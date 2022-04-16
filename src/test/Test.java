@@ -8,8 +8,16 @@
 
 package test.java;
 
+import static org.junit.Assert.*;
+
 public class Test {
 
+    @Test
+    public void testDummy(){
+        System.out.println("Testing for true");
+        String string = "test";
+        assertEquals("test", string);
+    }
 
 
 }
