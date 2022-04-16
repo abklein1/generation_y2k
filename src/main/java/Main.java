@@ -1,0 +1,16 @@
+/*
+    File: Main.java
+    Author: Alex Klein
+    Date: 04/13/2022
+    Description: Here is the driver for the program
+
+ */
+
+package java;
+
+public class Main {
+    public static void main(String[] args){
+        System.out.println("Hello, world!");
+        System.out.println("This is the beginning.");
+    }
+}

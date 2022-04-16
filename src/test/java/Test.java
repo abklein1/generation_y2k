@@ -6,9 +6,10 @@
 
  */
 
-package test.java;
+package java;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class Test {
 
