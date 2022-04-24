@@ -1,3 +1,12 @@
+//*******************************************************************
+//  LibraryR.java
+//  Description: This represents a library object. Implements Room
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public class LibraryR implements Room {
 
     private int roomCapacity;

@@ -1,3 +1,12 @@
+//*******************************************************************
+//  ComputerLab.java
+//  Description: This represents a ComputerLab object. Implements Room
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public class ComputerLab implements Room {
 
     private int roomCapacity;

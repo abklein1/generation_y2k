@@ -1,3 +1,12 @@
+//*******************************************************************
+//  Hallway.java
+//  Description: This represents a hallway object. Implements Room
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public class Hallway implements Room {
 
     private int roomCapacity;

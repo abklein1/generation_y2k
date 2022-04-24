@@ -1,3 +1,12 @@
+//*******************************************************************
+//  Classroom.java
+//  Description: This represents a classroom object. Implements Room
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public class Classroom implements Room {
 
     private int roomCapacity;

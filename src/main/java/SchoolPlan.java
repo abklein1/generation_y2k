@@ -1,3 +1,13 @@
+//*******************************************************************
+//  SchoolPlan.java
+//  Description: This is a school plan interface that defines what a school
+//  should be built from
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public interface SchoolPlan {
     void setBathrooms(int number);
 

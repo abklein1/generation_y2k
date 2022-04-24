@@ -1,3 +1,12 @@
+//*******************************************************************
+//  Bathroom.java
+//  Description: This represents a bathroom object. Implements Room
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public class Bathroom implements Room {
 
     private int roomCapacity;

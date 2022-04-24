@@ -1,3 +1,12 @@
+//*******************************************************************
+//  Room.java
+//  Description: This is a room interface used to supply methods for Room type objects
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public interface Room {
 
     void reset();

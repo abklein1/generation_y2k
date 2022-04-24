@@ -1,3 +1,12 @@
+//*******************************************************************
+//  Breakroom.java
+//  Description: This represents a breakroom object. Implements Room
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public class Breakroom implements Room {
 
     private int roomCapacity;

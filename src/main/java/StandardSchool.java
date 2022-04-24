@@ -1,3 +1,14 @@
+//*******************************************************************
+//  StandardSchool.java
+//  Description: This is the implementation of a standard school based
+//  on the implementation of the school plan interface
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
+
 public class StandardSchool implements SchoolPlan {
 
 

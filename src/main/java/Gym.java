@@ -1,3 +1,12 @@
+//*******************************************************************
+//  Gym.java
+//  Description: This represents a gym object. Implements Room
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public class Gym implements Room {
 
     private int roomCapacity;

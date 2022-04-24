@@ -1,3 +1,12 @@
+//*******************************************************************
+//  Lunchroom.java
+//  Description: This represents a lunchroom object. Implements Room
+//  Bugs:
+//
+//  @author     Alex Klein
+//  @version    04242022
+//*******************************************************************
+
 public class Lunchroom implements Room {
 
     private int roomCapacity;
