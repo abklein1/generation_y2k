@@ -17,6 +17,11 @@ public class StandardSchool implements SchoolPlan {
         Bathroom[] bathrooms = new Bathroom[number];
         for (int i = 0; i < number; i++) {
             bathrooms[i].setRoomName("Bathroom" + i);
+            if(i % 2 == 0){
+                bathrooms[i].setRoomRestrictions(true, false);
+            } else {
+                bathrooms[i].setRoomRestrictions(false, true);
+            }
         }
     }
 
@@ -34,6 +39,15 @@ public class StandardSchool implements SchoolPlan {
         Classroom[] classrooms = new Classroom[number];
         for (int i = 0; i < number; i++) {
             classrooms[i].setRoomName("Classroom" + i);
+        }
+    }
+
+    @Override
+    public void setComputerLabs(int number){
+        ComputerLab[] computerLabs = new ComputerLab[number];
+        for (int i = 0; i < number; i++){
+            computerLabs[i].setRoomName("ComputerLab" + i);
+            computerLabs[i].setWindowCount(0);
         }
     }
 

@@ -17,6 +17,7 @@ public class Office implements Room{
     private int staffCap;
     private int studentCap;
     private int roomNumber;
+    private boolean studentRestriction;
 
     public Office() {
         this.roomCapacity = 0;
@@ -27,6 +28,7 @@ public class Office implements Room{
         this.staffCap = 0;
         this.studentCap = 0;
         this.roomNumber = 0;
+        this.studentRestriction = false;
     }
 
     @Override
@@ -36,46 +38,46 @@ public class Office implements Room{
 
     @Override
     public void setRoomCapacity(int capacity) {
-
+        this.roomCapacity = capacity;
     }
 
     @Override
     public void setConnections(int connections) {
-
+        this.numOfConnections = connections;
     }
 
     @Override
     public void setWindowCount(int windows) {
-
+        this.windowCount = windows;
     }
 
     @Override
     public void setRoomName(String roomName) {
-
+        this.roomName = roomName;
     }
 
     @Override
     public void setDoors(int doors) {
-
+        this.numOfDoors = doors;
     }
 
     @Override
     public void setInitialStaff(int staffCount) {
-
+        this.staffCap = staffCount;
     }
 
     @Override
     public void setInitialStudents(int studentCount) {
-
+        this.studentCap = studentCount;
     }
 
     @Override
     public void setRoomNumber(int roomNumber) {
-
+        this.roomNumber = roomNumber;
     }
 
     @Override
     public void setStudentRestriction(boolean studentRestriction) {
-
+        this.studentRestriction = studentRestriction;
     }
 }

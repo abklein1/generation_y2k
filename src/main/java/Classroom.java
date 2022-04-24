@@ -17,9 +17,7 @@ public class Classroom implements Room {
     private int staffCap;
     private int studentCap;
     private int roomNumber;
-    private enum classRoomType {
-        MATH, SCIENCE, ENGLISH, SOCIAL_STUDIES, ELECTIVE, HOMEROOM;
-    }
+    private boolean studentRestriction;
 
     public Classroom() {
         this.roomCapacity = 0;
@@ -30,8 +28,8 @@ public class Classroom implements Room {
         this.staffCap = 0;
         this.studentCap = 0;
         this.roomNumber = 0;
+        this.studentRestriction = false;
     }
-
 
     @Override
     public void reset() {
@@ -80,9 +78,13 @@ public class Classroom implements Room {
 
     @Override
     public void setStudentRestriction(boolean studentRestriction) {
+        this.studentRestriction = studentRestriction;
     }
 
-    public void setClassroomType(classRoomType classroomType){
+    public void setClassroomType(classRoomType classroomType) {
+    }
 
+    private enum classRoomType {
+        MATH, SCIENCE, ENGLISH, SOCIAL_STUDIES, ELECTIVE, HOMEROOM, DETENTION
     }
 }

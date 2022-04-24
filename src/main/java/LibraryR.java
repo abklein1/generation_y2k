@@ -17,6 +17,7 @@ public class LibraryR implements Room {
     private int staffCap;
     private int studentCap;
     private int roomNumber;
+    private boolean studentRestriction;
 
     public LibraryR() {
         this.roomCapacity = 0;
@@ -27,6 +28,7 @@ public class LibraryR implements Room {
         this.staffCap = 0;
         this.studentCap = 0;
         this.roomNumber = 0;
+        this.studentRestriction = false;
     }
 
 
@@ -77,5 +79,6 @@ public class LibraryR implements Room {
 
     @Override
     public void setStudentRestriction(boolean studentRestriction) {
+        this.studentRestriction = studentRestriction;
     }
 }

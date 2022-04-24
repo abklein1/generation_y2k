@@ -17,6 +17,7 @@ public class Hallway implements Room {
     private int staffCap;
     private int studentCap;
     private int roomNumber;
+    private boolean studentRestriction;
 
     public Hallway() {
         this.roomCapacity = 0;
@@ -27,6 +28,7 @@ public class Hallway implements Room {
         this.staffCap = 0;
         this.studentCap = 0;
         this.roomNumber = 0;
+        this.studentRestriction = false;
     }
 
     @Override
@@ -76,5 +78,6 @@ public class Hallway implements Room {
 
     @Override
     public void setStudentRestriction(boolean studentRestriction) {
+        this.studentRestriction = studentRestriction;
     }
 }

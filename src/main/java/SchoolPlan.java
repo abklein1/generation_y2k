@@ -17,6 +17,8 @@ public interface SchoolPlan {
 
     void setCourtyards(int number);
 
+    void setComputerLabs(int number);
+
     void setGyms(int number);
 
     void setHallways(int number);
