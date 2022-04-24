@@ -1,4 +1,4 @@
-public class StandardSchool implements SchoolBuilder {
+public class StandardSchool implements SchoolPlan {
 
 
     @Override
@@ -14,6 +14,7 @@ public class StandardSchool implements SchoolBuilder {
         Breakroom[] breakrooms = new Breakroom[number];
         for (int i = 0; i < number; i++) {
             breakrooms[i].setRoomName("Breakroom" + i);
+            breakrooms[i].setStudentRestriction(true);
         }
     }
 
@@ -66,10 +67,21 @@ public class StandardSchool implements SchoolBuilder {
     }
 
     @Override
+    public void setOffices(int number) {
+        Office[] offices = new Office[number];
+        for (int i = 0; i < number; i++) {
+            offices[i].setRoomName("Office" + i);
+            offices[i].setStudentRestriction(true);
+        }
+    }
+
+    @Override
     public void setUtilityRooms(int number) {
         UtilityRoom[] utilityrooms = new UtilityRoom[number];
         for (int i = 0; i < number; i++) {
             utilityrooms[i].setRoomName("UtilityRoom" + i);
+            utilityrooms[i].setStudentRestriction(true);
         }
     }
+
 }

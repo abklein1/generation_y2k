@@ -1,4 +1,4 @@
-public interface SchoolBuilder {
+public interface SchoolPlan {
     void setBathrooms(int number);
 
     void setBreakrooms(int number);
@@ -14,6 +14,8 @@ public interface SchoolBuilder {
     void setLibraries(int number);
 
     void setLunchrooms(int number);
+
+    void setOffices(int number);
 
     void setUtilityRooms(int number);
 }

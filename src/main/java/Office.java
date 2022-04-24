@@ -1,4 +1,4 @@
-public class Classroom implements Room {
+public class Office implements Room{
 
     private int roomCapacity;
     private int numOfConnections;
@@ -8,11 +8,8 @@ public class Classroom implements Room {
     private int staffCap;
     private int studentCap;
     private int roomNumber;
-    private enum classRoomType {
-        MATH, SCIENCE, ENGLISH, SOCIAL_STUDIES, ELECTIVE, HOMEROOM;
-    }
 
-    public Classroom() {
+    public Office() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -23,7 +20,6 @@ public class Classroom implements Room {
         this.roomNumber = 0;
     }
 
-
     @Override
     public void reset() {
 
@@ -31,49 +27,46 @@ public class Classroom implements Room {
 
     @Override
     public void setRoomCapacity(int capacity) {
-        this.roomCapacity = capacity;
+
     }
 
     @Override
     public void setConnections(int connections) {
-        this.numOfConnections = connections;
+
     }
 
     @Override
     public void setWindowCount(int windows) {
-        this.windowCount = windows;
+
     }
 
     @Override
     public void setRoomName(String roomName) {
-        this.roomName = roomName;
+
     }
 
     @Override
     public void setDoors(int doors) {
-        this.numOfDoors = doors;
+
     }
 
     @Override
     public void setInitialStaff(int staffCount) {
-        this.staffCap = staffCount;
+
     }
 
     @Override
     public void setInitialStudents(int studentCount) {
-        this.studentCap = studentCount;
+
     }
 
     @Override
     public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
+
     }
 
     @Override
     public void setStudentRestriction(boolean studentRestriction) {
-    }
-
-    public void setClassroomType(classRoomType classroomType){
 
     }
 }
