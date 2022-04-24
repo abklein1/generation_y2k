@@ -1,19 +1,19 @@
 public interface SchoolBuilder {
-    public void setBathrooms(int number);
+    void setBathrooms(int number);
 
-    public void setBreakrooms(int number);
+    void setBreakrooms(int number);
 
-    public void setClassrooms(int number);
+    void setClassrooms(int number);
 
-    public void setCourtyards(int number);
+    void setCourtyards(int number);
 
-    public void setGyms(int number);
+    void setGyms(int number);
 
-    public void setHallways(int number);
+    void setHallways(int number);
 
-    public void setLibraries(int number);
+    void setLibraries(int number);
 
-    public void setLunchrooms(int number);
+    void setLunchrooms(int number);
 
-    public void setUtilityRooms(int number);
+    void setUtilityRooms(int number);
 }

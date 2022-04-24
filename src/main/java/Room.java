@@ -1,21 +1,23 @@
-public interface RoomBuilder {
+public interface Room {
 
-    public void reset();
+    void reset();
 
-    public void setRoomCapacity(int capacity);
+    void setRoomCapacity(int capacity);
 
-    public void setConnections(int connections);
+    void setConnections(int connections);
 
-    public void setWindowCount(int windows);
+    void setWindowCount(int windows);
 
-    public void setRoomName(String roomName);
+    void setRoomName(String roomName);
 
-    public void setDoors(int doors);
+    void setDoors(int doors);
 
-    public void setInitialStaff(int staffCount);
+    void setInitialStaff(int staffCount);
 
-    public void setInitialStudents(int studentCount);
+    void setInitialStudents(int studentCount);
 
-    public void setRoomNumber(int roomNumber);
+    void setRoomNumber(int roomNumber);
+
+    void setStudentRestriction(boolean studentRestriction);
 
 }

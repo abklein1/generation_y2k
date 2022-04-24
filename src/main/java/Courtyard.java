@@ -1,4 +1,4 @@
-public class Courtyard implements RoomBuilder {
+public class Courtyard implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -9,7 +9,7 @@ public class Courtyard implements RoomBuilder {
     private int studentCap;
     private int roomNumber;
 
-    public Courtyard(){
+    public Courtyard() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -61,7 +61,11 @@ public class Courtyard implements RoomBuilder {
     }
 
     @Override
-    public void setRoomNumber(int roomNumber){
+    public void setRoomNumber(int roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    @Override
+    public void setStudentRestriction(boolean studentRestriction) {
     }
 }

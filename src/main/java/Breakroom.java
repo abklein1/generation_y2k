@@ -1,4 +1,4 @@
-public class Breakroom implements RoomBuilder {
+public class Breakroom implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -9,7 +9,7 @@ public class Breakroom implements RoomBuilder {
     private int studentCap;
     private int roomNumber;
 
-    public Breakroom(){
+    public Breakroom() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -61,7 +61,11 @@ public class Breakroom implements RoomBuilder {
     }
 
     @Override
-    public void setRoomNumber(int roomNumber){
+    public void setRoomNumber(int roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    @Override
+    public void setStudentRestriction(boolean studentRestriction) {
     }
 }

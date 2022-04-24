@@ -1,4 +1,4 @@
-public class LibraryR implements RoomBuilder{
+public class LibraryR implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -9,7 +9,7 @@ public class LibraryR implements RoomBuilder{
     private int studentCap;
     private int roomNumber;
 
-    public LibraryR(){
+    public LibraryR() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -25,6 +25,7 @@ public class LibraryR implements RoomBuilder{
     public void reset() {
 
     }
+
     @Override
     public void setRoomCapacity(int capacity) {
         this.roomCapacity = capacity;
@@ -61,7 +62,11 @@ public class LibraryR implements RoomBuilder{
     }
 
     @Override
-    public void setRoomNumber(int roomNumber){
+    public void setRoomNumber(int roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    @Override
+    public void setStudentRestriction(boolean studentRestriction) {
     }
 }

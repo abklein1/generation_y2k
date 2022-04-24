@@ -1,13 +1,13 @@
 package test.java;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class Tester {
     @Test
-    public void dummyTest(){
+    public void dummyTest() {
         String string = "Testing";
-        assertEquals("Testing",string);
+        assertEquals("Testing", string);
     }
 }

@@ -1,4 +1,4 @@
-public final class Bathroom implements RoomBuilder {
+public class Bathroom implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -11,7 +11,7 @@ public final class Bathroom implements RoomBuilder {
     private boolean restrictM;
     private boolean restrictF;
 
-    public Bathroom(){
+    public Bathroom() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -65,11 +65,15 @@ public final class Bathroom implements RoomBuilder {
     }
 
     @Override
-    public void setRoomNumber(int roomNumber){
+    public void setRoomNumber(int roomNumber) {
         this.roomNumber = roomNumber;
     }
 
-    public void setRoomRestrictions(boolean restrictM, boolean restrictF){
+    @Override
+    public void setStudentRestriction(boolean studentRestriction) {
+    }
+
+    public void setRoomRestrictions(boolean restrictM, boolean restrictF) {
         this.restrictM = restrictM;
         this.restrictF = restrictF;
     }
