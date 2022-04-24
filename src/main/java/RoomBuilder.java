@@ -16,4 +16,6 @@ public interface RoomBuilder {
 
     public void setInitialStudents(int studentCount);
 
+    public void setRoomNumber(int roomNumber);
+
 }

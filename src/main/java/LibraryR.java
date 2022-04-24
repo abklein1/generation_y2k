@@ -1,4 +1,4 @@
-public class Classroom implements RoomBuilder {
+public class LibraryR implements RoomBuilder{
     @Override
     public void reset() {
 

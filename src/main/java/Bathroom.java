@@ -39,4 +39,9 @@ public final class Bathroom implements RoomBuilder {
     public void setInitialStudents(int studentCount) {
 
     }
+
+    @Override
+    public void setRoomNumber(int roomNumber){
+
+    }
 }
