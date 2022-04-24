@@ -1,4 +1,4 @@
-public class Breakroom implements SchoolBuilder{
+public class Breakroom implements RoomBuilder {
 
     @Override
     public void reset() {

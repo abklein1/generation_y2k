@@ -1,4 +1,4 @@
-public interface SchoolBuilder {
+public interface RoomBuilder {
 
     public void reset();
 

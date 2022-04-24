@@ -1,4 +1,5 @@
-public class Bathroom implements SchoolBuilder{
+public final class Bathroom implements RoomBuilder {
+
     @Override
     public void reset() {
 
