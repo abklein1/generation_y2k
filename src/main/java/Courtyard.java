@@ -1,7 +1,7 @@
-public class Hallway implements SchoolBuilder{
+public class Courtyard implements SchoolBuilder{
     @Override
     public void reset() {
-
+        
     }
 
     @Override

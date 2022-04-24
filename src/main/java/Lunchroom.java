@@ -15,7 +15,7 @@ public class Lunchroom implements SchoolBuilder{
     }
 
     @Override
-    public void setWindows(int windows) {
+    public void setWindowCount(int windows) {
 
     }
 

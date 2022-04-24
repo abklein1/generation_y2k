@@ -15,7 +15,7 @@ public class Classroom implements SchoolBuilder{
     }
 
     @Override
-    public void setWindows(int windows) {
+    public void setWindowCount(int windows) {
 
     }
 

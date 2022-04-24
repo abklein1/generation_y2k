@@ -6,7 +6,7 @@ public interface SchoolBuilder {
 
     public void setConnections(int connections);
 
-    public void setWindows(int windows);
+    public void setWindowCount(int windows);
 
     public void setRoomName(String roomName);
 

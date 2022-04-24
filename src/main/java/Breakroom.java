@@ -1,4 +1,5 @@
-public class Hallway implements SchoolBuilder{
+public class Breakroom implements SchoolBuilder{
+
     @Override
     public void reset() {
 
