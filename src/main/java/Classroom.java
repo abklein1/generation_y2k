@@ -16,7 +16,7 @@ public class Classroom implements Room {
     private int numOfDoors;
     private int staffCap;
     private int studentCap;
-    private int roomNumber;
+    private String roomNumber;
     private boolean studentRestriction;
     private String classRoomType;
 
@@ -28,7 +28,7 @@ public class Classroom implements Room {
         this.numOfDoors = 0;
         this.staffCap = 0;
         this.studentCap = 0;
-        this.roomNumber = 0;
+        this.roomNumber = null;
         this.studentRestriction = false;
         this.classRoomType = null;
     }
@@ -69,7 +69,7 @@ public class Classroom implements Room {
     }
 
     @Override
-    public void setRoomNumber(int roomNumber) {
+    public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
     }
 
@@ -118,5 +118,35 @@ public class Classroom implements Room {
     @Override
     public int getStaffCapacity() {
         return staffCap;
+    }
+
+    public String getClassRoomType(){
+        return classRoomType;
+    }
+
+    public String getClassTypeAbbr(){
+        String abbr = null;
+        String type = getClassRoomType();
+
+        if(type.equals("Math")){
+            abbr = "MAT";
+        } else if (type.equals("English")){
+            abbr = "ENG";
+        } else if (type.equals("Science")){
+            abbr = "SCI";
+        } else if (type.equals("Social Studies")){
+            abbr = "SOC";
+        } else if (type.equals("Electives")){
+            abbr = "ELC";
+        } else if (type.equals("Homeroom")){
+            abbr = "HME";
+        } else if (type.equals("Study Hall")){
+            abbr = "STY";
+        } else {
+            System.out.println("No known class type!");
+        }
+
+        return abbr;
+
     }
 }

@@ -25,7 +25,7 @@ public interface Room {
 
     void setInitialStudents(int studentCount);
 
-    void setRoomNumber(int roomNumber);
+    void setRoomNumber(String roomNumber);
 
     void setStudentRestriction(boolean studentRestriction);
 

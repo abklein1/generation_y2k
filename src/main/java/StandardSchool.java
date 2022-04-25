@@ -50,6 +50,7 @@ public class StandardSchool implements SchoolPlan {
                 bathrooms[i].setWindowCount(setRandom(1, 3));
                 bathrooms[i].setRoomCapacity(setRandom(2, 18));
                 bathrooms[i].setStallNumber(setRandom(2, 5));
+                bathrooms[i].setRoomNumber("WC" + i + setRandom(0,9));
             }
         }
     }
@@ -68,6 +69,7 @@ public class StandardSchool implements SchoolPlan {
             breakrooms[i].setDoors(connectN);
             breakrooms[i].setWindowCount(setRandom(2, 6));
             breakrooms[i].setRoomCapacity(setRandom(10, 25));
+            breakrooms[i].setRoomNumber("B" + i + setRandom(0,9));
         }
     }
 
@@ -88,6 +90,7 @@ public class StandardSchool implements SchoolPlan {
             classrooms[i].setClassroomType(decision);
             classrooms[i].setInitialStaff(1);
             classrooms[i].setRoomCapacity(setRandom(15, 40));
+            classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(0,99));
         }
     }
 
@@ -105,6 +108,7 @@ public class StandardSchool implements SchoolPlan {
             computerLabs[i].setDoors(connectN);
             computerLabs[i].setRoomCapacity(setRandom(15, 45));
             computerLabs[i].setInitialStaff(setRandom(0, 1));
+            computerLabs[i].setRoomNumber("COM" + i);
         }
     }
 
@@ -120,6 +124,7 @@ public class StandardSchool implements SchoolPlan {
             courtyards[i].setConnections(4);
             courtyards[i].setDoors(4);
             courtyards[i].setRoomCapacity(setRandom(35, 150));
+            courtyards[i].setRoomNumber("C" + i);
         }
     }
 
@@ -136,6 +141,7 @@ public class StandardSchool implements SchoolPlan {
             gyms[i].setWindowCount(setRandom(4, 16));
             gyms[i].setRoomCapacity(setRandom(100, 450));
             gyms[i].setInitialStaff(setRandom(2, 4));
+            gyms[i].setRoomNumber("G" + i + setRandom(0,9));
         }
     }
 
@@ -152,6 +158,7 @@ public class StandardSchool implements SchoolPlan {
             hallways[i].setDoors(connectN);
             hallways[i].setWindowCount(setRandom(0, 6));
             hallways[i].setRoomCapacity(setRandom(35, 75));
+            hallways[i].setRoomNumber("H" + i);
         }
     }
 
@@ -169,6 +176,7 @@ public class StandardSchool implements SchoolPlan {
             libraries[i].setDoors(connectorN);
             libraries[i].setInitialStaff(2);
             libraries[i].setRoomCapacity(setRandom(30, 200));
+            libraries[i].setRoomNumber("L" + i + setRandom(0,9));
         }
     }
 
@@ -185,6 +193,7 @@ public class StandardSchool implements SchoolPlan {
             lunchrooms[i].setDoors(4);
             lunchrooms[i].setInitialStaff(setRandom(3, 10));
             lunchrooms[i].setRoomCapacity(setRandom(50, 250));
+            lunchrooms[i].setRoomNumber("L" + i + setRandom(0,9));
         }
     }
 
@@ -203,7 +212,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(6);
                 offices[i].setConnections(1);
-                offices[i].setRoomNumber(100);
+                offices[i].setRoomNumber("100");
             } else if (i == 1) {
                 offices[i].setRoomName("Vice Principal's Office");
                 System.out.println("      Generating Vice Principal's office");
@@ -213,7 +222,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(4);
                 offices[i].setConnections(1);
-                offices[i].setRoomNumber(101);
+                offices[i].setRoomNumber("101");
             } else if (i == 2) {
                 offices[i].setRoomName("Guidance Councilor's Office");
                 System.out.println("      Generating Councilor's Office");
@@ -223,7 +232,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(6);
                 offices[i].setConnections(1);
-                offices[i].setRoomNumber(102);
+                offices[i].setRoomNumber("102");
             } else if (i == 3) {
                 offices[i].setRoomName("Front Office");
                 System.out.println("      Generating Front Office");
@@ -233,7 +242,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(15);
                 offices[i].setConnections(4);
-                offices[i].setRoomNumber(103);
+                offices[i].setRoomNumber("103");
             } else {
                 offices[i].setRoomName("Office" + i);
                 System.out.println("      Generating " + offices[i].getRoomName());
@@ -241,7 +250,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setDoors(1);
                 offices[i].setInitialStaff(1);
                 offices[i].setRoomCapacity(setRandom(2, 6));
-                offices[i].setRoomNumber(103 + i);
+                offices[i].setRoomNumber("O"+ "1" + i);
             }
             offices[i].setStudentRestriction(true);
 
@@ -262,6 +271,7 @@ public class StandardSchool implements SchoolPlan {
             utilityrooms[i].setWindowCount(0);
             utilityrooms[i].setInitialStaff(setRandom(1, 3));
             utilityrooms[i].setRoomCapacity(setRandom(3, 8));
+            utilityrooms[i].setRoomNumber("U" + i + setRandom(0,9));
         }
     }
 

@@ -16,7 +16,7 @@ public class ComputerLab implements Room {
     private int numOfDoors;
     private int staffCap;
     private int studentCap;
-    private int roomNumber;
+    private String roomNumber;
     private boolean studentRestriction;
 
     public ComputerLab() {
@@ -27,7 +27,7 @@ public class ComputerLab implements Room {
         this.numOfDoors = 0;
         this.staffCap = 0;
         this.studentCap = 0;
-        this.roomNumber = 0;
+        this.roomNumber = null;
         this.studentRestriction = false;
     }
 
@@ -67,7 +67,7 @@ public class ComputerLab implements Room {
     }
 
     @Override
-    public void setRoomNumber(int roomNumber) {
+    public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
     }
 

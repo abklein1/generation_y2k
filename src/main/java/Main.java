@@ -12,7 +12,10 @@ public class Main {
         StandardSchool standardSchool = new StandardSchool();
         Director director = new Director(standardSchool);
 
+        int student_cap = standardSchool.getTotalStudentCapacity();
+        int staff_cap = standardSchool.getMinimumStaffRequirements();
 
-
+        System.out.println("Student capacity is " + student_cap);
+        System.out.println("Staff capacity is " + staff_cap);
     }
 }
