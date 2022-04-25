@@ -18,6 +18,7 @@ public class Classroom implements Room {
     private int studentCap;
     private int roomNumber;
     private boolean studentRestriction;
+    private String classRoomType;
 
     public Classroom() {
         this.roomCapacity = 0;
@@ -29,6 +30,7 @@ public class Classroom implements Room {
         this.studentCap = 0;
         this.roomNumber = 0;
         this.studentRestriction = false;
+        this.classRoomType = null;
     }
 
     @Override
@@ -76,9 +78,6 @@ public class Classroom implements Room {
         this.studentRestriction = studentRestriction;
     }
 
-    public void setClassroomType(classRoomType classroomType) {
-    }
-
     public String getRoomName() {
         return this.roomName;
     }
@@ -88,7 +87,19 @@ public class Classroom implements Room {
         this.roomName = roomName;
     }
 
-    private enum classRoomType {
-        MATH, SCIENCE, ENGLISH, SOCIAL_STUDIES, ELECTIVE, HOMEROOM, DETENTION
+    public void setClassroomType(int select) {
+        switch (select){
+            case 0: this.classRoomType = "Math";
+            case 1: this.classRoomType = "English";
+            case 2: this.classRoomType = "Science";
+            case 3: this.classRoomType = "Social Studies";
+            case 4: this.classRoomType = "Electives";
+            case 5: this.classRoomType = "Homeroom";
+            case 6: this.classRoomType = "Study Hall";
+        }
+    }
+
+    public void setDetention(){
+        this.classRoomType = "Detention";
     }
 }

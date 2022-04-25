@@ -20,6 +20,7 @@ public class Bathroom implements Room {
     private boolean restrictM;
     private boolean restrictF;
     private boolean studentRestriction;
+    private int stallNumber;
 
     public Bathroom() {
         this.roomCapacity = 0;
@@ -33,6 +34,7 @@ public class Bathroom implements Room {
         this.restrictF = false;
         this.restrictM = false;
         this.studentRestriction = false;
+        this.stallNumber = 0;
     }
 
     @Override
@@ -80,6 +82,11 @@ public class Bathroom implements Room {
         this.studentRestriction = studentRestriction;
     }
 
+    @Override
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
+
     public void setRoomRestrictions(boolean restrictM, boolean restrictF) {
         this.restrictM = restrictM;
         this.restrictF = restrictF;
@@ -89,8 +96,7 @@ public class Bathroom implements Room {
         return this.roomName;
     }
 
-    @Override
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
+    public void setStallNumber(int stallNumber){
+        this.stallNumber = stallNumber;
     }
 }
