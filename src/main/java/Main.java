@@ -6,11 +6,10 @@
 
  */
 
-package main.java;
-
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, world!");
-        System.out.println("This is the beginning.");
+
+        StandardSchool standardSchool = new StandardSchool();
+        Director director = new Director(standardSchool);
     }
 }

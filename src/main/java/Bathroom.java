@@ -25,7 +25,7 @@ public class Bathroom implements Room {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
-        this.roomName = null;
+        this.roomName = "init";
         this.numOfDoors = 0;
         this.staffCap = 0;
         this.studentCap = 0;
