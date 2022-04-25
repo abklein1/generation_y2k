@@ -9,6 +9,7 @@
 public class Main {
     public static void main(String[] args) {
 
+        System.out.println("Starting by generating the school");
         StandardSchool standardSchool = new StandardSchool();
         Director director = new Director(standardSchool);
 
