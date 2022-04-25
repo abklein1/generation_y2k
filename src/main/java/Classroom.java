@@ -112,7 +112,7 @@ public class Classroom implements Room {
 
     @Override
     public int getStudentCapacity() {
-        return studentCap;
+        return roomCapacity - 1;
     }
 
     @Override

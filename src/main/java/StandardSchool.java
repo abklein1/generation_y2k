@@ -135,6 +135,7 @@ public class StandardSchool implements SchoolPlan {
             gyms[i].setDoors(4);
             gyms[i].setWindowCount(setRandom(4, 16));
             gyms[i].setRoomCapacity(setRandom(100, 450));
+            gyms[i].setInitialStaff(setRandom(2, 4));
         }
     }
 
@@ -275,6 +276,46 @@ public class StandardSchool implements SchoolPlan {
     private int setRandom(int min, int max) {
         int random = ThreadLocalRandom.current().nextInt(min, max + 1);
         return random;
+    }
+
+    public int getTotalStudentCapacity() {
+        int total = 0;
+        for (Classroom classroom : classrooms) {
+            total = total + classroom.getStudentCapacity();
+        }
+
+        return total;
+    }
+
+    public int getMinimumStaffRequirements() {
+        int total = 0;
+        int class_count = 0;
+        int office_count = 0;
+        int maint_count = 0;
+        int lunch_count = 0;
+        int library_count = 0;
+        int gym_count = 0;
+        int computer_count = 0;
+
+        class_count = classrooms.length;
+        office_count = offices.length / 2;
+        maint_count = utilityrooms.length + 2;
+        library_count = libraries.length * 2;
+
+        for (Lunchroom lunchroom : lunchrooms) {
+            lunch_count = lunch_count + lunchroom.getStaffCapacity();
+        }
+
+        for (Gym gym : gyms) {
+            gym_count = gym_count + gym.getStaffCapacity();
+        }
+
+        for (ComputerLab computerLab : computerLabs) {
+            computer_count = computer_count + computerLab.getStaffCapacity();
+        }
+
+        total = class_count + office_count + maint_count + lunch_count + library_count + gym_count;
+        return total;
     }
 }
 

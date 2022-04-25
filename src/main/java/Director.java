@@ -49,10 +49,4 @@ public class Director {
         return random;
     }
 
-    public int getTotalStudentCapacity(){
-        int count = 0;
-
-        return count;
-    }
-
 }
