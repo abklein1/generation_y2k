@@ -88,6 +88,16 @@ public class UtilityRoom implements Room {
         this.roomName = roomName;
     }
 
+    @Override
+    public int getStudentCapacity() {
+        return studentCap;
+    }
+
+    @Override
+    public int getStaffCapacity() {
+        return staffCap;
+    }
+
     private enum utilityType {
         IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
     }

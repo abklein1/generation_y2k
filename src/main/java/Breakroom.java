@@ -76,6 +76,16 @@ public class Breakroom implements Room {
         this.studentRestriction = studentRestriction;
     }
 
+    @Override
+    public int getStudentCapacity() {
+        return studentCap;
+    }
+
+    @Override
+    public int getStaffCapacity() {
+        return staffCap;
+    }
+
     public String getRoomName() {
         return this.roomName;
     }

@@ -85,4 +85,14 @@ public class LibraryR implements Room {
     public void setRoomName(String roomName) {
         this.roomName = roomName;
     }
+
+    @Override
+    public int getStudentCapacity() {
+        return studentCap;
+    }
+
+    @Override
+    public int getStaffCapacity() {
+        return staffCap;
+    }
 }

@@ -13,10 +13,22 @@ import java.util.concurrent.ThreadLocalRandom;
 public class StandardSchool implements SchoolPlan {
 
     String schoolName;
+    Bathroom[] bathrooms;
+    Breakroom[] breakrooms;
+    Classroom[] classrooms;
+    ComputerLab[] computerLabs;
+    Courtyard[] courtyards;
+    Gym[] gyms;
+    Hallway[] hallways;
+    LibraryR[] libraries;
+    Lunchroom[] lunchrooms;
+    Office[] offices;
+    UtilityRoom[] utilityrooms;
+
 
     @Override
     public void setBathrooms(int number) {
-        Bathroom[] bathrooms = new Bathroom[number];
+        bathrooms = new Bathroom[number];
         System.out.println("   Generating " + number + " bathrooms...");
         for (int i = 0; i < number; i++) {
             bathrooms[i] = new Bathroom();
@@ -44,7 +56,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setBreakrooms(int number) {
-        Breakroom[] breakrooms = new Breakroom[number];
+        breakrooms = new Breakroom[number];
         System.out.println("   Generating " + number + " breakroom(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(1, 2);
@@ -63,7 +75,7 @@ public class StandardSchool implements SchoolPlan {
     public void setClassrooms(int number) {
         int WEIGHT = 7;
         int decision = 0;
-        Classroom[] classrooms = new Classroom[number];
+        classrooms = new Classroom[number];
         System.out.println("   Generating " + number + " classrooms...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(1, 2);
@@ -81,7 +93,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setComputerLabs(int number) {
-        ComputerLab[] computerLabs = new ComputerLab[number];
+        computerLabs = new ComputerLab[number];
         System.out.println("   Generating " + number + " Computer lab(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(1, 3);
@@ -98,7 +110,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setCourtyards(int number) {
-        Courtyard[] courtyards = new Courtyard[number];
+        courtyards = new Courtyard[number];
         System.out.println("   Generating " + number + " courtyard(s)...");
         for (int i = 0; i < number; i++) {
             courtyards[i] = new Courtyard();
@@ -113,7 +125,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setGyms(int number) {
-        Gym[] gyms = new Gym[number];
+        gyms = new Gym[number];
         System.out.println("   Generating " + number + " gym(s)...");
         for (int i = 0; i < number; i++) {
             gyms[i] = new Gym();
@@ -128,7 +140,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setHallways(int number) {
-        Hallway[] hallways = new Hallway[number];
+        hallways = new Hallway[number];
         System.out.println("   Generating " + number + " hallways...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(2, 12);
@@ -144,7 +156,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setLibraries(int number) {
-        LibraryR[] libraries = new LibraryR[number];
+        libraries = new LibraryR[number];
         System.out.println("   Generating " + number + " libraries...");
         for (int i = 0; i < number; i++) {
             int connectorN = setRandom(1, 4);
@@ -161,7 +173,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setLunchrooms(int number) {
-        Lunchroom[] lunchrooms = new Lunchroom[number];
+        lunchrooms = new Lunchroom[number];
         System.out.println("   Generating " + number + " lunchroom(s)...");
         for (int i = 0; i < number; i++) {
             lunchrooms[i] = new Lunchroom();
@@ -177,7 +189,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setOffices(int number) {
-        Office[] offices = new Office[number];
+        offices = new Office[number];
         System.out.println("   Generating " + number + " offices...");
         for (int i = 0; i < number; i++) {
             offices[i] = new Office();
@@ -237,7 +249,7 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setUtilityRooms(int number) {
-        UtilityRoom[] utilityrooms = new UtilityRoom[number];
+        utilityrooms = new UtilityRoom[number];
         System.out.println("   Generating " + number + " utility rooms...");
         for (int i = 0; i < number; i++) {
             utilityrooms[i] = new UtilityRoom();

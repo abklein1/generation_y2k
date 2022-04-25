@@ -88,18 +88,35 @@ public class Classroom implements Room {
     }
 
     public void setClassroomType(int select) {
-        switch (select){
-            case 0: this.classRoomType = "Math";
-            case 1: this.classRoomType = "English";
-            case 2: this.classRoomType = "Science";
-            case 3: this.classRoomType = "Social Studies";
-            case 4: this.classRoomType = "Electives";
-            case 5: this.classRoomType = "Homeroom";
-            case 6: this.classRoomType = "Study Hall";
+        switch (select) {
+            case 0:
+                this.classRoomType = "Math";
+            case 1:
+                this.classRoomType = "English";
+            case 2:
+                this.classRoomType = "Science";
+            case 3:
+                this.classRoomType = "Social Studies";
+            case 4:
+                this.classRoomType = "Electives";
+            case 5:
+                this.classRoomType = "Homeroom";
+            case 6:
+                this.classRoomType = "Study Hall";
         }
     }
 
-    public void setDetention(){
+    public void setDetention() {
         this.classRoomType = "Detention";
+    }
+
+    @Override
+    public int getStudentCapacity() {
+        return studentCap;
+    }
+
+    @Override
+    public int getStaffCapacity() {
+        return staffCap;
     }
 }

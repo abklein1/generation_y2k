@@ -29,4 +29,8 @@ public interface Room {
 
     void setStudentRestriction(boolean studentRestriction);
 
+    int getStudentCapacity();
+
+    int getStaffCapacity();
+
 }
