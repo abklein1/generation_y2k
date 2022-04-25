@@ -53,11 +53,6 @@ public class LibraryR implements Room {
     }
 
     @Override
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
-    }
-
-    @Override
     public void setDoors(int doors) {
         this.numOfDoors = doors;
     }
@@ -80,5 +75,14 @@ public class LibraryR implements Room {
     @Override
     public void setStudentRestriction(boolean studentRestriction) {
         this.studentRestriction = studentRestriction;
+    }
+
+    public String getRoomName() {
+        return this.roomName;
+    }
+
+    @Override
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
     }
 }

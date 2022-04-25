@@ -56,11 +56,6 @@ public class Bathroom implements Room {
     }
 
     @Override
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
-    }
-
-    @Override
     public void setDoors(int doors) {
         this.numOfDoors = doors;
     }
@@ -88,5 +83,14 @@ public class Bathroom implements Room {
     public void setRoomRestrictions(boolean restrictM, boolean restrictF) {
         this.restrictM = restrictM;
         this.restrictF = restrictF;
+    }
+
+    public String getRoomName() {
+        return this.roomName;
+    }
+
+    @Override
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
     }
 }

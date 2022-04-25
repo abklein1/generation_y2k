@@ -11,5 +11,7 @@ public class Main {
 
         StandardSchool standardSchool = new StandardSchool();
         Director director = new Director(standardSchool);
+
+
     }
 }

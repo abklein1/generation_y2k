@@ -52,11 +52,6 @@ public class UtilityRoom implements Room {
     }
 
     @Override
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
-    }
-
-    @Override
     public void setDoors(int doors) {
         this.numOfDoors = doors;
     }
@@ -82,6 +77,15 @@ public class UtilityRoom implements Room {
     }
 
     public void setUtilityType(UtilityRoom.utilityType utilityType) {
+    }
+
+    public String getRoomName() {
+        return this.roomName;
+    }
+
+    @Override
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
     }
 
     private enum utilityType {
