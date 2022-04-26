@@ -1,25 +1,25 @@
 public interface PStatistics {
-    void setHeight();
+    void setHeight(int height);
 
-    void setEyeColor();
+    void setEyeColor(String eyeColor);
 
-    void setHairColor();
+    void setHairColor(String hairColor);
 
-    void setBuild();
+    void setBuild(String build);
 
-    void setIntelligence();
+    void setIntelligence(int intelligence);
 
-    void setCharisma();
+    void setCharisma(int charisma);
 
-    void setAgility();
+    void setAgility(int agility);
 
-    void setDetermination();
+    void setDetermination(int determination);
 
-    void setStrength();
+    void setStrength(int strength);
 
-    void setSleepState();
+    void setSleepState(boolean sleepState);
 
-    void setBoredom();
+    void setBoredom(int boredom);
 
     int getBoredom();
 
