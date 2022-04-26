@@ -19,7 +19,6 @@ public class StudentFactory implements PersonFactory {
         return new StudentArms();
     }
 
-
     @Override
     public Backpack createCarry() {
         return new Backpack();
