@@ -18,5 +18,8 @@ public class Main {
 
         System.out.println("Student capacity is " + student_cap);
         System.out.println("Staff capacity is " + staff_cap);
+
+        NameLoader.readCSVFirst(true);
+        NameLoader.readCSVLast(true);
     }
 }

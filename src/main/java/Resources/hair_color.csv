@@ -1,0 +1,23 @@
+color,rank,percent
+black,1,21
+dark brown,2,15
+medium brown,3,10
+light brown,4,7
+blond,5,7
+chesnut,6,6
+mahogany,7,6
+dirty blond,8,5
+golden blond,9,4
+light blond,10,3.5
+golden brown,11,2.5
+caramel,12,2
+strawberry blond,13,2
+copper,14,2
+red,15,2
+platinum blond,16,2
+auburn,17,1
+amber,18,1
+titian,19,0.5
+no,20,0.25
+gray,21,0.125
+white,22,0.125

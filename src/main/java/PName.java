@@ -1,9 +1,9 @@
 public interface PName {
-    void setFirstName();
+    void setFirstName(String firstName);
 
-    void setLastName();
+    void setLastName(String lastName);
 
-    void getFirstName();
+    String getFirstName();
 
-    void getLastName();
+    String getLastName();
 }
