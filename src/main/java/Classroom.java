@@ -120,27 +120,27 @@ public class Classroom implements Room {
         return staffCap;
     }
 
-    public String getClassRoomType(){
+    public String getClassRoomType() {
         return classRoomType;
     }
 
-    public String getClassTypeAbbr(){
+    public String getClassTypeAbbr() {
         String abbr = null;
         String type = getClassRoomType();
 
-        if(type.equals("Math")){
+        if (type.equals("Math")) {
             abbr = "MAT";
-        } else if (type.equals("English")){
+        } else if (type.equals("English")) {
             abbr = "ENG";
-        } else if (type.equals("Science")){
+        } else if (type.equals("Science")) {
             abbr = "SCI";
-        } else if (type.equals("Social Studies")){
+        } else if (type.equals("Social Studies")) {
             abbr = "SOC";
-        } else if (type.equals("Electives")){
+        } else if (type.equals("Electives")) {
             abbr = "ELC";
-        } else if (type.equals("Homeroom")){
+        } else if (type.equals("Homeroom")) {
             abbr = "HME";
-        } else if (type.equals("Study Hall")){
+        } else if (type.equals("Study Hall")) {
             abbr = "STY";
         } else {
             System.out.println("No known class type!");
