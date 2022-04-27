@@ -1,15 +1,15 @@
 public class TeacherStatistics implements PStatistics {
-    int height;
-    String eyeColor;
-    String hairColor;
-    String build;
-    int intelligence;
-    int charisma;
-    int agility;
-    int determination;
-    int strength;
-    boolean sleep;
-    int boredom;
+    private int height;
+    private String eyeColor;
+    private String hairColor;
+    private String build;
+    private int intelligence;
+    private int charisma;
+    private int agility;
+    private int determination;
+    private int strength;
+    private boolean sleep;
+    private int boredom;
 
     public TeacherStatistics(){
         this.height = 0;
