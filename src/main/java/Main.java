@@ -110,6 +110,7 @@ public class Main {
         System.out.println("Ok so " + day1.studentName.getFirstName() + " got a " + day1.studentStatistics.getGradeAverage());
         System.out.println("Well tomorrow's a new day. Let's simulate another 10 of them!");
         day.setDayCounter();
+        //Simulate the whole school for 10 days
         for (int n = 0; n < 9; n++) {
             System.out.println("Today is " + day.getDayName());
             dungeon = bossDecision(day);
@@ -151,6 +152,7 @@ public class Main {
         return random;
     }
 
+    //Select hair type
     private static String hairSelection(int selection) {
         if (selection >= 0 && selection <= 21) {
             return "Black";
@@ -204,6 +206,7 @@ public class Main {
         }
     }
 
+    //Select eye type
     private static String eyeSelection(int selection) {
         if (selection >= 0 && selection <= 52) {
             return "Dark Brown";
@@ -230,6 +233,7 @@ public class Main {
         }
     }
 
+    //Display certain students
     private static void studentInspection(Student student) {
         String fir = student.studentName.getFirstName();
         String las = student.studentName.getLastName();
@@ -269,7 +273,7 @@ public class Main {
         System.out.println("Nice to meet you " + fir + "!");
     }
 
-
+    //Show stats for a particular staff
     private static void staffInspection(Staff staff) {
         String fir = staff.teacherName.getFirstName();
         String las = staff.teacherName.getLastName();
@@ -307,6 +311,7 @@ public class Main {
         System.out.println("Nice to meet you " + fir + "!");
     }
 
+    //What type of boss will we get today
     private static int bossDecision(Day day) {
         if (day.getDayCounter() == 1 || day.getDayCounter() == 2 || day.getDayCounter() == 4 || day.getDayCounter() == 6 || day.getDayCounter() == 7 || day.getDayCounter() == 9) {
             System.out.println("Today all students will have to face homework!");
@@ -320,6 +325,7 @@ public class Main {
         }
     }
 
+    //The showdown between a student and exam/quiz/homework
     private static void dungeonFight(Student student, Boss boss) {
         int finalGrade = 0;
         int bossStat = 0;
