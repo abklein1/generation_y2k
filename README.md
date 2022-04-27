@@ -2,18 +2,18 @@
 
 This repo covers assignments 5a-b
 
-For this project I think I will be making a detailed simulator of a high school where days progress and students attend
-classes based on schedules etc.
+For this project I made a detailed RPG simulator of a high school using Design Patterns from GoF.
 
-To make this a functional program I will need to make use of the iterator design pattern so that I can move through any
-generated data structure I use to store groups of objects- such as students, teachers, classes etc.
+I used a builder design pattern to proceedurally generate a high school and all specific rooms/ classrooms.
+From the builder, I used the school size (via number of classrooms and offices) to calculate the maximum number of
+students and minimum number of staff needed to run a school.
 
-That being said, I would like to make use of the Abstract Factory method to create different combinations of objects
-that are all somewhat releated to eachother. I think organizing it this way would be the easiest way to create readable
-and debuggable code. If I'm making students, an abstract factory can make students of different grades or teachers of
-different subjects.
+Next, I developed an Abstract Factory to build different types of People (staff and students) using components that
+make up a person, defined through an Interface. Students and staff are stored in separate hash maps for quick reference.
+People are then generated with attributes and stats.
 
-I might also use a Builder design pattern for creating the initial state of the school and populating it with
-classrooms, teachers, students. Ensuring everything is built out in a specific order will help me debug as the
-simulation becomes more complex. This will also allow me to add functionality later on to increase the complexity of the
-simulation. 
+I used a Singleton design pattern to generate days. The days act as a form of step within the state machine that is 
+the school and the people that attend/work at the school. Each day of the week defines a different Boss in the form of
+an Exam, Quiz, or homework, which each student in the school must face. The student has stats that are calculated against
+the stats of the Boss. The student may walk away with a grade and some experience or a bad status effect. Grades can be
+calculated to receive an average.
