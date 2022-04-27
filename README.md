@@ -4,9 +4,12 @@ This repo covers assignments 5a-b
 
 For this project I made a detailed RPG simulator of a high school using Design Patterns from GoF.
 
-I used a builder design pattern to proceedurally generate a high school and all specific rooms/ classrooms.
+I used a Builder design pattern to proceedurally generate a high school and all specific rooms/ classrooms.
+Rooms are an interface that serve as a template for specific room objects. A director object assembles the school
+by organizing a series of concrete builders.
 From the builder, I used the school size (via number of classrooms and offices) to calculate the maximum number of
-students and minimum number of staff needed to run a school.
+students and minimum number of staff needed to run a school. The school would have used a directed graph or adjacency
+matrix to link rooms, but ran out of time. Students and teachers would have populated rooms.
 
 Next, I developed an Abstract Factory to build different types of People (staff and students) using components that
 make up a person, defined through an Interface. Students and staff are stored in separate hash maps for quick reference.
@@ -20,3 +23,5 @@ the school and the people that attend/work at the school. Each day of the week d
 an Exam, Quiz, or homework, which each student in the school must face. The student has stats that are calculated against
 the stats of the Boss. The student may walk away with a grade and some experience or a bad status effect. Grades can be
 calculated to receive an average. The days work in the way that "floors" should function.
+
+video link: https://youtu.be/V5VnTmRAtOA
