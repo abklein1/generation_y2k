@@ -2,9 +2,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Exam implements Boss{
 
-    private int questions;
-    private int time;
-    private int difficulty;
+    private final int questions;
+    private final int time;
+    private final int difficulty;
     private String fullName;
 
     public Exam(){

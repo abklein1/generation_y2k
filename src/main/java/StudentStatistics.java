@@ -17,7 +17,7 @@ public class StudentStatistics implements PStatistics {
     private int level;
     private int experience;
     private int grade_average;
-    private List<Integer> grades;
+    private final List<Integer> grades;
 
     public StudentStatistics() {
         this.height = 0;
