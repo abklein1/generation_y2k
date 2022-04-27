@@ -10,7 +10,7 @@ public class Homework implements Boss{
     public Homework(){
         this.questions = setRandom(3, 30);
         this.time = setRandom(10,120);
-        this.difficulty = setRandom(1, 10);
+        this.difficulty = setRandom(10, 100);
         this.fullName = "Homework";
     }
 

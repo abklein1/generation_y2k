@@ -10,7 +10,7 @@ public class Exam implements Boss{
     public Exam(){
         this.questions = setRandom(6, 50);
         this.time = setRandom(30,130);
-        this.difficulty = setRandom(3, 20);
+        this.difficulty = setRandom(30, 200);
         this.fullName = "Exam";
     }
 

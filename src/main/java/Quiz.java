@@ -10,7 +10,7 @@ public class Quiz implements Boss {
     public Quiz() {
         this.questions = setRandom(5, 15);
         this.time = setRandom(10, 30);
-        this.difficulty = setRandom(2, 11);
+        this.difficulty = setRandom(10, 110);
         this.fullName = "Quiz";
     }
 

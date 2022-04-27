@@ -55,11 +55,11 @@ public class Main {
             student.studentStatistics.setHairColor(hairSelection(setRandom(0, 102)));
             student.studentStatistics.setEyeColor(eyeSelection(setRandom(0, 109)));
             student.studentStatistics.setHeight(setRandom(48, 78));
-            student.studentStatistics.setIntelligence(setRandom(0, 20));
-            student.studentStatistics.setCharisma(setRandom(0, 20));
-            student.studentStatistics.setAgility(setRandom(0, 20));
-            student.studentStatistics.setDetermination(setRandom(0, 20));
-            student.studentStatistics.setStrength(setRandom(0, 20));
+            student.studentStatistics.setIntelligence(setRandom(0, 15));
+            student.studentStatistics.setCharisma(setRandom(0, 15));
+            student.studentStatistics.setAgility(setRandom(0, 15));
+            student.studentStatistics.setDetermination(setRandom(0, 15));
+            student.studentStatistics.setStrength(setRandom(0, 15));
             student.studentStatistics.setLevel(1);
             student.studentStatistics.setExperience(0);
         }
@@ -105,31 +105,34 @@ public class Main {
             dungeonFight(studentHashMap.get(m), first_homework);
         }
         System.out.println("Alright let's see how a random student did...");
-        Student day1 = studentHashMap.get(setRandom(0,studentHashMap.size() - 1));
+        Student day1 = studentHashMap.get(setRandom(0, studentHashMap.size() - 1));
         System.out.println("Hey " + day1.studentName.getFirstName());
         System.out.println("Ok so " + day1.studentName.getFirstName() + " got a " + day1.studentStatistics.getGradeAverage());
         System.out.println("Well tomorrow's a new day. Let's simulate another 10 of them!");
         day.setDayCounter();
-        for(int n = 0; n < 9; n++){
+        for (int n = 0; n < 9; n++) {
             System.out.println("Today is " + day.getDayName());
             dungeon = bossDecision(day);
-            if(dungeon == 1){
+            if (dungeon == 1) {
                 Homework homework = new Homework();
                 for (Integer o = 0; o < student_cap; o++) {
                     dungeonFight(studentHashMap.get(o), homework);
                 }
+                day.setDayName();
                 day.setDayCounter();
-            } else if(dungeon == 2){
+            } else if (dungeon == 2) {
                 Quiz quiz = new Quiz();
                 for (Integer p = 0; p < student_cap; p++) {
                     dungeonFight(studentHashMap.get(p), quiz);
                 }
+                day.setDayName();
                 day.setDayCounter();
             } else {
                 Exam exam = new Exam();
                 for (Integer q = 0; q < student_cap; q++) {
                     dungeonFight(studentHashMap.get(q), exam);
                 }
+                day.setDayName();
                 day.setDayCounter();
             }
         }
@@ -304,11 +307,11 @@ public class Main {
         System.out.println("Nice to meet you " + fir + "!");
     }
 
-    private static int bossDecision(Day day){
-        if(day.getDayCounter() == 1 || day.getDayCounter() == 2 || day.getDayCounter() == 4) {
+    private static int bossDecision(Day day) {
+        if (day.getDayCounter() == 1 || day.getDayCounter() == 2 || day.getDayCounter() == 4 || day.getDayCounter() == 6 || day.getDayCounter() == 7 || day.getDayCounter() == 9) {
             System.out.println("Today all students will have to face homework!");
             return 1;
-        } else if(day.getDayCounter() == 3){
+        } else if (day.getDayCounter() == 3 || day.getDayCounter() == 8 || day.getDayCounter() == 13) {
             System.out.println("Today all students will have to be ready for a quiz!");
             return 2;
         } else {
@@ -340,37 +343,37 @@ public class Main {
                 student.studentStatistics.setBoredom(0);
             }
         }
-        if(result <= 0){
+        if (result <= 0.5) {
             //Student got an A
             finalGrade = setRandom(90, 100);
             student.studentStatistics.setExperience(15);
             //Chance for stat boost
-            if(finalGrade == 100){
+            if (finalGrade == 100) {
                 student.studentStatistics.setBoredom(0);
                 student.studentStatistics.setDetermination(student.studentStatistics.getDetermination() + 1);
                 student.studentStatistics.setExperience(20);
             }
-        } else if(result >= 1 && result <= 3){
+        } else if (result >= .5 && result <= 1) {
             //Student got a B
-            finalGrade = setRandom(80,89);
+            finalGrade = setRandom(80, 89);
             student.studentStatistics.setExperience(12);
-        } else if(result >= 4 && result <= 6){
+        } else if (result >= 4 && result <= 6) {
             //Student got a C
-            finalGrade = setRandom(70,79);
+            finalGrade = setRandom(70, 79);
             student.studentStatistics.setExperience(9);
 
-        } else if(result >= 7 && result <=8){
+        } else if (result >= 7 && result <= 8) {
             //Student got a D
-            finalGrade = setRandom(60,69);
+            finalGrade = setRandom(60, 69);
             student.studentStatistics.setExperience(5);
-        } else if(result >= 9){
+        } else if (result >= 9) {
             //Student got an F
-            finalGrade = setRandom(0,59);
+            finalGrade = setRandom(0, 59);
             //Chance for boredom to set in
-            if(finalGrade < 3){
+            if (finalGrade < 3) {
                 student.studentStatistics.setBoredom(student.studentStatistics.getBoredom() + 1);
             }
-            if(finalGrade < 2){
+            if (finalGrade < 2) {
                 student.studentStatistics.setSleepState(true);
             }
             student.studentStatistics.setExperience(2);
