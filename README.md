@@ -9,14 +9,15 @@ Rooms are an interface that serve as a template for specific room objects. A dir
 by organizing a series of concrete builders.
 From the builder, I used the school size (via number of classrooms and offices) to calculate the maximum number of
 students and minimum number of staff needed to run a school. The school would have used a directed graph or adjacency
-matrix to link rooms, but ran out of time. Students and teachers would have populated rooms.
+matrix to link rooms, but ran out of time. Students and teachers would have populated rooms based on schedules.
 
 Next, I developed an Abstract Factory to build different types of People (staff and students) using components that
 make up a person, defined through an Interface. Students and staff are stored in separate hash maps for quick reference.
 People are then generated with attributes and stats. There are no "races" in this, like a typical RPG, but students
 and teachers have a chance at different base stats. Students and teachers can equip items to different parts of their bodies
 which are objects in themselves. Items would have been implemented given more time. Teachers are meant to be trainers, but
-their complete implementation was not finished.
+their complete implementation was not finished. Student and teacher first and last names are generated using US census data.
+Hair and eye colors are built using a real-ish distribution of hair/eye colors.
 
 I used a Singleton design pattern to generate days. The days act as a form of step within the state machine that is 
 the school and the people that attend/work at the school. Each day of the week defines a different Boss in the form of
