@@ -1,6 +1,9 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class StudentStatistics implements PStatistics {
 
-    private int  height;
+    private int height;
     private String eyeColor;
     private String hairColor;
     private String build;
@@ -13,6 +16,8 @@ public class StudentStatistics implements PStatistics {
     private int boredom;
     private int level;
     private int experience;
+    private int grade_average;
+    private List<Integer> grades;
 
     public StudentStatistics() {
         this.height = 0;
@@ -28,6 +33,8 @@ public class StudentStatistics implements PStatistics {
         this.boredom = 0;
         this.level = 0;
         this.experience = 0;
+        this.grade_average = 0;
+        this.grades = new ArrayList<Integer>();
     }
 
     @Override
@@ -150,5 +157,25 @@ public class StudentStatistics implements PStatistics {
 
     public void setExperience(int experience) {
         this.experience = this.experience + experience;
+    }
+
+    public void setNewGrade(int grade) {
+        this.grades.add(grade);
+    }
+
+    public void getAllGrades() {
+        System.out.println(this.grades);
+    }
+
+    public void setGradeAverage() {
+        int size = grades.size();
+        for (int i = 0; i < size; i++) {
+            grade_average = grade_average + grades.get(1);
+        }
+        grade_average = grade_average / size;
+    }
+
+    public Integer getGradeAverage() {
+        return this.grade_average;
     }
 }
