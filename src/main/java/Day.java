@@ -36,10 +36,9 @@ public class Day {
     }
 
     public static Day getInstance(){
-        if(day == null){
-            Day day = new Day();
-            day.setDayName();
-        }
+        Day day = new Day();
+        day.setDayName();
+
         return day;
     }
 }

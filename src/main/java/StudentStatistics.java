@@ -170,7 +170,7 @@ public class StudentStatistics implements PStatistics {
     public void setGradeAverage() {
         int size = grades.size();
         for (int i = 0; i < size; i++) {
-            grade_average = grade_average + grades.get(1);
+            grade_average = grade_average + grades.get(i);
         }
         grade_average = grade_average / size;
     }
