@@ -95,10 +95,10 @@ public class Main {
         System.out.println("Ok now introduce me to a random teacher, please.");
         staffInspection(staffHashMap.get(setRandom(0, staffHashMap.size() - 1)));
         //This is the first Monday of school
-        System.out.println("Alright time to get on with the day then...");
-        Day day = Day.getInstance();
-        System.out.println("Today is " + day.getDayName());
-        System.out.println("Each day might present a new challenge that every student must face");
+        System.out.println("Alright time to get on with the time then...");
+        Time time = new Time();
+        System.out.println("Today is " + time.getDayName());
+        System.out.println("Each time might present a new challenge that every student must face");
         Homework first_homework = new Homework();
         //Each student must face the first boss
         for (Integer m = 0; m < student_cap; m++) {
@@ -108,33 +108,30 @@ public class Main {
         Student day1 = studentHashMap.get(setRandom(0, studentHashMap.size() - 1));
         System.out.println("Hey " + day1.studentName.getFirstName());
         System.out.println("Ok so " + day1.studentName.getFirstName() + " got a " + day1.studentStatistics.getGradeAverage());
-        System.out.println("Well tomorrow's a new day. Let's simulate another 10 of them!");
-        day.setDayCounter();
+        System.out.println("Well tomorrow's a new time. Let's simulate another 10 of them!");
+        time.incrementDayCounter();
         //Simulate the whole school for 10 days
         for (int n = 0; n < 9; n++) {
-            System.out.println("Today is " + day.getDayName());
-            dungeon = bossDecision(day);
+            System.out.println("Today is " + time.getDayName());
+            dungeon = bossDecision(time);
             if (dungeon == 1) {
                 Homework homework = new Homework();
                 for (Integer o = 0; o < student_cap; o++) {
                     dungeonFight(studentHashMap.get(o), homework);
                 }
-                day.setDayName();
-                day.setDayCounter();
+                time.incrementDayCounter();
             } else if (dungeon == 2) {
                 Quiz quiz = new Quiz();
                 for (Integer p = 0; p < student_cap; p++) {
                     dungeonFight(studentHashMap.get(p), quiz);
                 }
-                day.setDayName();
-                day.setDayCounter();
+                time.incrementDayCounter();
             } else {
                 Exam exam = new Exam();
                 for (Integer q = 0; q < student_cap; q++) {
                     dungeonFight(studentHashMap.get(q), exam);
                 }
-                day.setDayName();
-                day.setDayCounter();
+                time.incrementDayCounter();
             }
         }
         System.out.println("Now let's check on a random student...");
@@ -312,11 +309,11 @@ public class Main {
     }
 
     //What type of boss will we get today
-    private static int bossDecision(Day day) {
-        if (day.getDayCounter() == 1 || day.getDayCounter() == 2 || day.getDayCounter() == 4 || day.getDayCounter() == 6 || day.getDayCounter() == 7 || day.getDayCounter() == 9) {
+    private static int bossDecision(Time time) {
+        if (time.getDayName().equals("Monday") || time.getDayName().equals("Tuesday") || time.getDayName().equals("Thursday")) {
             System.out.println("Today all students will have to face homework!");
             return 1;
-        } else if (day.getDayCounter() == 3 || day.getDayCounter() == 8 || day.getDayCounter() == 13) {
+        } else if (time.getDayName().equals("Wednesday")) {
             System.out.println("Today all students will have to be ready for a quiz!");
             return 2;
         } else {
