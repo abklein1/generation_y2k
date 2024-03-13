@@ -8,7 +8,14 @@
 //  @version    04242022
 //*******************************************************************
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.concurrent.ThreadLocalRandom;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.*;
 
 public class StandardSchool implements SchoolPlan {
 
@@ -279,8 +286,8 @@ public class StandardSchool implements SchoolPlan {
         return this.schoolName;
     }
 
-    public void setSchoolName(String name) {
-        this.schoolName = name;
+    public void setSchoolName() {
+        this.schoolName = schoolNameLoader();
     }
 
     private int setRandom(int min, int max) {
@@ -326,6 +333,50 @@ public class StandardSchool implements SchoolPlan {
 
         total = class_count + office_count + maint_count + lunch_count + library_count + gym_count;
         return total;
+    }
+
+    private String schoolNameLoader() {
+        String schoolName = null;
+        int selection = setRandom(1,10);
+        Object object;
+        try {
+            object = new JSONParser().parse(new FileReader("src/main/java/Resources/highschool_gen.json"));
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+        JSONObject choices = (JSONObject) object;
+
+        if(selection <= 5) {
+            Object names1 = choices.get("Place1");
+            Object names2 = choices.get("Place2");
+            JSONArray names_1 = (JSONArray) names1;
+            JSONArray names_2 = (JSONArray) names2;
+
+            selection = setRandom(0, names_1.size() - 1);
+            schoolName = names_1.get(selection).toString();
+
+            selection = setRandom(0, names_2.size() - 1);
+            schoolName = schoolName + " " + names_2.get(selection).toString();
+
+        } else {
+            Object names3 = choices.get("Name");
+            Object names4 = choices.get("MiddleInitial");
+            Object names5 = choices.get("LastName");
+            JSONArray names_3 = (JSONArray) names3;
+            JSONArray names_4 = (JSONArray) names4;
+            JSONArray names_5 = (JSONArray) names5;
+
+            selection = setRandom(0, names_3.size() - 1);
+            schoolName = names_3.get(selection).toString();
+
+            selection = setRandom(0, names_4.size() - 1);
+            schoolName = schoolName + " " + names_4.get(selection).toString();
+
+            selection = setRandom(0, names_5.size() - 1);
+            schoolName = schoolName + " " + names_5.get(selection).toString();
+        }
+
+        return schoolName + " High School";
     }
 }
 

@@ -24,7 +24,7 @@ public class Time {
 
     public void incrementDayCounter() {
         dayCounter++;
-        calendar.add(Calendar.DATE, 1);
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
     }
 
     public int getDayCounter() {

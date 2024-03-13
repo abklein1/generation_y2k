@@ -88,6 +88,8 @@ public class Main {
         }
         System.out.println("Done creating school and students");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
+        //Welcome
+        System.out.println("Welcome to " + standardSchool.getSchoolName());
         //Introduce me to random student
         System.out.println("Introduce me to a random student, please.");
         studentInspection(studentHashMap.get(setRandom(0, studentHashMap.size() - 1)));

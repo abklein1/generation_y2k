@@ -41,7 +41,8 @@ public class Director {
         standardSchool.setOffices(setRandom(5, 20));
         System.out.println("Building utility rooms...");
         standardSchool.setUtilityRooms(setRandom(5, 10));
-        standardSchool.setSchoolName("High School");
+        System.out.println("Setting school name...");
+        standardSchool.setSchoolName();
     }
 
     private int setRandom(int min, int max) {

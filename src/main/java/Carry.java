@@ -10,4 +10,8 @@ public interface Carry {
     void setCapacity();
 
     void getCapacity();
+
+    void addItem();
+
+    void removeItem();
 }

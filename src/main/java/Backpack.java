@@ -28,4 +28,10 @@ public class Backpack implements Carry {
     public void getCapacity() {
 
     }
+
+    @Override
+    public void addItem() {}
+
+    @Override
+    public void removeItem() {}
 }

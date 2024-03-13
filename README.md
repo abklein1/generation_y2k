@@ -20,7 +20,7 @@ their complete implementation was not finished. Student and teacher first and la
 Hair and eye colors are built using a real-ish distribution of hair/eye colors.
 
 I used a Singleton design pattern to generate days. The days act as a form of step within the state machine that is 
-the school and the people that attend/work at the school. Each day of the week defines a different Boss in the form of
+the school and the people that attend/work at the school. Each time of the week defines a different Boss in the form of
 an Exam, Quiz, or homework, which each student in the school must face. The student has stats that are calculated against
 the stats of the Boss. The student may walk away with a grade and some experience or a bad status effect. Grades can be
 calculated to receive an average. The days work in the way that "floors" should function.

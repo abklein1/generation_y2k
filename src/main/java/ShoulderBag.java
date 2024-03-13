@@ -29,5 +29,11 @@ public class ShoulderBag implements Carry {
 
     }
 
+    @Override
+    public void addItem() {}
+
+    @Override
+    public void removeItem(){}
+
 
 }
