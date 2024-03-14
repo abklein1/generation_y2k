@@ -30,3 +30,6 @@ $RECYCLE.BIN/
 .idea
 **/build
 **/out
+
+# IntelliJ specific
+*.iml
