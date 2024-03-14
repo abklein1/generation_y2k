@@ -8,13 +8,14 @@ package entity;//***************************************************************
 //  @version    04242022
 //*******************************************************************
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
 
 public class StandardSchool implements SchoolPlan {
 
@@ -68,7 +69,7 @@ public class StandardSchool implements SchoolPlan {
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(1, 2);
             breakrooms[i] = new Breakroom();
-            breakrooms[i].setRoomName("entity.Breakroom" + i);
+            breakrooms[i].setRoomName("Breakroom" + i);
             System.out.println("      Generating " + breakrooms[i].getRoomName());
             breakrooms[i].setStudentRestriction(true);
             breakrooms[i].setConnections(connectN);
@@ -89,7 +90,7 @@ public class StandardSchool implements SchoolPlan {
             int connectN = setRandom(1, 2);
             decision = i % WEIGHT;
             classrooms[i] = new Classroom();
-            classrooms[i].setRoomName("entity.Classroom" + i);
+            classrooms[i].setRoomName("Classroom" + i);
             System.out.println("      Generating " + classrooms[i].getRoomName());
             classrooms[i].setConnections(connectN);
             classrooms[i].setDoors(connectN);
@@ -107,7 +108,7 @@ public class StandardSchool implements SchoolPlan {
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(1, 3);
             computerLabs[i] = new ComputerLab();
-            computerLabs[i].setRoomName("entity.ComputerLab" + i);
+            computerLabs[i].setRoomName("ComputerLab" + i);
             System.out.println("      Generating " + computerLabs[i].getRoomName());
             computerLabs[i].setWindowCount(0);
             computerLabs[i].setConnections(connectN);
@@ -124,7 +125,7 @@ public class StandardSchool implements SchoolPlan {
         System.out.println("   Generating " + number + " courtyard(s)...");
         for (int i = 0; i < number; i++) {
             courtyards[i] = new Courtyard();
-            courtyards[i].setRoomName("entity.Courtyard" + i);
+            courtyards[i].setRoomName("Courtyard" + i);
             System.out.println("      Generating " + courtyards[i].getRoomName());
             courtyards[i].setWindowCount(0);
             courtyards[i].setConnections(4);
@@ -140,7 +141,7 @@ public class StandardSchool implements SchoolPlan {
         System.out.println("   Generating " + number + " gym(s)...");
         for (int i = 0; i < number; i++) {
             gyms[i] = new Gym();
-            gyms[i].setRoomName("entity.Gym" + i);
+            gyms[i].setRoomName("Gym" + i);
             System.out.println("      Generating " + gyms[i].getRoomName());
             gyms[i].setConnections(4);
             gyms[i].setDoors(4);
@@ -158,7 +159,7 @@ public class StandardSchool implements SchoolPlan {
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(2, 12);
             hallways[i] = new Hallway();
-            hallways[i].setRoomName("entity.Hallway" + i);
+            hallways[i].setRoomName("Hallway" + i);
             System.out.println("      Generating " + hallways[i].getRoomName());
             hallways[i].setConnections(connectN);
             hallways[i].setDoors(connectN);
@@ -192,7 +193,7 @@ public class StandardSchool implements SchoolPlan {
         System.out.println("   Generating " + number + " lunchroom(s)...");
         for (int i = 0; i < number; i++) {
             lunchrooms[i] = new Lunchroom();
-            lunchrooms[i].setRoomName("entity.Lunchroom" + i);
+            lunchrooms[i].setRoomName("Lunchroom" + i);
             System.out.println("      Generating " + lunchrooms[i].getRoomName());
             lunchrooms[i].setWindowCount(setRandom(5, 24));
             lunchrooms[i].setConnections(4);
@@ -210,7 +211,7 @@ public class StandardSchool implements SchoolPlan {
         for (int i = 0; i < number; i++) {
             offices[i] = new Office();
             if (i == 0) {
-                offices[i].setRoomName("Principal's entity.Office");
+                offices[i].setRoomName("Principal's Office");
                 System.out.println("      Generating Principal's office");
                 offices[i].setDoors(1);
                 offices[i].setWindowCount(3);
@@ -220,7 +221,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setConnections(1);
                 offices[i].setRoomNumber("100");
             } else if (i == 1) {
-                offices[i].setRoomName("Vice Principal's entity.Office");
+                offices[i].setRoomName("Vice Principal's Office");
                 System.out.println("      Generating Vice Principal's office");
                 offices[i].setDoors(1);
                 offices[i].setWindowCount(2);
@@ -230,8 +231,8 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setConnections(1);
                 offices[i].setRoomNumber("101");
             } else if (i == 2) {
-                offices[i].setRoomName("Guidance Councilor's entity.Office");
-                System.out.println("      Generating Councilor's entity.Office");
+                offices[i].setRoomName("Guidance Councilor's Office");
+                System.out.println("      Generating Councilor's Office");
                 offices[i].setDoors(1);
                 offices[i].setWindowCount(2);
                 offices[i].setInitialStaff(1);
@@ -240,8 +241,8 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setConnections(1);
                 offices[i].setRoomNumber("102");
             } else if (i == 3) {
-                offices[i].setRoomName("Front entity.Office");
-                System.out.println("      Generating Front entity.Office");
+                offices[i].setRoomName("Front Office");
+                System.out.println("      Generating Front Office");
                 offices[i].setDoors(5);
                 offices[i].setWindowCount(2);
                 offices[i].setInitialStaff(2);
@@ -250,7 +251,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setConnections(4);
                 offices[i].setRoomNumber("103");
             } else {
-                offices[i].setRoomName("entity.Office" + i);
+                offices[i].setRoomName("Office" + i);
                 System.out.println("      Generating " + offices[i].getRoomName());
                 offices[i].setConnections(1);
                 offices[i].setDoors(1);
@@ -289,6 +290,7 @@ public class StandardSchool implements SchoolPlan {
         this.schoolName = schoolNameLoader();
     }
 
+    //TODO: Centralize this
     private int setRandom(int min, int max) {
         int random = ThreadLocalRandom.current().nextInt(min, max + 1);
         return random;
@@ -336,7 +338,7 @@ public class StandardSchool implements SchoolPlan {
 
     private String schoolNameLoader() {
         String schoolName = null;
-        int selection = setRandom(1,10);
+        int selection = setRandom(1, 10);
         Object object;
         try {
             object = new JSONParser().parse(new FileReader("src/main/java/Resources/highschool_gen.json"));
@@ -345,7 +347,7 @@ public class StandardSchool implements SchoolPlan {
         }
         JSONObject choices = (JSONObject) object;
 
-        if(selection <= 5) {
+        if (selection <= 5) {
             Object names1 = choices.get("Place1");
             Object names2 = choices.get("Place2");
             JSONArray names_1 = (JSONArray) names1;

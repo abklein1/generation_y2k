@@ -12,6 +12,7 @@ import entity.StandardSchool;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Director {
+    //TODO: Why is bathnum specified always as 10?
     final int BATHNUM = 10;
     private final StandardSchool standardSchool;
 
