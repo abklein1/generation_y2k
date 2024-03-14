@@ -9,19 +9,23 @@ public class Time {
     private final Calendar calendar;
     private final Format f;
     private int dayCounter;
-
+    private SimpleDateFormat simpleDateFormat;
     public Time() {
         this.dayCounter = 1;
         this.calendar = Calendar.getInstance();
         this.calendar.set(Calendar.YEAR, 2004);
-        this.calendar.set(Calendar.MONTH, 8);
+        this.calendar.set(Calendar.MONTH, 7);
         this.calendar.set(Calendar.DATE, 23);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy 'at' HH:mm aaa");
+        this.simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy 'at' HH:mm aaa");
         this.f = new SimpleDateFormat("EEEE");
     }
 
     public String getDayName() {
-        return f.format(new Date());
+        return f.format(calendar.getTime());
+    }
+
+    public String getFormattedDate() {
+        return simpleDateFormat.format(calendar.getTime());
     }
 
     public void incrementDayCounter() {

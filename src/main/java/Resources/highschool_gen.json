@@ -21,12 +21,27 @@
     "West",
     "South",
     "East",
-    "Center"
+    "Center",
+    "Summit",
+    "Grove",
+    "Peak",
+    "Falls",
+    "Vista",
+    "Bay"
   ],
   "Place2": [
     "View",
     "Side",
-    "Point"
+    "Point",
+    "Heights",
+    "Junction",
+    "Woods",
+    "Green",
+    "Trails",
+    "Ridge",
+    "Landing",
+    "Dale",
+    "Springs"
   ],
   "Name": [
     "Robert",

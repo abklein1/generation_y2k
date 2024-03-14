@@ -47,6 +47,7 @@ public class Director {
         standardSchool.setSchoolName();
     }
 
+    //TODO: move this to central utility for use among multiple classes
     private int setRandom(int min, int max) {
         int random = ThreadLocalRandom.current().nextInt(min, max + 1);
         return random;

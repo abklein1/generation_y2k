@@ -6,7 +6,7 @@ package game;/*
 
  */
 
-
+//TODO: Optimize Imports
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import entity.*;
@@ -100,7 +100,7 @@ public class Main {
         //This is the first Monday of school
         System.out.println("Alright time to get on with the time then...");
         Time time = new Time();
-        System.out.println("Today is " + time.getDayName());
+        System.out.println("Today is " + time.getFormattedDate());
         System.out.println("Each time might present a new challenge that every student must face");
         Homework first_homework = new Homework();
         //Each student must face the first boss
