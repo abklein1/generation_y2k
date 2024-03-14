@@ -7,12 +7,17 @@ package game;/*
  */
 
 //TODO: Optimize Imports
+
+import entity.*;
+import utility.Director;
+import utility.Inspector;
+import utility.NameLoader;
+
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import entity.*;
-import utility.*;
-public class Main {
 
+public class Main {
+    //TODO: Just a main run to see that the sim works. Revise this to make actual game loop
     public static void main(String[] args) {
         //Create hash maps for storage
         HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
@@ -93,10 +98,10 @@ public class Main {
         System.out.println("Welcome to " + standardSchool.getSchoolName());
         //Introduce me to random student
         System.out.println("Introduce me to a random student, please.");
-        studentInspection(studentHashMap.get(setRandom(0, studentHashMap.size() - 1)));
+        Inspector.studentInspection(studentHashMap.get(setRandom(0, studentHashMap.size() - 1)));
         //Introduce me to a random teacher
         System.out.println("Ok now introduce me to a random teacher, please.");
-        staffInspection(staffHashMap.get(setRandom(0, staffHashMap.size() - 1)));
+        Inspector.staffInspection(staffHashMap.get(setRandom(0, staffHashMap.size() - 1)));
         //This is the first Monday of school
         System.out.println("Alright time to get on with the time then...");
         Time time = new Time();
@@ -129,17 +134,19 @@ public class Main {
                     dungeonFight(studentHashMap.get(p), quiz);
                 }
                 time.incrementDayCounter();
-            } else {
+            } else if (dungeon == 3) {
                 Exam exam = new Exam();
                 for (Integer q = 0; q < student_cap; q++) {
                     dungeonFight(studentHashMap.get(q), exam);
                 }
                 time.incrementDayCounter();
+            } else {
+                time.incrementDayCounter();
             }
         }
         System.out.println("Now let's check on a random student...");
         Student lastStudent = studentHashMap.get(setRandom(0, studentHashMap.size() - 1));
-        studentInspection(lastStudent);
+        Inspector.studentInspection(lastStudent);
         System.out.println("So " + lastStudent.studentName.getFirstName() + " you have the following grades:");
         lastStudent.studentStatistics.getAllGrades();
         System.out.println(lastStudent.studentName.getFirstName() + "'s average was " + lastStudent.studentStatistics.getGradeAverage());
@@ -152,6 +159,7 @@ public class Main {
         return random;
     }
 
+    //TODO: Remove this logic from main
     //Select hair type
     private static String hairSelection(int selection) {
         if (selection >= 0 && selection <= 21) {
@@ -206,6 +214,7 @@ public class Main {
         }
     }
 
+    //TODO: remove this logic from main
     //Select eye type
     private static String eyeSelection(int selection) {
         if (selection >= 0 && selection <= 52) {
@@ -233,84 +242,7 @@ public class Main {
         }
     }
 
-    //Display certain students
-    private static void studentInspection(Student student) {
-        String fir = student.studentName.getFirstName();
-        String las = student.studentName.getLastName();
-        String h = student.studentStatistics.getHairColor();
-        String e = student.studentStatistics.getEyeColor();
-        int hei = student.studentStatistics.getHeight();
-        int in = student.studentStatistics.getIntelligence();
-        int chr = student.studentStatistics.getCharisma();
-        int agl = student.studentStatistics.getAgility();
-        int det = student.studentStatistics.getDetermination();
-        int str = student.studentStatistics.getStrength();
-        int bor = student.studentStatistics.getBoredom();
-        boolean slp = student.studentStatistics.getSleepState();
-        int exp = student.studentStatistics.getExperience();
-
-        System.out.println(fir + " " + las);
-        System.out.println("=====================================");
-        System.out.println(fir + " has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
-        System.out.println("They have the following stats: ");
-        System.out.println("   INT: " + in);
-        System.out.println("   CHR: " + chr);
-        System.out.println("   AGL: " + agl);
-        System.out.println("   DET: " + det);
-        System.out.println("   STR: " + str);
-        System.out.println("   EXP: " + exp);
-        System.out.println(fir + " has the following status effects: ");
-        if (bor == 0) {
-            System.out.println(fir + " is not bored");
-        } else {
-            System.out.println(fir + " is slightly bored");
-        }
-        if (slp) {
-            System.out.println(fir + " is asleep!");
-        } else {
-            System.out.println(fir + " is not asleep");
-        }
-        System.out.println("Nice to meet you " + fir + "!");
-    }
-
-    //Show stats for a particular staff
-    private static void staffInspection(Staff staff) {
-        String fir = staff.teacherName.getFirstName();
-        String las = staff.teacherName.getLastName();
-        String h = staff.teacherStatistics.getHairColor();
-        String e = staff.teacherStatistics.getEyeColor();
-        int hei = staff.teacherStatistics.getHeight();
-        int in = staff.teacherStatistics.getIntelligence();
-        int chr = staff.teacherStatistics.getCharisma();
-        int agl = staff.teacherStatistics.getAgility();
-        int det = staff.teacherStatistics.getDetermination();
-        int str = staff.teacherStatistics.getStrength();
-        int bor = staff.teacherStatistics.getBoredom();
-        boolean slp = staff.teacherStatistics.getSleepState();
-
-        System.out.println(fir + " " + las);
-        System.out.println("=====================================");
-        System.out.println(fir + " has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
-        System.out.println("They have the following stats: ");
-        System.out.println("   INT: " + in);
-        System.out.println("   CHR: " + chr);
-        System.out.println("   AGL: " + agl);
-        System.out.println("   DET: " + det);
-        System.out.println("   STR: " + str);
-        System.out.println(fir + " has the following status effects: ");
-        if (bor == 0) {
-            System.out.println(fir + " is not bored");
-        } else {
-            System.out.println(fir + " is slightly bored");
-        }
-        if (slp) {
-            System.out.println(fir + " is asleep!");
-        } else {
-            System.out.println(fir + " is not asleep");
-        }
-        System.out.println("Nice to meet you " + fir + "!");
-    }
-
+    //TODO: Separate this from main
     //What type of boss will we get today
     private static int bossDecision(Time time) {
         if (time.getDayName().equals("Monday") || time.getDayName().equals("Tuesday") || time.getDayName().equals("Thursday")) {
@@ -319,12 +251,16 @@ public class Main {
         } else if (time.getDayName().equals("Wednesday")) {
             System.out.println("Today all students will have to be ready for a quiz!");
             return 2;
-        } else {
+        } else if (time.getDayName().equals("Friday")) {
             System.out.println("Today the students better be ready for the dreaded exam!");
             return 3;
+        } else {
+            System.out.println("Today is the weekend. No school!");
+            return 4;
         }
     }
 
+    //TODO: Separate this from main
     //The showdown between a student and exam/quiz/homework
     private static void dungeonFight(Student student, Boss boss) {
         int finalGrade = 0;
