@@ -1,4 +1,6 @@
+import entity.*;
 import org.junit.Test;
+import utility.Director;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
