@@ -1,4 +1,4 @@
-# SER316-Indvidual-Project-abklein1
+# SchoolSim
 
 This repo covers assignments 5a-b
 
