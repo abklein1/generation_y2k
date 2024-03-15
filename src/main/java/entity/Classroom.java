@@ -149,4 +149,7 @@ public class Classroom implements Room {
         return abbr;
 
     }
+
+    @Override
+    public int getConnections() {return this.numOfConnections;}
 }

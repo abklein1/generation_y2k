@@ -101,4 +101,7 @@ public class UtilityRoom implements Room {
     private enum utilityType {
         IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
     }
+
+    @Override
+    public int getConnections() {return this.numOfConnections;}
 }

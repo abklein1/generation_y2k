@@ -109,4 +109,6 @@ public class Bathroom implements Room {
     public void setStallNumber(int stallNumber) {
         this.stallNumber = stallNumber;
     }
+    @Override
+    public int getConnections() {return this.numOfConnections;}
 }

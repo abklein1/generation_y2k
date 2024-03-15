@@ -12,6 +12,7 @@ import entity.*;
 import utility.Director;
 import utility.Inspector;
 import utility.NameLoader;
+import utility.RoomConnector;
 
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,6 +39,10 @@ public class Main {
         System.out.println("entity.Student capacity is " + student_cap);
         System.out.println("entity.Staff capacity is " + staff_cap);
 
+        System.out.println("Connecting rooms");
+        RoomConnector roomConnector = new RoomConnector(standardSchool);
+        System.out.println("Show connections");
+        roomConnector.getConnections();
         System.out.println("Populating school...");
         //Store student objects in hashmap
         for (Integer i = 0; i < student_cap; i++) {

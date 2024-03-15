@@ -15,6 +15,8 @@ public interface Room {
 
     void setConnections(int connections);
 
+    int getConnections();
+
     void setWindowCount(int windows);
 
     void setRoomName(String roomName);
@@ -32,5 +34,7 @@ public interface Room {
     int getStudentCapacity();
 
     int getStaffCapacity();
+
+    String getRoomName();
 
 }

@@ -94,4 +94,7 @@ public class Hallway implements Room {
     public int getStaffCapacity() {
         return staffCap;
     }
+
+    @Override
+    public int getConnections() {return this.numOfConnections;}
 }

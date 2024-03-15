@@ -94,4 +94,7 @@ public class Breakroom implements Room {
     public void setRoomName(String roomName) {
         this.roomName = roomName;
     }
+
+    @Override
+    public int getConnections() {return this.numOfConnections;}
 }
