@@ -261,6 +261,7 @@ public class Main {
     }
 
     //TODO: Separate this from main
+    //TODO: Revise stat vs grade system to create better dist of grades/abilities
     //The showdown between a student and exam/quiz/homework
     private static void dungeonFight(Student student, Boss boss) {
         int finalGrade = 0;
