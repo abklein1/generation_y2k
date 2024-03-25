@@ -1,7 +1,7 @@
 package utility;
 
-import entity.Room;
 import entity.Bathroom;
+import entity.Room;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -9,7 +9,7 @@ import org.jgrapht.graph.Multigraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.util.Iterator;
-import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 // For now will build a graph that connects rooms at random. Later we can add some
@@ -97,8 +97,7 @@ public class RoomConnector {
     }
 
     private int setRandom(int min, int max) {
-        int random = ThreadLocalRandom.current().nextInt(min, max + 1);
-        return random;
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     // Perform simple print for now
@@ -107,7 +106,16 @@ public class RoomConnector {
 
         while (iterator.hasNext()) {
             Room room = iterator.next();
-            System.out.println("Room " + room.getRoomName() + " is connected to " + schoolConnect.edgesOf(room));
+            Set<DefaultEdge> edges = schoolConnect.edgesOf(room);
+
+            for (DefaultEdge edge : edges) {
+                Room sourceRoom = schoolConnect.getEdgeSource(edge);
+                Room targetRoom = schoolConnect.getEdgeTarget(edge);
+
+                if (sourceRoom.equals(room)) {
+                    System.out.println("Room " + sourceRoom.getRoomName() + " is connected to " + targetRoom.getRoomName());
+                }
+            }
         }
     }
 }
