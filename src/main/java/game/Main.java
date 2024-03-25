@@ -45,18 +45,18 @@ public class Main {
         roomConnector.getConnections();
         System.out.println("Populating school...");
         //Store student objects in hashmap
-        for (Integer i = 0; i < student_cap; i++) {
+        for (int i = 0; i < student_cap; i++) {
             studentHashMap.put(i, new Student());
         }
         //Store staff objects in another hashmap
-        for (Integer j = 0; j < staff_cap; j++) {
+        for (int j = 0; j < staff_cap; j++) {
             staffHashMap.put(j, new Staff());
         }
         //Set for student randomization
         System.out.println("Randomizing " + student_cap + " students...");
         fNameReference.putAll(NameLoader.readCSVFirst(true));
         lNameReference.putAll(NameLoader.readCSVLast(true));
-        for (Integer k = 0; k < student_cap; k++) {
+        for (int k = 0; k < student_cap; k++) {
             String f_name = fNameReference.get(setRandom(0, fNameReference.size() - 1));
             String l_name = lNameReference.get(setRandom(0, lNameReference.size() - 1));
             System.out.println("   Generating student " + f_name + " " + l_name);
@@ -81,7 +81,7 @@ public class Main {
         System.out.println("Randomizing " + staff_cap + " staff");
         fNameReference.putAll(NameLoader.readCSVFirst(false));
         lNameReference.putAll(NameLoader.readCSVLast(false));
-        for (Integer l = 0; l < staff_cap; l++) {
+        for (int l = 0; l < staff_cap; l++) {
             String f_name = fNameReference.get(setRandom(0, fNameReference.size() - 1));
             String l_name = lNameReference.get(setRandom(0, lNameReference.size() - 1));
             System.out.println("   Generating staff " + f_name + " " + l_name);
@@ -114,7 +114,7 @@ public class Main {
         System.out.println("Each time might present a new challenge that every student must face");
         Homework first_homework = new Homework();
         //Each student must face the first boss
-        for (Integer m = 0; m < student_cap; m++) {
+        for (int m = 0; m < student_cap; m++) {
             dungeonFight(studentHashMap.get(m), first_homework);
         }
         System.out.println("Alright let's see how a random student did...");
@@ -129,19 +129,19 @@ public class Main {
             dungeon = bossDecision(time);
             if (dungeon == 1) {
                 Homework homework = new Homework();
-                for (Integer o = 0; o < student_cap; o++) {
+                for (int o = 0; o < student_cap; o++) {
                     dungeonFight(studentHashMap.get(o), homework);
                 }
                 time.incrementDayCounter();
             } else if (dungeon == 2) {
                 Quiz quiz = new Quiz();
-                for (Integer p = 0; p < student_cap; p++) {
+                for (int p = 0; p < student_cap; p++) {
                     dungeonFight(studentHashMap.get(p), quiz);
                 }
                 time.incrementDayCounter();
             } else if (dungeon == 3) {
                 Exam exam = new Exam();
-                for (Integer q = 0; q < student_cap; q++) {
+                for (int q = 0; q < student_cap; q++) {
                     dungeonFight(studentHashMap.get(q), exam);
                 }
                 time.incrementDayCounter();
@@ -160,8 +160,7 @@ public class Main {
 
     //Not ideal design but need to add a few helpers here for simulation
     private static Integer setRandom(int min, int max) {
-        int random = ThreadLocalRandom.current().nextInt(min, max + 1);
-        return random;
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     //TODO: Remove this logic from main

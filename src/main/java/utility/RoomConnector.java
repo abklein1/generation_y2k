@@ -4,13 +4,16 @@ import entity.Bathroom;
 import entity.Room;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.Multigraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+
 
 // For now will build a graph that connects rooms at random. Later we can add some
 // procedural generation to make a proper floor plan
@@ -39,6 +42,21 @@ public class RoomConnector {
     private void connectRooms() {
         populateVertex();
         populateEdges();
+
+        // Ensure that the school can be traversed
+        ConnectivityInspector<Room, DefaultEdge> inspector = new ConnectivityInspector<>(schoolConnect);
+        if (!inspector.isConnected()) {
+            List<Set<Room>> connectedSets = inspector.connectedSets();
+            Iterator<Set<Room>> iterator = connectedSets.iterator();
+            Set<Room> firstSet = iterator.next();
+
+            while (iterator.hasNext()) {
+                Set<Room> nextSet = iterator.next();
+                Room roomFromFirstSet = firstSet.iterator().next();
+                Room roomFromNextSet = nextSet.iterator().next();
+                schoolConnect.addEdge(roomFromFirstSet, roomFromNextSet);
+            }
+        }
     }
 
     private void populateVertex() {
@@ -118,4 +136,6 @@ public class RoomConnector {
             }
         }
     }
+
+    //TODO: Add swing or frontend visualizer for graph
 }
