@@ -1,4 +1,4 @@
-# SER316-Indvidual-Project-abklein1
+# SchoolSim
 
 This repo covers assignments 5a-b
 
@@ -8,8 +8,7 @@ I used a Builder design pattern to proceedurally generate a high school and all 
 Rooms are an interface that serve as a template for specific room objects. A director object assembles the school
 by organizing a series of concrete builders.
 From the builder, I used the school size (via number of classrooms and offices) to calculate the maximum number of
-students and minimum number of staff needed to run a school. The school would have used a directed graph or adjacency
-matrix to link rooms, but ran out of time. Students and teachers would have populated rooms based on schedules.
+students and minimum number of staff needed to run a school.
 
 Next, I developed an Abstract Factory to build different types of People (staff and students) using components that
 make up a person, defined through an Interface. Students and staff are stored in separate hash maps for quick reference.
