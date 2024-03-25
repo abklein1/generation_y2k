@@ -1,6 +1,7 @@
 package utility;
 
 import entity.Room;
+import entity.Bathroom;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -8,6 +9,7 @@ import org.jgrapht.graph.Multigraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.util.Iterator;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 // For now will build a graph that connects rooms at random. Later we can add some
@@ -16,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 // edge is room
 public class RoomConnector {
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
-    Room[][] roomPool = new Room[11][];
+    private Room[][] roomPool = new Room[11][];
 
     public RoomConnector(StandardSchool standardSchool) {
         roomPool[0] = standardSchool.getBathrooms();
@@ -44,9 +46,11 @@ public class RoomConnector {
         will connect all rooms of the same type together first even if using a randomizer.
         Better to use separate
         */
-        for (int i = 0; i < roomPool.length; i++) {
-            for (int j = 0; j < roomPool[i].length; j++) {
-                schoolConnect.addVertex(roomPool[i][j]);
+        for (Room[] rooms : roomPool) {
+            if (rooms != null) {
+                for (Room room : rooms) {
+                    schoolConnect.addVertex(room);
+                }
             }
         }
     }
@@ -54,24 +58,42 @@ public class RoomConnector {
     private void populateEdges() {
         for (int i = 0; i < roomPool.length; i++) {
             for (int j = 0; j < roomPool[i].length; j++) {
-                // If vertex1 has available connections
                 if (roomPool[i][j].getConnections() > 0) {
-                    int x = i;
-                    int y = j;
-                    // avoid loops in graph generation
-                    while(x == i && y == j) {
-                        x = setRandom(0, roomPool.length - 1);
-                        y = setRandom(0, roomPool[x].length - 1);
+                    Room targetRoom = getRandomRoom(i, j);
+                    while (targetRoom != null && targetRoom.getConnections() == 0) {
+                        targetRoom = getRandomRoom(i, j);
                     }
-                    // If vertex2 has available connections
-                    if (roomPool[x][y].getConnections() > 0) {
-                        schoolConnect.addEdge(roomPool[i][j], roomPool[x][y]);
+                    if (targetRoom != null) {
+                        if (roomPool[i][j] instanceof Bathroom) {
+                            targetRoom = getRandomRoom(1, targetRoom);
+                        }
+                        schoolConnect.addEdge(roomPool[i][j], targetRoom);
                         roomPool[i][j].setConnections(roomPool[i][j].getConnections() - 1);
-                        roomPool[x][y].setConnections(roomPool[x][y].getConnections() - 1);
+                        targetRoom.setConnections(targetRoom.getConnections() - 1);
                     }
                 }
             }
         }
+    }
+
+    private Room getRandomRoom(int i, int j) {
+        int x = setRandom(0, roomPool.length - 1);
+        int y = setRandom(0, roomPool[x].length - 1);
+        while (x == i && y == j) {
+            x = setRandom(0, roomPool.length - 1);
+            y = setRandom(0, roomPool[x].length - 1);
+        }
+        return roomPool[x][y];
+    }
+
+    private Room getRandomRoom(int startIdx, Room roomToAvoid) {
+        int x = setRandom(startIdx, roomPool.length - 1);
+        int y = setRandom(0, roomPool[x].length - 1);
+        while (roomPool[x][y].equals(roomToAvoid)) {
+            x = setRandom(startIdx, roomPool.length - 1);
+            y = setRandom(0, roomPool[x].length - 1);
+        }
+        return roomPool[x][y];
     }
 
     private int setRandom(int min, int max) {
