@@ -48,13 +48,21 @@ public class RoomConnector {
         if (!inspector.isConnected()) {
             List<Set<Room>> connectedSets = inspector.connectedSets();
             Iterator<Set<Room>> iterator = connectedSets.iterator();
-            Set<Room> firstSet = iterator.next();
 
             while (iterator.hasNext()) {
-                Set<Room> nextSet = iterator.next();
+                Set<Room> firstSet = iterator.next();
+                Set<Room> nextSet = iterator.hasNext() ? iterator.next() : null;
+
                 Room roomFromFirstSet = firstSet.iterator().next();
-                Room roomFromNextSet = nextSet.iterator().next();
-                schoolConnect.addEdge(roomFromFirstSet, roomFromNextSet);
+                Room roomFromNextSet = nextSet != null ? nextSet.iterator().next() : null;
+
+                if (roomFromNextSet != null) {
+                    while (roomFromFirstSet.getConnections() > 0 && roomFromNextSet.getConnections() > 0) {
+                        schoolConnect.addEdge(roomFromFirstSet, roomFromNextSet);
+                        roomFromFirstSet.setConnections(roomFromFirstSet.getConnections() - 1);
+                        roomFromNextSet.setConnections(roomFromNextSet.getConnections() - 1);
+                    }
+                }
             }
         }
     }
