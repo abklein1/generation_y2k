@@ -93,11 +93,13 @@ public class RoomConnector {
         if(choice == 0) {
             do {
                 choice = setRandom(0, hallways.length - 1);
+                System.out.println("Connecting halls...");
             } while (hallways[choice].getConnections() == 0);
             return hallways[choice];
         } else {
             do {
                 choice = setRandom(0,courtyards.length - 1);
+                System.out.println("Connecting courtyards...");
             } while (courtyards[choice].getConnections() == 0);
             return courtyards[choice];
         }

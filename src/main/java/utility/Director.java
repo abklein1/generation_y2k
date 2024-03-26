@@ -35,7 +35,7 @@ public class Director {
         System.out.println("Building gyms...");
         standardSchool.setGyms(setRandom(1, 3));
         System.out.println("Building hallways...");
-        standardSchool.setHallways(setRandom(6, 10));
+        standardSchool.setHallways(setRandom(8, 12));
         System.out.println("Building libraries...");
         standardSchool.setLibraries(setRandom(1, 2));
         System.out.println("Building lunchrooms...");
