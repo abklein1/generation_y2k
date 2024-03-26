@@ -42,60 +42,10 @@ public class Main {
         System.out.println("Show connections");
         roomConnector.visualizer();
         System.out.println("Populating school...");
-        //Store student objects in hashmap
-        for (int i = 0; i < student_cap; i++) {
-            studentHashMap.put(i, new Student());
-        }
-        //Store staff objects in another hashmap
-        for (int j = 0; j < staff_cap; j++) {
-            staffHashMap.put(j, new Staff());
-        }
-        //Set for student randomization
-        System.out.println("Randomizing " + student_cap + " students...");
-        fNameReference.putAll(NameLoader.readCSVFirst(true));
-        lNameReference.putAll(NameLoader.readCSVLast(true));
-        for (int k = 0; k < student_cap; k++) {
-            String f_name = fNameReference.get(setRandom(0, fNameReference.size() - 1));
-            String l_name = lNameReference.get(setRandom(0, lNameReference.size() - 1));
-            System.out.println("   Generating student " + f_name + " " + l_name);
-            Student student = studentHashMap.get(k);
-            student.studentName.setFirstName(f_name);
-            student.studentName.setLastName(l_name);
-            student.studentStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102)));
-            student.studentStatistics.setEyeColor(TraitSelection.eyeSelection(setRandom(0, 109)));
-            student.studentStatistics.setHeight(setRandom(48, 78));
-            student.studentStatistics.setIntelligence(setRandom(0, 15));
-            student.studentStatistics.setCharisma(setRandom(0, 15));
-            student.studentStatistics.setAgility(setRandom(0, 15));
-            student.studentStatistics.setDetermination(setRandom(0, 15));
-            student.studentStatistics.setStrength(setRandom(0, 15));
-            student.studentStatistics.setLevel(1);
-            student.studentStatistics.setExperience(0);
-            student.studentStatistics.setGradeLevel(setRandom(0,3));
-        }
-        //Clear map for new values
-        fNameReference.clear();
-        lNameReference.clear();
-        //Set for staff randomization
-        System.out.println("Randomizing " + staff_cap + " staff");
-        fNameReference.putAll(NameLoader.readCSVFirst(false));
-        lNameReference.putAll(NameLoader.readCSVLast(false));
-        for (int l = 0; l < staff_cap; l++) {
-            String f_name = fNameReference.get(setRandom(0, fNameReference.size() - 1));
-            String l_name = lNameReference.get(setRandom(0, lNameReference.size() - 1));
-            System.out.println("   Generating staff " + f_name + " " + l_name);
-            Staff staff = staffHashMap.get(l);
-            staff.teacherName.setFirstName(f_name);
-            staff.teacherName.setLastName(l_name);
-            staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102)));
-            staff.teacherStatistics.setEyeColor(TraitSelection.eyeSelection(setRandom(0, 109)));
-            staff.teacherStatistics.setHeight(setRandom(50, 84));
-            staff.teacherStatistics.setIntelligence(setRandom(2, 22));
-            staff.teacherStatistics.setCharisma(setRandom(1, 22));
-            staff.teacherStatistics.setAgility(setRandom(1, 19));
-            staff.teacherStatistics.setDetermination(setRandom(1, 20));
-            staff.teacherStatistics.setStrength(setRandom(1, 20));
-        }
+        // Set for student population generation
+        StudentPopGenerator.generateStudents(student_cap, studentHashMap, fNameReference, lNameReference);
+        //Set for staff population generation
+        TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, fNameReference, lNameReference);
         System.out.println("Done creating school and students");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
         //Welcome
