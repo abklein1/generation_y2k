@@ -15,8 +15,9 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-// For now will build a graph that connects rooms at random. Later we can add some
-// procedural generation to make a proper floor plan
+// Procedural generation that builds the school by connecting rooms. Room connection starts
+// by connecting hallways and courtyards at random, and then allows other connections to build
+// off that backbone. jgrapht connectivity inspector ensures no dangling vertexes
 // vertex is door
 // edge is room
 public class RoomConnector {
@@ -91,7 +92,7 @@ public class RoomConnector {
                     }
                     if (targetRoom != null) {
                         if (roomPool[i][j] instanceof Bathroom) {
-                            targetRoom = getRandomRoom(1, targetRoom);
+                            targetRoom = getRandomRoom(targetRoom);
                         }
                         schoolConnect.addEdge(roomPool[i][j], targetRoom);
                         roomPool[i][j].setConnections(roomPool[i][j].getConnections() - 1);
@@ -138,11 +139,11 @@ public class RoomConnector {
         return roomPool[x][y];
     }
 
-    private Room getRandomRoom(int startIdx, Room roomToAvoid) {
-        int x = setRandom(startIdx, roomPool.length - 1);
+    private Room getRandomRoom(Room roomToAvoid) {
+        int x = setRandom(1, roomPool.length - 1);
         int y = setRandom(0, roomPool[x].length - 1);
         while (roomPool[x][y].equals(roomToAvoid)) {
-            x = setRandom(startIdx, roomPool.length - 1);
+            x = setRandom(1, roomPool.length - 1);
             y = setRandom(0, roomPool[x].length - 1);
         }
         return roomPool[x][y];
