@@ -1,14 +1,18 @@
 package utility;
 
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.swing.mxGraphComponent;
 import entity.Bathroom;
 import entity.Room;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.Multigraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
+import javax.swing.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -21,8 +25,8 @@ import java.util.concurrent.ThreadLocalRandom;
 // vertex is door
 // edge is room
 public class RoomConnector {
+    private final Room[][] roomPool = new Room[11][];
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
-    private Room[][] roomPool = new Room[11][];
 
     public RoomConnector(StandardSchool standardSchool) {
         roomPool[0] = standardSchool.getBathrooms();
@@ -172,5 +176,15 @@ public class RoomConnector {
         }
     }
 
-    //TODO: Add swing or frontend visualizer for graph
+    public void visualizer() {
+        JGraphXAdapter<Room, DefaultEdge> graphAdapter = new JGraphXAdapter<>(schoolConnect);
+        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
+        layout.execute(graphAdapter.getDefaultParent());
+        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
+        JFrame frame = new JFrame("School Room Layout");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.getContentPane().add(graphComponent);
+        frame.setVisible(true);
+    }
 }

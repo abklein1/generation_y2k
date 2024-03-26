@@ -40,7 +40,7 @@ public class Main {
         System.out.println("Connecting rooms");
         RoomConnector roomConnector = new RoomConnector(standardSchool);
         System.out.println("Show connections");
-        roomConnector.getConnections();
+        roomConnector.visualizer();
         System.out.println("Populating school...");
         //Store student objects in hashmap
         for (int i = 0; i < student_cap; i++) {
