@@ -23,5 +23,3 @@ the school and the people that attend/work at the school. Each time of the week 
 an Exam, Quiz, or homework, which each student in the school must face. The student has stats that are calculated against
 the stats of the Boss. The student may walk away with a grade and some experience or a bad status effect. Grades can be
 calculated to receive an average. The days work in the way that "floors" should function.
-
-video link: https://youtu.be/V5VnTmRAtOA
