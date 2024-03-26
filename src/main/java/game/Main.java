@@ -21,7 +21,7 @@ public class Main {
         HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
         HashMap<Integer, Staff> staffHashMap = new HashMap<Integer, Staff>();
         HashMap<Integer, String> fNameReference = new HashMap<Integer, String>();
-        HashMap<Integer, String> lNameReference = new HashMap<Integer, String>();
+        HashMap<Integer, String> lNameReference = new HashMap<>();
         int student_cap;
         int staff_cap;
         int dungeon;
@@ -33,8 +33,8 @@ public class Main {
         student_cap = standardSchool.getTotalStudentCapacity();
         staff_cap = standardSchool.getMinimumStaffRequirements();
 
-        System.out.println("entity.Student capacity is " + student_cap);
-        System.out.println("entity.Staff capacity is " + staff_cap);
+        System.out.println("Student capacity is " + student_cap);
+        System.out.println("Staff capacity is " + staff_cap);
 
         System.out.println("Connecting rooms");
         RoomConnector roomConnector = new RoomConnector(standardSchool);

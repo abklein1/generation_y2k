@@ -42,7 +42,20 @@ public class RoomConnector {
     private void connectRooms() {
         populateVertex();
         populateEdges();
+        connectivityInspection();
+    }
 
+    private void populateVertex() {
+        for (Room[] rooms : roomPool) {
+            if (rooms != null) {
+                for (Room room : rooms) {
+                    schoolConnect.addVertex(room);
+                }
+            }
+        }
+    }
+
+    private void connectivityInspection() {
         // Ensure that the school can be traversed
         ConnectivityInspector<Room, DefaultEdge> inspector = new ConnectivityInspector<>(schoolConnect);
         if (!inspector.isConnected()) {
@@ -62,20 +75,6 @@ public class RoomConnector {
                         roomFromFirstSet.setConnections(roomFromFirstSet.getConnections() - 1);
                         roomFromNextSet.setConnections(roomFromNextSet.getConnections() - 1);
                     }
-                }
-            }
-        }
-    }
-
-    private void populateVertex() {
-        /* If we traverse 2D array and add vertexes and edges at the same time it
-        will connect all rooms of the same type together first even if using a randomizer.
-        Better to use separate
-        */
-        for (Room[] rooms : roomPool) {
-            if (rooms != null) {
-                for (Room room : rooms) {
-                    schoolConnect.addVertex(room);
                 }
             }
         }
