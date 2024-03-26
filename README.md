@@ -1,6 +1,6 @@
 # SchoolSim
 
-This repo covers assignments 5a-b
+***Originally a school project that has been modified***
 
 For this project I made a detailed RPG simulator of a high school using Design Patterns from GoF.
 
