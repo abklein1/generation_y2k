@@ -191,12 +191,16 @@ public class StudentStatistics implements PStatistics {
         switch (level) {
             case 0:
                 this.gradeLevel = "Freshman";
+                break;
             case 1:
                 this.gradeLevel = "Sophomore";
+                break;
             case 2:
                 this.gradeLevel = "Junior";
+                break;
             case 3:
                 this.gradeLevel = "Senior";
+                break;
         }
     }
 }

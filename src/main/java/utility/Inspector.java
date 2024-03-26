@@ -18,10 +18,12 @@ public class Inspector {
         int bor = student.studentStatistics.getBoredom();
         boolean slp = student.studentStatistics.getSleepState();
         int exp = student.studentStatistics.getExperience();
+        String grade = student.studentStatistics.getGradeLevel();
 
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
         System.out.println(fir + " has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
+        System.out.println(fir + " is a " + grade + ".");
         System.out.println("They have the following stats: ");
         System.out.println("   INT: " + in);
         System.out.println("   CHR: " + chr);
