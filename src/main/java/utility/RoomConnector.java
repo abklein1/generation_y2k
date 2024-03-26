@@ -64,25 +64,42 @@ public class RoomConnector {
     private void connectivityInspection() {
         // Ensure that the school can be traversed
         ConnectivityInspector<Room, DefaultEdge> inspector = new ConnectivityInspector<>(schoolConnect);
-        if (!inspector.isConnected()) {
-            List<Set<Room>> connectedSets = inspector.connectedSets();
-            Iterator<Set<Room>> iterator = connectedSets.iterator();
+        List<Set<Room>> connectedSets = inspector.connectedSets();
+        Room connectorRoom = findCentralRoom();
 
-            while (iterator.hasNext()) {
-                Set<Room> firstSet = iterator.next();
-                Set<Room> nextSet = iterator.hasNext() ? iterator.next() : null;
-
-                Room roomFromFirstSet = firstSet.iterator().next();
-                Room roomFromNextSet = nextSet != null ? nextSet.iterator().next() : null;
-
-                if (roomFromNextSet != null) {
-                    while (roomFromFirstSet.getConnections() > 0 && roomFromNextSet.getConnections() > 0) {
-                        schoolConnect.addEdge(roomFromFirstSet, roomFromNextSet);
-                        roomFromFirstSet.setConnections(roomFromFirstSet.getConnections() - 1);
-                        roomFromNextSet.setConnections(roomFromNextSet.getConnections() - 1);
-                    }
+        if(connectedSets.size() > 1) {
+            for (Set<Room> roomSet : connectedSets) {
+                Room roomToConnect = roomSet.stream()
+                        .filter(r -> r.getConnections() > 0)
+                        .findAny()
+                        .orElse(null);
+                if (roomToConnect != null && !schoolConnect.containsEdge(roomToConnect, connectorRoom)) {
+                    schoolConnect.addEdge(roomToConnect, connectorRoom);
+                    roomToConnect.setConnections(roomToConnect.getConnections() - 1);
+                    connectorRoom.setConnections(connectorRoom.getConnections() - 1);
+                }
+                if(connectorRoom.getConnections() == 0) {
+                    connectorRoom = findCentralRoom();
                 }
             }
+        }
+    }
+
+    private Room findCentralRoom() {
+        Room[] hallways = roomPool[6];
+        Room[] courtyards = roomPool[4];
+        int choice = setRandom(0,2);
+
+        if(choice == 0) {
+            do {
+                choice = setRandom(0, hallways.length - 1);
+            } while (hallways[choice].getConnections() == 0);
+            return hallways[choice];
+        } else {
+            do {
+                choice = setRandom(0,courtyards.length - 1);
+            } while (courtyards[choice].getConnections() == 0);
+            return courtyards[choice];
         }
     }
 
