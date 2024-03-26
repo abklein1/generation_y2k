@@ -97,4 +97,8 @@ public class ComputerLab implements Room {
 
     @Override
     public int getConnections() {return this.numOfConnections;}
+    @Override
+    public String toString() {
+        return this.roomName;
+    }
 }

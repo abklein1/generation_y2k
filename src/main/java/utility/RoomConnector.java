@@ -1,6 +1,6 @@
 package utility;
 
-import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import entity.Bathroom;
 import entity.Room;
@@ -178,13 +178,18 @@ public class RoomConnector {
 
     public void visualizer() {
         JGraphXAdapter<Room, DefaultEdge> graphAdapter = new JGraphXAdapter<>(schoolConnect);
-        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-        layout.execute(graphAdapter.getDefaultParent());
-        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-        JFrame frame = new JFrame("School Room Layout");
+        JFrame frame = new JFrame("School Rooms Visualization");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
-        frame.getContentPane().add(graphComponent);
+        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
+        frame.add(graphComponent);
+        mxFastOrganicLayout layout = new mxFastOrganicLayout(graphAdapter);
+        layout.setForceConstant(50);
+        layout.setMinDistanceLimit(2.0);
+        layout.setInitialTemp(200);
+        layout.setMaxIterations(1000);
+        layout.execute(graphAdapter.getDefaultParent());
+        frame.pack();
         frame.setVisible(true);
     }
 }

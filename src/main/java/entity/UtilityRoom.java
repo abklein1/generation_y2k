@@ -42,11 +42,6 @@ public class UtilityRoom implements Room {
     }
 
     @Override
-    public void setConnections(int connections) {
-        this.numOfConnections = connections;
-    }
-
-    @Override
     public void setWindowCount(int windows) {
         this.windowCount = windows;
     }
@@ -98,10 +93,22 @@ public class UtilityRoom implements Room {
         return staffCap;
     }
 
-    private enum utilityType {
-        IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
+    @Override
+    public int getConnections() {
+        return this.numOfConnections;
     }
 
     @Override
-    public int getConnections() {return this.numOfConnections;}
+    public void setConnections(int connections) {
+        this.numOfConnections = connections;
+    }
+
+    @Override
+    public String toString() {
+        return this.roomName;
+    }
+
+    private enum utilityType {
+        IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
+    }
 }

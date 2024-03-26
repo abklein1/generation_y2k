@@ -43,11 +43,6 @@ public class LibraryR implements Room {
     }
 
     @Override
-    public void setConnections(int connections) {
-        this.numOfConnections = connections;
-    }
-
-    @Override
     public void setWindowCount(int windows) {
         this.windowCount = windows;
     }
@@ -97,5 +92,17 @@ public class LibraryR implements Room {
     }
 
     @Override
-    public int getConnections() {return this.numOfConnections;}
+    public int getConnections() {
+        return this.numOfConnections;
+    }
+
+    @Override
+    public void setConnections(int connections) {
+        this.numOfConnections = connections;
+    }
+
+    @Override
+    public String toString() {
+        return this.roomName;
+    }
 }
