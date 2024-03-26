@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
+    //TODO: Create seed ingestion for recreating specific schools or scenarios
     //TODO: Just a main run to see that the sim works. Revise this to make actual game loop
     public static void main(String[] args) {
         //Create hash maps for storage

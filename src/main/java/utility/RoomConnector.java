@@ -41,6 +41,7 @@ public class RoomConnector {
 
     private void connectRooms() {
         populateVertex();
+        constructBackbone();
         populateEdges();
         connectivityInspection();
     }
@@ -97,6 +98,32 @@ public class RoomConnector {
                         targetRoom.setConnections(targetRoom.getConnections() - 1);
                     }
                 }
+            }
+        }
+    }
+
+    private void constructBackbone() {
+        Room[] hallways = roomPool[6];
+        Room[] courtyards = roomPool[4];
+
+        for (Room hallway : hallways) {
+            int choice = setRandom(0, 2);
+
+            if (choice == 0 && hallways.length > 1) {
+                Room targetHallway;
+                do {
+                    int randomIndex = setRandom(0, hallways.length - 1);
+                    targetHallway = hallways[randomIndex];
+                } while (targetHallway == hallway);
+                schoolConnect.addEdge(hallway, targetHallway);
+                hallway.setConnections(hallway.getConnections() - 1);
+                targetHallway.setConnections(targetHallway.getConnections() - 1);
+            } else if (courtyards.length > 0) {
+                int randomIndex = setRandom(0, courtyards.length - 1);
+                Room targetCourtyard = courtyards[randomIndex];
+                schoolConnect.addEdge(hallway, targetCourtyard);
+                hallway.setConnections(hallway.getConnections() - 1);
+                targetCourtyard.setConnections(targetCourtyard.getConnections() - 1);
             }
         }
     }
