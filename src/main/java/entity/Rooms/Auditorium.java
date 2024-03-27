@@ -1,6 +1,5 @@
 package entity.Rooms;
 
-//TODO: Attach room to school director and room generation
 public class Auditorium implements Room {
     private int roomCapacity;
     private int numOfConnections;

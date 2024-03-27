@@ -1,6 +1,5 @@
 package entity.Rooms;
 
-// TODO: Add room to director and connector
 public class ArtStudio implements Room {
     private int roomCapacity;
     private int numOfConnections;

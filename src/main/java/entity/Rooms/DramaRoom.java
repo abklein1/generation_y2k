@@ -1,6 +1,5 @@
 package entity.Rooms;
 
-// TODO: Place in director and room coordinator
 public class DramaRoom implements Room {
     private int roomCapacity;
     private int numOfConnections;

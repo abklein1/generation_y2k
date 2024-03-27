@@ -50,10 +50,11 @@ public class RoomConnector {
 
         connectRooms();
     }
-
+    //TODO: More procedural generation
     private void connectRooms() {
         populateVertex();
         constructBackbone();
+        connectivityInspectionBackbone();
         populateEdges();
         connectivityInspection();
     }
@@ -159,6 +160,26 @@ public class RoomConnector {
         }
     }
 
+    private void connectivityInspectionBackbone() {
+        //Hallways and courtyards may exist as separate islands of edges so connect islands
+        ConnectivityInspector<Room, DefaultEdge> inspector = new ConnectivityInspector<>(schoolConnect);
+        List<Set<Room>> connectedSets = inspector.connectedSets();
+
+        if(connectedSets.size() > 1) {
+            for(int i = 0; i < connectedSets.size() - 1; i++) {
+                Set<Room> currentRoom = connectedSets.get(i);
+                Set<Room> nextRoom = connectedSets.get(i + 1);
+
+                Room currentCompRoom = currentRoom.iterator().next();
+                Room nextCompRoom = nextRoom.iterator().next();
+
+                schoolConnect.addEdge(currentCompRoom, nextCompRoom);
+                currentCompRoom.setConnections(currentCompRoom.getConnections() - 1);
+                nextCompRoom.setConnections(nextCompRoom.getConnections() - 1);
+            }
+        }
+    }
+
     private Room getRandomRoom(int i, int j) {
         int x = setRandom(0, roomPool.length - 1);
         int y = setRandom(0, roomPool[x].length - 1);
@@ -201,7 +222,7 @@ public class RoomConnector {
             }
         }
     }
-
+    //TODO: fix visibility on graphs
     public void visualizer() {
         JGraphXAdapter<Room, DefaultEdge> graphAdapter = new JGraphXAdapter<>(schoolConnect);
         JFrame frame = new JFrame("School Rooms Visualization");
