@@ -1,13 +1,6 @@
-package entity;//*******************************************************************
-//  entity.Lunchroom.java
-//  Description: This represents a lunchroom object. Implements entity.Room
-//  Bugs:
-//
-//  @author     Alex Klein
-//  @version    04242022
-//*******************************************************************
+package entity.Rooms;
 
-public class Lunchroom implements Room {
+public class AthleticField implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -19,7 +12,7 @@ public class Lunchroom implements Room {
     private String roomNumber;
     private boolean studentRestriction;
 
-    public Lunchroom() {
+    public AthleticField() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;

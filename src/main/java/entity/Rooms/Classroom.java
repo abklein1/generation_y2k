@@ -1,6 +1,6 @@
-package entity;//*******************************************************************
-//  entity.Classroom.java
-//  Description: This represents a classroom object. Implements entity.Room
+package entity.Rooms;//*******************************************************************
+//  entity.Rooms.Classroom.java
+//  Description: This represents a classroom object. Implements entity.Rooms.Room
 //  Bugs:
 //
 //  @author     Alex Klein

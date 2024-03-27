@@ -1,13 +1,13 @@
-package entity;//*******************************************************************
-//  entity.Gym.java
-//  Description: This represents a gym object. Implements entity.Room
+package entity.Rooms;//*******************************************************************
+//  entity.Rooms.Courtyard.java
+//  Description: This represents a courtyard object. Implements entity.Rooms.Room
 //  Bugs:
 //
 //  @author     Alex Klein
 //  @version    04242022
 //*******************************************************************
 
-public class Gym implements Room {
+public class Courtyard implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -19,7 +19,7 @@ public class Gym implements Room {
     private String roomNumber;
     private boolean studentRestriction;
 
-    public Gym() {
+    public Courtyard() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;

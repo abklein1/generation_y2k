@@ -2,8 +2,8 @@ package utility;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
-import entity.Bathroom;
-import entity.Room;
+import entity.Rooms.Bathroom;
+import entity.Rooms.Room;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;

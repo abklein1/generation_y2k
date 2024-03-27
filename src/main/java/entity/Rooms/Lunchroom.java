@@ -1,13 +1,13 @@
-package entity;//*******************************************************************
-//  entity.Hallway.java
-//  Description: This represents a hallway object. Implements entity.Room
+package entity.Rooms;//*******************************************************************
+//  entity.Rooms.Lunchroom.java
+//  Description: This represents a lunchroom object. Implements entity.Rooms.Room
 //  Bugs:
 //
 //  @author     Alex Klein
 //  @version    04242022
 //*******************************************************************
 
-public class Hallway implements Room {
+public class Lunchroom implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -19,7 +19,7 @@ public class Hallway implements Room {
     private String roomNumber;
     private boolean studentRestriction;
 
-    public Hallway() {
+    public Lunchroom() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;

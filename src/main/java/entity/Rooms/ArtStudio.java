@@ -1,16 +1,7 @@
-package entity;//*******************************************************************
-//  entity.UtilityRoom.java
-//  Description: This represents a utility room object. Implements entity.Rooms.Room
-//  Bugs:
-//
-//  @author     Alex Klein
-//  @version    04242022
-//*******************************************************************
+package entity.Rooms;
 
-import entity.Rooms.Room;
-
-public class UtilityRoom implements Room {
-
+// TODO: Add room to director and connector
+public class ArtStudio implements Room {
     private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
@@ -21,7 +12,7 @@ public class UtilityRoom implements Room {
     private String roomNumber;
     private boolean studentRestriction;
 
-    public UtilityRoom() {
+    public ArtStudio() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -73,9 +64,6 @@ public class UtilityRoom implements Room {
         this.studentRestriction = studentRestriction;
     }
 
-    public void setUtilityType(UtilityRoom.utilityType utilityType) {
-    }
-
     public String getRoomName() {
         return this.roomName;
     }
@@ -108,9 +96,5 @@ public class UtilityRoom implements Room {
     @Override
     public String toString() {
         return this.roomName;
-    }
-
-    private enum utilityType {
-        IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
     }
 }

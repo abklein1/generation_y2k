@@ -1,6 +1,6 @@
-package entity;//*******************************************************************
-//  entity.Room.java
-//  Description: This is a room interface used to supply methods for entity.Room type objects
+package entity.Rooms;//*******************************************************************
+//  entity.Rooms.Room.java
+//  Description: This is a room interface used to supply methods for entity.Rooms.Room type objects
 //  Bugs:
 //
 //  @author     Alex Klein

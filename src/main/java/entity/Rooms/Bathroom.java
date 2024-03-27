@@ -1,6 +1,6 @@
-package entity;//*******************************************************************
-//  entity.Bathroom.java
-//  Description: This represents a bathroom object. Implements entity.Room
+package entity.Rooms;//*******************************************************************
+//  entity.Rooms.Bathroom.java
+//  Description: This represents a bathroom object. Implements entity.Rooms.Room
 //  Bugs:
 //
 //  @author     Alex Klein

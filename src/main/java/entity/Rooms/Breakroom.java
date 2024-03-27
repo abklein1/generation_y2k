@@ -1,6 +1,6 @@
-package entity;//*******************************************************************
-//  entity.Breakroom.java
-//  Description: This represents a breakroom object. Implements entity.Room
+package entity.Rooms;//*******************************************************************
+//  entity.Rooms.Breakroom.java
+//  Description: This represents a breakroom object. Implements entity.Rooms.Room
 //  Bugs:
 //
 //  @author     Alex Klein

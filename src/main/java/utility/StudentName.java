@@ -4,10 +4,13 @@ public class StudentName implements PName {
 
     private String firstName;
     private String lastName;
+    private String nickname;
+
 
     public StudentName(){
         this.firstName = null;
         this.lastName = null;
+        this.nickname = null;
     }
 
     @Override
@@ -29,4 +32,6 @@ public class StudentName implements PName {
     public String getLastName() {
         return this.lastName;
     }
+
+    public void setNickname(String nickname) {this.nickname = nickname;}
 }

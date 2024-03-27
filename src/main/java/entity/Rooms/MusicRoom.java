@@ -1,13 +1,7 @@
-package entity;//*******************************************************************
-//  entity.ComputerLab.java
-//  Description: This represents a entity.ComputerLab object. Implements entity.Room
-//  Bugs:
-//
-//  @author     Alex Klein
-//  @version    04242022
-//*******************************************************************
+package entity.Rooms;
 
-public class ComputerLab implements Room {
+// TODO: Attach to school director and room generator
+public class MusicRoom implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -19,7 +13,7 @@ public class ComputerLab implements Room {
     private String roomNumber;
     private boolean studentRestriction;
 
-    public ComputerLab() {
+    public MusicRoom() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -39,11 +33,6 @@ public class ComputerLab implements Room {
     @Override
     public void setRoomCapacity(int capacity) {
         this.roomCapacity = capacity;
-    }
-
-    @Override
-    public void setConnections(int connections) {
-        this.numOfConnections = connections;
     }
 
     @Override
@@ -96,7 +85,15 @@ public class ComputerLab implements Room {
     }
 
     @Override
-    public int getConnections() {return this.numOfConnections;}
+    public int getConnections() {
+        return this.numOfConnections;
+    }
+
+    @Override
+    public void setConnections(int connections) {
+        this.numOfConnections = connections;
+    }
+
     @Override
     public String toString() {
         return this.roomName;

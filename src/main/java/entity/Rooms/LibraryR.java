@@ -1,13 +1,13 @@
-package entity;//*******************************************************************
-//  entity.Office.java
-//  Description: This represents a office object. Implements entity.Room
+package entity.Rooms;//*******************************************************************
+//  entity.Rooms.LibraryR.java
+//  Description: This represents a library object. Implements entity.Rooms.Room
 //  Bugs:
 //
 //  @author     Alex Klein
 //  @version    04242022
 //*******************************************************************
 
-public class Office implements Room {
+public class LibraryR implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -19,7 +19,7 @@ public class Office implements Room {
     private String roomNumber;
     private boolean studentRestriction;
 
-    public Office() {
+    public LibraryR() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -30,6 +30,7 @@ public class Office implements Room {
         this.roomNumber = null;
         this.studentRestriction = false;
     }
+
 
     @Override
     public void reset() {

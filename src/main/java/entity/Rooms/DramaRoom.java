@@ -1,14 +1,7 @@
-package entity;//*******************************************************************
-//  entity.Courtyard.java
-//  Description: This represents a courtyard object. Implements entity.Room
-//  Bugs:
-//
-//  @author     Alex Klein
-//  @version    04242022
-//*******************************************************************
+package entity.Rooms;
 
-public class Courtyard implements Room {
-
+// TODO: Place in director and room coordinator
+public class DramaRoom implements Room {
     private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
@@ -19,7 +12,7 @@ public class Courtyard implements Room {
     private String roomNumber;
     private boolean studentRestriction;
 
-    public Courtyard() {
+    public DramaRoom() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;

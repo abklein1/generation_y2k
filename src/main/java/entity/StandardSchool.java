@@ -8,6 +8,7 @@ package entity;//***************************************************************
 //  @version    04242022
 //*******************************************************************
 
+import entity.Rooms.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

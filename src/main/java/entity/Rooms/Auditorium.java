@@ -1,14 +1,7 @@
-package entity;//*******************************************************************
-//  entity.LibraryR.java
-//  Description: This represents a library object. Implements entity.Room
-//  Bugs:
-//
-//  @author     Alex Klein
-//  @version    04242022
-//*******************************************************************
+package entity.Rooms;
 
-public class LibraryR implements Room {
-
+//TODO: Attach room to school director and room generation
+public class Auditorium implements Room {
     private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
@@ -19,7 +12,7 @@ public class LibraryR implements Room {
     private String roomNumber;
     private boolean studentRestriction;
 
-    public LibraryR() {
+    public Auditorium() {
         this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
@@ -30,7 +23,6 @@ public class LibraryR implements Room {
         this.roomNumber = null;
         this.studentRestriction = false;
     }
-
 
     @Override
     public void reset() {
