@@ -25,21 +25,28 @@ import java.util.concurrent.ThreadLocalRandom;
 // vertex is door
 // edge is room
 public class RoomConnector {
-    private final Room[][] roomPool = new Room[11][];
+    private final Room[][] roomPool = new Room[18][];
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
 
     public RoomConnector(StandardSchool standardSchool) {
-        roomPool[0] = standardSchool.getBathrooms();
-        roomPool[1] = standardSchool.getBreakrooms();
-        roomPool[2] = standardSchool.getClassrooms();
-        roomPool[3] = standardSchool.getComputerLabs();
-        roomPool[4] = standardSchool.getCourtyards();
-        roomPool[5] = standardSchool.getGyms();
-        roomPool[6] = standardSchool.getHallways();
-        roomPool[7] = standardSchool.getLibraries();
-        roomPool[8] = standardSchool.getLunchrooms();
-        roomPool[9] = standardSchool.getOffices();
-        roomPool[10] = standardSchool.getUtilityrooms();
+        roomPool[0] = standardSchool.getArtStudios();
+        roomPool[1] = standardSchool.getAthleticFields();
+        roomPool[2] = standardSchool.getAuditoriums();
+        roomPool[3] = standardSchool.getBathrooms();
+        roomPool[4] = standardSchool.getBreakrooms();
+        roomPool[5] = standardSchool.getClassrooms();
+        roomPool[6] = standardSchool.getComputerLabs();
+        roomPool[7] = standardSchool.getCourtyards();
+        roomPool[8] = standardSchool.getDramaRooms();
+        roomPool[9] = standardSchool.getGyms();
+        roomPool[10] = standardSchool.getHallways();
+        roomPool[11] = standardSchool.getLibraries();
+        roomPool[12] = standardSchool.getLockerRooms();
+        roomPool[13] = standardSchool.getLunchrooms();
+        roomPool[14] = standardSchool.getMusicRooms();
+        roomPool[15] = standardSchool.getOffices();
+        roomPool[16] = standardSchool.getScienceLabs();
+        roomPool[17] = standardSchool.getUtilityrooms();
 
         connectRooms();
     }
@@ -86,8 +93,8 @@ public class RoomConnector {
     }
 
     private Room findCentralRoom() {
-        Room[] hallways = roomPool[6];
-        Room[] courtyards = roomPool[4];
+        Room[] hallways = roomPool[10];
+        Room[] courtyards = roomPool[7];
         int choice = setRandom(0,2);
 
         if(choice == 0) {
@@ -127,8 +134,8 @@ public class RoomConnector {
     }
 
     private void constructBackbone() {
-        Room[] hallways = roomPool[6];
-        Room[] courtyards = roomPool[4];
+        Room[] hallways = roomPool[10];
+        Room[] courtyards = roomPool[7];
 
         for (Room hallway : hallways) {
             int choice = setRandom(0, 2);
