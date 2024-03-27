@@ -21,16 +21,23 @@ import java.util.concurrent.ThreadLocalRandom;
 public class StandardSchool implements SchoolPlan {
 
     String schoolName;
+    ArtStudio[] artStudios;
+    AthleticField[] athleticFields;
+    Auditorium[] auditoriums;
     Bathroom[] bathrooms;
     Breakroom[] breakrooms;
     Classroom[] classrooms;
     ComputerLab[] computerLabs;
     Courtyard[] courtyards;
+    DramaRoom[] dramaRooms;
     Gym[] gyms;
     Hallway[] hallways;
     LibraryR[] libraries;
+    LockerRoom[] lockerRooms;
     Lunchroom[] lunchrooms;
+    MusicRoom[] musicRooms;
     Office[] offices;
+    ScienceLab[] scienceLabs;
     UtilityRoom[] utilityrooms;
 
     @Override
@@ -83,11 +90,17 @@ public class StandardSchool implements SchoolPlan {
         int library_count = 0;
         int gym_count = 0;
         int computer_count = 0;
+        int art_count = 0;
+        int field_count = 0;
+        int drama_count = 0;
+        int music_count = 0;
 
         class_count = classrooms.length;
         office_count = offices.length / 2;
         maint_count = utilityrooms.length + 2;
         library_count = libraries.length * 2;
+        drama_count = dramaRooms.length;
+        music_count = musicRooms.length;
 
         for (Lunchroom lunchroom : lunchrooms) {
             lunch_count = lunch_count + lunchroom.getStaffCapacity();
@@ -101,7 +114,17 @@ public class StandardSchool implements SchoolPlan {
             computer_count = computer_count + computerLab.getStaffCapacity();
         }
 
-        total = class_count + office_count + maint_count + lunch_count + library_count + gym_count;
+        for (ArtStudio artStudio : artStudios) {
+            art_count = art_count + artStudio.getStaffCapacity();
+        }
+
+        for (AthleticField field : athleticFields) {
+            field_count = field_count + field.getStaffCapacity();
+        }
+
+        total = class_count + office_count + maint_count +
+                lunch_count + library_count + gym_count +
+                art_count + field_count + drama_count + music_count;
         return total;
     }
 
@@ -264,8 +287,8 @@ public class StandardSchool implements SchoolPlan {
             courtyards[i].setRoomName("Courtyard" + i);
             System.out.println("      Generating " + courtyards[i].getRoomName());
             courtyards[i].setWindowCount(0);
-            courtyards[i].setConnections(14);
-            courtyards[i].setDoors(14);
+            courtyards[i].setConnections(16);
+            courtyards[i].setDoors(16);
             courtyards[i].setRoomCapacity(setRandom(35, 150));
             courtyards[i].setRoomNumber("C" + i);
         }
@@ -306,7 +329,7 @@ public class StandardSchool implements SchoolPlan {
         hallways = new Hallway[number];
         System.out.println("   Generating " + number + " hallways...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(8, 15);
+            int connectN = setRandom(8, 16);
             hallways[i] = new Hallway();
             hallways[i].setRoomName("Hallway" + i);
             System.out.println("      Generating " + hallways[i].getRoomName());
@@ -385,7 +408,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(6);
                 offices[i].setConnections(2);
-                offices[i].setRoomNumber("100");
+                offices[i].setRoomNumber("O-100");
             } else if (i == 1) {
                 offices[i].setRoomName("Vice Principal's Office");
                 System.out.println("      Generating Vice Principal's office");
@@ -395,7 +418,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(4);
                 offices[i].setConnections(2);
-                offices[i].setRoomNumber("101");
+                offices[i].setRoomNumber("O-101");
             } else if (i == 2) {
                 offices[i].setRoomName("Guidance Councilor's Office");
                 System.out.println("      Generating Councilor's Office");
@@ -405,7 +428,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(6);
                 offices[i].setConnections(2);
-                offices[i].setRoomNumber("102");
+                offices[i].setRoomNumber("O-102");
             } else if (i == 3) {
                 offices[i].setRoomName("Front Office");
                 System.out.println("      Generating Front Office");
@@ -415,7 +438,17 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(15);
                 offices[i].setConnections(4);
-                offices[i].setRoomNumber("103");
+                offices[i].setRoomNumber("O-103");
+            } else if (i == 4) {
+                offices[i].setRoomName("Nurse's Office");
+                System.out.println("      Generating Nurse's Office");
+                offices[i].setDoors(3);
+                offices[i].setWindowCount(1);
+                offices[i].setInitialStaff(2);
+                offices[i].setInitialStudents(0);
+                offices[i].setRoomCapacity(6);
+                offices[i].setConnections(3);
+                offices[i].setRoomNumber("O-104");
             } else {
                 offices[i].setRoomName("Office" + i);
                 System.out.println("      Generating " + offices[i].getRoomName());
@@ -423,7 +456,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setDoors(2);
                 offices[i].setInitialStaff(1);
                 offices[i].setRoomCapacity(setRandom(2, 6));
-                offices[i].setRoomNumber("O" + "1" + i);
+                offices[i].setRoomNumber("O" + "-1" + i);
             }
             offices[i].setStudentRestriction(true);
 
@@ -432,6 +465,158 @@ public class StandardSchool implements SchoolPlan {
 
     public UtilityRoom[] getUtilityrooms() {
         return utilityrooms;
+    }
+
+    public ArtStudio[] getArtStudios() {
+        return artStudios;
+    }
+
+    @Override
+    public void setArtStudios(int number) {
+        artStudios = new ArtStudio[number];
+        System.out.println("   Generating " + number + " art studio(s)...");
+        for (int i = 0; i < number; i++) {
+            int connectN = setRandom(4, 6);
+            artStudios[i] = new ArtStudio();
+            artStudios[i].setRoomName("Art Room" + i);
+            System.out.println("      Generating " + artStudios[i].getRoomName());
+            artStudios[i].setWindowCount(setRandom(5, 10));
+            artStudios[i].setConnections(connectN);
+            artStudios[i].setDoors(connectN);
+            artStudios[i].setInitialStaff(setRandom(1, 2));
+            artStudios[i].setRoomCapacity(setRandom(15, 35));
+            artStudios[i].setRoomNumber("AT" + i + setRandom(100, 999));
+        }
+    }
+
+    public AthleticField[] getAthleticFields() {
+        return athleticFields;
+    }
+
+    @Override
+    public void setAthleticFields(int number) {
+        athleticFields = new AthleticField[number];
+        System.out.println("   Generating " + number + " athletic fields(s)...");
+        for (int i = 0; i < number; i++) {
+            athleticFields[i] = new AthleticField();
+            athleticFields[i].setRoomName("Field" + i);
+            System.out.println("      Generating " + athleticFields[i].getRoomName());
+            athleticFields[i].setWindowCount(0);
+            athleticFields[i].setConnections(16);
+            athleticFields[i].setDoors(16);
+            athleticFields[i].setInitialStaff(setRandom(0, 2));
+            athleticFields[i].setRoomCapacity(setRandom(150, 500));
+            athleticFields[i].setRoomNumber("F" + i + setRandom(100, 999));
+        }
+    }
+
+    public Auditorium[] getAuditoriums() {
+        return auditoriums;
+    }
+
+    @Override
+    public void setAuditoriums(int number) {
+        auditoriums = new Auditorium[number];
+        System.out.println("   Generating " + number + " auditorium(s)...");
+        for (int i = 0; i < number; i++) {
+            auditoriums[i] = new Auditorium();
+            auditoriums[i].setRoomName("Auditorium" + i);
+            System.out.println("      Generating " + auditoriums[i].getRoomName());
+            auditoriums[i].setWindowCount(0);
+            auditoriums[i].setConnections(16);
+            auditoriums[i].setDoors(16);
+            auditoriums[i].setInitialStaff(0);
+            auditoriums[i].setRoomCapacity(setRandom(150, 550));
+            auditoriums[i].setRoomNumber("AD" + i + setRandom(100, 999));
+        }
+    }
+
+    public DramaRoom[] getDramaRooms() {
+        return dramaRooms;
+    }
+
+    @Override
+    public void setDramaRooms(int number) {
+        dramaRooms = new DramaRoom[number];
+        System.out.println("   Generating " + number + " Drama Room(s)...");
+        for (int i = 0; i < number; i++) {
+            int connectN = setRandom(2, 6);
+            dramaRooms[i] = new DramaRoom();
+            dramaRooms[i].setRoomName("Drama" + i);
+            System.out.println("      Generating " + dramaRooms[i].getRoomName());
+            dramaRooms[i].setWindowCount(setRandom(0, 6));
+            dramaRooms[i].setConnections(connectN);
+            dramaRooms[i].setDoors(connectN);
+            dramaRooms[i].setInitialStaff(1);
+            dramaRooms[i].setRoomCapacity(setRandom(15, 50));
+            dramaRooms[i].setRoomNumber("D" + i + setRandom(100, 999));
+        }
+    }
+
+    public LockerRoom[] getLockerRooms() {
+        return lockerRooms;
+    }
+
+    @Override
+    public void setLockerRooms(int number) {
+        lockerRooms = new LockerRoom[number];
+        System.out.println("   Generating " + number + " Locker Room(s)...");
+        for (int i = 0; i < number; i++) {
+            int connectN = setRandom(2, 6);
+            lockerRooms[i] = new LockerRoom();
+            lockerRooms[i].setRoomName("Locker Room" + i);
+            System.out.println("      Generating " + lockerRooms[i].getRoomName());
+            lockerRooms[i].setWindowCount(0);
+            lockerRooms[i].setConnections(connectN);
+            lockerRooms[i].setDoors(connectN);
+            lockerRooms[i].setInitialStaff(0);
+            lockerRooms[i].setRoomCapacity(setRandom(30, 90));
+            lockerRooms[i].setRoomNumber("LK" + i + setRandom(100, 999));
+        }
+    }
+
+    public MusicRoom[] getMusicRooms() {
+        return musicRooms;
+    }
+
+    @Override
+    public void setMusicRooms(int number) {
+        musicRooms = new MusicRoom[number];
+        System.out.println("   Generating " + number + " Music Room(s)...");
+        for (int i = 0; i < number; i++) {
+            int connectN = setRandom(3, 7);
+            musicRooms[i] = new MusicRoom();
+            musicRooms[i].setRoomName("Music Room" + i);
+            System.out.println("      Generating " + musicRooms[i].getRoomName());
+            musicRooms[i].setWindowCount(setRandom(0, 4));
+            musicRooms[i].setConnections(connectN);
+            musicRooms[i].setDoors(connectN);
+            musicRooms[i].setInitialStaff(1);
+            musicRooms[i].setRoomCapacity(setRandom(30, 90));
+            musicRooms[i].setRoomNumber("MR" + i + setRandom(100, 999));
+        }
+    }
+
+    public ScienceLab[] getScienceLabs() {
+        return scienceLabs;
+    }
+
+    @Override
+    public void setScienceLabs(int number) {
+        scienceLabs = new ScienceLab[number];
+        System.out.println("   Generating " + number + " Science Lab(s)...");
+        for (int i = 0; i < number; i++) {
+            int connectN = setRandom(2, 4);
+            scienceLabs[i] = new ScienceLab();
+            scienceLabs[i].setRoomName("Science Lab" + i);
+            System.out.println("      Generating " + scienceLabs[i].getRoomName());
+            scienceLabs[i].setWindowCount(0);
+            scienceLabs[i].setConnections(connectN);
+            scienceLabs[i].setDoors(connectN);
+            scienceLabs[i].setInitialStaff(0);
+            scienceLabs[i].setRoomCapacity(setRandom(15, 30));
+            scienceLabs[i].setRoomNumber("Lab" + i + setRandom(100, 999));
+        }
     }
 }
 
