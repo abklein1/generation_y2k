@@ -73,12 +73,28 @@ public class StandardSchool implements SchoolPlan {
     }
 
     public int getTotalStudentCapacity() {
-        int total = 0;
+        int class_total = 0;
+        int drama_total = 0;
+        int music_total = 0;
+        int art_total = 0;
+
         for (Classroom classroom : classrooms) {
-            total = total + classroom.getStudentCapacity();
+            class_total = class_total + classroom.getStudentCapacity();
         }
 
-        return total;
+        for (MusicRoom musicRoom: musicRooms) {
+            music_total = music_total + musicRoom.getStudentCapacity();
+        }
+
+        for (DramaRoom dramaRoom: dramaRooms) {
+            drama_total = drama_total + dramaRoom.getStudentCapacity();
+        }
+
+        for (ArtStudio artStudio: artStudios) {
+            art_total = art_total + artStudio.getStudentCapacity();
+        }
+
+        return class_total + music_total + drama_total + art_total;
     }
 
     public int getMinimumStaffRequirements() {
