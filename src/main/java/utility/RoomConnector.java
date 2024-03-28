@@ -2,6 +2,7 @@ package utility;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
+import entity.Rooms.Auditorium;
 import entity.Rooms.Bathroom;
 import entity.Rooms.Room;
 import entity.StandardSchool;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 // edge is room
 public class RoomConnector {
     private final Room[][] roomPool = new Room[18][];
+    private int locker_count = 0;
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
 
     public RoomConnector(StandardSchool standardSchool) {
@@ -57,8 +59,9 @@ public class RoomConnector {
         populateVertex();
         constructBackbone();
         connectivityInspectionBackbone();
-        populateEdges();
-        connectivityInspection();
+        populateAthleticFields();
+        populateAuditoriums();
+        populateGyms();
     }
 
     private void populateVertex() {
@@ -152,6 +155,61 @@ public class RoomConnector {
                 }
             }
         }
+    }
+
+    private void populateAthleticFields() {
+        Room[] athleticFields = roomPool[1];
+        Room[] lockerRooms = roomPool[12];
+
+        for (Room field: athleticFields) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(field, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            field.setConnections(field.getConnections() - 1);
+            // Add two locker rooms per athletic field
+            schoolConnect.addEdge(field, lockerRooms[locker_count]);
+            field.setConnections(field.getConnections() - 1);
+            lockerRooms[locker_count].setConnections(lockerRooms[locker_count].getConnections() - 1);
+            locker_count++;
+            schoolConnect.addEdge(field, lockerRooms[locker_count]);
+            field.setConnections(field.getConnections() - 1);
+            lockerRooms[locker_count].setConnections(lockerRooms[locker_count].getConnections() - 1);
+            locker_count++;
+        }
+    }
+
+    private void populateAuditoriums() {
+        Room[] auditoriums = roomPool[2];
+
+        for (Room auditorium: auditoriums) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(auditorium, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            auditorium.setConnections(auditorium.getConnections() - 1);
+        }
+    }
+
+    private void populateGyms() {
+        Room[] gyms = roomPool[9];
+        Room[] lockerRooms = roomPool[12];
+
+        for (Room gym: gyms) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(gym, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            gym.setConnections(gym.getConnections() - 1);
+            // Add two locker rooms per Gym
+            schoolConnect.addEdge(gym, lockerRooms[locker_count]);
+            gym.setConnections(gym.getConnections() - 1);
+            lockerRooms[locker_count].setConnections(lockerRooms[locker_count].getConnections() - 1);
+            locker_count++;
+            schoolConnect.addEdge(gym, lockerRooms[locker_count]);
+            gym.setConnections(gym.getConnections() - 1);
+            lockerRooms[locker_count].setConnections(lockerRooms[locker_count].getConnections() - 1);
+            locker_count++;
+        }
+
+
     }
 
     private void constructBackbone() {

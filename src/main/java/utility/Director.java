@@ -37,13 +37,13 @@ public class Director {
         System.out.println("Building computer labs...");
         standardSchool.setComputerLabs(setRandom(1, 3));
         System.out.println("Building courtyards...");
-        standardSchool.setCourtyards(setRandom(1, 5));
+        standardSchool.setCourtyards(setRandom(2, 5));
         System.out.println("Building drama rooms...");
         standardSchool.setDramaRooms(setRandom(1, 2));
         System.out.println("Building gyms...");
         standardSchool.setGyms(setRandom(1, 3));
         System.out.println("Building hallways...");
-        standardSchool.setHallways(setRandom(8, 12));
+        standardSchool.setHallways(setRandom(9, 12));
         System.out.println("Building libraries...");
         standardSchool.setLibraries(setRandom(1, 2));
         System.out.println("Building locker rooms...");
@@ -53,7 +53,7 @@ public class Director {
         System.out.println("Building music rooms...");
         standardSchool.setMusicRooms(setRandom(1, 2));
         System.out.println("Building offices...");
-        standardSchool.setOffices(setRandom(5, 20));
+        standardSchool.setOffices(setRandom(5, standardSchool.getClassrooms().length));
         System.out.println("Building science labs...");
         standardSchool.setScienceLabs(setRandom(2, 6));
         System.out.println("Building utility rooms...");
