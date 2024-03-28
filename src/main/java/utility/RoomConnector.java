@@ -2,6 +2,7 @@ package utility;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
+import entity.Rooms.Auditorium;
 import entity.Rooms.Bathroom;
 import entity.Rooms.Room;
 import entity.StandardSchool;
@@ -65,6 +66,7 @@ public class RoomConnector {
         populateLibraries();
         populateMusicRooms();
         populateArtRooms();
+        populateDramaRooms();
     }
 
     private void populateVertex() {
@@ -256,6 +258,28 @@ public class RoomConnector {
             schoolConnect.addEdge(artRoom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             artRoom.setConnections(artRoom.getConnections() - 1);
+        }
+    }
+
+    private void populateDramaRooms() {
+        Room [] dramaRooms = roomPool[8];
+        Room [] auditoriums = roomPool[2];
+        int chance;
+
+        for (Room dramaRoom : dramaRooms) {
+            chance = setRandom(0,10);
+            if (chance < 2) {
+                Room selectedAuditorium = auditoriums[setRandom(0, auditoriums.length - 1)];
+                schoolConnect.addEdge(dramaRoom,selectedAuditorium);
+                dramaRoom.setRoomNumber("A" + setRandom(101,901));
+                selectedAuditorium.setConnections(selectedAuditorium.getConnections() - 1);
+                dramaRoom.setConnections(dramaRoom.getConnections() - 1);
+            } else {
+                Room connectRoom = findCentralRoom();
+                schoolConnect.addEdge(dramaRoom, connectRoom);
+                connectRoom.setConnections(connectRoom.getConnections() - 1);
+                dramaRoom.setConnections(dramaRoom.getConnections() - 1);
+            }
         }
     }
 
