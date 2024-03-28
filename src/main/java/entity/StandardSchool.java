@@ -254,7 +254,7 @@ public class StandardSchool implements SchoolPlan {
         classrooms = new Classroom[number];
         System.out.println("   Generating " + number + " classrooms...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(2, 4);
+            int connectN = setRandom(3, 5);
             decision = i % WEIGHT;
             classrooms[i] = new Classroom();
             classrooms[i].setRoomName("Classroom" + i);
@@ -448,12 +448,12 @@ public class StandardSchool implements SchoolPlan {
             } else if (i == 3) {
                 offices[i].setRoomName("Front Office");
                 System.out.println("      Generating Front Office");
-                offices[i].setDoors(5);
+                offices[i].setDoors(12);
                 offices[i].setWindowCount(2);
                 offices[i].setInitialStaff(2);
                 offices[i].setInitialStudents(0);
                 offices[i].setRoomCapacity(15);
-                offices[i].setConnections(4);
+                offices[i].setConnections(12);
                 offices[i].setRoomNumber("O-103");
             } else if (i == 4) {
                 offices[i].setRoomName("Nurse's Office");

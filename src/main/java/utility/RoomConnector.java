@@ -67,6 +67,7 @@ public class RoomConnector {
         populateMusicRooms();
         populateArtRooms();
         populateDramaRooms();
+        populateOffices();
     }
 
     private void populateVertex() {
@@ -280,6 +281,116 @@ public class RoomConnector {
                 connectRoom.setConnections(connectRoom.getConnections() - 1);
                 dramaRoom.setConnections(dramaRoom.getConnections() - 1);
             }
+        }
+    }
+
+    private void populateOffices() {
+        Room [] offices = roomPool[15];
+        Room [] coreOffices = new Room[4];
+        Room frontOffice = null;
+
+        for(Room office : offices) {
+            if(office.getRoomName().equals("Front Office")) {
+                Room connectRoom = findCentralRoom();
+                frontOffice = office;
+                schoolConnect.addEdge(frontOffice, connectRoom);
+                connectRoom.setConnections(connectRoom.getConnections() - 1);
+                frontOffice.setConnections(frontOffice.getConnections() - 1);
+            } else if(office.getRoomName().equals("Principal's Office")) {
+                if(frontOffice == null) {
+                    coreOffices[0] = office;
+                } else {
+                    schoolConnect.addEdge(frontOffice,office);
+                    office.setConnections(office.getConnections() - 1);
+                    frontOffice.setConnections(frontOffice.getConnections() - 1);
+                }
+            } else if(office.getRoomName().equals("Vice Principal's Office")) {
+                if(frontOffice == null) {
+                    coreOffices[1] = office;
+                } else {
+                    schoolConnect.addEdge(frontOffice,office);
+                    office.setConnections(office.getConnections() - 1);
+                    frontOffice.setConnections(frontOffice.getConnections() - 1);
+                }
+            } else if(office.getRoomName().equals("Guidance Councilor's Office")) {
+                if(frontOffice == null) {
+                    coreOffices[2] = office;
+                } else {
+                    schoolConnect.addEdge(frontOffice,office);
+                    office.setConnections(office.getConnections() - 1);
+                    frontOffice.setConnections(frontOffice.getConnections() - 1);
+                }
+            } else if(office.getRoomName().equals("Nurse's Office")) {
+                if(frontOffice == null) {
+                    coreOffices[3] = office;
+                } else {
+                    schoolConnect.addEdge(frontOffice,office);
+                    office.setConnections(office.getConnections() - 1);
+                    frontOffice.setConnections(frontOffice.getConnections() - 1);
+                }
+            } else {
+                officeHelper(office);
+            }
+        }
+
+        for(Room office: coreOffices) {
+            if(office != null) {
+                schoolConnect.addEdge(frontOffice,office);
+                office.setConnections(office.getConnections() - 1);
+                frontOffice.setConnections(frontOffice.getConnections() - 1);
+            }
+        }
+    }
+
+    private void officeHelper(Room office) {
+        Room [] classrooms = roomPool[5];
+        Room [] gyms = roomPool[9];
+        Room [] musicRooms = roomPool[14];
+        Room [] artRooms = roomPool[0];
+        Room [] hallways = roomPool[10];
+        boolean connected = false;
+
+        int choice = setRandom(0,80);
+        if(choice < 50) {
+            choice = setRandom(0, classrooms.length - 1);
+            schoolConnect.addEdge(classrooms[choice], office);
+            classrooms[choice].setConnections(classrooms[choice].getConnections() - 1);
+            office.setConnections(office.getConnections() - 1);
+            connected = true;
+        } else if(50 < choice && choice < 60) {
+            choice = setRandom(0, gyms.length - 1);
+            if(gyms[choice].getConnections() > 0) {
+                schoolConnect.addEdge(gyms[choice], office);
+                gyms[choice].setConnections(gyms[choice].getConnections() - 1);
+                office.setConnections(office.getConnections() - 1);
+                connected = true;
+            }
+        } else if( 60 < choice && choice < 70) {
+            choice = setRandom(0, musicRooms.length - 1);
+            if(musicRooms[choice].getConnections() > 0) {
+                schoolConnect.addEdge(musicRooms[choice], office);
+                musicRooms[choice].setConnections(musicRooms[choice].getConnections() - 1);
+                office.setConnections(office.getConnections() - 1);
+                connected = true;
+            }
+        } else {
+            choice = setRandom(0, artRooms.length - 1);
+            if(artRooms[choice].getConnections() > 0) {
+                schoolConnect.addEdge(artRooms[choice], office);
+                artRooms[choice].setConnections(artRooms[choice].getConnections() - 1);
+                office.setConnections(office.getConnections() - 1);
+                connected = true;
+            }
+        }
+
+        if(!connected) {
+            choice = setRandom(0, hallways.length - 1);
+            if(hallways[choice].getConnections() == 0) {
+                hallways[choice].setConnections(hallways[choice].getConnections() + 1);
+            }
+            schoolConnect.addEdge(hallways[choice], office);
+            hallways[choice].setConnections(hallways[choice].getConnections() - 1);
+            office.setConnections(office.getConnections() - 1);
         }
     }
 
