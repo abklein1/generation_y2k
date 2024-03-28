@@ -99,20 +99,38 @@ public class RoomConnector {
         Room[] hallways = roomPool[10];
         Room[] courtyards = roomPool[7];
         int choice = setRandom(0,2);
+        int count = 0;
 
         if(choice == 0) {
             do {
                 choice = setRandom(0, hallways.length - 1);
                 System.out.println("Connecting halls...");
-            } while (hallways[choice].getConnections() == 0);
+                count++;
+            } while (hallways[choice].getConnections() == 0 && count < calculateExpectedCycles(hallways.length));
+            // Add a connection to a random hallway if no connections are left
+            hallways[choice].setConnections(hallways[choice].getConnections() + 1);
             return hallways[choice];
         } else {
             do {
                 choice = setRandom(0,courtyards.length - 1);
                 System.out.println("Connecting courtyards...");
-            } while (courtyards[choice].getConnections() == 0);
+                count++;
+            } while (courtyards[choice].getConnections() == 0 && count < calculateExpectedCycles(courtyards.length));
+            // Add a connection to a random courtyard if no connections are left
+            courtyards[choice].setConnections(courtyards[choice].getConnections() + 1);
             return courtyards[choice];
         }
+    }
+
+    // Coupon Collector problem for finding minimum random selections for a set
+    private double calculateExpectedCycles(int N) {
+        double harmonic_N = 0;
+
+        for (int i = 1; i <= N; i++) {
+            harmonic_N += 1.0 / i;
+        }
+
+        return N * harmonic_N;
     }
 
     private void populateEdges() {
