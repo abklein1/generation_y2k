@@ -2,7 +2,6 @@ package utility;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
-import entity.Rooms.Auditorium;
 import entity.Rooms.Bathroom;
 import entity.Rooms.Room;
 import entity.StandardSchool;
@@ -29,8 +28,8 @@ import java.util.stream.Collectors;
 // edge is room
 public class RoomConnector {
     private final Room[][] roomPool = new Room[18][];
-    private int locker_count = 0;
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
+    private int locker_count = 0;
 
     public RoomConnector(StandardSchool standardSchool) {
         roomPool[0] = standardSchool.getArtStudios();
@@ -54,7 +53,7 @@ public class RoomConnector {
 
         connectRooms();
     }
-    //TODO: More procedural generation
+
     private void connectRooms() {
         populateVertex();
         constructBackbone();
@@ -62,6 +61,10 @@ public class RoomConnector {
         populateAthleticFields();
         populateAuditoriums();
         populateGyms();
+        populateLunchrooms();
+        populateLibraries();
+        populateMusicRooms();
+        populateArtRooms();
     }
 
     private void populateVertex() {
@@ -80,7 +83,7 @@ public class RoomConnector {
         List<Set<Room>> connectedSets = inspector.connectedSets();
         Room connectorRoom = findCentralRoom();
 
-        if(connectedSets.size() > 1) {
+        if (connectedSets.size() > 1) {
             for (Set<Room> roomSet : connectedSets) {
                 Room roomToConnect = roomSet.stream()
                         .filter(r -> r.getConnections() > 0)
@@ -91,20 +94,22 @@ public class RoomConnector {
                     roomToConnect.setConnections(roomToConnect.getConnections() - 1);
                     connectorRoom.setConnections(connectorRoom.getConnections() - 1);
                 }
-                if(connectorRoom.getConnections() == 0) {
+                if (connectorRoom.getConnections() == 0) {
                     connectorRoom = findCentralRoom();
                 }
             }
         }
     }
 
+    // TODO: Allow for injected weight distribution on hallways and courtyards
+    // Adjust random weight of hallway or courtyard selection as needed. Might need to re-balance (i.e. 60/40)
     private Room findCentralRoom() {
         Room[] hallways = roomPool[10];
         Room[] courtyards = roomPool[7];
-        int choice = setRandom(0,2);
+        int choice = setRandom(0, 2);
         int count = 0;
 
-        if(choice == 0) {
+        if (choice == 0) {
             do {
                 choice = setRandom(0, hallways.length - 1);
                 System.out.println("Connecting halls...");
@@ -115,7 +120,7 @@ public class RoomConnector {
             return hallways[choice];
         } else {
             do {
-                choice = setRandom(0,courtyards.length - 1);
+                choice = setRandom(0, courtyards.length - 1);
                 System.out.println("Connecting courtyards...");
                 count++;
             } while (courtyards[choice].getConnections() == 0 && count < calculateExpectedCycles(courtyards.length));
@@ -161,7 +166,7 @@ public class RoomConnector {
         Room[] athleticFields = roomPool[1];
         Room[] lockerRooms = roomPool[12];
 
-        for (Room field: athleticFields) {
+        for (Room field : athleticFields) {
             Room connectRoom = findCentralRoom();
             schoolConnect.addEdge(field, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
@@ -181,7 +186,7 @@ public class RoomConnector {
     private void populateAuditoriums() {
         Room[] auditoriums = roomPool[2];
 
-        for (Room auditorium: auditoriums) {
+        for (Room auditorium : auditoriums) {
             Room connectRoom = findCentralRoom();
             schoolConnect.addEdge(auditorium, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
@@ -193,7 +198,7 @@ public class RoomConnector {
         Room[] gyms = roomPool[9];
         Room[] lockerRooms = roomPool[12];
 
-        for (Room gym: gyms) {
+        for (Room gym : gyms) {
             Room connectRoom = findCentralRoom();
             schoolConnect.addEdge(gym, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
@@ -208,8 +213,50 @@ public class RoomConnector {
             lockerRooms[locker_count].setConnections(lockerRooms[locker_count].getConnections() - 1);
             locker_count++;
         }
+    }
 
+    private void populateLunchrooms() {
+        Room[] lunchrooms = roomPool[13];
 
+        for (Room lunchroom : lunchrooms) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(lunchroom, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            lunchroom.setConnections(lunchroom.getConnections() - 1);
+        }
+    }
+
+    private void populateLibraries() {
+        Room[] libraries = roomPool[11];
+
+        for (Room library : libraries) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(library, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            library.setConnections(library.getConnections() - 1);
+        }
+    }
+
+    private void populateMusicRooms() {
+        Room[] musicRooms = roomPool[14];
+
+        for (Room musicRoom : musicRooms) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(musicRoom, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            musicRoom.setConnections(musicRoom.getConnections() - 1);
+        }
+    }
+
+    private void populateArtRooms() {
+        Room [] artRooms = roomPool[0];
+
+        for (Room artRoom : artRooms) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(artRoom, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            artRoom.setConnections(artRoom.getConnections() - 1);
+        }
     }
 
     private void constructBackbone() {
@@ -317,6 +364,7 @@ public class RoomConnector {
             }
         }
     }
+
     //TODO: fix visibility on graphs
     public void visualizer() {
         JGraphXAdapter<Room, DefaultEdge> graphAdapter = new JGraphXAdapter<>(schoolConnect);
