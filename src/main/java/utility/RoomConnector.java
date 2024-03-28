@@ -13,10 +13,12 @@ import org.jgrapht.graph.Multigraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 
 // Procedural generation that builds the school by connecting rooms. Room connection starts
@@ -161,23 +163,40 @@ public class RoomConnector {
     }
 
     private void connectivityInspectionBackbone() {
-        //Hallways and courtyards may exist as separate islands of edges so connect islands
         ConnectivityInspector<Room, DefaultEdge> inspector = new ConnectivityInspector<>(schoolConnect);
         List<Set<Room>> connectedSets = inspector.connectedSets();
 
-        if(connectedSets.size() > 1) {
-            for(int i = 0; i < connectedSets.size() - 1; i++) {
-                Set<Room> currentRoom = connectedSets.get(i);
-                Set<Room> nextRoom = connectedSets.get(i + 1);
+        // Filter sets to include only those that contain hallways or courtyards
+        List<Set<Room>> filteredSets = connectedSets.stream()
+                .filter(set -> set.stream().anyMatch(room -> isHallwayOrCourtyard(room)))
+                .collect(Collectors.toList());
 
-                Room currentCompRoom = currentRoom.iterator().next();
-                Room nextCompRoom = nextRoom.iterator().next();
+        if (filteredSets.size() > 1) {
+            for (int i = 0; i < filteredSets.size() - 1; i++) {
+                Set<Room> currentSet = filteredSets.get(i);
+                Set<Room> nextSet = filteredSets.get(i + 1);
 
-                schoolConnect.addEdge(currentCompRoom, nextCompRoom);
-                currentCompRoom.setConnections(currentCompRoom.getConnections() - 1);
-                nextCompRoom.setConnections(nextCompRoom.getConnections() - 1);
+                // Find hallways or courtyards within the current and next sets to connect
+                Room roomFromCurrentSet = findHallwayOrCourtyard(currentSet);
+                Room roomFromNextSet = findHallwayOrCourtyard(nextSet);
+
+                if (roomFromCurrentSet != null && roomFromNextSet != null) {
+                    schoolConnect.addEdge(roomFromCurrentSet, roomFromNextSet);
+                    roomFromCurrentSet.setConnections(roomFromCurrentSet.getConnections() - 1);
+                    roomFromNextSet.setConnections(roomFromNextSet.getConnections() - 1);
+                }
             }
         }
+    }
+
+    // Helper method to check if a room is a hallway or courtyard
+    private boolean isHallwayOrCourtyard(Room room) {
+        return Arrays.asList(roomPool[10], roomPool[7]).stream().flatMap(Arrays::stream).anyMatch(r -> r.equals(room));
+    }
+
+    // Helper method to find a hallway or courtyard in a set
+    private Room findHallwayOrCourtyard(Set<Room> roomSet) {
+        return roomSet.stream().filter(this::isHallwayOrCourtyard).findAny().orElse(null);
     }
 
     private Room getRandomRoom(int i, int j) {
