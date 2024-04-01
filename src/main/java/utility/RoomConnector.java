@@ -74,6 +74,7 @@ public class RoomConnector {
         populateRemainingLabs();
         populateComputerLabs();
         populateUtilityRooms();
+        populateBreakrooms();
     }
 
     private void populateVertex() {
@@ -425,7 +426,7 @@ public class RoomConnector {
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             classroom.setConnections(classroom.getConnections() - 1);
             assert classR != null;
-            if (classR.getClassRoomType().equals("Science")) {
+            if (classR.getClassRoomType().equals("Science") && labs_count < labs.length) {
                 schoolConnect.addEdge(classroom, labs[labs_count]);
                 labs[labs_count].setConnections(labs[labs_count].getConnections() - 1);
                 classroom.setConnections(classroom.getConnections() - 1);
@@ -506,6 +507,17 @@ public class RoomConnector {
                     connectRoom.setConnections(connectRoom.getConnections() - 1);
                     break;
             }
+        }
+    }
+
+    private void populateBreakrooms() {
+        Room[] breakrooms = roomPool[4];
+
+        for (Room breakroom : breakrooms) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(breakroom, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            breakroom.setConnections(breakroom.getConnections() - 1);
         }
     }
 
