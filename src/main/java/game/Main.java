@@ -50,6 +50,7 @@ public class Main {
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
         //Welcome
         System.out.println("Welcome to " + standardSchool.getSchoolName());
+        System.out.println("Home of the " + standardSchool.getSchoolMascot() + "!");
         //Introduce me to random student
         System.out.println("Introduce me to a random student, please.");
         Inspector.studentInspection(studentHashMap.get(setRandom(0, studentHashMap.size() - 1)));

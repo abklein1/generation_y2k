@@ -14,13 +14,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class StandardSchool implements SchoolPlan {
 
     String schoolName;
+    String schoolMascot;
     ArtStudio[] artStudios;
     AthleticField[] athleticFields;
     Auditorium[] auditoriums;
@@ -66,6 +71,10 @@ public class StandardSchool implements SchoolPlan {
         this.schoolName = schoolNameLoader();
     }
 
+    public void setSchoolMascot() {
+        this.schoolMascot = schoolMascotLoader();
+    }
+
     //TODO: Centralize this
     private int setRandom(int min, int max) {
         int random = ThreadLocalRandom.current().nextInt(min, max + 1);
@@ -82,15 +91,15 @@ public class StandardSchool implements SchoolPlan {
             class_total = class_total + classroom.getStudentCapacity();
         }
 
-        for (MusicRoom musicRoom: musicRooms) {
+        for (MusicRoom musicRoom : musicRooms) {
             music_total = music_total + musicRoom.getStudentCapacity();
         }
 
-        for (DramaRoom dramaRoom: dramaRooms) {
+        for (DramaRoom dramaRoom : dramaRooms) {
             drama_total = drama_total + dramaRoom.getStudentCapacity();
         }
 
-        for (ArtStudio artStudio: artStudios) {
+        for (ArtStudio artStudio : artStudios) {
             art_total = art_total + artStudio.getStudentCapacity();
         }
 
@@ -98,18 +107,18 @@ public class StandardSchool implements SchoolPlan {
     }
 
     public int getMinimumStaffRequirements() {
-        int total = 0;
-        int class_count = 0;
-        int office_count = 0;
-        int maint_count = 0;
+        int total;
+        int class_count;
+        int office_count;
+        int maint_count;
         int lunch_count = 0;
-        int library_count = 0;
+        int library_count;
         int gym_count = 0;
         int computer_count = 0;
         int art_count = 0;
         int field_count = 0;
-        int drama_count = 0;
-        int music_count = 0;
+        int drama_count;
+        int music_count;
 
         class_count = classrooms.length;
         office_count = offices.length / 2;
@@ -145,7 +154,7 @@ public class StandardSchool implements SchoolPlan {
     }
 
     private String schoolNameLoader() {
-        String schoolName = null;
+        String schoolName;
         int selection = setRandom(1, 10);
         Object object;
         try {
@@ -186,6 +195,48 @@ public class StandardSchool implements SchoolPlan {
         }
 
         return schoolName + " High School";
+    }
+
+    // Weighted chance of random mascot
+    private String schoolMascotLoader() {
+        String pathCSVMascots = "src/main/java/Resources/mascots.csv";
+        List<String> mascots = new ArrayList<>();
+        List<Integer> counts = new ArrayList<>();
+        List<Integer> cumulativeCounts = new ArrayList<>();
+        int totalSum = 0;
+        int randomIdx;
+        int insertPoint;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(pathCSVMascots))) {
+            String line;
+            br.readLine();
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                mascots.add(values[0]);
+                counts.add(Integer.parseInt(values[1]));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        for (int count : counts) {
+            totalSum += count;
+            cumulativeCounts.add(totalSum);
+        }
+
+        randomIdx = setRandom(0, totalSum + 1);
+        insertPoint = Collections.binarySearch(cumulativeCounts, randomIdx);
+        if (insertPoint < 0) {
+            insertPoint = -insertPoint - 1;
+        }
+        return mascots.get(insertPoint);
+    }
+
+    public String getSchoolMascot() {
+        return this.schoolMascot;
     }
 
     public Bathroom[] getBathrooms() {
@@ -250,7 +301,7 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setClassrooms(int number) {
         int WEIGHT = 7;
-        int decision = 0;
+        int decision;
         classrooms = new Classroom[number];
         System.out.println("   Generating " + number + " classrooms...");
         for (int i = 0; i < number; i++) {

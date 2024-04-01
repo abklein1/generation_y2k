@@ -60,6 +60,8 @@ public class Director {
         standardSchool.setUtilityRooms(setRandom(5, 10));
         System.out.println("Setting school name...");
         standardSchool.setSchoolName();
+        System.out.println("Setting school mascot...");
+        standardSchool.setSchoolMascot();
     }
 
     //TODO: move this to central utility for use among multiple classes
