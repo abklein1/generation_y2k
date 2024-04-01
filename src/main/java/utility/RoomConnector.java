@@ -2,8 +2,8 @@ package utility;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
-import entity.Rooms.Auditorium;
 import entity.Rooms.Bathroom;
+import entity.Rooms.Classroom;
 import entity.Rooms.Room;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
@@ -31,6 +31,7 @@ public class RoomConnector {
     private final Room[][] roomPool = new Room[18][];
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
     private int locker_count = 0;
+    private int labs_count = 0;
 
     public RoomConnector(StandardSchool standardSchool) {
         roomPool[0] = standardSchool.getArtStudios();
@@ -68,6 +69,11 @@ public class RoomConnector {
         populateArtRooms();
         populateDramaRooms();
         populateOffices();
+        populateStudentBathrooms();
+        populateClassrooms();
+        populateRemainingLabs();
+        populateComputerLabs();
+        populateUtilityRooms();
     }
 
     private void populateVertex() {
@@ -252,7 +258,7 @@ public class RoomConnector {
     }
 
     private void populateArtRooms() {
-        Room [] artRooms = roomPool[0];
+        Room[] artRooms = roomPool[0];
 
         for (Room artRoom : artRooms) {
             Room connectRoom = findCentralRoom();
@@ -263,16 +269,16 @@ public class RoomConnector {
     }
 
     private void populateDramaRooms() {
-        Room [] dramaRooms = roomPool[8];
-        Room [] auditoriums = roomPool[2];
+        Room[] dramaRooms = roomPool[8];
+        Room[] auditoriums = roomPool[2];
         int chance;
 
         for (Room dramaRoom : dramaRooms) {
-            chance = setRandom(0,10);
+            chance = setRandom(0, 10);
             if (chance < 2) {
                 Room selectedAuditorium = auditoriums[setRandom(0, auditoriums.length - 1)];
-                schoolConnect.addEdge(dramaRoom,selectedAuditorium);
-                dramaRoom.setRoomNumber("A" + setRandom(101,901));
+                schoolConnect.addEdge(dramaRoom, selectedAuditorium);
+                dramaRoom.setRoomNumber("A" + setRandom(101, 901));
                 selectedAuditorium.setConnections(selectedAuditorium.getConnections() - 1);
                 dramaRoom.setConnections(dramaRoom.getConnections() - 1);
             } else {
@@ -285,46 +291,46 @@ public class RoomConnector {
     }
 
     private void populateOffices() {
-        Room [] offices = roomPool[15];
-        Room [] coreOffices = new Room[4];
+        Room[] offices = roomPool[15];
+        Room[] coreOffices = new Room[4];
         Room frontOffice = null;
 
-        for(Room office : offices) {
-            if(office.getRoomName().equals("Front Office")) {
+        for (Room office : offices) {
+            if (office.getRoomName().equals("Front Office")) {
                 Room connectRoom = findCentralRoom();
                 frontOffice = office;
                 schoolConnect.addEdge(frontOffice, connectRoom);
                 connectRoom.setConnections(connectRoom.getConnections() - 1);
                 frontOffice.setConnections(frontOffice.getConnections() - 1);
-            } else if(office.getRoomName().equals("Principal's Office")) {
-                if(frontOffice == null) {
+            } else if (office.getRoomName().equals("Principal's Office")) {
+                if (frontOffice == null) {
                     coreOffices[0] = office;
                 } else {
-                    schoolConnect.addEdge(frontOffice,office);
+                    schoolConnect.addEdge(frontOffice, office);
                     office.setConnections(office.getConnections() - 1);
                     frontOffice.setConnections(frontOffice.getConnections() - 1);
                 }
-            } else if(office.getRoomName().equals("Vice Principal's Office")) {
-                if(frontOffice == null) {
+            } else if (office.getRoomName().equals("Vice Principal's Office")) {
+                if (frontOffice == null) {
                     coreOffices[1] = office;
                 } else {
-                    schoolConnect.addEdge(frontOffice,office);
+                    schoolConnect.addEdge(frontOffice, office);
                     office.setConnections(office.getConnections() - 1);
                     frontOffice.setConnections(frontOffice.getConnections() - 1);
                 }
-            } else if(office.getRoomName().equals("Guidance Councilor's Office")) {
-                if(frontOffice == null) {
+            } else if (office.getRoomName().equals("Guidance Councilor's Office")) {
+                if (frontOffice == null) {
                     coreOffices[2] = office;
                 } else {
-                    schoolConnect.addEdge(frontOffice,office);
+                    schoolConnect.addEdge(frontOffice, office);
                     office.setConnections(office.getConnections() - 1);
                     frontOffice.setConnections(frontOffice.getConnections() - 1);
                 }
-            } else if(office.getRoomName().equals("Nurse's Office")) {
-                if(frontOffice == null) {
+            } else if (office.getRoomName().equals("Nurse's Office")) {
+                if (frontOffice == null) {
                     coreOffices[3] = office;
                 } else {
-                    schoolConnect.addEdge(frontOffice,office);
+                    schoolConnect.addEdge(frontOffice, office);
                     office.setConnections(office.getConnections() - 1);
                     frontOffice.setConnections(frontOffice.getConnections() - 1);
                 }
@@ -333,41 +339,42 @@ public class RoomConnector {
             }
         }
 
-        for(Room office: coreOffices) {
-            if(office != null) {
-                schoolConnect.addEdge(frontOffice,office);
+        for (Room office : coreOffices) {
+            if (office != null) {
+                schoolConnect.addEdge(frontOffice, office);
                 office.setConnections(office.getConnections() - 1);
+                assert frontOffice != null;
                 frontOffice.setConnections(frontOffice.getConnections() - 1);
             }
         }
     }
 
     private void officeHelper(Room office) {
-        Room [] classrooms = roomPool[5];
-        Room [] gyms = roomPool[9];
-        Room [] musicRooms = roomPool[14];
-        Room [] artRooms = roomPool[0];
-        Room [] hallways = roomPool[10];
+        Room[] classrooms = roomPool[5];
+        Room[] gyms = roomPool[9];
+        Room[] musicRooms = roomPool[14];
+        Room[] artRooms = roomPool[0];
+        Room[] hallways = roomPool[10];
         boolean connected = false;
 
-        int choice = setRandom(0,80);
-        if(choice < 50) {
+        int choice = setRandom(0, 80);
+        if (choice < 50) {
             choice = setRandom(0, classrooms.length - 1);
             schoolConnect.addEdge(classrooms[choice], office);
             classrooms[choice].setConnections(classrooms[choice].getConnections() - 1);
             office.setConnections(office.getConnections() - 1);
             connected = true;
-        } else if(50 < choice && choice < 60) {
+        } else if (50 < choice && choice < 60) {
             choice = setRandom(0, gyms.length - 1);
-            if(gyms[choice].getConnections() > 0) {
+            if (gyms[choice].getConnections() > 0) {
                 schoolConnect.addEdge(gyms[choice], office);
                 gyms[choice].setConnections(gyms[choice].getConnections() - 1);
                 office.setConnections(office.getConnections() - 1);
                 connected = true;
             }
-        } else if( 60 < choice && choice < 70) {
+        } else if (60 < choice && choice < 70) {
             choice = setRandom(0, musicRooms.length - 1);
-            if(musicRooms[choice].getConnections() > 0) {
+            if (musicRooms[choice].getConnections() > 0) {
                 schoolConnect.addEdge(musicRooms[choice], office);
                 musicRooms[choice].setConnections(musicRooms[choice].getConnections() - 1);
                 office.setConnections(office.getConnections() - 1);
@@ -375,7 +382,7 @@ public class RoomConnector {
             }
         } else {
             choice = setRandom(0, artRooms.length - 1);
-            if(artRooms[choice].getConnections() > 0) {
+            if (artRooms[choice].getConnections() > 0) {
                 schoolConnect.addEdge(artRooms[choice], office);
                 artRooms[choice].setConnections(artRooms[choice].getConnections() - 1);
                 office.setConnections(office.getConnections() - 1);
@@ -383,14 +390,122 @@ public class RoomConnector {
             }
         }
 
-        if(!connected) {
+        if (!connected) {
             choice = setRandom(0, hallways.length - 1);
-            if(hallways[choice].getConnections() == 0) {
+            if (hallways[choice].getConnections() == 0) {
                 hallways[choice].setConnections(hallways[choice].getConnections() + 1);
             }
             schoolConnect.addEdge(hallways[choice], office);
             hallways[choice].setConnections(hallways[choice].getConnections() - 1);
             office.setConnections(office.getConnections() - 1);
+        }
+    }
+
+    private void populateStudentBathrooms() {
+        Room[] bathrooms = roomPool[3];
+
+        for (Room bathroom : bathrooms) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(bathroom, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            bathroom.setConnections(bathroom.getConnections() - 1);
+        }
+    }
+
+    private void populateClassrooms() {
+        Room[] classrooms = roomPool[5];
+        Room[] labs = roomPool[16];
+        Classroom classR = null;
+        for (Room classroom : classrooms) {
+            if (classroom instanceof Classroom) {
+                classR = (Classroom) classroom;
+            }
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(classroom, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            classroom.setConnections(classroom.getConnections() - 1);
+            assert classR != null;
+            if (classR.getClassRoomType().equals("Science")) {
+                schoolConnect.addEdge(classroom, labs[labs_count]);
+                labs[labs_count].setConnections(labs[labs_count].getConnections() - 1);
+                classroom.setConnections(classroom.getConnections() - 1);
+                labs_count++;
+            }
+        }
+    }
+
+    private void populateRemainingLabs() {
+        Room[] labs = roomPool[16];
+
+        for (int i = labs_count; i < labs.length; i++) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(labs[i], connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            labs[i].setConnections(labs[i].getConnections() - 1);
+        }
+    }
+
+    private void populateComputerLabs() {
+        Room[] computerLabs = roomPool[6];
+        Room[] libraries = roomPool[11];
+
+        for (Room computerLab : computerLabs) {
+            int choice = setRandom(0, 2);
+            if (choice == 1) {
+                choice = setRandom(0, libraries.length - 1);
+                schoolConnect.addEdge(computerLab, libraries[choice]);
+                computerLab.setConnections(computerLab.getConnections() - 1);
+                libraries[choice].setConnections(libraries[choice].getConnections() - 1);
+            } else {
+                Room connectRoom = findCentralRoom();
+                schoolConnect.addEdge(computerLab, connectRoom);
+                computerLab.setConnections(computerLab.getConnections() - 1);
+                connectRoom.setConnections(connectRoom.getConnections() - 1);
+            }
+        }
+    }
+
+    private void populateUtilityRooms() {
+        Room[] utilityRooms = roomPool[17];
+        Room[] libraries = roomPool[11];
+        Room[] computerLabs = roomPool[6];
+        Room[] auditoriums = roomPool[2];
+        Room[] lunchRooms = roomPool[13];
+
+        for (Room utilityRoom : utilityRooms) {
+            int choice = setRandom(0, 10);
+            switch (choice) {
+                case 0:
+                    choice = setRandom(0, libraries.length - 1);
+                    schoolConnect.addEdge(utilityRoom, libraries[choice]);
+                    utilityRoom.setConnections(utilityRoom.getConnections() - 1);
+                    libraries[choice].setConnections(libraries[choice].getConnections() - 1);
+                    break;
+                case 1:
+                    choice = setRandom(0, computerLabs.length - 1);
+                    schoolConnect.addEdge(utilityRoom, computerLabs[choice]);
+                    utilityRoom.setConnections(utilityRoom.getConnections() - 1);
+                    computerLabs[choice].setConnections(computerLabs[choice].getConnections() - 1);
+                    break;
+                case 2:
+                    choice = setRandom(0, auditoriums.length - 1);
+                    schoolConnect.addEdge(utilityRoom, auditoriums[choice]);
+                    utilityRoom.setConnections(utilityRoom.getConnections() - 1);
+                    auditoriums[choice].setConnections(auditoriums[choice].getConnections() - 1);
+                    break;
+                case 3:
+                    choice = setRandom(0, lunchRooms.length - 1);
+                    schoolConnect.addEdge(utilityRoom, lunchRooms[choice]);
+                    utilityRoom.setConnections(utilityRoom.getConnections() - 1);
+                    lunchRooms[choice].setConnections(lunchRooms[choice].getConnections() - 1);
+                    break;
+                default:
+                    Room connectRoom = findCentralRoom();
+                    schoolConnect.addEdge(utilityRoom, connectRoom);
+                    utilityRoom.setConnections(utilityRoom.getConnections() - 1);
+                    connectRoom.setConnections(connectRoom.getConnections() - 1);
+                    break;
+            }
         }
     }
 

@@ -91,18 +91,25 @@ public class Classroom implements Room {
         switch (select) {
             case 0:
                 this.classRoomType = "Math";
+                break;
             case 1:
                 this.classRoomType = "English";
+                break;
             case 2:
                 this.classRoomType = "Science";
+                break;
             case 3:
                 this.classRoomType = "Social Studies";
+                break;
             case 4:
                 this.classRoomType = "Electives";
+                break;
             case 5:
                 this.classRoomType = "Homeroom";
+                break;
             case 6:
                 this.classRoomType = "Study Hall";
+                break;
         }
     }
 
