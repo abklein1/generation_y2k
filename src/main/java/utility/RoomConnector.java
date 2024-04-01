@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 // Procedural generation that builds the school by connecting rooms. Room connection starts
@@ -75,6 +76,7 @@ public class RoomConnector {
         populateComputerLabs();
         populateUtilityRooms();
         populateBreakrooms();
+        connectivityInspection();
     }
 
     private void populateVertex() {
@@ -526,9 +528,9 @@ public class RoomConnector {
         Room[] courtyards = roomPool[7];
 
         for (Room hallway : hallways) {
-            int choice = setRandom(0, 2);
+            int choice = setRandom(0, 10);
 
-            if (choice == 0 && hallways.length > 1) {
+            if (choice > 3 && hallways.length > 1) {
                 Room targetHallway;
                 do {
                     int randomIndex = setRandom(0, hallways.length - 1);
@@ -553,7 +555,7 @@ public class RoomConnector {
 
         // Filter sets to include only those that contain hallways or courtyards
         List<Set<Room>> filteredSets = connectedSets.stream()
-                .filter(set -> set.stream().anyMatch(room -> isHallwayOrCourtyard(room)))
+                .filter(set -> set.stream().anyMatch(this::isHallwayOrCourtyard))
                 .collect(Collectors.toList());
 
         if (filteredSets.size() > 1) {
@@ -576,7 +578,7 @@ public class RoomConnector {
 
     // Helper method to check if a room is a hallway or courtyard
     private boolean isHallwayOrCourtyard(Room room) {
-        return Arrays.asList(roomPool[10], roomPool[7]).stream().flatMap(Arrays::stream).anyMatch(r -> r.equals(room));
+        return Stream.of(roomPool[10], roomPool[7]).flatMap(Arrays::stream).anyMatch(r -> r.equals(room));
     }
 
     // Helper method to find a hallway or courtyard in a set
