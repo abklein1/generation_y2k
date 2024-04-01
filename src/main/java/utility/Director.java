@@ -33,7 +33,7 @@ public class Director {
         System.out.println("Building breakrooms...");
         standardSchool.setBreakrooms(setRandom(1, 4));
         System.out.println("Building classrooms...");
-        standardSchool.setClassrooms(setRandom(15, 55));
+        standardSchool.setClassrooms(setRandom(16, 55));
         System.out.println("Building computer labs...");
         standardSchool.setComputerLabs(setRandom(1, 3));
         System.out.println("Building courtyards...");

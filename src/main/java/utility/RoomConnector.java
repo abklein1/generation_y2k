@@ -118,10 +118,10 @@ public class RoomConnector {
     private Room findCentralRoom() {
         Room[] hallways = roomPool[10];
         Room[] courtyards = roomPool[7];
-        int choice = setRandom(0, 2);
+        int choice = setRandom(0, 3);
         int count = 0;
 
-        if (choice == 0) {
+        if (choice < 3) {
             do {
                 choice = setRandom(0, hallways.length - 1);
                 System.out.println("Connecting halls...");
