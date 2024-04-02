@@ -1,5 +1,6 @@
 package utility;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,8 @@ public class StudentStatistics implements PStatistics {
     private int level;
     private int experience;
     private int grade_average;
-
+    private String gender;
+    private LocalDate birthday;
     public StudentStatistics() {
         this.height = 0;
         this.eyeColor = null;
@@ -39,6 +41,8 @@ public class StudentStatistics implements PStatistics {
         this.grade_average = 0;
         this.grades = new ArrayList<>();
         this.gradeLevel = null;
+        this.gender = null;
+        this.birthday = null;
     }
 
     @Override
@@ -186,7 +190,7 @@ public class StudentStatistics implements PStatistics {
     public String getGradeLevel() {
         return this.gradeLevel;
     }
-
+    // TODO: set buckets for grade levels, maybe make into enum
     public void setGradeLevel(int level) {
         switch (level) {
             case 0:
@@ -202,5 +206,21 @@ public class StudentStatistics implements PStatistics {
                 this.gradeLevel = "Senior";
                 break;
         }
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getGender() {
+        return this.gender;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
     }
 }

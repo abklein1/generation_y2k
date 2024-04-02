@@ -33,6 +33,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setLevel(1);
             student.studentStatistics.setExperience(0);
             student.studentStatistics.setGradeLevel(setRandom(0,3));
+            student.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(student.studentStatistics.getGradeLevel()));
         }
         //Clear map for new values
         fNameReference.clear();

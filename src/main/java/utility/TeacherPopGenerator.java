@@ -29,6 +29,7 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setAgility(setRandom(1, 19));
             staff.teacherStatistics.setDetermination(setRandom(1, 20));
             staff.teacherStatistics.setStrength(setRandom(1, 20));
+            staff.teacherStatistics.setBirthday(BirthdayGenerator.generateRandomBirthdayStaff());
         }
 
         //Clear map for new values

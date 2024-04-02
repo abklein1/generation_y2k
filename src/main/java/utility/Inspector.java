@@ -3,6 +3,8 @@ package utility;
 import entity.Student;
 import entity.Staff;
 
+import java.time.LocalDate;
+
 public class Inspector {
     public static void studentInspection(Student student) {
         String fir = student.studentName.getFirstName();
@@ -19,11 +21,13 @@ public class Inspector {
         boolean slp = student.studentStatistics.getSleepState();
         int exp = student.studentStatistics.getExperience();
         String grade = student.studentStatistics.getGradeLevel();
+        LocalDate birth = student.studentStatistics.getBirthday();
 
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
         System.out.println(fir + " has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
         System.out.println(fir + " is a " + grade + ".");
+        System.out.println(fir + " was born on " + birth);
         System.out.println("They have the following stats: ");
         System.out.println("   INT: " + in);
         System.out.println("   CHR: " + chr);
@@ -58,10 +62,12 @@ public class Inspector {
         int str = staff.teacherStatistics.getStrength();
         int bor = staff.teacherStatistics.getBoredom();
         boolean slp = staff.teacherStatistics.getSleepState();
+        LocalDate birth = staff.teacherStatistics.getBirthday();
 
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
         System.out.println(fir + " has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
+        System.out.println(fir + " was born on " + birth);
         System.out.println("They have the following stats: ");
         System.out.println("   INT: " + in);
         System.out.println("   CHR: " + chr);

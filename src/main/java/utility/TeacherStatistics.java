@@ -1,5 +1,7 @@
 package utility;
 
+import java.time.LocalDate;
+
 public class TeacherStatistics implements PStatistics {
     private int height;
     private String eyeColor;
@@ -12,6 +14,8 @@ public class TeacherStatistics implements PStatistics {
     private int strength;
     private boolean sleep;
     private int boredom;
+    private String gender;
+    private LocalDate birthday;
 
     public TeacherStatistics(){
         this.height = 0;
@@ -25,6 +29,7 @@ public class TeacherStatistics implements PStatistics {
         this.strength = 0;
         this.sleep = false;
         this.boredom = 0;
+        this.birthday = null;
     }
 
     @Override
@@ -135,5 +140,21 @@ public class TeacherStatistics implements PStatistics {
     @Override
     public int getHeight() {
         return this.height;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getGender() {
+        return this.gender;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
     }
 }

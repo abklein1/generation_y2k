@@ -293,6 +293,8 @@ public class RoomConnector {
         }
     }
 
+    //TODO: Tweak office gen so that multiple don't end up on classrooms. Possibly add more offices to front office
+    //TODO: Add meeting room to front office
     private void populateOffices() {
         Room[] offices = roomPool[15];
         Room[] coreOffices = new Room[4];

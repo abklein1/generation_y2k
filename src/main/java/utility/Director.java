@@ -1,4 +1,6 @@
-package utility;//*******************************************************************
+package utility;
+
+//*******************************************************************
 //  utility.Director.java
 //  Description: This directs the construction of a school from rooms
 //  Bugs:
@@ -14,13 +16,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Director {
     //TODO: Why is bathnum specified always as 10?
     final int BATHNUM = 10;
-    private final StandardSchool standardSchool;
 
     public Director(StandardSchool standardSchool) {
-        this.standardSchool = standardSchool;
-        setStandardSchool(this.standardSchool);
+        setStandardSchool(standardSchool);
     }
-
+    //TODO: Seed these values
     public void setStandardSchool(StandardSchool standardSchool) {
         System.out.println("Building art studios...");
         standardSchool.setArtStudios(setRandom(1, 3));
@@ -66,8 +66,7 @@ public class Director {
 
     //TODO: move this to central utility for use among multiple classes
     private int setRandom(int min, int max) {
-        int random = ThreadLocalRandom.current().nextInt(min, max + 1);
-        return random;
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
 }
