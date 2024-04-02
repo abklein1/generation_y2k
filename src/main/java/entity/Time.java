@@ -9,7 +9,7 @@ public class Time {
     private final Calendar calendar;
     private final Format f;
     private int dayCounter;
-    private SimpleDateFormat simpleDateFormat;
+    private final SimpleDateFormat simpleDateFormat;
     public Time() {
         this.dayCounter = 1;
         this.calendar = Calendar.getInstance();
