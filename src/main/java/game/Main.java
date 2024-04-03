@@ -21,7 +21,6 @@ public class Main {
         //Create hash maps for storage
         HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
         HashMap<Integer, Staff> staffHashMap = new HashMap<Integer, Staff>();
-        HashMap<Integer, String> lNameReference = new HashMap<>();
         int student_cap;
         int staff_cap;
         int dungeon;

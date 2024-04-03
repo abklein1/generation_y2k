@@ -22,10 +22,11 @@ public class Inspector {
         int exp = student.studentStatistics.getExperience();
         String grade = student.studentStatistics.getGradeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
+        String gen = student.studentStatistics.getGender();
 
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
-        System.out.println(fir + " has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
+        System.out.println(fir + " is a " + gen + " and has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
         System.out.println(fir + " is a " + grade + ".");
         System.out.println(fir + " was born on " + birth);
         System.out.println("They have the following stats: ");
@@ -63,10 +64,11 @@ public class Inspector {
         int bor = staff.teacherStatistics.getBoredom();
         boolean slp = staff.teacherStatistics.getSleepState();
         LocalDate birth = staff.teacherStatistics.getBirthday();
+        String gen = staff.teacherStatistics.getGender();
 
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
-        System.out.println(fir + " has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
+        System.out.println(fir + " is a " + gen + " and has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
         System.out.println(fir + " was born on " + birth);
         System.out.println("They have the following stats: ");
         System.out.println("   INT: " + in);
