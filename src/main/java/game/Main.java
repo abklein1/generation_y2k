@@ -21,7 +21,6 @@ public class Main {
         //Create hash maps for storage
         HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
         HashMap<Integer, Staff> staffHashMap = new HashMap<Integer, Staff>();
-        HashMap<Integer, String> fNameReference = new HashMap<Integer, String>();
         HashMap<Integer, String> lNameReference = new HashMap<>();
         int student_cap;
         int staff_cap;
@@ -43,9 +42,9 @@ public class Main {
         roomConnector.visualizer();
         System.out.println("Populating school...");
         // Set for student population generation
-        StudentPopGenerator.generateStudents(student_cap, studentHashMap, fNameReference, lNameReference);
+        StudentPopGenerator.generateStudents(student_cap, studentHashMap);
         //Set for staff population generation
-        TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, fNameReference, lNameReference);
+        TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap);
         System.out.println("Done creating school and students");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
         //Welcome
