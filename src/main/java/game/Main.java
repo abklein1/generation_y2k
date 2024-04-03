@@ -42,6 +42,7 @@ public class Main {
         System.out.println("Populating school...");
         // Set for student population generation
         StudentPopGenerator.generateStudents(student_cap, studentHashMap);
+        standardSchool.setStudentGradeClass(studentHashMap);
         //Set for staff population generation
         TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap);
         System.out.println("Done creating school and students");
@@ -103,7 +104,8 @@ public class Main {
         System.out.println("So " + lastStudent.studentName.getFirstName() + " you have the following grades:");
         lastStudent.studentStatistics.getAllGrades();
         System.out.println(lastStudent.studentName.getFirstName() + "'s average was " + lastStudent.studentStatistics.getGradeAverage());
-
+        System.out.println("Let's check on an entire year of students...");
+        Inspector.gradeClassInspection(standardSchool.getStudentGradeClass("Freshman"));
     }
 
     //Not ideal design but need to add a few helpers here for simulation

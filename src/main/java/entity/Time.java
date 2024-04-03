@@ -3,7 +3,6 @@ package entity;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Time {
     private final Calendar calendar;
@@ -16,6 +15,8 @@ public class Time {
         this.calendar.set(Calendar.YEAR, 2004);
         this.calendar.set(Calendar.MONTH, 7);
         this.calendar.set(Calendar.DATE, 23);
+        this.calendar.set(Calendar.HOUR, 0);
+        this.calendar.set(Calendar.MINUTE, 0);
         this.simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy 'at' HH:mm aaa");
         this.f = new SimpleDateFormat("EEEE");
     }

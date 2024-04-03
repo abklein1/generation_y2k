@@ -17,9 +17,7 @@ import org.json.simple.parser.ParseException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class StandardSchool implements SchoolPlan {
@@ -44,6 +42,11 @@ public class StandardSchool implements SchoolPlan {
     Office[] offices;
     ScienceLab[] scienceLabs;
     UtilityRoom[] utilityrooms;
+
+    HashMap<Integer, Student> freshmanClass = new HashMap<>();
+    HashMap<Integer, Student> sophomoreClass = new HashMap<>();
+    HashMap<Integer, Student> juniorClass = new HashMap<>();
+    HashMap<Integer, Student> seniorClass = new HashMap<>();
 
     @Override
     public void setUtilityRooms(int number) {
@@ -684,6 +687,55 @@ public class StandardSchool implements SchoolPlan {
             scienceLabs[i].setRoomCapacity(setRandom(15, 30));
             scienceLabs[i].setRoomNumber("Lab" + i + setRandom(100, 999));
         }
+    }
+
+    public void setStudentGradeClass(HashMap<Integer, Student> studentHashMap) {
+        Integer f_count = 0;
+        Integer s_count = 0;
+        Integer j_count = 0;
+        Integer sr_count = 0;
+        // TODO: investigate placing og key vs new counter for performance
+        for (Map.Entry<Integer, Student> entry : studentHashMap.entrySet()) {
+            String grade = entry.getValue().studentStatistics.getGradeLevel();
+            switch (grade) {
+                case "Freshman":
+                    freshmanClass.put(f_count, entry.getValue());
+                    f_count++;
+                    break;
+                case "Sophomore":
+                    sophomoreClass.put(s_count, entry.getValue());
+                    s_count++;
+                    break;
+                case "Junior":
+                    juniorClass.put(j_count, entry.getValue());
+                    j_count++;
+                    break;
+                case "Senior":
+                    seniorClass.put(sr_count, entry.getValue());
+                    sr_count++;
+                    break;
+                default:
+                    System.out.println("Can't find student class");
+                    break;
+            }
+        }
+    }
+
+    public HashMap<Integer, Student> getStudentGradeClass(String gradClass) {
+        switch (gradClass) {
+            case "Freshman":
+                return freshmanClass;
+            case "Sophomore":
+                return sophomoreClass;
+            case "Junior":
+                return juniorClass;
+            case "Senior":
+                return seniorClass;
+            default:
+                System.out.println("Can't find student class");
+                break;
+        }
+        return null;
     }
 }
 

@@ -4,6 +4,8 @@ import entity.Student;
 import entity.Staff;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Inspector {
     public static void studentInspection(Student student) {
@@ -88,5 +90,11 @@ public class Inspector {
             System.out.println(fir + " is not asleep");
         }
         System.out.println("Nice to meet you " + fir + "!");
+    }
+
+    public static void gradeClassInspection(HashMap<Integer, Student> studentGradeClass) {
+        for(Map.Entry<Integer, Student> entry : studentGradeClass.entrySet()) {
+            System.out.println(entry.getValue().studentName.getFirstName() + " " + entry.getValue().studentName.getLastName());
+        }
     }
 }
