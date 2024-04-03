@@ -45,4 +45,36 @@ public interface PStatistics {
 
     int getHeight();
 
+    void setCreativity(int creativity);
+
+    int getCreativity();
+
+    void setEmpathy(int empathy);
+
+    int getEmpathy();
+
+    void setAdaptability(int adaptability);
+
+    int getAdaptability();
+
+    void setInitiative(int initiative);
+
+    int getInitiative();
+
+    void setResilience(int resilience);
+
+    int getResilience();
+
+    void setCuriosity(int curiosity);
+
+    int getCuriosity();
+
+    void setResponsibility(int responsibility);
+
+    int getResponsibility();
+
+    void setOpenMindedness(int openMindedness);
+
+    int getOpenMindedness();
+
 }

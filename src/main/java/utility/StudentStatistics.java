@@ -24,6 +24,14 @@ public class StudentStatistics implements PStatistics {
     private int grade_average;
     private String gender;
     private LocalDate birthday;
+    private int creativity;
+    private int empathy;
+    private int adaptability;
+    private int initiative;
+    private int resilience;
+    private int curiosity;
+    private int responsibility;
+    private int openmindedness;
     public StudentStatistics() {
         this.height = 0;
         this.eyeColor = null;
@@ -43,6 +51,14 @@ public class StudentStatistics implements PStatistics {
         this.gradeLevel = null;
         this.gender = null;
         this.birthday = null;
+        this.creativity = 0;
+        this.empathy = 0;
+        this.adaptability = 0;
+        this.initiative = 0;
+        this.resilience = 0;
+        this.curiosity = 0;
+        this.responsibility = 0;
+        this.openmindedness = 0;
     }
 
     @Override
@@ -222,5 +238,86 @@ public class StudentStatistics implements PStatistics {
 
     public LocalDate getBirthday() {
         return birthday;
+    }
+
+
+    @Override
+    public void setCreativity(int creativity) {
+        this.creativity = creativity;
+    }
+
+    @Override
+    public int getCreativity() {
+        return this.creativity;
+    }
+
+    @Override
+    public void setEmpathy(int empathy) {
+        this.empathy = empathy;
+    }
+
+    @Override
+    public int getEmpathy() {
+        return this.empathy;
+    }
+
+    @Override
+    public void setAdaptability(int adaptability) {
+        this.adaptability = adaptability;
+    }
+
+    @Override
+    public int getAdaptability() {
+        return this.adaptability;
+    }
+
+    @Override
+    public void setInitiative(int initiative) {
+        this.initiative = initiative;
+    }
+
+    @Override
+    public int getInitiative() {
+        return this.initiative;
+    }
+
+    @Override
+    public void setResilience(int resilience) {
+        this.resilience = resilience;
+    }
+
+    @Override
+    public int getResilience() {
+        return this.resilience;
+    }
+
+    @Override
+    public void setCuriosity(int curiosity) {
+        this.curiosity = curiosity;
+    }
+
+    @Override
+    public int getCuriosity() {
+        return this.curiosity;
+    }
+
+    @Override
+    public void setResponsibility(int responsibility) {
+        this.responsibility = responsibility;
+    }
+
+    @Override
+    public int getResponsibility() {
+        return this.responsibility;
+    }
+
+    @Override
+    public void setOpenMindedness(int openMindedness) {
+        this.openmindedness = openMindedness;
+    }
+
+    @Override
+    public int getOpenMindedness() {
+        return this.openmindedness;
     }
 }
