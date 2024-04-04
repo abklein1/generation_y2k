@@ -12,6 +12,7 @@ public class TeacherStatistics implements PStatistics {
     private int charisma;
     private int agility;
     private int determination;
+    private int perception;
     private int strength;
     private boolean sleep;
     private int boredom;
@@ -35,6 +36,7 @@ public class TeacherStatistics implements PStatistics {
         this.charisma = 0;
         this.agility = 0;
         this.determination = 0;
+        this.perception = 0;
         this.strength = 0;
         this.sleep = false;
         this.boredom = 0;
@@ -294,5 +296,53 @@ public class TeacherStatistics implements PStatistics {
         } else {
             return 10 - (age - 40) * 0.5;
         }
+    }
+
+    //TODO: basic calculations for now
+    public void setInitCreativity() {
+        // Primarily driven by intelligence and secondary by perception
+        this.creativity = (int) ((this.intelligence * 1.5) + this.perception) / 2;
+    }
+
+    public void setInitEmpathy() {
+        // Primarily driven by charisma and secondary by perception
+        this.empathy = (int) ((this.charisma * 1.5) + this.perception) / 2;
+    }
+
+    public void setInitAdaptability() {
+        // Physical and mental adaptability and tertiary determination
+        this.adaptability = (this.agility + this.intelligence + (this.determination/4)) / 2;
+    }
+
+    public void setInitInitiative() {
+        // Primarily driven by determination
+        this.initiative = (int) ((this.determination * 1.5) + this.perception) / 2;
+    }
+
+    public void setInitResilience() {
+        // Primary strength and secondary determination
+        this.resilience = (int) ((this.strength * 1.5) + this.determination) / 2;
+    }
+
+    public void setInitCuriosity() {
+        this.curiosity = (int) ((this.perception * 1.5) + this.intelligence) / 2;
+    }
+
+    public void setInitResponsibility() {
+        this.responsibility = (int) ((this.charisma * 1.25) + (this.determination * 1.25)) / 2;
+    }
+
+    public void setInitOpenMind() {
+        this.openmindedness = (int) ((this.intelligence * 1.25) + (this.charisma * 1.25)) / 2;
+    }
+
+    @Override
+    public int getPerception(){
+        return this.perception;
+    }
+
+    @Override
+    public void setPerception(int perception) {
+        this.perception = perception;
     }
 }

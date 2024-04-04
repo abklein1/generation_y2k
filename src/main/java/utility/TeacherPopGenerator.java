@@ -46,6 +46,14 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setAgility((int) (distribution.nextGaussian()*agl_stdDev+agl_mean));
             staff.teacherStatistics.setDetermination((int) (distribution.nextGaussian()*det_stdDev+det_mean));
             staff.teacherStatistics.setInitStrength();
+            staff.teacherStatistics.setInitCreativity();
+            staff.teacherStatistics.setInitEmpathy();
+            staff.teacherStatistics.setInitAdaptability();
+            staff.teacherStatistics.setInitInitiative();
+            staff.teacherStatistics.setInitResilience();
+            staff.teacherStatistics.setInitCuriosity();
+            staff.teacherStatistics.setInitResponsibility();
+            staff.teacherStatistics.setInitOpenMind();
             staff.teacherName.setFirstName(f_name);
             staff.teacherName.setLastName(l_name);
             System.out.println("   Generated staff " + f_name + " " + l_name);

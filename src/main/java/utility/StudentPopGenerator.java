@@ -22,6 +22,8 @@ public class StudentPopGenerator {
         int agl_mean = 50;
         int det_stdDev = 10;
         int det_mean = 50;
+        int per_stdDev = 10;
+        int per_mean = 50;
 
         for (int i = 0; i < studentCap; i++) {
             studentHashMap.put(i, new Student());
@@ -48,7 +50,17 @@ public class StudentPopGenerator {
             student.studentStatistics.setCharisma((int) (distribution.nextGaussian()*chr_stdDev+chr_mean));
             student.studentStatistics.setAgility((int) (distribution.nextGaussian()*agl_stdDev+agl_mean));
             student.studentStatistics.setDetermination((int) (distribution.nextGaussian()*det_stdDev+det_mean));
+            student.studentStatistics.setPerception((int) (distribution.nextGaussian()*per_stdDev+per_mean));
             student.studentStatistics.setInitStrength();
+            student.studentStatistics.setInitCreativity();
+            student.studentStatistics.setInitEmpathy();
+            student.studentStatistics.setInitAdaptability();
+            student.studentStatistics.setInitInitiative();
+            student.studentStatistics.setInitResilience();
+            student.studentStatistics.setInitCuriosity();
+            student.studentStatistics.setInitResponsibility();
+            student.studentStatistics.setInitOpenMind();
+
             System.out.println("   Generated student " + f_name + " " + l_name);
         }
         //Clear map for new values

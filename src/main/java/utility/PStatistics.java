@@ -77,4 +77,8 @@ public interface PStatistics {
 
     int getOpenMindedness();
 
+    void setPerception(int perception);
+
+    int getPerception();
+
 }

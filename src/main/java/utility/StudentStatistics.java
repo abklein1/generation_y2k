@@ -1,12 +1,9 @@
 package utility;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class StudentStatistics implements PStatistics {
 
@@ -21,6 +18,7 @@ public class StudentStatistics implements PStatistics {
     private int agility;
     private int determination;
     private int strength;
+    private int perception;
     private boolean sleep;
     private int boredom;
     private int level;
@@ -46,6 +44,7 @@ public class StudentStatistics implements PStatistics {
         this.charisma = 0;
         this.agility = 0;
         this.determination = 0;
+        this.perception = 0;
         this.strength = 0;
         this.sleep = false;
         this.boredom = 0;
@@ -64,10 +63,6 @@ public class StudentStatistics implements PStatistics {
         this.curiosity = 0;
         this.responsibility = 0;
         this.openmindedness = 0;
-    }
-
-    private static Integer setRandom(int min, int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     @Override
@@ -216,7 +211,6 @@ public class StudentStatistics implements PStatistics {
         return this.gradeLevel;
     }
 
-    // TODO: set buckets for grade levels, maybe make into enum
     public void setGradeLevel(int level) {
         switch (level) {
             case 0:
@@ -339,29 +333,36 @@ public class StudentStatistics implements PStatistics {
         if (gender.equals("Male")) {
             switch (gradeLevel) {
                 case "Freshman":
-                    mean = 59; stdDev = 5;
+                    mean = 59;
+                    stdDev = 5;
                     break;
                 case "Sophomore":
-                    mean = 64.5; stdDev = 5.5;
+                    mean = 64.5;
+                    stdDev = 5.5;
                     break;
                 case "Junior":
-                    mean = 68; stdDev = 4.5;
+                    mean = 68;
+                    stdDev = 4.5;
                     break;
                 case "Senior":
-                    mean = 69.5; stdDev = 3.3;
+                    mean = 69.5;
+                    stdDev = 3.3;
                     break;
             }
         } else {
             switch (gradeLevel) {
                 case "Freshman":
-                    mean = 59.5; stdDev = 4.5;
+                    mean = 59.5;
+                    stdDev = 4.5;
                     break;
                 case "Sophomore":
-                    mean = 63.5; stdDev = 4.5;
+                    mean = 63.5;
+                    stdDev = 4.5;
                     break;
                 case "Junior":
                 case "Senior":
-                    mean = 64; stdDev = 3;
+                    mean = 64;
+                    stdDev = 3;
                     break;
             }
         }
@@ -371,6 +372,16 @@ public class StudentStatistics implements PStatistics {
         this.height = Math.max(this.height, mean - 3 * stdDev);
         this.height = Math.min(this.height, mean + 3 * stdDev);
 
+    }
+
+    @Override
+    public int getPerception(){
+        return this.perception;
+    }
+
+    @Override
+    public void setPerception(int perception) {
+        this.perception = perception;
     }
 
     public void setInitStrength() {
@@ -398,5 +409,43 @@ public class StudentStatistics implements PStatistics {
         } else {
             return 10 - (age - 40) * 0.5;
         }
+    }
+
+    //TODO: basic calculations for now
+    public void setInitCreativity() {
+        // Primarily driven by intelligence and secondary by perception
+        this.creativity = (int) ((this.intelligence * 1.5) + this.perception) / 2;
+    }
+
+    public void setInitEmpathy() {
+        // Primarily driven by charisma and secondary by perception
+        this.empathy = (int) ((this.charisma * 1.5) + this.perception) / 2;
+    }
+
+    public void setInitAdaptability() {
+        // Physical and mental adaptability and tertiary determination
+        this.adaptability = (this.agility + this.intelligence + (this.determination/4)) / 2;
+    }
+
+    public void setInitInitiative() {
+        // Primarily driven by determination
+        this.initiative = (int) ((this.determination * 1.5) + this.perception) / 2;
+    }
+
+    public void setInitResilience() {
+        // Primary strength and secondary determination
+        this.resilience = (int) ((this.strength * 1.5) + this.determination) / 2;
+    }
+
+    public void setInitCuriosity() {
+        this.curiosity = (int) ((this.perception * 1.5) + this.intelligence) / 2;
+    }
+
+    public void setInitResponsibility() {
+        this.responsibility = (int) ((this.charisma * 1.25) + (this.determination * 1.25)) / 2;
+    }
+
+    public void setInitOpenMind() {
+        this.openmindedness = (int) ((this.intelligence * 1.25) + (this.charisma * 1.25)) / 2;
     }
 }
