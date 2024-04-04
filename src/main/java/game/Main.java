@@ -106,6 +106,10 @@ public class Main {
         System.out.println(lastStudent.studentName.getFirstName() + "'s average was " + lastStudent.studentStatistics.getGradeAverage());
         System.out.println("Let's check on an entire year of students...");
         Inspector.gradeClassInspection(standardSchool.getStudentGradeClass("Freshman"));
+        System.out.println("Find the top student by primary stats...");
+        Inspector.findHighestStudent(studentHashMap);
+        System.out.println("Find the lowest student by primary stats...");
+        Inspector.findLowestStudent(studentHashMap);
     }
 
     //Not ideal design but need to add a few helpers here for simulation

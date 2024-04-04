@@ -141,4 +141,44 @@ public class Inspector {
             System.out.println(entry.getValue().studentName.getFirstName() + " " + entry.getValue().studentName.getLastName());
         }
     }
+
+    public static void findHighestStudent(HashMap<Integer, Student> studentHashMap) {
+        Student temp;
+        Student high = null;
+        int total;
+        int top = 0;
+
+        for (Map.Entry<Integer, Student> entry : studentHashMap.entrySet()) {
+            temp = entry.getValue();
+            total = temp.studentStatistics.getIntelligence() + temp.studentStatistics.getCharisma()
+                    + temp.studentStatistics.getAgility() + temp.studentStatistics.getDetermination()
+                    + temp.studentStatistics.getPerception() + temp.studentStatistics.getStrength();
+            if(total > top) {
+                top = total;
+                high = temp;
+            }
+        }
+
+        studentInspection(high);
+    }
+
+    public static void findLowestStudent(HashMap<Integer, Student> studentHashMap) {
+        Student temp;
+        Student low = null;
+        int total;
+        int bottom = 1000;
+
+        for (Map.Entry<Integer, Student> entry : studentHashMap.entrySet()) {
+            temp = entry.getValue();
+            total = temp.studentStatistics.getIntelligence() + temp.studentStatistics.getCharisma()
+                    + temp.studentStatistics.getAgility() + temp.studentStatistics.getDetermination()
+                    + temp.studentStatistics.getPerception() + temp.studentStatistics.getStrength();
+            if(total < bottom) {
+                bottom = total;
+                low = temp;
+            }
+        }
+
+        studentInspection(low);
+    }
 }
