@@ -24,12 +24,6 @@ public class StudentPopGenerator {
             Student student = studentHashMap.get(k);
             student.studentStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102)));
             student.studentStatistics.setEyeColor(TraitSelection.eyeSelection(setRandom(0, 109)));
-            student.studentStatistics.setHeight(setRandom(48, 78));
-            student.studentStatistics.setIntelligence(setRandom(0, 15));
-            student.studentStatistics.setCharisma(setRandom(0, 15));
-            student.studentStatistics.setAgility(setRandom(0, 15));
-            student.studentStatistics.setDetermination(setRandom(0, 15));
-            student.studentStatistics.setStrength(setRandom(0, 15));
             student.studentStatistics.setLevel(1);
             student.studentStatistics.setExperience(0);
             student.studentStatistics.setGradeLevel(setRandom(0, 3));
@@ -39,6 +33,12 @@ public class StudentPopGenerator {
             l_name = lNameReference.get(setRandom(0, lNameReference.size()));
             student.studentName.setFirstName(f_name);
             student.studentName.setLastName(l_name);
+            student.studentStatistics.setHeight(student.studentStatistics.getGender(), student.studentStatistics.getGradeLevel());
+            student.studentStatistics.setIntelligence(setRandom(0, 15));
+            student.studentStatistics.setCharisma(setRandom(0, 15));
+            student.studentStatistics.setAgility(setRandom(0, 15));
+            student.studentStatistics.setDetermination(setRandom(0, 15));
+            student.studentStatistics.setStrength(setRandom(0, 15));
             System.out.println("   Generated student " + f_name + " " + l_name);
         }
         //Clear map for new values

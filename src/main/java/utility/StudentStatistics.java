@@ -3,6 +3,7 @@ package utility;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class StudentStatistics implements PStatistics {
 
@@ -32,6 +33,7 @@ public class StudentStatistics implements PStatistics {
     private int curiosity;
     private int responsibility;
     private int openmindedness;
+
     public StudentStatistics() {
         this.height = 0;
         this.eyeColor = null;
@@ -59,6 +61,10 @@ public class StudentStatistics implements PStatistics {
         this.curiosity = 0;
         this.responsibility = 0;
         this.openmindedness = 0;
+    }
+
+    private static Integer setRandom(int min, int max) {
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     @Override
@@ -206,6 +212,7 @@ public class StudentStatistics implements PStatistics {
     public String getGradeLevel() {
         return this.gradeLevel;
     }
+
     // TODO: set buckets for grade levels, maybe make into enum
     public void setGradeLevel(int level) {
         switch (level) {
@@ -224,26 +231,20 @@ public class StudentStatistics implements PStatistics {
         }
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public String getGender() {
         return this.gender;
     }
 
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public LocalDate getBirthday() {
         return birthday;
     }
 
-
-    @Override
-    public void setCreativity(int creativity) {
-        this.creativity = creativity;
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 
     @Override
@@ -252,8 +253,8 @@ public class StudentStatistics implements PStatistics {
     }
 
     @Override
-    public void setEmpathy(int empathy) {
-        this.empathy = empathy;
+    public void setCreativity(int creativity) {
+        this.creativity = creativity;
     }
 
     @Override
@@ -262,8 +263,8 @@ public class StudentStatistics implements PStatistics {
     }
 
     @Override
-    public void setAdaptability(int adaptability) {
-        this.adaptability = adaptability;
+    public void setEmpathy(int empathy) {
+        this.empathy = empathy;
     }
 
     @Override
@@ -272,8 +273,8 @@ public class StudentStatistics implements PStatistics {
     }
 
     @Override
-    public void setInitiative(int initiative) {
-        this.initiative = initiative;
+    public void setAdaptability(int adaptability) {
+        this.adaptability = adaptability;
     }
 
     @Override
@@ -282,8 +283,8 @@ public class StudentStatistics implements PStatistics {
     }
 
     @Override
-    public void setResilience(int resilience) {
-        this.resilience = resilience;
+    public void setInitiative(int initiative) {
+        this.initiative = initiative;
     }
 
     @Override
@@ -292,8 +293,8 @@ public class StudentStatistics implements PStatistics {
     }
 
     @Override
-    public void setCuriosity(int curiosity) {
-        this.curiosity = curiosity;
+    public void setResilience(int resilience) {
+        this.resilience = resilience;
     }
 
     @Override
@@ -302,8 +303,8 @@ public class StudentStatistics implements PStatistics {
     }
 
     @Override
-    public void setResponsibility(int responsibility) {
-        this.responsibility = responsibility;
+    public void setCuriosity(int curiosity) {
+        this.curiosity = curiosity;
     }
 
     @Override
@@ -312,12 +313,50 @@ public class StudentStatistics implements PStatistics {
     }
 
     @Override
-    public void setOpenMindedness(int openMindedness) {
-        this.openmindedness = openMindedness;
+    public void setResponsibility(int responsibility) {
+        this.responsibility = responsibility;
     }
 
     @Override
     public int getOpenMindedness() {
         return this.openmindedness;
+    }
+
+    @Override
+    public void setOpenMindedness(int openMindedness) {
+        this.openmindedness = openMindedness;
+    }
+
+    // TODO: values should really be a distribution across range, not random within
+    public void setHeight(String gender, String gradeLevel) {
+        if (gender.equals("Male")) {
+            switch (gradeLevel) {
+                case "Freshman":
+                    this.height = setRandom(54, 64);
+                    break;
+                case "Sophomore":
+                    this.height = setRandom(59, 70);
+                    break;
+                case "Junior":
+                    this.height = setRandom(63, 73);
+                    break;
+                case "Senior":
+                    this.height = setRandom(65, 74);
+                    break;
+            }
+        } else {
+            switch (gradeLevel) {
+                case "Freshman":
+                    this.height = setRandom(55, 64);
+                    break;
+                case "Sophomore":
+                    this.height = setRandom(59, 68);
+                    break;
+                case "Junior":
+                case "Senior":
+                    this.height = setRandom(60, 68);
+                    break;
+            }
+        }
     }
 }
