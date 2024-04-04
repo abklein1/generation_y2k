@@ -4,7 +4,6 @@ import entity.Student;
 
 import java.util.HashMap;
 import java.util.Random;
-import java.util.Random.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 // TODO: improve performance. It is horrible
@@ -17,9 +16,9 @@ public class StudentPopGenerator {
         Random distribution = new Random();
         int int_stdDev = 15;
         int int_mean = 100;
-        int chr_stdDev = 5;
+        int chr_stdDev = 10;
         int chr_mean = 50;
-        int agl_stdDev = 5;
+        int agl_stdDev = 10;
         int agl_mean = 50;
         int det_stdDev = 10;
         int det_mean = 50;
@@ -44,12 +43,12 @@ public class StudentPopGenerator {
             l_name = lNameReference.get(setRandom(0, lNameReference.size()));
             student.studentName.setFirstName(f_name);
             student.studentName.setLastName(l_name);
-            student.studentStatistics.setHeight(student.studentStatistics.getGender(), student.studentStatistics.getGradeLevel());
+            student.studentStatistics.setInitHeight();
             student.studentStatistics.setIntelligence((int) (distribution.nextGaussian()*int_stdDev+int_mean));
             student.studentStatistics.setCharisma((int) (distribution.nextGaussian()*chr_stdDev+chr_mean));
             student.studentStatistics.setAgility((int) (distribution.nextGaussian()*agl_stdDev+agl_mean));
             student.studentStatistics.setDetermination((int) (distribution.nextGaussian()*det_stdDev+det_mean));
-            student.studentStatistics.setStrength(setRandom(0, 15));
+            student.studentStatistics.setInitStrength();
             System.out.println("   Generated student " + f_name + " " + l_name);
         }
         //Clear map for new values

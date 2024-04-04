@@ -3,6 +3,7 @@ package utility;
 import entity.Staff;
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 // TODO: improve performance. It is horrible
@@ -12,6 +13,15 @@ public class TeacherPopGenerator {
         HashMap<Integer, String> lNameReference = new HashMap<>();
         String f_name;
         String l_name;
+        Random distribution = new Random();
+        int int_stdDev = 15;
+        int int_mean = 100;
+        int chr_stdDev = 10;
+        int chr_mean = 50;
+        int agl_stdDev = 10;
+        int agl_mean = 50;
+        int det_stdDev = 10;
+        int det_mean = 50;
 
         //Store staff objects in another hashmap
         for (int j = 0; j < staffCap; j++) {
@@ -26,16 +36,16 @@ public class TeacherPopGenerator {
 
             staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102)));
             staff.teacherStatistics.setEyeColor(TraitSelection.eyeSelection(setRandom(0, 109)));
-            staff.teacherStatistics.setHeight(setRandom(50, 84));
-            staff.teacherStatistics.setIntelligence(setRandom(2, 22));
-            staff.teacherStatistics.setCharisma(setRandom(1, 22));
-            staff.teacherStatistics.setAgility(setRandom(1, 19));
-            staff.teacherStatistics.setDetermination(setRandom(1, 20));
-            staff.teacherStatistics.setStrength(setRandom(1, 20));
             staff.teacherStatistics.setBirthday(BirthdayGenerator.generateRandomBirthdayStaff());
             staff.teacherStatistics.setGender(GenderLoader.genderSelection());
             f_name = NameLoader.nameGenerator(String.valueOf(staff.teacherStatistics.getBirthday().getYear()), staff.teacherStatistics.getGender());
             l_name = lNameReference.get(setRandom(0, lNameReference.size()));
+            staff.teacherStatistics.setInitHeight();
+            staff.teacherStatistics.setIntelligence((int) (distribution.nextGaussian()*int_stdDev+int_mean));
+            staff.teacherStatistics.setCharisma((int) (distribution.nextGaussian()*chr_stdDev+chr_mean));
+            staff.teacherStatistics.setAgility((int) (distribution.nextGaussian()*agl_stdDev+agl_mean));
+            staff.teacherStatistics.setDetermination((int) (distribution.nextGaussian()*det_stdDev+det_mean));
+            staff.teacherStatistics.setInitStrength();
             staff.teacherName.setFirstName(f_name);
             staff.teacherName.setLastName(l_name);
             System.out.println("   Generated staff " + f_name + " " + l_name);

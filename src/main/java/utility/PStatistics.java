@@ -43,7 +43,7 @@ public interface PStatistics {
 
     String getEyeColor();
 
-    int getHeight();
+    double getHeight();
 
     void setCreativity(int creativity);
 

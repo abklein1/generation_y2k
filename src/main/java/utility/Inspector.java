@@ -3,17 +3,21 @@ package utility;
 import entity.Student;
 import entity.Staff;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Inspector {
     public static void studentInspection(Student student) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
         String fir = student.studentName.getFirstName();
         String las = student.studentName.getLastName();
         String h = student.studentStatistics.getHairColor();
         String e = student.studentStatistics.getEyeColor();
-        int hei = student.studentStatistics.getHeight();
+        double hei = student.studentStatistics.getHeight();
         int in = student.studentStatistics.getIntelligence();
         int chr = student.studentStatistics.getCharisma();
         int agl = student.studentStatistics.getAgility();
@@ -28,7 +32,7 @@ public class Inspector {
 
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
-        System.out.println(fir + " is a " + gen + " and has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
+        System.out.println(fir + " is a " + gen + " and has " + h + " hair and " + e + " eyes. They are " + df.format(hei) + " inches tall.");
         System.out.println(fir + " is a " + grade + ".");
         System.out.println(fir + " was born on " + birth);
         System.out.println("They have the following stats: ");
@@ -53,11 +57,13 @@ public class Inspector {
     }
 
     public static void staffInspection(Staff staff) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
         String fir = staff.teacherName.getFirstName();
         String las = staff.teacherName.getLastName();
         String h = staff.teacherStatistics.getHairColor();
         String e = staff.teacherStatistics.getEyeColor();
-        int hei = staff.teacherStatistics.getHeight();
+        double hei = staff.teacherStatistics.getHeight();
         int in = staff.teacherStatistics.getIntelligence();
         int chr = staff.teacherStatistics.getCharisma();
         int agl = staff.teacherStatistics.getAgility();
@@ -70,7 +76,7 @@ public class Inspector {
 
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
-        System.out.println(fir + " is a " + gen + " and has " + h + " hair and " + e + " eyes. They are " + hei + " inches tall.");
+        System.out.println(fir + " is a " + gen + " and has " + h + " hair and " + e + " eyes. They are " + df.format(hei) + " inches tall.");
         System.out.println(fir + " was born on " + birth);
         System.out.println("They have the following stats: ");
         System.out.println("   INT: " + in);

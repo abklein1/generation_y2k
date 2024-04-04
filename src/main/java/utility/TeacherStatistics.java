@@ -1,9 +1,10 @@
 package utility;
 
 import java.time.LocalDate;
+import java.util.Random;
 
 public class TeacherStatistics implements PStatistics {
-    private int height;
+    private double height;
     private String eyeColor;
     private String hairColor;
     private String build;
@@ -149,7 +150,7 @@ public class TeacherStatistics implements PStatistics {
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         return this.height;
     }
 
@@ -252,5 +253,46 @@ public class TeacherStatistics implements PStatistics {
 
     public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
+    }
+
+    public void setInitHeight() {
+        Random distribution = new Random();
+        double mean = 0;
+        double stdDev = 0;
+
+        if(gender.equals("Male")) {
+            mean = 69.2; stdDev = 2.66;
+        } else {
+            mean = 64.3; stdDev = 2.58;
+        }
+
+        this.height = mean + stdDev * distribution.nextGaussian();
+    }
+
+    public void setInitStrength() {
+        Random random = new Random();
+        double meanBaseStr = 50;
+        double stdDevStr = 10;
+        int baseStr = (int) (meanBaseStr + stdDevStr * random.nextGaussian());
+
+        double heightMod = (this.height - 60) * 0.5;
+        int genderMod = this.gender.equals("Male") ? 10 : 5;
+        int currentYear = 2004;
+        int birthYear = this.birthday.getYear();
+        int age = currentYear - birthYear;
+        double ageMod = calculateAgeModifier(age);
+
+        this.strength = (int) (baseStr + heightMod + genderMod + ageMod);
+
+    }
+
+    private double calculateAgeModifier(int age) {
+        if (age < 30) {
+            return age - 20;
+        } else if (age <= 40) {
+            return 10;
+        } else {
+            return 10 - (age - 40) * 0.5;
+        }
     }
 }
