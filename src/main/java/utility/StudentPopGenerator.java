@@ -3,6 +3,8 @@ package utility;
 import entity.Student;
 
 import java.util.HashMap;
+import java.util.Random;
+import java.util.Random.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 // TODO: improve performance. It is horrible
@@ -12,6 +14,15 @@ public class StudentPopGenerator {
         HashMap<Integer, String> lNameReference = new HashMap<>();
         String f_name;
         String l_name;
+        Random distribution = new Random();
+        int int_stdDev = 15;
+        int int_mean = 100;
+        int chr_stdDev = 5;
+        int chr_mean = 50;
+        int agl_stdDev = 5;
+        int agl_mean = 50;
+        int det_stdDev = 10;
+        int det_mean = 50;
 
         for (int i = 0; i < studentCap; i++) {
             studentHashMap.put(i, new Student());
@@ -34,10 +45,10 @@ public class StudentPopGenerator {
             student.studentName.setFirstName(f_name);
             student.studentName.setLastName(l_name);
             student.studentStatistics.setHeight(student.studentStatistics.getGender(), student.studentStatistics.getGradeLevel());
-            student.studentStatistics.setIntelligence(setRandom(0, 15));
-            student.studentStatistics.setCharisma(setRandom(0, 15));
-            student.studentStatistics.setAgility(setRandom(0, 15));
-            student.studentStatistics.setDetermination(setRandom(0, 15));
+            student.studentStatistics.setIntelligence((int) (distribution.nextGaussian()*int_stdDev+int_mean));
+            student.studentStatistics.setCharisma((int) (distribution.nextGaussian()*chr_stdDev+chr_mean));
+            student.studentStatistics.setAgility((int) (distribution.nextGaussian()*agl_stdDev+agl_mean));
+            student.studentStatistics.setDetermination((int) (distribution.nextGaussian()*det_stdDev+det_mean));
             student.studentStatistics.setStrength(setRandom(0, 15));
             System.out.println("   Generated student " + f_name + " " + l_name);
         }
