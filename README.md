@@ -2,6 +2,8 @@
 
 ***Originally a school project that has been modified***
 
+## Intro
+
 For this project I made a detailed RPG simulator of a high school using Design Patterns from GoF.
 
 I used a Builder design pattern to proceedurally generate a high school and all specific rooms/ classrooms.
@@ -23,3 +25,30 @@ the school and the people that attend/work at the school. Each time of the week 
 an Exam, Quiz, or homework, which each student in the school must face. The student has stats that are calculated against
 the stats of the Boss. The student may walk away with a grade and some experience or a bad status effect. Grades can be
 calculated to receive an average. The days work in the way that "floors" should function.
+
+## School Generation 
+
+The layout of the high school is procedurally generated. First, individual rooms are created. Then the "backbone" of the school is constructed using hallways and courtyards. Hallways and courtyards are randomly connected using an undirected graph. A connectivity inspector ensures that all backbone rooms are traversable from any other room. After the backbone is constructed rooms are procedurally added to the backbone or other rooms in the following order:
+- Athletic Fields
+- Auditoriums
+- Gyms
+- Lunchrooms
+- Libraries
+- Music Rooms
+- Art Rooms
+- Drama Rooms
+- Offices
+- Student Bathrooms
+- Classrooms
+- Science Labs
+- Computer Labs
+- Utility Rooms
+- Breakrooms
+* Coming soon *
+- Conference Rooms
+- Parking Lots
+
+The front office will always contain a connection to the principal and vice principal's office.
+
+## Student and Staff Stat Generation
+* TODO *
