@@ -3,7 +3,7 @@ package entity.Rooms;
 public class ConferenceRoom implements Room {
     @Override
     public void reset() {
-        
+
     }
 
     @Override
