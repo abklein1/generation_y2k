@@ -317,7 +317,7 @@ public class StandardSchool implements SchoolPlan {
             classrooms[i].setDoors(connectN);
             classrooms[i].setClassroomType(decision);
             classrooms[i].setInitialStaff(1);
-            classrooms[i].setRoomCapacity(setRandom(15, 40));
+            classrooms[i].setRoomCapacity(setRandom(20, 45));
             classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(0, 99));
         }
     }

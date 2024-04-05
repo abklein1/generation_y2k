@@ -153,7 +153,7 @@ public class Inspector {
             total = temp.studentStatistics.getIntelligence() + temp.studentStatistics.getCharisma()
                     + temp.studentStatistics.getAgility() + temp.studentStatistics.getDetermination()
                     + temp.studentStatistics.getPerception() + temp.studentStatistics.getStrength();
-            if(total > top) {
+            if (total > top) {
                 top = total;
                 high = temp;
             }
@@ -173,12 +173,13 @@ public class Inspector {
             total = temp.studentStatistics.getIntelligence() + temp.studentStatistics.getCharisma()
                     + temp.studentStatistics.getAgility() + temp.studentStatistics.getDetermination()
                     + temp.studentStatistics.getPerception() + temp.studentStatistics.getStrength();
-            if(total < bottom) {
+            if (total < bottom) {
                 bottom = total;
                 low = temp;
             }
         }
 
+        assert low != null;
         studentInspection(low);
     }
 }
