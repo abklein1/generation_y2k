@@ -42,6 +42,8 @@ public class StandardSchool implements SchoolPlan {
     Office[] offices;
     ScienceLab[] scienceLabs;
     UtilityRoom[] utilityrooms;
+    ConferenceRoom[] conferenceRooms;
+    ParkingLot[] parkingLots;
 
     HashMap<Integer, Student> freshmanClass = new HashMap<>();
     HashMap<Integer, Student> sophomoreClass = new HashMap<>();
@@ -736,6 +738,48 @@ public class StandardSchool implements SchoolPlan {
                 break;
         }
         return null;
+    }
+
+    public ConferenceRoom[] getConferenceRooms() {
+        return conferenceRooms;
+    }
+
+    public void setConferenceRooms(int number) {
+        conferenceRooms = new ConferenceRoom[number];
+        System.out.println("   Generating " + number + " Conference Room(s)...");
+        for (int i = 0; i < number; i++) {
+            int connectN = setRandom(3, 4);
+            conferenceRooms[i] = new ConferenceRoom();
+            conferenceRooms[i].setRoomName("Conference Room" + i);
+            System.out.println("      Generating " + conferenceRooms[i].getRoomName());
+            conferenceRooms[i].setWindowCount(setRandom(1, 5));
+            conferenceRooms[i].setConnections(connectN);
+            conferenceRooms[i].setDoors(connectN);
+            conferenceRooms[i].setInitialStaff(0);
+            conferenceRooms[i].setRoomCapacity(setRandom(15, 30));
+            conferenceRooms[i].setRoomNumber("Conference" + i + setRandom(100, 999));
+        }
+    }
+
+    public ParkingLot[] getParkingLots() {
+        return parkingLots;
+    }
+
+    public void setParkingLots(int number) {
+        parkingLots = new ParkingLot[number];
+        System.out.println("   Generating " + number + " Parking Lot(s)...");
+        for (int i = 0; i < number; i++) {
+            int connectN = 16;
+            parkingLots[i] = new ParkingLot();
+            parkingLots[i].setRoomName("Parking Lot" + i);
+            System.out.println("      Generating " + parkingLots[i].getRoomName());
+            parkingLots[i].setWindowCount(0);
+            parkingLots[i].setConnections(connectN);
+            parkingLots[i].setDoors(0);
+            parkingLots[i].setInitialStaff(0);
+            parkingLots[i].setRoomCapacity(setRandom(100, 300));
+            parkingLots[i].setRoomNumber("ParkingLot" + i + setRandom(100, 999));
+        }
     }
 }
 

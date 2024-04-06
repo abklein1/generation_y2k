@@ -58,6 +58,10 @@ public class Director {
         standardSchool.setScienceLabs(setRandom(2, 6));
         System.out.println("Building utility rooms...");
         standardSchool.setUtilityRooms(setRandom(5, 10));
+        System.out.println("Building conference rooms...");
+        standardSchool.setConferenceRooms(setRandom(1,4));
+        System.out.println("Building parking lots...");
+        standardSchool.setParkingLots(setRandom(2,6));
         System.out.println("Setting school name...");
         standardSchool.setSchoolName();
         System.out.println("Setting school mascot...");

@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 // vertex is door
 // edge is room
 public class RoomConnector {
-    private final Room[][] roomPool = new Room[18][];
+    private final Room[][] roomPool = new Room[20][];
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
     private int locker_count = 0;
     private int labs_count = 0;
@@ -53,6 +53,8 @@ public class RoomConnector {
         roomPool[15] = standardSchool.getOffices();
         roomPool[16] = standardSchool.getScienceLabs();
         roomPool[17] = standardSchool.getUtilityrooms();
+        roomPool[18] = standardSchool.getConferenceRooms();
+        roomPool[19] = standardSchool.getParkingLots();
 
         connectRooms();
     }
@@ -62,6 +64,7 @@ public class RoomConnector {
         constructBackbone();
         connectivityInspectionBackbone();
         populateAthleticFields();
+        populateParkingLots();
         populateAuditoriums();
         populateGyms();
         populateLunchrooms();
@@ -70,6 +73,7 @@ public class RoomConnector {
         populateArtRooms();
         populateDramaRooms();
         populateOffices();
+        populateConferenceRooms();
         populateStudentBathrooms();
         populateClassrooms();
         populateRemainingLabs();
@@ -195,6 +199,63 @@ public class RoomConnector {
         }
     }
 
+    private void populateParkingLots() {
+        Room[] parkingLots = roomPool[19];
+        Room[] fields = roomPool[1];
+        int choice = 0;
+
+        for (Room parkingLot : parkingLots) {
+            choice = setRandom(0, 10);
+            if (choice < 5) {
+                choice = setRandom(0, fields.length - 1);
+                schoolConnect.addEdge(fields[choice], parkingLot);
+                fields[choice].setConnections(fields[choice].getConnections() - 1);
+                parkingLot.setConnections(parkingLot.getConnections() - 1);
+            } else {
+                Room connectRoom = findCentralRoom();
+                schoolConnect.addEdge(parkingLot, connectRoom);
+                connectRoom.setConnections(connectRoom.getConnections() - 1);
+                parkingLot.setConnections(parkingLot.getConnections() - 1);
+            }
+        }
+    }
+
+    private void populateConferenceRooms() {
+        Room[] conferenceRooms = roomPool[18];
+        Room[] offices = roomPool[15];
+
+        Room frontOffice = frontOfficeLocator(offices);
+        int choice;
+
+        for (Room conferenceRoom : conferenceRooms) {
+            choice = setRandom(0, 5);
+            if (choice >= 3 && frontOffice != null) {
+                schoolConnect.addEdge(conferenceRoom, frontOffice);
+                conferenceRoom.setConnections(conferenceRoom.getConnections() - 1);
+                frontOffice.setConnections(frontOffice.getConnections() - 1);
+            } else {
+                Room connectRoom = findCentralRoom();
+                schoolConnect.addEdge(connectRoom, conferenceRoom);
+                connectRoom.setConnections(connectRoom.getConnections() - 1);
+                conferenceRoom.setConnections(conferenceRoom.getConnections() - 1);
+            }
+        }
+    }
+
+    private Room frontOfficeLocator(Room[] offices) {
+
+        Room front = null;
+
+        for (Room office : offices) {
+            if (office.getRoomName().equals("Front Office") && office.getConnections() != 0) {
+                front = office;
+                break;
+            }
+        }
+
+        return front;
+    }
+
     private void populateAuditoriums() {
         Room[] auditoriums = roomPool[2];
 
@@ -295,6 +356,7 @@ public class RoomConnector {
 
     //TODO: Tweak office gen so that multiple don't end up on classrooms. Possibly add more offices to front office
     //TODO: Add meeting room to front office
+    //TODO: Change to improved switch statement for performance
     private void populateOffices() {
         Room[] offices = roomPool[15];
         Room[] coreOffices = new Room[4];
@@ -354,6 +416,7 @@ public class RoomConnector {
         }
     }
 
+    // TODO: switch statement here too
     private void officeHelper(Room office) {
         Room[] classrooms = roomPool[5];
         Room[] gyms = roomPool[9];
