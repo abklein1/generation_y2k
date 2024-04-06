@@ -33,9 +33,6 @@ The layout of the high school is semi-procedurally generated. First, individual 
 - Computer Labs
 - Utility Rooms
 - Breakrooms
-
-*Coming soon*
-
 - Conference Rooms
 - Parking Lots
 
