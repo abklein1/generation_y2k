@@ -65,22 +65,22 @@ Students and staff are comprised of individual body parts as described above. On
 
 ## Gameplay Mechanics
 Student and teacher stats are comprised of the following primary traits. Primary traits are inherent to the characters and do not change:
-- INT / Intelligence: 
+- INT / Intelligence:
 - CHR / Charisma: 
 - AGL / Agility:
 - DET / Determination:
 - PER / Perception: 
 - STR / Strength:
 
-Secondary stats are derived from a combination of primary stats and are capable of being drained through activities or events. Initial values for the secondary stats represent a maximum.
-- CRE / Creativity:
-- EMP / Empathy:
-- ADP / Adaptability:
-- INT / Initiative:
-- RES / Resilience:
-- CUR / Curiosity:
-- RSP / Responsibility:
-- OPN / Open-Mindedness:
+Secondary stats are derived from a combination of primary stats and are capable of being drained through activities or events. Initial values for the secondary stats represent a maximum. Secondary stats can be recharged with rest or other activities but they cannot be pushed beyond their initial cap.
+- CRE / Creativity: This represents a combination primarily of intelligence and perception. This is the max ability of a person to create solutions, projects, ideas etc. that are unique.
+- EMP / Empathy: This is driven primarily by charisma and intelligence. This is the max ability of a person to understand the complex emotional states and situations of others.
+- ADP / Adaptability: This is a combination of agility and intelligence, each which represent the physical and mental ability to adapt to new situations. Determination also plays a factor in this cap.
+- INT / Initiative: This stat is a combination of the determination to take action and the perception to see that an action needs to be taken. This is the max ability of someone to take action without the external influence of others.
+- RES / Resilience: This stat is a combination of strength and determination. This is the max ability of someone to withstand the pressure or adversity of various events or peers
+- CUR / Curiosity: This is a combination of primarily perception and intelligence. This represents a person's desire to not only understand the ideas and people around them, but also make useful connections between concepts
+- RSP / Responsibility: This is a combination of charisma and determination. This not only represents a personal responsibilty (to carry out daily tasks/ do socially responsible things) but also the ability to instill or influence responsible behavior in others.
+- OPN / Open-Mindedness: This is a combination of intelligence and charisma. This represents the ability for the inidividual receive new ideas and accept situations and others that might exist outside their comfort-zone. 
 
 ### Known Bugs
 - Minor: Rarely some student surnames appear as 'null'
