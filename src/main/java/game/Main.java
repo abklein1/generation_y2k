@@ -11,6 +11,7 @@ package game;/*
 import entity.*;
 import utility.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -24,6 +25,8 @@ public class Main {
         int student_cap;
         int staff_cap;
         int dungeon;
+        String[] colors;
+
         //Generate a new standard school with rooms
         System.out.println("Starting by generating the school");
         StandardSchool standardSchool = new StandardSchool();
@@ -31,7 +34,7 @@ public class Main {
         //Pull capacities
         student_cap = standardSchool.getTotalStudentCapacity();
         staff_cap = standardSchool.getMinimumStaffRequirements();
-
+        // TODO: move this all into an inspector
         System.out.println("Student capacity is " + student_cap);
         System.out.println("Staff capacity is " + staff_cap);
 
@@ -50,6 +53,8 @@ public class Main {
         //Welcome
         System.out.println("Welcome to " + standardSchool.getSchoolName());
         System.out.println("Home of the " + standardSchool.getSchoolMascot() + "!");
+        colors = standardSchool.getSchoolColors();
+        System.out.println("The school colors are " + colors[0] + " and " + colors[1]);
         //Introduce me to random student
         System.out.println("Introduce me to a random student, please.");
         Inspector.studentInspection(studentHashMap.get(setRandom(0, studentHashMap.size() - 1)));

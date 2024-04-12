@@ -66,6 +66,8 @@ public class Director {
         standardSchool.setSchoolName();
         System.out.println("Setting school mascot...");
         standardSchool.setSchoolMascot();
+        System.out.println("Setting school colors...");
+        standardSchool.schoolColorsLoader();
     }
 
     //TODO: move this to central utility for use among multiple classes

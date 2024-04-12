@@ -24,6 +24,7 @@ public class StandardSchool implements SchoolPlan {
 
     String schoolName;
     String schoolMascot;
+    String [] schoolColors;
     ArtStudio[] artStudios;
     AthleticField[] athleticFields;
     Auditorium[] auditoriums;
@@ -82,8 +83,7 @@ public class StandardSchool implements SchoolPlan {
 
     //TODO: Centralize this
     private int setRandom(int min, int max) {
-        int random = ThreadLocalRandom.current().nextInt(min, max + 1);
-        return random;
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     public int getTotalStudentCapacity() {
@@ -780,6 +780,40 @@ public class StandardSchool implements SchoolPlan {
             parkingLots[i].setRoomCapacity(setRandom(100, 300));
             parkingLots[i].setRoomNumber("ParkingLot" + i + setRandom(100, 999));
         }
+    }
+
+    public void setSchoolColors(String [] colors) {
+        this.schoolColors = colors;
+    }
+
+    public void schoolColorsLoader() {
+        String pathColors = "src/main/java/Resources/colors.txt";
+        List<String> colors = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(pathColors))) {
+            String line;
+            br.readLine();
+
+            while ((line = br.readLine()) != null) {
+                colors.add(line.trim());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+
+        int firstColor = setRandom(0, colors.size());
+        int secondColor;
+
+        do {
+            secondColor = setRandom(0, colors.size());
+        } while (firstColor == secondColor);
+
+        this.schoolColors = new String[] {colors.get(firstColor), colors.get(secondColor)};
+    }
+
+    public String[] getSchoolColors() {
+        return Arrays.copyOf(schoolColors, schoolColors.length);
     }
 }
 

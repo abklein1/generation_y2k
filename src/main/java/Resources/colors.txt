@@ -1,0 +1,42 @@
+Red
+Green
+Blue
+Black
+Grey
+Yellow
+Gold
+Bronze
+Silver
+Orange
+White
+Purple
+Mauve
+Navy Blue
+Dark Blue
+Light Blue
+Maroon
+Dark Green
+Light Green
+Forest Green
+Burgundy
+Royal Blue
+Crimson
+Columbia Blue
+Vegas Gold
+Carolina Blue
+Cardinal
+Scarlet
+Kelly Green
+Brown
+Dark Red
+Violet
+Indigo
+Steel Blue
+Midnight Blue
+Cadet Blue
+Slate
+Steel
+Azure
+Teal
+Sea Green
+Ivory
