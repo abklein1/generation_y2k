@@ -47,6 +47,7 @@ The school mascot is generated from a weighted list based on the most frequently
 *Coming soon*
 
 School colors generation
+Hair Types
 
 ## Student and Staff Stat Generation
 
@@ -62,6 +63,7 @@ Students and staff are comprised of individual body parts as described above. On
 - US Height Data Per Age Range : https://www.cincinnatichildrens.org/health/g/normal-growth
 - Hair Color Distribution : https://beautytmr.medium.com/diversity-of-hair-types-b3615cec8ed8
 - Eye Color Distribution : https://www.verywellhealth.com/what-is-the-rarest-eye-color-5087302
+- US High School Colors Reference : https://www.quora.com/What-are-the-most-popular-high-school-color-combinations-in-the-US
 
 ## Gameplay Mechanics
 Student and teacher stats are comprised of the following primary traits. Primary traits are inherent to the characters and do not change:
@@ -84,3 +86,9 @@ Secondary stats are derived from a combination of primary stats and are capable 
 
 ### Known Bugs
 - Minor: Rarely some student surnames appear as 'null'
+
+## Release 0.0.1
+
+- Procedurally generated schools can be populated by a number of students and staff
+- Schools contain classrooms and room types, mascots, school colors, and a generated school name
+- Students and staff have primary and secondary stats that are generated on a normal distribution
