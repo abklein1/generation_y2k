@@ -46,7 +46,6 @@ The school mascot is generated from a weighted list based on the most frequently
 
 *Coming soon*
 
-School colors generation
 Hair Types
 
 ## Student and Staff Stat Generation
@@ -81,14 +80,21 @@ Secondary stats are derived from a combination of primary stats and are capable 
 - INT / Initiative: This stat is a combination of the determination to take action and the perception to see that an action needs to be taken. This is the max ability of someone to take action without the external influence of others.
 - RES / Resilience: This stat is a combination of strength and determination. This is the max ability of someone to withstand the pressure or adversity of various events or peers
 - CUR / Curiosity: This is a combination of primarily perception and intelligence. This represents a person's desire to not only understand the ideas and people around them, but also make useful connections between concepts
-- RSP / Responsibility: This is a combination of charisma and determination. This not only represents a personal responsibilty (to carry out daily tasks/ do socially responsible things) but also the ability to instill or influence responsible behavior in others.
-- OPN / Open-Mindedness: This is a combination of intelligence and charisma. This represents the ability for the inidividual receive new ideas and accept situations and others that might exist outside their comfort-zone. 
+- RSP / Responsibility: This is a combination of charisma and determination. This not only represents a personal responsibility (to carry out daily tasks/ do socially responsible things) but also the ability to instill or influence responsible behavior in others.
+- OPN / Open-Mindedness: This is a combination of intelligence and charisma. This represents the ability for the individual receive new ideas and accept situations and others that might exist outside their comfort-zone. 
 
 ### Known Bugs
 - Minor: Rarely some student surnames appear as 'null'
+- Graph visualization of rooms can be hard to read due to overlapping labels
 
 ## Release 0.0.1
 
 - Procedurally generated schools can be populated by a number of students and staff
 - Schools contain classrooms and room types, mascots, school colors, and a generated school name
 - Students and staff have primary and secondary stats that are generated on a normal distribution
+- Student and staff names are generated based on US census data
+- School rooms are automatically connected and represented as a contiguous, undirected graph. It can be visualized through Swing/JGraphX
+- Students are automatically sorted to appropriate grade levels based on birthdays
+- Inspectors are available for debugging and viewing individual staff/students
+- Time is represented and can be advanced by days/hours
+- Basic quiz and test system to challenge student stat system
