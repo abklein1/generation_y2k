@@ -60,6 +60,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitCuriosity();
             student.studentStatistics.setInitResponsibility();
             student.studentStatistics.setInitOpenMind();
+            student.studentStatistics.setInitHairLength();
 
             System.out.println("   Generated student " + f_name + " " + l_name);
         }

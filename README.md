@@ -50,7 +50,19 @@ The school mascot is generated from a weighted list based on the most frequently
 
 *Coming soon*
 
-Hair Types
+- Hair Types
+- Hair Lengths
+- Weighted Distribution of surnames
+- Staff assignments
+- Courses
+- School schedules/ bell schedule
+- Initial school state machine
+- More status effects for people
+- Social links as weighted graphs
+- Items
+- Family income status
+- Siblings
+
 
 ## Student and Staff Stat Generation
 
@@ -90,6 +102,7 @@ Nice to meet you Christopher!
 - US Mascot Frequency Database : https://masseyratings.com/mascots
 - US Height Data Per Age Range : https://www.cincinnatichildrens.org/health/g/normal-growth
 - Hair Color Distribution : https://beautytmr.medium.com/diversity-of-hair-types-b3615cec8ed8
+- Hair Length Approximation : https://pubmed.ncbi.nlm.nih.gov/12644859/
 - Eye Color Distribution : https://www.verywellhealth.com/what-is-the-rarest-eye-color-5087302
 - US High School Colors Reference : https://www.quora.com/What-are-the-most-popular-high-school-color-combinations-in-the-US
 

@@ -7,6 +7,7 @@ public class TeacherStatistics implements PStatistics {
     private double height;
     private String eyeColor;
     private String hairColor;
+    private String hairLength;
     private String build;
     private int intelligence;
     private int charisma;
@@ -31,6 +32,7 @@ public class TeacherStatistics implements PStatistics {
         this.height = 0;
         this.eyeColor = null;
         this.hairColor = null;
+        this.hairLength = null;
         this.build = null;
         this.intelligence = 0;
         this.charisma = 0;
@@ -344,5 +346,48 @@ public class TeacherStatistics implements PStatistics {
     @Override
     public void setPerception(int perception) {
         this.perception = perception;
+    }
+
+    @Override
+    public void setInitHairLength() {
+        Random random = new Random();
+        int choice = random.nextInt(10000);
+        if (this.gender.equals("Male")) {
+            if (choice <= 3) {
+                this.hairLength = "waist-length";
+            } else if (choice <= 25) {
+                this.hairLength = "shoulder-length";
+            } else if (choice <= 1325) {
+                this.hairLength = "long";
+            } else if (choice <= 1600) {
+                this.hairLength = "chin-length";
+            } else {
+                this.hairLength = "short";
+            }
+        } else {
+            if (choice <= 4) {
+                this.hairLength = "extremely long";
+            } else if (choice <= 78) {
+                this.hairLength = "waist-length";
+            } else if (choice <= 321) {
+                this.hairLength = "shoulder-length";
+            } else if (choice <= 1621) {
+                this.hairLength = "long";
+            } else if (choice <= 8300) {
+                this.hairLength = "chin-length";
+            } else {
+                this.hairLength = "short";
+            }
+        }
+    }
+
+    @Override
+    public String getHairLength() {
+        return this.hairLength;
+    }
+
+    @Override
+    public void setHairLength(String hairLength) {
+        this.hairLength = hairLength;
     }
 }

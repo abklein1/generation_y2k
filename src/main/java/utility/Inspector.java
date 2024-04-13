@@ -17,6 +17,7 @@ public class Inspector {
         String las = student.studentName.getLastName();
         String h = student.studentStatistics.getHairColor();
         String e = student.studentStatistics.getEyeColor();
+        String hl = student.studentStatistics.getHairLength();
         double hei = student.studentStatistics.getHeight();
         int in = student.studentStatistics.getIntelligence();
         int chr = student.studentStatistics.getCharisma();
@@ -38,10 +39,10 @@ public class Inspector {
         String grade = student.studentStatistics.getGradeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
         String gen = student.studentStatistics.getGender();
-
+        //TODO: use some sort of string builder?
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
-        System.out.println(fir + " is a " + gen + " and has " + h + " hair and " + e + " eyes. They are " + df.format(hei) + " inches tall.");
+        System.out.println(fir + " is a " + gen + " with " + hl + ", " + h + " hair and " + e + " eyes. They are " + df.format(hei) + " inches tall.");
         System.out.println(fir + " is a " + grade + ".");
         System.out.println(fir + " was born on " + birth);
         System.out.println("They have the following base stats: ");
@@ -81,6 +82,7 @@ public class Inspector {
         String fir = staff.teacherName.getFirstName();
         String las = staff.teacherName.getLastName();
         String h = staff.teacherStatistics.getHairColor();
+        String hl = staff.teacherStatistics.getHairLength();
         String e = staff.teacherStatistics.getEyeColor();
         double hei = staff.teacherStatistics.getHeight();
         int in = staff.teacherStatistics.getIntelligence();
@@ -104,7 +106,7 @@ public class Inspector {
 
         System.out.println(fir + " " + las);
         System.out.println("=====================================");
-        System.out.println(fir + " is a " + gen + " and has " + h + " hair and " + e + " eyes. They are " + df.format(hei) + " inches tall.");
+        System.out.println(fir + " is a " + gen + " with " + hl + ", " + h + " hair and " + e + " eyes. They are " + df.format(hei) + " inches tall.");
         System.out.println(fir + " was born on " + birth);
         System.out.println("They have the following stats: ");
         System.out.println("   INTELLIGENCE: " + in);

@@ -56,6 +56,7 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setInitOpenMind();
             staff.teacherName.setFirstName(f_name);
             staff.teacherName.setLastName(l_name);
+            staff.teacherStatistics.setInitHairLength();
             System.out.println("   Generated staff " + f_name + " " + l_name);
         }
 
