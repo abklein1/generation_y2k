@@ -1,7 +1,6 @@
 package utility;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BirthdayGenerator {

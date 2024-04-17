@@ -12,6 +12,7 @@ public class StudentStatistics implements PStatistics {
     private String eyeColor;
     private String hairColor;
     private String hairLength;
+    private String hairType;
     private String build;
     private String gradeLevel;
     private int intelligence;
@@ -41,6 +42,7 @@ public class StudentStatistics implements PStatistics {
         this.eyeColor = null;
         this.hairColor = null;
         this.hairLength = null;
+        this.hairType = null;
         this.build = null;
         this.intelligence = 0;
         this.charisma = 0;
@@ -492,5 +494,13 @@ public class StudentStatistics implements PStatistics {
     @Override
     public void setHairLength(String hairLength) {
         this.hairLength = hairLength;
+    }
+
+    public String getHairType() {
+        return this.hairType;
+    }
+
+    public void setHairType(String hairType) {
+        this.hairType = hairType;
     }
 }

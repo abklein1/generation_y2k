@@ -57,6 +57,7 @@ public class TeacherPopGenerator {
             staff.teacherName.setFirstName(f_name);
             staff.teacherName.setLastName(l_name);
             staff.teacherStatistics.setInitHairLength();
+            staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975)));
             System.out.println("   Generated staff " + f_name + " " + l_name);
         }
 

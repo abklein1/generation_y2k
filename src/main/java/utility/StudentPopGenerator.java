@@ -61,7 +61,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitResponsibility();
             student.studentStatistics.setInitOpenMind();
             student.studentStatistics.setInitHairLength();
-
+            student.studentStatistics.setHairType(TraitSelection.hairType(setRandom(0,975)));
             System.out.println("   Generated student " + f_name + " " + l_name);
         }
         //Clear map for new values

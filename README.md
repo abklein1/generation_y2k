@@ -62,6 +62,7 @@ The school mascot is generated from a weighted list based on the most frequently
 - Items
 - Family income status
 - Siblings
+- Moods
 
 
 ## Student and Staff Stat Generation
