@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GenderLoader {
     public static String genderSelection() {
         int selection = ThreadLocalRandom.current().nextInt(0, 11);
-        String gender = null;
+        String gender;
         if (selection <= 4) {
             gender = "male";
         } else {
