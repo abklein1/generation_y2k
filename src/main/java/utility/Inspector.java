@@ -13,131 +13,99 @@ public class Inspector {
     public static void studentInspection(Student student) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
-        String fir = student.studentName.getFirstName();
-        String las = student.studentName.getLastName();
-        String h = student.studentStatistics.getHairColor();
-        String e = student.studentStatistics.getEyeColor();
-        String hl = student.studentStatistics.getHairLength();
-        String ht = student.studentStatistics.getHairType();
-        double hei = student.studentStatistics.getHeight();
-        int in = student.studentStatistics.getIntelligence();
-        int chr = student.studentStatistics.getCharisma();
-        int agl = student.studentStatistics.getAgility();
-        int det = student.studentStatistics.getDetermination();
-        int per = student.studentStatistics.getPerception();
-        int str = student.studentStatistics.getStrength();
-        int cre = student.studentStatistics.getCreativity();
-        int emp = student.studentStatistics.getEmpathy();
-        int adp = student.studentStatistics.getAdaptability();
-        int ini = student.studentStatistics.getInitiative();
-        int res = student.studentStatistics.getResilience();
-        int cur = student.studentStatistics.getCuriosity();
-        int rsp = student.studentStatistics.getResponsibility();
-        int opm = student.studentStatistics.getOpenMindedness();
-        int bor = student.studentStatistics.getBoredom();
-        boolean slp = student.studentStatistics.getSleepState();
-        int exp = student.studentStatistics.getExperience();
+
+        StringBuilder sb = new StringBuilder();
+        String firstName = student.studentName.getFirstName();
+        String lastName = student.studentName.getLastName();
+        String gender = student.studentStatistics.getGender();
+        String hairColor = student.studentStatistics.getHairColor();
+        String eyeColor = student.studentStatistics.getEyeColor();
+        String hairLength = student.studentStatistics.getHairLength();
+        String hairType = student.studentStatistics.getHairType();
+        double height = student.studentStatistics.getHeight();
         String grade = student.studentStatistics.getGradeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
-        String gen = student.studentStatistics.getGender();
-        //TODO: use some sort of string builder?
-        System.out.println(fir + " " + las);
-        System.out.println("=====================================");
-        System.out.println(fir + " is a " + gen + " with " + hl + ", " + ht + ", " + h + " hair and " + e + " eyes. They are " + df.format(hei) + " inches tall.");
-        System.out.println(fir + " is a " + grade + ".");
-        System.out.println(fir + " was born on " + birth);
-        System.out.println("They have the following base stats: ");
-        System.out.println("   INTELLIGENCE: " + in);
-        System.out.println("   CHARISMA: " + chr);
-        System.out.println("   AGILITY: " + agl);
-        System.out.println("   DETERMINATION: " + det);
-        System.out.println("   PERCEPTION: " + per);
-        System.out.println("   STRENGTH: " + str);
-        System.out.println("   EXP: " + exp);
-        System.out.println("They have the following secondary stats: ");
-        System.out.println("   Creativity: " + cre);
-        System.out.println("   Empathy: " + emp);
-        System.out.println("   Adaptability: " + adp);
-        System.out.println("   Initiative: " + ini);
-        System.out.println("   Resilience: " + res);
-        System.out.println("   Curiosity: " + cur);
-        System.out.println("   Responsibility: " + rsp);
-        System.out.println("   Open-Mindedness: " + opm);
-        System.out.println(fir + " has the following status effects: ");
-        if (bor == 0) {
-            System.out.println(fir + " is not bored");
+
+        sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
+        sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
+        sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ").append(hairColor.toLowerCase());
+        sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
+        sb.append("They stand ").append(df.format(height)).append(" inches tall.\n");
+        sb.append(firstName).append(" is a ").append(grade).append(".\n");
+        sb.append(firstName).append(" was born on ").append(birth).append(".\n");
+        sb.append("They have the following base stats:\n   INTELLIGENCE: ").append(student.studentStatistics.getIntelligence());
+        sb.append("\n   CHARISMA: ").append(student.studentStatistics.getCharisma()).append("\n   AGILITY: ");
+        sb.append(student.studentStatistics.getAgility()).append("\n   DETERMINATION: ").append(student.studentStatistics.getDetermination());
+        sb.append("\n   PERCEPTION: ").append(student.studentStatistics.getPerception()).append("\n   STRENGTH: ");
+        sb.append(student.studentStatistics.getStrength()).append("\n   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
+        sb.append("They have the following secondary stats:\n   Creativity: ").append(student.studentStatistics.getCreativity());
+        sb.append("\n   Empathy: ").append(student.studentStatistics.getEmpathy()).append("\n   Adaptability: ");
+        sb.append(student.studentStatistics.getAdaptability()).append("\n   Initiative: ").append(student.studentStatistics.getInitiative());
+        sb.append("\n   Resilience: ").append(student.studentStatistics.getResilience()).append("\n   Curiosity: ");
+        sb.append(student.studentStatistics.getCuriosity()).append("\n   Responsibility: ").append(student.studentStatistics.getResponsibility());
+        sb.append("\n   Open-Mindedness: ").append(student.studentStatistics.getOpenMindedness()).append("\n");
+        sb.append(firstName).append(" has the following status effects:\n");
+        if (student.studentStatistics.getBoredom() == 0) {
+            sb.append(firstName).append(" is not bored.\n");
         } else {
-            System.out.println(fir + " is slightly bored");
+            sb.append(firstName).append(" is slightly bored.\n");
         }
-        if (slp) {
-            System.out.println(fir + " is asleep!");
+        if (student.studentStatistics.getSleepState()) {
+            sb.append(firstName).append(" is asleep!\n");
         } else {
-            System.out.println(fir + " is not asleep");
+            sb.append(firstName).append(" is not asleep.\n");
         }
-        System.out.println("Nice to meet you " + fir + "!");
+        sb.append("Nice to meet you ").append(firstName).append("!");
+
+        System.out.println(sb);
     }
 
     public static void staffInspection(Staff staff) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
-        String fir = staff.teacherName.getFirstName();
-        String las = staff.teacherName.getLastName();
-        String h = staff.teacherStatistics.getHairColor();
-        String hl = staff.teacherStatistics.getHairLength();
-        String ht = staff.teacherStatistics.getHairType();
-        String e = staff.teacherStatistics.getEyeColor();
-        double hei = staff.teacherStatistics.getHeight();
-        int in = staff.teacherStatistics.getIntelligence();
-        int chr = staff.teacherStatistics.getCharisma();
-        int agl = staff.teacherStatistics.getAgility();
-        int det = staff.teacherStatistics.getDetermination();
-        int per = staff.teacherStatistics.getPerception();
-        int str = staff.teacherStatistics.getStrength();
-        int cre = staff.teacherStatistics.getCreativity();
-        int emp = staff.teacherStatistics.getEmpathy();
-        int adp = staff.teacherStatistics.getAdaptability();
-        int ini = staff.teacherStatistics.getInitiative();
-        int res = staff.teacherStatistics.getResilience();
-        int cur = staff.teacherStatistics.getCuriosity();
-        int rsp = staff.teacherStatistics.getResponsibility();
-        int opm = staff.teacherStatistics.getOpenMindedness();
-        int bor = staff.teacherStatistics.getBoredom();
-        boolean slp = staff.teacherStatistics.getSleepState();
-        LocalDate birth = staff.teacherStatistics.getBirthday();
-        String gen = staff.teacherStatistics.getGender();
 
-        System.out.println(fir + " " + las);
-        System.out.println("=====================================");
-        System.out.println(fir + " is a " + gen + " with " + hl + ", " + ht + ", " + h + " hair and " + e + " eyes. They are " + df.format(hei) + " inches tall.");
-        System.out.println(fir + " was born on " + birth);
-        System.out.println("They have the following stats: ");
-        System.out.println("   INTELLIGENCE: " + in);
-        System.out.println("   CHARISMA: " + chr);
-        System.out.println("   AGILITY: " + agl);
-        System.out.println("   DETERMINATION: " + det);
-        System.out.println("   PERCEPTION: " + per);
-        System.out.println("   STRENGTH: " + str);
-        System.out.println("They have the following secondary stats: ");
-        System.out.println("   Creativity: " + cre);
-        System.out.println("   Empathy: " + emp);
-        System.out.println("   Adaptability: " + adp);
-        System.out.println("   Initiative: " + ini);
-        System.out.println("   Resilience: " + res);
-        System.out.println("   Curiosity: " + cur);
-        System.out.println("   Responsibility: " + rsp);
-        System.out.println("   Open-Mindedness: " + opm);
-        System.out.println(fir + " has the following status effects: ");
-        if (bor == 0) {
-            System.out.println(fir + " is not bored");
+        StringBuilder sb = new StringBuilder();
+        String firstName = staff.teacherName.getFirstName();
+        String lastName = staff.teacherName.getLastName();
+        String gender = staff.teacherStatistics.getGender().toLowerCase();
+        String hairColor = staff.teacherStatistics.getHairColor().toLowerCase();
+        String hairLength = staff.teacherStatistics.getHairLength().toLowerCase();
+        String hairType = staff.teacherStatistics.getHairType().toLowerCase();
+        String eyeColor = staff.teacherStatistics.getEyeColor().toLowerCase();
+        double height = staff.teacherStatistics.getHeight();
+        LocalDate birth = staff.teacherStatistics.getBirthday();
+
+        sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
+        sb.append(firstName).append(" is a ").append(gender).append(" with ");
+        sb.append(hairLength).append(", ").append(hairType).append(", ").append(hairColor);
+        sb.append(" hair and ").append(eyeColor).append(" eyes. They stand ");
+        sb.append(df.format(height)).append(" inches tall.\n");
+        sb.append(firstName).append(" was born on ").append(birth).append(".\n");
+        sb.append("They have the following stats:\n   INTELLIGENCE: ").append(staff.teacherStatistics.getIntelligence());
+        sb.append("\n   CHARISMA: ").append(staff.teacherStatistics.getCharisma()).append("\n   AGILITY: ");
+        sb.append(staff.teacherStatistics.getAgility()).append("\n   DETERMINATION: ").append(staff.teacherStatistics.getDetermination());
+        sb.append("\n   PERCEPTION: ").append(staff.teacherStatistics.getPerception()).append("\n   STRENGTH: ");
+        sb.append(staff.teacherStatistics.getStrength()).append("\n");
+        sb.append("They have the following secondary stats:\n   Creativity: ").append(staff.teacherStatistics.getCreativity());
+        sb.append("\n   Empathy: ").append(staff.teacherStatistics.getEmpathy()).append("\n   Adaptability: ");
+        sb.append(staff.teacherStatistics.getAdaptability()).append("\n   Initiative: ").append(staff.teacherStatistics.getInitiative());
+        sb.append("\n   Resilience: ").append(staff.teacherStatistics.getResilience()).append("\n   Curiosity: ");
+        sb.append(staff.teacherStatistics.getCuriosity()).append("\n   Responsibility: ").append(staff.teacherStatistics.getResponsibility());
+        sb.append("\n   Open-Mindedness: ").append(staff.teacherStatistics.getOpenMindedness()).append("\n");
+        sb.append(firstName).append(" has the following status effects:\n");
+        if (staff.teacherStatistics.getBoredom() == 0) {
+            sb.append(firstName).append(" is not bored.\n");
         } else {
-            System.out.println(fir + " is slightly bored");
+            sb.append(firstName).append(" is slightly bored.\n");
         }
-        if (slp) {
-            System.out.println(fir + " is asleep!");
+        if (staff.teacherStatistics.getSleepState()) {
+            sb.append(firstName).append(" is asleep!\n");
         } else {
-            System.out.println(fir + " is not asleep");
+            sb.append(firstName).append(" is not asleep.\n");
         }
-        System.out.println("Nice to meet you " + fir + "!");
+        sb.append("Nice to meet you ").append(firstName).append("!");
+
+        System.out.println(sb);
     }
 
     public static void gradeClassInspection(HashMap<Integer, Student> studentGradeClass) {
@@ -163,6 +131,7 @@ public class Inspector {
             }
         }
 
+        assert high != null;
         studentInspection(high);
     }
 
