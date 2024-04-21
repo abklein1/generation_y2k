@@ -96,7 +96,7 @@ April is not asleep.
 Nice to meet you April!
 
 ## Datasets and References
-- US Census Data for Surnames :  https://www.census.gov/topics/population/genealogy/data/2000_surnames.html
+- US Census Data for Surnames (Use File B) :  https://www.census.gov/topics/population/genealogy/data/2000_surnames.html
 - US Census Data for First Names : https://www.ssa.gov/oact/babynames/limits.html (Use the National Data folder)
 - US Mascot Frequency Database : https://masseyratings.com/mascots
 - US Height Data Per Age Range : https://www.cincinnatichildrens.org/health/g/normal-growth

@@ -18,6 +18,7 @@ public class Inspector {
         String firstName = student.studentName.getFirstName();
         String lastName = student.studentName.getLastName();
         String gender = student.studentStatistics.getGender();
+        String race = student.studentStatistics.getRace();
         String hairColor = student.studentStatistics.getHairColor();
         String eyeColor = student.studentStatistics.getEyeColor();
         String hairLength = student.studentStatistics.getHairLength();
@@ -27,7 +28,7 @@ public class Inspector {
         LocalDate birth = student.studentStatistics.getBirthday();
 
         sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
-        sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
+        sb.append(firstName).append(" is a ").append(race).append(", ").append(gender.toLowerCase()).append(" with ");
         sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ").append(hairColor.toLowerCase());
         sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
         sb.append("They stand ").append(df.format(height)).append(" inches tall.\n");

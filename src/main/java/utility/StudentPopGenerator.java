@@ -2,6 +2,7 @@ package utility;
 
 import entity.Student;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,9 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class StudentPopGenerator {
     public static void generateStudents(int studentCap, HashMap<Integer, Student> studentHashMap) {
 
-        HashMap<Integer, String> lNameReference = new HashMap<>();
         String f_name;
-        String l_name;
+        String[] l_name;
         Random distribution = new Random();
         int int_stdDev = 15;
         int int_mean = 100;
@@ -30,7 +30,7 @@ public class StudentPopGenerator {
         }
 
         System.out.println("Randomizing " + studentCap + " students...");
-        lNameReference.putAll(NameLoader.readCSVLast(true));
+
 
         for (int k = 0; k < studentCap; k++) {
             Student student = studentHashMap.get(k);
@@ -42,9 +42,10 @@ public class StudentPopGenerator {
             student.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(student.studentStatistics.getGradeLevel()));
             student.studentStatistics.setGender(GenderLoader.genderSelection());
             f_name = NameLoader.nameGenerator(String.valueOf(student.studentStatistics.getBirthday().getYear()), student.studentStatistics.getGender());
-            l_name = lNameReference.get(setRandom(0, lNameReference.size()));
+            l_name = NameLoader.selectWeightedRandom();
             student.studentName.setFirstName(f_name);
-            student.studentName.setLastName(l_name);
+            student.studentName.setLastName(l_name[0]);
+            student.studentStatistics.setRace(l_name[1]);
             student.studentStatistics.setInitHeight();
             student.studentStatistics.setIntelligence((int) (distribution.nextGaussian()*int_stdDev+int_mean));
             student.studentStatistics.setCharisma((int) (distribution.nextGaussian()*chr_stdDev+chr_mean));
@@ -62,10 +63,8 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitOpenMind();
             student.studentStatistics.setInitHairLength();
             student.studentStatistics.setHairType(TraitSelection.hairType(setRandom(0,975)));
-            System.out.println("   Generated student " + f_name + " " + l_name);
+            System.out.println("   Generated student " + f_name + " " + l_name[0]);
         }
-        //Clear map for new values
-        lNameReference.clear();
     }
 
     private static Integer setRandom(int min, int max) {

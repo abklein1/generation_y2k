@@ -15,6 +15,7 @@ public class StudentStatistics implements PStatistics {
     private String hairType;
     private String build;
     private String gradeLevel;
+    private String race;
     private int intelligence;
     private int charisma;
     private int agility;
@@ -44,6 +45,7 @@ public class StudentStatistics implements PStatistics {
         this.hairLength = null;
         this.hairType = null;
         this.build = null;
+        this.race = null;
         this.intelligence = 0;
         this.charisma = 0;
         this.agility = 0;
@@ -502,5 +504,13 @@ public class StudentStatistics implements PStatistics {
 
     public void setHairType(String hairType) {
         this.hairType = hairType;
+    }
+
+    public void setRace(String race) {
+        this.race = race;
+    }
+
+    public String getRace() {
+        return this.race;
     }
 }

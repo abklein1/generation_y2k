@@ -28,7 +28,7 @@ public class TeacherPopGenerator {
             staffHashMap.put(j, new Staff());
         }
         System.out.println("Randomizing " + staffCap + " staff");
-        lNameReference.putAll(NameLoader.readCSVLast(false));
+        lNameReference.putAll(NameLoader.readCSVLast());
 
         for (int l = 0; l < staffCap; l++) {
 

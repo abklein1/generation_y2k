@@ -3,13 +3,14 @@ package utility;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NameLoader {
     private static HashMap<Integer, String> firstNames = new HashMap<Integer, String>();
+    private static HashMap<String, NameData> lastNamesStudent = new HashMap<>();
     private static HashMap<Integer, Long> frequency = new HashMap<>();
     private static HashMap<Integer, Character> gender = new HashMap<>();
 
@@ -109,15 +110,11 @@ public class NameLoader {
         return null;
     }
 
-    public static HashMap readCSVLast(boolean student) {
-        String csvLast;
+    public static HashMap readCSVLast() {
+        String csvLast = "src/main/java/Resources/surname_2.txt";
         HashMap<Integer, String> lastNames = new HashMap<Integer, String>();
         BufferedReader lr = null;
-        if(student){
-            csvLast = "src/main/java/Resources/surname_1.txt";
-        }else{
-            csvLast = "src/main/java/Resources/surname_2.txt";
-        }
+
         try {
             File lastFile = new File(csvLast);
             lr = new BufferedReader(new FileReader(lastFile));
@@ -143,6 +140,101 @@ public class NameLoader {
         }
 
         return lastNames;
+    }
+
+    public static void readCSVLastStudent() {
+        String csvLast = "src/main/java/Resources/app_c.csv";
+
+        BufferedReader lr = null;
+
+        try {
+            lr = new BufferedReader(new FileReader(new File(csvLast)));
+            String l_line;
+            lr.readLine();
+
+            while ((l_line = lr.readLine()) != null) {
+                String[] data = l_line.trim().split("\\s*,\\s*");
+                String name = data[0].trim();
+                double weight = Double.parseDouble(data[2].trim());
+                Map<String, Double> raceDistribution = new HashMap<>();
+
+                raceDistribution.put("white", parseDoubleOrS(data[4].trim()));
+                raceDistribution.put("black", parseDoubleOrS(data[5].trim()));
+                raceDistribution.put("api", parseDoubleOrS(data[6].trim()));
+                raceDistribution.put("aian", parseDoubleOrS(data[7].trim()));
+                raceDistribution.put("2prace", parseDoubleOrS(data[8].trim()));
+                raceDistribution.put("hispanic", parseDoubleOrS(data[9].trim()));
+
+                lastNamesStudent.put(name, new NameData(weight, raceDistribution));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (lr != null) lr.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static double parseDoubleOrS(String str) {
+        if ("(S)".equals(str)) {
+            return 0.1;
+        } else {
+            try {
+                return Double.parseDouble(str);
+            } catch (NumberFormatException e) {
+                return 0.1;
+            }
+        }
+    }
+
+    // Select a surname based on the weight and then a race based on the distribution
+    public static String[] selectWeightedRandom() {
+
+        readCSVLastStudent();
+
+        double totalWeight = lastNamesStudent.values().stream().mapToDouble(nd -> nd.weight).sum();
+        double value = Math.random() * totalWeight;
+        double cumulativeWeight = 0.0;
+
+
+
+        for (Map.Entry<String, NameData> entry : lastNamesStudent.entrySet()) {
+            cumulativeWeight += entry.getValue().weight;
+            if (cumulativeWeight >= value) {
+                // We've selected a name, now select the race
+                String selectedRace = selectRace(entry.getValue().raceDistribution);
+                return new String[]{entry.getKey(), selectedRace};
+            }
+        }
+        return new String[]{"", ""}; // Empty result as a fallback
+    }
+
+    // Weighted random selection for race
+    private static String selectRace(Map<String, Double> raceDist) {
+        double total = raceDist.values().stream().mapToDouble(Double::doubleValue).sum();
+        double roll = Math.random() * total;
+        double cumulative = 0.0;
+
+        for (Map.Entry<String, Double> entry : raceDist.entrySet()) {
+            cumulative += entry.getValue();
+            if (cumulative >= roll) {
+                return entry.getKey();
+            }
+        }
+        return "unknown"; // Fallback in case of error
+    }
+
+    static class NameData {
+        double weight;
+        Map<String, Double> raceDistribution;
+
+        NameData(double weight, Map<String, Double> raceDistribution) {
+            this.weight = weight;
+            this.raceDistribution = raceDistribution;
+        }
     }
 
 }
