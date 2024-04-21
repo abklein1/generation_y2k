@@ -802,11 +802,11 @@ public class StandardSchool implements SchoolPlan {
             throw new RuntimeException();
         }
 
-        int firstColor = setRandom(0, colors.size());
+        int firstColor = setRandom(0, colors.size() - 1);
         int secondColor;
 
         do {
-            secondColor = setRandom(0, colors.size());
+            secondColor = setRandom(0, colors.size() - 1);
         } while (firstColor == secondColor);
 
         this.schoolColors = new String[] {colors.get(firstColor), colors.get(secondColor)};
