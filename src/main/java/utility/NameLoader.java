@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 public class NameLoader {
-    private static HashMap<Integer, String> firstNames = new HashMap<Integer, String>();
-    private static HashMap<String, NameData> lastNamesStudent = new HashMap<>();
-    private static HashMap<Integer, Long> frequency = new HashMap<>();
-    private static HashMap<Integer, Character> gender = new HashMap<>();
+    private static final HashMap<Integer, String> firstNames = new HashMap<Integer, String>();
+    private static final HashMap<String, NameData> lastNamesStudent = new HashMap<>();
+    private static final HashMap<Integer, Long> frequency = new HashMap<>();
+    private static final HashMap<Integer, Character> gender = new HashMap<>();
 
     private static void readCSVFirst(String birth) {
         String basePath = "src/main/java/Resources/";
@@ -158,12 +158,12 @@ public class NameLoader {
                 double weight = Double.parseDouble(data[2].trim());
                 Map<String, Double> raceDistribution = new HashMap<>();
 
-                raceDistribution.put("white", parseDoubleOrS(data[4].trim()));
-                raceDistribution.put("black", parseDoubleOrS(data[5].trim()));
-                raceDistribution.put("api", parseDoubleOrS(data[6].trim()));
-                raceDistribution.put("aian", parseDoubleOrS(data[7].trim()));
-                raceDistribution.put("2prace", parseDoubleOrS(data[8].trim()));
-                raceDistribution.put("hispanic", parseDoubleOrS(data[9].trim()));
+                raceDistribution.put("white", parseDoubleOrS(data[5].trim()));
+                raceDistribution.put("black", parseDoubleOrS(data[6].trim()));
+                raceDistribution.put("api", parseDoubleOrS(data[7].trim()));
+                raceDistribution.put("aian", parseDoubleOrS(data[8].trim()));
+                raceDistribution.put("2prace", parseDoubleOrS(data[9].trim()));
+                raceDistribution.put("hispanic", parseDoubleOrS(data[10].trim()));
 
                 lastNamesStudent.put(name, new NameData(weight, raceDistribution));
             }
