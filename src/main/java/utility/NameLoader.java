@@ -193,8 +193,6 @@ public class NameLoader {
     // Select a surname based on the weight and then a race based on the distribution
     public static String[] selectWeightedRandom() {
 
-        readCSVLastStudent();
-
         double totalWeight = lastNamesStudent.values().stream().mapToDouble(nd -> nd.weight).sum();
         double value = Math.random() * totalWeight;
         double cumulativeWeight = 0.0;

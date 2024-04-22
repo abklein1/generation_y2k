@@ -30,7 +30,8 @@ public class StudentPopGenerator {
         }
 
         System.out.println("Randomizing " + studentCap + " students...");
-
+        // Read large file into memory first
+        NameLoader.readCSVLastStudent();
 
         for (int k = 0; k < studentCap; k++) {
             Student student = studentHashMap.get(k);
