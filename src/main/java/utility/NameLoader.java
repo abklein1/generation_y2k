@@ -10,11 +10,30 @@ import java.util.Map;
 
 public class NameLoader {
     private static final HashMap<Integer, String> firstNames = new HashMap<Integer, String>();
+    // cache students since we are generating more
+    private static final HashMap<Integer, String> firstNames1986 = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> firstNames1987 = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> firstNames1988 = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> firstNames1989 = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> firstNames1990 = new HashMap<Integer, String>();
     private static final HashMap<String, NameData> lastNamesStudent = new HashMap<>();
     private static final HashMap<Integer, Long> frequency = new HashMap<>();
+    // cache frequency for students
+    private static final HashMap<Integer, Long> frequency1986 = new HashMap<>();
+    private static final HashMap<Integer, Long> frequency1987 = new HashMap<>();
+    private static final HashMap<Integer, Long> frequency1988 = new HashMap<>();
+    private static final HashMap<Integer, Long> frequency1989 = new HashMap<>();
+    private static final HashMap<Integer, Long> frequency1990 = new HashMap<>();
     private static final HashMap<Integer, Character> gender = new HashMap<>();
+    //cache gender maps for students
+    private static final HashMap<Integer, Character> gender1986 = new HashMap<>();
+    private static final HashMap<Integer, Character> gender1987 = new HashMap<>();
+    private static final HashMap<Integer, Character> gender1988 = new HashMap<>();
+    private static final HashMap<Integer, Character> gender1989 = new HashMap<>();
+    private static final HashMap<Integer, Character> gender1990 = new HashMap<>();
 
-    private static void readCSVFirst(String birth) {
+    // TODO: this is some nasty code to refactor, but for performance
+    public static void readCSVFirst(String birth) {
         String basePath = "src/main/java/Resources/";
         String csvFirst = basePath + "yob" + birth + ".txt";
         BufferedReader fr = null;
@@ -31,11 +50,38 @@ public class NameLoader {
                     String name = parts[0].trim();
                     char gen = parts[1].trim().charAt(0);
                     long freq = Long.parseLong(parts[2].trim());
-
-                    firstNames.put(iterator, name);
-                    frequency.put(iterator, freq);
-                    gender.put(iterator, gen);
-
+                    switch (birth) {
+                        case "1986":
+                            firstNames1986.put(iterator, name);
+                            frequency1986.put(iterator, freq);
+                            gender1986.put(iterator, gen);
+                            break;
+                        case "1987":
+                            firstNames1987.put(iterator, name);
+                            frequency1987.put(iterator, freq);
+                            gender1987.put(iterator, gen);
+                            break;
+                        case "1988":
+                            firstNames1988.put(iterator, name);
+                            frequency1988.put(iterator, freq);
+                            gender1988.put(iterator, gen);
+                            break;
+                        case "1989":
+                            firstNames1989.put(iterator, name);
+                            frequency1989.put(iterator, freq);
+                            gender1989.put(iterator, gen);
+                            break;
+                        case "1990":
+                            firstNames1990.put(iterator, name);
+                            frequency1990.put(iterator, freq);
+                            gender1990.put(iterator, gen);
+                            break;
+                        default:
+                            firstNames.put(iterator, name);
+                            frequency.put(iterator, freq);
+                            gender.put(iterator, gen);
+                            break;
+                    }
                     iterator++;
                 }
 
@@ -52,10 +98,11 @@ public class NameLoader {
             }
         }
     }
-
+    // TODO: bad code to refactor later for readability
     public static String nameGenerator(String year, String genderR) {
-
-        readCSVFirst(year);
+        if (Integer.parseInt(year) < 1986) {
+            readCSVFirst(year);
+        }
 
         char genR = genderR.equalsIgnoreCase("Male") ? 'M' : 'F';
         List<String> filteredNames = new ArrayList<>();
@@ -64,23 +111,88 @@ public class NameLoader {
 
         boolean targetGenderFound = false;
 
-        for (int i = 0; i < gender.size(); i++) {
-            char currentGender= gender.get(i);
+        switch (year) {
+            case "1986":
+                for (int i = 0; i < gender1986.size(); i++) {
+                    char currentGender= gender1986.get(i);
 
-            if (currentGender == genR) {
-                targetGenderFound = true;
-                filteredNames.add(firstNames.get(i));
-                weights.add(frequency.get(i));
-            } else if (targetGenderFound) {
+                    if (currentGender == genR) {
+                        targetGenderFound = true;
+                        filteredNames.add(firstNames1986.get(i));
+                        weights.add(frequency1986.get(i));
+                    } else if (targetGenderFound) {
+                        break;
+                    }
+                }
                 break;
-            }
+            case "1987":
+                for (int i = 0; i < gender1987.size(); i++) {
+                    char currentGender= gender1987.get(i);
+
+                    if (currentGender == genR) {
+                        targetGenderFound = true;
+                        filteredNames.add(firstNames1987.get(i));
+                        weights.add(frequency1987.get(i));
+                    } else if (targetGenderFound) {
+                        break;
+                    }
+                }
+                break;
+            case "1988":
+                for (int i = 0; i < gender1988.size(); i++) {
+                    char currentGender= gender1988.get(i);
+
+                    if (currentGender == genR) {
+                        targetGenderFound = true;
+                        filteredNames.add(firstNames1988.get(i));
+                        weights.add(frequency1988.get(i));
+                    } else if (targetGenderFound) {
+                        break;
+                    }
+                }
+                break;
+            case "1989":
+                for (int i = 0; i < gender1989.size(); i++) {
+                    char currentGender= gender1989.get(i);
+
+                    if (currentGender == genR) {
+                        targetGenderFound = true;
+                        filteredNames.add(firstNames1989.get(i));
+                        weights.add(frequency1989.get(i));
+                    } else if (targetGenderFound) {
+                        break;
+                    }
+                }
+                break;
+            case "1990":
+                for (int i = 0; i < gender1990.size(); i++) {
+                    char currentGender= gender1990.get(i);
+
+                    if (currentGender == genR) {
+                        targetGenderFound = true;
+                        filteredNames.add(firstNames1990.get(i));
+                        weights.add(frequency1990.get(i));
+                    } else if (targetGenderFound) {
+                        break;
+                    }
+                }
+                break;
+            default:
+                for (int i = 0; i < gender.size(); i++) {
+                    char currentGender= gender.get(i);
+
+                    if (currentGender == genR) {
+                        targetGenderFound = true;
+                        filteredNames.add(firstNames.get(i));
+                        weights.add(frequency.get(i));
+                    } else if (targetGenderFound) {
+                        break;
+                    }
+                }
+                break;
         }
 
         f_name = chooseByWeight(filteredNames, weights);
-
-        firstNames.clear();
-        frequency.clear();
-        gender.clear();
 
         return f_name;
     }

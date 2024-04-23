@@ -30,8 +30,7 @@ public class StudentPopGenerator {
         }
 
         System.out.println("Randomizing " + studentCap + " students...");
-        // Read large file into memory first
-        NameLoader.readCSVLastStudent();
+        loadCSVData();
 
         for (int k = 0; k < studentCap; k++) {
             Student student = studentHashMap.get(k);
@@ -66,6 +65,16 @@ public class StudentPopGenerator {
             student.studentStatistics.setHairType(TraitSelection.hairType(setRandom(0,975)));
             System.out.println("   Generated student " + f_name + " " + l_name[0]);
         }
+    }
+
+    private static void loadCSVData() {
+        // Read large file into memory first
+        NameLoader.readCSVFirst("1986");
+        NameLoader.readCSVFirst("1987");
+        NameLoader.readCSVFirst("1988");
+        NameLoader.readCSVFirst("1989");
+        NameLoader.readCSVFirst("1990");
+        NameLoader.readCSVLastStudent();
     }
 
     private static Integer setRandom(int min, int max) {
