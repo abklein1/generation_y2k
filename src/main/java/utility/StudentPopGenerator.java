@@ -46,11 +46,11 @@ public class StudentPopGenerator {
             student.studentName.setLastName(l_name[0]);
             student.studentStatistics.setRace(l_name[1]);
             student.studentStatistics.setInitHeight();
-            student.studentStatistics.setIntelligence((int) (distribution.nextGaussian()*int_stdDev+int_mean));
-            student.studentStatistics.setCharisma((int) (distribution.nextGaussian()*chr_stdDev+chr_mean));
-            student.studentStatistics.setAgility((int) (distribution.nextGaussian()*agl_stdDev+agl_mean));
-            student.studentStatistics.setDetermination((int) (distribution.nextGaussian()*det_stdDev+det_mean));
-            student.studentStatistics.setPerception((int) (distribution.nextGaussian()*per_stdDev+per_mean));
+            student.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
+            student.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
+            student.studentStatistics.setAgility((int) (distribution.nextGaussian() * agl_stdDev + agl_mean));
+            student.studentStatistics.setDetermination((int) (distribution.nextGaussian() * det_stdDev + det_mean));
+            student.studentStatistics.setPerception((int) (distribution.nextGaussian() * per_stdDev + per_mean));
             student.studentStatistics.setInitStrength();
             student.studentStatistics.setInitCreativity();
             student.studentStatistics.setInitEmpathy();
@@ -61,7 +61,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitResponsibility();
             student.studentStatistics.setInitOpenMind();
             student.studentStatistics.setInitHairLength();
-            student.studentStatistics.setHairType(TraitSelection.hairType(setRandom(0,975)));
+            student.studentStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975)));
             System.out.println("   Generated student " + f_name + " " + l_name[0]);
         }
     }
