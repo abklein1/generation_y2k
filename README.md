@@ -128,6 +128,12 @@ Secondary stats are derived from a combination of primary stats and are capable 
 - Minor: Rarely some student surnames appear as 'null'
 - Graph visualization of rooms can be hard to read due to overlapping labels
 
+## Release 0.0.3
+- Surnames are now a weighted choice based on US census data
+- Students are assigned race based on surname distributions (reference app_c.csv)
+- Performance fixes on student and staff name generation by reading docs into memory first
+- Minor bug fixes
+
 ## Release 0.0.2
 - Use string builder for student and staff inspection
 - Staff and students have hair types and lengths
