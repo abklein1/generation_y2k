@@ -1,0 +1,290 @@
+{
+  "white": {
+    "Brown": {
+      "Total": 45,
+      "brown": 20,
+      "dark brown": 15,
+      "light brown": 9.50,
+      "reddish-brown": 0.25,
+      "black": 0.25
+    },
+    "Blue": {
+      "Total": 24,
+      "blue": 7,
+      "pale blue": 6.75,
+      "deep blue": 5,
+      "light blue": 5,
+      "violet-blue": 0.25
+    },
+    "Hazel": {
+      "Total": 18,
+      "hazel": 9,
+      "greenish-hazel": 5,
+      "golden-hazel": 2,
+      "brownish-hazel": 2
+    },
+    "Green": {
+      "Total": 7,
+      "green": 3,
+      "dark green": 2,
+      "light green": 1,
+      "yellow-green": 1,
+      "pale green": 1,
+      "sea green": 1
+    },
+    "Gray": {
+      "Total": 3,
+      "blue-gray": 2,
+      "green-gray": 0.5,
+      "gray": 0.5
+    },
+    "Other": {
+      "Total": 3,
+      "amber": 1,
+      "yellow": 0.5,
+      "heterochromatic": 0.5,
+      "violet": 0.5,
+      "red": 0.5
+    }
+  },
+  "black": {
+    "Brown": {
+      "Total": 95,
+      "brown": 50,
+      "light brown": 18,
+      "dark brown": 15,
+      "black": 10,
+      "reddish-brown": 2
+    },
+    "Blue": {
+      "Total": 0.75,
+      "blue": 0.50,
+      "deep blue": 0.10,
+      "light blue": 0.05,
+      "pale blue": 0.05,
+      "violet-blue": 0.05
+    },
+    "Hazel": {
+      "Total": 1,
+      "hazel": 0.50,
+      "brownish-hazel": 0.25,
+      "golden-hazel": 0.125,
+      "greenish-hazel": 0.125
+    },
+    "Green": {
+      "Total": 0.25,
+      "green": 0.05,
+      "light green": 0.04,
+      "dark green": 0.04,
+      "yellow-green": 0.04,
+      "pale green": 0.04,
+      "sea green": 0.04
+    },
+    "Gray": {
+      "Total": 1,
+      "gray": 0.5,
+      "blue-gray": 0.25,
+      "green-gray": 0.25
+    },
+    "Other": {
+      "Total": 2,
+      "heterochromatic": 0.5,
+      "violet": 0.5,
+      "red": 0.5,
+      "amber": 0.25,
+      "yellow": 0.25
+    }
+  },
+  "api": {
+    "Brown": {
+      "Total": 85,
+      "dark brown": 15,
+      "brown": 50,
+      "light brown": 18,
+      "reddish-brown": 2,
+      "black": 10
+    },
+    "Blue": {
+      "Total": 5,
+      "deep blue": 2,
+      "blue": 2,
+      "light blue": 0.50,
+      "pale blue": 0.25,
+      "violet-blue": 0.25
+    },
+    "Hazel": {
+      "Total": 5,
+      "hazel": 3,
+      "brownish-hazel": 1.50,
+      "golden-hazel": 0.25,
+      "greenish-hazel": 0.25
+    },
+    "Green": {
+      "Total": 1,
+      "green": 0.05,
+      "light green": 0.04,
+      "dark green": 0.04,
+      "yellow-green": 0.04,
+      "pale green": 0.04,
+      "sea green": 0.04
+    },
+    "Gray": {
+      "Total": 1,
+      "gray": 0.5,
+      "blue-gray": 0.25,
+      "green-gray": 0.25
+    },
+    "Other": {
+      "Total": 2,
+      "heterochromatic": 0.5,
+      "violet": 0.5,
+      "red": 0.5,
+      "amber": 0.25,
+      "yellow": 0.25
+    }
+  },
+  "aian": {
+    "Brown": {
+      "Total": 85,
+      "dark brown": 15,
+      "brown": 50,
+      "light brown": 18,
+      "reddish-brown": 2,
+      "black": 10
+    },
+    "Blue": {
+      "Total": 5,
+      "deep blue": 2,
+      "blue": 2,
+      "light blue": 0.50,
+      "pale blue": 0.25,
+      "violet-blue": 0.25
+    },
+    "Hazel": {
+      "Total": 5,
+      "hazel": 3,
+      "brownish-hazel": 1.50,
+      "golden-hazel": 0.25,
+      "greenish-hazel": 0.25
+    },
+    "Green": {
+      "Total": 1,
+      "green": 0.05,
+      "light green": 0.04,
+      "dark green": 0.04,
+      "yellow-green": 0.04,
+      "pale green": 0.04,
+      "sea green": 0.04
+    },
+    "Gray": {
+      "Total": 1,
+      "gray": 0.5,
+      "blue-gray": 0.25,
+      "green-gray": 0.25
+    },
+    "Other": {
+      "Total": 2,
+      "heterochromatic": 0.5,
+      "violet": 0.5,
+      "red": 0.5,
+      "amber": 0.25,
+      "yellow": 0.25
+    }
+  },
+  "2prace": {
+    "Brown": {
+      "Total": 65,
+      "dark brown": 10,
+      "brown": 40,
+      "light brown": 8,
+      "reddish-brown": 2,
+      "black": 5
+    },
+    "Blue": {
+      "Total": 17,
+      "deep blue": 5,
+      "blue": 5,
+      "light blue": 4,
+      "pale blue": 2,
+      "violet-blue": 1
+    },
+    "Hazel": {
+      "Total": 10,
+      "hazel": 7,
+      "brownish-hazel": 2.50,
+      "golden-hazel": 0.25,
+      "greenish-hazel": 0.25
+    },
+    "Green": {
+      "Total": 4,
+      "green": 1.50,
+      "light green": 0.50,
+      "dark green": 1,
+      "yellow-green": 0.25,
+      "pale green": 0.25,
+      "sea green": 0.50
+    },
+    "Gray": {
+      "Total": 2,
+      "gray": 1.5,
+      "blue-gray": 0.25,
+      "green-gray": 0.25
+    },
+    "Other": {
+      "Total": 2,
+      "heterochromatic": 0.5,
+      "violet": 0.5,
+      "red": 0.5,
+      "amber": 0.25,
+      "yellow": 0.25
+    }
+  },
+  "hispanic": {
+    "Brown": {
+      "Total": 75,
+      "dark brown": 10,
+      "brown": 50,
+      "light brown": 10,
+      "reddish-brown": 2,
+      "black": 3
+    },
+    "Blue": {
+      "Total": 10,
+      "deep blue": 3.50,
+      "blue": 5,
+      "light blue": 0.50,
+      "pale blue": 0.50,
+      "violet-blue": 0.50
+    },
+    "Hazel": {
+      "Total": 5,
+      "hazel": 3,
+      "brownish-hazel": 1.50,
+      "golden-hazel": 0.25,
+      "greenish-hazel": 0.25
+    },
+    "Green": {
+      "Total": 2,
+      "green": 1,
+      "light green": 0.20,
+      "dark green": 0.20,
+      "yellow-green": 0.20,
+      "pale green": 0.20,
+      "sea green": 0.20
+    },
+    "Gray": {
+      "Total": 3,
+      "gray": 2,
+      "blue-gray": 0.50,
+      "green-gray": 0.50
+    },
+    "Other": {
+      "Total": 4,
+      "heterochromatic": 0.25,
+      "violet": 0.25,
+      "red": 0.25,
+      "amber": 3,
+      "yellow": 0.25
+    }
+  }
+}

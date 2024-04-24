@@ -40,3 +40,8 @@ Azure
 Teal
 Sea Green
 Ivory
+Saffron
+Tangerine
+Vermilion
+Ochre
+Magenta

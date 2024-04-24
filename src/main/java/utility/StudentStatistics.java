@@ -466,10 +466,12 @@ public class StudentStatistics implements PStatistics {
                 this.hairLength = "shoulder-length";
             } else if (choice <= 1325) {
                 this.hairLength = "long";
-            } else if (choice <= 1600) {
+            } else if (choice <= 1500) {
                 this.hairLength = "chin-length";
-            } else {
+            } else if (choice <= 8000) {
                 this.hairLength = "short";
+            } else {
+                this.hairLength = "very short";
             }
         } else {
             if (choice <= 4) {
