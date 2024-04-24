@@ -50,7 +50,6 @@ The school mascot is generated from a weighted list based on the most frequently
 
 *Coming soon*
 
-- Weighted Distribution of surnames
 - Staff assignments
 - Courses
 - School schedules/ bell schedule
@@ -61,6 +60,8 @@ The school mascot is generated from a weighted list based on the most frequently
 - Family income status
 - Siblings
 - Moods
+- Nicknames and randomly distributed suffixes
+- Rival schools
 
 
 ## Student and Staff Stat Generation
@@ -151,3 +152,5 @@ Secondary stats are derived from a combination of primary stats and are capable 
 - Inspectors are available for debugging and viewing individual staff/students
 - Time is represented and can be advanced by days/hours
 - Basic quiz and test system to challenge student stat system
+
+**Disclaimer:** *The story, all names, characters, and incidents portrayed in this game are fictitious and randomly generated. No identification with actual persons (living or deceased), places, buildings, and products is intended or should be inferred.* 
