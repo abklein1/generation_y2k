@@ -160,7 +160,7 @@ public class StandardSchool implements SchoolPlan {
 
     private String schoolNameLoader() {
         String schoolName;
-        int selection = setRandom(1, 10);
+        int selection = setRandom(1, 20);
         Object object;
         try {
             object = new JSONParser().parse(new FileReader("src/main/java/Resources/highschool_gen.json"));
@@ -169,7 +169,7 @@ public class StandardSchool implements SchoolPlan {
         }
         JSONObject choices = (JSONObject) object;
 
-        if (selection <= 5) {
+        if (selection <= 10) {
             Object names1 = choices.get("Place1");
             Object names2 = choices.get("Place2");
             JSONArray names_1 = (JSONArray) names1;
@@ -180,7 +180,11 @@ public class StandardSchool implements SchoolPlan {
 
             selection = setRandom(0, names_2.size() - 1);
             schoolName = schoolName + " " + names_2.get(selection).toString();
-
+        } else if (selection <= 12) {
+            Object names1 = choices.get("Single");
+            JSONArray names_1 = (JSONArray) names1;
+            selection = setRandom(0, names_1.size() - 1);
+            schoolName = names_1.get(selection).toString();
         } else {
             Object names3 = choices.get("Name");
             Object names4 = choices.get("MiddleInitial");
