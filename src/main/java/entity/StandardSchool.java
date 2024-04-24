@@ -24,7 +24,7 @@ public class StandardSchool implements SchoolPlan {
 
     String schoolName;
     String schoolMascot;
-    String [] schoolColors;
+    String[] schoolColors;
     ArtStudio[] artStudios;
     AthleticField[] athleticFields;
     Auditorium[] auditoriums;
@@ -169,7 +169,7 @@ public class StandardSchool implements SchoolPlan {
         }
         JSONObject choices = (JSONObject) object;
 
-        if (selection <= 10) {
+        if (selection <= 14) {
             Object names1 = choices.get("Place1");
             Object names2 = choices.get("Place2");
             JSONArray names_1 = (JSONArray) names1;
@@ -180,7 +180,7 @@ public class StandardSchool implements SchoolPlan {
 
             selection = setRandom(0, names_2.size() - 1);
             schoolName = schoolName + " " + names_2.get(selection).toString();
-        } else if (selection <= 12) {
+        } else if (selection <= 17) {
             Object names1 = choices.get("Single");
             JSONArray names_1 = (JSONArray) names1;
             selection = setRandom(0, names_1.size() - 1);
@@ -786,10 +786,6 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
-    public void setSchoolColors(String [] colors) {
-        this.schoolColors = colors;
-    }
-
     public void schoolColorsLoader() {
         String pathColors = "src/main/java/Resources/colors.txt";
         List<String> colors = new ArrayList<>();
@@ -813,11 +809,15 @@ public class StandardSchool implements SchoolPlan {
             secondColor = setRandom(0, colors.size() - 1);
         } while (firstColor == secondColor);
 
-        this.schoolColors = new String[] {colors.get(firstColor), colors.get(secondColor)};
+        this.schoolColors = new String[]{colors.get(firstColor), colors.get(secondColor)};
     }
 
     public String[] getSchoolColors() {
         return Arrays.copyOf(schoolColors, schoolColors.length);
+    }
+
+    public void setSchoolColors(String[] colors) {
+        this.schoolColors = colors;
     }
 }
 
