@@ -1,5 +1,14 @@
 package utility;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TraitSelection {
@@ -113,5 +122,122 @@ public class TraitSelection {
         } else {
             return "dense, coily";
         }
+    }
+
+    public static String studentHairSelection(String race) {
+
+        JSONObject choices = loadHairColorData();
+        JSONObject weights = (JSONObject) choices.get(race);
+        if (weights == null) {
+            throw new IllegalArgumentException("Race not found");
+        }
+
+        List<String> hairColors = new ArrayList<>();
+        List<Double> probabilities = new ArrayList<>();
+
+        for (Object key : weights.keySet()) {
+            String color = (String) key;
+            Double probability = ((Number) weights.get(color)).doubleValue();
+            hairColors.add(color);
+            probabilities.add(probability);
+        }
+
+        return weightedRandomSelection(hairColors, probabilities);
+    }
+
+    private static JSONObject loadHairColorData() {
+        try {
+            JSONParser parser = new JSONParser();
+            FileReader reader = new FileReader("src/main/java/Resources/hair_color.json");
+            return (JSONObject) parser.parse(reader);
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException("Failed to load hair color data", e);
+        }
+    }
+
+    private static String weightedRandomSelection(List<String> items, List<Double> weights) {
+        double totalWeight = 0.0;
+        for (Double weight : weights) {
+            totalWeight += weight;
+        }
+
+        double random = new Random().nextDouble() * totalWeight;
+        for (int i = 0; i < items.size(); i++) {
+            random -= weights.get(i);
+            if (random <= 0.0) {
+                return items.get(i);
+            }
+        }
+
+        return null;
+    }
+
+    public static String studentEyeColorSelection(String race) {
+        JSONObject choices = loadEyeColorData();
+
+        // Get the main eye color weights for the specified race
+        JSONObject raceData = (JSONObject) choices.get(race);
+        if (raceData == null) {
+            throw new IllegalArgumentException("Race not found in the dataset");
+        }
+
+        // Lists to hold main eye color categories and their weights
+        List<String> mainColors = new ArrayList<>();
+        List<Double> mainWeights = new ArrayList<>();
+
+        // Populate lists from JSON data
+        for (Object key : raceData.keySet()) {
+            String color = (String) key;
+            JSONObject colorDetails = (JSONObject) raceData.get(color);
+            Double totalWeight = ((Number) colorDetails.get("Total")).doubleValue();
+            mainColors.add(color);
+            mainWeights.add(totalWeight);
+        }
+
+        // Weighted random selection of main color
+        String selectedMainColor = weightedRandomSelectionEyes(mainColors, mainWeights);
+
+        // Now select a specific shade within the chosen main color category
+        JSONObject selectedColorDetails = (JSONObject) raceData.get(selectedMainColor);
+        List<String> shades = new ArrayList<>();
+        List<Double> shadeWeights = new ArrayList<>();
+
+        for (Object key : selectedColorDetails.keySet()) {
+            if (!"Total".equals(key)) {
+                String shade = (String) key;
+                Double weight = ((Number) selectedColorDetails.get(shade)).doubleValue();
+                shades.add(shade);
+                shadeWeights.add(weight);
+            }
+        }
+
+        return weightedRandomSelection(shades, shadeWeights);
+    }
+
+    private static JSONObject loadEyeColorData() {
+        try {
+            JSONParser parser = new JSONParser();
+            FileReader reader = new FileReader("src/main/java/Resources/eye_color.json");
+            return (JSONObject) parser.parse(reader);
+        } catch (IOException | org.json.simple.parser.ParseException e) {
+            throw new RuntimeException("Failed to load eye color data", e);
+        }
+    }
+
+    private static String weightedRandomSelectionEyes(List<String> items, List<Double> weights) {
+        double totalWeight = 0.0;
+        for (Double weight : weights) {
+            totalWeight += weight;
+        }
+
+        double random = new Random().nextDouble() * totalWeight;
+        for (int i = 0; i < items.size(); i++) {
+            random -= weights.get(i);
+            if (random <= 0.0) {
+                return items.get(i);
+            }
+        }
+
+        return null;
     }
 }

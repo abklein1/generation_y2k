@@ -33,8 +33,6 @@ public class StudentPopGenerator {
 
         for (int k = 0; k < studentCap; k++) {
             Student student = studentHashMap.get(k);
-            student.studentStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102)));
-            student.studentStatistics.setEyeColor(TraitSelection.eyeSelection(setRandom(0, 109)));
             student.studentStatistics.setLevel(1);
             student.studentStatistics.setExperience(0);
             student.studentStatistics.setGradeLevel(setRandom(0, 3));
@@ -42,9 +40,14 @@ public class StudentPopGenerator {
             student.studentStatistics.setGender(GenderLoader.genderSelection());
             f_name = NameLoader.nameGenerator(String.valueOf(student.studentStatistics.getBirthday().getYear()), student.studentStatistics.getGender());
             l_name = NameLoader.selectWeightedRandom();
+            // Race distribution tied to last names
+            String lastName = l_name[0];
+            String race = l_name[1];
             student.studentName.setFirstName(f_name);
-            student.studentName.setLastName(l_name[0]);
-            student.studentStatistics.setRace(l_name[1]);
+            student.studentName.setLastName(lastName);
+            student.studentStatistics.setRace(race);
+            student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race));
+            student.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
             student.studentStatistics.setInitHeight();
             student.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
             student.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
@@ -62,7 +65,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitOpenMind();
             student.studentStatistics.setInitHairLength();
             student.studentStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975)));
-            System.out.println("   Generated student " + f_name + " " + l_name[0]);
+            System.out.println("   Generated student " + f_name + " " + lastName);
         }
     }
 

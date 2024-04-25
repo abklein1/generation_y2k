@@ -6,7 +6,7 @@
       "dark brown": 15,
       "light brown": 9.50,
       "reddish-brown": 0.25,
-      "black": 0.25
+      "blackish-brown": 0.25
     },
     "Blue": {
       "Total": 24,
@@ -53,7 +53,7 @@
       "brown": 50,
       "light brown": 18,
       "dark brown": 15,
-      "black": 10,
+      "blackish-brown": 10,
       "reddish-brown": 2
     },
     "Blue": {
@@ -102,7 +102,7 @@
       "brown": 50,
       "light brown": 18,
       "reddish-brown": 2,
-      "black": 10
+      "blackish-brown": 10
     },
     "Blue": {
       "Total": 5,
@@ -150,7 +150,7 @@
       "brown": 50,
       "light brown": 18,
       "reddish-brown": 2,
-      "black": 10
+      "blackish-brown": 10
     },
     "Blue": {
       "Total": 5,
@@ -198,7 +198,7 @@
       "brown": 40,
       "light brown": 8,
       "reddish-brown": 2,
-      "black": 5
+      "blackish-brown": 5
     },
     "Blue": {
       "Total": 17,
@@ -246,7 +246,7 @@
       "brown": 50,
       "light brown": 10,
       "reddish-brown": 2,
-      "black": 3
+      "blackish-brown": 3
     },
     "Blue": {
       "Total": 10,
