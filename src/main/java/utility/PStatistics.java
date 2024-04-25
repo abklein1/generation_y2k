@@ -81,7 +81,7 @@ public interface PStatistics {
 
     int getPerception();
 
-    void setInitHairLength();
+    void setInitHairLength(int choice);
 
     String getHairLength();
 

@@ -46,8 +46,9 @@ public class StudentPopGenerator {
             student.studentName.setFirstName(f_name);
             student.studentName.setLastName(lastName);
             student.studentStatistics.setRace(race);
-            student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race));
             student.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
+            String eyes = student.studentStatistics.getEyeColor();
+            student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
             student.studentStatistics.setInitHeight();
             student.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
             student.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
@@ -63,7 +64,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitCuriosity();
             student.studentStatistics.setInitResponsibility();
             student.studentStatistics.setInitOpenMind();
-            student.studentStatistics.setInitHairLength();
+            student.studentStatistics.setInitHairLength(setRandom(0,10000));
             student.studentStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975)));
             System.out.println("   Generated student " + f_name + " " + lastName);
         }

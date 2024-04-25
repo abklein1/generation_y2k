@@ -124,7 +124,12 @@ public class TraitSelection {
         }
     }
 
-    public static String studentHairSelection(String race) {
+    public static String studentHairSelection(String race, String eyes) {
+        // TODO: possibly separate logic from hair and have separate gen for genetic disorders
+        // albinism
+        if (eyes.equals("red") || eyes.equals("violet")) {
+            return "white";
+        }
 
         JSONObject choices = loadHairColorData();
         JSONObject weights = (JSONObject) choices.get(race);

@@ -351,17 +351,15 @@ public class TeacherStatistics implements PStatistics {
     }
 
     @Override
-    public void setInitHairLength() {
-        Random random = new Random();
-        int choice = random.nextInt(10000);
+    public void setInitHairLength(int choice) {
         if (this.gender.equals("Male")) {
             if (choice <= 3) {
                 this.hairLength = "waist-length";
             } else if (choice <= 25) {
                 this.hairLength = "shoulder-length";
-            } else if (choice <= 1325) {
+            } else if (choice <= 325) {
                 this.hairLength = "long";
-            } else if (choice <= 1600) {
+            } else if (choice <= 600) {
                 this.hairLength = "chin-length";
             } else {
                 this.hairLength = "short";

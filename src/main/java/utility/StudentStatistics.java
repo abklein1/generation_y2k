@@ -456,17 +456,15 @@ public class StudentStatistics implements PStatistics {
     }
     //TODO: Experiment with more narrative descriptions. ex. 'Rachel has wavy, brown hair that falls past her shoulders'
     @Override
-    public void setInitHairLength() {
-        Random random = new Random();
-        int choice = random.nextInt(10000);
-        if (this.gender.equals("Male")) {
-            if (choice <= 3) {
+    public void setInitHairLength(int choice) {
+        if (this.gender.equals("male")) {
+            if (choice < 30) {
                 this.hairLength = "waist-length";
-            } else if (choice <= 25) {
+            } else if (choice < 100) {
                 this.hairLength = "shoulder-length";
-            } else if (choice <= 1325) {
+            } else if (choice <= 400) {
                 this.hairLength = "long";
-            } else if (choice <= 1500) {
+            } else if (choice <= 800) {
                 this.hairLength = "chin-length";
             } else if (choice <= 8000) {
                 this.hairLength = "short";
@@ -480,8 +478,8 @@ public class StudentStatistics implements PStatistics {
                 this.hairLength = "waist-length";
             } else if (choice <= 321) {
                 this.hairLength = "shoulder-length";
-            } else if (choice <= 1621) {
-                this.hairLength = "long";
+            } else if (choice <= 4500) {
+                this.hairLength = "neck-length";
             } else if (choice <= 8300) {
                 this.hairLength = "chin-length";
             } else {
