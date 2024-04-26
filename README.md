@@ -62,7 +62,7 @@ The school mascot is generated from a weighted list based on the most frequently
 - Moods
 - Nicknames and randomly distributed suffixes
 - Rival schools
-
+- More accurate descriptors of teachers based on age
 
 ## Student and Staff Stat Generation
 
