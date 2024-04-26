@@ -67,6 +67,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitOpenMind();
             student.studentStatistics.setInitHairLength(setRandom(0,10000));
             student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
+            student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
             System.out.println("   Generated student " + f_name + " " + lastName);
         }
     }

@@ -16,6 +16,7 @@ public class StudentStatistics implements PStatistics {
     private String build;
     private String gradeLevel;
     private String race;
+    private String skinColor;
     private int intelligence;
     private int charisma;
     private int agility;
@@ -46,6 +47,7 @@ public class StudentStatistics implements PStatistics {
         this.hairType = null;
         this.build = null;
         this.race = null;
+        this.skinColor = null;
         this.intelligence = 0;
         this.charisma = 0;
         this.agility = 0;
@@ -330,6 +332,7 @@ public class StudentStatistics implements PStatistics {
         this.openmindedness = openMindedness;
     }
 
+    //TODO: remove calculation from Student stats
     public void setInitHeight() {
 
         Random random = new Random();
@@ -454,6 +457,7 @@ public class StudentStatistics implements PStatistics {
     public void setInitOpenMind() {
         this.openmindedness = (int) ((this.intelligence * 1.25) + (this.charisma * 1.25)) / 2;
     }
+
     //TODO: Experiment with more narrative descriptions. ex. 'Rachel has wavy, brown hair that falls past her shoulders'
     @Override
     public void setInitHairLength(int choice) {
@@ -506,11 +510,19 @@ public class StudentStatistics implements PStatistics {
         this.hairType = hairType;
     }
 
+    public String getRace() {
+        return this.race;
+    }
+
     public void setRace(String race) {
         this.race = race;
     }
 
-    public String getRace() {
-        return this.race;
+    public String getSkinColor() {
+        return this.skinColor;
+    }
+
+    public void setSkinColor(String skinColor) {
+        this.skinColor = skinColor;
     }
 }

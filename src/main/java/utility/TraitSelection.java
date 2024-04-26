@@ -16,7 +16,7 @@ public class TraitSelection {
     private static Integer setRandom(int min, int max) {
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
-
+    // TODO: Make these hair descriptions more accurate to teachers/older people
     public static String hairSelection(int selection) {
         if (selection >= 0 && selection <= 21) {
             return "black";
@@ -160,7 +160,7 @@ public class TraitSelection {
             throw new RuntimeException("Failed to load hair type data", e);
         }
     }
-
+    //TODO: some repeated code that needs cleaning eventually
     public static String studentHairSelection(String race, String eyes) {
         // TODO: possibly separate logic from hair and have separate gen for genetic disorders
         // albinism
@@ -281,5 +281,40 @@ public class TraitSelection {
         }
 
         return null;
+    }
+
+    public static String studentSkinColorSelection(String race, String eyes) {
+        if (eyes.equals("red") || eyes.equals("violet")) {
+            return "pale white";
+        }
+
+        JSONObject choices = loadSkinColorData();
+        JSONObject weights = (JSONObject) choices.get(race);
+        if (weights == null) {
+            throw new IllegalArgumentException("Race not found");
+        }
+
+        List<String> skinColors = new ArrayList<>();
+        List<Double> probabilities = new ArrayList<>();
+
+        for (Object key : weights.keySet()) {
+            String color = (String) key;
+            Double probability = ((Number) weights.get(color)).doubleValue();
+            skinColors.add(color);
+            probabilities.add(probability);
+        }
+
+        return weightedRandomSelection(skinColors, probabilities);
+
+    }
+
+    private static JSONObject loadSkinColorData() {
+        try {
+            JSONParser parser = new JSONParser();
+            FileReader reader = new FileReader("src/main/java/Resources/skin_distribution.json");
+            return (JSONObject) parser.parse(reader);
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException("Failed to load skin color data", e);
+        }
     }
 }

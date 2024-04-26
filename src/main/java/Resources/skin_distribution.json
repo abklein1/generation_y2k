@@ -1,0 +1,76 @@
+{
+  "white": {
+    "beige": 20,
+    "white": 30,
+    "pale beige": 10,
+    "ivory": 10,
+    "sand": 10,
+    "pale ivory": 10,
+    "porcelain": 9.9,
+    "vitiligo": 0.1
+  },
+  "black": {
+    "brown": 20,
+    "dark brown": 20,
+    "sepia": 10,
+    "ochre": 10,
+    "umber": 10,
+    "bronze": 10,
+    "ebony": 20,
+    "vitiligo": 0.1
+  },
+  "api": {
+    "beige": 20,
+    "ivory": 10,
+    "sepia": 10,
+    "ochre": 10,
+    "tawny": 10,
+    "gold": 10,
+    "tan": 10,
+    "amber": 9.9,
+    "warm ivory": 10,
+    "vitiligo": 0.1
+  },
+  "aian": {
+    "beige": 10,
+    "ivory": 20,
+    "sepia": 10,
+    "fawn": 10,
+    "tawny": 10,
+    "gold": 10,
+    "tan": 10,
+    "amber": 9.9,
+    "warm ivory": 10,
+    "vitiligo": 0.1
+  },
+  "2prace": {
+    "beige": 10,
+    "white": 10,
+    "pale beige": 10,
+    "ivory": 10,
+    "sand": 10,
+    "pale ivory": 10,
+    "porcelain": 9.9,
+    "brown": 10,
+    "sepia": 5,
+    "ochre": 5,
+    "umber": 5,
+    "bronze": 5,
+    "vitiligo": 0.1
+  },
+  "hispanic": {
+    "beige": 10,
+    "white": 10,
+    "pale beige": 10,
+    "ivory": 10,
+    "sand": 10,
+    "pale ivory": 10,
+    "porcelain": 9.9,
+    "brown": 10,
+    "sepia": 5,
+    "ochre": 5,
+    "umber": 5,
+    "bronze": 5,
+    "vitiligo": 0.1
+  }
+}
