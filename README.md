@@ -105,6 +105,7 @@ Nice to meet you April!
 - Hair Length Approximation : https://pubmed.ncbi.nlm.nih.gov/12644859/
 - Eye Color Distribution : https://www.verywellhealth.com/what-is-the-rarest-eye-color-5087302
 - US High School Colors Reference : https://www.quora.com/What-are-the-most-popular-high-school-color-combinations-in-the-US
+- Hair types by race (General) : https://www.researchgate.net/figure/a-Demographics-of-sample-population-n-48-of-8-hair-curl-groups-Hair-geometric_fig1_317578316
 
 ## Gameplay Mechanics
 Student and teacher stats are comprised of the following primary traits. Primary traits are inherent to the characters and do not change:

@@ -92,11 +92,14 @@ public class TraitSelection {
         } else if (selection == 108) {
             return "black";
         } else {
-            return "heterochromia";
+            return "heterochromatic";
         }
     }
 
-    public static String hairType(int selection) {
+    public static String hairType(int selection, String hairColor) {
+        if(hairColor.equals("no")) {
+            return "";
+        }
         if (selection >= 0 && selection <= 50) {
             return "fine, straight";
         } else if (selection >= 51 && selection <= 250) {
@@ -121,6 +124,40 @@ public class TraitSelection {
             return "coily";
         } else {
             return "dense, coily";
+        }
+    }
+
+    public static String studentHairType(String race, String hairColor) {
+        if(hairColor.equals("no")) {
+            return "";
+        }
+
+        JSONObject choices = loadHairTypeData();
+        JSONObject weights = (JSONObject) choices.get(race);
+        if (weights == null) {
+            throw new IllegalArgumentException("Race not found");
+        }
+
+        List<String> hairTypes = new ArrayList<>();
+        List<Double> probabilities = new ArrayList<>();
+
+        for (Object key : weights.keySet()) {
+            String type = (String) key;
+            Double probability = ((Number) weights.get(type)).doubleValue();
+            hairTypes.add(type);
+            probabilities.add(probability);
+        }
+
+        return weightedRandomSelection(hairTypes, probabilities);
+    }
+
+    private static JSONObject loadHairTypeData() {
+        try {
+            JSONParser parser = new JSONParser();
+            FileReader reader = new FileReader("src/main/java/Resources/hair_type.json");
+            return (JSONObject) parser.parse(reader);
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException("Failed to load hair type data", e);
         }
     }
 
