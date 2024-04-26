@@ -3,10 +3,7 @@ package utility;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class NameLoader {
     private static final HashMap<Integer, String> firstNames = new HashMap<Integer, String>();
@@ -344,6 +341,29 @@ public class NameLoader {
         NameData(double weight, Map<String, Double> raceDistribution) {
             this.weight = weight;
             this.raceDistribution = raceDistribution;
+        }
+    }
+
+    public static String middleNameGenerator(String gender) {
+        Random r = new Random();
+        int roll = 0;
+
+        if (gender.equals("female")) {
+            return "";
+        }
+
+        roll = r.nextInt(100)+1;
+
+        if(roll <= 50) {
+            return "JR.";
+        } else if (roll <= 80) {
+            return "II";
+        } else if (roll <= 95) {
+            return "III";
+        } else if (roll <= 98) {
+            return "IV";
+        } else {
+            return "V";
         }
     }
 

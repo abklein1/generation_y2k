@@ -45,6 +45,10 @@ public class StudentPopGenerator {
             String race = l_name[1];
             student.studentName.setFirstName(f_name);
             student.studentName.setLastName(lastName);
+            if(setRandom(0,180) == 100) {
+                student.studentName.setSuffix(NameLoader.middleNameGenerator(student.studentStatistics.getGender()));
+            }
+            String suffix = student.studentName.getSuffix();
             student.studentStatistics.setRace(race);
             student.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
             String eyes = student.studentStatistics.getEyeColor();
@@ -68,7 +72,11 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitHairLength(setRandom(0,10000));
             student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
             student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
-            System.out.println("   Generated student " + f_name + " " + lastName);
+            if(suffix != null) {
+                System.out.println("   Generated student " + f_name + " " + lastName + " " + suffix);
+            } else {
+                System.out.println("   Generated student " + f_name + " " + lastName);
+            }
         }
     }
 

@@ -17,6 +17,7 @@ public class Inspector {
         StringBuilder sb = new StringBuilder();
         String firstName = student.studentName.getFirstName();
         String lastName = student.studentName.getLastName();
+        String suffix = student.studentName.getSuffix();
         String gender = student.studentStatistics.getGender();
         //String race = student.studentStatistics.getRace();
         String hairColor = student.studentStatistics.getHairColor();
@@ -27,8 +28,11 @@ public class Inspector {
         double height = student.studentStatistics.getHeight();
         String grade = student.studentStatistics.getGradeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
-
-        sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
+        if (suffix != null) {
+            sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix).append("\n=====================================\n");
+        } else {
+            sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
+        }
         sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
         sb.append(skinColor).append(" colored skin and ");
         sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ").append(hairColor.toLowerCase());
