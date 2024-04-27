@@ -1,0 +1,305 @@
+{
+  "core" : {
+    "English" : {
+      "American Literature" : {
+
+      },
+      "British Literature" : {
+
+      },
+      "Contemporary Literature" : {
+
+      },
+      "Creative Writing" : {
+
+      },
+      "English Language and Composition" : {
+
+      },
+      "English Literature and Composition" : {
+
+      },
+      "Literary Analysis" : {
+
+      },
+      "Modern Literature" : {
+
+      },
+      "Technical Writing" : {
+
+      },
+      "World Literature" : {
+
+      },
+      "Written and Oral Communication" : {
+
+      },
+      "Journalism" : {
+
+      },
+      "English I" : {
+
+      },
+      "English II" : {
+
+      }
+    },
+    "History" : {
+      "U.S. Government" : {
+
+      },
+      "U.S. History" : {
+
+      },
+      "World History" : {
+
+      },
+      "World Politics" : {
+
+      },
+      "Sociology" : {
+
+      },
+      "European History" : {
+
+      },
+      "Geography" : {
+
+      },
+      "Law" : {
+
+      },
+      "Macroeconomics" : {
+
+      },
+      "Political Studies" : {
+
+      },
+      "Human Geography" : {
+
+      },
+      "Microeconomics" : {
+
+      },
+      "Current Events" : {
+
+      }
+    },
+    "Math" : {
+      "Algebra 1" : {
+
+      },
+      "Algebra 2" : {
+
+      },
+      "Calculus" : {
+
+      },
+      "Geometry" : {
+
+      },
+      "Integrated Math" : {
+
+      },
+      "Pre-Algebra" : {
+
+      },
+      "PreCalculus" : {
+
+      },
+      "Statistics" : {
+
+      },
+      "Trigonometry" : {
+
+      },
+      "Fundamentals of Math" : {
+
+      },
+      "Practical Math" : {
+
+      }
+    },
+    "Science" : {
+      "Biology" : {
+
+      },
+      "Chemistry" : {
+
+      },
+      "Earth and Space Science" : {
+
+      },
+      "Geology" : {
+
+      },
+      "Physical Science" : {
+
+      },
+      "Environmental Studies" : {
+
+      },
+      "Physics" : {
+
+      },
+      "Environmental Science" : {
+
+      },
+      "Oceanography" : {
+
+      },
+      "Forensic Science" : {
+      }
+    },
+    "Languages" : {
+      "American Sign Language" : {
+
+      },
+      "French" : {
+
+      },
+      "Latin" : {
+
+      },
+      "Spanish" : {
+
+      },
+      "German" : {
+
+      }
+    }
+  },
+  "electives" : {
+    "VisualArts" : {
+      "Ceramics" : {
+
+      },
+      "Drawing" : {
+
+      },
+      "Painting" : {
+
+      },
+      "Photography" : {
+
+      },
+      "Printmaking" : {
+
+      },
+      "Sculpture" : {
+
+      }
+    },
+    "VocationalEd" : {
+      "Auto Body Repair" : {
+
+      },
+      "Auto Mechanics" : {
+
+      },
+      "Computer Aided Drafting I" : {
+
+      },
+      "Computer Aided Drafting II" : {
+
+      },
+      "Criminal Justice" : {
+
+      },
+      "Hospitality and Tourism" : {
+
+      },
+      "JROTC" : {
+
+      },
+      "Metalworking" : {
+
+      },
+      "Production Technology" : {
+
+      },
+      "Woodworking" : {
+
+      },
+      "Driver's Education" : {
+
+      },
+      "Cosmetology" : {
+
+      }
+    },
+    "Philosophy" : {
+
+    },
+    "Business" : {
+      "Accounting" : {
+
+      },
+      "Business Management" : {
+
+      },
+      "Introduction to Business" : {
+
+      },
+      "Personal Finance" : {
+
+      },
+      "Marketing" : {
+
+      },
+      "Entrepreneurial Skills" : {
+
+      }
+    },
+    "CompSci" : {
+      "Keyboarding" : {
+
+      },
+      "Word Processing" : {
+
+      },
+      "Intro to Programming" : {
+
+      },
+      "Film Production" : {
+
+      }
+    },
+    "PhysEd" : {
+      "Dance" : {
+
+      },
+      "Health" : {
+
+      }
+    },
+    "ConsumerSci" : {
+
+    },
+    "PerformingArts" : {
+      "Debate" : {
+
+      }
+    }
+  },
+  "ap" : {
+    "Arts" : {
+
+    },
+    "English" : {
+
+    },
+    "SocialStudies" : {
+
+    },
+    "Math" : {
+
+    },
+    "Science" : {
+
+    },
+    "WorldLang" : {
+
+    }
+  }
+}
