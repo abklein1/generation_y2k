@@ -7,6 +7,8 @@ package entity.Rooms;//*********************************************************
 //  @version    04242022
 //*******************************************************************
 
+import entity.Staff;
+
 public interface Room {
 
     void reset();
@@ -36,5 +38,9 @@ public interface Room {
     int getStaffCapacity();
 
     String getRoomName();
+
+    void setAssignedStaff(Staff staff);
+
+    Staff getAssignedStaff();
 
 }

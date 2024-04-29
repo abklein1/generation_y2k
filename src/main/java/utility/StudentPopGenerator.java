@@ -45,7 +45,7 @@ public class StudentPopGenerator {
             String race = l_name[1];
             student.studentName.setFirstName(f_name);
             student.studentName.setLastName(lastName);
-            if(setRandom(0,180) == 100) {
+            if(setRandom(0,170) == 100) {
                 student.studentName.setSuffix(NameLoader.middleNameGenerator(student.studentStatistics.getGender()));
             }
             String suffix = student.studentName.getSuffix();
