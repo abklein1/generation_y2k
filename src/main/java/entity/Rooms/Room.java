@@ -9,6 +9,8 @@ package entity.Rooms;//*********************************************************
 
 import entity.Staff;
 
+import java.util.List;
+
 public interface Room {
 
     void reset();
@@ -41,6 +43,8 @@ public interface Room {
 
     void setAssignedStaff(Staff staff);
 
-    Staff getAssignedStaff();
+    List<Staff> getAssignedStaff();
+
+    void removeAssignedStaff(Staff staff);
 
 }

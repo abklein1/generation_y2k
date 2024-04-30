@@ -7,6 +7,11 @@ package entity.Rooms;//*********************************************************
 //  @version    04242022
 //*******************************************************************
 
+import entity.Staff;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class UtilityRoom implements Room {
 
     private int roomCapacity;
@@ -18,6 +23,7 @@ public class UtilityRoom implements Room {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
+    private List<Staff> staffAssign;
 
     public UtilityRoom() {
         this.roomCapacity = 0;
@@ -29,6 +35,7 @@ public class UtilityRoom implements Room {
         this.studentCap = 0;
         this.roomNumber = null;
         this.studentRestriction = false;
+        this.staffAssign = new ArrayList<>();
     }
 
     @Override
@@ -110,5 +117,20 @@ public class UtilityRoom implements Room {
 
     private enum utilityType {
         IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
+    }
+
+    @Override
+    public void setAssignedStaff(Staff staff) {
+        staffAssign.add(staff);
+    }
+
+    @Override
+    public List<Staff> getAssignedStaff() {
+        return this.staffAssign;
+    }
+
+    @Override
+    public void removeAssignedStaff(Staff staff) {
+        staffAssign.remove(staff);
     }
 }

@@ -1,5 +1,7 @@
 package utility;
 
+import entity.StaffType;
+
 import java.time.LocalDate;
 import java.util.Random;
 
@@ -28,6 +30,7 @@ public class TeacherStatistics implements PStatistics {
     private int curiosity;
     private int responsibility;
     private int openmindedness;
+    private Enum staffType;
 
     public TeacherStatistics() {
         this.height = 0;
@@ -53,6 +56,7 @@ public class TeacherStatistics implements PStatistics {
         this.curiosity = 0;
         this.responsibility = 0;
         this.openmindedness = 0;
+        this.staffType = null;
     }
 
     @Override
@@ -397,5 +401,13 @@ public class TeacherStatistics implements PStatistics {
 
     public void setHairType(String hairType) {
         this.hairType = hairType;
+    }
+
+    public void setStaffType(Enum<StaffType> type) {
+        this.staffType = type;
+    }
+
+    public Enum<StaffType> getStaffType() {
+        return this.staffType;
     }
 }
