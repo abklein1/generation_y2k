@@ -9,24 +9,37 @@ import java.util.List;
 import java.util.Random;
 
 public class StaffAssignment {
+
+    public static void initialAssignments(HashMap<Integer, Staff> staffHashMap) {
+        assignPrincipal(staffHashMap);
+        assignVicePrincipal(staffHashMap);
+        assignGuidanceCouncilors(staffHashMap);
+    }
+
     public static void assignPrincipal(HashMap<Integer, Staff> staffHashMap) {
         Staff teacher = selectRandomTeacher(staffHashMap);
         teacher.teacherStatistics.setStaffType(StaffType.PRINCIPAL);
-        System.out.println("Staff " + teacher.teacherName.getFirstName() + " assigned as principal!");
+        System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as principal!");
     }
 
-    public static void assignPrincipal(Staff staff) {
-        staff.teacherStatistics.setStaffType(StaffType.PRINCIPAL);
+    public static void assignStaff(Staff staff, StaffType type) {
+        staff.teacherStatistics.setStaffType(type);
     }
 
     public static void assignVicePrincipal(HashMap<Integer, Staff> staffHashMap) {
         Staff teacher = selectRandomTeacher(staffHashMap);
         teacher.teacherStatistics.setStaffType(StaffType.VICE_PRINCIPAL);
-        System.out.println("Staff " + teacher.teacherName.getFirstName() + " assigned as vice principal!");
+        System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as vice principal!");
     }
 
-    public static void assignVicePrincipal(Staff staff) {
-        staff.teacherStatistics.setStaffType(StaffType.VICE_PRINCIPAL);
+    public static void assignGuidanceCouncilors(HashMap<Integer, Staff> staffHashMap) {
+        int councilMax = 4;
+
+        for(int councilCount = 0; councilCount < councilMax; councilCount++) {
+            Staff teacher = selectRandomTeacher(staffHashMap);
+            teacher.teacherStatistics.setStaffType(StaffType.GUIDANCE);
+            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as guidance councilor!");
+        }
     }
 
     private static Staff selectRandomTeacher(HashMap<Integer, Staff> staffHashMap) {

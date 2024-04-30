@@ -48,9 +48,8 @@ public class Main {
         standardSchool.setStudentGradeClass(studentHashMap);
         //Set for staff population generation
         TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap);
-        System.out.println("Assign principal and vice principal");
-        StaffAssignment.assignPrincipal(staffHashMap);
-        StaffAssignment.assignVicePrincipal(staffHashMap);
+        System.out.println("Assign initial staff");
+        StaffAssignment.initialAssignments(staffHashMap);
         System.out.println("Done creating school and students");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
         //Welcome
