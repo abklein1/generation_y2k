@@ -11,7 +11,6 @@ package game;/*
 import entity.*;
 import utility.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -49,7 +48,10 @@ public class Main {
         //Set for staff population generation
         TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap);
         System.out.println("Assign initial staff");
-        StaffAssignment.initialAssignments(staffHashMap);
+        StaffAssignment.initialAssignmentsCore(staffHashMap, student_cap);
+        StaffAssignment.assignElectiveByRooms(staffHashMap,standardSchool.getArtStudios().length, StaffType.VISUAL_ARTS);
+        StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getAthleticFields().length + standardSchool.getGyms().length, StaffType.PHYSICAL_ED);
+        StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getMusicRooms().length + standardSchool.getDramaRooms().length + standardSchool.getAuditoriums().length, StaffType.PERFORMING_ARTS);
         System.out.println("Done creating school and students");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
         //Welcome

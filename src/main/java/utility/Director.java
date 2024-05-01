@@ -23,7 +23,7 @@ public class Director {
     //TODO: Seed these values
     public void setStandardSchool(StandardSchool standardSchool) {
         System.out.println("Building art studios...");
-        standardSchool.setArtStudios(setRandom(1, 3));
+        standardSchool.setArtStudios(setRandom(1, 4));
         System.out.println("Building athletic fields...");
         standardSchool.setAthleticFields(setRandom(1, 3));
         System.out.println("Building auditoriums...");
