@@ -488,10 +488,20 @@
         "GradeLevel" : [9,10,11,12]
       },
       "Computer Aided Drafting I" : {
-
+        "Honors" : false,
+        "OnLevel" : true,
+        "Required" : false,
+        "Prerequisite" : [],
+        "Alternatives" : [ "Building Construction and Maintenance", "Digital Production Technology", "Agriscience Fundamentals"],
+        "GradeLevel" : [10,11,12]
       },
       "Computer Aided Drafting II" : {
-
+        "Honors" : false,
+        "OnLevel" : true,
+        "Required" : false,
+        "Prerequisite" : ["Computer Aided Drafting II"],
+        "Alternatives" : [ "Building Construction and Maintenance", "Digital Production Technology", "Agriscience Fundamentals"],
+        "GradeLevel" : [10,11,12]
       },
       "Criminal Justice" : {
 
@@ -559,7 +569,12 @@
 
       },
       "Introduction to Business" : {
-
+        "Honors" : false,
+        "OnLevel" : true,
+        "Required" : false,
+        "Prerequisite" : [],
+        "Alternatives" : [],
+        "GradeLevel" : [9,10,11,12]
       },
       "Personal Finance" : {
 
@@ -568,15 +583,30 @@
 
       },
       "Entrepreneurial Skills" : {
-
+        "Honors" : false,
+        "OnLevel" : true,
+        "Required" : false,
+        "Prerequisite" : ["Introduction to Business"],
+        "Alternatives" : [],
+        "GradeLevel" : [9,10,11,12]
       }
     },
     "CompSci" : {
       "Keyboarding" : {
-
+        "Honors" : false,
+        "OnLevel" : true,
+        "Required" : false,
+        "Prerequisite" : [],
+        "Alternatives" : [],
+        "GradeLevel" : [9,10,11,12]
       },
       "Word Processing" : {
-
+        "Honors" : false,
+        "OnLevel" : true,
+        "Required" : false,
+        "Prerequisite" : [],
+        "Alternatives" : [],
+        "GradeLevel" : [9,10,11,12]
       },
       "Intro to Programming" : {
 

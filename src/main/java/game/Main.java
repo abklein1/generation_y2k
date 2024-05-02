@@ -52,6 +52,13 @@ public class Main {
         StaffAssignment.assignElectiveByRooms(staffHashMap,standardSchool.getArtStudios().length, StaffType.VISUAL_ARTS);
         StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getAthleticFields().length + standardSchool.getGyms().length, StaffType.PHYSICAL_ED);
         StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getMusicRooms().length + standardSchool.getDramaRooms().length + standardSchool.getAuditoriums().length, StaffType.PERFORMING_ARTS);
+        StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getVocationalRooms().length, StaffType.VOCATIONAL);
+        StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI);
+        StaffAssignment.assignFrontOfficePersonnel(staffHashMap);
+        StaffAssignment.assignUtilityPersonnel(staffHashMap);
+        StaffAssignment.assignLibraryPersonnel(staffHashMap);
+        StaffAssignment.assignNurse(staffHashMap);
+        StaffAssignment.assignLunch(staffHashMap);
         System.out.println("Done creating school and students");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
         //Welcome

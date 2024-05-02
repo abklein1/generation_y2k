@@ -46,6 +46,8 @@ public class StandardSchool implements SchoolPlan {
     ConferenceRoom[] conferenceRooms;
     ParkingLot[] parkingLots;
 
+    VocationalRoom[] vocationalRooms;
+
     HashMap<Integer, Student> freshmanClass = new HashMap<>();
     HashMap<Integer, Student> sophomoreClass = new HashMap<>();
     HashMap<Integer, Student> juniorClass = new HashMap<>();
@@ -124,6 +126,7 @@ public class StandardSchool implements SchoolPlan {
         int field_count = 0;
         int drama_count;
         int music_count;
+        int vocation_count = 0;
 
         class_count = classrooms.length;
         office_count = offices.length / 4;
@@ -152,9 +155,13 @@ public class StandardSchool implements SchoolPlan {
             field_count = field_count + field.getStaffCapacity();
         }
 
+        for (VocationalRoom room : vocationalRooms) {
+            vocation_count = vocation_count + room.getStaffCapacity();
+        }
+
         total = class_count + office_count + maint_count +
                 lunch_count + library_count + gym_count +
-                art_count + field_count + drama_count + music_count + 15;
+                art_count + field_count + drama_count + music_count + vocation_count + 15;
         return total;
     }
 
@@ -525,6 +532,16 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setRoomCapacity(6);
                 offices[i].setConnections(3);
                 offices[i].setRoomNumber("O-104");
+            } else if (i == 5) {
+                offices[i].setRoomName("Guidance Councilor's Office");
+                System.out.println("      Generating Councilor's Office");
+                offices[i].setDoors(2);
+                offices[i].setWindowCount(2);
+                offices[i].setInitialStaff(1);
+                offices[i].setInitialStudents(0);
+                offices[i].setRoomCapacity(6);
+                offices[i].setConnections(2);
+                offices[i].setRoomNumber("O-103");
             } else {
                 offices[i].setRoomName("Office" + i);
                 System.out.println("      Generating " + offices[i].getRoomName());
@@ -765,6 +782,25 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
+    public void setVocationalRooms(int number) {
+        vocationalRooms = new VocationalRoom[number];
+        System.out.println("   Generating " + number + " Vocational room(s)...");
+        for (int i = 0; i < number; i++) {
+            int connectN = setRandom(3, 5);
+            vocationalRooms[i] = new VocationalRoom();
+            vocationalRooms[i].setRoomName("Vocational Room" + i);
+            System.out.println("      Generating " + vocationalRooms[i].getRoomName());
+            vocationalRooms[i].setWindowCount(setRandom(1,6));
+            vocationalRooms[i].setConnections(connectN);
+            vocationalRooms[i].setDoors(connectN);
+            vocationalRooms[i].setInitialStaff(1);
+            vocationalRooms[i].setRoomCapacity(setRandom(30, 55));
+            vocationalRooms[i].setRoomNumber("Vocational" + i + setRandom(100, 999));
+        }
+    }
+
+    public VocationalRoom[] getVocationalRooms() { return vocationalRooms; }
+
     public ParkingLot[] getParkingLots() {
         return parkingLots;
     }
@@ -819,5 +855,7 @@ public class StandardSchool implements SchoolPlan {
     public void setSchoolColors(String[] colors) {
         this.schoolColors = colors;
     }
+
+
 }
 

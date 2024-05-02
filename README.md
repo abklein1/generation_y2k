@@ -165,6 +165,7 @@ Nice to meet you Nicholas!
   General) : https://www.researchgate.net/figure/a-Demographics-of-sample-population-n-48-of-8-hair-curl-groups-Hair-geometric_fig1_317578316
 - Skin tone and color
   descriptors : https://writingwithcolor.tumblr.com/post/96830966357/words-for-skin-tone-how-to-describe-skin-color
+- Staff Averages Per School : https://nces.ed.gov/pubs2007/ruraled/tables/table3_12.asp
 
 ## Gameplay Mechanics
 

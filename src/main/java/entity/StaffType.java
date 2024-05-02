@@ -19,5 +19,7 @@ public enum StaffType {
     MAINTENANCE,
     LUNCH,
     OFFICE,
+    LIBRARY,
+    NURSE,
     SUB
 }

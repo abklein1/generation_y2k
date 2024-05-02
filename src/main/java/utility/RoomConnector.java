@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 // vertex is door
 // edge is room
 public class RoomConnector {
-    private final Room[][] roomPool = new Room[20][];
+    private final Room[][] roomPool = new Room[21][];
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
     private int locker_count = 0;
     private int labs_count = 0;
@@ -55,6 +55,7 @@ public class RoomConnector {
         roomPool[17] = standardSchool.getUtilityrooms();
         roomPool[18] = standardSchool.getConferenceRooms();
         roomPool[19] = standardSchool.getParkingLots();
+        roomPool[20] = standardSchool.getVocationalRooms();
 
         connectRooms();
     }
@@ -80,6 +81,7 @@ public class RoomConnector {
         populateComputerLabs();
         populateUtilityRooms();
         populateBreakrooms();
+        populateVocationalRooms();
         connectivityInspection();
     }
 
@@ -585,6 +587,17 @@ public class RoomConnector {
             schoolConnect.addEdge(breakroom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             breakroom.setConnections(breakroom.getConnections() - 1);
+        }
+    }
+
+    private void populateVocationalRooms() {
+        Room[] vocationalRooms = roomPool[20];
+
+        for(Room vocationalRoom : vocationalRooms) {
+            Room connectRoom = findCentralRoom();
+            schoolConnect.addEdge(vocationalRoom, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            vocationalRoom.setConnections(vocationalRoom.getConnections() - 1);
         }
     }
 
