@@ -45,9 +45,7 @@ public class StandardSchool implements SchoolPlan {
     UtilityRoom[] utilityrooms;
     ConferenceRoom[] conferenceRooms;
     ParkingLot[] parkingLots;
-
     VocationalRoom[] vocationalRooms;
-
     HashMap<Integer, Student> freshmanClass = new HashMap<>();
     HashMap<Integer, Student> sophomoreClass = new HashMap<>();
     HashMap<Integer, Student> juniorClass = new HashMap<>();

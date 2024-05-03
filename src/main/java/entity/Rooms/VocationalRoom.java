@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-public class VocationalRoom implements Room{
+public class VocationalRoom implements Room {
 
     private int roomCapacity;
     private int numOfConnections;
@@ -46,23 +45,18 @@ public class VocationalRoom implements Room{
     }
 
     @Override
-    public void setConnections(int connections) {
-        this.numOfConnections = connections;
-    }
-
-    @Override
     public int getConnections() {
         return this.numOfConnections;
     }
 
     @Override
-    public void setWindowCount(int windows) {
-        this.windowCount = windows;
+    public void setConnections(int connections) {
+        this.numOfConnections = connections;
     }
 
     @Override
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
+    public void setWindowCount(int windows) {
+        this.windowCount = windows;
     }
 
     @Override
@@ -100,14 +94,13 @@ public class VocationalRoom implements Room{
         return staffCap;
     }
 
-    @Override
     public String getRoomName() {
         return this.roomName;
     }
 
     @Override
-    public void setAssignedStaff(Staff staff) {
-        staffAssign.add(staff);
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
     }
 
     @Override
@@ -116,7 +109,17 @@ public class VocationalRoom implements Room{
     }
 
     @Override
+    public void setAssignedStaff(Staff staff) {
+        staffAssign.add(staff);
+    }
+
+    @Override
     public void removeAssignedStaff(Staff staff) {
         staffAssign.remove(staff);
+    }
+
+    @Override
+    public String toString() {
+        return this.roomName;
     }
 }
