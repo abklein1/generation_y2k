@@ -16,11 +16,11 @@ public class TeacherPopGenerator {
         Random distribution = new Random();
         int int_stdDev = 15;
         int int_mean = 100;
-        int chr_stdDev = 10;
+        int chr_stdDev = 15;
         int chr_mean = 50;
-        int agl_stdDev = 10;
+        int agl_stdDev = 15;
         int agl_mean = 50;
-        int det_stdDev = 10;
+        int det_stdDev = 15;
         int det_mean = 50;
 
         //Store staff objects in another hashmap

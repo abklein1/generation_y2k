@@ -3,10 +3,7 @@ package utility;
 import entity.Staff;
 import entity.StaffType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class StaffAssignment {
     //TODO: clean up these functions. Some can be combined
@@ -131,6 +128,22 @@ public class StaffAssignment {
         }
     }
 
+    public static void assignBusiness(HashMap<Integer, Staff> staffHashMap) {
+        Staff teacher = selectRandomTeacher(staffHashMap);
+        teacher.teacherStatistics.setStaffType(StaffType.BUSINESS);
+        System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.BUSINESS.toString().toLowerCase());
+    }
+
+    // If anyone is left assign them to sub
+    public static void assignSubs(HashMap<Integer,Staff> staffHashMap) {
+        for(Map.Entry<Integer, Staff> staff : staffHashMap.entrySet()) {
+            if(staff.getValue().teacherStatistics.getStaffType() == null) {
+                staff.getValue().teacherStatistics.setStaffType(StaffType.SUB);
+                System.out.println("Staff " + staff.getValue().teacherName.getFirstName() + " " + staff.getValue().teacherName.getLastName() + " assigned to " + StaffType.SUB.toString().toLowerCase());
+            }
+        }
+    }
+
     private static Staff selectRandomTeacher(HashMap<Integer, Staff> staffHashMap) {
         Random random = new Random();
         int counter = 0;
@@ -143,7 +156,7 @@ public class StaffAssignment {
             counter++;
         } while (staffHashMap.get(key).teacherStatistics.getStaffType() != null && counter < staffHashMap.size());
         // TODO: error handling etc. prob throw exception
-        if (counter > staffHashMap.size()) {
+        if (counter >= staffHashMap.size()) {
             System.out.println("Staff cannot be assigned! Ran out of room.");
         }
 

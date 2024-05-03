@@ -59,6 +59,8 @@ public class Main {
         StaffAssignment.assignLibraryPersonnel(staffHashMap);
         StaffAssignment.assignNurse(staffHashMap);
         StaffAssignment.assignLunch(staffHashMap);
+        StaffAssignment.assignBusiness(staffHashMap);
+        StaffAssignment.assignSubs(staffHashMap);
         System.out.println("Done creating school and students");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
         //Welcome
