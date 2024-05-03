@@ -205,6 +205,14 @@ activities but they cannot be pushed beyond their initial cap.
 
 - Graph visualization of rooms can be hard to read due to overlapping labels
 
+## Release 0.0.5
+
+- New room types: vocational rooms
+- Generated staff are now assigned responsibilities
+- Added a framework of possible classes that students can be enrolled in
+- Added outlines and ideas for characteristic traits
+- Some students may have suffixes (Jr, II, III, IV)
+
 ## Release 0.0.4
 
 - Hair color, skin color, hair type distributions are now dependent on and weighted by race
