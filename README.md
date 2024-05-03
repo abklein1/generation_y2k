@@ -60,6 +60,7 @@ the backbone is constructed rooms are procedurally added to the backbone or othe
 - Breakrooms
 - Conference Rooms
 - Parking Lots
+- Vocational Rooms
 
 The front office will always contain a connection to the principal and vice principal's office as well as the nurse's
 office and any conference rooms. Breakrooms and planning rooms may be attached to the front office cluster in the
@@ -87,8 +88,6 @@ community) or a randomly concatinated place name (Place1 + Place2) where, genera
 
 *Coming soon*
 
-- Staff assignments
-- Courses
 - School schedules/ bell schedule
 - Initial school state machine
 - More status effects for people
@@ -101,6 +100,9 @@ community) or a randomly concatinated place name (Place1 + Place2) where, genera
 - Rival schools
 - More accurate descriptors of teachers based on age
 - Household and personal traits
+- Graduation requirements
+- Rumors
+- School and extracurricular events
 
 ## Student and Staff Stat Generation
 
