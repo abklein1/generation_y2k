@@ -22,6 +22,8 @@ public class TeacherPopGenerator {
         int agl_mean = 50;
         int det_stdDev = 15;
         int det_mean = 50;
+        int lck_stdDev = 10;
+        int lck_mean = 0;
 
         //Store staff objects in another hashmap
         for (int j = 0; j < staffCap; j++) {
@@ -45,6 +47,7 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setCharisma((int) (distribution.nextGaussian()*chr_stdDev+chr_mean));
             staff.teacherStatistics.setAgility((int) (distribution.nextGaussian()*agl_stdDev+agl_mean));
             staff.teacherStatistics.setDetermination((int) (distribution.nextGaussian()*det_stdDev+det_mean));
+            staff.teacherStatistics.setLuck((int) (distribution.nextGaussian()*lck_stdDev+lck_mean));
             staff.teacherStatistics.setInitStrength();
             staff.teacherStatistics.setInitCreativity();
             staff.teacherStatistics.setInitEmpathy();

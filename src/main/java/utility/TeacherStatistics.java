@@ -18,6 +18,7 @@ public class TeacherStatistics implements PStatistics {
     private int determination;
     private int perception;
     private int strength;
+    private int luck;
     private boolean sleep;
     private int boredom;
     private String gender;
@@ -45,6 +46,7 @@ public class TeacherStatistics implements PStatistics {
         this.determination = 0;
         this.perception = 0;
         this.strength = 0;
+        this.luck = 0;
         this.sleep = false;
         this.boredom = 0;
         this.birthday = null;
@@ -270,10 +272,12 @@ public class TeacherStatistics implements PStatistics {
         double mean = 0;
         double stdDev = 0;
 
-        if(gender.equals("Male")) {
-            mean = 69.2; stdDev = 2.66;
+        if (gender.equals("Male")) {
+            mean = 69.2;
+            stdDev = 2.66;
         } else {
-            mean = 64.3; stdDev = 2.58;
+            mean = 64.3;
+            stdDev = 2.58;
         }
 
         this.height = mean + stdDev * distribution.nextGaussian();
@@ -319,7 +323,7 @@ public class TeacherStatistics implements PStatistics {
 
     public void setInitAdaptability() {
         // Physical and mental adaptability and tertiary determination
-        this.adaptability = (this.agility + this.intelligence + (this.determination/4)) / 2;
+        this.adaptability = (this.agility + this.intelligence + (this.determination / 4)) / 2;
     }
 
     public void setInitInitiative() {
@@ -345,7 +349,7 @@ public class TeacherStatistics implements PStatistics {
     }
 
     @Override
-    public int getPerception(){
+    public int getPerception() {
         return this.perception;
     }
 
@@ -403,11 +407,19 @@ public class TeacherStatistics implements PStatistics {
         this.hairType = hairType;
     }
 
+    public Enum<StaffType> getStaffType() {
+        return this.staffType;
+    }
+
     public void setStaffType(Enum<StaffType> type) {
         this.staffType = type;
     }
 
-    public Enum<StaffType> getStaffType() {
-        return this.staffType;
+    public int getLuck() {
+        return this.luck;
+    }
+
+    public void setLuck(int luck) {
+        this.luck = luck;
     }
 }

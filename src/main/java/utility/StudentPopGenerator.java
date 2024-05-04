@@ -23,6 +23,8 @@ public class StudentPopGenerator {
         int det_mean = 50;
         int per_stdDev = 15;
         int per_mean = 50;
+        int lck_stdDev = 10;
+        int lck_mean = 0;
 
         for (int i = 0; i < studentCap; i++) {
             studentHashMap.put(i, new Student());
@@ -60,6 +62,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setAgility((int) (distribution.nextGaussian() * agl_stdDev + agl_mean));
             student.studentStatistics.setDetermination((int) (distribution.nextGaussian() * det_stdDev + det_mean));
             student.studentStatistics.setPerception((int) (distribution.nextGaussian() * per_stdDev + per_mean));
+            student.studentStatistics.setLuck((int) (distribution.nextGaussian() * lck_stdDev + lck_mean));
             student.studentStatistics.setInitStrength();
             student.studentStatistics.setInitCreativity();
             student.studentStatistics.setInitEmpathy();

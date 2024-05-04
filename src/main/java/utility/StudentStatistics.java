@@ -23,6 +23,7 @@ public class StudentStatistics implements PStatistics {
     private int determination;
     private int strength;
     private int perception;
+    private int luck;
     private boolean sleep;
     private int boredom;
     private int level;
@@ -54,6 +55,7 @@ public class StudentStatistics implements PStatistics {
         this.determination = 0;
         this.perception = 0;
         this.strength = 0;
+        this.luck = 0;
         this.sleep = false;
         this.boredom = 0;
         this.level = 0;
@@ -524,5 +526,13 @@ public class StudentStatistics implements PStatistics {
 
     public void setSkinColor(String skinColor) {
         this.skinColor = skinColor;
+    }
+
+    public int getLuck() {
+        return this.luck;
+    }
+
+    public void setLuck(int luck) {
+        this.luck = luck;
     }
 }

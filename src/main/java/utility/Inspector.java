@@ -44,7 +44,8 @@ public class Inspector {
         sb.append("\n   CHARISMA: ").append(student.studentStatistics.getCharisma()).append("\n   AGILITY: ");
         sb.append(student.studentStatistics.getAgility()).append("\n   DETERMINATION: ").append(student.studentStatistics.getDetermination());
         sb.append("\n   PERCEPTION: ").append(student.studentStatistics.getPerception()).append("\n   STRENGTH: ");
-        sb.append(student.studentStatistics.getStrength()).append("\n   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
+        sb.append(student.studentStatistics.getStrength()).append("\n   LUCK: ").append(student.studentStatistics.getLuck()).append("\n");
+        sb.append("   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
         sb.append("They have the following secondary stats:\n   Creativity: ").append(student.studentStatistics.getCreativity());
         sb.append("\n   Empathy: ").append(student.studentStatistics.getEmpathy()).append("\n   Adaptability: ");
         sb.append(student.studentStatistics.getAdaptability()).append("\n   Initiative: ").append(student.studentStatistics.getInitiative());
@@ -93,6 +94,7 @@ public class Inspector {
         sb.append(staff.teacherStatistics.getAgility()).append("\n   DETERMINATION: ").append(staff.teacherStatistics.getDetermination());
         sb.append("\n   PERCEPTION: ").append(staff.teacherStatistics.getPerception()).append("\n   STRENGTH: ");
         sb.append(staff.teacherStatistics.getStrength()).append("\n");
+        sb.append("\n   LUCK: ").append(staff.teacherStatistics.getLuck()).append("\n");
         sb.append("They have the following secondary stats:\n   Creativity: ").append(staff.teacherStatistics.getCreativity());
         sb.append("\n   Empathy: ").append(staff.teacherStatistics.getEmpathy()).append("\n   Adaptability: ");
         sb.append(staff.teacherStatistics.getAdaptability()).append("\n   Initiative: ").append(staff.teacherStatistics.getInitiative());
