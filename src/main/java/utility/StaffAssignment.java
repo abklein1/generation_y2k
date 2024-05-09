@@ -45,8 +45,9 @@ public class StaffAssignment {
     }
 
     private static void assignCoreTeachers(HashMap<Integer, Staff> staffHashMap, int studentCap, StaffType type) {
-        // Core reqs (I,II,III,IV) need to be taught to half the school each semester mod by the classroom size
-        int coreMax = (studentCap / 2) / 35;
+        // Core reqs (I- IV) have to be taught to half the student body per semester. Each teacher can handle 35 students and has 3 periods to teach a subject
+        // Plus 4 extra teachers to teach ancillary courses/ AP
+        int coreMax = (((studentCap / 2) / 35) / 3) + 4;
 
         for (int count = 0; count < coreMax; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
@@ -79,7 +80,7 @@ public class StaffAssignment {
     }
 
     public static void assignFrontOfficePersonnel(HashMap<Integer, Staff> staffHashMap) {
-        int maxOffice = 2;
+        int maxOffice = 4;
 
         for (int count = 0; count < maxOffice; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
@@ -89,7 +90,7 @@ public class StaffAssignment {
     }
 
     public static void assignUtilityPersonnel(HashMap<Integer, Staff> staffHashMap) {
-        int maxUtility = 2;
+        int maxUtility = 4;
 
         for (int count = 0; count < maxUtility; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
@@ -99,7 +100,7 @@ public class StaffAssignment {
     }
 
     public static void assignLibraryPersonnel(HashMap<Integer, Staff> staffHashMap) {
-        int maxLibrarian = 1;
+        int maxLibrarian = 2;
 
         for (int count = 0; count < maxLibrarian; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
@@ -109,7 +110,7 @@ public class StaffAssignment {
     }
 
     public static void assignNurse(HashMap<Integer, Staff> staffHashMap) {
-        int maxNurse = 1;
+        int maxNurse = 2;
 
         for (int count = 0; count < maxNurse; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
@@ -119,7 +120,7 @@ public class StaffAssignment {
     }
 
     public static void assignLunch(HashMap<Integer, Staff> staffHashMap) {
-        int maxLunchroom = 2;
+        int maxLunchroom = 3;
 
         for (int count = 0; count < maxLunchroom; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
@@ -158,6 +159,7 @@ public class StaffAssignment {
         // TODO: error handling etc. prob throw exception
         if (counter >= staffHashMap.size()) {
             System.out.println("Staff cannot be assigned! Ran out of room.");
+            return null;
         }
 
         return staffHashMap.get(key);

@@ -159,7 +159,7 @@ public class StandardSchool implements SchoolPlan {
 
         total = class_count + office_count + maint_count +
                 lunch_count + library_count + gym_count +
-                art_count + field_count + drama_count + music_count + vocation_count + 15;
+                art_count + field_count + drama_count + music_count + vocation_count + 5;
         return total;
     }
 
