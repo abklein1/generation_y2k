@@ -39,6 +39,7 @@ public class StudentStatistics implements PStatistics {
     private int curiosity;
     private int responsibility;
     private int openmindedness;
+    private String incomeLevel;
 
     public StudentStatistics() {
         this.height = 0;
@@ -73,6 +74,7 @@ public class StudentStatistics implements PStatistics {
         this.curiosity = 0;
         this.responsibility = 0;
         this.openmindedness = 0;
+        this.incomeLevel = null;
     }
 
     @Override
@@ -534,5 +536,23 @@ public class StudentStatistics implements PStatistics {
 
     public void setLuck(int luck) {
         this.luck = luck;
+    }
+
+    public void setIncomeLevel(String incomeLevel) {
+        this.incomeLevel = incomeLevel;
+    }
+
+    public String getIncomeLevel() {
+        return incomeLevel;
+    }
+
+    public void setInitIncomeLevel(int choice) {
+        if (choice <= 25) {
+            this.incomeLevel = "low";
+        } else if (choice <= 85) {
+            this.incomeLevel = "middle";
+        } else {
+            this.incomeLevel = "high";
+        }
     }
 }

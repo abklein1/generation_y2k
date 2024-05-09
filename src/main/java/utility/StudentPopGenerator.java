@@ -75,6 +75,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitHairLength(setRandom(0,10000));
             student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
             student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
+            student.studentStatistics.setInitIncomeLevel(setRandom(0,100));
             if(suffix != null) {
                 System.out.println("   Generated student " + f_name + " " + lastName + " " + suffix);
             } else {

@@ -27,6 +27,7 @@ public class Inspector {
         String hairType = student.studentStatistics.getHairType();
         double height = student.studentStatistics.getHeight();
         String grade = student.studentStatistics.getGradeLevel();
+        String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
         if (suffix != null) {
             sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix).append("\n=====================================\n");
@@ -63,6 +64,7 @@ public class Inspector {
         } else {
             sb.append(firstName).append(" is not asleep.\n");
         }
+        sb.append("Their family has the following income: " ).append(income).append("\n");
         sb.append("Nice to meet you ").append(firstName).append("!");
 
         System.out.println(sb);
@@ -94,7 +96,7 @@ public class Inspector {
         sb.append(staff.teacherStatistics.getAgility()).append("\n   DETERMINATION: ").append(staff.teacherStatistics.getDetermination());
         sb.append("\n   PERCEPTION: ").append(staff.teacherStatistics.getPerception()).append("\n   STRENGTH: ");
         sb.append(staff.teacherStatistics.getStrength()).append("\n");
-        sb.append("\n   LUCK: ").append(staff.teacherStatistics.getLuck()).append("\n");
+        sb.append("   LUCK: ").append(staff.teacherStatistics.getLuck()).append("\n");
         sb.append("They have the following secondary stats:\n   Creativity: ").append(staff.teacherStatistics.getCreativity());
         sb.append("\n   Empathy: ").append(staff.teacherStatistics.getEmpathy()).append("\n   Adaptability: ");
         sb.append(staff.teacherStatistics.getAdaptability()).append("\n   Initiative: ").append(staff.teacherStatistics.getInitiative());
