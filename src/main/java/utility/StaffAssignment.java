@@ -130,7 +130,7 @@ public class StaffAssignment {
     }
     //TODO: fix this since there can be multiple lunchrooms
     public static void assignLunch(HashMap<Integer, Staff> staffHashMap) {
-        int maxLunchroom = 4;
+        int maxLunchroom = 3;
 
         for (int count = 0; count < maxLunchroom; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);

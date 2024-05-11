@@ -62,6 +62,8 @@ public class Main {
         StaffAssignment.assignBusiness(staffHashMap);
         StaffAssignment.assignSubs(staffHashMap);
         RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
+        System.out.println("Inspect a random classroom");
+        Inspector.inspectRoom(standardSchool.getClassrooms()[2]);
         System.out.println("Done creating school and students");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++");
         //Welcome

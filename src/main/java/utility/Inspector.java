@@ -1,5 +1,6 @@
 package utility;
 
+import entity.Rooms.Room;
 import entity.Staff;
 import entity.Student;
 
@@ -7,6 +8,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Inspector {
@@ -165,5 +167,17 @@ public class Inspector {
 
         assert low != null;
         studentInspection(low);
+    }
+
+    public static void inspectRoom(Room room) {
+        String room_name = room.getRoomName();
+        List<Staff> staff = room.getAssignedStaff();
+        int student_cap = room.getStudentCapacity();
+
+        System.out.println("Welcome to " + room_name + "\n");
+        for (Staff value : staff) {
+            System.out.println("The room contains the following staff " + value.teacherName.getFirstName() + " " + value.teacherName.getLastName() + "\n");
+        }
+        System.out.println("It has a student capacity of " + student_cap + "\n");
     }
 }
