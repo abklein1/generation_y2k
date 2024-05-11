@@ -780,6 +780,10 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
+    public VocationalRoom[] getVocationalRooms() {
+        return vocationalRooms;
+    }
+
     public void setVocationalRooms(int number) {
         vocationalRooms = new VocationalRoom[number];
         System.out.println("   Generating " + number + " Vocational room(s)...");
@@ -788,7 +792,7 @@ public class StandardSchool implements SchoolPlan {
             vocationalRooms[i] = new VocationalRoom();
             vocationalRooms[i].setRoomName("Vocational Room" + i);
             System.out.println("      Generating " + vocationalRooms[i].getRoomName());
-            vocationalRooms[i].setWindowCount(setRandom(1,6));
+            vocationalRooms[i].setWindowCount(setRandom(1, 6));
             vocationalRooms[i].setConnections(connectN);
             vocationalRooms[i].setDoors(connectN);
             vocationalRooms[i].setInitialStaff(1);
@@ -796,8 +800,6 @@ public class StandardSchool implements SchoolPlan {
             vocationalRooms[i].setRoomNumber("Vocational" + i + setRandom(100, 999));
         }
     }
-
-    public VocationalRoom[] getVocationalRooms() { return vocationalRooms; }
 
     public ParkingLot[] getParkingLots() {
         return parkingLots;

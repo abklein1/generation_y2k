@@ -20,6 +20,7 @@ public class StaffAssignment {
 
     public static void assignPrincipal(HashMap<Integer, Staff> staffHashMap) {
         Staff teacher = selectRandomTeacher(staffHashMap);
+        assert teacher != null;
         teacher.teacherStatistics.setStaffType(StaffType.PRINCIPAL);
         System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as principal!");
     }
@@ -30,6 +31,7 @@ public class StaffAssignment {
 
     private static void assignVicePrincipal(HashMap<Integer, Staff> staffHashMap) {
         Staff teacher = selectRandomTeacher(staffHashMap);
+        assert teacher != null;
         teacher.teacherStatistics.setStaffType(StaffType.VICE_PRINCIPAL);
         System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as vice principal!");
     }
@@ -39,6 +41,7 @@ public class StaffAssignment {
 
         for (int councilCount = 0; councilCount < councilMax; councilCount++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(StaffType.GUIDANCE);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as guidance councilor!");
         }
@@ -51,6 +54,7 @@ public class StaffAssignment {
 
         for (int count = 0; count < coreMax; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(type);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + type.toString().toLowerCase() + " teacher!");
         }
@@ -66,6 +70,7 @@ public class StaffAssignment {
 
         for (int count = 0; count < staffMax; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(StaffType.LANGUAGES);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LANGUAGES.toString().toLowerCase() + " teacher!");
         }
@@ -74,6 +79,7 @@ public class StaffAssignment {
     public static void assignElectiveByRooms(HashMap<Integer, Staff> staffHashMap, int roomCount, StaffType type) {
         for (int count = 0; count < roomCount; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(type);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + type.toString().toLowerCase() + " teacher!");
         }
@@ -84,6 +90,7 @@ public class StaffAssignment {
 
         for (int count = 0; count < maxOffice; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(StaffType.OFFICE);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as " + StaffType.OFFICE.toString().toLowerCase() + " staff!");
         }
@@ -94,16 +101,18 @@ public class StaffAssignment {
 
         for (int count = 0; count < maxUtility; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(StaffType.MAINTENANCE);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.MAINTENANCE.toString().toLowerCase());
         }
     }
-
+    //TODO: fix this since there can be multiple libraries
     public static void assignLibraryPersonnel(HashMap<Integer, Staff> staffHashMap) {
         int maxLibrarian = 2;
 
         for (int count = 0; count < maxLibrarian; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(StaffType.LIBRARY);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LIBRARY.toString().toLowerCase());
         }
@@ -114,16 +123,18 @@ public class StaffAssignment {
 
         for (int count = 0; count < maxNurse; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(StaffType.NURSE);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as a " + StaffType.NURSE.toString().toLowerCase());
         }
     }
-
+    //TODO: fix this since there can be multiple lunchrooms
     public static void assignLunch(HashMap<Integer, Staff> staffHashMap) {
-        int maxLunchroom = 3;
+        int maxLunchroom = 4;
 
         for (int count = 0; count < maxLunchroom; count++) {
             Staff teacher = selectRandomTeacher(staffHashMap);
+            assert teacher != null;
             teacher.teacherStatistics.setStaffType(StaffType.LUNCH);
             System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LUNCH.toString().toLowerCase());
         }
@@ -131,6 +142,7 @@ public class StaffAssignment {
 
     public static void assignBusiness(HashMap<Integer, Staff> staffHashMap) {
         Staff teacher = selectRandomTeacher(staffHashMap);
+        assert teacher != null;
         teacher.teacherStatistics.setStaffType(StaffType.BUSINESS);
         System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.BUSINESS.toString().toLowerCase());
     }
