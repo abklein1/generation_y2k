@@ -1,5 +1,6 @@
 package utility;
 
+import entity.Rooms.Classroom;
 import entity.Rooms.Room;
 import entity.Staff;
 import entity.Student;
@@ -174,10 +175,14 @@ public class Inspector {
         List<Staff> staff = room.getAssignedStaff();
         int student_cap = room.getStudentCapacity();
 
-        System.out.println("Welcome to " + room_name + "\n");
+        System.out.println("Welcome to " + room_name);
         for (Staff value : staff) {
-            System.out.println("The room contains the following staff " + value.teacherName.getFirstName() + " " + value.teacherName.getLastName() + "\n");
+            System.out.println("The room contains the following staff " + value.teacherName.getFirstName() + " " + value.teacherName.getLastName());
         }
-        System.out.println("It has a student capacity of " + student_cap + "\n");
+        System.out.println("It has a student capacity of " + student_cap);
+        if(room instanceof Classroom) {
+            String abbrev = ((Classroom) room).getClassRoomType();
+            System.out.println("It is a classroom of type " + abbrev);
+        }
     }
 }
