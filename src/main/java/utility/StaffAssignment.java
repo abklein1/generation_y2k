@@ -19,10 +19,14 @@ public class StaffAssignment {
     }
 
     public static void assignPrincipal(HashMap<Integer, Staff> staffHashMap) {
-        Staff teacher = selectRandomTeacher(staffHashMap);
-        assert teacher != null;
-        teacher.teacherStatistics.setStaffType(StaffType.PRINCIPAL);
-        System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as principal!");
+        Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+        if (optionalStaff.isPresent()) {
+            Staff teacher = optionalStaff.get();
+            teacher.teacherStatistics.setStaffType(StaffType.PRINCIPAL);
+            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as principal!");
+        } else {
+            System.out.println("Failed to assign principal. No available staff.");
+        }
     }
 
     public static void assignStaff(Staff staff, StaffType type) {
@@ -30,20 +34,29 @@ public class StaffAssignment {
     }
 
     private static void assignVicePrincipal(HashMap<Integer, Staff> staffHashMap) {
-        Staff teacher = selectRandomTeacher(staffHashMap);
-        assert teacher != null;
-        teacher.teacherStatistics.setStaffType(StaffType.VICE_PRINCIPAL);
-        System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as vice principal!");
+        Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+        if (optionalStaff.isPresent()) {
+            Staff teacher = optionalStaff.get();
+            teacher.teacherStatistics.setStaffType(StaffType.VICE_PRINCIPAL);
+            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as vice principal!");
+        } else {
+            System.out.println("Failed to assign vice principal. No available staff.");
+        }
     }
 
     private static void assignGuidanceCouncilors(HashMap<Integer, Staff> staffHashMap) {
         int councilMax = 4;
 
         for (int councilCount = 0; councilCount < councilMax; councilCount++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(StaffType.GUIDANCE);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as guidance councilor!");
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(StaffType.GUIDANCE);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as guidance councilor!");
+            } else {
+                System.out.println("Failed to assign guidance councilor. No available staff.");
+                break;
+            }
         }
     }
 
@@ -53,10 +66,15 @@ public class StaffAssignment {
         int coreMax = (((studentCap / 2) / 35) / 3) + 4;
 
         for (int count = 0; count < coreMax; count++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(type);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + type.toString().toLowerCase() + " teacher!");
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(type);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + type.toString().toLowerCase() + " teacher!");
+            } else {
+                System.out.println("Failed to assign core teacher. No available staff.");
+                break;
+            }
         }
     }
 
@@ -69,19 +87,29 @@ public class StaffAssignment {
         staffMax = 6;
 
         for (int count = 0; count < staffMax; count++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(StaffType.LANGUAGES);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LANGUAGES.toString().toLowerCase() + " teacher!");
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(StaffType.LANGUAGES);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LANGUAGES.toString().toLowerCase() + " teacher!");
+            } else {
+                System.out.println("Failed to assign language teacher. No available staff.");
+                break;
+            }
         }
     }
 
     public static void assignElectiveByRooms(HashMap<Integer, Staff> staffHashMap, int roomCount, StaffType type) {
         for (int count = 0; count < roomCount; count++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(type);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + type.toString().toLowerCase() + " teacher!");
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(type);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + type.toString().toLowerCase() + " teacher!");
+            } else {
+                System.out.println("Failed to assign elective teacher. No available staff.");
+                break;
+            }
         }
     }
 
@@ -89,10 +117,15 @@ public class StaffAssignment {
         int maxOffice = 4;
 
         for (int count = 0; count < maxOffice; count++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(StaffType.OFFICE);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as " + StaffType.OFFICE.toString().toLowerCase() + " staff!");
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(StaffType.OFFICE);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as " + StaffType.OFFICE.toString().toLowerCase() + " staff!");
+            } else {
+                System.out.println("Failed to assign front office. No available staff.");
+                break;
+            }
         }
     }
 
@@ -100,21 +133,32 @@ public class StaffAssignment {
         int maxUtility = 4;
 
         for (int count = 0; count < maxUtility; count++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(StaffType.MAINTENANCE);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.MAINTENANCE.toString().toLowerCase());
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(StaffType.MAINTENANCE);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.MAINTENANCE.toString().toLowerCase());
+            } else {
+                System.out.println("Failed to assign utility personnel. No available staff.");
+                break;
+            }
         }
     }
+
     //TODO: fix this since there can be multiple libraries
     public static void assignLibraryPersonnel(HashMap<Integer, Staff> staffHashMap) {
         int maxLibrarian = 2;
 
         for (int count = 0; count < maxLibrarian; count++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(StaffType.LIBRARY);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LIBRARY.toString().toLowerCase());
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(StaffType.LIBRARY);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LIBRARY.toString().toLowerCase());
+            } else {
+                System.out.println("Failed to assign library staff. No available staff.");
+                break;
+            }
         }
     }
 
@@ -122,42 +166,58 @@ public class StaffAssignment {
         int maxNurse = 2;
 
         for (int count = 0; count < maxNurse; count++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(StaffType.NURSE);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as a " + StaffType.NURSE.toString().toLowerCase());
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(StaffType.NURSE);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as a " + StaffType.NURSE.toString().toLowerCase());
+            } else {
+                System.out.println("Failed to assign nurse. No available staff.");
+                break;
+            }
         }
     }
+
     //TODO: fix this since there can be multiple lunchrooms
     public static void assignLunch(HashMap<Integer, Staff> staffHashMap) {
         int maxLunchroom = 3;
 
         for (int count = 0; count < maxLunchroom; count++) {
-            Staff teacher = selectRandomTeacher(staffHashMap);
-            assert teacher != null;
-            teacher.teacherStatistics.setStaffType(StaffType.LUNCH);
-            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LUNCH.toString().toLowerCase());
+            Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+            if (optionalStaff.isPresent()) {
+                Staff teacher = optionalStaff.get();
+                teacher.teacherStatistics.setStaffType(StaffType.LUNCH);
+                System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.LUNCH.toString().toLowerCase());
+            } else {
+                System.out.println("Failed to assign lunch staff. No available staff.");
+                break;
+            }
         }
     }
 
     public static void assignBusiness(HashMap<Integer, Staff> staffHashMap) {
-        Staff teacher = selectRandomTeacher(staffHashMap);
-        assert teacher != null;
-        teacher.teacherStatistics.setStaffType(StaffType.BUSINESS);
-        System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.BUSINESS.toString().toLowerCase());
+        Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap);
+        if (optionalStaff.isPresent()) {
+            Staff teacher = optionalStaff.get();
+            teacher.teacherStatistics.setStaffType(StaffType.BUSINESS);
+            System.out.println("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned to " + StaffType.BUSINESS.toString().toLowerCase());
+        } else {
+            System.out.println("Failed to assign business teachers. No available staff.");
+        }
     }
 
     // If anyone is left assign them to sub
-    public static void assignSubs(HashMap<Integer,Staff> staffHashMap) {
-        for(Map.Entry<Integer, Staff> staff : staffHashMap.entrySet()) {
-            if(staff.getValue().teacherStatistics.getStaffType() == null) {
+    public static void assignSubs(HashMap<Integer, Staff> staffHashMap) {
+        for (Map.Entry<Integer, Staff> staff : staffHashMap.entrySet()) {
+            if (staff.getValue().teacherStatistics.getStaffType() == null) {
                 staff.getValue().teacherStatistics.setStaffType(StaffType.SUB);
                 System.out.println("Staff " + staff.getValue().teacherName.getFirstName() + " " + staff.getValue().teacherName.getLastName() + " assigned to " + StaffType.SUB.toString().toLowerCase());
             }
         }
     }
 
-    private static Staff selectRandomTeacher(HashMap<Integer, Staff> staffHashMap) {
+    //TODO: explore efficiency of optionality
+    private static Optional<Staff> selectRandomTeacher(HashMap<Integer, Staff> staffHashMap) {
         Random random = new Random();
         int counter = 0;
         List<Integer> keys = new ArrayList<>(staffHashMap.keySet());
@@ -168,12 +228,11 @@ public class StaffAssignment {
             key = keys.get(randomIndex);
             counter++;
         } while (staffHashMap.get(key).teacherStatistics.getStaffType() != null && counter < staffHashMap.size());
-        // TODO: error handling etc. prob throw exception
         if (counter >= staffHashMap.size()) {
             System.out.println("Staff cannot be assigned! Ran out of room.");
-            return null;
+            return Optional.empty();
         }
 
-        return staffHashMap.get(key);
+        return Optional.of(staffHashMap.get(key));
     }
 }

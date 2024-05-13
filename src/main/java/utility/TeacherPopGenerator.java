@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static utility.Randomizer.setRandom;
+
 // TODO: improve performance. It is horrible
 public class TeacherPopGenerator {
     public static void generateTeachers(int staffCap, HashMap<Integer, Staff> staffHashMap) {
@@ -67,9 +69,5 @@ public class TeacherPopGenerator {
 
         //Clear map for new values
         lNameReference.clear();
-    }
-
-    private static Integer setRandom(int min, int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 }

@@ -10,6 +10,7 @@ package game;
 
 import entity.*;
 import utility.*;
+import view.GameView;
 
 import java.util.HashMap;
 
@@ -21,6 +22,11 @@ public class Main {
     //TODO: Create seed ingestion for recreating specific schools or scenarios
     //TODO: Just a main run to see that the sim works. Revise this to make actual game loop
     public static void main(String[] args) {
+
+        GameView view = new GameView();
+
+        
+
         //Create hash maps for storage
         HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
         HashMap<Integer, Staff> staffHashMap = new HashMap<Integer, Staff>();
