@@ -18,7 +18,8 @@ public class GameView {
         frame.setSize(500, 500);
 
         generateButton = new JButton("Generate new school");
-        visualizeButton = new JButton("Show school layout")
+        visualizeButton = new JButton("Show school layout");
+        visualizeButton.setEnabled(false);
 
         statusOutput = new JTextArea(20, 40);
         statusOutput.setEditable(false);
@@ -32,6 +33,7 @@ public class GameView {
         panel.setLayout(new BorderLayout());
         panel.add(generateButton, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(visualizeButton, BorderLayout.SOUTH);
 
         frame.add(panel);
         frame.setVisible(true);
@@ -39,6 +41,18 @@ public class GameView {
 
     public void addGenerateButtonListener(ActionListener listener) {
         generateButton.addActionListener(listener);
+    }
+
+    public void addVisualizeButtonListener(ActionListener listener) {
+        visualizeButton.addActionListener(listener);
+    }
+
+    public void setVisualizeButtonEnabled(boolean enabled) {
+        visualizeButton.setEnabled(enabled);
+    }
+
+    public void setVisualizeButtonVisible(boolean visible) {
+        visualizeButton.setVisible(visible);
     }
 
     public void appendOutput(String message) {

@@ -10,16 +10,27 @@ import java.util.HashMap;
 
 public class SchoolController {
     private final GameView view;
+    private RoomConnector roomConnector;
+    private StandardSchool standardSchool;
 
     public SchoolController(GameView view) {
         this.view = view;
         this.view.addGenerateButtonListener(new GenerateButtonListener());
+        this.view.addVisualizeButtonListener(new VisualizeButtonListener());
     }
 
     class GenerateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             new SchoolGenerationWorker().execute();
+        }
+    }
+
+    class VisualizeButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            roomConnector.visualizer(standardSchool);
         }
     }
 
@@ -36,12 +47,12 @@ public class SchoolController {
 
             //Generate a new standard school with rooms
             publish("Generating the school...");
-            StandardSchool standardSchool = new StandardSchool();
+            standardSchool = new StandardSchool();
             Director director = new Director(standardSchool, view);
             student_cap = standardSchool.getTotalStudentCapacity();
             staff_cap = standardSchool.getMinimumStaffRequirements();
             publish("Connecting rooms...");
-            RoomConnector roomConnector = new RoomConnector(standardSchool, view);
+            roomConnector = new RoomConnector(standardSchool, view);
             publish("Populating school...");
             // Set for student population generation
             StudentPopGenerator.generateStudents(student_cap, studentHashMap, view);
@@ -87,6 +98,7 @@ public class SchoolController {
         @Override
         protected void done() {
             view.displayMessage("School generated successfully!");
+            view.setVisualizeButtonEnabled(true);
         }
 
 
