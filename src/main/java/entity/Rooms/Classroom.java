@@ -24,7 +24,7 @@ public class Classroom implements Room {
     private String roomNumber;
     private boolean studentRestriction;
     private String classRoomType;
-    private List<Staff> staffAssign;
+    private final List<Staff> staffAssign;
 
     public Classroom() {
         this.roomCapacity = 0;

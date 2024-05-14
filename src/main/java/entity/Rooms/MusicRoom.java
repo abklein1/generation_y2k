@@ -17,7 +17,7 @@ public class MusicRoom implements Room {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
-    private List<Staff> staffAssign;
+    private final List<Staff> staffAssign;
 
     public MusicRoom() {
         this.roomCapacity = 0;

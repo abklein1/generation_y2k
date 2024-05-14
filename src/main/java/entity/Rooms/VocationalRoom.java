@@ -17,8 +17,8 @@ public class VocationalRoom implements Room {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
-    private String classRoomType;
-    private List<Staff> staffAssign;
+    private final String classRoomType;
+    private final List<Staff> staffAssign;
 
     public VocationalRoom() {
         this.roomCapacity = 0;

@@ -23,7 +23,7 @@ public class Courtyard implements Room {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
-    private List<Staff> staffAssign;
+    private final List<Staff> staffAssign;
 
     public Courtyard() {
         this.roomCapacity = 0;

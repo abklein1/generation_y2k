@@ -23,7 +23,7 @@ public class UtilityRoom implements Room {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
-    private List<Staff> staffAssign;
+    private final List<Staff> staffAssign;
 
     public UtilityRoom() {
         this.roomCapacity = 0;

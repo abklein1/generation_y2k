@@ -26,7 +26,7 @@ public class Bathroom implements Room {
     private boolean restrictF;
     private boolean studentRestriction;
     private int stallNumber;
-    private List<Staff> staffAssign;
+    private final List<Staff> staffAssign;
 
     public Bathroom() {
         this.roomCapacity = 0;

@@ -15,7 +15,7 @@ public class Auditorium implements Room {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
-    private List<Staff> staffAssign;
+    private final List<Staff> staffAssign;
 
     public Auditorium() {
         this.roomCapacity = 0;
