@@ -22,6 +22,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static utility.Randomizer.setRandom;
+
 
 // Procedural generation that builds the school by connecting rooms. Room connection starts
 // by connecting hallways and courtyards at random, and then allows other connections to build
@@ -684,10 +686,6 @@ public class RoomConnector {
         return roomPool[x][y];
     }
 
-    private int setRandom(int min, int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
-    }
-
     // Perform simple print for now
     public void getConnections() {
         Iterator<Room> iterator = new DepthFirstIterator<>(schoolConnect);
@@ -708,9 +706,10 @@ public class RoomConnector {
     }
 
     //TODO: fix visibility on graphs
-    public void visualizer() {
+    public void visualizer(StandardSchool school) {
+        String schoolName = school.getSchoolName();
         JGraphXAdapter<Room, DefaultEdge> graphAdapter = new JGraphXAdapter<>(schoolConnect);
-        JFrame frame = new JFrame("School Rooms Visualization");
+        JFrame frame = new JFrame(schoolName);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);

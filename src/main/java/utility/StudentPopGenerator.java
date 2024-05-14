@@ -1,14 +1,16 @@
 package utility;
 
 import entity.Student;
+import view.GameView;
 
 import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+
+import static utility.Randomizer.setRandom;
 
 // TODO: improve performance. It is horrible
 public class StudentPopGenerator {
-    public static void generateStudents(int studentCap, HashMap<Integer, Student> studentHashMap) {
+    public static void generateStudents(int studentCap, HashMap<Integer, Student> studentHashMap, GameView view) {
 
         String f_name;
         String[] l_name;
@@ -30,7 +32,7 @@ public class StudentPopGenerator {
             studentHashMap.put(i, new Student());
         }
 
-        System.out.println("Randomizing " + studentCap + " students...");
+        view.appendOutput("Randomizing " + studentCap + " students...");
         loadCSVData();
 
         for (int k = 0; k < studentCap; k++) {
@@ -77,9 +79,9 @@ public class StudentPopGenerator {
             student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
             student.studentStatistics.setInitIncomeLevel(setRandom(0,100));
             if(suffix != null) {
-                System.out.println("   Generated student " + f_name + " " + lastName + " " + suffix);
+                view.appendOutput("   Generated student " + f_name + " " + lastName + " " + suffix);
             } else {
-                System.out.println("   Generated student " + f_name + " " + lastName);
+                view.appendOutput("   Generated student " + f_name + " " + lastName);
             }
         }
     }
@@ -92,9 +94,5 @@ public class StudentPopGenerator {
         NameLoader.readCSVFirst("1989");
         NameLoader.readCSVFirst("1990");
         NameLoader.readCSVLastStudent();
-    }
-
-    private static Integer setRandom(int min, int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 }

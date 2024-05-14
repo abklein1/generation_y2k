@@ -1,6 +1,7 @@
 package utility;
 
 import entity.Staff;
+import view.GameView;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -10,7 +11,7 @@ import static utility.Randomizer.setRandom;
 
 // TODO: improve performance. It is horrible
 public class TeacherPopGenerator {
-    public static void generateTeachers(int staffCap, HashMap<Integer, Staff> staffHashMap) {
+    public static void generateTeachers(int staffCap, HashMap<Integer, Staff> staffHashMap, GameView view) {
 
         HashMap<Integer, String> lNameReference = new HashMap<>();
         String f_name;
@@ -31,7 +32,7 @@ public class TeacherPopGenerator {
         for (int j = 0; j < staffCap; j++) {
             staffHashMap.put(j, new Staff());
         }
-        System.out.println("Randomizing " + staffCap + " staff");
+        view.appendOutput("Randomizing " + staffCap + " staff");
         lNameReference.putAll(NameLoader.readCSVLast());
 
         for (int l = 0; l < staffCap; l++) {
@@ -64,7 +65,7 @@ public class TeacherPopGenerator {
             String hairColor = staff.teacherStatistics.getHairColor();
             staff.teacherStatistics.setInitHairLength(setRandom(0,10000));
             staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975), hairColor));
-            System.out.println("   Generated staff " + f_name + " " + l_name);
+            view.appendOutput("   Generated staff " + f_name + " " + l_name);
         }
 
         //Clear map for new values
