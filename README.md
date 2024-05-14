@@ -182,6 +182,7 @@ do not change:
 - DET / Determination:
 - PER / Perception:
 - STR / Strength:
+- LCK / Luck:
 
 Secondary stats are derived from a combination of primary stats and are capable of being drained through activities or
 events. Initial values for the secondary stats represent a maximum. Secondary stats can be recharged with rest or other
@@ -208,6 +209,21 @@ activities but they cannot be pushed beyond their initial cap.
 ### Known Bugs
 
 - Graph visualization of rooms can be hard to read due to overlapping labels
+- Graph visualization of rooms cannot handle drags or movement of entities/rooms
+- Initial staff assignment is not efficient and sometimes runs out of available teachers
+
+## Release 0.0.6
+
+- New stat : Luck (LCK)
+- Students now have initial family income levels when generated
+- Staff assignments tweaked to be less wasteful
+- Basic room inspection added in Inspector
+- Staff are now assigned to specific rooms
+- GUI prototype has been constructed and output has been moved away from reporting to console
+- GUI updates in realtime as school is generated
+- Java project SDK upgraded from 11 to 17
+
+![](src/main/java/Resources/proto2.JPG)
 
 ## Release 0.0.5
 
