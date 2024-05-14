@@ -21,7 +21,7 @@ public class GameView {
         statusOutput = new JTextArea(20, 40);
         statusOutput.setEditable(false);
 
-        DefaultCaret caret= (DefaultCaret) statusOutput.getCaret();
+        DefaultCaret caret = (DefaultCaret) statusOutput.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         JScrollPane scrollPane = new JScrollPane(statusOutput);

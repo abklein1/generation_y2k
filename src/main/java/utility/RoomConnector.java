@@ -12,6 +12,7 @@ import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.Multigraph;
 import org.jgrapht.traverse.DepthFirstIterator;
+import view.GameView;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class RoomConnector {
     private int locker_count = 0;
     private int labs_count = 0;
 
-    public RoomConnector(StandardSchool standardSchool) {
+    public RoomConnector(StandardSchool standardSchool, GameView view) {
         roomPool[0] = standardSchool.getArtStudios();
         roomPool[1] = standardSchool.getAthleticFields();
         roomPool[2] = standardSchool.getAuditoriums();
@@ -59,32 +60,32 @@ public class RoomConnector {
         roomPool[19] = standardSchool.getParkingLots();
         roomPool[20] = standardSchool.getVocationalRooms();
 
-        connectRooms();
+        connectRooms(view);
     }
 
-    private void connectRooms() {
+    private void connectRooms(GameView view) {
         populateVertex();
         constructBackbone();
         connectivityInspectionBackbone();
-        populateAthleticFields();
-        populateParkingLots();
-        populateAuditoriums();
-        populateGyms();
-        populateLunchrooms();
-        populateLibraries();
-        populateMusicRooms();
-        populateArtRooms();
-        populateDramaRooms();
-        populateOffices();
-        populateConferenceRooms();
-        populateStudentBathrooms();
-        populateClassrooms();
-        populateRemainingLabs();
-        populateComputerLabs();
-        populateUtilityRooms();
-        populateBreakrooms();
-        populateVocationalRooms();
-        connectivityInspection();
+        populateAthleticFields(view);
+        populateParkingLots(view);
+        populateAuditoriums(view);
+        populateGyms(view);
+        populateLunchrooms(view);
+        populateLibraries(view);
+        populateMusicRooms(view);
+        populateArtRooms(view);
+        populateDramaRooms(view);
+        populateOffices(view);
+        populateConferenceRooms(view);
+        populateStudentBathrooms(view);
+        populateClassrooms(view);
+        populateRemainingLabs(view);
+        populateComputerLabs(view);
+        populateUtilityRooms(view);
+        populateBreakrooms(view);
+        populateVocationalRooms(view);
+        connectivityInspection(view);
     }
 
     private void populateVertex() {
@@ -97,11 +98,11 @@ public class RoomConnector {
         }
     }
 
-    private void connectivityInspection() {
+    private void connectivityInspection(GameView view) {
         // Ensure that the school can be traversed
         ConnectivityInspector<Room, DefaultEdge> inspector = new ConnectivityInspector<>(schoolConnect);
         List<Set<Room>> connectedSets = inspector.connectedSets();
-        Room connectorRoom = findCentralRoom();
+        Room connectorRoom = findCentralRoom(view);
 
         if (connectedSets.size() > 1) {
             for (Set<Room> roomSet : connectedSets) {
@@ -115,7 +116,7 @@ public class RoomConnector {
                     connectorRoom.setConnections(connectorRoom.getConnections() - 1);
                 }
                 if (connectorRoom.getConnections() == 0) {
-                    connectorRoom = findCentralRoom();
+                    connectorRoom = findCentralRoom(view);
                 }
             }
         }
@@ -123,7 +124,7 @@ public class RoomConnector {
 
     // TODO: Allow for injected weight distribution on hallways and courtyards
     // Adjust random weight of hallway or courtyard selection as needed. Might need to re-balance (i.e. 60/40)
-    private Room findCentralRoom() {
+    private Room findCentralRoom(GameView view) {
         Room[] hallways = roomPool[10];
         Room[] courtyards = roomPool[7];
         int choice = setRandom(0, 3);
@@ -132,7 +133,7 @@ public class RoomConnector {
         if (choice < 3) {
             do {
                 choice = setRandom(0, hallways.length - 1);
-                System.out.println("Connecting halls...");
+                view.appendOutput("Connecting halls...");
                 count++;
             } while (hallways[choice].getConnections() == 0 && count < calculateExpectedCycles(hallways.length));
             // Add a connection to a random hallway if no connections are left
@@ -141,7 +142,7 @@ public class RoomConnector {
         } else {
             do {
                 choice = setRandom(0, courtyards.length - 1);
-                System.out.println("Connecting courtyards...");
+                view.appendOutput("Connecting courtyards...");
                 count++;
             } while (courtyards[choice].getConnections() == 0 && count < calculateExpectedCycles(courtyards.length));
             // Add a connection to a random courtyard if no connections are left
@@ -182,12 +183,12 @@ public class RoomConnector {
         }
     }
 
-    private void populateAthleticFields() {
+    private void populateAthleticFields(GameView view ) {
         Room[] athleticFields = roomPool[1];
         Room[] lockerRooms = roomPool[12];
 
         for (Room field : athleticFields) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(field, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             field.setConnections(field.getConnections() - 1);
@@ -203,7 +204,7 @@ public class RoomConnector {
         }
     }
 
-    private void populateParkingLots() {
+    private void populateParkingLots(GameView view) {
         Room[] parkingLots = roomPool[19];
         Room[] fields = roomPool[1];
         int choice = 0;
@@ -216,7 +217,7 @@ public class RoomConnector {
                 fields[choice].setConnections(fields[choice].getConnections() - 1);
                 parkingLot.setConnections(parkingLot.getConnections() - 1);
             } else {
-                Room connectRoom = findCentralRoom();
+                Room connectRoom = findCentralRoom(view);
                 schoolConnect.addEdge(parkingLot, connectRoom);
                 connectRoom.setConnections(connectRoom.getConnections() - 1);
                 parkingLot.setConnections(parkingLot.getConnections() - 1);
@@ -224,7 +225,7 @@ public class RoomConnector {
         }
     }
 
-    private void populateConferenceRooms() {
+    private void populateConferenceRooms(GameView view) {
         Room[] conferenceRooms = roomPool[18];
         Room[] offices = roomPool[15];
 
@@ -238,7 +239,7 @@ public class RoomConnector {
                 conferenceRoom.setConnections(conferenceRoom.getConnections() - 1);
                 frontOffice.setConnections(frontOffice.getConnections() - 1);
             } else {
-                Room connectRoom = findCentralRoom();
+                Room connectRoom = findCentralRoom(view);
                 schoolConnect.addEdge(connectRoom, conferenceRoom);
                 connectRoom.setConnections(connectRoom.getConnections() - 1);
                 conferenceRoom.setConnections(conferenceRoom.getConnections() - 1);
@@ -260,23 +261,23 @@ public class RoomConnector {
         return front;
     }
 
-    private void populateAuditoriums() {
+    private void populateAuditoriums(GameView view) {
         Room[] auditoriums = roomPool[2];
 
         for (Room auditorium : auditoriums) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(auditorium, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             auditorium.setConnections(auditorium.getConnections() - 1);
         }
     }
 
-    private void populateGyms() {
+    private void populateGyms(GameView view) {
         Room[] gyms = roomPool[9];
         Room[] lockerRooms = roomPool[12];
 
         for (Room gym : gyms) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(gym, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             gym.setConnections(gym.getConnections() - 1);
@@ -292,51 +293,51 @@ public class RoomConnector {
         }
     }
 
-    private void populateLunchrooms() {
+    private void populateLunchrooms(GameView view) {
         Room[] lunchrooms = roomPool[13];
 
         for (Room lunchroom : lunchrooms) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(lunchroom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             lunchroom.setConnections(lunchroom.getConnections() - 1);
         }
     }
 
-    private void populateLibraries() {
+    private void populateLibraries(GameView view) {
         Room[] libraries = roomPool[11];
 
         for (Room library : libraries) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(library, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             library.setConnections(library.getConnections() - 1);
         }
     }
 
-    private void populateMusicRooms() {
+    private void populateMusicRooms(GameView view) {
         Room[] musicRooms = roomPool[14];
 
         for (Room musicRoom : musicRooms) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(musicRoom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             musicRoom.setConnections(musicRoom.getConnections() - 1);
         }
     }
 
-    private void populateArtRooms() {
+    private void populateArtRooms(GameView view) {
         Room[] artRooms = roomPool[0];
 
         for (Room artRoom : artRooms) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(artRoom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             artRoom.setConnections(artRoom.getConnections() - 1);
         }
     }
 
-    private void populateDramaRooms() {
+    private void populateDramaRooms(GameView view) {
         Room[] dramaRooms = roomPool[8];
         Room[] auditoriums = roomPool[2];
         int chance;
@@ -350,7 +351,7 @@ public class RoomConnector {
                 selectedAuditorium.setConnections(selectedAuditorium.getConnections() - 1);
                 dramaRoom.setConnections(dramaRoom.getConnections() - 1);
             } else {
-                Room connectRoom = findCentralRoom();
+                Room connectRoom = findCentralRoom(view);
                 schoolConnect.addEdge(dramaRoom, connectRoom);
                 connectRoom.setConnections(connectRoom.getConnections() - 1);
                 dramaRoom.setConnections(dramaRoom.getConnections() - 1);
@@ -361,14 +362,14 @@ public class RoomConnector {
     //TODO: Tweak office gen so that multiple don't end up on classrooms. Possibly add more offices to front office
     //TODO: Add meeting room to front office
     //TODO: Change to improved switch statement for performance
-    private void populateOffices() {
+    private void populateOffices(GameView view) {
         Room[] offices = roomPool[15];
         Room[] coreOffices = new Room[4];
         Room frontOffice = null;
 
         for (Room office : offices) {
             if (office.getRoomName().equals("Front Office")) {
-                Room connectRoom = findCentralRoom();
+                Room connectRoom = findCentralRoom(view);
                 frontOffice = office;
                 schoolConnect.addEdge(frontOffice, connectRoom);
                 connectRoom.setConnections(connectRoom.getConnections() - 1);
@@ -473,18 +474,18 @@ public class RoomConnector {
         }
     }
 
-    private void populateStudentBathrooms() {
+    private void populateStudentBathrooms(GameView view) {
         Room[] bathrooms = roomPool[3];
 
         for (Room bathroom : bathrooms) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(bathroom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             bathroom.setConnections(bathroom.getConnections() - 1);
         }
     }
 
-    private void populateClassrooms() {
+    private void populateClassrooms(GameView view) {
         Room[] classrooms = roomPool[5];
         Room[] labs = roomPool[16];
         Classroom classR = null;
@@ -492,7 +493,7 @@ public class RoomConnector {
             if (classroom instanceof Classroom) {
                 classR = (Classroom) classroom;
             }
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(classroom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             classroom.setConnections(classroom.getConnections() - 1);
@@ -506,18 +507,18 @@ public class RoomConnector {
         }
     }
 
-    private void populateRemainingLabs() {
+    private void populateRemainingLabs(GameView view) {
         Room[] labs = roomPool[16];
 
         for (int i = labs_count; i < labs.length; i++) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(labs[i], connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             labs[i].setConnections(labs[i].getConnections() - 1);
         }
     }
 
-    private void populateComputerLabs() {
+    private void populateComputerLabs(GameView view) {
         Room[] computerLabs = roomPool[6];
         Room[] libraries = roomPool[11];
 
@@ -529,7 +530,7 @@ public class RoomConnector {
                 computerLab.setConnections(computerLab.getConnections() - 1);
                 libraries[choice].setConnections(libraries[choice].getConnections() - 1);
             } else {
-                Room connectRoom = findCentralRoom();
+                Room connectRoom = findCentralRoom(view);
                 schoolConnect.addEdge(computerLab, connectRoom);
                 computerLab.setConnections(computerLab.getConnections() - 1);
                 connectRoom.setConnections(connectRoom.getConnections() - 1);
@@ -537,7 +538,7 @@ public class RoomConnector {
         }
     }
 
-    private void populateUtilityRooms() {
+    private void populateUtilityRooms(GameView view) {
         Room[] utilityRooms = roomPool[17];
         Room[] libraries = roomPool[11];
         Room[] computerLabs = roomPool[6];
@@ -572,7 +573,7 @@ public class RoomConnector {
                     lunchRooms[choice].setConnections(lunchRooms[choice].getConnections() - 1);
                     break;
                 default:
-                    Room connectRoom = findCentralRoom();
+                    Room connectRoom = findCentralRoom(view);
                     schoolConnect.addEdge(utilityRoom, connectRoom);
                     utilityRoom.setConnections(utilityRoom.getConnections() - 1);
                     connectRoom.setConnections(connectRoom.getConnections() - 1);
@@ -581,22 +582,22 @@ public class RoomConnector {
         }
     }
 
-    private void populateBreakrooms() {
+    private void populateBreakrooms(GameView view) {
         Room[] breakrooms = roomPool[4];
 
         for (Room breakroom : breakrooms) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(breakroom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             breakroom.setConnections(breakroom.getConnections() - 1);
         }
     }
 
-    private void populateVocationalRooms() {
+    private void populateVocationalRooms(GameView view) {
         Room[] vocationalRooms = roomPool[20];
 
         for(Room vocationalRoom : vocationalRooms) {
-            Room connectRoom = findCentralRoom();
+            Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(vocationalRoom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);
             vocationalRoom.setConnections(vocationalRoom.getConnections() - 1);

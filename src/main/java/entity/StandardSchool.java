@@ -13,12 +13,15 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import view.GameView;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static utility.Randomizer.setRandom;
 
 public class StandardSchool implements SchoolPlan {
 
@@ -52,13 +55,13 @@ public class StandardSchool implements SchoolPlan {
     HashMap<Integer, Student> seniorClass = new HashMap<>();
 
     @Override
-    public void setUtilityRooms(int number) {
+    public void setUtilityRooms(int number, GameView view) {
         utilityrooms = new UtilityRoom[number];
-        System.out.println("   Generating " + number + " utility rooms...");
+        view.appendOutput("   Generating " + number + " utility rooms...");
         for (int i = 0; i < number; i++) {
             utilityrooms[i] = new UtilityRoom();
             utilityrooms[i].setRoomName("UtilityRoom" + i);
-            System.out.println("       Generating " + utilityrooms[i].getRoomName());
+            view.appendOutput("       Generating " + utilityrooms[i].getRoomName());
             utilityrooms[i].setStudentRestriction(true);
             utilityrooms[i].setDoors(2);
             utilityrooms[i].setConnections(2);
@@ -79,11 +82,6 @@ public class StandardSchool implements SchoolPlan {
 
     public void setSchoolMascot() {
         this.schoolMascot = schoolMascotLoader();
-    }
-
-    //TODO: Centralize this
-    private int setRandom(int min, int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     public int getTotalStudentCapacity() {
@@ -258,14 +256,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setBathrooms(int number) {
+    public void setBathrooms(int number, GameView view) {
         bathrooms = new Bathroom[number];
-        System.out.println("   Generating " + number + " bathrooms...");
+        view.appendOutput("   Generating " + number + " bathrooms...");
         for (int i = 0; i < number; i++) {
             bathrooms[i] = new Bathroom();
             if (i % 2 == 0) {
                 bathrooms[i].setRoomName("Female_Bathroom" + i);
-                System.out.println("      Generating " + bathrooms[i].getRoomName());
+                view.appendOutput("      Generating " + bathrooms[i].getRoomName());
                 bathrooms[i].setRoomRestrictions(true, false);
                 bathrooms[i].setConnections(2);
                 bathrooms[i].setDoors(2);
@@ -274,7 +272,7 @@ public class StandardSchool implements SchoolPlan {
                 bathrooms[i].setStallNumber(setRandom(3, 7));
             } else {
                 bathrooms[i].setRoomName("Male_Bathroom" + i);
-                System.out.println("      Generating " + bathrooms[i].getRoomName());
+                view.appendOutput("      Generating " + bathrooms[i].getRoomName());
                 bathrooms[i].setRoomRestrictions(false, true);
                 bathrooms[i].setConnections(2);
                 bathrooms[i].setDoors(2);
@@ -291,14 +289,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setBreakrooms(int number) {
+    public void setBreakrooms(int number, GameView view) {
         breakrooms = new Breakroom[number];
-        System.out.println("   Generating " + number + " breakroom(s)...");
+        view.appendOutput("   Generating " + number + " breakroom(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(1, 2);
             breakrooms[i] = new Breakroom();
             breakrooms[i].setRoomName("Breakroom" + i);
-            System.out.println("      Generating " + breakrooms[i].getRoomName());
+            view.appendOutput("      Generating " + breakrooms[i].getRoomName());
             breakrooms[i].setStudentRestriction(true);
             breakrooms[i].setConnections(connectN);
             breakrooms[i].setDoors(connectN);
@@ -313,17 +311,17 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setClassrooms(int number) {
+    public void setClassrooms(int number, GameView view) {
         int WEIGHT = 7;
         int decision;
         classrooms = new Classroom[number];
-        System.out.println("   Generating " + number + " classrooms...");
+        view.appendOutput("   Generating " + number + " classrooms...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(3, 5);
             decision = i % WEIGHT;
             classrooms[i] = new Classroom();
             classrooms[i].setRoomName("Classroom" + i);
-            System.out.println("      Generating " + classrooms[i].getRoomName());
+            view.appendOutput("      Generating " + classrooms[i].getRoomName());
             classrooms[i].setConnections(connectN);
             classrooms[i].setDoors(connectN);
             classrooms[i].setClassroomType(decision);
@@ -338,14 +336,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setComputerLabs(int number) {
+    public void setComputerLabs(int number, GameView view) {
         computerLabs = new ComputerLab[number];
-        System.out.println("   Generating " + number + " Computer lab(s)...");
+        view.appendOutput("   Generating " + number + " Computer lab(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(2, 6);
             computerLabs[i] = new ComputerLab();
             computerLabs[i].setRoomName("ComputerLab" + i);
-            System.out.println("      Generating " + computerLabs[i].getRoomName());
+            view.appendOutput("      Generating " + computerLabs[i].getRoomName());
             computerLabs[i].setWindowCount(0);
             computerLabs[i].setConnections(connectN);
             computerLabs[i].setDoors(connectN);
@@ -360,13 +358,13 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setCourtyards(int number) {
+    public void setCourtyards(int number, GameView view) {
         courtyards = new Courtyard[number];
-        System.out.println("   Generating " + number + " courtyard(s)...");
+        view.appendOutput("   Generating " + number + " courtyard(s)...");
         for (int i = 0; i < number; i++) {
             courtyards[i] = new Courtyard();
             courtyards[i].setRoomName("Courtyard" + i);
-            System.out.println("      Generating " + courtyards[i].getRoomName());
+            view.appendOutput("      Generating " + courtyards[i].getRoomName());
             courtyards[i].setWindowCount(0);
             courtyards[i].setConnections(16);
             courtyards[i].setDoors(16);
@@ -380,14 +378,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setGyms(int number) {
+    public void setGyms(int number, GameView view) {
         gyms = new Gym[number];
-        System.out.println("   Generating " + number + " gym(s)...");
+        view.appendOutput("   Generating " + number + " gym(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(6, 9);
             gyms[i] = new Gym();
             gyms[i].setRoomName("Gym" + i);
-            System.out.println("      Generating " + gyms[i].getRoomName());
+            view.appendOutput("      Generating " + gyms[i].getRoomName());
             gyms[i].setConnections(connectN);
             gyms[i].setDoors(connectN);
             gyms[i].setWindowCount(setRandom(4, 16));
@@ -406,14 +404,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setHallways(int number) {
+    public void setHallways(int number, GameView view) {
         hallways = new Hallway[number];
-        System.out.println("   Generating " + number + " hallways...");
+        view.appendOutput("   Generating " + number + " hallways...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(8, 16);
             hallways[i] = new Hallway();
             hallways[i].setRoomName("Hallway" + i);
-            System.out.println("      Generating " + hallways[i].getRoomName());
+            view.appendOutput("      Generating " + hallways[i].getRoomName());
             hallways[i].setConnections(connectN);
             hallways[i].setDoors(connectN);
             hallways[i].setWindowCount(setRandom(0, 6));
@@ -427,14 +425,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setLibraries(int number) {
+    public void setLibraries(int number, GameView view) {
         libraries = new LibraryR[number];
-        System.out.println("   Generating " + number + " libraries...");
+        view.appendOutput("   Generating " + number + " libraries...");
         for (int i = 0; i < number; i++) {
             int connectorN = setRandom(3, 8);
             libraries[i] = new LibraryR();
             libraries[i].setRoomName("Library" + i);
-            System.out.println("      Generating " + libraries[i].getRoomName());
+            view.appendOutput("      Generating " + libraries[i].getRoomName());
             libraries[i].setWindowCount(setRandom(4, 20));
             libraries[i].setConnections(connectorN);
             libraries[i].setDoors(connectorN);
@@ -453,14 +451,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setLunchrooms(int number) {
+    public void setLunchrooms(int number, GameView view) {
         lunchrooms = new Lunchroom[number];
-        System.out.println("   Generating " + number + " lunchroom(s)...");
+        view.appendOutput("   Generating " + number + " lunchroom(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(6, 8);
             lunchrooms[i] = new Lunchroom();
             lunchrooms[i].setRoomName("Lunchroom" + i);
-            System.out.println("      Generating " + lunchrooms[i].getRoomName());
+            view.appendOutput("      Generating " + lunchrooms[i].getRoomName());
             lunchrooms[i].setWindowCount(setRandom(5, 24));
             lunchrooms[i].setConnections(connectN);
             lunchrooms[i].setDoors(connectN);
@@ -475,14 +473,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setOffices(int number) {
+    public void setOffices(int number, GameView view) {
         offices = new Office[number];
-        System.out.println("   Generating " + number + " offices...");
+        view.appendOutput("   Generating " + number + " offices...");
         for (int i = 0; i < number; i++) {
             offices[i] = new Office();
             if (i == 0) {
                 offices[i].setRoomName("Principal's Office");
-                System.out.println("      Generating Principal's office");
+                view.appendOutput("      Generating Principal's office");
                 offices[i].setDoors(2);
                 offices[i].setWindowCount(3);
                 offices[i].setInitialStaff(1);
@@ -492,7 +490,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setRoomNumber("O-100");
             } else if (i == 1) {
                 offices[i].setRoomName("Vice Principal's Office");
-                System.out.println("      Generating Vice Principal's office");
+                view.appendOutput("      Generating Vice Principal's office");
                 offices[i].setDoors(2);
                 offices[i].setWindowCount(2);
                 offices[i].setInitialStaff(1);
@@ -502,7 +500,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setRoomNumber("O-101");
             } else if (i == 2) {
                 offices[i].setRoomName("Guidance Councilor's Office");
-                System.out.println("      Generating Councilor's Office");
+                view.appendOutput("      Generating Councilor's Office");
                 offices[i].setDoors(2);
                 offices[i].setWindowCount(2);
                 offices[i].setInitialStaff(1);
@@ -512,7 +510,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setRoomNumber("O-102");
             } else if (i == 3) {
                 offices[i].setRoomName("Front Office");
-                System.out.println("      Generating Front Office");
+                view.appendOutput("      Generating Front Office");
                 offices[i].setDoors(12);
                 offices[i].setWindowCount(2);
                 offices[i].setInitialStaff(2);
@@ -522,7 +520,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setRoomNumber("O-103");
             } else if (i == 4) {
                 offices[i].setRoomName("Nurse's Office");
-                System.out.println("      Generating Nurse's Office");
+                view.appendOutput("      Generating Nurse's Office");
                 offices[i].setDoors(3);
                 offices[i].setWindowCount(1);
                 offices[i].setInitialStaff(2);
@@ -532,7 +530,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setRoomNumber("O-104");
             } else if (i == 5) {
                 offices[i].setRoomName("Guidance Councilor's Office");
-                System.out.println("      Generating Councilor's Office");
+                view.appendOutput("      Generating Councilor's Office");
                 offices[i].setDoors(2);
                 offices[i].setWindowCount(2);
                 offices[i].setInitialStaff(1);
@@ -542,7 +540,7 @@ public class StandardSchool implements SchoolPlan {
                 offices[i].setRoomNumber("O-103");
             } else {
                 offices[i].setRoomName("Office" + i);
-                System.out.println("      Generating " + offices[i].getRoomName());
+                view.appendOutput("      Generating " + offices[i].getRoomName());
                 offices[i].setConnections(2);
                 offices[i].setDoors(2);
                 offices[i].setInitialStaff(1);
@@ -563,14 +561,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setArtStudios(int number) {
+    public void setArtStudios(int number, GameView view) {
         artStudios = new ArtStudio[number];
-        System.out.println("   Generating " + number + " art studio(s)...");
+        view.appendOutput("   Generating " + number + " art studio(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(4, 6);
             artStudios[i] = new ArtStudio();
             artStudios[i].setRoomName("Art Room" + i);
-            System.out.println("      Generating " + artStudios[i].getRoomName());
+            view.appendOutput("      Generating " + artStudios[i].getRoomName());
             artStudios[i].setWindowCount(setRandom(5, 10));
             artStudios[i].setConnections(connectN);
             artStudios[i].setDoors(connectN);
@@ -585,13 +583,13 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setAthleticFields(int number) {
+    public void setAthleticFields(int number, GameView view) {
         athleticFields = new AthleticField[number];
-        System.out.println("   Generating " + number + " athletic fields(s)...");
+        view.appendOutput("   Generating " + number + " athletic fields(s)...");
         for (int i = 0; i < number; i++) {
             athleticFields[i] = new AthleticField();
             athleticFields[i].setRoomName("Field" + i);
-            System.out.println("      Generating " + athleticFields[i].getRoomName());
+            view.appendOutput("      Generating " + athleticFields[i].getRoomName());
             athleticFields[i].setWindowCount(0);
             athleticFields[i].setConnections(16);
             athleticFields[i].setDoors(16);
@@ -606,13 +604,13 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setAuditoriums(int number) {
+    public void setAuditoriums(int number, GameView view) {
         auditoriums = new Auditorium[number];
-        System.out.println("   Generating " + number + " auditorium(s)...");
+        view.appendOutput("   Generating " + number + " auditorium(s)...");
         for (int i = 0; i < number; i++) {
             auditoriums[i] = new Auditorium();
             auditoriums[i].setRoomName("Auditorium" + i);
-            System.out.println("      Generating " + auditoriums[i].getRoomName());
+            view.appendOutput("      Generating " + auditoriums[i].getRoomName());
             auditoriums[i].setWindowCount(0);
             auditoriums[i].setConnections(16);
             auditoriums[i].setDoors(16);
@@ -627,14 +625,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setDramaRooms(int number) {
+    public void setDramaRooms(int number, GameView view) {
         dramaRooms = new DramaRoom[number];
-        System.out.println("   Generating " + number + " Drama Room(s)...");
+        view.appendOutput("   Generating " + number + " Drama Room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(2, 6);
             dramaRooms[i] = new DramaRoom();
             dramaRooms[i].setRoomName("Drama" + i);
-            System.out.println("      Generating " + dramaRooms[i].getRoomName());
+            view.appendOutput("      Generating " + dramaRooms[i].getRoomName());
             dramaRooms[i].setWindowCount(setRandom(0, 6));
             dramaRooms[i].setConnections(connectN);
             dramaRooms[i].setDoors(connectN);
@@ -649,14 +647,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setLockerRooms(int number) {
+    public void setLockerRooms(int number, GameView view) {
         lockerRooms = new LockerRoom[number];
-        System.out.println("   Generating " + number + " Locker Room(s)...");
+        view.appendOutput("   Generating " + number + " Locker Room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(2, 6);
             lockerRooms[i] = new LockerRoom();
             lockerRooms[i].setRoomName("Locker Room" + i);
-            System.out.println("      Generating " + lockerRooms[i].getRoomName());
+            view.appendOutput("      Generating " + lockerRooms[i].getRoomName());
             lockerRooms[i].setWindowCount(0);
             lockerRooms[i].setConnections(connectN);
             lockerRooms[i].setDoors(connectN);
@@ -671,14 +669,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setMusicRooms(int number) {
+    public void setMusicRooms(int number, GameView view) {
         musicRooms = new MusicRoom[number];
-        System.out.println("   Generating " + number + " Music Room(s)...");
+        view.appendOutput("   Generating " + number + " Music Room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(3, 7);
             musicRooms[i] = new MusicRoom();
             musicRooms[i].setRoomName("Music Room" + i);
-            System.out.println("      Generating " + musicRooms[i].getRoomName());
+            view.appendOutput("      Generating " + musicRooms[i].getRoomName());
             musicRooms[i].setWindowCount(setRandom(0, 4));
             musicRooms[i].setConnections(connectN);
             musicRooms[i].setDoors(connectN);
@@ -693,14 +691,14 @@ public class StandardSchool implements SchoolPlan {
     }
 
     @Override
-    public void setScienceLabs(int number) {
+    public void setScienceLabs(int number, GameView view) {
         scienceLabs = new ScienceLab[number];
-        System.out.println("   Generating " + number + " Science Lab(s)...");
+        view.appendOutput("   Generating " + number + " Science Lab(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(2, 4);
             scienceLabs[i] = new ScienceLab();
             scienceLabs[i].setRoomName("Science Lab" + i);
-            System.out.println("      Generating " + scienceLabs[i].getRoomName());
+            view.appendOutput("      Generating " + scienceLabs[i].getRoomName());
             scienceLabs[i].setWindowCount(0);
             scienceLabs[i].setConnections(connectN);
             scienceLabs[i].setDoors(connectN);
@@ -710,7 +708,7 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
-    public void setStudentGradeClass(HashMap<Integer, Student> studentHashMap) {
+    public void setStudentGradeClass(HashMap<Integer, Student> studentHashMap, GameView view) {
         Integer f_count = 0;
         Integer s_count = 0;
         Integer j_count = 0;
@@ -736,13 +734,13 @@ public class StandardSchool implements SchoolPlan {
                     sr_count++;
                     break;
                 default:
-                    System.out.println("Can't find student class");
+                    view.appendOutput("Can't find student class");
                     break;
             }
         }
     }
 
-    public HashMap<Integer, Student> getStudentGradeClass(String gradClass) {
+    public HashMap<Integer, Student> getStudentGradeClass(String gradClass, GameView view) {
         switch (gradClass) {
             case "Freshman":
                 return freshmanClass;
@@ -753,7 +751,7 @@ public class StandardSchool implements SchoolPlan {
             case "Senior":
                 return seniorClass;
             default:
-                System.out.println("Can't find student class");
+                view.appendOutput("Can't find student class");
                 break;
         }
         return null;
@@ -763,14 +761,14 @@ public class StandardSchool implements SchoolPlan {
         return conferenceRooms;
     }
 
-    public void setConferenceRooms(int number) {
+    public void setConferenceRooms(int number, GameView view) {
         conferenceRooms = new ConferenceRoom[number];
-        System.out.println("   Generating " + number + " Conference Room(s)...");
+        view.appendOutput("   Generating " + number + " Conference Room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(3, 4);
             conferenceRooms[i] = new ConferenceRoom();
             conferenceRooms[i].setRoomName("Conference Room" + i);
-            System.out.println("      Generating " + conferenceRooms[i].getRoomName());
+            view.appendOutput("      Generating " + conferenceRooms[i].getRoomName());
             conferenceRooms[i].setWindowCount(setRandom(1, 5));
             conferenceRooms[i].setConnections(connectN);
             conferenceRooms[i].setDoors(connectN);
@@ -784,14 +782,14 @@ public class StandardSchool implements SchoolPlan {
         return vocationalRooms;
     }
 
-    public void setVocationalRooms(int number) {
+    public void setVocationalRooms(int number, GameView view) {
         vocationalRooms = new VocationalRoom[number];
-        System.out.println("   Generating " + number + " Vocational room(s)...");
+        view.appendOutput("   Generating " + number + " Vocational room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(3, 5);
             vocationalRooms[i] = new VocationalRoom();
             vocationalRooms[i].setRoomName("Vocational Room" + i);
-            System.out.println("      Generating " + vocationalRooms[i].getRoomName());
+            view.appendOutput("      Generating " + vocationalRooms[i].getRoomName());
             vocationalRooms[i].setWindowCount(setRandom(1, 6));
             vocationalRooms[i].setConnections(connectN);
             vocationalRooms[i].setDoors(connectN);
@@ -805,14 +803,14 @@ public class StandardSchool implements SchoolPlan {
         return parkingLots;
     }
 
-    public void setParkingLots(int number) {
+    public void setParkingLots(int number, GameView view) {
         parkingLots = new ParkingLot[number];
-        System.out.println("   Generating " + number + " Parking Lot(s)...");
+        view.appendOutput("   Generating " + number + " Parking Lot(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = 16;
             parkingLots[i] = new ParkingLot();
             parkingLots[i].setRoomName("Parking Lot" + i);
-            System.out.println("      Generating " + parkingLots[i].getRoomName());
+            view.appendOutput("      Generating " + parkingLots[i].getRoomName());
             parkingLots[i].setWindowCount(0);
             parkingLots[i].setConnections(connectN);
             parkingLots[i].setDoors(0);

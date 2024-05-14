@@ -1,6 +1,7 @@
 import entity.*;
 import org.junit.Test;
 import utility.Director;
+import view.GameView;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -111,7 +112,7 @@ public class Tester {
     @Test
     public void TestSchoolDirector(){
         StandardSchool stand = new StandardSchool();
-        Director director = new Director(stand);
+        Director director = new Director(stand, new GameView());
         assertNotNull(stand);
     }
 

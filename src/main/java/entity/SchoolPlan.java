@@ -8,33 +8,35 @@ package entity;//***************************************************************
 //  @version    04242022
 //*******************************************************************
 
+import view.GameView;
+
 public interface SchoolPlan {
-    void setArtStudios(int number);
-    void setAthleticFields(int number);
-    void setAuditoriums(int number);
-    void setBathrooms(int number);
+    void setArtStudios(int number, GameView view);
+    void setAthleticFields(int number, GameView view);
+    void setAuditoriums(int number, GameView view);
+    void setBathrooms(int number, GameView view);
 
-    void setBreakrooms(int number);
+    void setBreakrooms(int number, GameView view);
 
-    void setClassrooms(int number);
+    void setClassrooms(int number, GameView view);
 
-    void setCourtyards(int number);
+    void setCourtyards(int number, GameView view);
 
-    void setComputerLabs(int number);
-    void setDramaRooms(int number);
+    void setComputerLabs(int number, GameView view);
+    void setDramaRooms(int number, GameView view);
 
-    void setGyms(int number);
+    void setGyms(int number, GameView view);
 
-    void setHallways(int number);
+    void setHallways(int number, GameView view);
 
-    void setLibraries(int number);
-    void setLockerRooms(int number);
+    void setLibraries(int number, GameView view);
+    void setLockerRooms(int number, GameView view);
 
-    void setLunchrooms(int number);
-    void setMusicRooms(int number);
+    void setLunchrooms(int number, GameView view);
+    void setMusicRooms(int number, GameView view);
 
-    void setOffices(int number);
-    void setScienceLabs(int number);
+    void setOffices(int number, GameView view);
+    void setScienceLabs(int number, GameView view);
 
-    void setUtilityRooms(int number);
+    void setUtilityRooms(int number, GameView view);
 }

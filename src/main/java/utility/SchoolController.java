@@ -35,34 +35,33 @@ public class SchoolController {
             String[] colors;
 
             //Generate a new standard school with rooms
-            publish("Starting by generating the school");
+            publish("Generating the school...");
             StandardSchool standardSchool = new StandardSchool();
-            Director director = new Director(standardSchool);
-            //Pull capacities
+            Director director = new Director(standardSchool, view);
             student_cap = standardSchool.getTotalStudentCapacity();
             staff_cap = standardSchool.getMinimumStaffRequirements();
-            publish("Connecting rooms");
-            RoomConnector roomConnector = new RoomConnector(standardSchool);
+            publish("Connecting rooms...");
+            RoomConnector roomConnector = new RoomConnector(standardSchool, view);
             publish("Populating school...");
             // Set for student population generation
             StudentPopGenerator.generateStudents(student_cap, studentHashMap, view);
-            standardSchool.setStudentGradeClass(studentHashMap);
+            standardSchool.setStudentGradeClass(studentHashMap, view);
             //Set for staff population generation
             TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, view);
-            publish("Assign initial staff");
-            StaffAssignment.initialAssignmentsCore(staffHashMap, student_cap);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getArtStudios().length, StaffType.VISUAL_ARTS);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getAthleticFields().length + standardSchool.getGyms().length, StaffType.PHYSICAL_ED);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getMusicRooms().length + standardSchool.getDramaRooms().length + standardSchool.getAuditoriums().length, StaffType.PERFORMING_ARTS);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getVocationalRooms().length, StaffType.VOCATIONAL);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI);
-            StaffAssignment.assignFrontOfficePersonnel(staffHashMap);
-            StaffAssignment.assignUtilityPersonnel(staffHashMap);
-            StaffAssignment.assignLibraryPersonnel(staffHashMap);
-            StaffAssignment.assignNurse(staffHashMap);
-            StaffAssignment.assignLunch(staffHashMap);
-            StaffAssignment.assignBusiness(staffHashMap);
-            StaffAssignment.assignSubs(staffHashMap);
+            publish("Assigning initial staff...");
+            StaffAssignment.initialAssignmentsCore(staffHashMap, student_cap, view);
+            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getArtStudios().length, StaffType.VISUAL_ARTS, view);
+            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getAthleticFields().length + standardSchool.getGyms().length, StaffType.PHYSICAL_ED, view);
+            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getMusicRooms().length + standardSchool.getDramaRooms().length + standardSchool.getAuditoriums().length, StaffType.PERFORMING_ARTS, view);
+            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getVocationalRooms().length, StaffType.VOCATIONAL, view);
+            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI, view);
+            StaffAssignment.assignFrontOfficePersonnel(staffHashMap, view);
+            StaffAssignment.assignUtilityPersonnel(staffHashMap, view);
+            StaffAssignment.assignLibraryPersonnel(staffHashMap, view);
+            StaffAssignment.assignNurse(staffHashMap, view);
+            StaffAssignment.assignLunch(staffHashMap, view);
+            StaffAssignment.assignBusiness(staffHashMap, view);
+            StaffAssignment.assignSubs(staffHashMap, view);
             RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
             publish("Done creating school and students");
             publish("+++++++++++++++++++++++++++++++++++++++++");
