@@ -2,7 +2,9 @@ package entity;
 
 import entity.Arms;
 
-public class TeacherArms implements Arms {
+import java.io.Serializable;
+
+public class TeacherArms implements Arms, Serializable {
     @Override
     public void setAttire() {
 

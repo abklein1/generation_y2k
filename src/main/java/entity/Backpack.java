@@ -1,6 +1,8 @@
 package entity;
 
-public class Backpack implements Carry {
+import java.io.Serializable;
+
+public class Backpack implements Carry, Serializable {
     @Override
     public void setAttire() {
 

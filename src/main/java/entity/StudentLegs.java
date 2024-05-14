@@ -2,7 +2,9 @@ package entity;
 
 import entity.Legs;
 
-public class StudentLegs implements Legs {
+import java.io.Serializable;
+
+public class StudentLegs implements Legs, Serializable {
     @Override
     public void setAttire() {
 

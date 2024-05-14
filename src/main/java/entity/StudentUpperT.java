@@ -1,6 +1,8 @@
 package entity;
 
-public class StudentUpperT implements UpperTorso {
+import java.io.Serializable;
+
+public class StudentUpperT implements UpperTorso, Serializable {
     @Override
     public void setAttire() {
 

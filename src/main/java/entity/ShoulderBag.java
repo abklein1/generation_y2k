@@ -2,7 +2,9 @@ package entity;
 
 import entity.Carry;
 
-public class ShoulderBag implements Carry {
+import java.io.Serializable;
+
+public class ShoulderBag implements Carry, Serializable {
     @Override
     public void setAttire() {
 
