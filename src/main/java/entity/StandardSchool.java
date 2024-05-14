@@ -717,25 +717,23 @@ public class StandardSchool implements SchoolPlan {
         for (Map.Entry<Integer, Student> entry : studentHashMap.entrySet()) {
             String grade = entry.getValue().studentStatistics.getGradeLevel();
             switch (grade) {
-                case "Freshman":
+                case "Freshman" -> {
                     freshmanClass.put(f_count, entry.getValue());
                     f_count++;
-                    break;
-                case "Sophomore":
+                }
+                case "Sophomore" -> {
                     sophomoreClass.put(s_count, entry.getValue());
                     s_count++;
-                    break;
-                case "Junior":
+                }
+                case "Junior" -> {
                     juniorClass.put(j_count, entry.getValue());
                     j_count++;
-                    break;
-                case "Senior":
+                }
+                case "Senior" -> {
                     seniorClass.put(sr_count, entry.getValue());
                     sr_count++;
-                    break;
-                default:
-                    view.appendOutput("Can't find student class");
-                    break;
+                }
+                default -> view.appendOutput("Can't find student class");
             }
         }
     }

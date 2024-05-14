@@ -548,36 +548,36 @@ public class RoomConnector {
         for (Room utilityRoom : utilityRooms) {
             int choice = setRandom(0, 10);
             switch (choice) {
-                case 0:
+                case 0 -> {
                     choice = setRandom(0, libraries.length - 1);
                     schoolConnect.addEdge(utilityRoom, libraries[choice]);
                     utilityRoom.setConnections(utilityRoom.getConnections() - 1);
                     libraries[choice].setConnections(libraries[choice].getConnections() - 1);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     choice = setRandom(0, computerLabs.length - 1);
                     schoolConnect.addEdge(utilityRoom, computerLabs[choice]);
                     utilityRoom.setConnections(utilityRoom.getConnections() - 1);
                     computerLabs[choice].setConnections(computerLabs[choice].getConnections() - 1);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     choice = setRandom(0, auditoriums.length - 1);
                     schoolConnect.addEdge(utilityRoom, auditoriums[choice]);
                     utilityRoom.setConnections(utilityRoom.getConnections() - 1);
                     auditoriums[choice].setConnections(auditoriums[choice].getConnections() - 1);
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     choice = setRandom(0, lunchRooms.length - 1);
                     schoolConnect.addEdge(utilityRoom, lunchRooms[choice]);
                     utilityRoom.setConnections(utilityRoom.getConnections() - 1);
                     lunchRooms[choice].setConnections(lunchRooms[choice].getConnections() - 1);
-                    break;
-                default:
+                }
+                default -> {
                     Room connectRoom = findCentralRoom(view);
                     schoolConnect.addEdge(utilityRoom, connectRoom);
                     utilityRoom.setConnections(utilityRoom.getConnections() - 1);
                     connectRoom.setConnections(connectRoom.getConnections() - 1);
-                    break;
+                }
             }
         }
     }
@@ -636,8 +636,7 @@ public class RoomConnector {
 
         // Filter sets to include only those that contain hallways or courtyards
         List<Set<Room>> filteredSets = connectedSets.stream()
-                .filter(set -> set.stream().anyMatch(this::isHallwayOrCourtyard))
-                .collect(Collectors.toList());
+                .filter(set -> set.stream().anyMatch(this::isHallwayOrCourtyard)).toList();
 
         if (filteredSets.size() > 1) {
             for (int i = 0; i < filteredSets.size() - 1; i++) {

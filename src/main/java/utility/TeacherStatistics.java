@@ -407,7 +407,7 @@ public class TeacherStatistics implements PStatistics {
         this.hairType = hairType;
     }
 
-    public Enum<StaffType> getStaffType() {
+    public Enum getStaffType() {
         return this.staffType;
     }
 

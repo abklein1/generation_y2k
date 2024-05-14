@@ -9,6 +9,7 @@ public class GameView {
 
     private final JFrame frame;
     private final JButton generateButton;
+    private final JButton visualizeButton;
     private final JTextArea statusOutput;
 
     public GameView() {
@@ -17,6 +18,7 @@ public class GameView {
         frame.setSize(500, 500);
 
         generateButton = new JButton("Generate new school");
+        visualizeButton = new JButton("Show school layout")
 
         statusOutput = new JTextArea(20, 40);
         statusOutput.setEditable(false);
