@@ -8,22 +8,30 @@ package game;
 
 //TODO: Optimize Imports
 
-import entity.*;
-import utility.*;
+import utility.SchoolController;
 import view.GameView;
 
-import java.util.HashMap;
-
-import static utility.BossUtility.bossDecision;
-import static utility.BossUtility.dungeonFight;
-import static utility.Randomizer.setRandom;
+import javax.swing.*;
 
 public class Main {
     //TODO: Create seed ingestion for recreating specific schools or scenarios
-    //TODO: Just a main run to see that the sim works. Revise this to make actual game loop
     public static void main(String[] args) {
 
-        GameView view = new GameView();
-        SchoolController controller = new SchoolController(view);
+        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            if ("Windows".equals(info.getName())) {
+                try {
+                    UIManager.setLookAndFeel(info.getClassName());
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                         UnsupportedLookAndFeelException ex) {
+                    throw new RuntimeException(ex);
+                }
+                break;
+            }
+        }
+
+        SwingUtilities.invokeLater(() ->{
+            GameView view = new GameView();
+            SchoolController controller = new SchoolController(view);
+        });
     }
 }
