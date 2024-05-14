@@ -710,7 +710,7 @@ public class RoomConnector {
         String schoolName = school.getSchoolName();
         JGraphXAdapter<Room, DefaultEdge> graphAdapter = new JGraphXAdapter<>(schoolConnect);
         JFrame frame = new JFrame(schoolName);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(800, 600);
         mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
         frame.add(graphComponent);

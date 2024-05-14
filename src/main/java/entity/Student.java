@@ -3,7 +3,10 @@ package entity;
 import utility.StudentName;
 import utility.StudentStatistics;
 import utility.StudentFactory;
-public class Student {
+
+import java.io.Serializable;
+
+public class Student implements Serializable {
 
     public StudentName studentName;
     public StudentStatistics studentStatistics;

@@ -3,7 +3,10 @@ package entity;
 import utility.TeacherName;
 import utility.TeacherStatistics;
 import utility.TeacherFactory;
-public class Staff {
+
+import java.io.Serializable;
+
+public class Staff implements Serializable {
 
     public TeacherName teacherName;
     private final TeacherUpperT teacherUpperT;

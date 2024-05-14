@@ -2,11 +2,12 @@ package entity.Rooms;
 
 import entity.Staff;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Attach to school director and room generator
-public class MusicRoom implements Room {
+public class MusicRoom implements Room, Serializable {
 
     private int roomCapacity;
     private int numOfConnections;

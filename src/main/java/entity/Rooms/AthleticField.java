@@ -2,10 +2,11 @@ package entity.Rooms;
 
 import entity.Staff;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AthleticField implements Room {
+public class AthleticField implements Room, Serializable {
 
     private int roomCapacity;
     private int numOfConnections;

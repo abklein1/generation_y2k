@@ -9,10 +9,11 @@ package entity.Rooms;//*********************************************************
 
 import entity.Staff;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Lunchroom implements Room {
+public class Lunchroom implements Room, Serializable {
 
     private int roomCapacity;
     private int numOfConnections;
