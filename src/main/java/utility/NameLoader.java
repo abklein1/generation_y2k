@@ -31,7 +31,7 @@ public class NameLoader {
 
     // TODO: this is some nasty code to refactor, but for performance
     public static void readCSVFirst(String birth) {
-        String basePath = "src/main/java/Resources/";
+        String basePath = "src/main/java/Resources.People/";
         String csvFirst = basePath + "yob" + birth + ".txt";
         BufferedReader fr = null;
         int iterator = 0;
@@ -220,7 +220,7 @@ public class NameLoader {
     }
 
     public static HashMap readCSVLast() {
-        String csvLast = "src/main/java/Resources/surname_2.txt";
+        String csvLast = "src/main/java/Resources.People/surname_2.txt";
         HashMap<Integer, String> lastNames = new HashMap<Integer, String>();
         BufferedReader lr = null;
 
@@ -252,7 +252,7 @@ public class NameLoader {
     }
 
     public static void readCSVLastStudent() {
-        String csvLast = "src/main/java/Resources/app_c.csv";
+        String csvLast = "src/main/java/Resources.People/app_c.csv";
 
         BufferedReader lr = null;
 

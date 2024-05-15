@@ -154,7 +154,7 @@ public class TraitSelection {
     private static JSONObject loadHairTypeData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources/hair_type.json");
+            FileReader reader = new FileReader("src/main/java/Resources.People/hair_type.json");
             return (JSONObject) parser.parse(reader);
         } catch (IOException | ParseException e) {
             throw new RuntimeException("Failed to load hair type data", e);
@@ -190,7 +190,7 @@ public class TraitSelection {
     private static JSONObject loadHairColorData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources/hair_color.json");
+            FileReader reader = new FileReader("src/main/java/Resources.People/hair_color.json");
             return (JSONObject) parser.parse(reader);
         } catch (IOException | ParseException e) {
             throw new RuntimeException("Failed to load hair color data", e);
@@ -259,7 +259,7 @@ public class TraitSelection {
     private static JSONObject loadEyeColorData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources/eye_color.json");
+            FileReader reader = new FileReader("src/main/java/Resources.People/eye_color.json");
             return (JSONObject) parser.parse(reader);
         } catch (IOException | org.json.simple.parser.ParseException e) {
             throw new RuntimeException("Failed to load eye color data", e);
@@ -311,7 +311,7 @@ public class TraitSelection {
     private static JSONObject loadSkinColorData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources/skin_distribution.json");
+            FileReader reader = new FileReader("src/main/java/Resources.People/skin_distribution.json");
             return (JSONObject) parser.parse(reader);
         } catch (IOException | ParseException e) {
             throw new RuntimeException("Failed to load skin color data", e);
