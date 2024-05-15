@@ -12,11 +12,30 @@ public class GameView {
     private final JButton visualizeButton;
     private final JTextArea statusOutput;
     private final JLabel timeLabel;
+    private final JMenu inspectionMenu;
 
     public GameView() {
-        frame = new JFrame("High School Sim");
+        frame = new JFrame("Generation '04");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(600, 500);
+
+        JMenuBar menuBar = new JMenuBar();
+
+        // Inspection
+        inspectionMenu = new JMenu("Inspection");
+        JMenuItem freshmanItem = new JMenuItem("Freshman");
+        JMenuItem sophomoresItem = new JMenuItem("Sophomores");
+        JMenuItem juniorsItem = new JMenuItem("Juniors");
+        JMenuItem seniorsItem = new JMenuItem("Seniors");
+        JMenuItem staffItem = new JMenuItem("Staff");
+        inspectionMenu.add(freshmanItem);
+        inspectionMenu.add(sophomoresItem);
+        inspectionMenu.add(juniorsItem);
+        inspectionMenu.add(seniorsItem);
+        inspectionMenu.add(staffItem);
+        menuBar.add(inspectionMenu);
+        frame.setJMenuBar(menuBar);
+        inspectionMenu.setEnabled(false);
 
         generateButton = new JButton("Generate new school");
         visualizeButton = new JButton("Show school layout");
@@ -35,12 +54,15 @@ public class GameView {
         buttonPanel.add(generateButton);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(visualizeButton);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // time label
         timeLabel = new JLabel();
         timeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        timeLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        timeLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
         JPanel timePanel = new JPanel(new BorderLayout());
         timePanel.add(timeLabel, BorderLayout.EAST);
         timePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -50,7 +72,7 @@ public class GameView {
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(timePanel, BorderLayout.SOUTH);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         frame.add(mainPanel);
         frame.setVisible(true);
@@ -68,6 +90,10 @@ public class GameView {
         visualizeButton.setEnabled(enabled);
     }
 
+    public void setInspectionMenuEnabled(boolean enabled) {
+        inspectionMenu.setEnabled(enabled);
+    }
+
     public void setVisualizeButtonVisible(boolean visible) {
         visualizeButton.setVisible(visible);
     }
@@ -82,5 +108,13 @@ public class GameView {
 
     public void updateTime(String time) {
         timeLabel.setText(time);
+    }
+
+    public void addInspectionMenuListener(ActionListener listener) {
+        for (Component component : frame.getJMenuBar().getMenu(0).getMenuComponents()) {
+            if (component instanceof JMenuItem) {
+                ((JMenuItem) component).addActionListener(listener);
+            }
+        }
     }
 }

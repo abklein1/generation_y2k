@@ -21,4 +21,9 @@ public class Student implements Serializable {
         Backpack backpack = studentFactory.createCarry();
         studentStatistics = studentFactory.setStats();
     }
+
+    @Override
+    public String toString() {
+        return studentName.getFirstName() + " " + studentName.getLastName();
+    }
 }

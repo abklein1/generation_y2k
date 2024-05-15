@@ -5,6 +5,7 @@ import entity.Rooms.Room;
 import entity.Staff;
 import entity.Student;
 
+import javax.swing.*;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Inspector {
-    public static void studentInspection(Student student) {
+    public static void studentInspection(Student student, JTextArea inspectionArea) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
 
@@ -68,9 +69,8 @@ public class Inspector {
             sb.append(firstName).append(" is not asleep.\n");
         }
         sb.append("Their family has the following income: " ).append(income).append("\n");
-        sb.append("Nice to meet you ").append(firstName).append("!");
 
-        System.out.println(sb);
+        inspectionArea.setText(sb.toString());
     }
 
     public static void staffInspection(Staff staff) {
@@ -122,13 +122,16 @@ public class Inspector {
         System.out.println(sb);
     }
 
-    public static void gradeClassInspection(HashMap<Integer, Student> studentGradeClass) {
+    public static String gradeClassInspection(HashMap<Integer, Student> studentGradeClass) {
+        StringBuilder sb = new StringBuilder();
         for (Map.Entry<Integer, Student> entry : studentGradeClass.entrySet()) {
-            System.out.println(entry.getValue().studentName.getFirstName() + " " + entry.getValue().studentName.getLastName());
+            Student student = entry.getValue();
+            sb.append(student.studentName.getFirstName()).append(" ").append(student.studentName.getLastName()).append("\n");
         }
+        return sb.toString();
     }
 
-    public static void findHighestStudent(HashMap<Integer, Student> studentHashMap) {
+    public static void findHighestStudent(HashMap<Integer, Student> studentHashMap, JTextArea inspectionArea) {
         Student temp;
         Student high = null;
         int total;
@@ -146,10 +149,10 @@ public class Inspector {
         }
 
         assert high != null;
-        studentInspection(high);
+        studentInspection(high, inspectionArea);
     }
 
-    public static void findLowestStudent(HashMap<Integer, Student> studentHashMap) {
+    public static void findLowestStudent(HashMap<Integer, Student> studentHashMap, JTextArea inspectionArea) {
         Student temp;
         Student low = null;
         int total;
@@ -167,7 +170,7 @@ public class Inspector {
         }
 
         assert low != null;
-        studentInspection(low);
+        studentInspection(low, inspectionArea);
     }
 
     public static void inspectRoom(Room room) {

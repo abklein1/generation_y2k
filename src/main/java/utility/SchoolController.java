@@ -4,9 +4,13 @@ import entity.*;
 import view.GameView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Vector;
+
+import static utility.Inspector.studentInspection;
 
 public class SchoolController {
     private final GameView view;
@@ -18,6 +22,7 @@ public class SchoolController {
         this.view = view;
         this.view.addGenerateButtonListener(new GenerateButtonListener());
         this.view.addVisualizeButtonListener(new VisualizeButtonListener());
+        this.view.addInspectionMenuListener(new InspectionMenuListener());
         this.time = new Time();
     }
 
@@ -33,6 +38,15 @@ public class SchoolController {
         @Override
         public void actionPerformed(ActionEvent e) {
             roomConnector.visualizer(standardSchool);
+        }
+    }
+
+    class InspectionMenuListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            showInspectionWindow(command);
         }
     }
 
@@ -82,8 +96,6 @@ public class SchoolController {
             publish("Home of the " + standardSchool.getSchoolMascot() + "!");
             colors = standardSchool.getSchoolColors();
             publish("The school colors are " + colors[0] + " and " + colors[1]);
-            //This is the first Monday of school
-            publish("Alright time to get on with the time then...");
             updateTimeLabel();
             return null;
         }
@@ -99,6 +111,7 @@ public class SchoolController {
         protected void done() {
             view.displayMessage("School generated successfully!");
             view.setVisualizeButtonEnabled(true);
+            view.setInspectionMenuEnabled(true);
         }
 
     }
@@ -106,5 +119,41 @@ public class SchoolController {
     private void updateTimeLabel() {
         String formattedDate = time.getFormattedDate();
         view.updateTime("Today is " + formattedDate);
+    }
+
+    private void showInspectionWindow(String type) {
+        JFrame inspectionFrame = new JFrame(type + " Inspection");
+        inspectionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        inspectionFrame.setSize(400, 300);
+
+        JTextArea inspectionArea = new JTextArea();
+        inspectionArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(inspectionArea);
+
+        HashMap<Integer, Student> studentGradeClass = standardSchool.getStudentGradeClass(type);
+
+        if (studentGradeClass != null) {
+            DefaultListModel<Student> listModel = new DefaultListModel<>();
+            for (Student student : studentGradeClass.values()) {
+                listModel.addElement(student);
+            }
+
+            JList<Student> studentList = new JList<>(listModel);
+            studentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            studentList.addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting()) {
+                    Student selectedStudent = studentList.getSelectedValue();
+                    if (selectedStudent != null) {
+                        studentInspection(selectedStudent, inspectionArea);
+                    }
+                }
+            });
+
+            inspectionFrame.setLayout(new BorderLayout());
+            inspectionFrame.add(new JScrollPane(studentList), BorderLayout.WEST);
+            inspectionFrame.add(scrollPane, BorderLayout.CENTER);
+        }
+
+        inspectionFrame.setVisible(true);
     }
 }

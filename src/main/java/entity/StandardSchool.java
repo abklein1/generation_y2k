@@ -738,7 +738,7 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
-    public HashMap<Integer, Student> getStudentGradeClass(String gradClass, GameView view) {
+    public HashMap<Integer, Student> getStudentGradeClass(String gradClass) {
         switch (gradClass) {
             case "Freshman":
                 return freshmanClass;
@@ -749,7 +749,6 @@ public class StandardSchool implements SchoolPlan {
             case "Senior":
                 return seniorClass;
             default:
-                view.appendOutput("Can't find student class");
                 break;
         }
         return null;
