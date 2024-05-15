@@ -11,6 +11,7 @@ public class GameView {
     private final JButton generateButton;
     private final JButton visualizeButton;
     private final JTextArea statusOutput;
+    private final JLabel timeLabel;
 
     public GameView() {
         frame = new JFrame("High School Sim");
@@ -36,9 +37,19 @@ public class GameView {
         buttonPanel.add(visualizeButton);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
+        // time label
+        timeLabel = new JLabel();
+        timeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        timeLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        JPanel timePanel = new JPanel(new BorderLayout());
+        timePanel.add(timeLabel, BorderLayout.EAST);
+        timePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(timePanel, BorderLayout.SOUTH);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
         frame.add(mainPanel);
@@ -67,5 +78,9 @@ public class GameView {
 
     public void displayMessage(String message) {
         JOptionPane.showMessageDialog(frame, message);
+    }
+
+    public void updateTime(String time) {
+        timeLabel.setText(time);
     }
 }

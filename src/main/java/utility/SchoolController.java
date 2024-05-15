@@ -12,11 +12,13 @@ public class SchoolController {
     private final GameView view;
     private RoomConnector roomConnector;
     private StandardSchool standardSchool;
+    private final Time time;
 
     public SchoolController(GameView view) {
         this.view = view;
         this.view.addGenerateButtonListener(new GenerateButtonListener());
         this.view.addVisualizeButtonListener(new VisualizeButtonListener());
+        this.time = new Time();
     }
 
     class GenerateButtonListener implements ActionListener {
@@ -82,9 +84,7 @@ public class SchoolController {
             publish("The school colors are " + colors[0] + " and " + colors[1]);
             //This is the first Monday of school
             publish("Alright time to get on with the time then...");
-            Time time = new Time();
-            publish("Today is " + time.getFormattedDate());
-
+            updateTimeLabel();
             return null;
         }
 
@@ -101,6 +101,10 @@ public class SchoolController {
             view.setVisualizeButtonEnabled(true);
         }
 
+    }
 
+    private void updateTimeLabel() {
+        String formattedDate = time.getFormattedDate();
+        view.updateTime("Today is " + formattedDate);
     }
 }
