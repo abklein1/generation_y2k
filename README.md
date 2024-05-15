@@ -1,4 +1,4 @@
-# SchoolSim
+# Generation '04
 
 ***Originally a school project that has been modified***
 
@@ -127,31 +127,8 @@ normalized distribution based on age and gender.
 
 ### Example Student Generation
 
-Nicholas is a male with beige colored skin and very short, wavy, medium brown hair and light brown eyes. They stand
-51.13 inches tall.
-Nicholas is a Freshman.
-Nicholas was born on 1990-08-04.
-They have the following base stats:
-INTELLIGENCE: 83
-CHARISMA: 48
-AGILITY: 54
-DETERMINATION: 25
-PERCEPTION: 55
-STRENGTH: 28
-EXP: 0
-They have the following secondary stats:
-Creativity: 89
-Empathy: 63
-Adaptability: 71
-Initiative: 46
-Resilience: 33
-Curiosity: 82
-Responsibility: 45
-Open-Mindedness: 81
-Nicholas has the following status effects:
-Nicholas is not bored.
-Nicholas is not asleep.
-Nice to meet you Nicholas!
+An example of a student generated and displayed in the inspector:
+![](src/main/java/Resources/proto_inspect.JPG)
 
 ## Datasets and References
 
@@ -186,7 +163,7 @@ do not change:
 
 Secondary stats are derived from a combination of primary stats and are capable of being drained through activities or
 events. Initial values for the secondary stats represent a maximum. Secondary stats can be recharged with rest or other
-activities but they cannot be pushed beyond their initial cap.
+activities, but they cannot be pushed beyond their initial cap.
 
 - CRE / Creativity: This represents a combination primarily of intelligence and perception. This is the max ability of a
   person to create solutions, projects, ideas etc. that are unique.
@@ -209,7 +186,7 @@ activities but they cannot be pushed beyond their initial cap.
 ### Known Bugs
 
 - Graph visualization of rooms can be hard to read due to overlapping labels
-- Graph visualization of rooms cannot handle drags or movement of entities/rooms
+- Graph visualization of rooms cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers
 
 ## Release 0.0.6
