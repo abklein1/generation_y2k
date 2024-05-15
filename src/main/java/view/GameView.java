@@ -29,13 +29,19 @@ public class GameView {
 
         JScrollPane scrollPane = new JScrollPane(statusOutput);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(generateButton, BorderLayout.NORTH);
-        panel.add(scrollPane, BorderLayout.CENTER);
-        panel.add(visualizeButton, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.add(generateButton);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(visualizeButton);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-        frame.add(panel);
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(buttonPanel, BorderLayout.WEST);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+        frame.add(mainPanel);
         frame.setVisible(true);
     }
 
