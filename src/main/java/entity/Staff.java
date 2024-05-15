@@ -26,4 +26,9 @@ public class Staff implements Serializable {
         teacherStatistics = teacherFactory.setStats();
     }
 
+    @Override
+    public String toString() {
+        return teacherName.getFirstName() + " " + teacherName.getLastName();
+    }
+
 }

@@ -73,7 +73,7 @@ public class Inspector {
         inspectionArea.setText(sb.toString());
     }
 
-    public static void staffInspection(Staff staff) {
+    public static void staffInspection(Staff staff, JTextArea inspectionArea) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
 
@@ -117,9 +117,8 @@ public class Inspector {
         } else {
             sb.append(firstName).append(" is not asleep.\n");
         }
-        sb.append("Nice to meet you ").append(firstName).append("!");
 
-        System.out.println(sb);
+        inspectionArea.setText(sb.toString());
     }
 
     public static String gradeClassInspection(HashMap<Integer, Student> studentGradeClass) {
@@ -127,6 +126,15 @@ public class Inspector {
         for (Map.Entry<Integer, Student> entry : studentGradeClass.entrySet()) {
             Student student = entry.getValue();
             sb.append(student.studentName.getFirstName()).append(" ").append(student.studentName.getLastName()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public static String staffListInspection(HashMap<Integer, Staff> staffHashMap) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Integer, Staff> entry : staffHashMap.entrySet()) {
+            Staff staff = entry.getValue();
+            sb.append(staff.teacherName.getFirstName()).append(" ").append(staff.teacherName.getLastName()).append("\n");
         }
         return sb.toString();
     }

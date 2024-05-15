@@ -10,13 +10,14 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Vector;
 
-import static utility.Inspector.studentInspection;
+import static utility.Inspector.*;
 
 public class SchoolController {
     private final GameView view;
     private RoomConnector roomConnector;
     private StandardSchool standardSchool;
     private final Time time;
+    HashMap<Integer, Staff> staffHashMap;
 
     public SchoolController(GameView view) {
         this.view = view;
@@ -56,7 +57,7 @@ public class SchoolController {
         protected Void doInBackground(){
             //Create hash maps for storage
             HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
-            HashMap<Integer, Staff> staffHashMap = new HashMap<Integer, Staff>();
+            staffHashMap = new HashMap<Integer, Staff>();
             int student_cap;
             int staff_cap;
             String[] colors;
@@ -129,30 +130,52 @@ public class SchoolController {
         JTextArea inspectionArea = new JTextArea();
         inspectionArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(inspectionArea);
-
-        HashMap<Integer, Student> studentGradeClass = standardSchool.getStudentGradeClass(type);
-
-        if (studentGradeClass != null) {
-            DefaultListModel<Student> listModel = new DefaultListModel<>();
-            for (Student student : studentGradeClass.values()) {
-                listModel.addElement(student);
+        if (type.equals("Staff")) {
+            DefaultListModel<Staff> listModel = new DefaultListModel<>();
+            for (Staff staff : staffHashMap.values()) {
+                listModel.addElement(staff);
             }
 
-            JList<Student> studentList = new JList<>(listModel);
-            studentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            studentList.addListSelectionListener(e -> {
+            JList<Staff> staffJList = new JList<>(listModel);
+            staffJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            staffJList.addListSelectionListener(e -> {
                 if (!e.getValueIsAdjusting()) {
-                    Student selectedStudent = studentList.getSelectedValue();
-                    if (selectedStudent != null) {
-                        studentInspection(selectedStudent, inspectionArea);
+                    Staff selectedStaff = staffJList.getSelectedValue();
+                    if (selectedStaff != null) {
+                        staffInspection(selectedStaff, inspectionArea);
                     }
                 }
             });
 
             inspectionFrame.setLayout(new BorderLayout());
-            inspectionFrame.add(new JScrollPane(studentList), BorderLayout.WEST);
+            inspectionFrame.add(new JScrollPane(staffJList), BorderLayout.WEST);
             inspectionFrame.add(scrollPane, BorderLayout.CENTER);
+        } else {
+            HashMap<Integer, Student> studentGradeClass = standardSchool.getStudentGradeClass(type);
+
+            if (studentGradeClass != null) {
+                DefaultListModel<Student> listModel = new DefaultListModel<>();
+                for (Student student : studentGradeClass.values()) {
+                    listModel.addElement(student);
+                }
+
+                JList<Student> studentList = new JList<>(listModel);
+                studentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                studentList.addListSelectionListener(e -> {
+                    if (!e.getValueIsAdjusting()) {
+                        Student selectedStudent = studentList.getSelectedValue();
+                        if (selectedStudent != null) {
+                            studentInspection(selectedStudent, inspectionArea);
+                        }
+                    }
+                });
+
+                inspectionFrame.setLayout(new BorderLayout());
+                inspectionFrame.add(new JScrollPane(studentList), BorderLayout.WEST);
+                inspectionFrame.add(scrollPane, BorderLayout.CENTER);
+            }
         }
+
 
         inspectionFrame.setVisible(true);
     }

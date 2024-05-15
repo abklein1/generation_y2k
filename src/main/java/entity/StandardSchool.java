@@ -1,4 +1,5 @@
-package entity;//*******************************************************************
+package entity;
+//*******************************************************************
 //  entity.StandardSchool.java
 //  Description: This is the implementation of a standard school based
 //  on the implementation of the school plan interface
@@ -19,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static utility.Randomizer.setRandom;
 
