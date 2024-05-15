@@ -24,9 +24,9 @@ public class GameView {
         // Inspection
         inspectionMenu = new JMenu("Inspection");
         JMenuItem freshmanItem = new JMenuItem("Freshman");
-        JMenuItem sophomoresItem = new JMenuItem("Sophomores");
-        JMenuItem juniorsItem = new JMenuItem("Juniors");
-        JMenuItem seniorsItem = new JMenuItem("Seniors");
+        JMenuItem sophomoresItem = new JMenuItem("Sophomore");
+        JMenuItem juniorsItem = new JMenuItem("Junior");
+        JMenuItem seniorsItem = new JMenuItem("Senior");
         JMenuItem staffItem = new JMenuItem("Staff");
         inspectionMenu.add(freshmanItem);
         inspectionMenu.add(sophomoresItem);
