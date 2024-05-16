@@ -84,7 +84,7 @@ community) or a randomly concatinated place name (Place1 + Place2) where, genera
 
 ### Example of School Room Map
 
-![](src/main/java/Resources/gen_example.JPG)
+![](src/main/java/Resources.Screencaps/gen_example.JPG)
 
 *Coming soon*
 
@@ -128,7 +128,12 @@ normalized distribution based on age and gender.
 ### Example Student Generation
 
 An example of a student generated and displayed in the inspector:
-![](src/main/java/Resources/proto_inspect.JPG)
+![](src/main/java/Resources.Screencaps/proto_inspect.JPG)
+
+### Example Staff Generation
+
+An example of a staff generated and displayed in the inspector:
+![](src/main/java/Resources.Screencaps/staff_proto1.JPG)
 
 ## Datasets and References
 
@@ -200,7 +205,7 @@ activities, but they cannot be pushed beyond their initial cap.
 - GUI updates in realtime as school is generated
 - Java project SDK upgraded from 11 to 17
 
-![](src/main/java/Resources/proto2.JPG)
+![](src/main/java/Resources.Screencaps/proto2.JPG)
 
 ## Release 0.0.5
 

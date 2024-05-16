@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class Inspector {
@@ -87,6 +88,7 @@ public class Inspector {
         String eyeColor = staff.teacherStatistics.getEyeColor().toLowerCase();
         double height = staff.teacherStatistics.getHeight();
         LocalDate birth = staff.teacherStatistics.getBirthday();
+        String assignment = staff.teacherStatistics.getStaffType().toString().toLowerCase();
 
         sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
         sb.append(firstName).append(" is a ").append(gender).append(" with ");
@@ -117,6 +119,7 @@ public class Inspector {
         } else {
             sb.append(firstName).append(" is not asleep.\n");
         }
+        sb.append("They are assigned as: ").append(assignment).append("\n");
 
         inspectionArea.setText(sb.toString());
     }
