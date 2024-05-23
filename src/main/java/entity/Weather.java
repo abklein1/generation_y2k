@@ -3,6 +3,7 @@ package entity;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +48,9 @@ public class Weather {
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                if (values[1].equals(targetDateStr)) {
+                Date dateC = dateFormat.parse(values[1]);
+                Date targetDate = dateFormat.parse(targetDateStr);
+                if (dateC.equals(targetDate)) {
                     weatherData.put("PRCP", values[6]);
                     weatherData.put("SNOW", values[8]);
                     weatherData.put("SNWD", values[10]);
@@ -245,6 +248,8 @@ public class Weather {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
 
         return weatherData;

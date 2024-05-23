@@ -97,6 +97,7 @@ public class SchoolController {
             colors = standardSchool.getSchoolColors();
             publish("The school colors are " + colors[0] + " and " + colors[1]);
             updateTimeLabel();
+            updateWeatherLabels();
             return null;
         }
 
@@ -119,6 +120,13 @@ public class SchoolController {
     private void updateTimeLabel() {
         String formattedDate = time.getFormattedDate();
         view.updateTime("Today is " + formattedDate);
+    }
+
+    private void updateWeatherLabels() {
+        String rootPath = "src/main/java/Resources/Weather/Icons/";
+        Weather weather = new Weather(standardSchool.getSchoolName());
+        WeatherPatterns[] weatherPatterns = weather.determineWeatherAMPM(time.getCurrentDate());
+        view.updateWeatherIcons(rootPath + weatherPatterns[0].getIconName(), rootPath + weatherPatterns[1].getIconName());
     }
 
     private void showInspectionWindow(String type) {

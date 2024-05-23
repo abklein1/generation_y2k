@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class GameView {
 
@@ -12,6 +13,8 @@ public class GameView {
     private final JButton visualizeButton;
     private final JTextArea statusOutput;
     private final JLabel timeLabel;
+    private final JLabel weatherAMLabel;
+    private final JLabel weatherPMLabel;
     private final JMenu inspectionMenu;
 
     public GameView() {
@@ -63,8 +66,26 @@ public class GameView {
                 BorderFactory.createLineBorder(Color.BLACK),
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
+
+        // weather label
+        weatherAMLabel = new JLabel();
+        weatherAMLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        weatherAMLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+
+        weatherPMLabel = new JLabel();
+        weatherPMLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        weatherPMLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+
         JPanel timePanel = new JPanel(new BorderLayout());
         timePanel.add(timeLabel, BorderLayout.EAST);
+        timePanel.add(weatherAMLabel, BorderLayout.WEST);
+        timePanel.add(weatherPMLabel, BorderLayout.CENTER);
         timePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // main panel
@@ -108,6 +129,14 @@ public class GameView {
 
     public void updateTime(String time) {
         timeLabel.setText(time);
+    }
+
+    public void updateWeatherIcons(String amIconPath, String pmIconPath) {
+        ImageIcon weatherAMIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource(amIconPath)));
+        weatherAMLabel.setIcon(weatherAMIcon);
+
+        ImageIcon weatherPMIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource(pmIconPath)));
+        weatherPMLabel.setIcon(weatherPMIcon);
     }
 
     public void addInspectionMenuListener(ActionListener listener) {

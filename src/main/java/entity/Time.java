@@ -3,6 +3,7 @@ package entity;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Time {
     private final Calendar calendar;
@@ -36,5 +37,9 @@ public class Time {
 
     public int getDayCounter() {
         return dayCounter;
+    }
+
+    public Date getCurrentDate() {
+        return calendar.getTime();
     }
 }
