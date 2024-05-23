@@ -262,11 +262,13 @@ public class Weather {
         double tmin = Double.parseDouble(weatherData.getOrDefault("TMIN", "-9999")) / 10.0;
         double awnd = Double.parseDouble(weatherData.getOrDefault("AWND", "0"));
         int choice;
+        //TODO: figure out what to do with WT values
+
         // Day conditions
         if (time.equals("AM")) {
-            choice = setRandom(0,100);
+            choice = setRandom(0, 100);
             // light rain and no snow
-            if ( prcp < 25 && prcp > 0 && snow == 0 && tmin > 0) {
+            if (prcp < 25 && prcp > 0 && snow == 0 && tmin > 0) {
                 // Wind
                 if (awnd > 70) {
                     if (choice < 75) {
@@ -276,7 +278,7 @@ public class Weather {
                     } else {
                         return WeatherPatterns.RAIN_AND_WIND;
                     }
-                // No wind
+                    // No wind
                 } else {
                     if (choice < 25) {
                         return WeatherPatterns.SCATTERED_SHOWERS_DAY;
@@ -288,7 +290,7 @@ public class Weather {
                         return WeatherPatterns.ISOLATED_SHOWERS_DAY;
                     }
                 }
-            // Moderate rain and no snow
+                // Moderate rain and no snow
             } else if (prcp <= 76 && snow == 0 && tmin > 0) {
                 // Wind
                 if (awnd > 70) {
@@ -299,7 +301,7 @@ public class Weather {
                     } else {
                         return WeatherPatterns.HEAVY_RAIN_AND_WIND;
                     }
-                // No wind
+                    // No wind
                 } else {
                     if (choice < 50) {
                         return WeatherPatterns.RAIN;
@@ -315,7 +317,7 @@ public class Weather {
                         return WeatherPatterns.SCATTERED_THUNDERSTORMS_DAY;
                     }
                 }
-            // Heavy rain and no snow
+                // Heavy rain and no snow
             } else if (prcp > 77 && snow == 0 && tmin > 0) {
                 // Wind
                 if (awnd > 70) {
@@ -324,7 +326,7 @@ public class Weather {
                     } else {
                         return WeatherPatterns.THUNDERSTORMS_WITH_WIND;
                     }
-                // No wind
+                    // No wind
                 } else {
                     if (choice < 20) {
                         return WeatherPatterns.SCATTERED_THUNDERSTORMS_DAY;
@@ -335,7 +337,7 @@ public class Weather {
                     } else if (choice < 80) {
                         return WeatherPatterns.STRONG_THUNDERSTORMS;
                     } else {
-                        return WeatherPatterns. THUNDERSTORMS;
+                        return WeatherPatterns.PM_THUNDERSTORMS;
                     }
                 }
             }
@@ -348,7 +350,7 @@ public class Weather {
                     } else {
                         return WeatherPatterns.SLEET_AND_WIND;
                     }
-                // No wind
+                    // No wind
                 } else {
                     if (choice < 10) {
                         return WeatherPatterns.FREEZING_DRIZZLE;
@@ -371,7 +373,7 @@ public class Weather {
                     } else if (choice < 95) {
                         return WeatherPatterns.WINTRY_MIX;
                     } else {
-                        return  WeatherPatterns.WINTRY_MIX_WITH_THUNDER;
+                        return WeatherPatterns.WINTRY_MIX_WITH_THUNDER;
                     }
                 }
             }
@@ -382,6 +384,8 @@ public class Weather {
                 } else {
                     if (choice < 20) {
                         return WeatherPatterns.WINTRY_MIX;
+                    } else if (choice < 30) {
+                        return WeatherPatterns.THUNDERSTORMS_WITH_FREEZING_RAIN;
                     } else if (choice < 40) {
                         return WeatherPatterns.WINTRY_MIX_WITH_THUNDER;
                     } else if (choice < 60) {
@@ -394,7 +398,7 @@ public class Weather {
                         return WeatherPatterns.RAIN_AND_SNOW;
                     }
                 }
-            // Light amounts of snow but no rain
+                // Light amounts of snow but no rain
             } else if (prcp == 0 && snow > 0 && snow < 20) {
                 // Wind
                 if (awnd > 70) {
@@ -403,19 +407,21 @@ public class Weather {
                     } else {
                         return WeatherPatterns.SNOW_AND_WIND;
                     }
-                // No wind
+                    // No wind
                 } else {
-                    if (choice < 25) {
+                    if (choice < 20) {
                         return WeatherPatterns.SNOW;
-                    } else if (choice < 50) {
+                    } else if (choice < 40) {
                         return WeatherPatterns.LIGHT_SNOW;
-                    } else if (choice < 75) {
+                    } else if (choice < 60) {
                         return WeatherPatterns.SCATTERED_FLURRIES;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.SCATTERED_SNOW_SHOWERS_DAY;
                     } else {
                         return WeatherPatterns.FLURRIES;
                     }
                 }
-            // Moderate to Heavy snow but no rain
+                // Moderate to Heavy snow but no rain
             } else if (prcp == 0 && snow >= 20) {
                 // Wind
                 if (awnd > 70) {
@@ -426,7 +432,7 @@ public class Weather {
                     } else {
                         return WeatherPatterns.BLIZZARD_BLOWING_SNOW;
                     }
-                // No wind
+                    // No wind
                 } else {
                     if (choice < 25) {
                         return WeatherPatterns.SNOW;
@@ -438,7 +444,7 @@ public class Weather {
                         return WeatherPatterns.THUNDERSTORMS_WITH_SNOW;
                     }
                 }
-            // Fair conditions but no snow or rain
+                // Fair conditions but no snow or rain
             } else if (prcp == 0 && snow == 0 && tmin > 0 && tmax < 30) {
                 // Wind
                 if (awnd > 70) {
@@ -450,12 +456,12 @@ public class Weather {
                         return WeatherPatterns.SUNNY_AND_WINDY;
                     } else if (choice < 80) {
                         return WeatherPatterns.MOSTLY_SUNNY_AND_WINDY_DAY;
-                    } else if (choice  < 90) {
+                    } else if (choice < 90) {
                         return WeatherPatterns.MOSTLY_CLOUDY_AND_WINDY_DAY;
                     } else {
                         return WeatherPatterns.WINDY_CONDITIONS;
                     }
-                // No wind
+                    // No wind
                 } else {
                     if (choice < 10) {
                         return WeatherPatterns.AM_SUN_PM_CLOUDS;
@@ -479,7 +485,7 @@ public class Weather {
                         return WeatherPatterns.AM_FOG_PM_SUN;
                     }
                 }
-            // No snow or rain but really hot
+                // No snow or rain but really hot
             } else if (prcp == 0 && snow == 0 && tmax > 30) {
                 // Wind
                 if (awnd > 70) {
@@ -492,7 +498,7 @@ public class Weather {
                     } else {
                         return WeatherPatterns.CLOUDY_AND_WINDY_ALT;
                     }
-                // No wind
+                    // No wind
                 } else {
                     if (choice < 50) {
                         return WeatherPatterns.HOT_CONDITIONS;
@@ -508,7 +514,7 @@ public class Weather {
                         return WeatherPatterns.MOSTLY_SUNNY;
                     }
                 }
-            // If no snow or rain but freezing
+                // If no snow or rain but freezing
             } else if (prcp == 0 && snow == 0 && tmin < -3) {
                 if (choice < 25) {
                     return WeatherPatterns.FRIGID_CONDITIONS;
@@ -519,6 +525,7 @@ public class Weather {
                 } else {
                     return WeatherPatterns.PARTLY_CLOUDY_DAY;
                 }
+                // Weather pattern does not match any conditional
             } else {
                 if (choice < 10) {
                     return WeatherPatterns.AM_FOG_PM_CLOUDS;
@@ -540,38 +547,315 @@ public class Weather {
                     return WeatherPatterns.MOSTLY_SUNNY_AND_WINDY_DAY;
                 }
             }
-        // Night
+            // Night
         } else {
-            if ( prcp < 25 && prcp > 0 && snow == 0) {
-                if (awnd > 80) {
-                    choice = setRandom(0,100);
-
-                    if (choice < 25) {
-                        return WeatherPatterns.PARTLY_CLOUDY_AND_WINDY_NIGHT;
-                    } else if (choice < 50) {
-                        return WeatherPatterns.SCATTERED_SHOWERS_NIGHT_ONLINE;
+            choice = setRandom(0, 100);
+            // light rain and no snow
+            if (prcp < 25 && prcp > 0 && snow == 0 && tmin > 0) {
+                // Wind
+                if (awnd > 70) {
+                    if (choice < 35) {
+                        return WeatherPatterns.LIGHT_RAIN_AND_WIND;
+                    } else if (choice < 55) {
+                        return WeatherPatterns.MOSTLY_CLOUDY_AND_WINDY_NIGHT;
+                    } else if (choice < 75) {
+                        return WeatherPatterns.WINDY_CONDITIONS;
+                    } else {
+                        return WeatherPatterns.FAIR_MOSTLY_CLEAR_AND_WINDY_NIGHT;
                     }
-
+                    // No wind
+                } else {
+                    if (choice < 10) {
+                        return WeatherPatterns.FAIR_MOSTLY_CLEAR_NIGHT;
+                    } else if (choice < 20) {
+                        return WeatherPatterns.PARTLY_CLOUDY_NIGHT;
+                    } else if (choice < 40) {
+                        return WeatherPatterns.FOG_DEVELOPING;
+                    } else if (choice < 60) {
+                        return WeatherPatterns.SCATTERED_SHOWERS_NIGHT_ONLINE;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.VARIABLY_CLOUDY_NIGHT;
+                    } else {
+                        return WeatherPatterns.ISOLATED_SHOWERS_NIGHT;
+                    }
                 }
-
+                // Moderate rain and no snow
+            } else if (prcp <= 76 && snow == 0 && tmin > 0) {
+                // Wind
+                if (awnd > 70) {
+                    if (choice < 20) {
+                        return WeatherPatterns.RAIN_AND_WIND;
+                    } else if (choice < 40) {
+                        return WeatherPatterns.ISOLATED_THUNDERSTORMS_NIGHT;
+                    } else if (choice < 60) {
+                        return WeatherPatterns.MOSTLY_CLOUDY_AND_WINDY_NIGHT;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.DRIZZLE_AND_WIND;
+                    } else if (choice < 90) {
+                        return WeatherPatterns.CLEAR_AND_WINDY;
+                    } else {
+                        return WeatherPatterns.HEAVY_RAIN_AND_WIND;
+                    }
+                    // No wind
+                } else {
+                    if (choice < 50) {
+                        return WeatherPatterns.ISOLATED_THUNDERSTORMS_NIGHT;
+                    } else if (choice < 60) {
+                        return WeatherPatterns.SCATTERED_SHOWERS_NIGHT_ONLINE;
+                    } else if (choice < 75) {
+                        return WeatherPatterns.SCATTERED_STRONG_THUNDERSTORMS_NIGHT;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.FOG_DEVELOPING;
+                    } else if (choice < 85) {
+                        return WeatherPatterns.FAIR_MOSTLY_CLEAR_NIGHT;
+                    } else {
+                        return WeatherPatterns.MOSTLY_CLOUDY_NIGHT;
+                    }
+                }
+                // Heavy rain and no snow
+            } else if (prcp > 77 && snow == 0 && tmin > 0) {
+                // Wind
+                if (awnd > 70) {
+                    if (choice < 50) {
+                        return WeatherPatterns.STRONG_THUNDERSTORMS_AND_WIND;
+                    } else if (choice < 55) {
+                        return WeatherPatterns.SCATTERED_STRONG_THUNDERSTORMS_NIGHT;
+                    } else {
+                        return WeatherPatterns.HEAVY_THUNDERSTORMS_WITH_WIND;
+                    }
+                    // No wind
+                } else {
+                    if (choice < 20) {
+                        return WeatherPatterns.SCATTERED_STRONG_THUNDERSTORMS_NIGHT;
+                    } else if (choice < 40) {
+                        return WeatherPatterns.SCATTERED_THUNDERSTORMS_NIGHT;
+                    } else if (choice < 60) {
+                        return WeatherPatterns.AM_THUNDERSTORMS;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.STRONG_THUNDERSTORMS;
+                    } else if (choice < 90) {
+                        return WeatherPatterns.SCATTERED_SHOWERS_NIGHT_ONLINE;
+                    } else {
+                        return WeatherPatterns.THUNDERSTORMS;
+                    }
+                }
+            }
+            // Any mix of rain and snow
+            else if (prcp > 0 && snow > 0 && tmin > -2) {
+                // Wind
+                if (awnd > 70) {
+                    if (choice < 50) {
+                        return WeatherPatterns.ICE_AND_WIND;
+                    } else {
+                        return WeatherPatterns.SLEET_AND_WIND;
+                    }
+                    // No wind
+                } else {
+                    if (choice < 10) {
+                        return WeatherPatterns.FREEZING_DRIZZLE;
+                    } else if (choice < 20) {
+                        return WeatherPatterns.LIGHT_FREEZING_RAIN;
+                    } else if (choice < 30) {
+                        return WeatherPatterns.FREEZING_RAIN_AND_SLEET;
+                    } else if (choice < 40) {
+                        return WeatherPatterns.FREEZING_RAIN_AND_THUNDER;
+                    } else if (choice < 50) {
+                        return WeatherPatterns.LIGHT_RAIN_AND_SNOW;
+                    } else if (choice < 60) {
+                        return WeatherPatterns.SCATTERED_FLURRIES_NIGHT;
+                    } else if (choice < 70) {
+                        return WeatherPatterns.SLEET;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.FAIR_MOSTLY_CLEAR_NIGHT;
+                    } else if (choice < 90) {
+                        return WeatherPatterns.VARIABLY_CLOUDY_NIGHT;
+                    } else if (choice < 95) {
+                        return WeatherPatterns.WINTRY_MIX;
+                    } else {
+                        return WeatherPatterns.WINTRY_MIX_WITH_THUNDER;
+                    }
+                }
+            }
+            // Any mix of rain and snow but low temps
+            else if (prcp > 0 && snow > 0 && tmin < -2) {
+                if (awnd > 70) {
+                    if (choice < 50) {
+                        return WeatherPatterns.RAIN_SNOW_AND_WIND;
+                    } else {
+                        return WeatherPatterns.SLEET_AND_WIND;
+                    }
+                } else {
+                    if (choice < 20) {
+                        return WeatherPatterns.SCATTERED_FLURRIES_NIGHT;
+                    } else if (choice < 40) {
+                        return WeatherPatterns.WINTRY_MIX_WITH_THUNDER;
+                    } else if (choice < 60) {
+                        return WeatherPatterns.SLEET_AND_SNOW;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.HEAVY_RAIN_AND_SNOW;
+                    } else if (choice < 90) {
+                        return WeatherPatterns.FREEZING_RAIN_AND_SNOW;
+                    } else {
+                        return WeatherPatterns.VARIABLY_CLOUDY_NIGHT;
+                    }
+                }
+                // Light amounts of snow but no rain
+            } else if (prcp == 0 && snow > 0 && snow < 20) {
+                // Wind
+                if (awnd > 70) {
+                    if (choice < 25) {
+                        return WeatherPatterns.LIGHT_SNOW_AND_WIND;
+                    } else if (choice < 50) {
+                        return WeatherPatterns.WINDY_CONDITIONS;
+                    } else if (choice < 75) {
+                        return WeatherPatterns.CLEAR_AND_WINDY;
+                    } else {
+                        return WeatherPatterns.SNOW_AND_WIND;
+                    }
+                    // No wind
+                } else {
+                    if (choice < 25) {
+                        return WeatherPatterns.LIGHT_SNOW_SHOWERS_NIGHT;
+                    } else if (choice < 50) {
+                        return WeatherPatterns.SCATTERED_SNOW_SHOWERS_NIGHT;
+                    } else if (choice < 75) {
+                        return WeatherPatterns.SCATTERED_FLURRIES_NIGHT;
+                    } else {
+                        return WeatherPatterns.VARIABLY_CLOUDY_NIGHT;
+                    }
+                }
+                // Moderate to Heavy snow but no rain
+            } else if (prcp == 0 && snow >= 20) {
+                // Wind
+                if (awnd > 70) {
+                    if (choice < 25) {
+                        return WeatherPatterns.HEAVY_SNOW_AND_WIND;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.SNOW_AND_WIND;
+                    } else {
+                        return WeatherPatterns.BLIZZARD_BLOWING_SNOW;
+                    }
+                    // No wind
+                } else {
+                    if (choice < 25) {
+                        return WeatherPatterns.SNOW;
+                    } else if (choice < 50) {
+                        return WeatherPatterns.HEAVY_SNOW;
+                    } else if (choice < 75) {
+                        return WeatherPatterns.SNOW_WITH_THUNDER;
+                    } else {
+                        return WeatherPatterns.THUNDERSTORMS_WITH_SNOW;
+                    }
+                }
+                // Fair conditions but no snow or rain
+            } else if (prcp == 0 && snow == 0 && tmin > 0 && tmax < 30) {
+                // Wind
+                if (awnd > 70) {
+                    if (choice < 20) {
+                        return WeatherPatterns.FAIR_MOSTLY_CLEAR_AND_WINDY_NIGHT;
+                    } else if (choice < 40) {
+                        return WeatherPatterns.PARTLY_CLOUDY_AND_WINDY_NIGHT;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.CLEAR_AND_WINDY;
+                    } else {
+                        return WeatherPatterns.WINDY_CONDITIONS;
+                    }
+                    // No wind
+                } else {
+                    if (choice < 10) {
+                        return WeatherPatterns.CLEAR;
+                    } else if (choice < 20) {
+                        return WeatherPatterns.CLEAR_AND_HAZY;
+                    } else if (choice < 30) {
+                        return WeatherPatterns.FAIR_AND_HAZY;
+                    } else if (choice < 40) {
+                        return WeatherPatterns.FAIR_MOSTLY_CLEAR_NIGHT;
+                    } else if (choice < 50) {
+                        return WeatherPatterns.FOG_DEVELOPING;
+                    } else if (choice < 60) {
+                        return WeatherPatterns.PARTLY_CLOUDY_NIGHT;
+                    } else if (choice < 70) {
+                        return WeatherPatterns.PARTLY_CLOUDY_AND_HAZY_NIGHT;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.VARIABLY_CLOUDY_NIGHT;
+                    } else if (choice < 90) {
+                        return WeatherPatterns.FAIR_MOSTLY_CLEAR_AND_WINDY_NIGHT;
+                    } else {
+                        return WeatherPatterns.PARTLY_CLOUDY_AND_WINDY_NIGHT;
+                    }
+                }
+                // No snow or rain but really hot
+            } else if (prcp == 0 && snow == 0 && tmax > 30) {
+                // Wind
+                if (awnd > 70) {
+                    if (choice < 25) {
+                        return WeatherPatterns.WINDY_CONDITIONS;
+                    } else if (choice < 50) {
+                        return WeatherPatterns.CLEAR_AND_WINDY;
+                    } else if (choice < 75) {
+                        return WeatherPatterns.PARTLY_CLOUDY_AND_WINDY_NIGHT;
+                    } else {
+                        return WeatherPatterns.PARTLY_CLOUDY_NIGHT;
+                    }
+                    // No wind
+                } else {
+                    if (choice < 50) {
+                        return WeatherPatterns.PARTLY_CLOUDY_AND_HAZY_NIGHT;
+                    } else if (choice < 60) {
+                        return WeatherPatterns.CLEAR;
+                    } else if (choice < 70) {
+                        return WeatherPatterns.CLEAR_AND_HAZY;
+                    } else if (choice < 80) {
+                        return WeatherPatterns.FAIR_MOSTLY_CLEAR_NIGHT;
+                    } else if (choice < 90) {
+                        return WeatherPatterns.CLEAR_AND_WINDY;
+                    } else {
+                        return WeatherPatterns.VARIABLY_CLOUDY_NIGHT;
+                    }
+                }
+                // If no snow or rain but freezing
+            } else if (prcp == 0 && snow == 0 && tmin < -3) {
+                if (choice < 25) {
+                    return WeatherPatterns.FRIGID_CONDITIONS;
+                } else if (choice < 40) {
+                    return WeatherPatterns.ICY_CLOUD;
+                } else if (choice < 60) {
+                    return WeatherPatterns.FAIR_MOSTLY_CLEAR_NIGHT;
+                } else if (choice < 75) {
+                    return WeatherPatterns.DARK_CLOUD;
+                } else {
+                    return WeatherPatterns.CLEAR;
+                }
+                // Weather pattern does not match any conditional
+            } else {
+                if (choice < 10) {
+                    return WeatherPatterns.CLEAR;
+                } else if (choice < 20) {
+                    return WeatherPatterns.CLOUD_2;
+                } else if (choice < 30) {
+                    return WeatherPatterns.PARTLY_CLOUDY_NIGHT_REVISED;
+                } else if (choice < 40) {
+                    return WeatherPatterns.MOSTLY_CLOUDY_DAY;
+                } else if (choice < 50) {
+                    return WeatherPatterns.MOSTLY_CLOUDY_AND_HAZY_DAY;
+                } else if (choice < 60) {
+                    return WeatherPatterns.THUNDER_IN_THE_VICINITY;
+                } else if (choice < 70) {
+                    return WeatherPatterns.THUNDER_CLOUD;
+                } else if (choice < 80) {
+                    return WeatherPatterns.MOSTLY_SUNNY;
+                } else {
+                    return WeatherPatterns.MOSTLY_SUNNY_AND_WINDY_DAY;
+                }
             }
         }
-
-
-        return WeatherPatterns.CLEAR;
     }
-    public void determineWeatherAM(Date date) {
+
+    public WeatherPatterns[] determineWeatherAMPM(Date date) {
         Map<String, String> weatherData = parseCSV(date);
-        WeatherPatterns pattern = determineWeatherPattern(weatherData, "AM");
-        determineWeatherPM(date, pattern);
+        WeatherPatterns AM = determineWeatherPattern(weatherData, "AM");
+        WeatherPatterns PM = determineWeatherPattern(weatherData, "PM");
+        return new WeatherPatterns[]{AM, PM};
     }
-
-    // Use day pattern to make some decisions on night
-    // We could use some metrics from CSV here to make more accurate night predictions but want some chance thrown in
-    public void determineWeatherPM(Date date, WeatherPatterns day) {
-        Map<String, String> weatherData = parseCSV(date);
-        WeatherPatterns pattern = determineWeatherPattern(weatherData, "PM");
-    }
-
 
 }

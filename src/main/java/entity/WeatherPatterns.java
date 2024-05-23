@@ -14,7 +14,6 @@ public enum WeatherPatterns {
     CLEAR_AND_WINDY("Clear and Windy.png"),
     CLOUD_1("Cloud 1.png"),
     CLOUD_2("Cloud 2.png"),
-    CLOUDY_AND_HAZY_ALT("Cloudy and Hazy alt.png"),
     CLOUDY_AND_WINDY_ALT("Cloudy and Windy alt.png"),
     DARK_CLOUD("Dark Cloud.png"),
     DRIZZLE_FOG("Drizzle and Fog.png"),
@@ -22,7 +21,10 @@ public enum WeatherPatterns {
     FAIR_DAY("Fair (day).png"),
     FAIR_AND_HAZY("Fair and Hazy.png"),
     FAIR_AND_WINDY("Fair and Windy.png"),
+    FAIR_MOSTLY_CLEAR_NIGHT("Fair-Mostly Clear (night).png"),
+    FAIR_MOSTLY_CLEAR_AND_WINDY_NIGHT("Fair-Mostly Clear and Windy (night).png"),
     FEW_SHOWERS_WORDED("Few Showers (worded).png"),
+    FOG_DEVELOPING("Fog Developing.png"),
     FLURRIES("Flurries.png"),
     FREEZING_DRIZZLE("Freezing Drizzle.png"),
     FREEZING_RAIN("Freezing Rain.png"),
@@ -52,6 +54,7 @@ public enum WeatherPatterns {
     MOSTLY_CLOUDY_NIGHT("Mostly Cloudy (night).png"),
     MOSTLY_CLOUDY_AND_HAZY_DAY("Mostly Cloudy and Hazy (day).png"),
     MOSTLY_CLOUDY_AND_WINDY_DAY("Mostly Cloudy and Windy (day).png"),
+    MOSTLY_CLOUDY_AND_WINDY_NIGHT("Mostly Cloudy and Windy (night).png"),
     MOSTLY_SUNNY_AND_WINDY_DAY("Mostly Sunny and Windy (day).png"),
     MOSTLY_SUNNY("Mostly Sunny.png"),
     NOT_AVAILABLE("Not Available.png"),
@@ -60,6 +63,7 @@ public enum WeatherPatterns {
     PARTLY_CLOUDY_NIGHT("Partly Cloudy (night).png"),
     PARTLY_CLOUDY_AND_WINDY_DAY("Partly Cloudy and Windy (day).png"),
     PARTLY_CLOUDY_AND_WINDY_NIGHT("Partly Cloudy and Windy (night, revised"),
+    PARTLY_CLOUDY_AND_HAZY_NIGHT("Partly Cloudy and Hazy (night).png"),
     PM_THUNDERSTORMS("PM Thunderstorms.png"),
     RAIN_AND_FOG("Rain and Fog.png"),
     RAIN_AND_FREEZING_RAIN("Rain and Freezing Rain.png"),
@@ -67,6 +71,7 @@ public enum WeatherPatterns {
     RAIN_AND_WIND("Rain and Wind.png"),
     RAIN_SNOW_AND_WIND("Rain, Snow and Wind.png"),
     SCATTERED_FLURRIES("Scattered Flurries.png"),
+    SCATTERED_FLURRIES_NIGHT("Scattered Flurries (night).png"),
     SCATTERED_SHOWERS_DAY("Scattered Showers (day).png"),
     SCATTERED_SHOWERS_NIGHT_ONLINE("Scattered Showers (night, online).png"),
     SCATTERED_SNOW_SHOWERS_DAY("Scattered Snow Showers (day).png"),
@@ -74,6 +79,7 @@ public enum WeatherPatterns {
     SCATTERED_STRONG_THUNDERSTORMS_DAY("Scattered Strong Thunderstorms (day).png"),
     SCATTERED_STRONG_THUNDERSTORMS_NIGHT("Scattered Strong Thunderstorms (night).png"),
     SCATTERED_THUNDERSTORMS_DAY("Scattered Thunderstorms (day).png"),
+    SCATTERED_THUNDERSTORMS_NIGHT("Scattered Thunderstorms (night).png"),
     SLEET_AND_WIND("Sleet and Wind.png"),
     SLEET("Sleet.png"),
     SLEET_WITH_THUNDER("Sleet with Thunder.png"),
@@ -99,8 +105,6 @@ public enum WeatherPatterns {
     VARIABLY_CLOUDY_DAY("Variably Cloudy Day.png"),
     VARIABLY_CLOUDY_NIGHT("Variably Cloudy Night.png"),
     WINDY_CONDITIONS("Windy Conditions.png"),
-    WINTRY_MIX_WORD("Wintry Mix (worded).png"),
-    WINTRY_MIX_WITH_THUNDER_WORD("Wintry Mix with Thunder (worded).png"),
     WINTRY_MIX_WITH_THUNDER("Wintry Mix with Thunder.png"),
     WINTRY_MIX("Wintry Mix.png"),
     CLOUDY("Cloudy.png"),
@@ -127,7 +131,6 @@ public enum WeatherPatterns {
             case "clear and windy" -> CLEAR_AND_WINDY;
             case "cloud 1" -> CLOUD_1;
             case "cloud 2" -> CLOUD_2;
-            case "cloudy and hazy alt" -> CLOUDY_AND_HAZY_ALT;
             case "cloudy and windy alt" -> CLOUDY_AND_WINDY_ALT;
             case "dark cloud" -> DARK_CLOUD;
             case "drizzle fog" -> DRIZZLE_FOG;
@@ -135,7 +138,10 @@ public enum WeatherPatterns {
             case "fair day" -> FAIR_DAY;
             case "fair and hazy" -> FAIR_AND_HAZY;
             case "fair and windy" -> FAIR_AND_WINDY;
+            case "fair-mostly clear night" -> FAIR_MOSTLY_CLEAR_NIGHT;
+            case "fair-mostly clear and windy night" -> FAIR_MOSTLY_CLEAR_AND_WINDY_NIGHT;
             case "few showers" -> FEW_SHOWERS_WORDED;
+            case "fog developing" -> FOG_DEVELOPING;
             case "flurries" -> FLURRIES;
             case "freezing drizzle" -> FREEZING_DRIZZLE;
             case "freezing rain" -> FREEZING_RAIN;
@@ -165,6 +171,7 @@ public enum WeatherPatterns {
             case "mostly cloudy (night)" -> MOSTLY_CLOUDY_NIGHT;
             case "mostly cloudy and hazy (day)" -> MOSTLY_CLOUDY_AND_HAZY_DAY;
             case "mostly cloudy and windy (day)" -> MOSTLY_CLOUDY_AND_WINDY_DAY;
+            case "mostly cloudy and windy (night)" -> MOSTLY_CLOUDY_AND_WINDY_NIGHT;
             case "mostly sunny and windy (day)" -> MOSTLY_SUNNY_AND_WINDY_DAY;
             case "mostly sunny" -> MOSTLY_SUNNY;
             case "partly cloudy (night, revised)" -> PARTLY_CLOUDY_NIGHT_REVISED;
@@ -172,6 +179,7 @@ public enum WeatherPatterns {
             case "partly cloudy (night)" -> PARTLY_CLOUDY_NIGHT;
             case "partly cloudy and windy (day)" -> PARTLY_CLOUDY_AND_WINDY_DAY;
             case "partly cloudy and windy (night)" -> PARTLY_CLOUDY_AND_WINDY_NIGHT;
+            case "partly cloudy and hazy (night)" -> PARTLY_CLOUDY_AND_HAZY_NIGHT;
             case "pm thunderstorms" -> PM_THUNDERSTORMS;
             case "rain and fog" -> RAIN_AND_FOG;
             case "rain and freezing rain" -> RAIN_AND_FREEZING_RAIN;
@@ -179,6 +187,7 @@ public enum WeatherPatterns {
             case "rain and wind" -> RAIN_AND_WIND;
             case "rain and snow and wind" -> RAIN_SNOW_AND_WIND;
             case "scattered flurries" -> SCATTERED_FLURRIES;
+            case "scattered flurries night" -> SCATTERED_FLURRIES_NIGHT;
             case "scattered showers day" -> SCATTERED_SHOWERS_DAY;
             case "scattered showers night" -> SCATTERED_SHOWERS_NIGHT_ONLINE;
             case "scattered snow showers day" -> SCATTERED_SNOW_SHOWERS_DAY;
@@ -186,6 +195,7 @@ public enum WeatherPatterns {
             case "scattered strong thunderstorms night" -> SCATTERED_STRONG_THUNDERSTORMS_NIGHT;
             case "scattered strong thunderstorms day" -> SCATTERED_STRONG_THUNDERSTORMS_DAY;
             case "scattered thunderstorms day" -> SCATTERED_THUNDERSTORMS_DAY;
+            case "scattered thunderstorms night" -> SCATTERED_THUNDERSTORMS_NIGHT;
             case "sleet and wind" -> SLEET_AND_WIND;
             case "sleet" -> SLEET;
             case "sleet with thunder" -> SLEET_WITH_THUNDER;
@@ -210,8 +220,6 @@ public enum WeatherPatterns {
             case "variably cloudy day" -> VARIABLY_CLOUDY_DAY;
             case "variably cloudy night" -> VARIABLY_CLOUDY_NIGHT;
             case "windy conditions" -> WINDY_CONDITIONS;
-            case "wintry mix word" -> WINTRY_MIX_WORD;
-            case "wintry mix with thunder word" -> WINTRY_MIX_WITH_THUNDER_WORD;
             case "wintry mix with thunder" -> WINTRY_MIX_WITH_THUNDER;
             case "wintry mix" -> WINTRY_MIX;
             case "blowing dust" -> BLOWING_DUST;
