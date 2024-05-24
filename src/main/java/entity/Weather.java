@@ -735,7 +735,7 @@ public class Weather {
     }
 
     public String getTemp(String temp) {
-        double celsius = Double.parseDouble(weatherData.get(temp));
+        double celsius = Double.parseDouble(weatherData.get(temp)) / 10.0;
         int fahrenheit = (int) (celsius * (9/5)) + 32;
         return String.valueOf(fahrenheit);
     }
