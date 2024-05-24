@@ -162,13 +162,14 @@ public class GameView {
         timeLabel.setText(time);
     }
 
-    public void updateWeatherIcons(String amIconPath, String pmIconPath) {
+    public void updateWeatherIcons(String amIconPath, String pmIconPath, String amName, String pmName) {
         try {
             // Load and scale AM icon
             BufferedImage amImage = ImageIO.read(Objects.requireNonNull(getClass().getResource(amIconPath)));
             Image scaledAmImage = amImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             ImageIcon weatherAMIcon = new ImageIcon(scaledAmImage);
             weatherAMIconLabel.setIcon(weatherAMIcon);
+            weatherAMIconLabel.setToolTipText(amName);
             System.out.println("AM icon loaded and scaled successfully.");
 
             // Load and scale PM icon
@@ -177,6 +178,7 @@ public class GameView {
             Image scaledPmImage = pmImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             ImageIcon weatherPMIcon = new ImageIcon(scaledPmImage);
             weatherPMIconLabel.setIcon(weatherPMIcon);
+            weatherAMIconLabel.setToolTipText(pmName);
             System.out.println("PM icon loaded and scaled successfully.");
 
         } catch (Exception e) {
