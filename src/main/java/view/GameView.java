@@ -1,9 +1,12 @@
 package view;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 public class GameView {
 
@@ -69,7 +72,6 @@ public class GameView {
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
 
-        // weather label
         // weather icons and labels
         weatherAMIconLabel = new JLabel();
         weatherAMIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -91,7 +93,8 @@ public class GameView {
 
         // weather panel
         JPanel weatherPanel = new JPanel(new BorderLayout());
-        weatherPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        weatherPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        weatherPanel.setPreferredSize(new Dimension(300, 100));
 
         JPanel weatherIconsPanel = new JPanel(new GridLayout(1, 2));
         JPanel amPanel = new JPanel(new BorderLayout());
@@ -115,8 +118,12 @@ public class GameView {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(weatherPanel, BorderLayout.SOUTH);
-        mainPanel.add(timeLabel, BorderLayout.EAST);
+
+        JPanel lowerPanel = new JPanel(new BorderLayout());
+        lowerPanel.add(weatherPanel, BorderLayout.WEST);
+        lowerPanel.add(timeLabel, BorderLayout.EAST);
+
+        mainPanel.add(lowerPanel, BorderLayout.SOUTH);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         frame.add(mainPanel);
@@ -157,25 +164,19 @@ public class GameView {
 
     public void updateWeatherIcons(String amIconPath, String pmIconPath) {
         try {
-            // Load AM icon
-            java.net.URL amIconURL = getClass().getResource(amIconPath);
-            if (amIconURL != null) {
-                ImageIcon weatherAMIcon = new ImageIcon(amIconURL);
-                weatherAMIconLabel.setIcon(weatherAMIcon);
-                System.out.println("AM icon loaded successfully.");
-            } else {
-                System.err.println("AM Icon not found: " + amIconPath);
-            }
+            // Load and scale AM icon
+            BufferedImage amImage = ImageIO.read(Objects.requireNonNull(getClass().getResource(amIconPath)));
+            Image scaledAmImage = amImage.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            ImageIcon weatherAMIcon = new ImageIcon(scaledAmImage);
+            weatherAMIconLabel.setIcon(weatherAMIcon);
+            System.out.println("AM icon loaded and scaled successfully.");
 
-            // Load PM icon
-            java.net.URL pmIconURL = getClass().getResource(pmIconPath);
-            if (pmIconURL != null) {
-                ImageIcon weatherPMIcon = new ImageIcon(pmIconURL);
-                weatherPMIconLabel.setIcon(weatherPMIcon);
-                System.out.println("PM icon loaded successfully.");
-            } else {
-                System.err.println("PM Icon not found: " + pmIconPath);
-            }
+            // Load and scale PM icon
+            BufferedImage pmImage = ImageIO.read(Objects.requireNonNull(getClass().getResource(pmIconPath)));
+            Image scaledPmImage = pmImage.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            ImageIcon weatherPMIcon = new ImageIcon(scaledPmImage);
+            weatherPMIconLabel.setIcon(weatherPMIcon);
+            System.out.println("PM icon loaded and scaled successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();
