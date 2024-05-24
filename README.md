@@ -150,7 +150,8 @@ An example of a staff generated and displayed in the inspector:
 - Skin tone and color
   descriptors : https://writingwithcolor.tumblr.com/post/96830966357/words-for-skin-tone-how-to-describe-skin-color
 - Staff Averages Per School : https://nces.ed.gov/pubs2007/ruraled/tables/table3_12.asp
-- Approximate Household income distribution : https://www.pewresearch.org/short-reads/2022/04/20/how-the-american-middle-class-has-changed-in-the-past-five-decades/
+- Approximate Household income
+  distribution : https://www.pewresearch.org/short-reads/2022/04/20/how-the-american-middle-class-has-changed-in-the-past-five-decades/
 - Weather Data per region : https://www.ncei.noaa.gov/access/search/data-search/daily-summaries
 
 ## Gameplay Mechanics
@@ -158,13 +159,36 @@ An example of a staff generated and displayed in the inspector:
 Student and teacher stats are comprised of the following primary stats. Primary stats are inherent to the characters and
 do not change:
 
-- INT / Intelligence:
-- CHR / Charisma:
-- AGL / Agility:
-- DET / Determination:
-- PER / Perception:
-- STR / Strength:
-- LCK / Luck:
+- INT / Intelligence: Mental ability of a person to grasp complex ideas, solve problems, and think abstractly. The
+  intelligence base stat effects the capacity of Creativity, Empathy, Adaptability, Curiosity and Open-Mindedness.
+  Intelligence distribution is based on an approximation of IQ where the average is 100 with a standard deviation of 15
+  points.
+- CHR / Charisma: A person's natural ability to influence others through speech, action or appearance. It may also apply
+  to the presence of someone's personality, and the willingness for others to emulate or follow this person. The
+  charisma base stat affects the capacity of Empathy, Responsibility and Open-Mindedness. Charisma distribution has an
+  average of 50 with a standard deviation of 15.
+- AGL / Agility: The mental or physical ability to quickly change direction, or evade potential hazards. The agility
+  base
+  stat effects the capacity of Adaptability. Agility may contribute to the ability to learn physical skills in the
+  future.
+  Agility distribution has an average of 50 with a standard deviation of 15.
+- DET / Determination: This simulates a person's ability to focus on a physical or mental task despite outside pressure
+  and adversity. Determination effects the capacity of Adaptability, Initiative, Resilience, and Responsibility.
+  Determination
+  has an average of 50 and a standard deviation of 15.
+- PER / Perception: A person's ability to understand the intent of others, or predict the outcome of certain situations.
+  Someone with a high PER might have a good "instinct" or strong "gut-feeling" about situations - sometimes without
+  being
+  fully-aware of what is wrong. Perception effects the capacity of Creativity, Initiative, and Curiosity. Perception
+  distribution has an average of 50 and a standard deviation of 15.
+- STR / Strength: This refers to someone's physical strength. Strength effects the cap for Resilience and may be
+  important
+  for learning physical skills in future updates.
+- LCK / Luck: This represents the mysterious forces that work for or against someone. Some people may be naturally lucky
+  or unlucky. People can be generated with negative or positive Luck, which act as a modifier on all rolls and skill
+  checks. Luck distribution has an average of 0 (meaning the person is neither lucky nor unlucky) with a standard
+  deviation
+  of 10.
 
 Secondary stats are derived from a combination of primary stats and are capable of being drained through activities or
 events. Initial values for the secondary stats represent a maximum. Secondary stats can be recharged with rest or other
@@ -175,7 +199,7 @@ activities, but they cannot be pushed beyond their initial cap.
 - EMP / Empathy: This is driven primarily by charisma and intelligence. This is the max ability of a person to
   understand the complex emotional states and situations of others.
 - ADP / Adaptability: This is a combination of agility and intelligence, each which represent the physical and mental
-  ability to adapt to new situations. Determination also plays a factor in this cap.
+  ability to adapt to new situations. Determination also plays a role in this cap.
 - INT / Initiative: This stat is a combination of the determination to take action and the perception to see that an
   action needs to be taken. This is the max ability of someone to take action without the external influence of others.
 - RES / Resilience: This stat is a combination of strength and determination. This is the max ability of someone to
