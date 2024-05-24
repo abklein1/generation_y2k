@@ -14,6 +14,7 @@ import static utility.Randomizer.setRandom;
 public class Weather {
     private static final String CSV_FILE_PATH_BASE = "src/main/java/Resources/Weather/";
     private static String location;
+    private static Map<String, String> weatherData;
 
     public Weather(String schoolName) {
         String[] locations;
@@ -39,7 +40,7 @@ public class Weather {
     }
 
     public static Map<String, String> parseCSV(Date date) {
-        Map<String, String> weatherData = new HashMap<>();
+        weatherData = new HashMap<>();
         String csv_path = CSV_FILE_PATH_BASE + location + ".csv";
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         String targetDateStr = dateFormat.format(date);
@@ -731,6 +732,12 @@ public class Weather {
         WeatherPatterns AM = determineWeatherPattern(weatherData, "AM");
         WeatherPatterns PM = determineWeatherPattern(weatherData, "PM");
         return new WeatherPatterns[]{AM, PM};
+    }
+
+    public String getTemp(String temp) {
+        double celsius = Double.parseDouble(weatherData.get(temp));
+        int fahrenheit = (int) (celsius * (9/5)) + 32;
+        return String.valueOf(fahrenheit);
     }
 
 }

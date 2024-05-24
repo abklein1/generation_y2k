@@ -73,7 +73,7 @@ public enum WeatherPatterns {
     SCATTERED_FLURRIES("Scattered Flurries.png"),
     SCATTERED_FLURRIES_NIGHT("Scattered Flurries (night).png"),
     SCATTERED_SHOWERS_DAY("Scattered Showers (day).png"),
-    SCATTERED_SHOWERS_NIGHT_ONLINE("Scattered Showers (night, online).png"),
+    SCATTERED_SHOWERS_NIGHT_ONLINE("Scattered Showers (night, online version).png"),
     SCATTERED_SNOW_SHOWERS_DAY("Scattered Snow Showers (day).png"),
     SCATTERED_SNOW_SHOWERS_NIGHT("Scattered Snow Showers (night).png"),
     SCATTERED_STRONG_THUNDERSTORMS_DAY("Scattered Strong Thunderstorms (day).png"),
@@ -115,10 +115,6 @@ public enum WeatherPatterns {
 
     WeatherPatterns(String iconName) {
         this.iconName = iconName;
-    }
-
-    public String getIconName() {
-        return iconName;
     }
 
     public static WeatherPatterns fromString(String pattern) {
@@ -233,5 +229,9 @@ public enum WeatherPatterns {
             case "blizzard blowing snow" -> BLIZZARD_BLOWING_SNOW;
             default -> NOT_AVAILABLE;
         };
+    }
+
+    public String getIconName() {
+        return iconName;
     }
 }

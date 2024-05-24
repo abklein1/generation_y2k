@@ -128,6 +128,8 @@ public class SchoolController {
         Weather weather = new Weather(standardSchool.getSchoolName());
         weatherArray = weather.determineWeatherAMPM(time.getCurrentDate());
         view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName());
+        view.updateWeatherTemps(weather.getTemp("TMAX"), weather.getTemp("TMIN"));
+        view.updateDayLabel(time.getDayName());
     }
 
     private void showInspectionWindow(String type) {

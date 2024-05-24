@@ -12,8 +12,11 @@ public class GameView {
     private final JButton visualizeButton;
     private final JTextArea statusOutput;
     private final JLabel timeLabel;
-    private final JLabel weatherAMLabel;
-    private final JLabel weatherPMLabel;
+    private final JLabel weatherAMIconLabel;
+    private final JLabel weatherPMIconLabel;
+    private final JLabel weatherAMTempLabel;
+    private final JLabel weatherPMTempLabel;
+    private final JLabel dayLabel;
     private final JMenu inspectionMenu;
 
     public GameView() {
@@ -67,31 +70,53 @@ public class GameView {
         ));
 
         // weather label
-        weatherAMLabel = new JLabel();
-        weatherAMLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        weatherAMLabel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.BLACK),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
+        // weather icons and labels
+        weatherAMIconLabel = new JLabel();
+        weatherAMIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        weatherAMIconLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        weatherPMLabel = new JLabel();
-        weatherPMLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        weatherPMLabel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.BLACK),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
+        weatherPMIconLabel = new JLabel();
+        weatherPMIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        weatherPMIconLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        JPanel timePanel = new JPanel(new BorderLayout());
-        timePanel.add(timeLabel, BorderLayout.EAST);
-        timePanel.add(weatherAMLabel, BorderLayout.WEST);
-        timePanel.add(weatherPMLabel, BorderLayout.CENTER);
-        timePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        weatherAMTempLabel = new JLabel();
+        weatherAMTempLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        weatherPMTempLabel = new JLabel();
+        weatherPMTempLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // day label
+        dayLabel = new JLabel("Mon", SwingConstants.CENTER);
+        dayLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        // weather panel
+        JPanel weatherPanel = new JPanel(new BorderLayout());
+        weatherPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JPanel weatherIconsPanel = new JPanel(new GridLayout(1, 2));
+        JPanel amPanel = new JPanel(new BorderLayout());
+        JLabel amLabel = new JLabel("AM", SwingConstants.CENTER);
+        amPanel.add(amLabel, BorderLayout.NORTH);
+        amPanel.add(weatherAMIconLabel, BorderLayout.CENTER);
+        amPanel.add(weatherAMTempLabel, BorderLayout.SOUTH);
+        weatherIconsPanel.add(amPanel);
+
+        JPanel pmPanel = new JPanel(new BorderLayout());
+        JLabel pmLabel = new JLabel("PM", SwingConstants.CENTER);
+        pmPanel.add(pmLabel, BorderLayout.NORTH);
+        pmPanel.add(weatherPMIconLabel, BorderLayout.CENTER);
+        pmPanel.add(weatherPMTempLabel, BorderLayout.SOUTH);
+        weatherIconsPanel.add(pmPanel);
+
+        weatherPanel.add(dayLabel, BorderLayout.NORTH);
+        weatherPanel.add(weatherIconsPanel, BorderLayout.CENTER);
 
         // main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(timePanel, BorderLayout.SOUTH);
+        mainPanel.add(weatherPanel, BorderLayout.SOUTH);
+        mainPanel.add(timeLabel, BorderLayout.EAST);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         frame.add(mainPanel);
@@ -136,7 +161,7 @@ public class GameView {
             java.net.URL amIconURL = getClass().getResource(amIconPath);
             if (amIconURL != null) {
                 ImageIcon weatherAMIcon = new ImageIcon(amIconURL);
-                weatherAMLabel.setIcon(weatherAMIcon);
+                weatherAMIconLabel.setIcon(weatherAMIcon);
                 System.out.println("AM icon loaded successfully.");
             } else {
                 System.err.println("AM Icon not found: " + amIconPath);
@@ -146,7 +171,7 @@ public class GameView {
             java.net.URL pmIconURL = getClass().getResource(pmIconPath);
             if (pmIconURL != null) {
                 ImageIcon weatherPMIcon = new ImageIcon(pmIconURL);
-                weatherPMLabel.setIcon(weatherPMIcon);
+                weatherPMIconLabel.setIcon(weatherPMIcon);
                 System.out.println("PM icon loaded successfully.");
             } else {
                 System.err.println("PM Icon not found: " + pmIconPath);
@@ -155,6 +180,15 @@ public class GameView {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateWeatherTemps(String amTemp, String pmTemp) {
+        weatherAMTempLabel.setText(amTemp + "\u00B0" + " F");
+        weatherPMTempLabel.setText(pmTemp + "\u00B0" + " F");
+    }
+
+    public void updateDayLabel(String day) {
+        dayLabel.setText(day);
     }
 
     public void addInspectionMenuListener(ActionListener listener) {
