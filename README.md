@@ -80,7 +80,7 @@ Rooms also have the ability to be off-limits to students, by setting the setStud
 
 The school mascot is generated from a weighted list based on the most frequently to least frequently used mascots in US
 high schools. The high school name is either a randomly generated person (presumably important in the fictionalized
-community) or a randomly concatinated place name (Place1 + Place2) where, generally, most combinations make sense.
+community) or a randomly concatenated place name (Place1 + Place2) where, generally, most combinations make sense.
 
 ### Example of School Room Map
 
