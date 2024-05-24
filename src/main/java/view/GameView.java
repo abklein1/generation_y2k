@@ -166,14 +166,15 @@ public class GameView {
         try {
             // Load and scale AM icon
             BufferedImage amImage = ImageIO.read(Objects.requireNonNull(getClass().getResource(amIconPath)));
-            Image scaledAmImage = amImage.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            Image scaledAmImage = amImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             ImageIcon weatherAMIcon = new ImageIcon(scaledAmImage);
             weatherAMIconLabel.setIcon(weatherAMIcon);
             System.out.println("AM icon loaded and scaled successfully.");
 
             // Load and scale PM icon
+            System.out.println(pmIconPath);
             BufferedImage pmImage = ImageIO.read(Objects.requireNonNull(getClass().getResource(pmIconPath)));
-            Image scaledPmImage = pmImage.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            Image scaledPmImage = pmImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             ImageIcon weatherPMIcon = new ImageIcon(scaledPmImage);
             weatherPMIconLabel.setIcon(weatherPMIcon);
             System.out.println("PM icon loaded and scaled successfully.");
