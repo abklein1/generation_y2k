@@ -102,7 +102,6 @@ community) or a randomly concatinated place name (Place1 + Place2) where, genera
 - Graduation requirements
 - Rumors
 - School and extracurricular events
-- Weather system
 - Local businesses / points of interest
 
 ## Student and Staff Stat Generation
@@ -152,6 +151,7 @@ An example of a staff generated and displayed in the inspector:
   descriptors : https://writingwithcolor.tumblr.com/post/96830966357/words-for-skin-tone-how-to-describe-skin-color
 - Staff Averages Per School : https://nces.ed.gov/pubs2007/ruraled/tables/table3_12.asp
 - Approximate Household income distribution : https://www.pewresearch.org/short-reads/2022/04/20/how-the-american-middle-class-has-changed-in-the-past-five-decades/
+- Weather Data per region : https://www.ncei.noaa.gov/access/search/data-search/daily-summaries
 
 ## Gameplay Mechanics
 
@@ -193,6 +193,14 @@ activities, but they cannot be pushed beyond their initial cap.
 - Graph visualization of rooms can be hard to read due to overlapping labels
 - Graph visualization of rooms cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers
+
+## Release 0.0.7
+
+- New system : Weather
+- Staff inspection for individual staff
+- Student inspection for individual students
+- AM and PM weather displayed in main view
+- Basic UI cleanup
 
 ## Release 0.0.6
 
