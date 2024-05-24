@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.Objects;
 
 public class GameView {
 
@@ -133,33 +132,29 @@ public class GameView {
 
     public void updateWeatherIcons(String amIconPath, String pmIconPath) {
         try {
-        // Debugging paths
-        System.out.println("AM Icon Path: " + amIconPath);
-        System.out.println("PM Icon Path: " + pmIconPath);
+            // Load AM icon
+            java.net.URL amIconURL = getClass().getResource(amIconPath);
+            if (amIconURL != null) {
+                ImageIcon weatherAMIcon = new ImageIcon(amIconURL);
+                weatherAMLabel.setIcon(weatherAMIcon);
+                System.out.println("AM icon loaded successfully.");
+            } else {
+                System.err.println("AM Icon not found: " + amIconPath);
+            }
 
-        // Load AM icon
-        java.net.URL amIconURL = getClass().getResource(amIconPath);
-        if (amIconURL != null) {
-            ImageIcon weatherAMIcon = new ImageIcon(amIconURL);
-            weatherAMLabel.setIcon(weatherAMIcon);
-            System.out.println("AM icon loaded successfully.");
-        } else {
-            System.err.println("AM Icon not found: " + amIconPath);
+            // Load PM icon
+            java.net.URL pmIconURL = getClass().getResource(pmIconPath);
+            if (pmIconURL != null) {
+                ImageIcon weatherPMIcon = new ImageIcon(pmIconURL);
+                weatherPMLabel.setIcon(weatherPMIcon);
+                System.out.println("PM icon loaded successfully.");
+            } else {
+                System.err.println("PM Icon not found: " + pmIconPath);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        // Load PM icon
-        java.net.URL pmIconURL = getClass().getResource(pmIconPath);
-        if (pmIconURL != null) {
-            ImageIcon weatherPMIcon = new ImageIcon(pmIconURL);
-            weatherPMLabel.setIcon(weatherPMIcon);
-            System.out.println("PM icon loaded successfully.");
-        } else {
-            System.err.println("PM Icon not found: " + pmIconPath);
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
     }
 
     public void addInspectionMenuListener(ActionListener listener) {
