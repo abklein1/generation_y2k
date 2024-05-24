@@ -17,6 +17,7 @@ public class SchoolController {
     private StandardSchool standardSchool;
     private final Time time;
     HashMap<Integer, Staff> staffHashMap;
+    private WeatherPatterns[] weatherArray;
 
     public SchoolController(GameView view) {
         this.view = view;
@@ -123,10 +124,10 @@ public class SchoolController {
     }
 
     private void updateWeatherLabels() {
-        String rootPath = "src/main/java/Resources/Weather/Icons/";
+        String rootPath = "/Resources/Weather/Icons/";
         Weather weather = new Weather(standardSchool.getSchoolName());
-        WeatherPatterns[] weatherPatterns = weather.determineWeatherAMPM(time.getCurrentDate());
-        view.updateWeatherIcons(rootPath + weatherPatterns[0].getIconName(), rootPath + weatherPatterns[1].getIconName());
+        weatherArray = weather.determineWeatherAMPM(time.getCurrentDate());
+        view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName());
     }
 
     private void showInspectionWindow(String type) {

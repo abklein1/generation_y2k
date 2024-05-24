@@ -27,13 +27,13 @@ public class Weather {
             location = locations[setRandom(0, 4)];
         } else if (schoolName.contains("Prairie") || schoolName.contains("Valley") || schoolName.contains("Grande") ||
                 schoolName.contains("Grand") || schoolName.contains("Lake")) {
-            locations = new String[]{"austin", "chicago"};
+            locations = new String[]{"austin", "kansas"};
             location = locations[setRandom(0, 1)];
         } else if (schoolName.contains("Desert") || schoolName.contains("Canyon")) {
             locations = new String[]{"phoenix", "los_angeles"};
             location = locations[setRandom(0, 1)];
         } else {
-            locations = new String[]{"alaska", "austin", "chicago", "los_angeles", "macon", "new_york", "phoenix", "spokane", "west_palm"};
+            locations = new String[]{"alaska", "austin", "kansas", "los_angeles", "macon", "new_york", "phoenix", "spokane", "west_palm"};
             location = locations[setRandom(0, 8)];
         }
     }
@@ -45,205 +45,75 @@ public class Weather {
         String targetDateStr = dateFormat.format(date);
 
         try (BufferedReader br = new BufferedReader(new FileReader(csv_path))) {
-            String line = br.readLine();
+            String line = br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 Date dateC = dateFormat.parse(values[1]);
                 Date targetDate = dateFormat.parse(targetDateStr);
                 if (dateC.equals(targetDate)) {
-                    weatherData.put("PRCP", values[6]);
-                    weatherData.put("SNOW", values[8]);
-                    weatherData.put("SNWD", values[10]);
-                    weatherData.put("TMAX", values[12]);
-                    weatherData.put("TMIN", values[14]);
+                    weatherData.put("PRCP", values[6].isEmpty() ? "0" : values[6]);
+                    weatherData.put("SNOW", values[8].isEmpty() ? "0" : values[8]);
+                    weatherData.put("SNWD", values[10].isEmpty() ? "0" : values[10]);
+                    weatherData.put("TMAX", values[12].isEmpty() ? "0" : values[12]);
+                    weatherData.put("TMIN", values[14].isEmpty() ? "0" : values[14]);
                     switch (location) {
                         case "alaska", "new_york" -> {
-                            weatherData.put("ACMH", values[16]);
-                            weatherData.put("ACSH", values[18]);
-                            weatherData.put("AWND", values[28]);
-                            weatherData.put("WDF1", values[62]);
-                            weatherData.put("WSF1", values[76]);
-                            weatherData.put("WT01", values[86]);
-                            weatherData.put("WT02", values[88]);
-                            weatherData.put("WT03", values[90]);
-                            weatherData.put("WT04", values[92]);
-                            weatherData.put("WT05", values[94]);
-                            weatherData.put("WT06", values[96]);
-                            weatherData.put("WT07", values[98]);
-                            weatherData.put("WT08", values[100]);
-                            weatherData.put("WT09", values[102]);
-                            weatherData.put("WT11", values[104]);
-                            weatherData.put("WT13", values[106]);
-                            weatherData.put("WT14", values[108]);
-                            weatherData.put("WT15", values[110]);
-                            weatherData.put("WT16", values[112]);
-                            weatherData.put("WT17", values[114]);
-                            weatherData.put("WT18", values[116]);
-                            weatherData.put("WT19", values[118]);
-                            weatherData.put("WT21", values[120]);
-                            weatherData.put("WT22", values[122]);
+                            weatherData.put("ACMH", values[16].isEmpty() ? "0" : values[16]);
+                            weatherData.put("ACSH", values[18].isEmpty() ? "0" : values[18]);
+                            weatherData.put("AWND", values[28].isEmpty() ? "0" : values[28]);
+                            weatherData.put("WDF1", values[62].isEmpty() ? "0" : values[62]);
+                            weatherData.put("WSF1", values[76].isEmpty() ? "0" : values[76]);
                         }
                         case "austin" -> {
-                            weatherData.put("ACMH", values[16]);
-                            weatherData.put("ACSH", values[18]);
-                            weatherData.put("AWND", values[28]);
-                            weatherData.put("WDF1", values[66]);
-                            weatherData.put("WSF1", values[80]);
-                            weatherData.put("WT01", values[94]);
-                            weatherData.put("WT02", values[96]);
-                            weatherData.put("WT03", values[98]);
-                            weatherData.put("WT04", values[100]);
-                            weatherData.put("WT05", values[102]);
-                            weatherData.put("WT06", values[104]);
-                            weatherData.put("WT07", values[106]);
-                            weatherData.put("WT08", values[108]);
-                            weatherData.put("WT09", values[110]);
-                            weatherData.put("WT11", values[112]);
-                            weatherData.put("WT13", values[114]);
-                            weatherData.put("WT14", values[116]);
-                            weatherData.put("WT15", values[118]);
-                            weatherData.put("WT16", values[120]);
-                            weatherData.put("WT17", values[122]);
-                            weatherData.put("WT18", values[124]);
-                            weatherData.put("WT19", values[126]);
-                            weatherData.put("WT21", values[128]);
-                            weatherData.put("WT22", values[130]);
+                            weatherData.put("ACMH", values[16].isEmpty() ? "0" : values[16]);
+                            weatherData.put("ACSH", values[18].isEmpty() ? "0" : values[18]);
+                            weatherData.put("AWND", values[28].isEmpty() ? "0" : values[28]);
+                            weatherData.put("WDF1", values[66].isEmpty() ? "0" : values[66]);
+                            weatherData.put("WSF1", values[80].isEmpty() ? "0" : values[80]);
                         }
-                        case "chicago" -> {
-                            weatherData.put("ACMH", values[16]);
-                            weatherData.put("ACSH", values[18]);
-                            weatherData.put("WT01", values[46]);
-                            weatherData.put("WT02", values[48]);
-                            weatherData.put("WT03", values[50]);
-                            weatherData.put("WT04", values[52]);
-                            weatherData.put("WT05", values[54]);
-                            weatherData.put("WT06", values[56]);
-                            weatherData.put("WT07", values[58]);
-                            weatherData.put("WT08", values[60]);
-                            weatherData.put("WT09", values[62]);
-                            weatherData.put("WT11", values[64]);
-                            weatherData.put("WT14", values[66]);
-                            weatherData.put("WT16", values[68]);
-                            weatherData.put("WT18", values[70]);
+                        case "kansas" -> {
+                            weatherData.put("ACMH", values[16].isEmpty() ? "0" : values[16]);
+                            weatherData.put("ACSH", values[18].isEmpty() ? "0" : values[18]);
+                            weatherData.put("AWND", values[28].isEmpty() ? "0" : values[28]);
                         }
                         case "los_angeles" -> {
-                            weatherData.put("ACMH", values[16]);
-                            weatherData.put("ACSH", values[18]);
-                            weatherData.put("AWND", values[28]);
+                            weatherData.put("ACMH", values[16].isEmpty() ? "0" : values[16]);
+                            weatherData.put("ACSH", values[18].isEmpty() ? "0" : values[18]);
+                            weatherData.put("AWND", values[28].isEmpty() ? "0" : values[28]);
                             //TODO: Check these later
-                            weatherData.put("WDF1", values[54]);
-                            weatherData.put("WSF1", values[60]);
-                            weatherData.put("WT01", values[72]);
-                            weatherData.put("WT02", values[74]);
-                            weatherData.put("WT03", values[76]);
-                            weatherData.put("WT04", values[78]);
-                            weatherData.put("WT05", values[80]);
-                            weatherData.put("WT06", values[82]);
-                            weatherData.put("WT07", values[84]);
-                            weatherData.put("WT08", values[86]);
-                            weatherData.put("WT09", values[88]);
-                            weatherData.put("WT11", values[90]);
-                            weatherData.put("WT13", values[92]);
-                            weatherData.put("WT14", values[94]);
-                            weatherData.put("WT16", values[96]);
-                            weatherData.put("WT18", values[98]);
-                            weatherData.put("WT21", values[100]);
+                            weatherData.put("WDF1", values[54].isEmpty() ? "0" : values[54]);
+                            weatherData.put("WSF1", values[60].isEmpty() ? "0" : values[60]);
                         }
                         case "macon" -> {
-                            weatherData.put("ACMH", values[18]);
-                            weatherData.put("ACSH", values[22]);
-                            weatherData.put("AWND", values[32]);
-                            weatherData.put("WDF1", values[60]);
-                            weatherData.put("WSF1", values[74]);
-                            weatherData.put("WT01", values[86]);
-                            weatherData.put("WT02", values[88]);
-                            weatherData.put("WT03", values[90]);
-                            weatherData.put("WT04", values[92]);
-                            weatherData.put("WT05", values[94]);
-                            weatherData.put("WT06", values[96]);
-                            weatherData.put("WT07", values[98]);
-                            weatherData.put("WT08", values[100]);
-                            weatherData.put("WT09", values[102]);
-                            weatherData.put("WT11", values[104]);
-                            weatherData.put("WT13", values[106]);
-                            weatherData.put("WT14", values[108]);
-                            weatherData.put("WT15", values[110]);
-                            weatherData.put("WT16", values[112]);
-                            weatherData.put("WT17", values[114]);
-                            weatherData.put("WT18", values[116]);
-                            weatherData.put("WT19", values[118]);
-                            weatherData.put("WT21", values[120]);
-                            weatherData.put("WT22", values[122]);
+                            weatherData.put("ACMH", values[18].isEmpty() ? "0" : values[18]);
+                            weatherData.put("ACSH", values[22].isEmpty() ? "0" : values[22]);
+                            weatherData.put("AWND", values[32].isEmpty() ? "0" : values[32]);
+                            weatherData.put("WDF1", values[60].isEmpty() ? "0" : values[60]);
+                            weatherData.put("WSF1", values[74].isEmpty() ? "0" : values[74]);
                         }
                         case "phoenix" -> {
-                            weatherData.put("ACMH", values[18]);
-                            weatherData.put("ACSH", values[22]);
-                            weatherData.put("AWND", values[32]);
-                            weatherData.put("WDF1", values[56]);
-                            weatherData.put("WSF1", values[70]);
-                            weatherData.put("WT01", values[82]);
-                            weatherData.put("WT02", values[84]);
-                            weatherData.put("WT03", values[86]);
-                            weatherData.put("WT04", values[88]);
-                            weatherData.put("WT05", values[90]);
-                            weatherData.put("WT06", values[92]);
-                            weatherData.put("WT07", values[94]);
-                            weatherData.put("WT08", values[96]);
-                            weatherData.put("WT09", values[98]);
-                            weatherData.put("WT11", values[100]);
-                            weatherData.put("WT13", values[102]);
-                            weatherData.put("WT14", values[104]);
-                            weatherData.put("WT16", values[106]);
-                            weatherData.put("WT18", values[108]);
-                            weatherData.put("WT21", values[110]);
-                            weatherData.put("WT22", values[112]);
+                            weatherData.put("ACMH", values[18].isEmpty() ? "0" : values[18]);
+                            weatherData.put("ACSH", values[22].isEmpty() ? "0" : values[22]);
+                            weatherData.put("AWND", values[32].isEmpty() ? "0" : values[32]);
+                            weatherData.put("WDF1", values[56].isEmpty() ? "0" : values[56]);
+                            weatherData.put("WSF1", values[70].isEmpty() ? "0" : values[70]);
                         }
                         case "spokane" -> {
-                            weatherData.put("ACMH", values[16]);
-                            weatherData.put("ACSH", values[18]);
-                            weatherData.put("AWND", values[28]);
-                            weatherData.put("WDF1", values[60]);
-                            weatherData.put("WSF1", values[74]);
-                            weatherData.put("WT01", values[84]);
-                            weatherData.put("WT02", values[86]);
-                            weatherData.put("WT03", values[88]);
-                            weatherData.put("WT04", values[90]);
-                            weatherData.put("WT05", values[92]);
-                            weatherData.put("WT06", values[94]);
-                            weatherData.put("WT07", values[96]);
-                            weatherData.put("WT08", values[98]);
-                            weatherData.put("WT09", values[100]);
-                            weatherData.put("WT11", values[102]);
-                            weatherData.put("WT13", values[104]);
-                            weatherData.put("WT14", values[106]);
-                            weatherData.put("WT16", values[108]);
-                            weatherData.put("WT18", values[110]);
-                            weatherData.put("WT21", values[112]);
-                            weatherData.put("WT22", values[114]);
+                            weatherData.put("ACMH", values[16].isEmpty() ? "0" : values[16]);
+                            weatherData.put("ACSH", values[18].isEmpty() ? "0" : values[18]);
+                            weatherData.put("AWND", values[28].isEmpty() ? "0" : values[28]);
+                            weatherData.put("WDF1", values[60].isEmpty() ? "0" : values[60]);
+                            weatherData.put("WSF1", values[74].isEmpty() ? "0" : values[74]);
                         }
                         case "west_palm" -> {
-                            weatherData.put("ACMH", values[16]);
-                            weatherData.put("ACSH", values[18]);
-                            weatherData.put("AWND", values[28]);
-                            weatherData.put("WDF1", values[50]);
-                            weatherData.put("WSF1", values[60]);
-                            weatherData.put("WT01", values[68]);
-                            weatherData.put("WT02", values[70]);
-                            weatherData.put("WT03", values[72]);
-                            weatherData.put("WT04", values[74]);
-                            weatherData.put("WT05", values[76]);
-                            weatherData.put("WT06", values[78]);
-                            weatherData.put("WT07", values[80]);
-                            weatherData.put("WT08", values[82]);
-                            weatherData.put("WT09", values[84]);
-                            weatherData.put("WT11", values[86]);
-                            weatherData.put("WT13", values[88]);
-                            weatherData.put("WT14", values[90]);
-                            weatherData.put("WT16", values[92]);
-                            weatherData.put("WT18", values[94]);
-                            weatherData.put("WT21", values[96]);
+                            weatherData.put("ACMH", values[16].isEmpty() ? "0" : values[16]);
+                            weatherData.put("ACSH", values[18].isEmpty() ? "0" : values[18]);
+                            weatherData.put("AWND", values[28].isEmpty() ? "0" : values[28]);
+                            weatherData.put("WDF1", values[50].isEmpty() ? "0" : values[50]);
+                            weatherData.put("WSF1", values[60].isEmpty() ? "0" : values[60]);
                         }
                     }
+                    break;
                 }
             }
         } catch (IOException e) {
