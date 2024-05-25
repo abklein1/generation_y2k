@@ -127,7 +127,7 @@ public class SchoolController {
         String rootPath = "/Resources/Weather/Icons/";
         Weather weather = new Weather(standardSchool.getSchoolName());
         weatherArray = weather.determineWeatherAMPM(time.getCurrentDate());
-        view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName(), weatherArray[0].getIconName(), weatherArray[1].getIconName());
+        view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName(), weatherArray[0].toString(), weatherArray[1].toString());
         view.updateWeatherTemps(weather.getTemp("TMAX"), weather.getTemp("TMIN"));
         view.updateDayLabel(time.getDayName());
     }
