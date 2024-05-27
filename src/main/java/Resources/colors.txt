@@ -1,47 +1,47 @@
-Red
-Green
-Blue
-Black
-Grey
-Yellow
-Gold
-Bronze
-Silver
-Orange
-White
-Purple
-Mauve
-Navy Blue
-Dark Blue
-Light Blue
-Maroon
-Dark Green
-Light Green
-Forest Green
-Burgundy
-Royal Blue
-Crimson
-Columbia Blue
-Vegas Gold
-Carolina Blue
-Cardinal
-Scarlet
-Kelly Green
-Brown
-Dark Red
-Violet
-Indigo
-Steel Blue
-Midnight Blue
-Cadet Blue
-Slate
-Steel
-Azure
-Teal
-Sea Green
-Ivory
-Saffron
-Tangerine
-Vermilion
-Ochre
-Magenta
+Red,#ff0000
+Green,#008000
+Blue,#0000ff
+Black,#000000
+Grey,#808080
+Yellow,#ffff00
+Gold,#ffd700
+Bronze,#cd7f32
+Silver,#c0c0c0
+Orange,#ffa500
+White,#ffffff
+Purple,#800080
+Mauve,#e0b0ff
+Navy Blue,#000080
+Dark Blue,#00008b
+Light Blue,#add8e6
+Maroon,#800000
+Dark Green,#006400
+Light Green,#90ee90
+Forest Green,#228b22
+Burgundy,#800020
+Royal Blue,#4169e1
+Crimson,#dc143c
+Columbia Blue,#9bddff
+Vegas Gold,#c4b454
+Carolina Blue,#56a0d3
+Cardinal,#c41e3a
+Scarlet,#ff2400
+Kelly Green,#4cbb17
+Brown,#964b00
+Dark Red,#8b0000
+Violet,#8f00ff
+Indigo,#4b0082
+Steel Blue,#4682b4
+Midnight Blue,#191970
+Cadet Blue,#5f9ea0
+Slate,#c0c2c9
+Steel,#b5c0c9
+Azure,#007fff
+Teal,#008080
+Sea Green,#2e8b57
+Ivory,#fffff0
+Saffron,#f4cf30
+Tangerine,#f28500
+Vermilion,#e34234
+Ochre,#cc7722
+Magenta,#ff00ff

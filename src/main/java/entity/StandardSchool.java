@@ -28,6 +28,7 @@ public class StandardSchool implements SchoolPlan {
     String schoolName;
     String schoolMascot;
     String[] schoolColors;
+    String[] schoolColorsHex;
     ArtStudio[] artStudios;
     AthleticField[] athleticFields;
     Auditorium[] auditoriums;
@@ -819,28 +820,37 @@ public class StandardSchool implements SchoolPlan {
 
     public void schoolColorsLoader() {
         String pathColors = "src/main/java/Resources/colors.txt";
-        List<String> colors = new ArrayList<>();
+        Map<String, String> colorMap = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(pathColors))) {
             String line;
             br.readLine();
 
             while ((line = br.readLine()) != null) {
-                colors.add(line.trim());
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    colorMap.put(parts[0].trim(), parts[1].trim());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
 
-        int firstColor = setRandom(0, colors.size() - 1);
-        int secondColor;
+        List<String> colorNames = new ArrayList<>(colorMap.keySet());
+
+        int firstColorIndex = setRandom(0, colorNames.size() - 1);
+        int secondColorIndex;
 
         do {
-            secondColor = setRandom(0, colors.size() - 1);
-        } while (firstColor == secondColor);
+            secondColorIndex = setRandom(0, colorNames.size() - 1);
+        } while (firstColorIndex == secondColorIndex);
 
-        this.schoolColors = new String[]{colors.get(firstColor), colors.get(secondColor)};
+        String firstColorName = colorNames.get(firstColorIndex);
+        String secondColorName = colorNames.get(secondColorIndex);
+
+        this.schoolColors = new String[]{firstColorName, secondColorName};
+        this.schoolColorsHex = new String[]{colorMap.get(firstColorName), colorMap.get(secondColorName)};
     }
 
     public String[] getSchoolColors() {
@@ -849,6 +859,10 @@ public class StandardSchool implements SchoolPlan {
 
     public void setSchoolColors(String[] colors) {
         this.schoolColors = colors;
+    }
+
+    public String[] getSchoolColorsHex() {
+        return Arrays.copyOf(schoolColorsHex, schoolColorsHex.length);
     }
 
 

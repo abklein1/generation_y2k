@@ -17,7 +17,6 @@ public class SchoolController {
     private StandardSchool standardSchool;
     private final Time time;
     HashMap<Integer, Staff> staffHashMap;
-    private WeatherPatterns[] weatherArray;
 
     public SchoolController(GameView view) {
         this.view = view;
@@ -61,6 +60,7 @@ public class SchoolController {
             int student_cap;
             int staff_cap;
             String[] colors;
+            //String[] colorsHex;
 
             //Generate a new standard school with rooms
             publish("Generating the school...");
@@ -126,7 +126,7 @@ public class SchoolController {
     private void updateWeatherLabels() {
         String rootPath = "/Resources/Weather/Icons/";
         Weather weather = new Weather(standardSchool.getSchoolName());
-        weatherArray = weather.determineWeatherAMPM(time.getCurrentDate());
+        WeatherPatterns[] weatherArray = weather.determineWeatherAMPM(time.getCurrentDate());
         view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName(), weatherArray[0].toString(), weatherArray[1].toString());
         view.updateWeatherTemps(weather.getTemp("TMAX"), weather.getTemp("TMIN"));
         view.updateDayLabel(time.getDayName());

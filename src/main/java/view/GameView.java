@@ -21,6 +21,8 @@ public class GameView {
     private final JLabel weatherPMTempLabel;
     private final JLabel dayLabel;
     private final JMenu inspectionMenu;
+    private final JPanel amPanel;
+    private final JPanel pmPanel;
 
     public GameView() {
         frame = new JFrame("Generation '04");
@@ -76,20 +78,25 @@ public class GameView {
         weatherAMIconLabel = new JLabel();
         weatherAMIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
         weatherAMIconLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        weatherAMIconLabel.setVisible(false);
 
         weatherPMIconLabel = new JLabel();
         weatherPMIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
         weatherPMIconLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        weatherPMIconLabel.setVisible(false);
 
         weatherAMTempLabel = new JLabel();
         weatherAMTempLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        weatherAMTempLabel.setVisible(false);
 
         weatherPMTempLabel = new JLabel();
         weatherPMTempLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        weatherPMTempLabel.setVisible(false);
 
         // day label
         dayLabel = new JLabel("Mon", SwingConstants.CENTER);
         dayLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        dayLabel.setVisible(false);
 
         // weather panel
         JPanel weatherPanel = new JPanel(new BorderLayout());
@@ -97,18 +104,20 @@ public class GameView {
         weatherPanel.setPreferredSize(new Dimension(300, 100));
 
         JPanel weatherIconsPanel = new JPanel(new GridLayout(1, 2));
-        JPanel amPanel = new JPanel(new BorderLayout());
+        amPanel = new JPanel(new BorderLayout());
         JLabel amLabel = new JLabel("AM", SwingConstants.CENTER);
         amPanel.add(amLabel, BorderLayout.NORTH);
         amPanel.add(weatherAMIconLabel, BorderLayout.CENTER);
         amPanel.add(weatherAMTempLabel, BorderLayout.SOUTH);
+        amPanel.setVisible(false);
         weatherIconsPanel.add(amPanel);
 
-        JPanel pmPanel = new JPanel(new BorderLayout());
+        pmPanel = new JPanel(new BorderLayout());
         JLabel pmLabel = new JLabel("PM", SwingConstants.CENTER);
         pmPanel.add(pmLabel, BorderLayout.NORTH);
         pmPanel.add(weatherPMIconLabel, BorderLayout.CENTER);
         pmPanel.add(weatherPMTempLabel, BorderLayout.SOUTH);
+        pmPanel.setVisible(false);
         weatherIconsPanel.add(pmPanel);
 
         weatherPanel.add(dayLabel, BorderLayout.NORTH);
@@ -171,6 +180,9 @@ public class GameView {
             ImageIcon weatherAMIcon = new ImageIcon(scaledAmImage);
             weatherAMIconLabel.setIcon(weatherAMIcon);
             weatherAMIconLabel.setToolTipText(amName);
+            weatherAMIconLabel.setVisible(true);
+            weatherAMTempLabel.setVisible(true);
+            amPanel.setVisible(true);
             System.out.println("AM icon loaded and scaled successfully.");
 
             // Load and scale PM icon
@@ -180,8 +192,12 @@ public class GameView {
             ImageIcon weatherPMIcon = new ImageIcon(scaledPmImage);
             weatherPMIconLabel.setIcon(weatherPMIcon);
             weatherPMIconLabel.setToolTipText(pmName);
+            weatherPMIconLabel.setVisible(true);
+            weatherPMTempLabel.setVisible(true);
+            pmPanel.setVisible(true);
             System.out.println("PM icon loaded and scaled successfully.");
 
+            dayLabel.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
