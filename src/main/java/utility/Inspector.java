@@ -185,18 +185,22 @@ public class Inspector {
     }
 
     public static void inspectRoom(Room room) {
-        String room_name = room.getRoomName();
+        String roomName = room.getRoomName();
         List<Staff> staff = room.getAssignedStaff();
-        int student_cap = room.getStudentCapacity();
+        int studentCap = room.getStudentCapacity();
 
-        System.out.println("Welcome to " + room_name);
+        StringBuilder roomDetails = new StringBuilder();
+        roomDetails.append("Welcome to ").append(roomName).append("\n");
+        roomDetails.append("The room contains the following staff:\n");
         for (Staff value : staff) {
-            System.out.println("The room contains the following staff " + value.teacherName.getFirstName() + " " + value.teacherName.getLastName());
+            roomDetails.append(value.teacherName.getFirstName()).append(" ").append(value.teacherName.getLastName()).append("\n");
         }
-        System.out.println("It has a student capacity of " + student_cap);
-        if(room instanceof Classroom) {
+        roomDetails.append("It has a student capacity of ").append(studentCap).append("\n");
+        if (room instanceof Classroom) {
             String abbrev = ((Classroom) room).getClassRoomType();
-            System.out.println("It is a classroom of type " + abbrev);
+            roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");
         }
+
+        JOptionPane.showMessageDialog(null, roomDetails.toString(), "Room Details", JOptionPane.INFORMATION_MESSAGE);
     }
 }

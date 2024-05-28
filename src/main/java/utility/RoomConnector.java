@@ -1,6 +1,7 @@
 package utility;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import entity.Rooms.Bathroom;
 import entity.Rooms.Classroom;
@@ -15,6 +16,8 @@ import org.jgrapht.traverse.DepthFirstIterator;
 import view.GameView;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -720,6 +723,16 @@ public class RoomConnector {
         layout.setInitialTemp(200);
         layout.setMaxIterations(1000);
         layout.execute(graphAdapter.getDefaultParent());
+
+        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
+                if (cell != null && cell.getValue() instanceof Room room) {
+                    Inspector.inspectRoom(room);
+                }
+            }
+        });
         frame.pack();
         frame.setVisible(true);
     }
