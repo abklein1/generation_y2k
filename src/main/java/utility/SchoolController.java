@@ -1,6 +1,7 @@
 package utility;
 
 import entity.*;
+import entity.Rooms.Classroom;
 import view.GameView;
 
 import javax.swing.*;
@@ -60,6 +61,7 @@ public class SchoolController {
             int student_cap;
             int staff_cap;
             String[] colors;
+            Classroom[] classrooms;
             //String[] colorsHex;
 
             //Generate a new standard school with rooms
@@ -99,6 +101,11 @@ public class SchoolController {
             publish("The school colors are " + colors[0] + " and " + colors[1]);
             updateTimeLabel();
             updateWeatherLabels();
+            classrooms = standardSchool.getClassrooms();
+            for(Classroom classroom : classrooms) {
+                classroom.reassignClassroomByTeacher();
+                publish("Classroom " + classroom.getRoomName() + " reassigned.");
+            }
             return null;
         }
 

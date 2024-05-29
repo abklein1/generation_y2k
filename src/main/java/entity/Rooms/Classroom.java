@@ -8,6 +8,8 @@ package entity.Rooms;//*********************************************************
 //*******************************************************************
 
 import entity.Staff;
+import entity.StaffType;
+import entity.StandardSchool;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -102,6 +104,10 @@ public class Classroom implements Room, Serializable {
         }
     }
 
+    public void setClassRoomType(String type) {
+        this.classRoomType = type;
+    }
+
     public void setDetention() {
         this.classRoomType = "Detention";
     }
@@ -124,22 +130,15 @@ public class Classroom implements Room, Serializable {
         String abbr = null;
         String type = getClassRoomType();
 
-        if (type.equals("Math")) {
-            abbr = "MAT";
-        } else if (type.equals("English")) {
-            abbr = "ENG";
-        } else if (type.equals("Science")) {
-            abbr = "SCI";
-        } else if (type.equals("Social Studies")) {
-            abbr = "SOC";
-        } else if (type.equals("Electives")) {
-            abbr = "ELC";
-        } else if (type.equals("Homeroom")) {
-            abbr = "HME";
-        } else if (type.equals("Study Hall")) {
-            abbr = "STY";
-        } else {
-            System.out.println("No known class type!");
+        switch (type) {
+            case "Math" -> abbr = "MAT";
+            case "English" -> abbr = "ENG";
+            case "Science" -> abbr = "SCI";
+            case "Social Studies" -> abbr = "SOC";
+            case "Electives" -> abbr = "ELC";
+            case "Homeroom" -> abbr = "HME";
+            case "Study Hall" -> abbr = "STY";
+            default -> System.out.println("No known class type!");
         }
 
         return abbr;
@@ -172,7 +171,16 @@ public class Classroom implements Room, Serializable {
     }
 
     @Override
-    public void removeAssignedStaff(Staff staff) {
-        staffAssign.remove(staff);
+        public void removeAssignedStaff(Staff staff) {
+            staffAssign.remove(staff);
+        }
+
+        public void reassignClassroomByTeacher() {
+            String staffType = getAssignedStaff().get(0).teacherStatistics.getStaffType().toString();
+        String roomType = getClassRoomType();
+
+        if (!roomType.equals(staffType)) {
+            setClassRoomType(staffType);
+        }
     }
 }
