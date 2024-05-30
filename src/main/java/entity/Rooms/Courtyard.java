@@ -127,4 +127,7 @@ public class Courtyard implements Room, Serializable {
     public void removeAssignedStaff(Staff staff) {
         staffAssign.remove(staff);
     }
+
+    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
+
 }

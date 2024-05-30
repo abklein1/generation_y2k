@@ -84,10 +84,10 @@ public class VocationalRoom implements Room, Serializable {
     public void setStudentRestriction(boolean studentRestriction) {
         this.studentRestriction = studentRestriction;
     }
-
+    //TODO: I should actually use studentCap instead in the future
     @Override
     public int getStudentCapacity() {
-        return roomCapacity - 1;
+        return studentCap;
     }
 
     @Override
@@ -123,4 +123,7 @@ public class VocationalRoom implements Room, Serializable {
     public String toString() {
         return this.roomName;
     }
+
+    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
+
 }

@@ -97,9 +97,9 @@ public class Classroom implements Room, Serializable {
             case 0 -> this.classRoomType = "Math";
             case 1 -> this.classRoomType = "English";
             case 2 -> this.classRoomType = "Science";
-            case 3 -> this.classRoomType = "Social Studies";
-            case 4 -> this.classRoomType = "Electives";
-            case 5 -> this.classRoomType = "Homeroom";
+            case 3 -> this.classRoomType = "History";
+            case 4 -> this.classRoomType = "Language";
+            case 5 -> this.classRoomType = "Electives";
             case 6 -> this.classRoomType = "Study Hall";
         }
     }
@@ -114,7 +114,7 @@ public class Classroom implements Room, Serializable {
 
     @Override
     public int getStudentCapacity() {
-        return roomCapacity - 1;
+        return studentCap;
     }
 
     @Override
@@ -134,9 +134,10 @@ public class Classroom implements Room, Serializable {
             case "Math" -> abbr = "MAT";
             case "English" -> abbr = "ENG";
             case "Science" -> abbr = "SCI";
-            case "Social Studies" -> abbr = "SOC";
-            case "Electives" -> abbr = "ELC";
-            case "Homeroom" -> abbr = "HME";
+            case "History" -> abbr = "HST";
+            case "Language" -> abbr = "LNG";
+            case "Vocational" -> abbr = "VOC";
+            case "Consumer Science", "Business", "Computer Science" -> abbr = "ELC";
             case "Study Hall" -> abbr = "STY";
             default -> System.out.println("No known class type!");
         }
@@ -183,4 +184,7 @@ public class Classroom implements Room, Serializable {
             setClassRoomType(staffType);
         }
     }
+
+    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
+
 }

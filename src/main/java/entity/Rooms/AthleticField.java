@@ -120,4 +120,7 @@ public class AthleticField implements Room, Serializable {
     public void removeAssignedStaff(Staff staff) {
         staffAssign.remove(staff);
     }
+
+    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
+
 }

@@ -142,8 +142,32 @@ public class RoomAssignment {
                     }
                 }
                 break;
-            default:
+            case SUB:
+                break;
+            case MAINTENANCE:
+                UtilityRoom[] utilityRooms = school.getUtilityrooms();
+                for(UtilityRoom utilityRoom : utilityRooms) {
+                    if (utilityRoom.getAssignedStaff().size() < utilityRoom.getStaffCapacity()) {
+                        assignTeacherToRoom(staff, utilityRoom);
+                    }
+                    break;
+                }
+            case SCIENCE:
                 Classroom[] classrooms = school.getClassrooms();
+                for(Classroom classroom : classrooms) {
+                    if(classroom.getClassRoomType().equals("Science") && classroom.getAssignedStaff().isEmpty()) {
+                        assignTeacherToRoom(staff, classroom);
+                    }
+                    break;
+                }
+                for (Classroom classroom : classrooms) {
+                    if(classroom.getAssignedStaff().isEmpty()) {
+                        assignTeacherToRoom(staff, classroom);
+                    }
+                    break;
+                }
+            default:
+                classrooms = school.getClassrooms();
                 for (Classroom classroom : classrooms) {
                     if (classroom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, classroom);

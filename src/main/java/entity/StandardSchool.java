@@ -159,6 +159,12 @@ public class StandardSchool implements SchoolPlan {
         total = class_count + office_count + maint_count +
                 lunch_count + library_count + gym_count +
                 art_count + field_count + drama_count + music_count + vocation_count + 5;
+
+        // TODO: Bad fix for staff cap issues
+        if (getTotalStudentCapacity() < 880) {
+            total = total + 8;
+        }
+
         return total;
     }
 
@@ -280,6 +286,7 @@ public class StandardSchool implements SchoolPlan {
                 bathrooms[i].setWindowCount(setRandom(1, 3));
                 bathrooms[i].setRoomCapacity(setRandom(2, 18));
                 bathrooms[i].setStallNumber(setRandom(2, 5));
+                bathrooms[i].setStudentCap();
                 bathrooms[i].setRoomNumber("WC" + i + setRandom(0, 9));
             }
         }
@@ -328,6 +335,7 @@ public class StandardSchool implements SchoolPlan {
             classrooms[i].setClassroomType(decision);
             classrooms[i].setInitialStaff(1);
             classrooms[i].setRoomCapacity(setRandom(25, 45));
+            classrooms[i].setStudentCap();
             classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(0, 99));
         }
     }
@@ -350,6 +358,7 @@ public class StandardSchool implements SchoolPlan {
             computerLabs[i].setDoors(connectN);
             computerLabs[i].setRoomCapacity(setRandom(15, 45));
             computerLabs[i].setInitialStaff(setRandom(0, 1));
+            computerLabs[i].setStudentCap();
             computerLabs[i].setRoomNumber("COM" + i);
         }
     }
@@ -370,6 +379,7 @@ public class StandardSchool implements SchoolPlan {
             courtyards[i].setConnections(16);
             courtyards[i].setDoors(16);
             courtyards[i].setRoomCapacity(setRandom(35, 150));
+            courtyards[i].setStudentCap();
             courtyards[i].setRoomNumber("C" + i);
         }
     }
@@ -391,7 +401,7 @@ public class StandardSchool implements SchoolPlan {
             gyms[i].setDoors(connectN);
             gyms[i].setWindowCount(setRandom(4, 16));
             gyms[i].setRoomCapacity(setRandom(100, 450));
-            gyms[i].setInitialStaff(setRandom(2, 4));
+            gyms[i].setStudentCap();
             gyms[i].setRoomNumber("G" + i + setRandom(0, 9));
         }
     }
@@ -417,6 +427,7 @@ public class StandardSchool implements SchoolPlan {
             hallways[i].setDoors(connectN);
             hallways[i].setWindowCount(setRandom(0, 6));
             hallways[i].setRoomCapacity(setRandom(35, 75));
+            hallways[i].setStudentCap();
             hallways[i].setRoomNumber("H" + i);
         }
     }
@@ -439,6 +450,7 @@ public class StandardSchool implements SchoolPlan {
             libraries[i].setDoors(connectorN);
             libraries[i].setInitialStaff(2);
             libraries[i].setRoomCapacity(setRandom(30, 200));
+            libraries[i].setStudentCap();
             libraries[i].setRoomNumber("L" + i + setRandom(0, 9));
         }
     }
@@ -465,6 +477,7 @@ public class StandardSchool implements SchoolPlan {
             lunchrooms[i].setDoors(connectN);
             lunchrooms[i].setInitialStaff(setRandom(3, 10));
             lunchrooms[i].setRoomCapacity(setRandom(50, 250));
+            lunchrooms[i].setStudentCap();
             lunchrooms[i].setRoomNumber("L" + i + setRandom(0, 9));
         }
     }
@@ -575,6 +588,7 @@ public class StandardSchool implements SchoolPlan {
             artStudios[i].setDoors(connectN);
             artStudios[i].setInitialStaff(setRandom(1, 2));
             artStudios[i].setRoomCapacity(setRandom(15, 35));
+            artStudios[i].setStudentCap();
             artStudios[i].setRoomNumber("AT" + i + setRandom(100, 999));
         }
     }
@@ -596,6 +610,7 @@ public class StandardSchool implements SchoolPlan {
             athleticFields[i].setDoors(16);
             athleticFields[i].setInitialStaff(setRandom(0, 2));
             athleticFields[i].setRoomCapacity(setRandom(150, 500));
+            athleticFields[i].setStudentCap();
             athleticFields[i].setRoomNumber("F" + i + setRandom(100, 999));
         }
     }
@@ -617,6 +632,7 @@ public class StandardSchool implements SchoolPlan {
             auditoriums[i].setDoors(16);
             auditoriums[i].setInitialStaff(0);
             auditoriums[i].setRoomCapacity(setRandom(150, 550));
+            auditoriums[i].setStudentCap();
             auditoriums[i].setRoomNumber("AD" + i + setRandom(100, 999));
         }
     }
@@ -639,6 +655,7 @@ public class StandardSchool implements SchoolPlan {
             dramaRooms[i].setDoors(connectN);
             dramaRooms[i].setInitialStaff(1);
             dramaRooms[i].setRoomCapacity(setRandom(15, 50));
+            dramaRooms[i].setStudentCap();
             dramaRooms[i].setRoomNumber("D" + i + setRandom(100, 999));
         }
     }
@@ -661,6 +678,7 @@ public class StandardSchool implements SchoolPlan {
             lockerRooms[i].setDoors(connectN);
             lockerRooms[i].setInitialStaff(0);
             lockerRooms[i].setRoomCapacity(setRandom(30, 90));
+            lockerRooms[i].setStudentCap();
             lockerRooms[i].setRoomNumber("LK" + i + setRandom(100, 999));
         }
     }
@@ -683,6 +701,7 @@ public class StandardSchool implements SchoolPlan {
             musicRooms[i].setDoors(connectN);
             musicRooms[i].setInitialStaff(1);
             musicRooms[i].setRoomCapacity(setRandom(30, 90));
+            musicRooms[i].setStudentCap();
             musicRooms[i].setRoomNumber("MR" + i + setRandom(100, 999));
         }
     }
@@ -705,6 +724,7 @@ public class StandardSchool implements SchoolPlan {
             scienceLabs[i].setDoors(connectN);
             scienceLabs[i].setInitialStaff(0);
             scienceLabs[i].setRoomCapacity(setRandom(15, 30));
+            scienceLabs[i].setStudentCap();
             scienceLabs[i].setRoomNumber("Lab" + i + setRandom(100, 999));
         }
     }
@@ -793,6 +813,7 @@ public class StandardSchool implements SchoolPlan {
             vocationalRooms[i].setDoors(connectN);
             vocationalRooms[i].setInitialStaff(1);
             vocationalRooms[i].setRoomCapacity(setRandom(30, 55));
+            vocationalRooms[i].setStudentCap();
             vocationalRooms[i].setRoomNumber("Vocational" + i + setRandom(100, 999));
         }
     }
@@ -814,6 +835,7 @@ public class StandardSchool implements SchoolPlan {
             parkingLots[i].setDoors(0);
             parkingLots[i].setInitialStaff(0);
             parkingLots[i].setRoomCapacity(setRandom(100, 300));
+            parkingLots[i].setStudentCap();
             parkingLots[i].setRoomNumber("ParkingLot" + i + setRandom(100, 999));
         }
     }

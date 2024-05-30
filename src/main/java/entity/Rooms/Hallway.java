@@ -127,4 +127,7 @@ public class Hallway implements Room, Serializable {
     public void removeAssignedStaff(Staff staff) {
         staffAssign.remove(staff);
     }
+
+    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
+
 }
