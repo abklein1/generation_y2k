@@ -219,6 +219,20 @@ activities, but they cannot be pushed beyond their initial cap.
 - Graph visualization of rooms can be hard to read due to overlapping labels
 - Graph visualization of rooms cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers
+- Some classrooms with attached science labs reassigned to other teacher types
+
+## Release 0.0.8
+
+- Rooms within the school layout visualizer can now individually be inspected
+- Room types reassigned based on Staff type
+- Fixing UI weather icon scaling and missing icon bug
+- Added weather description on hover
+- Outlines for bell schedule and grad requirements created
+- Added hexcodes for school colors to be used in future systems
+- Fix temperature display bug
+- Student cap bug fix where student cap was 0 for specific rooms
+
+![](src/main/java/Resources.Screencaps/proto3.JPG)
 
 ## Release 0.0.7
 
