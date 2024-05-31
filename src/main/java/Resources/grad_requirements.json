@@ -1,0 +1,38 @@
+{
+  "Freshman" : {
+    "English" : ["English I"],
+    "Math" : ["Algebra I", "Algebra II", "Geometry", "Fundamentals of Math"],
+    "Science" : ["Biology"],
+    "History" : ["World History", "AP Human Geography"],
+    "Language" : ["Spanish I", "American Sign Language I", "French I", "Latin I", "German I", "Spanish II", "American Sign Language II", "French II", "Latin II", "German II"],
+    "Elective" : 1,
+    "PhysEd" : ["Health"]
+  },
+  "Sophomore" : {
+    "English" : ["English II"],
+    "Math" : ["Algebra I", "Algebra II", "Geometry", "PreCalculus"],
+    "Science" : ["Chemistry", "Earth and Space Science", "Geology", "Physical Science", "Environmental Science", "Anatomy and Physiology"],
+    "History" : ["U.S. History", "AP Human Geography"],
+    "Language" : [],
+    "Elective" : 1,
+    "PhysEd" : ["Team Sports", "Weightlifting", "Specialized Sports", "Lifetime Recreation"]
+  },
+  "Junior" : {
+    "English" : ["English III", "AP Language and Composition"],
+    "Math" : ["Algebra II", "PreCalculus", "Statistics", "Math for Data and Financial Literacy", "AP Statistics"],
+    "Science" : ["Chemistry", "Earth and Space Science", "Geology", "Physical Science", "Environmental Science", "Anatomy and Physiology", "Genetics", "AP Biology", "AP Chemistry"],
+    "History" : ["U.S. History", "AP United States History"],
+    "Language" : [],
+    "Elective" : 1,
+    "PhysEd" : []
+  },
+  "Senior" : {
+    "English" : ["English IV", "AP Literature and Composition"],
+    "Math" : ["PreCalculus", "Calculus", "AP Calculus AB", "AP Calculus BC"],
+    "Science" : ["Chemistry", "Earth and Space Science", "Geology", "Physics I", "Physics II", "Environmental Science", "Anatomy and Physiology", "Genetics", "AP Biology", "AP Chemistry"],
+    "History" : ["U.S. Government", "AP US Government", "Macroeconomics", "AP Economics Macro"],
+    "Language" : [],
+    "Elective" : 1,
+    "PhysEd" : []
+  }
+}

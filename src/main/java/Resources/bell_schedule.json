@@ -1,0 +1,54 @@
+{
+  "Block 1" : {
+    "Start Time" : "08:20 AM",
+    "End Time" : "09:50 AM",
+    "Late" : "08:25 AM",
+    "Duration" : 90,
+    "Lunch" : false
+  },
+  "Transition 1" : {
+    "Start Time" : "09:50 AM",
+    "End Time" : "10:00 AM"
+  },
+  "Block 2" : {
+    "Start Time" : "10:00 AM",
+    "End Time" : "11:30 AM",
+    "Late" : "10:05 AM",
+    "Duration" : 90,
+    "Lunch" : false
+  },
+  "Transition 2" : {
+    "Start Time" : "11:30 AM",
+    "End Time" : "11:40 AM"
+  },
+  "Block 3" : {
+    "Start Time" : "11:40 AM",
+    "End Time" : "01:20 PM",
+    "Late" : "11:45 AM",
+    "Duration" : 100,
+    "Lunch" : true
+  },
+  "Transition 3" : {
+    "Start Time" : "01:20 PM",
+    "End Time" : "01:30 PM"
+  },
+  "Block 4" : {
+    "Start Time" : "01:30 PM",
+    "End Time" : "03:00 PM",
+    "Late" : "01:25 PM",
+    "Duration" : 90,
+    "Lunch" : false
+  },
+  "Lunch A" : {
+    "Start Time" : "11:40 AM",
+    "End Time" : "12:20 PM",
+    "Late" : "",
+    "Duration" : 40
+  },
+  "Lunch B" : {
+    "Start Time" : "12:40 PM",
+    "End Time" : "01:20 PM",
+    "Late" : "",
+    "Duration" : 40
+  }
+}

@@ -1,998 +1,1706 @@
 {
-  "core" : {
-    "English" : {
-      "English III" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["English II"],
-        "Alternatives" : ["British Literature"],
-        "Grade Level" : [11]
+  "core": {
+    "English": {
+      "English III": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "English II"
+        ],
+        "Alternatives": [
+          "British Literature"
+        ],
+        "Grade Level": [
+          11
+        ]
       },
-      "English IV" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["English III"],
-        "Alternatives" : ["American Literature"],
-        "Grade Level" : [12]
+      "English IV": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "English III"
+        ],
+        "Alternatives": [
+          "American Literature"
+        ],
+        "Grade Level": [
+          12
+        ]
       },
-      "American Literature" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["English II"],
-        "Alternatives" : ["Modern Literature", "World Literature"],
-        "Grade Level" : [11,12]
+      "American Literature": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "English II"
+        ],
+        "Alternatives": [
+          "Modern Literature",
+          "World Literature"
+        ],
+        "Grade Level": [
+          11,
+          12
+        ]
       },
-      "Creative Writing" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["English I"],
-        "Alternatives" : ["Journalism"],
-        "GradeLevel" : [9,10,11,12]
+      "Creative Writing": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "English I"
+        ],
+        "Alternatives": [
+          "Journalism"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Modern Literature" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["English II"],
-        "Alternatives" : ["American Literature", "World Literature"],
-        "Grade Level" : [11,12]
+      "Modern Literature": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "English II"
+        ],
+        "Alternatives": [
+          "American Literature",
+          "World Literature"
+        ],
+        "Grade Level": [
+          11,
+          12
+        ]
       },
-      "Technical Writing" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["English I"],
-        "Alternatives" : ["Journalism", "Creative Writing"],
-        "GradeLevel" : [9,10,11,12]
+      "Technical Writing": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "English I"
+        ],
+        "Alternatives": [
+          "Journalism",
+          "Creative Writing"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "World Literature" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["English II"],
-        "Alternatives" : ["American Literature", "Modern Literature"],
-        "Grade Level" : [11,12]
+      "World Literature": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "English II"
+        ],
+        "Alternatives": [
+          "American Literature",
+          "Modern Literature"
+        ],
+        "Grade Level": [
+          11,
+          12
+        ]
       },
-      "Journalism" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["English I"],
-        "Alternatives" : ["Creative Writing"],
-        "GradeLevel" : [9,10,11,12]
+      "Journalism": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "English I"
+        ],
+        "Alternatives": [
+          "Creative Writing"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "English I" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [9]
+      "English I": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          9
+        ]
       },
-      "English II" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["English I"],
-        "Alternatives" : [],
-        "GradeLevel" : [10]
+      "English II": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "English I"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          10
+        ]
       }
     },
-    "History" : {
-      "U.S. Government" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["U.S. History"],
-        "Alternatives" : [],
-        "GradeLevel" : [11]
+    "History": {
+      "U.S. Government": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "U.S. History"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11
+        ]
       },
-      "U.S. History" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["World History"],
-        "Alternatives" : [],
-        "GradeLevel" : [10]
+      "U.S. History": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "World History"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          10
+        ]
       },
-      "World History" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [""],
-        "Alternatives" : [],
-        "GradeLevel" : [9]
+      "World History": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          ""
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          9
+        ]
       },
-      "World Politics" : {
-
+      "World Politics": {
       },
-      "Sociology" : {
-
+      "Sociology": {
       },
-      "European History" : {
-
+      "European History": {
       },
-      "Geography" : {
-
+      "Geography": {
       },
-      "Law" : {
-
+      "Law": {
       },
-      "Macroeconomics" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["U.S. Government"],
-        "Alternatives" : [],
-        "GradeLevel" : [12]
+      "Macroeconomics": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "U.S. Government"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          12
+        ]
       },
-      "Political Studies" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["U.S. History"],
-        "Alternatives" : ["Current Events", "Microeconomics"],
-        "GradeLevel" : [10,11,12]
+      "Political Studies": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "U.S. History"
+        ],
+        "Alternatives": [
+          "Current Events",
+          "Microeconomics"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Microeconomics" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["U.S. Government"],
-        "Alternatives" : ["Current Events", "Political Studies"],
-        "GradeLevel" : [11,12]
+      "Microeconomics": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "U.S. Government"
+        ],
+        "Alternatives": [
+          "Current Events",
+          "Political Studies"
+        ],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "Current Events" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [""],
-        "Alternatives" : ["Microeconomics", "Political Studies"],
-        "GradeLevel" : [9,10,11,12]
+      "Current Events": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          ""
+        ],
+        "Alternatives": [
+          "Microeconomics",
+          "Political Studies"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       }
     },
-    "Math" : {
-      "Algebra I" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["Algebra 2", "Geometry", "Fundamentals of Math"],
-        "GradeLevel" : [9]
+    "Math": {
+      "Algebra I": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Algebra 2",
+          "Geometry",
+          "Fundamentals of Math"
+        ],
+        "GradeLevel": [
+          9
+        ]
       },
-      "Algebra II" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["Algebra 1"],
-        "Alternatives" : ["Geometry"],
-        "GradeLevel" : [9,10]
+      "Algebra II": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "Algebra 1"
+        ],
+        "Alternatives": [
+          "Geometry"
+        ],
+        "GradeLevel": [
+          9,
+          10
+        ]
       },
-      "Calculus" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["Precalculus"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "Calculus": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "Precalculus"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "Geometry" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["Algebra 1", "Algebra 2", "Fundamentals of Math"],
-        "GradeLevel" : [9,10]
+      "Geometry": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Algebra 1",
+          "Algebra 2",
+          "Fundamentals of Math"
+        ],
+        "GradeLevel": [
+          9,
+          10
+        ]
       },
-      "Precalculus" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["Algebra II"],
-        "Alternatives" : [],
-        "GradeLevel" : [10,11,12]
+      "Precalculus": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "Algebra II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Statistics" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Algebra II"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "Statistics": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Algebra II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "Math for Data and Financial Literacy" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Algebra II"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "Math for Data and Financial Literacy": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Algebra II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "Fundamentals of Math" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["Algebra 1", "Geometry"],
-        "GradeLevel" : [9]
+      "Fundamentals of Math": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Algebra 1",
+          "Geometry"
+        ],
+        "GradeLevel": [
+          9
+        ]
       }
     },
-    "Science" : {
-      "Biology" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Alternatives" : [],
-        "GradeLevel" : [9]
+    "Science": {
+      "Biology": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Alternatives": [],
+        "GradeLevel": [
+          9
+        ]
       },
-      "Chemistry" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [10,11,12]
+      "Chemistry": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Earth and Space Science" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [10,11,12]
+      "Earth and Space Science": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Geology" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [10,11,12]
+      "Geology": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Physical Science" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["Physics I"],
-        "GradeLevel" : [10,11,12]
+      "Physical Science": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Physics I"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Physics I" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["Environmental Science"],
-        "GradeLevel" : [10,11,12]
+      "Physics I": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Environmental Science"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Physics II" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Physics I"],
-        "Alternatives" : ["Environmental Science"],
-        "GradeLevel" : [11,12]
+      "Physics II": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Physics I"
+        ],
+        "Alternatives": [
+          "Environmental Science"
+        ],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "Environmental Science" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Genetics", "Forensic Science", "Anatomy and Physiology"],
-        "GradeLevel" : [10,11,12]
+      "Environmental Science": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Genetics",
+          "Forensic Science",
+          "Anatomy and Physiology"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Genetics" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Biology"],
-        "Alternatives" : ["Forensic Science", "Environmental Science", "Anatomy and Physiology"],
-        "GradeLevel" : [11,12]
+      "Genetics": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Biology"
+        ],
+        "Alternatives": [
+          "Forensic Science",
+          "Environmental Science",
+          "Anatomy and Physiology"
+        ],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "Forensic Science" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Biology"],
-        "Alternatives" : ["Genetics", "Environmental Science", "Anatomy and Physiology"],
-        "GradeLevel" : [11,12]
+      "Forensic Science": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Biology"
+        ],
+        "Alternatives": [
+          "Genetics",
+          "Environmental Science",
+          "Anatomy and Physiology"
+        ],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "Anatomy and Physiology" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Biology"],
-        "Alternatives" : ["Genetics", "Forensic Science", "Environmental Science"],
-        "GradeLevel" : [10,11,12]
+      "Anatomy and Physiology": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Biology"
+        ],
+        "Alternatives": [
+          "Genetics",
+          "Forensic Science",
+          "Environmental Science"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       }
     },
-    "Languages" : {
-      "American Sign Language I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["German I", "French I", "Latin I", "Spanish I"],
-        "GradeLevel" : [9]
+    "Languages": {
+      "American Sign Language I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "German I",
+          "French I",
+          "Latin I",
+          "Spanish I"
+        ],
+        "GradeLevel": [
+          9
+        ]
       },
-      "American Sign Language II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["American Sign Language I"],
-        "Alternatives" : ["German II", "French II", "Latin II", "Spanish I"],
-        "GradeLevel" : [10]
+      "American Sign Language II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "American Sign Language I"
+        ],
+        "Alternatives": [
+          "German II",
+          "French II",
+          "Latin II",
+          "Spanish I"
+        ],
+        "GradeLevel": [
+          10
+        ]
       },
-      "French I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["German I", "Spanish I", "Latin I", "American Sign Language I"],
-        "GradeLevel" : [9]
+      "French I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "German I",
+          "Spanish I",
+          "Latin I",
+          "American Sign Language I"
+        ],
+        "GradeLevel": [
+          9
+        ]
       },
-      "French II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["French I"],
-        "Alternatives" : ["German I", "Spanish I", "Latin I", "American Sign Language I"],
-        "GradeLevel" : [10]
+      "French II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "French I"
+        ],
+        "Alternatives": [
+          "German I",
+          "Spanish I",
+          "Latin I",
+          "American Sign Language I"
+        ],
+        "GradeLevel": [
+          10
+        ]
       },
-      "Latin I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["German I", "French I", "Latin I", "American Sign Language I"],
-        "GradeLevel" : [9]
+      "Latin I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "German I",
+          "French I",
+          "Latin I",
+          "American Sign Language I"
+        ],
+        "GradeLevel": [
+          9
+        ]
       },
-      "Latin II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : ["Latin I"],
-        "Alternatives" : ["German II", "French II", "Spanish II", "American Sign Language II"],
-        "GradeLevel" : [10]
+      "Latin II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [
+          "Latin I"
+        ],
+        "Alternatives": [
+          "German II",
+          "French II",
+          "Spanish II",
+          "American Sign Language II"
+        ],
+        "GradeLevel": [
+          10
+        ]
       },
-      "Spanish I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["German I", "French I", "Latin I", "American Sign Language I"],
-        "GradeLevel" : [9]
+      "Spanish I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "German I",
+          "French I",
+          "Latin I",
+          "American Sign Language I"
+        ],
+        "GradeLevel": [
+          9
+        ]
       },
-      "Spanish II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["German II", "French II", "Latin II", "American Sign Language II"],
-        "GradeLevel" : [10]
+      "Spanish II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "German II",
+          "French II",
+          "Latin II",
+          "American Sign Language II"
+        ],
+        "GradeLevel": [
+          10
+        ]
       },
-      "Spanish III" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11]
+      "Spanish III": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11
+        ]
       },
-      "Spanish IV" : {
-        "Honors" : true,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [12]
+      "Spanish IV": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          12
+        ]
       },
-      "German I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["Spanish I", "French I", "Latin I", "American Sign Language I"],
-        "GradeLevel" : [9]
+      "German I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Spanish I",
+          "French I",
+          "Latin I",
+          "American Sign Language I"
+        ],
+        "GradeLevel": [
+          9
+        ]
       },
-      "German II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : ["Spanish II", "French II", "Latin II", "American Sign Language II"],
-        "GradeLevel" : [10]
+      "German II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Spanish II",
+          "French II",
+          "Latin II",
+          "American Sign Language II"
+        ],
+        "GradeLevel": [
+          10
+        ]
       }
     }
   },
-  "electives" : {
-    "VisualArts" : {
-      "2D Studio Art I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["3D Studio Art I", "Photography I", "Printmaking"],
-        "GradeLevel" : [9,10,11,12]
+  "electives": {
+    "VisualArts": {
+      "2D Studio Art I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "3D Studio Art I",
+          "Photography I",
+          "Printmaking"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "2D Studio Art II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["2D Studio Art I"],
-        "Alternatives" : ["3D Studio Art II", "Photography I", "Printmaking"],
-        "GradeLevel" : [10,11,12]
+      "2D Studio Art II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "2D Studio Art I"
+        ],
+        "Alternatives": [
+          "3D Studio Art II",
+          "Photography I",
+          "Printmaking"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "3D Studio Art I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["2D Studio Art I", "Photography I", "Printmaking"],
-        "GradeLevel" : [9,10,11,12]
+      "3D Studio Art I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "2D Studio Art I",
+          "Photography I",
+          "Printmaking"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "3D Studio Art II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["3D Studio Art I", "Photography I", "Printmaking"],
-        "GradeLevel" : [10,11,12]
+      "3D Studio Art II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "3D Studio Art I",
+          "Photography I",
+          "Printmaking"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Photography I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["3D Studio Art I", "2D Studio Art I", "Printmaking"],
-        "GradeLevel" : [9,10,11,12]
+      "Photography I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "3D Studio Art I",
+          "2D Studio Art I",
+          "Printmaking"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Photography II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Photography I"],
-        "Alternatives" : ["3D Studio Art II", "2D Studio Art II", "Printmaking"],
-        "GradeLevel" : [10,11,12]
+      "Photography II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Photography I"
+        ],
+        "Alternatives": [
+          "3D Studio Art II",
+          "2D Studio Art II",
+          "Printmaking"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Printmaking" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["3D Studio Art I", "Photography I", "Printmaking", "3D Studio Art II", "2D Studio Art II"],
-        "GradeLevel" : [9,10,11,12]
+      "Printmaking": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "3D Studio Art I",
+          "Photography I",
+          "Printmaking",
+          "3D Studio Art II",
+          "2D Studio Art II"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       }
     },
-    "VocationalEd" : {
-      "Auto Body Repair" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Computer Aided Drafting I", "Computer Aided Drafting II", "Building Construction and Maintenance",
-          "Digital Production Technology", "Agriscience Fundamentals", "ROTC"],
-        "GradeLevel" : [9,10,11,12]
+    "VocationalEd": {
+      "Auto Body Repair": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Computer Aided Drafting I",
+          "Computer Aided Drafting II",
+          "Building Construction and Maintenance",
+          "Digital Production Technology",
+          "Agriscience Fundamentals",
+          "ROTC"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Auto Mechanics" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Auto Body Repair"],
-        "Alternatives" : ["Computer Aided Drafting I", "Computer Aided Drafting II", "Building Construction and Maintenance",
-          "Digital Production Technology", "Agriscience Fundamentals", "ROTC"],
-        "GradeLevel" : [9,10,11,12]
+      "Auto Mechanics": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Auto Body Repair"
+        ],
+        "Alternatives": [
+          "Computer Aided Drafting I",
+          "Computer Aided Drafting II",
+          "Building Construction and Maintenance",
+          "Digital Production Technology",
+          "Agriscience Fundamentals",
+          "ROTC"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Computer Aided Drafting I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [ "Building Construction and Maintenance", "Digital Production Technology", "Agriscience Fundamentals"],
-        "GradeLevel" : [10,11,12]
+      "Computer Aided Drafting I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Building Construction and Maintenance",
+          "Digital Production Technology",
+          "Agriscience Fundamentals"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Computer Aided Drafting II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Computer Aided Drafting II"],
-        "Alternatives" : [ "Building Construction and Maintenance", "Digital Production Technology", "Agriscience Fundamentals"],
-        "GradeLevel" : [10,11,12]
+      "Computer Aided Drafting II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Computer Aided Drafting II"
+        ],
+        "Alternatives": [
+          "Building Construction and Maintenance",
+          "Digital Production Technology",
+          "Agriscience Fundamentals"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Criminal Justice" : {
-
+      "Criminal Justice": {
       },
-      "Hospitality and Tourism" : {
-
+      "Hospitality and Tourism": {
       },
-      "ROTC" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Computer Aided Drafting I", "Computer Aided Drafting II", "Building Construction and Maintenance",
-          "Digital Production Technology", "Agriscience Fundamentals"],
-        "GradeLevel" : [9,10,11,12]
+      "ROTC": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Computer Aided Drafting I",
+          "Computer Aided Drafting II",
+          "Building Construction and Maintenance",
+          "Digital Production Technology",
+          "Agriscience Fundamentals"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Metalworking" : {
-
+      "Metalworking": {
       },
-      "Digital Production Technology" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Computer Aided Drafting I", "Computer Aided Drafting II", "Building Construction and Maintenance",
-          "Auto Body Repair", "Agriscience Fundamentals", "ROTC"],
-        "GradeLevel" : [9,10,11,12]
+      "Digital Production Technology": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Computer Aided Drafting I",
+          "Computer Aided Drafting II",
+          "Building Construction and Maintenance",
+          "Auto Body Repair",
+          "Agriscience Fundamentals",
+          "ROTC"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Woodworking" : {
-
+      "Woodworking": {
       },
-      "Driver's Education" : {
-
+      "Driver's Education": {
       },
-      "Cosmetology" : {
-
+      "Cosmetology": {
       },
-      "Agriscience Fundamentals" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Computer Aided Drafting I", "Computer Aided Drafting II", "Building Construction and Maintenance",
-          "Digital Production Technology", "ROTC", "Auto Body Repair"],
-        "GradeLevel" : [9,10,11,12]
+      "Agriscience Fundamentals": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Computer Aided Drafting I",
+          "Computer Aided Drafting II",
+          "Building Construction and Maintenance",
+          "Digital Production Technology",
+          "ROTC",
+          "Auto Body Repair"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Building Construction and Technology" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Computer Aided Drafting I", "Computer Aided Drafting II", "Agriscience Fundamentals",
-          "Digital Production Technology", "ROTC", "Auto Body Repair"],
-        "GradeLevel" : [9,10,11,12]
+      "Building Construction and Technology": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Computer Aided Drafting I",
+          "Computer Aided Drafting II",
+          "Agriscience Fundamentals",
+          "Digital Production Technology",
+          "ROTC",
+          "Auto Body Repair"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       }
     },
-    "Philosophy" : {
-
+    "Philosophy": {
     },
-    "Business" : {
-      "Accounting" : {
-
+    "Business": {
+      "Accounting": {
       },
-      "Business Management" : {
-
+      "Business Management": {
       },
-      "Introduction to Business" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [9,10,11,12]
+      "Introduction to Business": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Personal Finance" : {
-
+      "Personal Finance": {
       },
-      "Marketing" : {
-
+      "Marketing": {
       },
-      "Entrepreneurial Skills" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Introduction to Business"],
-        "Alternatives" : [],
-        "GradeLevel" : [9,10,11,12]
+      "Entrepreneurial Skills": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Introduction to Business"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       }
     },
-    "CompSci" : {
-      "Keyboarding" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [9,10,11,12]
+    "CompSci": {
+      "Keyboarding": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Word Processing" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [9,10,11,12]
+      "Word Processing": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Intro to Programming" : {
-
+      "Intro to Programming": {
       },
-      "Film Production" : {
-
+      "Film Production": {
       }
     },
-    "PhysEd" : {
-      "Dance" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Specialized Sports", "Team Sports", "Weightlifting", "Lifetime Recreation"],
-        "GradeLevel" : [9,10,11,12]
+    "PhysEd": {
+      "Dance": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Specialized Sports",
+          "Team Sports",
+          "Weightlifting",
+          "Lifetime Recreation"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Health" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : true,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [9]
+      "Health": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          9
+        ]
       },
-      "Team Sports" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Specialized Sports", "Weightlifting", "Dance", "Lifetime Recreation"],
-        "GradeLevel" : [9,10,11,12]
+      "Team Sports": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Specialized Sports",
+          "Weightlifting",
+          "Dance",
+          "Lifetime Recreation"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Weightlifting" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Specialized Sports", "Team Sports", "Dance", "Lifetime Recreation"],
-        "GradeLevel" : [9,10,11,12]
+      "Weightlifting": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Specialized Sports",
+          "Team Sports",
+          "Dance",
+          "Lifetime Recreation"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Specialized Sports" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Weightlifting", "Team Sports", "Dance", "Lifetime Recreation"],
-        "GradeLevel" : [9,10,11,12]
+      "Specialized Sports": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Weightlifting",
+          "Team Sports",
+          "Dance",
+          "Lifetime Recreation"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Lifetime Recreation" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Specialized Sports", "Team Sports", "Dance", "Weightlifting"],
-        "GradeLevel" : [9,10,11,12]
+      "Lifetime Recreation": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Specialized Sports",
+          "Team Sports",
+          "Dance",
+          "Weightlifting"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       }
     },
-    "ConsumerSci" : {
-      "Culinary Arts" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [10,11,12]
+    "ConsumerSci": {
+      "Culinary Arts": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Family Studies" : {
-
+      "Family Studies": {
       },
-      "Home Economics" : {
-
+      "Home Economics": {
       },
-      "Nutrition" : {
-
+      "Nutrition": {
       }
     },
-    "PerformingArts" : {
-      "Debate" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Jazz Band", "Concert Band", "Dance Techniques I", "Dance Techniques II", "Marching Band"],
-        "GradeLevel" : [10,11,12]
+    "PerformingArts": {
+      "Debate": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Jazz Band",
+          "Concert Band",
+          "Dance Techniques I",
+          "Dance Techniques II",
+          "Marching Band"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Choir" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Jazz Band", "Concert Band", "Dance Techniques I", "Dance Techniques II", "Marching Band"],
-        "GradeLevel" : [9,10,11,12]
+      "Choir": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Jazz Band",
+          "Concert Band",
+          "Dance Techniques I",
+          "Dance Techniques II",
+          "Marching Band"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Concert Band" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Jazz Band", "Choir", "Dance Techniques I", "Dance Techniques II", "Marching Band"],
-        "GradeLevel" : [9,10,11,12]
+      "Concert Band": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Jazz Band",
+          "Choir",
+          "Dance Techniques I",
+          "Dance Techniques II",
+          "Marching Band"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Jazz Band" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Choir", "Concert Band", "Dance Techniques I", "Dance Techniques II", "Marching Band"],
-        "GradeLevel" : [9,10,11,12]
+      "Jazz Band": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Choir",
+          "Concert Band",
+          "Dance Techniques I",
+          "Dance Techniques II",
+          "Marching Band"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Marching Band" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Choir", "Concert Band", "Dance Techniques I", "Dance Techniques II", "Jazz Band"],
-        "GradeLevel" : [9,10,11,12]
+      "Marching Band": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Choir",
+          "Concert Band",
+          "Dance Techniques I",
+          "Dance Techniques II",
+          "Jazz Band"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Theater Technology" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Theater I", "Theater II", "Musical Theater I", "Musical Theater II"],
-        "GradeLevel" : [9,10,11,12]
+      "Theater Technology": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Theater I",
+          "Theater II",
+          "Musical Theater I",
+          "Musical Theater II"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Dance Techniques I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Choir", "Concert Band", "Marching Band", "Jazz Band"],
-        "GradeLevel" : [9,10,11,12]
+      "Dance Techniques I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Choir",
+          "Concert Band",
+          "Marching Band",
+          "Jazz Band"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Dance Techniques II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Dance Techniques I"],
-        "Alternatives" : ["Choir", "Concert Band", "Marching Band", "Jazz Band"],
-        "GradeLevel" : [10,11,12]
+      "Dance Techniques II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Dance Techniques I"
+        ],
+        "Alternatives": [
+          "Choir",
+          "Concert Band",
+          "Marching Band",
+          "Jazz Band"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Theater I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Theater Technology", "Musical Theater I"],
-        "GradeLevel" : [9,10,11,12]
+      "Theater I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Theater Technology",
+          "Musical Theater I"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Musical Theater I" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : ["Theater I", "Theater Technology"],
-        "GradeLevel" : [9,10,11,12]
+      "Musical Theater I": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [
+          "Theater I",
+          "Theater Technology"
+        ],
+        "GradeLevel": [
+          9,
+          10,
+          11,
+          12
+        ]
       },
-      "Theater II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Theater I"],
-        "Alternatives" : ["Theater Technology", "Musical Theater II"],
-        "GradeLevel" : [10,11,12]
+      "Theater II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Theater I"
+        ],
+        "Alternatives": [
+          "Theater Technology",
+          "Musical Theater II"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       },
-      "Musical Theater II" : {
-        "Honors" : false,
-        "OnLevel" : true,
-        "Required" : false,
-        "Prerequisite" : ["Musical Theater I"],
-        "Alternatives" : ["Theater Technology", "Theater II"],
-        "GradeLevel" : [10,11,12]
+      "Musical Theater II": {
+        "Honors": false,
+        "OnLevel": true,
+        "Required": false,
+        "Prerequisite": [
+          "Musical Theater I"
+        ],
+        "Alternatives": [
+          "Theater Technology",
+          "Theater II"
+        ],
+        "GradeLevel": [
+          10,
+          11,
+          12
+        ]
       }
     }
   },
-  "ap" : {
-    "Arts" : {
-      "AP Art History" : {
-
+  "ap": {
+    "Arts": {
+      "AP Art History": {
       },
-      "AP Music Theory" : {
-
+      "AP Music Theory": {
       },
-      "AP Studio Art" : {
-
+      "AP Studio Art": {
       }
     },
-    "English" : {
-      "AP English Language & Composition" : {
-
+    "English": {
+      "AP English Language & Composition": {
       },
-      "AP English Literature & Composition" : {
-
+      "AP English Literature & Composition": {
       }
     },
-    "SocialStudies" : {
-      "AP Economics Micro" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [12]
+    "SocialStudies": {
+      "AP Economics Micro": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          12
+        ]
       },
-      "AP Economics Macro" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [12]
+      "AP Economics Macro": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          12
+        ]
       },
-      "AP European History" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP European History": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP Human Geography" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [9,10]
+      "AP Human Geography": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          9,
+          10
+        ]
       },
-      "AP Government & Comparative Politics" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP Government & Comparative Politics": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP US Government" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [12]
+      "AP US Government": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          12
+        ]
       },
-      "AP Psychology" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP Psychology": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP United States History" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11]
+      "AP United States History": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11
+        ]
       },
-      "AP World History" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [10]
+      "AP World History": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          10
+        ]
       }
     },
-    "Math" : {
-      "AP Calculus AB" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+    "Math": {
+      "AP Calculus AB": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP Calculus BC" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP Calculus BC": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP Statistics" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP Statistics": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       }
     },
-    "Science" : {
-      "AP Biology" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [10]
+    "Science": {
+      "AP Biology": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          10
+        ]
       },
-      "AP Chemistry" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [10]
+      "AP Chemistry": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          10
+        ]
       },
-      "AP Environmental Science" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP Environmental Science": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP Physics B" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [12]
+      "AP Physics B": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          12
+        ]
       },
-      "AP Physics C" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : [],
-        "Alternatives" : [],
-        "GradeLevel" : [12]
+      "AP Physics C": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [],
+        "Alternatives": [],
+        "GradeLevel": [
+          12
+        ]
       }
     },
-    "WorldLang" : {
-      "AP French Language" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : ["French I", "French II"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+    "WorldLang": {
+      "AP French Language": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [
+          "French I",
+          "French II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP French Literature" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : ["French I", "French II"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP French Literature": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [
+          "French I",
+          "French II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP German Language" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : ["German I", "German II"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP German Language": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [
+          "German I",
+          "German II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP Latin Literature" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : ["Latin I", "Latin II"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP Latin Literature": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [
+          "Latin I",
+          "Latin II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP Spanish Literature" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : ["Spanish I", "Spanish II"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP Spanish Literature": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [
+          "Spanish I",
+          "Spanish II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       },
-      "AP Spanish Language" : {
-        "Honors" : false,
-        "OnLevel" : false,
-        "Required" : false,
-        "Prerequisite" : ["Spanish I", "Spanish II"],
-        "Alternatives" : [],
-        "GradeLevel" : [11,12]
+      "AP Spanish Language": {
+        "Honors": false,
+        "OnLevel": false,
+        "Required": false,
+        "Prerequisite": [
+          "Spanish I",
+          "Spanish II"
+        ],
+        "Alternatives": [],
+        "GradeLevel": [
+          11,
+          12
+        ]
       }
     }
   }

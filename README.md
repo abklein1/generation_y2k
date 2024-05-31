@@ -103,6 +103,8 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 - Rumors
 - School and extracurricular events
 - Local businesses / points of interest
+- Historical events
+- Memories
 
 ## Student and Staff Stat Generation
 

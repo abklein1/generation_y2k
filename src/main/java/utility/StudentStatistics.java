@@ -1,9 +1,7 @@
 package utility;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class StudentStatistics implements PStatistics {
 
@@ -40,6 +38,8 @@ public class StudentStatistics implements PStatistics {
     private int responsibility;
     private int openmindedness;
     private String incomeLevel;
+    private ArrayList<String> completedClasses;
+    private HashMap<String, String> currentClasses;
 
     public StudentStatistics() {
         this.height = 0;
@@ -75,6 +75,8 @@ public class StudentStatistics implements PStatistics {
         this.responsibility = 0;
         this.openmindedness = 0;
         this.incomeLevel = null;
+        this.completedClasses = new ArrayList<>();
+        this.currentClasses = new HashMap<>();
     }
 
     @Override
@@ -225,18 +227,10 @@ public class StudentStatistics implements PStatistics {
 
     public void setGradeLevel(int level) {
         switch (level) {
-            case 0:
-                this.gradeLevel = "Freshman";
-                break;
-            case 1:
-                this.gradeLevel = "Sophomore";
-                break;
-            case 2:
-                this.gradeLevel = "Junior";
-                break;
-            case 3:
-                this.gradeLevel = "Senior";
-                break;
+            case 0 -> this.gradeLevel = "Freshman";
+            case 1 -> this.gradeLevel = "Sophomore";
+            case 2 -> this.gradeLevel = "Junior";
+            case 3 -> this.gradeLevel = "Senior";
         }
     }
 
@@ -345,38 +339,37 @@ public class StudentStatistics implements PStatistics {
 
         if (gender.equals("Male")) {
             switch (gradeLevel) {
-                case "Freshman":
+                case "Freshman" -> {
                     mean = 59;
                     stdDev = 5;
-                    break;
-                case "Sophomore":
+                }
+                case "Sophomore" -> {
                     mean = 64.5;
                     stdDev = 5.5;
-                    break;
-                case "Junior":
+                }
+                case "Junior" -> {
                     mean = 68;
                     stdDev = 4.5;
-                    break;
-                case "Senior":
+                }
+                case "Senior" -> {
                     mean = 69.5;
                     stdDev = 3.3;
-                    break;
+                }
             }
         } else {
             switch (gradeLevel) {
-                case "Freshman":
+                case "Freshman" -> {
                     mean = 59.5;
                     stdDev = 4.5;
-                    break;
-                case "Sophomore":
+                }
+                case "Sophomore" -> {
                     mean = 63.5;
                     stdDev = 4.5;
-                    break;
-                case "Junior":
-                case "Senior":
+                }
+                case "Junior", "Senior" -> {
                     mean = 64;
                     stdDev = 3;
-                    break;
+                }
             }
         }
 
@@ -554,5 +547,19 @@ public class StudentStatistics implements PStatistics {
         } else {
             this.incomeLevel = "high";
         }
+    }
+
+    public ArrayList<String> getCompletedClasses() {return this.completedClasses;}
+
+    public void addToCompletedClasses(String completedClass) {
+        this.completedClasses.add(completedClass);
+    }
+
+    public void addCurrentClass(String period, String className) {
+        this.currentClasses.put(period, className);
+    }
+
+    public HashMap<String, String> getCurrentClasses() {
+        return this.currentClasses;
     }
 }
