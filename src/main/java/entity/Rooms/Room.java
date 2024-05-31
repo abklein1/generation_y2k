@@ -8,6 +8,7 @@ package entity.Rooms;//*********************************************************
 //*******************************************************************
 
 import entity.Staff;
+import entity.Student;
 
 import java.util.List;
 
@@ -46,5 +47,21 @@ public interface Room {
     List<Staff> getAssignedStaff();
 
     void removeAssignedStaff(Staff staff);
+
+    void setSeatArrangement();
+
+    Student[][] getSeatArrangement();
+
+    void assignStudentToSeat();
+
+    Student getStudentInSeat(int x, int y);
+
+    int[][] getStudentSeatCoord(Student student);
+
+    void addStudentToSeat(Student student, int x, int y);
+
+    void removeStudentFromSeat(Student student);
+
+    void swapStudentSeats(Student student1, Student student2);
 
 }

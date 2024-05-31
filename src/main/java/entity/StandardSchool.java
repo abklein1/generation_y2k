@@ -162,7 +162,7 @@ public class StandardSchool implements SchoolPlan {
 
         // TODO: Bad fix for staff cap issues
         if (getTotalStudentCapacity() < 880) {
-            total = total + 8;
+            total = total + 10;
         }
 
         return total;
