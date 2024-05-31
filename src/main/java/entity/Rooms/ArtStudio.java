@@ -1,6 +1,8 @@
 package entity.Rooms;
 
 import entity.Staff;
+import entity.Student;
+import utility.Randomizer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ public class ArtStudio implements Room, Serializable {
     private String roomNumber;
     private boolean studentRestriction;
     private final List<Staff> staffAssign;
+    private Student[][] seats;
 
     public ArtStudio() {
         this.roomCapacity = 0;
@@ -118,6 +121,93 @@ public class ArtStudio implements Room, Serializable {
     @Override
     public void removeAssignedStaff(Staff staff) {
         staffAssign.remove(staff);
+    }
+
+    // TODO: Later we can make desk arrangements that are not only squares/rectangles
+    @Override
+    public void setSeatArrangement() {
+        int choice = Randomizer.setRandom(0,2);
+        if (studentCap <= 16) {
+            if (choice == 0) {
+                seats = new Student[4][4];
+            } else if (choice == 1) {
+                seats = new Student[4][5];
+            } else {
+                seats = new Student[5][4];
+            }
+        } else if (studentCap <= 25) {
+            if (choice == 0) {
+                seats = new Student[5][5];
+            } else if (choice == 1) {
+                seats = new Student[5][6];
+            } else {
+                seats = new Student[6][5];
+            }
+        } else if (studentCap <= 48) {
+            if (choice == 0) {
+                seats = new Student[6][8];
+            } else if (choice == 1) {
+                seats = new Student[8][6];
+            } else {
+                seats = new Student[12][4];
+            }
+        } else {
+            // TODO: Better error handling later
+            System.out.println("Can't find student cap!");
+        }
+    }
+
+    @Override
+    public Student[][] getSeatArrangement() {
+        return seats;
+    }
+
+    @Override
+    public Student getStudentInSeat(int x, int y) {
+        return seats[x][y];
+    }
+
+    @Override
+    public int[] getStudentSeatCoordinate(Student student) {
+        int[] coords = new int[2];
+        for(int i = 0; i < seats.length; i++) {
+            for(int j = 0; j < seats[i].length; j++) {
+                if(seats[i][j].equals(student)) {
+                    coords[0] = i;
+                    coords[1] = j;
+                    return coords;
+                }
+            }
+        }
+        System.out.println("Can't find student " + student.studentName);
+        return coords;
+    }
+
+    @Override
+    public void addStudentToSeat(Student student, int x, int y) {
+        if(seats[x][y] != null) {
+            System.out.println(student.studentName + " can't be assigned to seat because there is already someone there!");
+        } else {
+            seats[x][y] = student;
+        }
+    }
+
+    @Override
+    public void removeStudentFromSeat(Student student) {
+        int[] coords = getStudentSeatCoordinate(student);
+        seats[coords[0]][coords[1]] = null;
+    }
+
+    @Override
+    public void swapStudentSeats(Student student1, Student student2) {
+        int[] coords1 = getStudentSeatCoordinate(student1);
+        int[] coords2 = getStudentSeatCoordinate(student2);
+
+        removeStudentFromSeat(student1);
+        removeStudentFromSeat(student2);
+
+        addStudentToSeat(student1, coords2[0], coords2[1]);
+        addStudentToSeat(student2, coords1[0], coords1[1]);
     }
 
     public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}

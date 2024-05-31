@@ -52,11 +52,9 @@ public interface Room {
 
     Student[][] getSeatArrangement();
 
-    void assignStudentToSeat();
-
     Student getStudentInSeat(int x, int y);
 
-    int[][] getStudentSeatCoord(Student student);
+    int[] getStudentSeatCoordinate(Student student);
 
     void addStudentToSeat(Student student, int x, int y);
 
