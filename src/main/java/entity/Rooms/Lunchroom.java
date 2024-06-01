@@ -135,29 +135,29 @@ public class Lunchroom implements Room, Serializable {
     @Override
     public void setSeatArrangement() {
         int choice = Randomizer.setRandom(0,2);
-        if (studentCap <= 16) {
+        if (studentCap <= 50) {
             if (choice == 0) {
-                seats = new Student[4][4];
+                seats = new Student[5][10];
             } else if (choice == 1) {
-                seats = new Student[4][5];
+                seats = new Student[8][8];
             } else {
-                seats = new Student[5][4];
+                seats = new Student[6][10];
             }
-        } else if (studentCap <= 25) {
+        } else if (studentCap <= 150) {
             if (choice == 0) {
-                seats = new Student[5][5];
+                seats = new Student[10][15];
             } else if (choice == 1) {
-                seats = new Student[5][6];
+                seats = new Student[15][10];
             } else {
-                seats = new Student[6][5];
+                seats = new Student[16][10];
             }
-        } else if (studentCap <= 48) {
+        } else if (studentCap <= 250) {
             if (choice == 0) {
-                seats = new Student[6][8];
+                seats = new Student[25][10];
             } else if (choice == 1) {
-                seats = new Student[8][6];
+                seats = new Student[10][25];
             } else {
-                seats = new Student[12][4];
+                seats = new Student[14][19];
             }
         } else {
             // TODO: Better error handling later

@@ -131,21 +131,13 @@ public class VocationalRoom implements Room, Serializable {
     @Override
     public void setSeatArrangement() {
         int choice = Randomizer.setRandom(0,2);
-        if (studentCap <= 16) {
+        if (studentCap <= 36) {
             if (choice == 0) {
-                seats = new Student[4][4];
+                seats = new Student[6][6];
             } else if (choice == 1) {
-                seats = new Student[4][5];
+                seats = new Student[4][10];
             } else {
-                seats = new Student[5][4];
-            }
-        } else if (studentCap <= 25) {
-            if (choice == 0) {
-                seats = new Student[5][5];
-            } else if (choice == 1) {
-                seats = new Student[5][6];
-            } else {
-                seats = new Student[6][5];
+                seats = new Student[10][4];
             }
         } else if (studentCap <= 48) {
             if (choice == 0) {
@@ -153,7 +145,15 @@ public class VocationalRoom implements Room, Serializable {
             } else if (choice == 1) {
                 seats = new Student[8][6];
             } else {
-                seats = new Student[12][4];
+                seats = new Student[5][10];
+            }
+        } else if (studentCap <= 64) {
+            if (choice == 0) {
+                seats = new Student[8][8];
+            } else if (choice == 1) {
+                seats = new Student[7][10];
+            } else {
+                seats = new Student[10][7];
             }
         } else {
             // TODO: Better error handling later

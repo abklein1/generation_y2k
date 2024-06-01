@@ -135,29 +135,27 @@ public class Gym implements Room, Serializable {
     @Override
     public void setSeatArrangement() {
         int choice = Randomizer.setRandom(0,2);
-        if (studentCap <= 16) {
+        if (studentCap <= 100) {
             if (choice == 0) {
-                seats = new Student[4][4];
+                seats = new Student[10][10];
             } else if (choice == 1) {
-                seats = new Student[4][5];
+                seats = new Student[12][10];
             } else {
-                seats = new Student[5][4];
+                seats = new Student[10][12];
             }
-        } else if (studentCap <= 25) {
+        } else if (studentCap <= 300) {
             if (choice == 0) {
-                seats = new Student[5][5];
+                seats = new Student[30][10];
             } else if (choice == 1) {
-                seats = new Student[5][6];
+                seats = new Student[10][30];
             } else {
-                seats = new Student[6][5];
+                seats = new Student[20][15];
             }
-        } else if (studentCap <= 48) {
+        } else if (studentCap <= 500) {
             if (choice == 0) {
-                seats = new Student[6][8];
-            } else if (choice == 1) {
-                seats = new Student[8][6];
+                seats = new Student[25][20];
             } else {
-                seats = new Student[12][4];
+                seats = new Student[20][25];
             }
         } else {
             // TODO: Better error handling later

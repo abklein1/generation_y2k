@@ -135,29 +135,29 @@ public class Hallway implements Room, Serializable {
     @Override
     public void setSeatArrangement() {
         int choice = Randomizer.setRandom(0,2);
-        if (studentCap <= 16) {
+        if (studentCap <= 48) {
             if (choice == 0) {
-                seats = new Student[4][4];
-            } else if (choice == 1) {
-                seats = new Student[4][5];
-            } else {
-                seats = new Student[5][4];
-            }
-        } else if (studentCap <= 25) {
-            if (choice == 0) {
-                seats = new Student[5][5];
-            } else if (choice == 1) {
-                seats = new Student[5][6];
-            } else {
-                seats = new Student[6][5];
-            }
-        } else if (studentCap <= 48) {
-            if (choice == 0) {
-                seats = new Student[6][8];
-            } else if (choice == 1) {
-                seats = new Student[8][6];
-            } else {
                 seats = new Student[12][4];
+            } else if (choice == 1) {
+                seats = new Student[10][5];
+            } else {
+                seats = new Student[11][5];
+            }
+        } else if (studentCap <= 64) {
+            if (choice == 0) {
+                seats = new Student[16][4];
+            } else if (choice == 1) {
+                seats = new Student[16][5];
+            } else {
+                seats = new Student[17][4];
+            }
+        } else if (studentCap <= 81) {
+            if (choice == 0) {
+                seats = new Student[18][5];
+            } else if (choice == 1) {
+                seats = new Student[21][4];
+            } else {
+                seats = new Student[19][5];
             }
         } else {
             // TODO: Better error handling later

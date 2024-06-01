@@ -10,6 +10,7 @@ import java.util.List;
 
 public class AthleticField implements Room, Serializable {
 
+    private final List<Staff> staffAssign;
     private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
@@ -19,7 +20,6 @@ public class AthleticField implements Room, Serializable {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
-    private final List<Staff> staffAssign;
     private Student[][] seats;
 
     public AthleticField() {
@@ -110,13 +110,13 @@ public class AthleticField implements Room, Serializable {
     }
 
     @Override
-    public void setAssignedStaff(Staff staff) {
-        staffAssign.add(staff);
+    public List<Staff> getAssignedStaff() {
+        return this.staffAssign;
     }
 
     @Override
-    public List<Staff> getAssignedStaff() {
-        return this.staffAssign;
+    public void setAssignedStaff(Staff staff) {
+        staffAssign.add(staff);
     }
 
     @Override
@@ -124,39 +124,19 @@ public class AthleticField implements Room, Serializable {
         staffAssign.remove(staff);
     }
 
-    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
+    public void setStudentCap() {
+        this.studentCap = roomCapacity - staffCap;
+    }
 
     // TODO: Later we can make desk arrangements that are not only squares/rectangles
     @Override
     public void setSeatArrangement() {
-        int choice = Randomizer.setRandom(0,2);
-        if (studentCap <= 16) {
-            if (choice == 0) {
-                seats = new Student[4][4];
-            } else if (choice == 1) {
-                seats = new Student[4][5];
-            } else {
-                seats = new Student[5][4];
-            }
-        } else if (studentCap <= 25) {
-            if (choice == 0) {
-                seats = new Student[5][5];
-            } else if (choice == 1) {
-                seats = new Student[5][6];
-            } else {
-                seats = new Student[6][5];
-            }
-        } else if (studentCap <= 48) {
-            if (choice == 0) {
-                seats = new Student[6][8];
-            } else if (choice == 1) {
-                seats = new Student[8][6];
-            } else {
-                seats = new Student[12][4];
-            }
+        // Smaller field
+        if (studentCap <= 250) {
+           seats = new Student[25][10];
+        // Larger field
         } else {
-            // TODO: Better error handling later
-            System.out.println("Can't find student cap!");
+            seats = new Student[20][25];
         }
     }
 
@@ -173,9 +153,9 @@ public class AthleticField implements Room, Serializable {
     @Override
     public int[] getStudentSeatCoordinate(Student student) {
         int[] coords = new int[2];
-        for(int i = 0; i < seats.length; i++) {
-            for(int j = 0; j < seats[i].length; j++) {
-                if(seats[i][j].equals(student)) {
+        for (int i = 0; i < seats.length; i++) {
+            for (int j = 0; j < seats[i].length; j++) {
+                if (seats[i][j].equals(student)) {
                     coords[0] = i;
                     coords[1] = j;
                     return coords;
@@ -188,7 +168,7 @@ public class AthleticField implements Room, Serializable {
 
     @Override
     public void addStudentToSeat(Student student, int x, int y) {
-        if(seats[x][y] != null) {
+        if (seats[x][y] != null) {
             System.out.println(student.studentName + " can't be assigned to seat because there is already someone there!");
         } else {
             seats[x][y] = student;

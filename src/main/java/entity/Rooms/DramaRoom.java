@@ -143,13 +143,13 @@ public class DramaRoom implements Room, Serializable {
             } else {
                 seats = new Student[6][5];
             }
-        } else if (studentCap <= 48) {
+        } else if (studentCap <= 50) {
             if (choice == 0) {
-                seats = new Student[6][8];
+                seats = new Student[5][10];
             } else if (choice == 1) {
-                seats = new Student[8][6];
+                seats = new Student[10][5];
             } else {
-                seats = new Student[12][4];
+                seats = new Student[13][4];
             }
         } else {
             // TODO: Better error handling later

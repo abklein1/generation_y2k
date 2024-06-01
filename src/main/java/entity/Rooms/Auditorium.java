@@ -129,33 +129,22 @@ public class Auditorium implements Room, Serializable {
     @Override
     public void setSeatArrangement() {
         int choice = Randomizer.setRandom(0,2);
-        if (studentCap <= 16) {
+        if (studentCap <= 200) {
             if (choice == 0) {
-                seats = new Student[4][4];
+                seats = new Student[10][20];
             } else if (choice == 1) {
-                seats = new Student[4][5];
+                seats = new Student[20][10];
             } else {
-                seats = new Student[5][4];
-            }
-        } else if (studentCap <= 25) {
-            if (choice == 0) {
-                seats = new Student[5][5];
-            } else if (choice == 1) {
-                seats = new Student[5][6];
-            } else {
-                seats = new Student[6][5];
-            }
-        } else if (studentCap <= 48) {
-            if (choice == 0) {
-                seats = new Student[6][8];
-            } else if (choice == 1) {
-                seats = new Student[8][6];
-            } else {
-                seats = new Student[12][4];
+                seats = new Student[8][25];
             }
         } else {
-            // TODO: Better error handling later
-            System.out.println("Can't find student cap!");
+            if (choice == 0) {
+                seats = new Student[11][50];
+            } else if (choice == 1) {
+                seats = new Student[22][25];
+            } else {
+                seats = new Student[25][22];
+            }
         }
     }
 

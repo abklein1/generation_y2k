@@ -129,29 +129,29 @@ public class MusicRoom implements Room, Serializable {
     @Override
     public void setSeatArrangement() {
         int choice = Randomizer.setRandom(0,2);
-        if (studentCap <= 16) {
+        if (studentCap <= 30) {
             if (choice == 0) {
-                seats = new Student[4][4];
+                seats = new Student[6][6];
             } else if (choice == 1) {
-                seats = new Student[4][5];
+                seats = new Student[3][12];
             } else {
-                seats = new Student[5][4];
+                seats = new Student[4][10];
             }
-        } else if (studentCap <= 25) {
+        } else if (studentCap <= 64) {
             if (choice == 0) {
-                seats = new Student[5][5];
+                seats = new Student[8][8];
             } else if (choice == 1) {
-                seats = new Student[5][6];
+                seats = new Student[7][10];
             } else {
-                seats = new Student[6][5];
+                seats = new Student[5][13];
             }
-        } else if (studentCap <= 48) {
+        } else if (studentCap <= 90) {
             if (choice == 0) {
-                seats = new Student[6][8];
+                seats = new Student[9][10];
             } else if (choice == 1) {
-                seats = new Student[8][6];
+                seats = new Student[3][30];
             } else {
-                seats = new Student[12][4];
+                seats = new Student[10][10];
             }
         } else {
             // TODO: Better error handling later

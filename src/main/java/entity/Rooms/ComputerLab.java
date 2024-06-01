@@ -134,27 +134,27 @@ public class ComputerLab implements Room, Serializable {
         int choice = Randomizer.setRandom(0,2);
         if (studentCap <= 16) {
             if (choice == 0) {
-                seats = new Student[4][4];
+                seats = new Student[2][8];
             } else if (choice == 1) {
-                seats = new Student[4][5];
+                seats = new Student[2][10];
             } else {
-                seats = new Student[5][4];
+                seats = new Student[4][5];
             }
         } else if (studentCap <= 25) {
             if (choice == 0) {
-                seats = new Student[5][5];
+                seats = new Student[2][15];
             } else if (choice == 1) {
-                seats = new Student[5][6];
+                seats = new Student[3][10];
             } else {
-                seats = new Student[6][5];
+                seats = new Student[5][6];
             }
         } else if (studentCap <= 48) {
             if (choice == 0) {
-                seats = new Student[6][8];
+                seats = new Student[4][12];
             } else if (choice == 1) {
-                seats = new Student[8][6];
+                seats = new Student[5][10];
             } else {
-                seats = new Student[12][4];
+                seats = new Student[6][8];
             }
         } else {
             // TODO: Better error handling later
