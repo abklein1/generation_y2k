@@ -6,6 +6,10 @@ import entity.Staff;
 import entity.Student;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -188,6 +192,7 @@ public class Inspector {
         String roomName = room.getRoomName();
         List<Staff> staff = room.getAssignedStaff();
         int studentCap = room.getStudentCapacity();
+        Student[][] seats = room.getSeatArrangement();
 
         StringBuilder roomDetails = new StringBuilder();
         roomDetails.append("Welcome to ").append(roomName).append("\n");
@@ -201,6 +206,48 @@ public class Inspector {
             roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");
         }
 
-        JOptionPane.showMessageDialog(null, roomDetails.toString(), "Room Details", JOptionPane.INFORMATION_MESSAGE);
+        JTextArea roomInfoArea = new JTextArea(roomDetails.toString());
+        roomInfoArea.setEditable(false);
+
+        String[] columnNames = new String[seats[0].length];
+        for (int i = 0; i < seats[0].length; i++) {
+            columnNames[i] = "Col " + (i + 1);
+        }
+
+        Object[][] data = new Object[seats.length][seats[0].length];
+        for (int row = 0; row < seats.length; row++) {
+            for (int col = 0; col <seats[0].length; col++) {
+                if (seats[row][col] != null) {
+                    data[row][col] = seats[row][col].studentName.getFirstName() + " " + seats[row][col].studentName.getLastName();
+                } else {
+                    data[row][col] = "Empty";
+                }
+            }
+        }
+
+        JTable studentTable = new JTable(new DefaultTableModel(data, columnNames));
+        studentTable.setFillsViewportHeight(true);
+        studentTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = studentTable.rowAtPoint(e.getPoint());
+                int col = studentTable.columnAtPoint(e.getPoint());
+                if (seats[row][col] != null) {
+                    JTextArea studentInfoArea = new JTextArea();
+                    studentInspection(seats[row][col], studentInfoArea);
+                    JOptionPane.showMessageDialog(null, new JScrollPane(studentInfoArea), "Student Details", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(studentTable);
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(roomInfoArea, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        JOptionPane.showMessageDialog(null, panel, "Room Details", JOptionPane.INFORMATION_MESSAGE);
     }
 }
