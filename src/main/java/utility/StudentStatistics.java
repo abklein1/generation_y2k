@@ -1,5 +1,8 @@
 package utility;
 
+import entity.StudentBlock;
+import entity.StudentSchedule;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -39,7 +42,7 @@ public class StudentStatistics implements PStatistics {
     private int openmindedness;
     private String incomeLevel;
     private ArrayList<String> completedClasses;
-    private HashMap<String, String> currentClasses;
+    private StudentSchedule studentSchedule;
 
     public StudentStatistics() {
         this.height = 0;
@@ -76,7 +79,7 @@ public class StudentStatistics implements PStatistics {
         this.openmindedness = 0;
         this.incomeLevel = null;
         this.completedClasses = new ArrayList<>();
-        this.currentClasses = new HashMap<>();
+        this.studentSchedule = new StudentSchedule();
     }
 
     @Override
@@ -555,11 +558,15 @@ public class StudentStatistics implements PStatistics {
         this.completedClasses.add(completedClass);
     }
 
-    public void addCurrentClass(String period, String className) {
-        this.currentClasses.put(period, className);
+    public StudentSchedule getStudentSchedule() {
+        return studentSchedule;
     }
 
-    public HashMap<String, String> getCurrentClasses() {
-        return this.currentClasses;
+    public void addStudentSchedule(StudentBlock block) {
+        this.studentSchedule.add(block);
+    }
+
+    public void removeStudentSchedule(StudentBlock block) {
+
     }
 }

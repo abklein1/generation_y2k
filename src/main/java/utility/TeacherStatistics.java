@@ -1,6 +1,8 @@
 package utility;
 
 import entity.StaffType;
+import entity.TeacherBlock;
+import entity.TeacherSchedule;
 
 import java.time.LocalDate;
 import java.util.Random;
@@ -32,6 +34,8 @@ public class TeacherStatistics implements PStatistics {
     private int responsibility;
     private int openmindedness;
     private Enum staffType;
+    private TeacherSchedule teacherSchedule;
+
 
     public TeacherStatistics() {
         this.height = 0;
@@ -59,6 +63,7 @@ public class TeacherStatistics implements PStatistics {
         this.responsibility = 0;
         this.openmindedness = 0;
         this.staffType = null;
+        this.teacherSchedule = new TeacherSchedule();
     }
 
     @Override
@@ -421,5 +426,13 @@ public class TeacherStatistics implements PStatistics {
 
     public void setLuck(int luck) {
         this.luck = luck;
+    }
+
+    public TeacherSchedule getTeacherSchedule() {
+        return teacherSchedule;
+    }
+
+    public void addTeacherSchedule(TeacherBlock block) {
+        teacherSchedule.add(block);
     }
 }

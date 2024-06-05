@@ -1,7 +1,6 @@
 package utility;
 
-import entity.Staff;
-import entity.StaffType;
+import entity.*;
 import view.GameView;
 
 import java.util.*;
@@ -235,5 +234,62 @@ public class StaffAssignment {
         }
 
         return Optional.of(staffHashMap.get(key));
+    }
+
+    public static List<Staff> getTeachersOfType(HashMap<Integer, Staff> staffHashMap, StaffType type) {
+        List<Staff> staffList = new ArrayList<>();
+        for (Map.Entry<Integer, Staff> staff : staffHashMap.entrySet()) {
+            if(staff.getValue().teacherStatistics.getStaffType().equals(type)) {
+                staffList.add((Staff) staff);
+            }
+        }
+
+        return staffList;
+    }
+
+    public static void assignClassesToStaff(HashMap<Integer, Staff> staffHashMap, StandardSchool standardSchool, GameView view) {
+        List<Staff> englishTeachers = getTeachersOfType(staffHashMap, StaffType.ENGLISH);
+
+        if (englishTeachers.isEmpty()) {
+            view.appendOutput("No English teachers available for assignment.");
+        }
+
+        String[] englishClasses = {"English I", "English II", "English III", "English IV"};
+        String[] gradeLevels = {"Freshman", "Sophomore", "Junior", "Senior"};
+
+        int[] studentsPerGrade = new int[gradeLevels.length];
+        for (int i = 0; i < gradeLevels.length; i++) {
+            HashMap<Integer, Student> gradeClass = standardSchool.getStudentGradeClass(gradeLevels[i]);
+            studentsPerGrade[i] = (gradeClass != null) ? gradeClass.size() : 0;
+        }
+
+        for (int gradeIndex = 0; gradeIndex < englishClasses.length; gradeIndex++) {
+            int studentsInGrade = studentsPerGrade[gradeIndex];
+            int classesNeeded = (int) Math.ceil((double) studentsInGrade/35);
+
+            for(int classCount = 0; classCount < classesNeeded; classCount++) {
+                Staff selectedTeacher = null;
+                for(Staff teacher : englishTeachers) {
+                    TeacherSchedule schedule = teacher.teacherStatistics.getTeacherSchedule();
+                    if(schedule.size() < 4) {
+                        selectedTeacher = teacher;
+                        break;
+                    }
+                }
+
+                if (selectedTeacher == null) {
+                    view.appendOutput("Not enough teachers available to cover all classes.");
+                    return;
+                }
+
+                TeacherBlock block = new TeacherBlock();
+                block.setBlockNumber(selectedTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
+                block.setClassName(englishClasses[gradeIndex]);
+                block.setSemester("Both");
+
+                selectedTeacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned " + englishClasses[gradeIndex] + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
+            }
+        }
     }
 }
