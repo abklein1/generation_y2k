@@ -4,6 +4,8 @@ import entity.Rooms.Classroom;
 import entity.Rooms.Room;
 import entity.Staff;
 import entity.Student;
+import entity.TeacherBlock;
+import entity.TeacherSchedule;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -93,6 +95,7 @@ public class Inspector {
         double height = staff.teacherStatistics.getHeight();
         LocalDate birth = staff.teacherStatistics.getBirthday();
         String assignment = staff.teacherStatistics.getStaffType().toString().toLowerCase();
+        List<String> teacherSchedule = staff.teacherStatistics.getTeacherSchedule().toStringArray();
 
         sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
         sb.append(firstName).append(" is a ").append(gender).append(" with ");
@@ -124,6 +127,7 @@ public class Inspector {
             sb.append(firstName).append(" is not asleep.\n");
         }
         sb.append("They are assigned as: ").append(assignment).append("\n");
+        sb.append("Teacher schedule is : ").append(teacherSchedule);
 
         inspectionArea.setText(sb.toString());
     }

@@ -39,4 +39,14 @@ public class TeacherSchedule {
         }
         return null;
     }
+
+    public List<String> toStringArray() {
+        List<String> teacherScheduleString = new ArrayList<>();
+
+        for(TeacherBlock block : teacherSchedule) {
+            teacherScheduleString.add(block.getClassName());
+        }
+
+        return teacherScheduleString;
+    }
 }

@@ -106,6 +106,7 @@ public class SchoolController {
                 classroom.reassignClassroomByTeacher();
                 publish("Classroom " + classroom.getRoomName() + " reassigned.");
             }
+            StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
             return null;
         }
 

@@ -15,10 +15,21 @@ import java.util.List;
 
 public class StudentScheduleAssigner {
 
+    private static HashMap<String, ClassDetail> classDetailsMap = ClassDetailsLoader.loadClassDetails("src/main/java/Resources/class_details.json");
+
+
     public static void scheduleStudent(Student student, HashMap<Integer, Staff> staffHashMap) {
         String year = student.studentStatistics.getGradeLevel();
         List<String> requiredClasses = loadGradeRequirements(year);
 
+        for (String className:  requiredClasses) {
+            if (classDetailsMap.containsKey(className)) {
+                ClassDetail classDetail = classDetailsMap.get(className);
+                assignClassToStudent(student, className, staffHashMap, classDetail);
+            } else {
+                System.out.println("Class details for " + className + " not found.");
+            }
+        }
 
     }
 
