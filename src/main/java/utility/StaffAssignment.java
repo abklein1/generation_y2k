@@ -240,7 +240,7 @@ public class StaffAssignment {
         List<Staff> staffList = new ArrayList<>();
         for (Map.Entry<Integer, Staff> staff : staffHashMap.entrySet()) {
             if(staff.getValue().teacherStatistics.getStaffType().equals(type)) {
-                staffList.add((Staff) staff);
+                staffList.add(staff.getValue());
             }
         }
 
