@@ -12,11 +12,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StudentScheduleAssigner {
 
-    private static HashMap<String, ClassDetail> classDetailsMap = ClassDetailsLoader.loadClassDetails("src/main/java/Resources/class_details.json");
+    private static final HashMap<String, ClassDetail> classDetailsMap = ClassDetailsLoader.loadClassDetails("src/main/java/Resources/available_classes.json");
 
+    //TODO: Not an amazing entry point but we will use it for now
+    public static void scheduleAllStudents(HashMap<Integer, Student> studentHashMap, HashMap<Integer, Staff> staffHashMap) {
+        System.out.println("In the scheduler");
+        for (Map.Entry<Integer, Student> student : studentHashMap.entrySet()) {
+            scheduleStudent(student.getValue(), staffHashMap);
+        }
+    }
 
     public static void scheduleStudent(Student student, HashMap<Integer, Staff> staffHashMap) {
         String year = student.studentStatistics.getGradeLevel();

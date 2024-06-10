@@ -10,15 +10,19 @@ public class Student implements Serializable {
 
     public StudentName studentName;
     public StudentStatistics studentStatistics;
+    private final StudentUpperT studentUpperT;
+    private final StudentLegs studentLegs;
+    private final StudentArms studentArms;
+    private final Backpack backpack;
 
     StudentFactory studentFactory = new StudentFactory();
     
     public Student(){
         studentName = studentFactory.createName();
-        StudentUpperT studentUpperT = studentFactory.createUpperTorso();
-        StudentLegs studentLegs = studentFactory.createLegs();
-        StudentArms studentArms = studentFactory.createArms();
-        Backpack backpack = studentFactory.createCarry();
+        studentUpperT = studentFactory.createUpperTorso();
+        studentLegs = studentFactory.createLegs();
+        studentArms = studentFactory.createArms();
+        backpack = studentFactory.createCarry();
         studentStatistics = studentFactory.setStats();
     }
 

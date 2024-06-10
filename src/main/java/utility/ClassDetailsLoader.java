@@ -28,31 +28,39 @@ public class ClassDetailsLoader {
                 for (Object classKey : subjectClasses.keySet()) {
                     String className = (String) classKey;
                     JSONObject classDetails = (JSONObject) subjectClasses.get(className);
+                    for (Object classKey2 : classDetails.keySet()) {
+                        String className2 = (String) classKey2;
+                        JSONObject classDetails2 = (JSONObject) classDetails.get(className2);
+                        boolean honors = (boolean) classDetails2.get("Honors");
+                        boolean onLevel = (boolean) classDetails2.get("OnLevel");
+                        boolean required = (boolean) classDetails2.get("Required");
 
-                    boolean honors = (boolean) classDetails.get("Honors");
-                    boolean onLevel = (boolean) classDetails.get("OnLevel");
-                    boolean required = (boolean) classDetails.get("Required");
+                        JSONArray prereqArray = (JSONArray) classDetails2.get("Prerequisite");
+                        List<String> prerequisite = new ArrayList<>();
+                        if(!(prereqArray == null)) {
+                            for (Object prereq : prereqArray) {
+                                prerequisite.add((String) prereq);
+                            }
+                        }
 
-                    JSONArray prereqArray = (JSONArray) classDetails.get("Prerequisite");
-                    List<String> prerequisite = new ArrayList<>();
-                    for (Object prereq : prereqArray) {
-                        prerequisite.add((String) prereq);
+                        JSONArray altArray = (JSONArray) classDetails2.get("Alternatives");
+                        List<String> alternatives = new ArrayList<>();
+                        if(!(altArray == null)) {
+                            for (Object alt : altArray) {
+                                alternatives.add((String) alt);
+                            }
+                        }
+
+                        JSONArray gradeArray = (JSONArray) classDetails2.get("Grade Level");
+                        List<Integer> gradeLevel = new ArrayList<>();
+                        if(!(gradeArray == null)) {
+                            for (Object grade : gradeArray) {
+                                gradeLevel.add(((Long) grade).intValue());
+                            }
+                        }
+                        ClassDetail detail = new ClassDetail(honors, onLevel, required, prerequisite, alternatives, gradeLevel);
+                        classDetailsMap.put(className2, detail);
                     }
-
-                    JSONArray altArray = (JSONArray) classDetails.get("Alternatives");
-                    List<String> alternatives = new ArrayList<>();
-                    for (Object alt : altArray) {
-                        alternatives.add((String) alt);
-                    }
-
-                    JSONArray gradeArray = (JSONArray) classDetails.get("GradeLevel");
-                    List<Integer> gradeLevel = new ArrayList<>();
-                    for (Object grade : gradeArray) {
-                        gradeLevel.add(((Long) grade).intValue());
-                    }
-
-                    ClassDetail detail = new ClassDetail(honors, onLevel, required, prerequisite, alternatives, gradeLevel);
-                    classDetailsMap.put(className, detail);
                 }
             }
         } catch (IOException | ParseException e) {

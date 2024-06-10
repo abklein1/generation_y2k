@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static utility.Inspector.*;
@@ -55,58 +56,69 @@ public class SchoolController {
 
         @Override
         protected Void doInBackground(){
-            //Create hash maps for storage
-            HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
-            staffHashMap = new HashMap<Integer, Staff>();
-            int student_cap;
-            int staff_cap;
-            String[] colors;
-            Classroom[] classrooms;
-            //String[] colorsHex;
+            try {
+                //Create hash maps for storage
+                HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
+                staffHashMap = new HashMap<Integer, Staff>();
+                int student_cap;
+                int staff_cap;
+                String[] colors;
+                Classroom[] classrooms;
+                //String[] colorsHex;
 
-            //Generate a new standard school with rooms
-            publish("Generating the school...");
-            standardSchool = new StandardSchool();
-            Director director = new Director(standardSchool, view);
-            student_cap = standardSchool.getTotalStudentCapacity();
-            staff_cap = standardSchool.getMinimumStaffRequirements();
-            publish("Connecting rooms...");
-            roomConnector = new RoomConnector(standardSchool, view);
-            publish("Populating school...");
-            // Set for student population generation
-            StudentPopGenerator.generateStudents(student_cap, studentHashMap, view);
-            standardSchool.setStudentGradeClass(studentHashMap, view);
-            //Set for staff population generation
-            TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, view);
-            publish("Assigning initial staff...");
-            StaffAssignment.initialAssignmentsCore(staffHashMap, student_cap, view);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getArtStudios().length, StaffType.VISUAL_ARTS, view);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getAthleticFields().length + standardSchool.getGyms().length, StaffType.PHYSICAL_ED, view);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getMusicRooms().length + standardSchool.getDramaRooms().length + standardSchool.getAuditoriums().length, StaffType.PERFORMING_ARTS, view);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getVocationalRooms().length, StaffType.VOCATIONAL, view);
-            StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI, view);
-            StaffAssignment.assignFrontOfficePersonnel(staffHashMap, view);
-            StaffAssignment.assignUtilityPersonnel(staffHashMap, view);
-            StaffAssignment.assignLibraryPersonnel(staffHashMap, view);
-            StaffAssignment.assignNurse(staffHashMap, view);
-            StaffAssignment.assignLunch(staffHashMap, view);
-            StaffAssignment.assignBusiness(staffHashMap, view);
-            StaffAssignment.assignSubs(staffHashMap, view);
-            RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
-            publish("Done creating school and students");
-            publish("+++++++++++++++++++++++++++++++++++++++++");
-            publish("Welcome to " + standardSchool.getSchoolName());
-            publish("Home of the " + standardSchool.getSchoolMascot() + "!");
-            colors = standardSchool.getSchoolColors();
-            publish("The school colors are " + colors[0] + " and " + colors[1]);
-            updateTimeLabel();
-            updateWeatherLabels();
-            classrooms = standardSchool.getClassrooms();
-            for(Classroom classroom : classrooms) {
-                classroom.reassignClassroomByTeacher();
-                publish("Classroom " + classroom.getRoomName() + " reassigned.");
+                //Generate a new standard school with rooms
+                publish("Generating the school...");
+                standardSchool = new StandardSchool();
+                Director director = new Director(standardSchool, view);
+                student_cap = standardSchool.getTotalStudentCapacity();
+                staff_cap = standardSchool.getMinimumStaffRequirements();
+                publish("Connecting rooms...");
+                roomConnector = new RoomConnector(standardSchool, view);
+                publish("Populating school...");
+                // Set for student population generation
+                StudentPopGenerator.generateStudents(student_cap, studentHashMap, view);
+                standardSchool.setStudentGradeClass(studentHashMap, view);
+                //Set for staff population generation
+                TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, view);
+                publish("Assigning initial staff...");
+                StaffAssignment.initialAssignmentsCore(staffHashMap, student_cap, view);
+                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getArtStudios().length, StaffType.VISUAL_ARTS, view);
+                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getAthleticFields().length + standardSchool.getGyms().length, StaffType.PHYSICAL_ED, view);
+                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getMusicRooms().length + standardSchool.getDramaRooms().length + standardSchool.getAuditoriums().length, StaffType.PERFORMING_ARTS, view);
+                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getVocationalRooms().length, StaffType.VOCATIONAL, view);
+                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI, view);
+                StaffAssignment.assignFrontOfficePersonnel(staffHashMap, view);
+                StaffAssignment.assignUtilityPersonnel(staffHashMap, view);
+                StaffAssignment.assignLibraryPersonnel(staffHashMap, view);
+                StaffAssignment.assignNurse(staffHashMap, view);
+                StaffAssignment.assignLunch(staffHashMap, view);
+                StaffAssignment.assignBusiness(staffHashMap, view);
+                StaffAssignment.assignSubs(staffHashMap, view);
+                RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
+                publish("Done creating school and students");
+                publish("+++++++++++++++++++++++++++++++++++++++++");
+                publish("Welcome to " + standardSchool.getSchoolName());
+                publish("Home of the " + standardSchool.getSchoolMascot() + "!");
+                colors = standardSchool.getSchoolColors();
+                publish("The school colors are " + colors[0] + " and " + colors[1]);
+                updateTimeLabel();
+                updateWeatherLabels();
+                classrooms = standardSchool.getClassrooms();
+                for(Classroom classroom : classrooms) {
+                    classroom.reassignClassroomByTeacher();
+                    publish("Classroom " + classroom.getRoomName() + " reassigned.");
+                }
+                StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
+                try {
+                    StudentScheduleAssigner.scheduleAllStudents(studentHashMap, staffHashMap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("some exception");
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+                publish("Caught an exception: " + t.getMessage());
             }
-            StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
             return null;
         }
 

@@ -8,8 +8,6 @@ package entity.Rooms;//*********************************************************
 //*******************************************************************
 
 import entity.Staff;
-import entity.StaffType;
-import entity.StandardSchool;
 import entity.Student;
 import utility.Randomizer;
 
@@ -19,6 +17,7 @@ import java.util.List;
 
 public class Classroom implements Room, Serializable {
 
+    private final List<Staff> staffAssign;
     private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
@@ -29,8 +28,6 @@ public class Classroom implements Room, Serializable {
     private String roomNumber;
     private boolean studentRestriction;
     private String classRoomType;
-    private final List<Staff> staffAssign;
-
     private Student[][] seats;
 
     public Classroom() {
@@ -108,10 +105,6 @@ public class Classroom implements Room, Serializable {
         }
     }
 
-    public void setClassRoomType(String type) {
-        this.classRoomType = type;
-    }
-
     public void setDetention() {
         this.classRoomType = "Detention";
     }
@@ -128,6 +121,10 @@ public class Classroom implements Room, Serializable {
 
     public String getClassRoomType() {
         return classRoomType;
+    }
+
+    public void setClassRoomType(String type) {
+        this.classRoomType = type;
     }
 
     public String getClassTypeAbbr() {
@@ -176,12 +173,12 @@ public class Classroom implements Room, Serializable {
     }
 
     @Override
-        public void removeAssignedStaff(Staff staff) {
-            staffAssign.remove(staff);
-        }
+    public void removeAssignedStaff(Staff staff) {
+        staffAssign.remove(staff);
+    }
 
-        public void reassignClassroomByTeacher() {
-            String staffType = getAssignedStaff().get(0).teacherStatistics.getStaffType().toString();
+    public void reassignClassroomByTeacher() {
+        String staffType = getAssignedStaff().get(0).teacherStatistics.getStaffType().toString();
         String roomType = getClassRoomType();
 
         if (!roomType.equals(staffType)) {
@@ -192,7 +189,7 @@ public class Classroom implements Room, Serializable {
     // TODO: Later we can make desk arrangements that are not only squares/rectangles
     @Override
     public void setSeatArrangement() {
-        int choice = Randomizer.setRandom(0,2);
+        int choice = Randomizer.setRandom(0, 2);
         if (studentCap <= 16) {
             if (choice == 0) {
                 seats = new Student[4][4];
@@ -236,9 +233,9 @@ public class Classroom implements Room, Serializable {
     @Override
     public int[] getStudentSeatCoordinate(Student student) {
         int[] coords = new int[2];
-        for(int i = 0; i < seats.length; i++) {
-            for(int j = 0; j < seats[i].length; j++) {
-                if(seats[i][j].equals(student)) {
+        for (int i = 0; i < seats.length; i++) {
+            for (int j = 0; j < seats[i].length; j++) {
+                if (seats[i][j].equals(student)) {
                     coords[0] = i;
                     coords[1] = j;
                     return coords;
@@ -251,7 +248,7 @@ public class Classroom implements Room, Serializable {
 
     @Override
     public void addStudentToSeat(Student student, int x, int y) {
-        if(seats[x][y] != null) {
+        if (seats[x][y] != null) {
             System.out.println(student.studentName + " can't be assigned to seat because there is already someone there!");
         } else {
             seats[x][y] = student;
@@ -277,6 +274,8 @@ public class Classroom implements Room, Serializable {
     }
 
 
-    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
+    public void setStudentCap() {
+        this.studentCap = roomCapacity - staffCap;
+    }
 
 }

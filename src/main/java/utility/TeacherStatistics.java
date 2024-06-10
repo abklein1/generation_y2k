@@ -1,5 +1,6 @@
 package utility;
 
+import entity.Rooms.Room;
 import entity.StaffType;
 import entity.TeacherBlock;
 import entity.TeacherSchedule;
@@ -35,7 +36,6 @@ public class TeacherStatistics implements PStatistics {
     private int openmindedness;
     private Enum staffType;
     private TeacherSchedule teacherSchedule;
-
 
     public TeacherStatistics() {
         this.height = 0;
@@ -435,4 +435,5 @@ public class TeacherStatistics implements PStatistics {
     public void addTeacherSchedule(TeacherBlock block) {
         teacherSchedule.add(block);
     }
+
 }

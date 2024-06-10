@@ -1,6 +1,7 @@
 package utility;
 
 import entity.*;
+import entity.Rooms.Room;
 import view.GameView;
 
 import java.util.*;
@@ -285,6 +286,7 @@ public class StaffAssignment {
                 TeacherBlock block = new TeacherBlock();
                 block.setBlockNumber(selectedTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
                 block.setClassName(englishClasses[gradeIndex]);
+                block.setRoom(standardSchool.getClassroomByStaff(selectedTeacher));
                 block.setSemester("Both");
 
                 selectedTeacher.teacherStatistics.addTeacherSchedule(block);
