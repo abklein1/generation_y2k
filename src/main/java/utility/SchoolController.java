@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import static utility.Inspector.*;
@@ -88,10 +87,10 @@ public class SchoolController {
                 StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getVocationalRooms().length, StaffType.VOCATIONAL, view);
                 StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI, view);
                 StaffAssignment.assignFrontOfficePersonnel(staffHashMap, view);
-                StaffAssignment.assignUtilityPersonnel(staffHashMap, view);
-                StaffAssignment.assignLibraryPersonnel(staffHashMap, view);
+                StaffAssignment.assignUtilityPersonnel(staffHashMap, view, standardSchool);
+                StaffAssignment.assignLibraryPersonnel(staffHashMap, view, standardSchool);
                 StaffAssignment.assignNurse(staffHashMap, view);
-                StaffAssignment.assignLunch(staffHashMap, view);
+                StaffAssignment.assignLunch(staffHashMap, view, standardSchool);
                 StaffAssignment.assignBusiness(staffHashMap, view);
                 StaffAssignment.assignSubs(staffHashMap, view);
                 RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);

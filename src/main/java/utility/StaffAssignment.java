@@ -1,6 +1,7 @@
 package utility;
 
 import entity.*;
+import entity.Rooms.Lunchroom;
 import view.GameView;
 
 import java.util.*;
@@ -129,8 +130,8 @@ public class StaffAssignment {
         }
     }
 
-    public static void assignUtilityPersonnel(HashMap<Integer, Staff> staffHashMap, GameView view) {
-        int maxUtility = 4;
+    public static void assignUtilityPersonnel(HashMap<Integer, Staff> staffHashMap, GameView view, StandardSchool standardSchool) {
+        int maxUtility = standardSchool.getUtilityrooms().length + 2;
 
         for (int count = 0; count < maxUtility; count++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
@@ -146,8 +147,8 @@ public class StaffAssignment {
     }
 
     //TODO: fix this since there can be multiple libraries
-    public static void assignLibraryPersonnel(HashMap<Integer, Staff> staffHashMap, GameView view) {
-        int maxLibrarian = 2;
+    public static void assignLibraryPersonnel(HashMap<Integer, Staff> staffHashMap, GameView view, StandardSchool standardSchool) {
+        int maxLibrarian = standardSchool.getLibraries().length * 2;
 
         for (int count = 0; count < maxLibrarian; count++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
@@ -179,10 +180,15 @@ public class StaffAssignment {
     }
 
     //TODO: fix this since there can be multiple lunchrooms
-    public static void assignLunch(HashMap<Integer, Staff> staffHashMap, GameView view) {
-        int maxLunchroom = 3;
+    public static void assignLunch(HashMap<Integer, Staff> staffHashMap, GameView view, StandardSchool standardSchool) {
+        Lunchroom[] lunchrooms = standardSchool.getLunchrooms();
+        int lunchCount = 0;
 
-        for (int count = 0; count < maxLunchroom; count++) {
+        for (Lunchroom lunchroom : lunchrooms) {
+            lunchCount = lunchCount + lunchroom.getStaffCapacity();
+        }
+
+        for (int count = 0; count < lunchCount; count++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
             if (optionalStaff.isPresent()) {
                 Staff teacher = optionalStaff.get();

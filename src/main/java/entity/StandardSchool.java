@@ -127,7 +127,7 @@ public class StandardSchool implements SchoolPlan {
         int vocation_count = 0;
 
         class_count = classrooms.length;
-        office_count = offices.length / 4;
+        office_count = offices.length / 2;
         maint_count = utilityrooms.length + 2;
         library_count = libraries.length * 2;
         drama_count = dramaRooms.length;
@@ -160,11 +160,6 @@ public class StandardSchool implements SchoolPlan {
         total = class_count + office_count + maint_count +
                 lunch_count + library_count + gym_count +
                 art_count + field_count + drama_count + music_count + vocation_count + 5;
-
-        // TODO: Bad fix for staff cap issues
-        if (getTotalStudentCapacity() < 880) {
-            total = total + 10;
-        }
 
         return total;
     }

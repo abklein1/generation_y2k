@@ -29,15 +29,32 @@ public class StudentScheduleAssigner {
         String year = student.studentStatistics.getGradeLevel();
         List<String> requiredClasses = loadGradeRequirements(year);
 
+        List<String> mathClasses = new ArrayList<>();
+        List<String> otherClasses = new ArrayList<>();
+
         for (String className:  requiredClasses) {
             if (classDetailsMap.containsKey(className)) {
                 ClassDetail classDetail = classDetailsMap.get(className);
+                if (classDetail.subject.equals("Math")) {
+                    mathClasses.add(className);
+                } else {
+                    otherClasses.add(className);
+                }
                 assignClassToStudent(student, className, staffHashMap, classDetail);
             } else {
                 System.out.println("Class details for " + className + " not found.");
             }
         }
 
+        //schedule math
+        scheduleMathClasses(student, mathClasses, staffHashMap);
+
+        for (String className : otherClasses) {
+            if (classDetailsMap.containsKey(className)) {
+                ClassDetail classDetail = classDetailsMap.get(className);
+                assignClassToStudent(student, className, staffHashMap, classDetail);
+            }
+        }
     }
 
     private static List<String> loadGradeRequirements(String year) {
@@ -71,6 +88,47 @@ public class StudentScheduleAssigner {
             throw new RuntimeException(e);
         }
         return availableClasses;
+    }
+
+    private static void scheduleMathClasses(Student student, List<String> mathClasses, HashMap<Integer, Staff> staffHashMap) {
+        int mathClassCount = 0;
+
+        for (String className : mathClasses) {
+            if (mathClassCount >= 2) {
+                break; // Only schedule two math classes per year
+            }
+
+            if (classDetailsMap.containsKey(className)) {
+                ClassDetail classDetail = classDetailsMap.get(className);
+                List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap);
+
+                for (Staff teacher : availableTeachers) {
+                    TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
+                    if (availableBlock != null) {
+                        // Create a new StudentBlock and assign the class
+                        StudentBlock studentBlock = new StudentBlock();
+                        studentBlock.setBlockNumber(availableBlock.getBlockNumber());
+                        studentBlock.setClassName(className);
+                        studentBlock.setTeacher(teacher);
+                        studentBlock.setSemester(availableBlock.getSemester());
+                        studentBlock.setRoom(availableBlock.getRoom());
+
+                        // Assign the student block to the student's schedule
+                        student.studentStatistics.getStudentSchedule().add(studentBlock);
+
+                        // Decrease the room capacity
+                        availableBlock.getRoom().setRoomCapacity(availableBlock.getRoom().getStudentCapacity() - 1);
+
+                        System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getStudentCapacity());
+
+                        mathClassCount++;
+                        if (mathClassCount >= 2) {
+                            break; // Stop scheduling after two math classes
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff > staffHashMap, ClassDetail classDetail) {

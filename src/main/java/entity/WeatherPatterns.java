@@ -72,7 +72,7 @@ public enum WeatherPatterns {
     RAIN_SNOW_AND_WIND("Rain, Snow and Wind.png"),
     SCATTERED_FLURRIES("Scattered Flurries.png"),
     SCATTERED_FLURRIES_NIGHT("Scattered Flurries (night).png"),
-    SCATTERED_SHOWERS_DAY("Scattered Showers (day).png"),
+    SCATTERED_SHOWERS_DAY("Scattered Showers  (day).png"),
     SCATTERED_SHOWERS_NIGHT_ONLINE("Scattered Showers  (night, online version).png"),
     SCATTERED_SNOW_SHOWERS_DAY("Scattered Snow Showers (day).png"),
     SCATTERED_SNOW_SHOWERS_NIGHT("Scattered Snow Showers (night).png"),
