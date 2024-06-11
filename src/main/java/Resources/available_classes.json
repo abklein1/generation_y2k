@@ -360,7 +360,6 @@
         ],
         "Alternatives": [],
         "Grade Level": [
-          10,
           11,
           12
         ]
@@ -402,6 +401,20 @@
         ],
         "Grade Level": [
           9
+        ]
+      },
+      "Trigonometry": {
+        "Honors": true,
+        "OnLevel": true,
+        "Required": true,
+        "Prerequisite": ["Algebra I"],
+        "Alternatives": [
+          "Algebra 1",
+          "Geometry"
+        ],
+        "Grade Level": [
+          10,
+          11
         ]
       }
     },

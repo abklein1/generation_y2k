@@ -1,11 +1,8 @@
 package utility;
 
+import entity.*;
 import entity.Rooms.Classroom;
 import entity.Rooms.Room;
-import entity.Staff;
-import entity.Student;
-import entity.TeacherBlock;
-import entity.TeacherSchedule;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -40,6 +37,8 @@ public class Inspector {
         String grade = student.studentStatistics.getGradeLevel();
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
+        List<String> schedule = student.studentStatistics.getStudentSchedule().toStringArray();
+
         if (suffix != null) {
             sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix).append("\n=====================================\n");
         } else {
@@ -76,6 +75,7 @@ public class Inspector {
             sb.append(firstName).append(" is not asleep.\n");
         }
         sb.append("Their family has the following income: " ).append(income).append("\n");
+        sb.append("Student schedule is: ").append(schedule);
 
         inspectionArea.setText(sb.toString());
     }

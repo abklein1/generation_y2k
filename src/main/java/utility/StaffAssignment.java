@@ -1,7 +1,6 @@
 package utility;
 
 import entity.*;
-import entity.Rooms.Room;
 import view.GameView;
 
 import java.util.*;
@@ -240,7 +239,7 @@ public class StaffAssignment {
     public static List<Staff> getTeachersOfType(HashMap<Integer, Staff> staffHashMap, StaffType type) {
         List<Staff> staffList = new ArrayList<>();
         for (Map.Entry<Integer, Staff> staff : staffHashMap.entrySet()) {
-            if(staff.getValue().teacherStatistics.getStaffType().equals(type)) {
+            if (staff.getValue().teacherStatistics.getStaffType().equals(type)) {
                 staffList.add(staff.getValue());
             }
         }
@@ -250,11 +249,17 @@ public class StaffAssignment {
 
     public static void assignClassesToStaff(HashMap<Integer, Staff> staffHashMap, StandardSchool standardSchool, GameView view) {
         List<Staff> englishTeachers = getTeachersOfType(staffHashMap, StaffType.ENGLISH);
+        List<Staff> mathTeachers = getTeachersOfType(staffHashMap, StaffType.MATH);
+        int studentsInGrade;
+        int classesNeeded;
+        Staff selectedTeacher;
+        TeacherSchedule schedule;
+        TeacherBlock block;
 
         if (englishTeachers.isEmpty()) {
             view.appendOutput("No English teachers available for assignment.");
         }
-
+        //TODO : Hardcoded for now
         String[] englishClasses = {"English I", "English II", "English III", "English IV"};
         String[] gradeLevels = {"Freshman", "Sophomore", "Junior", "Senior"};
 
@@ -263,16 +268,17 @@ public class StaffAssignment {
             HashMap<Integer, Student> gradeClass = standardSchool.getStudentGradeClass(gradeLevels[i]);
             studentsPerGrade[i] = (gradeClass != null) ? gradeClass.size() : 0;
         }
-
+        // TODO : Split all this out into their own methods at some point
+        //English assignment
         for (int gradeIndex = 0; gradeIndex < englishClasses.length; gradeIndex++) {
-            int studentsInGrade = studentsPerGrade[gradeIndex];
-            int classesNeeded = (int) Math.ceil((double) studentsInGrade/35);
+            studentsInGrade = studentsPerGrade[gradeIndex];
+            classesNeeded = (int) Math.ceil((double) studentsInGrade / 35);
 
-            for(int classCount = 0; classCount < classesNeeded; classCount++) {
-                Staff selectedTeacher = null;
-                for(Staff teacher : englishTeachers) {
-                    TeacherSchedule schedule = teacher.teacherStatistics.getTeacherSchedule();
-                    if(schedule.size() < 4) {
+            for (int classCount = 0; classCount < classesNeeded; classCount++) {
+                selectedTeacher = null;
+                for (Staff teacher : englishTeachers) {
+                    schedule = teacher.teacherStatistics.getTeacherSchedule();
+                    if (schedule.size() < 4) {
                         selectedTeacher = teacher;
                         break;
                     }
@@ -280,18 +286,129 @@ public class StaffAssignment {
 
                 if (selectedTeacher == null) {
                     view.appendOutput("Not enough teachers available to cover all classes.");
-                    return;
+                } else {
+                    block = new TeacherBlock();
+                    block.setBlockNumber(selectedTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
+                    block.setClassName(englishClasses[gradeIndex]);
+                    block.setRoom(standardSchool.getClassroomByStaff(selectedTeacher));
+                    block.setSemester("Both");
+
+                    selectedTeacher.teacherStatistics.addTeacherSchedule(block);
+                    view.appendOutput("Assigned " + englishClasses[gradeIndex] + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
+                }
+            }
+        }
+        //Math assignment
+        for (int gradeIndex = 0; gradeIndex < 4; gradeIndex++) {
+            studentsInGrade = studentsPerGrade[gradeIndex];
+            classesNeeded = (int) Math.ceil((double) studentsInGrade / 35);
+            for (int classCount = 0; classCount < classesNeeded; classCount++) {
+                selectedTeacher = null;
+                for (Staff teacher : mathTeachers) {
+                    schedule = teacher.teacherStatistics.getTeacherSchedule();
+                    if (schedule.size() < 8) {
+                        selectedTeacher = teacher;
+                        break;
+                    }
                 }
 
-                TeacherBlock block = new TeacherBlock();
-                block.setBlockNumber(selectedTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-                block.setClassName(englishClasses[gradeIndex]);
-                block.setRoom(standardSchool.getClassroomByStaff(selectedTeacher));
-                block.setSemester("Both");
+                if (selectedTeacher == null) {
+                    view.appendOutput("Not enough teachers available to cover all classes.");
+                } else {
+                    //fall math
+                    block = new TeacherBlock();
+                    String f_name = mathHelper(block, selectedTeacher, "Fall", gradeIndex, standardSchool, mathTeachers.indexOf(selectedTeacher));
+                    selectedTeacher.teacherStatistics.addTeacherSchedule(block);
+                    //spring math
+                    block = new TeacherBlock();
+                    String s_name = mathHelper(block, selectedTeacher, "Spring", gradeIndex, standardSchool, mathTeachers.indexOf(selectedTeacher));
+                    selectedTeacher.teacherStatistics.addTeacherSchedule(block);
 
-                selectedTeacher.teacherStatistics.addTeacherSchedule(block);
-                view.appendOutput("Assigned " + englishClasses[gradeIndex] + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
+                    view.appendOutput("Assigned " + f_name + " and " + s_name + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
+                }
             }
+        }
+    }
+
+    private static String mathHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
+
+        String classname;
+
+        block.setBlockNumber(teacher.teacherStatistics.getTeacherSchedule().size() + 1);
+        block.setRoom(standardSchool.getClassroomByStaff(teacher));
+        block.setSemester(semester);
+
+        if (semester.equals("Fall")) {
+            if (gradeIndex == 0) {
+                if (count % 2 == 0) {
+                    classname = "Geometry";
+                } else {
+                    classname = "Fundamentals of Math";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 1) {
+                if (count % 2 == 0) {
+                    classname = "Algebra II";
+                } else {
+                    classname = "Algebra I";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 2) {
+                if (count % 2 == 0) {
+                    classname = "Precalculus";
+                } else {
+                    classname = "Trigonometry";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else {
+                if (count % 2 == 0) {
+                    classname = "AP Calculus AB";
+                } else {
+                    classname = "Precalculus";
+                }
+                block.setClassName(classname);
+                return classname;
+            }
+        } else if (semester.equals("Spring")) {
+            if (gradeIndex == 0) {
+                if (count % 2 == 0) {
+                    classname = "Algebra I";
+                } else {
+                    classname = "Geometry";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 1) {
+                if (count % 2 == 0) {
+                    classname = "Trigonometry";
+                } else {
+                    classname = "Algebra II";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 2) {
+                if (count % 2 == 0) {
+                    classname = "AP Statistics";
+                } else {
+                    classname = "Math for Data and Financial Literacy";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else {
+                if (count % 2 == 0) {
+                    classname = "AP Calculus BC";
+                } else {
+                    classname = "Algebra II";
+                }
+                block.setClassName(classname);
+                return classname;
+            }
+        } else {
+            System.err.println("Can't find semester");
+            return "";
         }
     }
 }

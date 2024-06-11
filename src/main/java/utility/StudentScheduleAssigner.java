@@ -20,7 +20,6 @@ public class StudentScheduleAssigner {
 
     //TODO: Not an amazing entry point but we will use it for now
     public static void scheduleAllStudents(HashMap<Integer, Student> studentHashMap, HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("In the scheduler");
         for (Map.Entry<Integer, Student> student : studentHashMap.entrySet()) {
             scheduleStudent(student.getValue(), staffHashMap);
         }
