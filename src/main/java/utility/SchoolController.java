@@ -80,19 +80,7 @@ public class SchoolController {
                 //Set for staff population generation
                 TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, view);
                 publish("Assigning initial staff...");
-                StaffAssignment.initialAssignmentsCore(staffHashMap, student_cap, view);
-                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getArtStudios().length, StaffType.VISUAL_ARTS, view);
-                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getAthleticFields().length + standardSchool.getGyms().length, StaffType.PHYSICAL_ED, view);
-                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getMusicRooms().length + standardSchool.getDramaRooms().length + standardSchool.getAuditoriums().length, StaffType.PERFORMING_ARTS, view);
-                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getVocationalRooms().length, StaffType.VOCATIONAL, view);
-                StaffAssignment.assignElectiveByRooms(staffHashMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI, view);
-                StaffAssignment.assignFrontOfficePersonnel(staffHashMap, view);
-                StaffAssignment.assignUtilityPersonnel(staffHashMap, view, standardSchool);
-                StaffAssignment.assignLibraryPersonnel(staffHashMap, view, standardSchool);
-                StaffAssignment.assignNurse(staffHashMap, view);
-                StaffAssignment.assignLunch(staffHashMap, view, standardSchool);
-                StaffAssignment.assignBusiness(staffHashMap, view);
-                StaffAssignment.assignSubs(staffHashMap, view);
+                StaffAssignment.initialAssignments(staffHashMap, student_cap, view, standardSchool);
                 RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
                 publish("Done creating school and students");
                 publish("+++++++++++++++++++++++++++++++++++++++++");
@@ -104,8 +92,7 @@ public class SchoolController {
                 updateWeatherLabels();
                 classrooms = standardSchool.getClassrooms();
                 for(Classroom classroom : classrooms) {
-                    classroom.reassignClassroomByTeacher();
-                    publish("Classroom " + classroom.getRoomName() + " reassigned.");
+                    classroom.reassignClassroomByTeacher(staffHashMap, view);
                 }
                 StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
                 try {

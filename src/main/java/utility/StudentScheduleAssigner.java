@@ -6,7 +6,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.swing.*;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,21 +27,78 @@ public class StudentScheduleAssigner {
     public static void scheduleStudent(Student student, HashMap<Integer, Staff> staffHashMap) {
         String year = student.studentStatistics.getGradeLevel();
         List<String> requiredClasses = loadGradeRequirements(year);
+        int intelligence = student.studentStatistics.getIntelligence();
+        String income = student.studentStatistics.getIncomeLevel();
+        String pathSelection = classProbabilityLoader(intelligence, income);
 
         List<String> mathClasses = new ArrayList<>();
         List<String> otherClasses = new ArrayList<>();
 
-        for (String className:  requiredClasses) {
-            if (classDetailsMap.containsKey(className)) {
-                ClassDetail classDetail = classDetailsMap.get(className);
-                if (classDetail.subject.equals("Math")) {
-                    mathClasses.add(className);
-                } else {
-                    otherClasses.add(className);
+        if (pathSelection.equals("AP")) {
+            switch (year) {
+                case "Freshman" -> {
+                    otherClasses.add("English I");
+                    mathClasses.add("Geometry");
+                    mathClasses.add("Algebra I");
                 }
-                assignClassToStudent(student, className, staffHashMap, classDetail);
-            } else {
-                System.out.println("Class details for " + className + " not found.");
+                case "Sophomore" -> {
+                    otherClasses.add("English II");
+                    mathClasses.add("Algebra II");
+                    mathClasses.add("Trigonometry");
+                }
+                case "Junior" -> {
+                    otherClasses.add("AP Language and Composition");
+                    mathClasses.add("Precalculus");
+                    mathClasses.add("AP Statistics");
+                }
+                default -> {
+                    otherClasses.add("AP Literature and Composition");
+                    mathClasses.add("AP Calculus AB");
+                    mathClasses.add("AP Calculus BC");
+                }
+            }
+        } else if (pathSelection.equals("Honors")) {
+            switch (year) {
+                case "Freshman" -> {
+                    otherClasses.add("English I");
+                    mathClasses.add("Geometry");
+                    mathClasses.add("Algebra I");
+                }
+                case "Sophomore" -> {
+                    otherClasses.add("English II");
+                    mathClasses.add("Algebra II");
+                    mathClasses.add("Trigonometry");
+                }
+                case "Junior" -> {
+                    otherClasses.add("English III");
+                    mathClasses.add("Precalculus");
+                }
+                default -> {
+                    otherClasses.add("English IV");
+                    System.out.println("No required math this year");
+                }
+            }
+        } else {
+            switch (year) {
+                case "Freshman" -> {
+                    otherClasses.add("English I");
+                    mathClasses.add("Fundamentals of Math");
+                    mathClasses.add("Geometry");
+                }
+                case "Sophomore" -> {
+                    otherClasses.add("English II");
+                    mathClasses.add("Algebra I");
+                    mathClasses.add("Algebra II");
+                }
+                case "Junior" -> {
+                    otherClasses.add("English III");
+                    mathClasses.add("Trigonometry");
+                    mathClasses.add("Math for Data and Financial Literacy");
+                }
+                default -> {
+                    otherClasses.add("English IV");
+                    mathClasses.add("Precalculus");
+                }
             }
         }
 
@@ -131,7 +187,7 @@ public class StudentScheduleAssigner {
         }
     }
 
-    private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff > staffHashMap, ClassDetail classDetail) {
+    private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff> staffHashMap, ClassDetail classDetail) {
         List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap);
 
         for (Staff teacher : availableTeachers) {
@@ -178,7 +234,7 @@ public class StudentScheduleAssigner {
     private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap) {
         List<Staff> availableTeachers = new ArrayList<>();
 
-        for(Staff teacher : staffHashMap.values()) {
+        for (Staff teacher : staffHashMap.values()) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
                 availableTeachers.add(teacher);
                 break;
@@ -187,6 +243,62 @@ public class StudentScheduleAssigner {
         return availableTeachers;
     }
 
+    private static String classProbabilityLoader(int intelligence, String income) {
+        int random = Randomizer.setRandom(0, 100);
+        double apProbability = 0.0;
+        double honorsProbability = 0.0;
+        double onLevelProbability = 0.0;
 
+        // Base probabilities based on intelligence
+        if (intelligence >= 135) {
+            apProbability = 80.0;
+            honorsProbability = 10.0;
+            onLevelProbability = 10.0;
+        } else if (intelligence >= 120) {
+            apProbability = 50.0;
+            honorsProbability = 30.0;
+            onLevelProbability = 20.0;
+        } else if (intelligence >= 100) {
+            apProbability = 20.0;
+            honorsProbability = 30.0;
+            onLevelProbability = 50.0;
+        } else {
+            apProbability = 5.0;
+            honorsProbability = 20.0;
+            onLevelProbability = 75.0;
+        }
+
+        // Adjust probabilities based on income level
+        switch (income) {
+            case "high":
+                apProbability *= 1.2;
+                honorsProbability *= 1.1;
+                onLevelProbability *= 0.9;
+                break;
+            case "middle":
+                // No adjustment for middle income
+                break;
+            case "low":
+                apProbability *= 0.7;
+                honorsProbability *= 0.9;
+                onLevelProbability *= 1.2;
+                break;
+        }
+
+        // Normalize probabilities to ensure they add up to 100
+        double totalProbability = apProbability + honorsProbability + onLevelProbability;
+        apProbability = (apProbability / totalProbability) * 100;
+        honorsProbability = (honorsProbability / totalProbability) * 100;
+        onLevelProbability = (onLevelProbability / totalProbability) * 100;
+
+        // Determine class based on random value
+        if (random < apProbability) {
+            return "AP";
+        } else if (random < apProbability + honorsProbability) {
+            return "Honors";
+        } else {
+            return "On-Level";
+        }
+    }
 
 }

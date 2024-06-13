@@ -167,7 +167,7 @@ public class Weather {
                     }
                 }
                 // Moderate rain and no snow
-            } else if (prcp <= 76 && snow == 0 && tmin > 0) {
+            } else if (prcp >= 25 && prcp <= 76 && snow == 0 && tmin > 0) {
                 // Wind
                 if (awnd > 70) {
                     if (choice < 75) {
@@ -456,7 +456,7 @@ public class Weather {
                     }
                 }
                 // Moderate rain and no snow
-            } else if (prcp <= 76 && snow == 0 && tmin > 0) {
+            } else if (prcp >= 25 && prcp <= 76 && snow == 0 && tmin > 0) {
                 // Wind
                 if (awnd > 70) {
                     if (choice < 20) {
@@ -736,7 +736,7 @@ public class Weather {
 
     public String getTemp(String temp) {
         double celsius = Double.parseDouble(weatherData.get(temp)) / 10.0;
-        int fahrenheit = (int) (celsius * (9/5)) + 32;
+        int fahrenheit = (int) (celsius * (9.0 / 5.0)) + 32;
         return String.valueOf(fahrenheit);
     }
 

@@ -10,9 +10,12 @@ package entity.Rooms;//*********************************************************
 import entity.Staff;
 import entity.Student;
 import utility.Randomizer;
+import utility.StaffAssignment;
+import view.GameView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Classroom implements Room, Serializable {
@@ -177,12 +180,20 @@ public class Classroom implements Room, Serializable {
         staffAssign.remove(staff);
     }
 
-    public void reassignClassroomByTeacher() {
-        String staffType = getAssignedStaff().get(0).teacherStatistics.getStaffType().toString();
+    public void reassignClassroomByTeacher(HashMap<Integer, Staff> staffHashMap, GameView view) {
         String roomType = getClassRoomType();
-
-        if (!roomType.equals(staffType)) {
-            setClassRoomType(staffType);
+        String staffType;
+        if(!getAssignedStaff().isEmpty()) {
+            staffType = getAssignedStaff().get(0).teacherStatistics.getStaffType().toString();
+            if (!roomType.equals(staffType)) {
+                setClassRoomType(staffType);
+                view.appendOutput("Classroom " + getRoomName() + " reassigned to " + staffType + " from " + roomType);
+            }
+        } else {
+            view.appendOutput("Classroom " + getRoomName() + " has no staff!");
+            StaffAssignment.reassignSubToRoom(staffHashMap,view,this);
+            // recursive call be careful here
+            reassignClassroomByTeacher(staffHashMap, view);
         }
     }
 

@@ -35,9 +35,9 @@ public class Director {
         view.appendOutput("Building breakrooms...");
         standardSchool.setBreakrooms(setRandom(1, 4), view);
         view.appendOutput("Building classrooms...");
-        standardSchool.setClassrooms(setRandom(18, 65), view);
+        standardSchool.setClassrooms(setRandom(18, 75), view);
         view.appendOutput("Building vocational rooms...");
-        standardSchool.setVocationalRooms(setRandom(4,10), view);
+        standardSchool.setVocationalRooms(setRandom(4,14), view);
         view.appendOutput("Building computer labs...");
         standardSchool.setComputerLabs(setRandom(1, 3), view);
         view.appendOutput("Building courtyards...");

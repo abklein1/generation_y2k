@@ -1,22 +1,37 @@
 package utility;
 
-import entity.*;
 import entity.Rooms.Lunchroom;
+import entity.*;
+import entity.Rooms.Room;
 import view.GameView;
 
 import java.util.*;
 
 public class StaffAssignment {
+
     //TODO: clean up these functions. Some can be combined
-    public static void initialAssignmentsCore(HashMap<Integer, Staff> staffHashMap, int studentCap, GameView view) {
-        assignPrincipal(staffHashMap, view);
-        assignVicePrincipal(staffHashMap, view);
-        assignGuidanceCouncilors(staffHashMap, view);
-        assignCoreTeachers(staffHashMap, studentCap, StaffType.ENGLISH, view);
-        assignCoreTeachers(staffHashMap, studentCap, StaffType.HISTORY, view);
-        assignCoreTeachers(staffHashMap, studentCap, StaffType.MATH, view);
-        assignCoreTeachers(staffHashMap, studentCap, StaffType.SCIENCE, view);
-        assignLanguageTeachers(staffHashMap, studentCap, view);
+    public static void initialAssignments(HashMap<Integer, Staff> staffHashMap, int studentCap, GameView view, StandardSchool standardSchool) {
+        HashMap<Integer, Staff> localStaffMap = new HashMap<>(staffHashMap);
+        assignPrincipal(localStaffMap, view);
+        assignVicePrincipal(localStaffMap, view);
+        assignGuidanceCouncilors(localStaffMap, view);
+        assignCoreTeachers(localStaffMap, studentCap, StaffType.ENGLISH, view);
+        assignCoreTeachers(localStaffMap, studentCap, StaffType.HISTORY, view);
+        assignCoreTeachers(localStaffMap, studentCap, StaffType.MATH, view);
+        assignCoreTeachers(localStaffMap, studentCap, StaffType.SCIENCE, view);
+        assignLanguageTeachers(localStaffMap, studentCap, view);
+        StaffAssignment.assignElectiveByRooms(localStaffMap, standardSchool.getArtStudios().length, StaffType.VISUAL_ARTS, view);
+        StaffAssignment.assignElectiveByRooms(localStaffMap, standardSchool.getAthleticFields().length + standardSchool.getGyms().length, StaffType.PHYSICAL_ED, view);
+        StaffAssignment.assignElectiveByRooms(localStaffMap, standardSchool.getMusicRooms().length + standardSchool.getDramaRooms().length + standardSchool.getAuditoriums().length, StaffType.PERFORMING_ARTS, view);
+        StaffAssignment.assignElectiveByRooms(localStaffMap, standardSchool.getVocationalRooms().length, StaffType.VOCATIONAL, view);
+        StaffAssignment.assignElectiveByRooms(localStaffMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI, view);
+        assignUtilityPersonnel(localStaffMap, view, standardSchool);
+        assignLibraryPersonnel(localStaffMap, view, standardSchool);
+        assignFrontOfficePersonnel(localStaffMap, view);
+        assignNurse(localStaffMap, view);
+        assignLunch(localStaffMap, view, standardSchool);
+        assignBusiness(localStaffMap, view);
+        assignSubs(localStaffMap, view);
     }
 
     public static void assignPrincipal(HashMap<Integer, Staff> staffHashMap, GameView view) {
@@ -25,6 +40,7 @@ public class StaffAssignment {
             Staff teacher = optionalStaff.get();
             teacher.teacherStatistics.setStaffType(StaffType.PRINCIPAL);
             view.appendOutput("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as principal!");
+            staffHashMap.values().remove(teacher);
         } else {
             view.appendOutput("Failed to assign principal. No available staff.");
         }
@@ -40,6 +56,7 @@ public class StaffAssignment {
             Staff teacher = optionalStaff.get();
             teacher.teacherStatistics.setStaffType(StaffType.VICE_PRINCIPAL);
             view.appendOutput("Staff " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " assigned as vice principal!");
+            staffHashMap.values().remove(teacher);
         } else {
             view.appendOutput("Failed to assign vice principal. No available staff.");
         }
@@ -64,7 +81,11 @@ public class StaffAssignment {
     private static void assignCoreTeachers(HashMap<Integer, Staff> staffHashMap, int studentCap, StaffType type, GameView view) {
         // Core reqs (I- IV) have to be taught to half the student body per semester. Each teacher can handle 35 students and has 3 periods to teach a subject
         // Plus 4 extra teachers to teach ancillary courses/ AP
-        int coreMax = (((studentCap / 2) / 35) / 3) + 4;
+        int coreMax = (((studentCap / 2) / 35) / 4) + 4;
+
+        if(type.equals(StaffType.ENGLISH)) {
+            coreMax = ((studentCap / 35) / 4) + 4;
+        }
 
         for (int count = 0; count < coreMax; count++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
@@ -115,7 +136,7 @@ public class StaffAssignment {
     }
 
     public static void assignFrontOfficePersonnel(HashMap<Integer, Staff> staffHashMap, GameView view) {
-        int maxOffice = 4;
+        int maxOffice = 2;
 
         for (int count = 0; count < maxOffice; count++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
@@ -179,7 +200,6 @@ public class StaffAssignment {
         }
     }
 
-    //TODO: fix this since there can be multiple lunchrooms
     public static void assignLunch(HashMap<Integer, Staff> staffHashMap, GameView view, StandardSchool standardSchool) {
         Lunchroom[] lunchrooms = standardSchool.getLunchrooms();
         int lunchCount = 0;
@@ -220,6 +240,33 @@ public class StaffAssignment {
                 view.appendOutput("Staff " + staff.getValue().teacherName.getFirstName() + " " + staff.getValue().teacherName.getLastName() + " assigned to " + StaffType.SUB.toString().toLowerCase());
             }
         }
+    }
+
+    public static void reassignSubToRoom(HashMap<Integer, Staff> staffHashMap, GameView view, Room room) {
+        List<Staff> subs = getTeachersOfType(staffHashMap, StaffType.SUB);
+        if (subs.isEmpty()) {
+            view.appendOutput("List of subs is empty!");
+        }
+        int choice = Randomizer.setRandom(0, subs.size() - 1);
+        Staff sub = subs.get(choice);
+
+        StaffType type = selectRandomCoreType();
+
+        sub.teacherStatistics.setStaffType(type);
+
+        room.setAssignedStaff(sub);
+        view.appendOutput(sub.teacherName.getFirstName() + sub.teacherName.getLastName() + " reassigned to " + sub.teacherStatistics.getStaffType() + " in " + room.getRoomName());
+    }
+
+    private static StaffType selectRandomCoreType() {
+        List<StaffType> types = new ArrayList<>();
+        int choice;
+        types.add(StaffType.ENGLISH);
+        types.add(StaffType.MATH);
+        types.add(StaffType.SCIENCE);
+        types.add(StaffType.HISTORY);
+        choice = Randomizer.setRandom(0, types.size() - 1);
+        return types.get(choice);
     }
 
     //TODO: explore efficiency of optionality

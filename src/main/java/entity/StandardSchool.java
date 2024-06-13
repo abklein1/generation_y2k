@@ -108,7 +108,7 @@ public class StandardSchool implements SchoolPlan {
             art_total = art_total + artStudio.getStudentCapacity();
         }
         // We don't want school to be at total capacity to begin with
-        return (int) ((class_total + music_total + drama_total + art_total) * 0.80);
+        return (int) ((class_total + music_total + drama_total + art_total) * 0.75);
     }
 
     public int getMinimumStaffRequirements() {
@@ -156,10 +156,10 @@ public class StandardSchool implements SchoolPlan {
         for (VocationalRoom room : vocationalRooms) {
             vocation_count = vocation_count + room.getStaffCapacity();
         }
-
+        // Going to over-assign staff for now
         total = class_count + office_count + maint_count +
                 lunch_count + library_count + gym_count +
-                art_count + field_count + drama_count + music_count + vocation_count + 5;
+                art_count + field_count + drama_count + music_count + vocation_count + ((int) Math.round(getTotalStudentCapacity() * 0.025)) ;
 
         return total;
     }
