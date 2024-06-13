@@ -10,8 +10,6 @@ import java.util.List;
 
 // TODO: Attach to school director and room generator
 public class MusicRoom implements Room, Serializable {
-
-    private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
     private String roomName;
@@ -24,7 +22,6 @@ public class MusicRoom implements Room, Serializable {
     private Student[][] seats;
 
     public MusicRoom() {
-        this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
         this.roomName = null;
@@ -39,11 +36,6 @@ public class MusicRoom implements Room, Serializable {
     @Override
     public void reset() {
 
-    }
-
-    @Override
-    public void setRoomCapacity(int capacity) {
-        this.roomCapacity = capacity;
     }
 
     @Override
@@ -212,7 +204,12 @@ public class MusicRoom implements Room, Serializable {
         addStudentToSeat(student2, coords1[0], coords1[1]);
     }
 
+    @Override
+    public void setStudentCap(int studentCap) {
+        this.studentCap = studentCap;
+    }
 
-    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
+    @Override
+    public int getRoomCapacity() {return this.studentCap + this.staffCap;}
 
 }

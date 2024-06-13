@@ -21,7 +21,6 @@ import java.util.List;
 public class Classroom implements Room, Serializable {
 
     private final List<Staff> staffAssign;
-    private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
     private String roomName;
@@ -34,7 +33,6 @@ public class Classroom implements Room, Serializable {
     private Student[][] seats;
 
     public Classroom() {
-        this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
         this.roomName = null;
@@ -50,11 +48,6 @@ public class Classroom implements Room, Serializable {
     @Override
     public void reset() {
 
-    }
-
-    @Override
-    public void setRoomCapacity(int capacity) {
-        this.roomCapacity = capacity;
     }
 
     @Override
@@ -284,9 +277,12 @@ public class Classroom implements Room, Serializable {
         addStudentToSeat(student2, coords1[0], coords1[1]);
     }
 
-
-    public void setStudentCap() {
-        this.studentCap = roomCapacity - staffCap;
+    @Override
+    public void setStudentCap(int studentCap) {
+        this.studentCap = studentCap;
     }
+
+    @Override
+    public int getRoomCapacity() {return this.studentCap + this.staffCap;}
 
 }

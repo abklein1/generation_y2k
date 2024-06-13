@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bathroom implements Room, Serializable {
-
-    private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
     private String roomName;
@@ -33,7 +31,6 @@ public class Bathroom implements Room, Serializable {
     private Student[][] seats;
 
     public Bathroom() {
-        this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
         this.roomName = "init";
@@ -51,11 +48,6 @@ public class Bathroom implements Room, Serializable {
     @Override
     public void reset() {
 
-    }
-
-    @Override
-    public void setRoomCapacity(int capacity) {
-        this.roomCapacity = capacity;
     }
 
     @Override
@@ -145,7 +137,7 @@ public class Bathroom implements Room, Serializable {
     // TODO: Later we can make desk arrangements that are not only squares/rectangles
     @Override
     public void setSeatArrangement() {
-        seats = new Student[1][roomCapacity];
+        seats = new Student[1][getRoomCapacity()];
     }
 
     @Override
@@ -201,7 +193,11 @@ public class Bathroom implements Room, Serializable {
         addStudentToSeat(student2, coords1[0], coords1[1]);
     }
 
+    @Override
+    public void setStudentCap(int studentCap) {
+        this.studentCap = studentCap;
+    }
 
-    public void setStudentCap() {this.studentCap = roomCapacity - staffCap;}
-
+    @Override
+    public int getRoomCapacity() {return this.studentCap + this.staffCap;}
 }

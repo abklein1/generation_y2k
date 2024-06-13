@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Breakroom implements Room, Serializable {
-
-    private int roomCapacity;
     private int numOfConnections;
     private int windowCount;
     private String roomName;
@@ -30,7 +28,6 @@ public class Breakroom implements Room, Serializable {
     private Student[][] seats;
 
     public Breakroom() {
-        this.roomCapacity = 0;
         this.numOfConnections = 0;
         this.windowCount = 0;
         this.roomName = "";
@@ -45,11 +42,6 @@ public class Breakroom implements Room, Serializable {
     @Override
     public void reset() {
 
-    }
-
-    @Override
-    public void setRoomCapacity(int capacity) {
-        this.roomCapacity = capacity;
     }
 
     @Override
@@ -181,9 +173,16 @@ public class Breakroom implements Room, Serializable {
         addStudentToSeat(student2, coords1[0], coords1[1]);
     }
 
-
     @Override
     public void removeAssignedStaff(Staff staff) {
         staffAssign.remove(staff);
     }
+
+    @Override
+    public void setStudentCap(int studentCap) {
+        this.studentCap = studentCap;
+    }
+
+    @Override
+    public int getRoomCapacity() {return this.studentCap + this.staffCap;}
 }

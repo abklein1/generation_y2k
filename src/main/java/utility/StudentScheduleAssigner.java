@@ -156,7 +156,8 @@ public class StudentScheduleAssigner {
 
             if (classDetailsMap.containsKey(className)) {
                 ClassDetail classDetail = classDetailsMap.get(className);
-                List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap);
+                int semester = mathClasses.indexOf(className);
+                List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, semester);
 
                 for (Staff teacher : availableTeachers) {
                     TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
@@ -173,7 +174,7 @@ public class StudentScheduleAssigner {
                         student.studentStatistics.getStudentSchedule().add(studentBlock);
 
                         // Decrease the room capacity
-                        availableBlock.getRoom().setRoomCapacity(availableBlock.getRoom().getStudentCapacity() - 1);
+                        availableBlock.getRoom().setStudentCap(availableBlock.getRoom().getStudentCapacity() - 1);
 
                         System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getStudentCapacity());
 
@@ -205,7 +206,7 @@ public class StudentScheduleAssigner {
                 student.studentStatistics.getStudentSchedule().add(studentBlock);
 
                 // Decrease the room capacity
-                availableBlock.getRoom().setRoomCapacity(availableBlock.getRoom().getStudentCapacity() - 1);
+                availableBlock.getRoom().setStudentCap(availableBlock.getRoom().getStudentCapacity() - 1);
 
                 System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getStudentCapacity());
                 return;
@@ -242,6 +243,21 @@ public class StudentScheduleAssigner {
         }
         return availableTeachers;
     }
+
+    private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap, int semester) {
+        List<Staff> availableTeachers = new ArrayList<>();
+
+        for (Staff teacher : staffHashMap.values()) {
+            for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
+                if((block.getSemester().equals("Fall") && semester == 0) || (block.getSemester().equals("Spring") && semester == 1)) {
+                    availableTeachers.add(teacher);
+                    break;
+                }
+            }
+        }
+        return availableTeachers;
+    }
+
 
     private static String classProbabilityLoader(int intelligence, String income) {
         int random = Randomizer.setRandom(0, 100);

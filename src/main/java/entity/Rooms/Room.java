@@ -16,8 +16,6 @@ public interface Room {
 
     void reset();
 
-    void setRoomCapacity(int capacity);
-
     void setConnections(int connections);
 
     int getConnections();
@@ -61,5 +59,9 @@ public interface Room {
     void removeStudentFromSeat(Student student);
 
     void swapStudentSeats(Student student1, Student student2);
+
+    int getRoomCapacity();
+
+    void setStudentCap(int studentCap);
 
 }
