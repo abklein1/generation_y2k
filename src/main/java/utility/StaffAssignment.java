@@ -308,6 +308,7 @@ public class StaffAssignment {
         Staff selectedTeacher;
         TeacherSchedule schedule;
         TeacherBlock block;
+        boolean classSwitch = false;
 
         if (englishTeachers.isEmpty()) {
             view.appendOutput("No English teachers available for assignment.");
@@ -315,6 +316,7 @@ public class StaffAssignment {
         //TODO : Hardcoded for now
         String[] englishClasses = {"English I", "English II", "English III", "English IV"};
         String[] gradeLevels = {"Freshman", "Sophomore", "Junior", "Senior"};
+        String apEng;
 
         int[] studentsPerGrade = new int[gradeLevels.length];
         for (int i = 0; i < gradeLevels.length; i++) {
@@ -349,6 +351,29 @@ public class StaffAssignment {
                     selectedTeacher.teacherStatistics.addTeacherSchedule(block);
                     view.appendOutput("Assigned " + englishClasses[gradeIndex] + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
                 }
+            }
+        }
+        // if leftover English assign AP
+        for (Staff leftoverEnglish : englishTeachers) {
+            schedule = leftoverEnglish.teacherStatistics.getTeacherSchedule();
+            if(schedule.size() < 4) {
+                while (schedule.size() < 4) {
+                    block = new TeacherBlock();
+                    block.setBlockNumber(leftoverEnglish.teacherStatistics.getTeacherSchedule().size() + 1);
+                    if (!classSwitch) {
+                        apEng = "AP Language and Composition";
+                        block.setClassName(apEng);
+                    } else {
+                        apEng = "AP Literature and Composition";
+                        block.setClassName(apEng);
+                    }
+                    block.setRoom(standardSchool.getClassroomByStaff(leftoverEnglish));
+                    block.setSemester("Both");
+
+                    leftoverEnglish.teacherStatistics.addTeacherSchedule(block);
+                    view.appendOutput("Assigned " + apEng + " to " + leftoverEnglish.teacherName.getFirstName() + " " + leftoverEnglish.teacherName.getLastName());
+                }
+                classSwitch = !classSwitch;
             }
         }
         //Math assignment
