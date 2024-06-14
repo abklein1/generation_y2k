@@ -79,7 +79,7 @@ public class VocationalRoom implements Room, Serializable {
     public void setStudentRestriction(boolean studentRestriction) {
         this.studentRestriction = studentRestriction;
     }
-    //TODO: I should actually use studentCap instead in the future
+
     @Override
     public int getStudentCapacity() {
         return studentCap;

@@ -47,12 +47,12 @@ public class StudentScheduleAssigner {
                     mathClasses.add("Trigonometry");
                 }
                 case "Junior" -> {
-                    otherClasses.add("AP Language and Composition");
+                    otherClasses.add("AP English Language & Composition");
                     mathClasses.add("Precalculus");
                     mathClasses.add("AP Statistics");
                 }
                 default -> {
-                    otherClasses.add("AP Literature and Composition");
+                    otherClasses.add("AP English Literature & Composition");
                     mathClasses.add("AP Calculus AB");
                     mathClasses.add("AP Calculus BC");
                 }

@@ -113,7 +113,7 @@ public class StandardSchool implements SchoolPlan {
             voc_total = voc_total + vocationalRoom.getStudentCapacity();
         }
         // We don't want school to be at total capacity to begin with
-        return (int) ((class_total + music_total + drama_total + art_total + voc_total) * 0.75);
+        return (int) ((class_total + music_total + drama_total + art_total + voc_total) * 0.70);
     }
 
     public int getMinimumStaffRequirements() {
@@ -341,7 +341,7 @@ public class StandardSchool implements SchoolPlan {
             classrooms[i].setDoors(connectN);
             classrooms[i].setClassroomType(decision);
             classrooms[i].setInitialStaff(1);
-            classrooms[i].setStudentCap(setRandom(25,45));
+            classrooms[i].setStudentCap(setRandom(25,35));
             classrooms[i].setSeatArrangement();
             classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(0, 99));
         }
@@ -671,7 +671,7 @@ public class StandardSchool implements SchoolPlan {
             dramaRooms[i].setConnections(connectN);
             dramaRooms[i].setDoors(connectN);
             dramaRooms[i].setInitialStaff(1);
-            dramaRooms[i].setStudentCap(setRandom(15,50));
+            dramaRooms[i].setStudentCap(setRandom(15,35));
             dramaRooms[i].setSeatArrangement();
             dramaRooms[i].setRoomNumber("D" + i + setRandom(100, 999));
         }
@@ -830,7 +830,7 @@ public class StandardSchool implements SchoolPlan {
             vocationalRooms[i].setConnections(connectN);
             vocationalRooms[i].setDoors(connectN);
             vocationalRooms[i].setInitialStaff(1);
-            vocationalRooms[i].setStudentCap(setRandom(30, 55));
+            vocationalRooms[i].setStudentCap(setRandom(25, 35));
             vocationalRooms[i].setSeatArrangement();
             vocationalRooms[i].setRoomNumber("Vocational" + i + setRandom(100, 999));
         }
