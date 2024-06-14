@@ -12,11 +12,11 @@ import entity.Student;
 import utility.Randomizer;
 
 import java.io.Serializable;
-import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Office implements Room, Serializable {
+    private final List<Staff> staffAssign;
     private int numOfConnections;
     private int windowCount;
     private String roomName;
@@ -25,7 +25,6 @@ public class Office implements Room, Serializable {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
-    private final List<Staff> staffAssign;
     private Student[][] seats;
 
     public Office() {
@@ -110,13 +109,13 @@ public class Office implements Room, Serializable {
     }
 
     @Override
-    public void setAssignedStaff(Staff staff) {
-        staffAssign.add(staff);
+    public List<Staff> getAssignedStaff() {
+        return this.staffAssign;
     }
 
     @Override
-    public List<Staff> getAssignedStaff() {
-        return this.staffAssign;
+    public void setAssignedStaff(Staff staff) {
+        staffAssign.add(staff);
     }
 
     @Override
@@ -127,7 +126,7 @@ public class Office implements Room, Serializable {
     // TODO: Later we can make desk arrangements that are not only squares/rectangles
     @Override
     public void setSeatArrangement() {
-        int choice = Randomizer.setRandom(0,2);
+        int choice = Randomizer.setRandom(0, 2);
         if (studentCap <= 6) {
             if (choice == 0) {
                 seats = new Student[1][2];
@@ -135,6 +134,12 @@ public class Office implements Room, Serializable {
                 seats = new Student[2][1];
             } else {
                 seats = new Student[1][1];
+            }
+        } else if (studentCap <= 16) {
+            if (choice == 0) {
+                seats = new Student[4][4];
+            } else {
+                seats = new Student[2][8];
             }
         } else {
             // TODO: Better error handling later
@@ -155,9 +160,9 @@ public class Office implements Room, Serializable {
     @Override
     public int[] getStudentSeatCoordinate(Student student) {
         int[] coords = new int[2];
-        for(int i = 0; i < seats.length; i++) {
-            for(int j = 0; j < seats[i].length; j++) {
-                if(seats[i][j].equals(student)) {
+        for (int i = 0; i < seats.length; i++) {
+            for (int j = 0; j < seats[i].length; j++) {
+                if (seats[i][j].equals(student)) {
                     coords[0] = i;
                     coords[1] = j;
                     return coords;
@@ -170,7 +175,7 @@ public class Office implements Room, Serializable {
 
     @Override
     public void addStudentToSeat(Student student, int x, int y) {
-        if(seats[x][y] != null) {
+        if (seats[x][y] != null) {
             System.out.println(student.studentName + " can't be assigned to seat because there is already someone there!");
         } else {
             seats[x][y] = student;
@@ -201,6 +206,8 @@ public class Office implements Room, Serializable {
     }
 
     @Override
-    public int getRoomCapacity() {return this.studentCap + this.staffCap;}
+    public int getRoomCapacity() {
+        return this.studentCap + this.staffCap;
+    }
 
 }

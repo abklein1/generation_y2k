@@ -158,6 +158,7 @@ public class StudentScheduleAssigner {
                 ClassDetail classDetail = classDetailsMap.get(className);
                 int semester = mathClasses.indexOf(className);
                 List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, semester);
+                boolean classAssigned = false;
 
                 for (Staff teacher : availableTeachers) {
                     TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
@@ -179,10 +180,13 @@ public class StudentScheduleAssigner {
                         System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getStudentCapacity());
 
                         mathClassCount++;
-                        if (mathClassCount >= 2) {
-                            break; // Stop scheduling after two math classes
-                        }
+                        classAssigned = true;
+                        break;
                     }
+                }
+
+                if (classAssigned) {
+                    continue;
                 }
             }
         }
