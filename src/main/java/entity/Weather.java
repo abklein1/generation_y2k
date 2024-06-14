@@ -643,7 +643,7 @@ public class Weather {
                     } else if (choice < 20) {
                         return WeatherPatterns.CLEAR_AND_HAZY;
                     } else if (choice < 30) {
-                        return WeatherPatterns.FAIR_AND_HAZY;
+                        return WeatherPatterns.FAIR_AND_HAZY_NIGHT;
                     } else if (choice < 40) {
                         return WeatherPatterns.FAIR_MOSTLY_CLEAR_NIGHT;
                     } else if (choice < 50) {
