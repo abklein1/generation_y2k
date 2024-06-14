@@ -81,10 +81,10 @@ public class StaffAssignment {
     private static void assignCoreTeachers(HashMap<Integer, Staff> staffHashMap, int studentCap, StaffType type, GameView view) {
         // Core reqs (I- IV) have to be taught to half the student body per semester. Each teacher can handle 35 students and has 3 periods to teach a subject
         // Plus 4 extra teachers to teach ancillary courses/ AP
-        int coreMax = (((studentCap / 2) / 35) / 4) + 4;
+        int coreMax = (int) Math.round((((studentCap / 2.0) / 30.0) / 4.00) + 4);
 
         if(type.equals(StaffType.ENGLISH)) {
-            coreMax = ((studentCap / 35) / 4) + 4;
+            coreMax = (int) Math.round(((studentCap / 30.0) / 4.00) + 4);
         }
 
         for (int count = 0; count < coreMax; count++) {
@@ -255,12 +255,15 @@ public class StaffAssignment {
         sub.teacherStatistics.setStaffType(type);
 
         room.setAssignedStaff(sub);
-        view.appendOutput(sub.teacherName.getFirstName() + sub.teacherName.getLastName() + " reassigned to " + sub.teacherStatistics.getStaffType() + " in " + room.getRoomName());
+        view.appendOutput(sub.teacherName.getFirstName() + " " + sub.teacherName.getLastName() + " reassigned to " + sub.teacherStatistics.getStaffType() + " in " + room.getRoomName());
     }
 
+    //TODO: Lazy way of adjusting English but will re-evaluate later. Right now English is over-capacity
     private static StaffType selectRandomCoreType() {
         List<StaffType> types = new ArrayList<>();
         int choice;
+        types.add(StaffType.ENGLISH);
+        types.add(StaffType.ENGLISH);
         types.add(StaffType.ENGLISH);
         types.add(StaffType.MATH);
         types.add(StaffType.SCIENCE);
@@ -312,6 +315,7 @@ public class StaffAssignment {
 
         if (englishTeachers.isEmpty()) {
             view.appendOutput("No English teachers available for assignment.");
+            return;
         }
 
         String[] englishClasses = {"English I", "English II", "English III", "English IV"};
@@ -361,47 +365,53 @@ public class StaffAssignment {
             }
         }
 
-        // Step 3: Assign the last two remaining teachers to AP classes
+        // Step 3: Assign only two teachers to AP classes
         if (remainingTeachers.size() >= 2) {
-            Staff lastTeacher = remainingTeachers.remove(remainingTeachers.size() - 1);
-            Staff secondLastTeacher = remainingTeachers.remove(remainingTeachers.size() - 1);
+            Staff apLitTeacher = remainingTeachers.remove(remainingTeachers.size() - 1);
+            Staff apLangTeacher = remainingTeachers.remove(remainingTeachers.size() - 1);
 
-            // Assign to AP Literature and AP Language
-            TeacherBlock apLitBlock = new TeacherBlock();
-            apLitBlock.setBlockNumber(lastTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-            apLitBlock.setClassName("AP English Literature & Composition");
-            apLitBlock.setRoom(standardSchool.getClassroomByStaff(lastTeacher));
-            apLitBlock.setSemester("Both");
-            lastTeacher.teacherStatistics.addTeacherSchedule(apLitBlock);
-            view.appendOutput("Assigned AP English Literature & Composition to " + lastTeacher.teacherName.getFirstName() + " " + lastTeacher.teacherName.getLastName());
-
-            TeacherBlock apLangBlock = new TeacherBlock();
-            apLangBlock.setBlockNumber(secondLastTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-            apLangBlock.setClassName("AP English Language & Composition");
-            apLangBlock.setRoom(standardSchool.getClassroomByStaff(secondLastTeacher));
-            apLangBlock.setSemester("Both");
-            secondLastTeacher.teacherStatistics.addTeacherSchedule(apLangBlock);
-            view.appendOutput("Assigned AP English Language & Composition to " + secondLastTeacher.teacherName.getFirstName() + " " + secondLastTeacher.teacherName.getLastName());
-        }
-
-        // Step 4: Assign any additional remaining teachers to AP classes
-        boolean assignToAPLang = true;
-        for (Staff remainingTeacher : remainingTeachers) {
-            while (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+            // Assign to AP Literature
+            while (apLitTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
                 block = new TeacherBlock();
-                block.setBlockNumber(remainingTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-                if (assignToAPLang) {
-                    block.setClassName("AP English Language & Composition");
-                } else {
-                    block.setClassName("AP English Literature & Composition");
-                }
-                block.setRoom(standardSchool.getClassroomByStaff(remainingTeacher));
+                block.setBlockNumber(apLitTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
+                block.setClassName("AP English Literature & Composition");
+                block.setRoom(standardSchool.getClassroomByStaff(apLitTeacher));
                 block.setSemester("Both");
 
-                remainingTeacher.teacherStatistics.addTeacherSchedule(block);
-                view.appendOutput("Assigned " + block.getClassName() + " to " + remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName());
+                apLitTeacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned AP English Literature & Composition to " + apLitTeacher.teacherName.getFirstName() + " " + apLitTeacher.teacherName.getLastName());
+            }
 
-                assignToAPLang = !assignToAPLang;
+            // Assign to AP Language
+            while (apLangTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+                block = new TeacherBlock();
+                block.setBlockNumber(apLangTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
+                block.setClassName("AP English Language & Composition");
+                block.setRoom(standardSchool.getClassroomByStaff(apLangTeacher));
+                block.setSemester("Both");
+
+                apLangTeacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned AP English Language & Composition to " + apLangTeacher.teacherName.getFirstName() + " " + apLangTeacher.teacherName.getLastName());
+            }
+        }
+
+        // Step 4: Assign any additional remaining teachers to regular English classes
+        for (Staff remainingTeacher : remainingTeachers) {
+            while (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+                for (String englishClass : englishClasses) {
+                    if (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+                        block = new TeacherBlock();
+                        block.setBlockNumber(remainingTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
+                        block.setClassName(englishClass);
+                        block.setRoom(standardSchool.getClassroomByStaff(remainingTeacher));
+                        block.setSemester("Both");
+
+                        remainingTeacher.teacherStatistics.addTeacherSchedule(block);
+                        view.appendOutput("Assigned " + englishClass + " to " + remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName());
+                    } else {
+                        break;
+                    }
+                }
             }
         }
         //Math assignment

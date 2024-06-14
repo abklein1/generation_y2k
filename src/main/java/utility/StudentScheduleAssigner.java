@@ -177,7 +177,7 @@ public class StudentScheduleAssigner {
                         // Decrease the room capacity
                         availableBlock.getRoom().setStudentCap(availableBlock.getRoom().getStudentCapacity() - 1);
 
-                        System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getStudentCapacity());
+                        System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
 
                         mathClassCount++;
                         classAssigned = true;
@@ -212,7 +212,7 @@ public class StudentScheduleAssigner {
                 // Decrease the room capacity
                 availableBlock.getRoom().setStudentCap(availableBlock.getRoom().getStudentCapacity() - 1);
 
-                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getStudentCapacity());
+                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
                 return;
             }
         }
@@ -230,7 +230,7 @@ public class StudentScheduleAssigner {
                 student.studentStatistics.getStudentSchedule().add(studentBlock);
 
                 // Even though the room is overassigned, we add the student
-                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getStudentCapacity());
+                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
                 return;
             }
         }

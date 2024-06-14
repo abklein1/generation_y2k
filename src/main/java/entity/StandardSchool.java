@@ -88,32 +88,13 @@ public class StandardSchool implements SchoolPlan {
 
     public int getTotalStudentCapacity() {
         int class_total = 0;
-        int drama_total = 0;
-        int music_total = 0;
-        int art_total = 0;
-        int voc_total = 0;
 
         for (Classroom classroom : classrooms) {
             class_total = class_total + classroom.getStudentCapacity();
         }
 
-        for (MusicRoom musicRoom : musicRooms) {
-            music_total = music_total + musicRoom.getStudentCapacity();
-        }
-
-        for (DramaRoom dramaRoom : dramaRooms) {
-            drama_total = drama_total + dramaRoom.getStudentCapacity();
-        }
-
-        for (ArtStudio artStudio : artStudios) {
-            art_total = art_total + artStudio.getStudentCapacity();
-        }
-
-        for (VocationalRoom vocationalRoom : vocationalRooms) {
-            voc_total = voc_total + vocationalRoom.getStudentCapacity();
-        }
         // We don't want school to be at total capacity to begin with
-        return (int) ((class_total + music_total + drama_total + art_total + voc_total) * 0.70);
+        return (int) ((class_total ) * 0.70);
     }
 
     public int getMinimumStaffRequirements() {
@@ -341,7 +322,7 @@ public class StandardSchool implements SchoolPlan {
             classrooms[i].setDoors(connectN);
             classrooms[i].setClassroomType(decision);
             classrooms[i].setInitialStaff(1);
-            classrooms[i].setStudentCap(setRandom(25,35));
+            classrooms[i].setStudentCap(setRandom(20,30));
             classrooms[i].setSeatArrangement();
             classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(0, 99));
         }
