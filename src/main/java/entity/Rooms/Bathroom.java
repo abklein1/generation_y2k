@@ -28,6 +28,7 @@ public class Bathroom implements Room, Serializable {
     private boolean studentRestriction;
     private int stallNumber;
     private final List<Staff> staffAssign;
+    private final List<Student> students;
     private Student[][] seats;
 
     public Bathroom() {
@@ -43,6 +44,7 @@ public class Bathroom implements Room, Serializable {
         this.studentRestriction = false;
         this.stallNumber = 0;
         this.staffAssign = new ArrayList<>();
+        this.students = new ArrayList<>();
     }
 
     @Override
@@ -200,4 +202,9 @@ public class Bathroom implements Room, Serializable {
 
     @Override
     public int getRoomCapacity() {return this.studentCap + this.staffCap;}
+
+    @Override
+    public void addStudent(Student student) {students.add(student);}
+    @Override
+    public List<Student> getStudents() { return this.students;}
 }

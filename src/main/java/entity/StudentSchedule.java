@@ -19,6 +19,11 @@ public class StudentSchedule {
         classSchedule.remove(block);
     }
 
+    public List<StudentBlock> getClassSchedule() {
+        return new ArrayList<>(classSchedule);
+    }
+
+
     public List<String> toStringArray() {
         List<String> studentScheduleString = new ArrayList<>();
 

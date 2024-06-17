@@ -64,4 +64,8 @@ public interface Room {
 
     void setStudentCap(int studentCap);
 
+    void addStudent(Student student);
+
+    List<Student> getStudents();
+
 }

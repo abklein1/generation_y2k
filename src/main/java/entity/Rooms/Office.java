@@ -26,6 +26,7 @@ public class Office implements Room, Serializable {
     private String roomNumber;
     private boolean studentRestriction;
     private Student[][] seats;
+    private final List<Student> students;
 
     public Office() {
         this.numOfConnections = 0;
@@ -37,6 +38,7 @@ public class Office implements Room, Serializable {
         this.roomNumber = null;
         this.studentRestriction = false;
         this.staffAssign = new ArrayList<>();
+        this.students = new ArrayList<>();
     }
 
     @Override
@@ -209,5 +211,10 @@ public class Office implements Room, Serializable {
     public int getRoomCapacity() {
         return this.studentCap + this.staffCap;
     }
+
+    @Override
+    public void addStudent(Student student) {students.add(student);}
+    @Override
+    public List<Student> getStudents() { return this.students;}
 
 }

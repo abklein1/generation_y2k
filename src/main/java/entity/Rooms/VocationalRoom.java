@@ -20,6 +20,7 @@ public class VocationalRoom implements Room, Serializable {
     private boolean studentRestriction;
     private final String classRoomType;
     private final List<Staff> staffAssign;
+    private final List<Student> students;
     private Student[][] seats;
 
     public VocationalRoom() {
@@ -33,6 +34,7 @@ public class VocationalRoom implements Room, Serializable {
         this.studentRestriction = false;
         this.classRoomType = null;
         this.staffAssign = new ArrayList<>();
+        this.students = new ArrayList<>();
     }
 
     @Override
@@ -213,5 +215,10 @@ public class VocationalRoom implements Room, Serializable {
 
     @Override
     public int getRoomCapacity() {return this.studentCap + this.staffCap;}
+
+    @Override
+    public void addStudent(Student student) {students.add(student);}
+    @Override
+    public List<Student> getStudents() { return this.students;}
 
 }

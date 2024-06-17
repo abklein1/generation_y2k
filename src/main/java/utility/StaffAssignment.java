@@ -345,11 +345,13 @@ public class StaffAssignment {
                 if (selectedTeacher == null) {
                     view.appendOutput("Not enough teachers available to cover all classes.");
                 } else {
+                    Room selectedRoom = standardSchool.getClassroomByStaff(selectedTeacher);
                     block = new TeacherBlock();
                     block.setBlockNumber(selectedTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
                     block.setClassName(englishClasses[gradeIndex]);
-                    block.setRoom(standardSchool.getClassroomByStaff(selectedTeacher));
+                    block.setRoom(selectedRoom);
                     block.setSemester("Both");
+                    block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
                     selectedTeacher.teacherStatistics.addTeacherSchedule(block);
                     view.appendOutput("Assigned " + englishClasses[gradeIndex] + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
@@ -372,11 +374,13 @@ public class StaffAssignment {
 
             // Assign to AP Literature
             while (apLitTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+                Room selectedRoom = standardSchool.getClassroomByStaff(apLitTeacher);
                 block = new TeacherBlock();
                 block.setBlockNumber(apLitTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
                 block.setClassName("AP English Literature & Composition");
-                block.setRoom(standardSchool.getClassroomByStaff(apLitTeacher));
+                block.setRoom(selectedRoom);
                 block.setSemester("Both");
+                block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
                 apLitTeacher.teacherStatistics.addTeacherSchedule(block);
                 view.appendOutput("Assigned AP English Literature & Composition to " + apLitTeacher.teacherName.getFirstName() + " " + apLitTeacher.teacherName.getLastName());
@@ -384,11 +388,13 @@ public class StaffAssignment {
 
             // Assign to AP Language
             while (apLangTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+                Room selectedRoom = standardSchool.getClassroomByStaff(apLangTeacher);
                 block = new TeacherBlock();
                 block.setBlockNumber(apLangTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
                 block.setClassName("AP English Language & Composition");
-                block.setRoom(standardSchool.getClassroomByStaff(apLangTeacher));
+                block.setRoom(selectedRoom);
                 block.setSemester("Both");
+                block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
                 apLangTeacher.teacherStatistics.addTeacherSchedule(block);
                 view.appendOutput("Assigned AP English Language & Composition to " + apLangTeacher.teacherName.getFirstName() + " " + apLangTeacher.teacherName.getLastName());
@@ -400,11 +406,13 @@ public class StaffAssignment {
             while (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
                 for (String englishClass : englishClasses) {
                     if (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+                        Room selectedRoom = standardSchool.getClassroomByStaff(remainingTeacher);
                         block = new TeacherBlock();
                         block.setBlockNumber(remainingTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
                         block.setClassName(englishClass);
-                        block.setRoom(standardSchool.getClassroomByStaff(remainingTeacher));
+                        block.setRoom(selectedRoom);
                         block.setSemester("Both");
+                        block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
                         remainingTeacher.teacherStatistics.addTeacherSchedule(block);
                         view.appendOutput("Assigned " + englishClass + " to " + remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName());
@@ -449,10 +457,12 @@ public class StaffAssignment {
     private static String mathHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
 
         String classname;
+        int roomCapacity = standardSchool.getClassroomByStaff(teacher).getStudentCapacity();
 
         block.setBlockNumber(teacher.teacherStatistics.getTeacherSchedule().size() + 1);
         block.setRoom(standardSchool.getClassroomByStaff(teacher));
         block.setSemester(semester);
+        block.addClassPopulationBlock(roomCapacity);
 
         if (semester.equals("Fall")) {
             if (gradeIndex == 0) {

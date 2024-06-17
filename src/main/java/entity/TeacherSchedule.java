@@ -33,7 +33,7 @@ public class TeacherSchedule {
 
     public TeacherBlock getBlockByClassNameAndAvailability(String className) {
         for (TeacherBlock block : teacherSchedule) {
-            if (block.className.equals(className) && block.room.getStudentCapacity() > 0) {
+            if (block.className.equals(className) && block.capacity > 0) {
                 return block;
             }
         }

@@ -197,6 +197,7 @@ public class Inspector {
         List<Staff> staff = room.getAssignedStaff();
         int studentCap = room.getStudentCapacity();
         Student[][] seats = room.getSeatArrangement();
+        List<Student> students = room.getStudents();
 
         StringBuilder roomDetails = new StringBuilder();
         roomDetails.append("Welcome to ").append(roomName).append("\n");
@@ -209,6 +210,10 @@ public class Inspector {
             String abbrev = ((Classroom) room).getClassRoomType();
             roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");
         }
+        roomDetails.append("The following students are assigned to this room:\n");
+        for (Student student : students) {
+            roomDetails.append(student.studentName.getFirstName()).append(" ").append(student.studentName.getLastName()).append("\n");
+        }
 
         JTextArea roomInfoArea = new JTextArea(roomDetails.toString());
         roomInfoArea.setEditable(false);
@@ -220,7 +225,7 @@ public class Inspector {
 
         Object[][] data = new Object[seats.length][seats[0].length];
         for (int row = 0; row < seats.length; row++) {
-            for (int col = 0; col <seats[0].length; col++) {
+            for (int col = 0; col < seats[0].length; col++) {
                 if (seats[row][col] != null) {
                     data[row][col] = seats[row][col].studentName.getFirstName() + " " + seats[row][col].studentName.getLastName();
                 } else {

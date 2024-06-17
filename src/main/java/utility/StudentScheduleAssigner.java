@@ -105,10 +105,10 @@ public class StudentScheduleAssigner {
         //schedule math
         scheduleMathClasses(student, mathClasses, staffHashMap);
 
+        //English for now
         for (String className : otherClasses) {
             if (classDetailsMap.containsKey(className)) {
-                ClassDetail classDetail = classDetailsMap.get(className);
-                assignClassToStudent(student, className, staffHashMap, classDetail);
+                assignClassToStudent(student, className, staffHashMap, StaffType.ENGLISH);
             }
         }
     }
@@ -155,14 +155,20 @@ public class StudentScheduleAssigner {
             }
 
             if (classDetailsMap.containsKey(className)) {
-                ClassDetail classDetail = classDetailsMap.get(className);
                 int semester = mathClasses.indexOf(className);
-                List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, semester);
+                List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, semester, StaffType.MATH);
                 boolean classAssigned = false;
 
                 for (Staff teacher : availableTeachers) {
                     TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
                     if (availableBlock != null) {
+                        for (StudentBlock sb : student.studentStatistics.getStudentSchedule().getClassSchedule()) {
+                            if (sb.getRoom().getStudents().contains(student)) {
+                                System.out.println("Student already exists in class!");
+                                break;
+                            }
+                        }
+
                         // Create a new StudentBlock and assign the class
                         StudentBlock studentBlock = new StudentBlock();
                         studentBlock.setBlockNumber(availableBlock.getBlockNumber());
@@ -175,25 +181,20 @@ public class StudentScheduleAssigner {
                         student.studentStatistics.getStudentSchedule().add(studentBlock);
 
                         // Decrease the room capacity
-                        availableBlock.getRoom().setStudentCap(availableBlock.getRoom().getStudentCapacity() - 1);
+                        availableBlock.addStudentToBlock(student);
 
                         System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
 
                         mathClassCount++;
-                        classAssigned = true;
                         break;
                     }
-                }
-
-                if (classAssigned) {
-                    continue;
                 }
             }
         }
     }
 
-    private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff> staffHashMap, ClassDetail classDetail) {
-        List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap);
+    private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff> staffHashMap, StaffType staffType) {
+        List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, staffType);
 
         for (Staff teacher : availableTeachers) {
             TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
@@ -208,7 +209,7 @@ public class StudentScheduleAssigner {
 
                 // Assign the student block to the student's schedule
                 student.studentStatistics.getStudentSchedule().add(studentBlock);
-
+                studentBlock.getRoom().addStudent(student);
                 // Decrease the room capacity
                 availableBlock.getRoom().setStudentCap(availableBlock.getRoom().getStudentCapacity() - 1);
 
@@ -228,18 +229,20 @@ public class StudentScheduleAssigner {
                 studentBlock.setRoom(block.getRoom());
 
                 student.studentStatistics.getStudentSchedule().add(studentBlock);
+                studentBlock.getRoom().addStudent(student);
 
-                // Even though the room is overassigned, we add the student
+                // Even though the room is over assigned, we add the student
                 System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
                 return;
             }
         }
     }
 
-    private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap) {
+    private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap, StaffType staffType) {
+        List<Staff> staffTypeTeachers = StaffAssignment.getTeachersOfType(staffHashMap, staffType);
         List<Staff> availableTeachers = new ArrayList<>();
 
-        for (Staff teacher : staffHashMap.values()) {
+        for (Staff teacher : staffTypeTeachers) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
                 availableTeachers.add(teacher);
                 break;
@@ -248,10 +251,11 @@ public class StudentScheduleAssigner {
         return availableTeachers;
     }
 
-    private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap, int semester) {
+    private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap, int semester, StaffType staffType) {
+        List<Staff> staffTypeTeachers = StaffAssignment.getTeachersOfType(staffHashMap, staffType);
         List<Staff> availableTeachers = new ArrayList<>();
 
-        for (Staff teacher : staffHashMap.values()) {
+        for (Staff teacher : staffTypeTeachers) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
                 if((block.getSemester().equals("Fall") && semester == 0) || (block.getSemester().equals("Spring") && semester == 1)) {
                     availableTeachers.add(teacher);

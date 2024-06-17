@@ -11,6 +11,7 @@ import java.util.List;
 public class AthleticField implements Room, Serializable {
 
     private final List<Staff> staffAssign;
+    private final List<Student> students;
     private int numOfConnections;
     private int windowCount;
     private String roomName;
@@ -31,6 +32,7 @@ public class AthleticField implements Room, Serializable {
         this.roomNumber = null;
         this.studentRestriction = false;
         this.staffAssign = new ArrayList<>();
+        this.students = new ArrayList<>();
     }
 
     @Override
@@ -189,5 +191,10 @@ public class AthleticField implements Room, Serializable {
 
     @Override
     public int getRoomCapacity() {return this.studentCap + this.staffCap;}
+
+    @Override
+    public void addStudent(Student student) {students.add(student);}
+    @Override
+    public List<Student> getStudents() { return this.students;}
 
 }
