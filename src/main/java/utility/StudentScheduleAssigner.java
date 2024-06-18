@@ -209,9 +209,8 @@ public class StudentScheduleAssigner {
 
                 // Assign the student block to the student's schedule
                 student.studentStatistics.getStudentSchedule().add(studentBlock);
-                studentBlock.getRoom().addStudent(student);
                 // Decrease the room capacity
-                availableBlock.getRoom().setStudentCap(availableBlock.getRoom().getStudentCapacity() - 1);
+                availableBlock.addStudentToBlock(student);
 
                 System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
                 return;
@@ -228,8 +227,10 @@ public class StudentScheduleAssigner {
                 studentBlock.setSemester(block.getSemester());
                 studentBlock.setRoom(block.getRoom());
 
+                // Assign the student block to the student's schedule
                 student.studentStatistics.getStudentSchedule().add(studentBlock);
-                studentBlock.getRoom().addStudent(student);
+                // Decrease the room capacity
+                block.addStudentToBlock(student);
 
                 // Even though the room is over assigned, we add the student
                 System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
@@ -245,7 +246,6 @@ public class StudentScheduleAssigner {
         for (Staff teacher : staffTypeTeachers) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
                 availableTeachers.add(teacher);
-                break;
             }
         }
         return availableTeachers;

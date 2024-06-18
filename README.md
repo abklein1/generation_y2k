@@ -99,7 +99,6 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 - Rival schools
 - More accurate descriptors of teachers based on age
 - Household and personal traits
-- Graduation requirements
 - Rumors
 - School and extracurricular events
 - Local businesses / points of interest
