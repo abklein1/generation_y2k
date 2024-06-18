@@ -220,7 +220,20 @@ activities, but they cannot be pushed beyond their initial cap.
 - Graph visualization of rooms can be hard to read due to overlapping labels
 - Graph visualization of rooms cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers
-- Some classrooms with attached science labs reassigned to other teacher types
+- Some students aren't assigned to required classes per grade level
+- Some rooms have negative student capacity
+
+## Release 0.0.9
+
+- Teachers and students now can be assigned classes per block and semester
+- Initial Math and English assignments for teachers
+- Initial Math and English assignments for students based on graduation requirements, income level and intelligence
+- Room inspector now shows student assignments per block/class
+- Grid-based seating system implemented for rooms
+- Revised student cap and staff cap calculations
+- Various bugfixes
+
+![](src/main/java/Resources.Screencaps/proto4.JPG)
 
 ## Release 0.0.8
 
