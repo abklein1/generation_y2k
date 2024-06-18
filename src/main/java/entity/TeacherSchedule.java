@@ -1,5 +1,6 @@
 package entity;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,5 +49,9 @@ public class TeacherSchedule {
         }
 
         return teacherScheduleString;
+    }
+
+    public ArrayList<TeacherBlock> getTeacherSchedule() {
+        return teacherSchedule;
     }
 }

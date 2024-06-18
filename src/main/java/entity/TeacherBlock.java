@@ -83,4 +83,8 @@ public class TeacherBlock {
     public int getBlockPopulation() {
         return capacity;
     }
+
+    public List<Student> getClassPopulation() {
+        return classPopulation;
+    }
 }

@@ -192,12 +192,15 @@ public class Inspector {
         studentInspection(low, inspectionArea);
     }
 
+
     public static void inspectRoom(Room room) {
         String roomName = room.getRoomName();
         List<Staff> staff = room.getAssignedStaff();
         int studentCap = room.getStudentCapacity();
         Student[][] seats = room.getSeatArrangement();
-        List<Student> students = room.getStudents();
+        TeacherSchedule teacherSchedule = room.getAssignedStaff().get(0).teacherStatistics.getTeacherSchedule();
+        List<TeacherBlock> teacherBlocks = teacherSchedule.getTeacherSchedule();
+        List<Student> students;
 
         StringBuilder roomDetails = new StringBuilder();
         roomDetails.append("Welcome to ").append(roomName).append("\n");
@@ -209,10 +212,6 @@ public class Inspector {
         if (room instanceof Classroom) {
             String abbrev = ((Classroom) room).getClassRoomType();
             roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");
-        }
-        roomDetails.append("The following students are assigned to this room:\n");
-        for (Student student : students) {
-            roomDetails.append(student.studentName.getFirstName()).append(" ").append(student.studentName.getLastName()).append("\n");
         }
 
         JTextArea roomInfoArea = new JTextArea(roomDetails.toString());
@@ -249,13 +248,37 @@ public class Inspector {
             }
         });
 
-        JScrollPane scrollPane = new JScrollPane(studentTable);
-        scrollPane.setPreferredSize(new Dimension(400, 200));
+        JScrollPane studentScrollPane = new JScrollPane(studentTable);
+        studentScrollPane.setPreferredSize(new Dimension(400, 200));
+
+        JTextArea studentListArea = new JTextArea();
+        studentListArea.setEditable(false);
+        for (TeacherBlock block : teacherBlocks) {
+            studentListArea.append("Block: ");
+            studentListArea.append(String.valueOf(block.getBlockNumber()));
+            studentListArea.append("\n");
+            studentListArea.append(block.getClassName());
+            studentListArea.append("\n");
+            studentListArea.append(block.getSemester());
+            studentListArea.append("\n");
+            students = block.getClassPopulation();
+            for (Student student : students) {
+                studentListArea.append(student.studentName.getFirstName());
+                studentListArea.append(" ");
+                studentListArea.append(student.studentName.getLastName());
+                studentListArea.append("\n");
+            }
+        }
+        JScrollPane studentListScrollPane = new JScrollPane(studentListArea);
+        studentListScrollPane.setPreferredSize(new Dimension(200, 200));
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, studentListScrollPane, studentScrollPane);
+        splitPane.setResizeWeight(0.5);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.add(roomInfoArea, BorderLayout.NORTH);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(splitPane, BorderLayout.CENTER);
 
         JOptionPane.showMessageDialog(null, panel, "Room Details", JOptionPane.INFORMATION_MESSAGE);
     }
