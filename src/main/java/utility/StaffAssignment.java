@@ -1,8 +1,8 @@
 package utility;
 
 import entity.Rooms.Lunchroom;
-import entity.*;
 import entity.Rooms.Room;
+import entity.*;
 import view.GameView;
 
 import java.util.*;
@@ -83,7 +83,7 @@ public class StaffAssignment {
         // Plus 4 extra teachers to teach ancillary courses/ AP
         int coreMax = (int) Math.round((((studentCap / 2.0) / 30.0) / 4.00) + 4);
 
-        if(type.equals(StaffType.ENGLISH)) {
+        if (type.equals(StaffType.ENGLISH)) {
             coreMax = (int) Math.round(((studentCap / 30.0) / 4.00) + 4);
         }
 
@@ -303,9 +303,11 @@ public class StaffAssignment {
         return staffList;
     }
 
+    //TODO: Change the dumb way to do things. Break up this method
     public static void assignClassesToStaff(HashMap<Integer, Staff> staffHashMap, StandardSchool standardSchool, GameView view) {
         List<Staff> englishTeachers = getTeachersOfType(staffHashMap, StaffType.ENGLISH);
         List<Staff> mathTeachers = getTeachersOfType(staffHashMap, StaffType.MATH);
+        List<Staff> scienceTeachers = getTeachersOfType(staffHashMap, StaffType.SCIENCE);
         int studentsInGrade;
         int classesNeeded;
         Staff selectedTeacher;
@@ -437,7 +439,7 @@ public class StaffAssignment {
                 }
 
                 if (selectedTeacher == null) {
-                    view.appendOutput("Not enough teachers available to cover all classes.");
+                    view.appendOutput("Not enough teachers available to cover all math classes.");
                 } else {
                     //fall math
                     block = new TeacherBlock();
@@ -446,6 +448,36 @@ public class StaffAssignment {
                     //spring math
                     block = new TeacherBlock();
                     String s_name = mathHelper(block, selectedTeacher, "Spring", gradeIndex, standardSchool, mathTeachers.indexOf(selectedTeacher));
+                    selectedTeacher.teacherStatistics.addTeacherSchedule(block);
+
+                    view.appendOutput("Assigned " + f_name + " and " + s_name + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
+                }
+            }
+        }
+        //Science assignment
+        for (int gradeIndex = 0; gradeIndex < 4; gradeIndex++) {
+            studentsInGrade = studentsPerGrade[gradeIndex];
+            classesNeeded = (int) Math.ceil((double) studentsInGrade / 35);
+            for (int classCount = 0; classCount < classesNeeded; classCount++) {
+                selectedTeacher = null;
+                for (Staff teacher : scienceTeachers) {
+                    schedule = teacher.teacherStatistics.getTeacherSchedule();
+                    if (schedule.size() < 8) {
+                        selectedTeacher = teacher;
+                        break;
+                    }
+                }
+
+                if (selectedTeacher == null) {
+                    view.appendOutput("Not enough teachers available to cover all science classes");
+                } else {
+                    //fall science
+                    block = new TeacherBlock();
+                    String f_name = scienceHelper(block, selectedTeacher, "Fall", gradeIndex, standardSchool, scienceTeachers.indexOf(selectedTeacher));
+                    selectedTeacher.teacherStatistics.addTeacherSchedule(block);
+                    //spring science
+                    block = new TeacherBlock();
+                    String s_name = scienceHelper(block, selectedTeacher, "Spring", gradeIndex, standardSchool, scienceTeachers.indexOf(selectedTeacher));
                     selectedTeacher.teacherStatistics.addTeacherSchedule(block);
 
                     view.appendOutput("Assigned " + f_name + " and " + s_name + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
@@ -528,6 +560,78 @@ public class StaffAssignment {
                     classname = "AP Calculus BC";
                 } else {
                     classname = "Algebra II";
+                }
+                block.setClassName(classname);
+                return classname;
+            }
+        } else {
+            System.err.println("Can't find semester");
+            return "";
+        }
+    }
+
+    private static String scienceHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
+
+        String classname;
+        int roomCapacity = standardSchool.getClassroomByStaff(teacher).getStudentCapacity();
+
+        block.setBlockNumber(teacher.teacherStatistics.getTeacherSchedule().size() + 1);
+        block.setRoom(standardSchool.getClassroomByStaff(teacher));
+        block.setSemester(semester);
+        block.addClassPopulationBlock(roomCapacity);
+
+        if (semester.equals("Fall")) {
+            if (gradeIndex == 0) {
+                classname = "Biology";
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 1) {
+                classname = "Chemistry";
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 2) {
+                if (count % 2 == 0) {
+                    classname = "AP Biology";
+                } else {
+                    classname = "Anatomy and Physiology";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else {
+                if (count % 2 == 0) {
+                    classname = "AP Physics B";
+                } else {
+                    classname = "Physics";
+                }
+                block.setClassName(classname);
+                return classname;
+            }
+        } else if (semester.equals("Spring")) {
+            if (gradeIndex == 0) {
+                classname = "Biology";
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 1) {
+                if (count % 2 == 0) {
+                    classname = "Earth and Space Science";
+                } else {
+                    classname = "Physical Science";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 2) {
+                if (count % 2 == 0) {
+                    classname = "AP Chemistry";
+                } else {
+                    classname = "Anatomy and Physiology";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else {
+                if (count % 2 == 0) {
+                    classname = "AP Physics C";
+                } else {
+                    classname = "Environmental Science";
                 }
                 block.setClassName(classname);
                 return classname;

@@ -157,7 +157,6 @@ public class StudentScheduleAssigner {
             if (classDetailsMap.containsKey(className)) {
                 int semester = mathClasses.indexOf(className);
                 List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, semester, StaffType.MATH);
-                boolean classAssigned = false;
 
                 for (Staff teacher : availableTeachers) {
                     TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
@@ -168,9 +167,31 @@ public class StudentScheduleAssigner {
                                 break;
                             }
                         }
-
+                        int blockNumber = availableBlock.getBlockNumber();
+                        String semesterT = availableBlock.getSemester();
                         // Create a new StudentBlock and assign the class
                         StudentBlock studentBlock = new StudentBlock();
+                        if(semesterT.equals("Spring")) {
+                            if(blockNumber == 2) {
+                                studentBlock.setBlockNumber(1);
+                            } else if(blockNumber == 4) {
+                                studentBlock.setBlockNumber(2);
+                            } else if(blockNumber == 6) {
+                                studentBlock.setBlockNumber(3);
+                            } else {
+                                studentBlock.setBlockNumber(4);
+                            }
+                        } else {
+                            if(blockNumber == 1) {
+                                studentBlock.setBlockNumber(1);
+                            } else if (blockNumber == 3) {
+                                studentBlock.setBlockNumber(2);
+                            } else if (blockNumber == 5) {
+                                studentBlock.setBlockNumber(3);
+                            } else {
+                                studentBlock.setBlockNumber(4);
+                            }
+                        }
                         studentBlock.setBlockNumber(availableBlock.getBlockNumber());
                         studentBlock.setClassName(className);
                         studentBlock.setTeacher(teacher);
