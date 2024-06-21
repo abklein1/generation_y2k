@@ -1,4 +1,4 @@
-# Generation '04
+# generation_y2k
 
 ***Originally a school project that has been modified***
 
