@@ -25,7 +25,7 @@ public class GameView {
     private final JPanel pmPanel;
 
     public GameView() {
-        frame = new JFrame("Generation '04");
+        frame = new JFrame("generation_y2k");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 500);
 

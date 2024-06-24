@@ -308,6 +308,7 @@ public class StaffAssignment {
         List<Staff> englishTeachers = getTeachersOfType(staffHashMap, StaffType.ENGLISH);
         List<Staff> mathTeachers = getTeachersOfType(staffHashMap, StaffType.MATH);
         List<Staff> scienceTeachers = getTeachersOfType(staffHashMap, StaffType.SCIENCE);
+        List<Staff> historyTeachers = getTeachersOfType(staffHashMap, StaffType.HISTORY);
         int studentsInGrade;
         int classesNeeded;
         Staff selectedTeacher;
@@ -484,6 +485,36 @@ public class StaffAssignment {
                 }
             }
         }
+        //History assignment
+        for (int gradeIndex = 0; gradeIndex < 4; gradeIndex++) {
+            studentsInGrade = studentsPerGrade[gradeIndex];
+            classesNeeded = (int) Math.ceil((double) studentsInGrade / 35);
+            for (int classCount = 0; classCount < classesNeeded; classCount++) {
+                selectedTeacher = null;
+                for (Staff teacher : historyTeachers) {
+                    schedule = teacher.teacherStatistics.getTeacherSchedule();
+                    if (schedule.size() < 8) {
+                        selectedTeacher = teacher;
+                        break;
+                    }
+                }
+
+                if (selectedTeacher == null) {
+                    view.appendOutput("Not enough teachers available to cover all history classes");
+                } else {
+                    //fall history
+                    block = new TeacherBlock();
+                    String f_name = historyHelper(block, selectedTeacher, "Fall", gradeIndex, standardSchool, scienceTeachers.indexOf(selectedTeacher));
+                    selectedTeacher.teacherStatistics.addTeacherSchedule(block);
+                    //spring history
+                    block = new TeacherBlock();
+                    String s_name = historyHelper(block, selectedTeacher, "Spring", gradeIndex, standardSchool, scienceTeachers.indexOf(selectedTeacher));
+                    selectedTeacher.teacherStatistics.addTeacherSchedule(block);
+
+                    view.appendOutput("Assigned " + f_name + " and " + s_name + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
+                }
+            }
+        }
     }
 
     private static String mathHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
@@ -640,5 +671,81 @@ public class StaffAssignment {
             System.err.println("Can't find semester");
             return "";
         }
+    }
+
+    private static String historyHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
+        String classname;
+        int roomCapacity = standardSchool.getClassroomByStaff(teacher).getStudentCapacity();
+
+        block.setBlockNumber(teacher.teacherStatistics.getTeacherSchedule().size() + 1);
+        block.setRoom(standardSchool.getClassroomByStaff(teacher));
+        block.setSemester(semester);
+        block.addClassPopulationBlock(roomCapacity);
+
+        if (semester.equals("Fall")) {
+            if (gradeIndex == 0) {
+                classname = "World Geography";
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 1) {
+                if (count % 2 == 0) {
+                    classname = "World History";
+                } else {
+                    classname = "AP World History";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 2) {
+                if (count % 2 == 0) {
+                    classname = "US History";
+                } else {
+                    classname = "AP US History";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else {
+                if (count % 2 == 0) {
+                    classname = "US Government";
+                } else {
+                    classname = "AP US Government";
+                }
+                block.setClassName(classname);
+                return classname;
+            }
+        } else if (semester.equals("Spring")) {
+            if (gradeIndex == 0) {
+                classname = "AP Human Geography";
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 1) {
+                if (count % 2 == 0) {
+                    classname = "World History";
+                } else {
+                    classname = "AP World History";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else if (gradeIndex == 2) {
+                if (count % 2 == 0) {
+                    classname = "US History";
+                } else {
+                    classname = "AP US History";
+                }
+                block.setClassName(classname);
+                return classname;
+            } else {
+                if (count % 2 == 0) {
+                    classname = "U.S. Government";
+                } else {
+                    classname = "AP Economics Macro";
+                }
+                block.setClassName(classname);
+                return classname;
+            }
+        } else {
+            System.err.println("Can't find semester");
+            return "";
+        }
+
     }
 }
