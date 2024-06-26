@@ -26,89 +26,99 @@ public class StudentScheduleAssigner {
 
     public static void scheduleStudent(Student student, HashMap<Integer, Staff> staffHashMap) {
         String year = student.studentStatistics.getGradeLevel();
-        List<String> requiredClasses = loadGradeRequirements(year);
         int intelligence = student.studentStatistics.getIntelligence();
         String income = student.studentStatistics.getIncomeLevel();
-        String pathSelection = classProbabilityLoader(intelligence, income);
 
+        // Determine paths for each subject
+        String englishPath = classProbabilityLoader(intelligence, income);
+        String mathPath = classProbabilityLoader(intelligence, income);
+        String sciencePath = classProbabilityLoader(intelligence, income);
+        String historyPath = classProbabilityLoader(intelligence, income);
+
+        List<String> englishClasses = new ArrayList<>();
         List<String> mathClasses = new ArrayList<>();
-        List<String> otherClasses = new ArrayList<>();
+        List<String> scienceClasses = new ArrayList<>();
+        List<String> historyClasses = new ArrayList<>();
 
-        if (pathSelection.equals("AP")) {
-            switch (year) {
-                case "Freshman" -> {
-                    otherClasses.add("English I");
-                    mathClasses.add("Geometry");
+        // Determine English classes based on path and grade level
+        switch (year) {
+            case "Freshman" -> englishClasses.add("English I");
+            case "Sophomore" -> englishClasses.add("English II");
+            case "Junior" ->
+                    englishClasses.add(englishPath.equals("AP") ? "AP English Language & Composition" : "English III");
+            default ->
+                    englishClasses.add(englishPath.equals("AP") ? "AP English Literature & Composition" : "English IV");
+        }
+
+        // Determine Math and Science classes based on path and grade level
+        switch (year) {
+            case "Freshman" -> {
+                mathClasses.add(mathPath.equals("AP") ? "Geometry" : mathPath.equals("Honors") ? "Geometry" : "Fundamentals of Math");
+                if (!mathPath.equals("AP")) {
                     mathClasses.add("Algebra I");
                 }
-                case "Sophomore" -> {
-                    otherClasses.add("English II");
-                    mathClasses.add("Algebra II");
-                    mathClasses.add("Trigonometry");
+                //No science options freshman
+                scienceClasses.add("Biology");
+            }
+            case "Sophomore" -> {
+                mathClasses.add(mathPath.equals("AP") ? "Algebra II" : mathPath.equals("Honors") ? "Algebra II" : "Algebra I");
+                mathClasses.add(mathPath.equals("AP") ? "Trigonometry" : mathPath.equals("Honors") ? "Trigonometry" : "Algebra II");
+                //Science options
+                if (sciencePath.equals("AP") || sciencePath.equals("Honors")) {
+                    scienceClasses.add("Chemistry");
+                } else {
+                    String[] onLevelScienceOptions = {"Earth and Space Science", "Physical Science"};
+                    scienceClasses.add(onLevelScienceOptions[Randomizer.setRandom(0, onLevelScienceOptions.length - 1)]);
                 }
-                case "Junior" -> {
-                    otherClasses.add("AP English Language & Composition");
-                    mathClasses.add("Precalculus");
+            }
+            case "Junior" -> {
+                mathClasses.add(mathPath.equals("AP") ? "Precalculus" : mathPath.equals("Honors") ? "Precalculus" : "Trigonometry");
+                if (mathPath.equals("AP")) {
                     mathClasses.add("AP Statistics");
-                }
-                default -> {
-                    otherClasses.add("AP English Literature & Composition");
-                    mathClasses.add("AP Calculus AB");
-                    mathClasses.add("AP Calculus BC");
-                }
-            }
-        } else if (pathSelection.equals("Honors")) {
-            switch (year) {
-                case "Freshman" -> {
-                    otherClasses.add("English I");
-                    mathClasses.add("Geometry");
-                    mathClasses.add("Algebra I");
-                }
-                case "Sophomore" -> {
-                    otherClasses.add("English II");
-                    mathClasses.add("Algebra II");
-                    mathClasses.add("Trigonometry");
-                }
-                case "Junior" -> {
-                    otherClasses.add("English III");
-                    mathClasses.add("Precalculus");
-                }
-                default -> {
-                    otherClasses.add("English IV");
-                    System.out.println("No required math this year");
-                }
-            }
-        } else {
-            switch (year) {
-                case "Freshman" -> {
-                    otherClasses.add("English I");
-                    mathClasses.add("Fundamentals of Math");
-                    mathClasses.add("Geometry");
-                }
-                case "Sophomore" -> {
-                    otherClasses.add("English II");
-                    mathClasses.add("Algebra I");
-                    mathClasses.add("Algebra II");
-                }
-                case "Junior" -> {
-                    otherClasses.add("English III");
-                    mathClasses.add("Trigonometry");
+                } else if (!mathPath.equals("Honors")) {
                     mathClasses.add("Math for Data and Financial Literacy");
                 }
-                default -> {
-                    otherClasses.add("English IV");
+                if (sciencePath.equals("AP")) {
+                    String[] apScienceOptions = {"AP Biology", "AP Chemistry"};
+                    scienceClasses.add(apScienceOptions[Randomizer.setRandom(0, apScienceOptions.length - 1)]);
+                } else {
+                    scienceClasses.add("Anatomy and Physiology");
+                }
+            }
+            default -> {
+                if (mathPath.equals("AP")) {
+                    mathClasses.add("AP Calculus AB");
+                    mathClasses.add("AP Calculus BC");
+                } else if (mathPath.equals("Honors")) {
+                    // No required math this year for Honors path
+                } else {
                     mathClasses.add("Precalculus");
+                }
+                if (sciencePath.equals("AP")) {
+                    scienceClasses.add("AP Physics B");
+                    scienceClasses.add("AP Physics C");
+                } else if (sciencePath.equals("Honors")) {
+                    scienceClasses.add("Physics");
+                } else {
+                    scienceClasses.add("Environmental Science");
                 }
             }
         }
 
-        //schedule math
+        // Schedule math classes
         scheduleMathClasses(student, mathClasses, staffHashMap);
 
-        //English for now
-        for (String className : otherClasses) {
+        // Schedule English classes
+        for (String className : englishClasses) {
             if (classDetailsMap.containsKey(className)) {
                 assignClassToStudent(student, className, staffHashMap, StaffType.ENGLISH);
+            }
+        }
+
+        // Schedule science classes
+        for (String className : scienceClasses) {
+            if(classDetailsMap.containsKey(className)) {
+                assignClassToStudent(student, className, staffHashMap, StaffType.SCIENCE);
             }
         }
     }
