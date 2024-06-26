@@ -59,6 +59,7 @@ public class StudentScheduleAssigner {
                 }
                 //No science options freshman
                 scienceClasses.add("Biology");
+                historyClasses.add(historyPath.equals("AP") ? "AP Human Geography" : "World Geography");
             }
             case "Sophomore" -> {
                 mathClasses.add(mathPath.equals("AP") ? "Algebra II" : mathPath.equals("Honors") ? "Algebra II" : "Algebra I");
@@ -70,6 +71,7 @@ public class StudentScheduleAssigner {
                     String[] onLevelScienceOptions = {"Earth and Space Science", "Physical Science"};
                     scienceClasses.add(onLevelScienceOptions[Randomizer.setRandom(0, onLevelScienceOptions.length - 1)]);
                 }
+                historyClasses.add(historyPath.equals("AP") ? "AP World History" : "World History");
             }
             case "Junior" -> {
                 mathClasses.add(mathPath.equals("AP") ? "Precalculus" : mathPath.equals("Honors") ? "Precalculus" : "Trigonometry");
@@ -84,6 +86,7 @@ public class StudentScheduleAssigner {
                 } else {
                     scienceClasses.add("Anatomy and Physiology");
                 }
+                historyClasses.add(historyPath.equals("AP") ? "AP US History" : "US History");
             }
             default -> {
                 if (mathPath.equals("AP")) {
@@ -102,6 +105,12 @@ public class StudentScheduleAssigner {
                 } else {
                     scienceClasses.add("Environmental Science");
                 }
+                if (historyPath.equals("AP")) {
+                    historyClasses.add("AP US Government");
+                    historyClasses.add("AP Economics Macro");
+                } else {
+                    historyClasses.add("US Government");
+                }
             }
         }
 
@@ -119,6 +128,13 @@ public class StudentScheduleAssigner {
         for (String className : scienceClasses) {
             if(classDetailsMap.containsKey(className)) {
                 assignClassToStudent(student, className, staffHashMap, StaffType.SCIENCE);
+            }
+        }
+
+        // Schedule history classes
+        for (String className : historyClasses) {
+            if(classDetailsMap.containsKey(className)) {
+                assignClassToStudent(student, className, staffHashMap, StaffType.HISTORY);
             }
         }
     }

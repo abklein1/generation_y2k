@@ -735,7 +735,7 @@ public class StaffAssignment {
                 return classname;
             } else {
                 if (count % 2 == 0) {
-                    classname = "U.S. Government";
+                    classname = "US Government";
                 } else {
                     classname = "AP Economics Macro";
                 }
