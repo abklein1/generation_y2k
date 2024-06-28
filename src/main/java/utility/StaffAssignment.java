@@ -309,12 +309,13 @@ public class StaffAssignment {
         List<Staff> mathTeachers = getTeachersOfType(staffHashMap, StaffType.MATH);
         List<Staff> scienceTeachers = getTeachersOfType(staffHashMap, StaffType.SCIENCE);
         List<Staff> historyTeachers = getTeachersOfType(staffHashMap, StaffType.HISTORY);
+        List<Staff> languageTeachers = getTeachersOfType(staffHashMap, StaffType.LANGUAGES);
         int studentsInGrade;
         int classesNeeded;
         Staff selectedTeacher;
         TeacherSchedule schedule;
         TeacherBlock block;
-        boolean classSwitch = false;
+        int langCount = 0;
 
         if (englishTeachers.isEmpty()) {
             view.appendOutput("No English teachers available for assignment.");
@@ -515,6 +516,17 @@ public class StaffAssignment {
                 }
             }
         }
+        //Language Assignment
+        for (Staff teacher : languageTeachers) {
+            languageHelper(teacher, standardSchool, langCount, view);
+            if (langCount == 6) {
+                langCount = 0;
+            } else {
+                langCount++;
+            }
+        }
+
+
     }
 
     private static String mathHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
@@ -746,6 +758,104 @@ public class StaffAssignment {
             System.err.println("Can't find semester");
             return "";
         }
+    }
 
+    private static void languageHelper(Staff teacher, StandardSchool standardSchool, int count, GameView view) {
+        String[] classes = new String[8];
+        String f_name = teacher.teacherName.getFirstName();
+        String l_name = teacher.teacherName.getLastName();
+        Room room = standardSchool.getClassroomByStaff(teacher);
+        int studentPop = room.getStudentCapacity();
+        switch (count) {
+            case 0 -> {
+                classes[0] = "Spanish I";
+                classes[1] = "Spanish II";
+                classes[2] = "Spanish I";
+                classes[3] = "Spanish II";
+                classes[4] = "Spanish I";
+                classes[5] = "Spanish II";
+                classes[6] = "Spanish I";
+                classes[7] = "Spanish II";
+            }
+            case 1 -> {
+                classes[0] = "Spanish III";
+                classes[1] = "Spanish IV";
+                classes[2] = "Spanish III";
+                classes[3] = "Spanish IV";
+                classes[4] = "Spanish III";
+                classes[5] = "Spanish IV";
+                classes[6] = "AP Spanish Literature";
+                classes[7] = "AP Spanish Language";
+            }
+            case 2 -> {
+                classes[0] = "French I";
+                classes[1] = "French II";
+                classes[2] = "French I";
+                classes[3] = "French II";
+                classes[4] = "French I";
+                classes[5] = "French II";
+                classes[6] = "French I";
+                classes[7] = "French II";
+            }
+            case 3 -> {
+                classes[0] = "German I";
+                classes[1] = "German II";
+                classes[2] = "German I";
+                classes[3] = "German II";
+                classes[4] = "German I";
+                classes[5] = "German II";
+                classes[6] = "German I";
+                classes[7] = "German II";
+            }
+            case 4 -> {
+                classes[0] = "American Sign Language I";
+                classes[1] = "American Sign Language II";
+                classes[2] = "American Sign Language I";
+                classes[3] = "American Sign Language II";
+                classes[4] = "American Sign Language I";
+                classes[5] = "American Sign Language II";
+                classes[6] = "American Sign Language I";
+                classes[7] = "American Sign Language II";
+            }
+            case 5 -> {
+                classes[0] = "Latin I";
+                classes[1] = "Latin II";
+                classes[2] = "Latin I";
+                classes[3] = "Latin II";
+                classes[4] = "Latin I";
+                classes[5] = "Latin II";
+                classes[6] = "Latin I";
+                classes[7] = "Latin II";
+            }
+        }
+        int index = 0;
+        for(String classN : classes) {
+            TeacherBlock block = new TeacherBlock();
+            block.setClassName(classN);
+            if(index % 2 == 0) {
+                block.setSemester("Fall");
+            } else {
+                block.setSemester("Spring");
+            }
+            switch (index) {
+                case 0,4 -> {
+                    block.setBlockNumber(1);
+                }
+                case 1,5 -> {
+                    block.setBlockNumber(2);
+                }
+                case 2,6 -> {
+                    block.setBlockNumber(3);
+                }
+                case 3,7 -> {
+                    block.setBlockNumber(4);
+                }
+            }
+            block.setBlockPopulation(studentPop);
+            block.setRoom(room);
+            teacher.teacherStatistics.addTeacherSchedule(block);
+            view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
+            index++;
+        }
     }
 }

@@ -483,81 +483,89 @@ public class StandardSchool implements SchoolPlan {
         view.appendOutput("   Generating " + number + " offices...");
         for (int i = 0; i < number; i++) {
             offices[i] = new Office();
-            if (i == 0) {
-                offices[i].setRoomName("Principal's Office");
-                view.appendOutput("      Generating Principal's office");
-                offices[i].setDoors(2);
-                offices[i].setWindowCount(3);
-                offices[i].setInitialStaff(1);
-                offices[i].setInitialStudents(0);
-                offices[i].setStudentCap(4);
-                offices[i].setConnections(2);
-                offices[i].setSeatArrangement();
-                offices[i].setRoomNumber("O-100");
-            } else if (i == 1) {
-                offices[i].setRoomName("Vice Principal's Office");
-                view.appendOutput("      Generating Vice Principal's office");
-                offices[i].setDoors(2);
-                offices[i].setWindowCount(2);
-                offices[i].setInitialStaff(1);
-                offices[i].setInitialStudents(0);
-                offices[i].setStudentCap(4);
-                offices[i].setConnections(2);
-                offices[i].setSeatArrangement();
-                offices[i].setRoomNumber("O-101");
-            } else if (i == 2) {
-                offices[i].setRoomName("Guidance Councilor's Office");
-                view.appendOutput("      Generating Councilor's Office");
-                offices[i].setDoors(2);
-                offices[i].setWindowCount(2);
-                offices[i].setInitialStaff(1);
-                offices[i].setInitialStudents(0);
-                offices[i].setStudentCap(4);
-                offices[i].setConnections(2);
-                offices[i].setSeatArrangement();
-                offices[i].setRoomNumber("O-102");
-            } else if (i == 3) {
-                offices[i].setRoomName("Front Office");
-                view.appendOutput("      Generating Front Office");
-                offices[i].setDoors(12);
-                offices[i].setWindowCount(2);
-                offices[i].setInitialStaff(2);
-                offices[i].setInitialStudents(0);
-                offices[i].setStudentCap(15);
-                offices[i].setConnections(12);
-                offices[i].setSeatArrangement();
-                offices[i].setRoomNumber("O-103");
-            } else if (i == 4) {
-                offices[i].setRoomName("Nurse's Office");
-                view.appendOutput("      Generating Nurse's Office");
-                offices[i].setDoors(3);
-                offices[i].setWindowCount(1);
-                offices[i].setInitialStaff(2);
-                offices[i].setInitialStudents(0);
-                offices[i].setStudentCap(6);
-                offices[i].setConnections(3);
-                offices[i].setSeatArrangement();
-                offices[i].setRoomNumber("O-104");
-            } else if (i == 5) {
-                offices[i].setRoomName("Guidance Councilor's Office");
-                view.appendOutput("      Generating Councilor's Office");
-                offices[i].setDoors(2);
-                offices[i].setWindowCount(2);
-                offices[i].setInitialStaff(1);
-                offices[i].setInitialStudents(0);
-                offices[i].setStudentCap(6);
-                offices[i].setConnections(2);
-                offices[i].setSeatArrangement();
-                offices[i].setRoomNumber("O-103");
-            } else {
-                offices[i].setRoomName("Office" + i);
-                view.appendOutput("      Generating " + offices[i].getRoomName());
-                offices[i].setConnections(2);
-                offices[i].setDoors(2);
-                offices[i].setInitialStaff(1);
-                offices[i].setStudentCap(setRandom(2, 6));
-                offices[i].setSeatArrangement();
-                offices[i].setRoomNumber("O" + "-1" + i);
+            switch (i) {
+                case 0 -> {
+                    offices[i].setRoomName("Principal's Office");
+                    view.appendOutput("      Generating Principal's office");
+                    offices[i].setDoors(2);
+                    offices[i].setWindowCount(3);
+                    offices[i].setInitialStaff(1);
+                    offices[i].setInitialStudents(0);
+                    offices[i].setStudentCap(4);
+                    offices[i].setConnections(2);
+                    offices[i].setSeatArrangement();
+                    offices[i].setRoomNumber("O-100");
+                }
+                case 1 -> {
+                    offices[i].setRoomName("Vice Principal's Office");
+                    view.appendOutput("      Generating Vice Principal's office");
+                    offices[i].setDoors(2);
+                    offices[i].setWindowCount(2);
+                    offices[i].setInitialStaff(1);
+                    offices[i].setInitialStudents(0);
+                    offices[i].setStudentCap(4);
+                    offices[i].setConnections(2);
+                    offices[i].setSeatArrangement();
+                    offices[i].setRoomNumber("O-101");
+                }
+                case 2 -> {
+                    offices[i].setRoomName("Guidance Councilor's Office");
+                    view.appendOutput("      Generating Councilor's Office");
+                    offices[i].setDoors(2);
+                    offices[i].setWindowCount(2);
+                    offices[i].setInitialStaff(1);
+                    offices[i].setInitialStudents(0);
+                    offices[i].setStudentCap(4);
+                    offices[i].setConnections(2);
+                    offices[i].setSeatArrangement();
+                    offices[i].setRoomNumber("O-102");
+                }
+                case 3 -> {
+                    offices[i].setRoomName("Front Office");
+                    view.appendOutput("      Generating Front Office");
+                    offices[i].setDoors(12);
+                    offices[i].setWindowCount(2);
+                    offices[i].setInitialStaff(2);
+                    offices[i].setInitialStudents(0);
+                    offices[i].setStudentCap(15);
+                    offices[i].setConnections(12);
+                    offices[i].setSeatArrangement();
+                    offices[i].setRoomNumber("O-103");
+                }
+                case 4 -> {
+                    offices[i].setRoomName("Nurse's Office");
+                    view.appendOutput("      Generating Nurse's Office");
+                    offices[i].setDoors(3);
+                    offices[i].setWindowCount(1);
+                    offices[i].setInitialStaff(2);
+                    offices[i].setInitialStudents(0);
+                    offices[i].setStudentCap(6);
+                    offices[i].setConnections(3);
+                    offices[i].setSeatArrangement();
+                    offices[i].setRoomNumber("O-104");
+                }
+                case 5 -> {
+                    offices[i].setRoomName("Guidance Councilor's Office");
+                    view.appendOutput("      Generating Councilor's Office");
+                    offices[i].setDoors(2);
+                    offices[i].setWindowCount(2);
+                    offices[i].setInitialStaff(1);
+                    offices[i].setInitialStudents(0);
+                    offices[i].setStudentCap(6);
+                    offices[i].setConnections(2);
+                    offices[i].setSeatArrangement();
+                    offices[i].setRoomNumber("O-103");
+                }
+                default -> {
+                    offices[i].setRoomName("Office" + i);
+                    view.appendOutput("      Generating " + offices[i].getRoomName());
+                    offices[i].setConnections(2);
+                    offices[i].setDoors(2);
+                    offices[i].setInitialStaff(1);
+                    offices[i].setStudentCap(setRandom(2, 6));
+                    offices[i].setSeatArrangement();
+                    offices[i].setRoomNumber("O" + "-1" + i);
+                }
             }
             offices[i].setStudentRestriction(true);
 
@@ -895,6 +903,7 @@ public class StandardSchool implements SchoolPlan {
                 }
             }
         }
+        System.out.println("Cant find classroom of " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
         return null;
     }
 
