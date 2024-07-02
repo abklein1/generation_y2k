@@ -19,6 +19,7 @@ import view.GameView;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static utility.Randomizer.setRandom;
@@ -904,6 +905,40 @@ public class StandardSchool implements SchoolPlan {
             }
         }
         System.out.println("Cant find classroom of " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
+        return null;
+    }
+
+    public Room getRoomByStaff(Staff staff, String roomType) {
+        switch (roomType) {
+            case "Physical Education" -> {
+                for (Gym gym : gyms) {
+                    List<Staff> staffList = gym.getAssignedStaff();
+                    for(Staff staff1 : staffList) {
+                        if(staff1.equals(staff)){
+                            return gym;
+                        }
+                    }
+                }
+                for (AthleticField field : athleticFields) {
+                    List<Staff> staffList = field.getAssignedStaff();
+                    for(Staff staff1 : staffList) {
+                        if(staff1.equals(staff)) {
+                            return field;
+                        }
+                    }
+                }
+            }
+            case "Office" -> {
+                for (Office office : offices) {
+                    List<Staff> staffList = office.getAssignedStaff();
+                    for (Staff staff1 : staffList) {
+                        if(staff1.equals(staff)) {
+                            return office;
+                        }
+                    }
+                }
+            }
+        }
         return null;
     }
 

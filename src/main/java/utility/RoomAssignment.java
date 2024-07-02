@@ -175,8 +175,8 @@ public class RoomAssignment {
                     if (utilityRoom.getAssignedStaff().size() < utilityRoom.getStaffCapacity()) {
                         assignTeacherToRoom(staff, utilityRoom);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + utilityRoom.getRoomName());
+                        break;
                     }
-                    break;
                 }
                 break;
             case SCIENCE:
@@ -193,9 +193,9 @@ public class RoomAssignment {
                     for (Classroom classroom : classrooms) {
                         if (classroom.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, classroom);
-                            System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + classroom.getRoomName());
+                            System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + classroom.getRoomName() + " of other type!");
+                            break;
                         }
-                        break;
                     }
                 }
                 break;

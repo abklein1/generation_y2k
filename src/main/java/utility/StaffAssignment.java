@@ -310,12 +310,14 @@ public class StaffAssignment {
         List<Staff> scienceTeachers = getTeachersOfType(staffHashMap, StaffType.SCIENCE);
         List<Staff> historyTeachers = getTeachersOfType(staffHashMap, StaffType.HISTORY);
         List<Staff> languageTeachers = getTeachersOfType(staffHashMap, StaffType.LANGUAGES);
+        List<Staff> gymTeachers = getTeachersOfType(staffHashMap, StaffType.PHYSICAL_ED);
         int studentsInGrade;
         int classesNeeded;
         Staff selectedTeacher;
         TeacherSchedule schedule;
         TeacherBlock block;
         int langCount = 0;
+        int gymCount = 0;
 
         if (englishTeachers.isEmpty()) {
             view.appendOutput("No English teachers available for assignment.");
@@ -379,29 +381,37 @@ public class StaffAssignment {
             // Assign to AP Literature
             while (apLitTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
                 Room selectedRoom = standardSchool.getClassroomByStaff(apLitTeacher);
-                block = new TeacherBlock();
-                block.setBlockNumber(apLitTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-                block.setClassName("AP English Literature & Composition");
-                block.setRoom(selectedRoom);
-                block.setSemester("Both");
-                block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
+                if (selectedRoom != null) {
+                    block = new TeacherBlock();
+                    block.setBlockNumber(apLitTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
+                    block.setClassName("AP English Literature & Composition");
+                    block.setRoom(selectedRoom);
+                    block.setSemester("Both");
+                    block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
-                apLitTeacher.teacherStatistics.addTeacherSchedule(block);
-                view.appendOutput("Assigned AP English Literature & Composition to " + apLitTeacher.teacherName.getFirstName() + " " + apLitTeacher.teacherName.getLastName());
+                    apLitTeacher.teacherStatistics.addTeacherSchedule(block);
+                    view.appendOutput("Assigned AP English Literature & Composition to " + apLitTeacher.teacherName.getFirstName() + " " + apLitTeacher.teacherName.getLastName());
+                } else {
+                    System.out.println("AP Lit teachers could not be assigned!");
+                }
             }
 
             // Assign to AP Language
             while (apLangTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
                 Room selectedRoom = standardSchool.getClassroomByStaff(apLangTeacher);
-                block = new TeacherBlock();
-                block.setBlockNumber(apLangTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-                block.setClassName("AP English Language & Composition");
-                block.setRoom(selectedRoom);
-                block.setSemester("Both");
-                block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
+                if (selectedRoom != null) {
+                    block = new TeacherBlock();
+                    block.setBlockNumber(apLangTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
+                    block.setClassName("AP English Language & Composition");
+                    block.setRoom(selectedRoom);
+                    block.setSemester("Both");
+                    block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
-                apLangTeacher.teacherStatistics.addTeacherSchedule(block);
-                view.appendOutput("Assigned AP English Language & Composition to " + apLangTeacher.teacherName.getFirstName() + " " + apLangTeacher.teacherName.getLastName());
+                    apLangTeacher.teacherStatistics.addTeacherSchedule(block);
+                    view.appendOutput("Assigned AP English Language & Composition to " + apLangTeacher.teacherName.getFirstName() + " " + apLangTeacher.teacherName.getLastName());
+                } else {
+                    System.out.println("AP English Language teacher could not be assigned!");
+                }
             }
         }
 
@@ -411,15 +421,19 @@ public class StaffAssignment {
                 for (String englishClass : englishClasses) {
                     if (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
                         Room selectedRoom = standardSchool.getClassroomByStaff(remainingTeacher);
-                        block = new TeacherBlock();
-                        block.setBlockNumber(remainingTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-                        block.setClassName(englishClass);
-                        block.setRoom(selectedRoom);
-                        block.setSemester("Both");
-                        block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
+                        if (selectedRoom != null) {
+                            block = new TeacherBlock();
+                            block.setBlockNumber(remainingTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
+                            block.setClassName(englishClass);
+                            block.setRoom(selectedRoom);
+                            block.setSemester("Both");
+                            block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
-                        remainingTeacher.teacherStatistics.addTeacherSchedule(block);
-                        view.appendOutput("Assigned " + englishClass + " to " + remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName());
+                            remainingTeacher.teacherStatistics.addTeacherSchedule(block);
+                            view.appendOutput("Assigned " + englishClass + " to " + remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName());
+                        } else {
+                            System.out.println(remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName() + " is misisng a room!");
+                        }
                     } else {
                         break;
                     }
@@ -525,7 +539,15 @@ public class StaffAssignment {
                 langCount++;
             }
         }
-
+        //Gym Assignment
+        for (Staff teacher : gymTeachers) {
+            gymHelper(teacher, standardSchool, gymCount, view);
+            if (gymCount == 3) {
+                gymCount = 0;
+            } else {
+                gymCount++;
+            }
+        }
 
     }
 
@@ -616,146 +638,158 @@ public class StaffAssignment {
     private static String scienceHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
 
         String classname;
-        int roomCapacity = standardSchool.getClassroomByStaff(teacher).getStudentCapacity();
+        Room potentialRoom = standardSchool.getClassroomByStaff(teacher);
+        if (potentialRoom != null) {
+            int roomCapacity = potentialRoom.getStudentCapacity();
 
-        block.setBlockNumber(teacher.teacherStatistics.getTeacherSchedule().size() + 1);
-        block.setRoom(standardSchool.getClassroomByStaff(teacher));
-        block.setSemester(semester);
-        block.addClassPopulationBlock(roomCapacity);
+            block.setBlockNumber(teacher.teacherStatistics.getTeacherSchedule().size() + 1);
+            block.setRoom(standardSchool.getClassroomByStaff(teacher));
+            block.setSemester(semester);
+            block.addClassPopulationBlock(roomCapacity);
 
-        if (semester.equals("Fall")) {
-            if (gradeIndex == 0) {
-                classname = "Biology";
-                block.setClassName(classname);
-                return classname;
-            } else if (gradeIndex == 1) {
-                classname = "Chemistry";
-                block.setClassName(classname);
-                return classname;
-            } else if (gradeIndex == 2) {
-                if (count % 2 == 0) {
-                    classname = "AP Biology";
+            if (semester.equals("Fall")) {
+                if (gradeIndex == 0) {
+                    classname = "Biology";
+                    block.setClassName(classname);
+                    return classname;
+                } else if (gradeIndex == 1) {
+                    classname = "Chemistry";
+                    block.setClassName(classname);
+                    return classname;
+                } else if (gradeIndex == 2) {
+                    if (count % 2 == 0) {
+                        classname = "AP Biology";
+                    } else {
+                        classname = "Anatomy and Physiology";
+                    }
+                    block.setClassName(classname);
+                    return classname;
                 } else {
-                    classname = "Anatomy and Physiology";
+                    if (count % 2 == 0) {
+                        classname = "AP Physics B";
+                    } else {
+                        classname = "Physics";
+                    }
+                    block.setClassName(classname);
+                    return classname;
                 }
-                block.setClassName(classname);
-                return classname;
+            } else if (semester.equals("Spring")) {
+                if (gradeIndex == 0) {
+                    classname = "Biology";
+                    block.setClassName(classname);
+                    return classname;
+                } else if (gradeIndex == 1) {
+                    if (count % 2 == 0) {
+                        classname = "Earth and Space Science";
+                    } else {
+                        classname = "Physical Science";
+                    }
+                    block.setClassName(classname);
+                    return classname;
+                } else if (gradeIndex == 2) {
+                    if (count % 2 == 0) {
+                        classname = "AP Chemistry";
+                    } else {
+                        classname = "Anatomy and Physiology";
+                    }
+                    block.setClassName(classname);
+                    return classname;
+                } else {
+                    if (count % 2 == 0) {
+                        classname = "AP Physics C";
+                    } else {
+                        classname = "Environmental Science";
+                    }
+                    block.setClassName(classname);
+                    return classname;
+                }
             } else {
-                if (count % 2 == 0) {
-                    classname = "AP Physics B";
-                } else {
-                    classname = "Physics";
-                }
-                block.setClassName(classname);
-                return classname;
-            }
-        } else if (semester.equals("Spring")) {
-            if (gradeIndex == 0) {
-                classname = "Biology";
-                block.setClassName(classname);
-                return classname;
-            } else if (gradeIndex == 1) {
-                if (count % 2 == 0) {
-                    classname = "Earth and Space Science";
-                } else {
-                    classname = "Physical Science";
-                }
-                block.setClassName(classname);
-                return classname;
-            } else if (gradeIndex == 2) {
-                if (count % 2 == 0) {
-                    classname = "AP Chemistry";
-                } else {
-                    classname = "Anatomy and Physiology";
-                }
-                block.setClassName(classname);
-                return classname;
-            } else {
-                if (count % 2 == 0) {
-                    classname = "AP Physics C";
-                } else {
-                    classname = "Environmental Science";
-                }
-                block.setClassName(classname);
-                return classname;
+                System.err.println("Can't find semester");
+                return "";
             }
         } else {
-            System.err.println("Can't find semester");
+            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
             return "";
         }
     }
 
     private static String historyHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
         String classname;
-        int roomCapacity = standardSchool.getClassroomByStaff(teacher).getStudentCapacity();
+        Room potentialRoom = standardSchool.getClassroomByStaff(teacher);
+        if (potentialRoom != null) {
+            int roomCapacity = potentialRoom.getStudentCapacity();
 
-        block.setBlockNumber(teacher.teacherStatistics.getTeacherSchedule().size() + 1);
-        block.setRoom(standardSchool.getClassroomByStaff(teacher));
-        block.setSemester(semester);
-        block.addClassPopulationBlock(roomCapacity);
+            block.setBlockNumber(teacher.teacherStatistics.getTeacherSchedule().size() + 1);
+            block.setRoom(standardSchool.getClassroomByStaff(teacher));
+            block.setSemester(semester);
+            block.addClassPopulationBlock(roomCapacity);
 
-        if (semester.equals("Fall")) {
-            if (gradeIndex == 0) {
-                classname = "World Geography";
-                block.setClassName(classname);
-                return classname;
-            } else if (gradeIndex == 1) {
-                if (count % 2 == 0) {
-                    classname = "World History";
+            if (semester.equals("Fall")) {
+                if (gradeIndex == 0) {
+                    classname = "World Geography";
+                    block.setClassName(classname);
+                    return classname;
+                } else if (gradeIndex == 1) {
+                    if (count % 2 == 0) {
+                        classname = "World History";
+                    } else {
+                        classname = "AP World History";
+                    }
+                    block.setClassName(classname);
+                    return classname;
+                } else if (gradeIndex == 2) {
+                    if (count % 2 == 0) {
+                        classname = "US History";
+                    } else {
+                        classname = "AP US History";
+                    }
+                    block.setClassName(classname);
+                    return classname;
                 } else {
-                    classname = "AP World History";
+                    if (count % 2 == 0) {
+                        classname = "US Government";
+                    } else {
+                        classname = "AP US Government";
+                    }
+                    block.setClassName(classname);
+                    return classname;
                 }
-                block.setClassName(classname);
-                return classname;
-            } else if (gradeIndex == 2) {
-                if (count % 2 == 0) {
-                    classname = "US History";
+            } else if (semester.equals("Spring")) {
+                if (gradeIndex == 0) {
+                    classname = "AP Human Geography";
+                    block.setClassName(classname);
+                    return classname;
+                } else if (gradeIndex == 1) {
+                    if (count % 2 == 0) {
+                        classname = "World History";
+                    } else {
+                        classname = "AP World History";
+                    }
+                    block.setClassName(classname);
+                    return classname;
+                } else if (gradeIndex == 2) {
+                    if (count % 2 == 0) {
+                        classname = "US History";
+                    } else {
+                        classname = "AP US History";
+                    }
+                    block.setClassName(classname);
+                    return classname;
                 } else {
-                    classname = "AP US History";
+                    if (count % 2 == 0) {
+                        classname = "US Government";
+                    } else {
+                        classname = "AP Economics Macro";
+                    }
+                    block.setClassName(classname);
+                    return classname;
                 }
-                block.setClassName(classname);
-                return classname;
             } else {
-                if (count % 2 == 0) {
-                    classname = "US Government";
-                } else {
-                    classname = "AP US Government";
-                }
-                block.setClassName(classname);
-                return classname;
-            }
-        } else if (semester.equals("Spring")) {
-            if (gradeIndex == 0) {
-                classname = "AP Human Geography";
-                block.setClassName(classname);
-                return classname;
-            } else if (gradeIndex == 1) {
-                if (count % 2 == 0) {
-                    classname = "World History";
-                } else {
-                    classname = "AP World History";
-                }
-                block.setClassName(classname);
-                return classname;
-            } else if (gradeIndex == 2) {
-                if (count % 2 == 0) {
-                    classname = "US History";
-                } else {
-                    classname = "AP US History";
-                }
-                block.setClassName(classname);
-                return classname;
-            } else {
-                if (count % 2 == 0) {
-                    classname = "US Government";
-                } else {
-                    classname = "AP Economics Macro";
-                }
-                block.setClassName(classname);
-                return classname;
+                System.err.println("Can't find semester");
+                return "";
             }
         } else {
-            System.err.println("Can't find semester");
+            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
             return "";
         }
     }
@@ -765,97 +799,174 @@ public class StaffAssignment {
         String f_name = teacher.teacherName.getFirstName();
         String l_name = teacher.teacherName.getLastName();
         Room room = standardSchool.getClassroomByStaff(teacher);
-        int studentPop = room.getStudentCapacity();
-        switch (count) {
-            case 0 -> {
-                classes[0] = "Spanish I";
-                classes[1] = "Spanish II";
-                classes[2] = "Spanish I";
-                classes[3] = "Spanish II";
-                classes[4] = "Spanish I";
-                classes[5] = "Spanish II";
-                classes[6] = "Spanish I";
-                classes[7] = "Spanish II";
+        if (room != null) {
+            int studentPop = room.getStudentCapacity();
+            switch (count) {
+                case 0 -> {
+                    classes[0] = "Spanish I";
+                    classes[1] = "Spanish II";
+                    classes[2] = "Spanish I";
+                    classes[3] = "Spanish II";
+                    classes[4] = "Spanish I";
+                    classes[5] = "Spanish II";
+                    classes[6] = "Spanish I";
+                    classes[7] = "Spanish II";
+                }
+                case 1 -> {
+                    classes[0] = "Spanish III";
+                    classes[1] = "Spanish IV";
+                    classes[2] = "Spanish III";
+                    classes[3] = "Spanish IV";
+                    classes[4] = "Spanish III";
+                    classes[5] = "Spanish IV";
+                    classes[6] = "AP Spanish Literature";
+                    classes[7] = "AP Spanish Language";
+                }
+                case 2 -> {
+                    classes[0] = "French I";
+                    classes[1] = "French II";
+                    classes[2] = "French I";
+                    classes[3] = "French II";
+                    classes[4] = "French I";
+                    classes[5] = "French II";
+                    classes[6] = "French I";
+                    classes[7] = "French II";
+                }
+                case 3 -> {
+                    classes[0] = "German I";
+                    classes[1] = "German II";
+                    classes[2] = "German I";
+                    classes[3] = "German II";
+                    classes[4] = "German I";
+                    classes[5] = "German II";
+                    classes[6] = "German I";
+                    classes[7] = "German II";
+                }
+                case 4 -> {
+                    classes[0] = "American Sign Language I";
+                    classes[1] = "American Sign Language II";
+                    classes[2] = "American Sign Language I";
+                    classes[3] = "American Sign Language II";
+                    classes[4] = "American Sign Language I";
+                    classes[5] = "American Sign Language II";
+                    classes[6] = "American Sign Language I";
+                    classes[7] = "American Sign Language II";
+                }
+                case 5 -> {
+                    classes[0] = "Latin I";
+                    classes[1] = "Latin II";
+                    classes[2] = "Latin I";
+                    classes[3] = "Latin II";
+                    classes[4] = "Latin I";
+                    classes[5] = "Latin II";
+                    classes[6] = "Latin I";
+                    classes[7] = "Latin II";
+                }
             }
-            case 1 -> {
-                classes[0] = "Spanish III";
-                classes[1] = "Spanish IV";
-                classes[2] = "Spanish III";
-                classes[3] = "Spanish IV";
-                classes[4] = "Spanish III";
-                classes[5] = "Spanish IV";
-                classes[6] = "AP Spanish Literature";
-                classes[7] = "AP Spanish Language";
+            int index = 0;
+            for (String classN : classes) {
+                TeacherBlock block = new TeacherBlock();
+                block.setClassName(classN);
+                if (index % 2 == 0) {
+                    block.setSemester("Fall");
+                } else {
+                    block.setSemester("Spring");
+                }
+                switch (index) {
+                    case 0, 4 -> {
+                        block.setBlockNumber(1);
+                    }
+                    case 1, 5 -> {
+                        block.setBlockNumber(2);
+                    }
+                    case 2, 6 -> {
+                        block.setBlockNumber(3);
+                    }
+                    case 3, 7 -> {
+                        block.setBlockNumber(4);
+                    }
+                }
+                block.setBlockPopulation(studentPop);
+                block.setRoom(room);
+                teacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
+                index++;
             }
-            case 2 -> {
-                classes[0] = "French I";
-                classes[1] = "French II";
-                classes[2] = "French I";
-                classes[3] = "French II";
-                classes[4] = "French I";
-                classes[5] = "French II";
-                classes[6] = "French I";
-                classes[7] = "French II";
-            }
-            case 3 -> {
-                classes[0] = "German I";
-                classes[1] = "German II";
-                classes[2] = "German I";
-                classes[3] = "German II";
-                classes[4] = "German I";
-                classes[5] = "German II";
-                classes[6] = "German I";
-                classes[7] = "German II";
-            }
-            case 4 -> {
-                classes[0] = "American Sign Language I";
-                classes[1] = "American Sign Language II";
-                classes[2] = "American Sign Language I";
-                classes[3] = "American Sign Language II";
-                classes[4] = "American Sign Language I";
-                classes[5] = "American Sign Language II";
-                classes[6] = "American Sign Language I";
-                classes[7] = "American Sign Language II";
-            }
-            case 5 -> {
-                classes[0] = "Latin I";
-                classes[1] = "Latin II";
-                classes[2] = "Latin I";
-                classes[3] = "Latin II";
-                classes[4] = "Latin I";
-                classes[5] = "Latin II";
-                classes[6] = "Latin I";
-                classes[7] = "Latin II";
-            }
+        } else {
+            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
         }
-        int index = 0;
-        for(String classN : classes) {
-            TeacherBlock block = new TeacherBlock();
-            block.setClassName(classN);
-            if(index % 2 == 0) {
-                block.setSemester("Fall");
-            } else {
-                block.setSemester("Spring");
+    }
+
+    private static void gymHelper(Staff teacher, StandardSchool standardSchool, int count, GameView view) {
+        String[] classes = new String[8];
+        String f_name = teacher.teacherName.getFirstName();
+        String l_name = teacher.teacherName.getLastName();
+        Room room = standardSchool.getRoomByStaff(teacher, "Physical Education");
+        if (room != null) {
+            int studentPop = room.getStudentCapacity();
+            switch (count) {
+                case 0 -> {
+                    classes[0] = "Health";
+                    classes[1] = "Health";
+                    classes[2] = "Health";
+                    classes[3] = "Health";
+                    classes[4] = "Team Sports";
+                    classes[5] = "Weightlifting";
+                    classes[6] = "Specialized Sports";
+                    classes[7] = "Lifetime Recreation";
+                }
+                case 1 -> {
+                    classes[0] = "Weightlifting";
+                    classes[1] = "Dance";
+                    classes[2] = "Team Sports";
+                    classes[3] = "Specialized Sports";
+                    classes[4] = "Health";
+                    classes[5] = "Health";
+                    classes[6] = "Health";
+                    classes[7] = "Health";
+                }
+                case 2 -> {
+                    classes[0] = "Specialized Sports";
+                    classes[1] = "Weightlifting";
+                    classes[2] = "Health";
+                    classes[3] = "Health";
+                    classes[4] = "Health";
+                    classes[5] = "Health";
+                    classes[6] = "Lifetime Recreation";
+                    classes[7] = "Dance";
+                }
             }
-            switch (index) {
-                case 0,4 -> {
-                    block.setBlockNumber(1);
+            int index = 0;
+            for (String classN : classes) {
+                TeacherBlock block = new TeacherBlock();
+                block.setClassName(classN);
+                if (index % 2 == 0) {
+                    block.setSemester("Fall");
+                } else {
+                    block.setSemester("Spring");
                 }
-                case 1,5 -> {
-                    block.setBlockNumber(2);
+                switch (index) {
+                    case 0, 4 -> {
+                        block.setBlockNumber(1);
+                    }
+                    case 1, 5 -> {
+                        block.setBlockNumber(2);
+                    }
+                    case 2, 6 -> {
+                        block.setBlockNumber(3);
+                    }
+                    case 3, 7 -> {
+                        block.setBlockNumber(4);
+                    }
                 }
-                case 2,6 -> {
-                    block.setBlockNumber(3);
-                }
-                case 3,7 -> {
-                    block.setBlockNumber(4);
-                }
+                block.setBlockPopulation(studentPop);
+                block.setRoom(room);
+                teacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
+                index++;
             }
-            block.setBlockPopulation(studentPop);
-            block.setRoom(room);
-            teacher.teacherStatistics.addTeacherSchedule(block);
-            view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
-            index++;
+        } else {
+            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
         }
     }
 }
