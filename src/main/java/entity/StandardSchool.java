@@ -938,6 +938,16 @@ public class StandardSchool implements SchoolPlan {
                     }
                 }
             }
+            case "Visual Arts" -> {
+                for (ArtStudio artStudio : artStudios) {
+                    List<Staff> staffList = artStudio.getAssignedStaff();
+                    for (Staff staff1 : staffList) {
+                        if(staff1.equals(staff)) {
+                            return artStudio;
+                        }
+                    }
+                }
+            }
         }
         return null;
     }

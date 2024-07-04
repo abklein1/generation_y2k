@@ -311,6 +311,7 @@ public class StaffAssignment {
         List<Staff> historyTeachers = getTeachersOfType(staffHashMap, StaffType.HISTORY);
         List<Staff> languageTeachers = getTeachersOfType(staffHashMap, StaffType.LANGUAGES);
         List<Staff> gymTeachers = getTeachersOfType(staffHashMap, StaffType.PHYSICAL_ED);
+        List<Staff> visualArtsTeachers = getTeachersOfType(staffHashMap, StaffType.VISUAL_ARTS);
         int studentsInGrade;
         int classesNeeded;
         Staff selectedTeacher;
@@ -393,6 +394,7 @@ public class StaffAssignment {
                     view.appendOutput("Assigned AP English Literature & Composition to " + apLitTeacher.teacherName.getFirstName() + " " + apLitTeacher.teacherName.getLastName());
                 } else {
                     System.out.println("AP Lit teachers could not be assigned!");
+                    break;
                 }
             }
 
@@ -411,6 +413,7 @@ public class StaffAssignment {
                     view.appendOutput("Assigned AP English Language & Composition to " + apLangTeacher.teacherName.getFirstName() + " " + apLangTeacher.teacherName.getLastName());
                 } else {
                     System.out.println("AP English Language teacher could not be assigned!");
+                    break;
                 }
             }
         }
@@ -542,11 +545,15 @@ public class StaffAssignment {
         //Gym Assignment
         for (Staff teacher : gymTeachers) {
             gymHelper(teacher, standardSchool, gymCount, view);
-            if (gymCount == 3) {
+            if (gymCount >= 3) {
                 gymCount = 0;
             } else {
                 gymCount++;
             }
+        }
+        //Visual Arts Assignment
+        for (Staff teacher : visualArtsTeachers) {
+            visualArtsHelper(teacher, standardSchool, view);
         }
 
     }
@@ -873,18 +880,10 @@ public class StaffAssignment {
                     block.setSemester("Spring");
                 }
                 switch (index) {
-                    case 0, 4 -> {
-                        block.setBlockNumber(1);
-                    }
-                    case 1, 5 -> {
-                        block.setBlockNumber(2);
-                    }
-                    case 2, 6 -> {
-                        block.setBlockNumber(3);
-                    }
-                    case 3, 7 -> {
-                        block.setBlockNumber(4);
-                    }
+                    case 0, 4 -> block.setBlockNumber(1);
+                    case 1, 5 -> block.setBlockNumber(2);
+                    case 2, 6 -> block.setBlockNumber(3);
+                    case 3, 7 -> block.setBlockNumber(4);
                 }
                 block.setBlockPopulation(studentPop);
                 block.setRoom(room);
@@ -935,6 +934,16 @@ public class StaffAssignment {
                     classes[6] = "Lifetime Recreation";
                     classes[7] = "Dance";
                 }
+                default -> {
+                    classes[0] = "Health";
+                    classes[1] = "Health";
+                    classes[2] = "Health";
+                    classes[3] = "Health";
+                    classes[4] = "Health";
+                    classes[5] = "Health";
+                    classes[6] = "Health";
+                    classes[7] = "Health";
+                }
             }
             int index = 0;
             for (String classN : classes) {
@@ -946,18 +955,96 @@ public class StaffAssignment {
                     block.setSemester("Spring");
                 }
                 switch (index) {
-                    case 0, 4 -> {
-                        block.setBlockNumber(1);
-                    }
-                    case 1, 5 -> {
-                        block.setBlockNumber(2);
-                    }
-                    case 2, 6 -> {
-                        block.setBlockNumber(3);
-                    }
-                    case 3, 7 -> {
-                        block.setBlockNumber(4);
-                    }
+                    case 0, 4 -> block.setBlockNumber(1);
+                    case 1, 5 -> block.setBlockNumber(2);
+                    case 2, 6 -> block.setBlockNumber(3);
+                    case 3, 7 -> block.setBlockNumber(4);
+                }
+                block.setBlockPopulation(studentPop);
+                block.setRoom(room);
+                teacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
+                index++;
+            }
+        } else {
+            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+        }
+    }
+
+    private static void visualArtsHelper(Staff teacher, StandardSchool standardSchool, GameView view) {
+        String[] classes = new String[8];
+        String f_name = teacher.teacherName.getFirstName();
+        String l_name = teacher.teacherName.getLastName();
+        Room room = standardSchool.getRoomByStaff(teacher, "Visual Arts");
+        int choice = Randomizer.setRandom(0,4);
+        if (room != null) {
+            int studentPop = room.getStudentCapacity();
+            switch (choice) {
+                case 0 -> {
+                    classes[0] = "2D Studio Art I";
+                    classes[1] = "2D Studio Art II";
+                    classes[2] = "2D Studio Art I";
+                    classes[3] = "2D Studio Art II";
+                    classes[4] = "3D Studio Art I";
+                    classes[5] = "3D Studio Art II";
+                    classes[6] = "3D Studio Art I";
+                    classes[7] = "3D Studio Art II";
+                }
+                case 1 -> {
+                    classes[0] = "Photography I";
+                    classes[1] = "Photography II";
+                    classes[2] = "Photography I";
+                    classes[3] = "Photography II";
+                    classes[4] = "Printmaking";
+                    classes[5] = "Printmaking";
+                    classes[6] = "Printmaking";
+                    classes[7] = "Printmaking";
+                }
+                case 2 -> {
+                    classes[0] = "3D Studio Art I";
+                    classes[1] = "3D Studio Art II";
+                    classes[2] = "3D Studio Art I";
+                    classes[3] = "3D Studio Art II";
+                    classes[4] = "2D Studio Art I";
+                    classes[5] = "2D Studio Art II";
+                    classes[6] = "2D Studio Art I";
+                    classes[7] = "2D Studio Art II";
+                }
+                case 3 -> {
+                    classes[0] = "Printmaking";
+                    classes[1] = "Printmaking";
+                    classes[2] = "Printmaking";
+                    classes[3] = "Printmaking";
+                    classes[4] = "Photography I";
+                    classes[5] = "Photography II";
+                    classes[6] = "Photography I";
+                    classes[7] = "Photography II";
+                }
+                default -> {
+                    classes[0] = "2D Studio Art II";
+                    classes[1] = "AP Art History";
+                    classes[2] = "2D Studio Art II";
+                    classes[3] = "AP Art History";
+                    classes[4] = "AP Studio Art";
+                    classes[5] = "AP Studio Art";
+                    classes[6] = "AP Studio Art";
+                    classes[7] = "AP Studio Art";
+                }
+            }
+            int index = 0;
+            for (String classN : classes) {
+                TeacherBlock block = new TeacherBlock();
+                block.setClassName(classN);
+                if (index % 2 == 0) {
+                    block.setSemester("Fall");
+                } else {
+                    block.setSemester("Spring");
+                }
+                switch (index) {
+                    case 0, 4 -> block.setBlockNumber(1);
+                    case 1, 5 -> block.setBlockNumber(2);
+                    case 2, 6 -> block.setBlockNumber(3);
+                    case 3, 7 -> block.setBlockNumber(4);
                 }
                 block.setBlockPopulation(studentPop);
                 block.setRoom(room);

@@ -215,7 +215,6 @@ public class RoomAssignment {
     public static void initialClassroomAssignments(StandardSchool school, HashMap<Integer, Staff> staffHashMap) {
         //Assign teacher to each classroom
         for (Map.Entry<Integer, Staff> entry : staffHashMap.entrySet()) {
-            Enum<StaffType> type = entry.getValue().teacherStatistics.getStaffType();
             initialRoomAssignmentHelper(entry.getValue(), school);
         }
     }
