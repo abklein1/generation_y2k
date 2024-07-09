@@ -312,6 +312,7 @@ public class StaffAssignment {
         List<Staff> languageTeachers = getTeachersOfType(staffHashMap, StaffType.LANGUAGES);
         List<Staff> gymTeachers = getTeachersOfType(staffHashMap, StaffType.PHYSICAL_ED);
         List<Staff> visualArtsTeachers = getTeachersOfType(staffHashMap, StaffType.VISUAL_ARTS);
+        List<Staff> performingArtsTeachers = getTeachersOfType(staffHashMap, StaffType.PERFORMING_ARTS);
         int studentsInGrade;
         int classesNeeded;
         Staff selectedTeacher;
@@ -319,6 +320,7 @@ public class StaffAssignment {
         TeacherBlock block;
         int langCount = 0;
         int gymCount = 0;
+        int perfCount = 0;
 
         if (englishTeachers.isEmpty()) {
             view.appendOutput("No English teachers available for assignment.");
@@ -536,7 +538,7 @@ public class StaffAssignment {
         //Language Assignment
         for (Staff teacher : languageTeachers) {
             languageHelper(teacher, standardSchool, langCount, view);
-            if (langCount == 6) {
+            if (langCount >= 6) {
                 langCount = 0;
             } else {
                 langCount++;
@@ -555,7 +557,15 @@ public class StaffAssignment {
         for (Staff teacher : visualArtsTeachers) {
             visualArtsHelper(teacher, standardSchool, view);
         }
-
+        //Performing Arts Assignment
+        for (Staff teacher : performingArtsTeachers) {
+            performingArtsHelper(teacher, standardSchool, perfCount, view);
+            if(perfCount >= 4) {
+                perfCount = 0;
+            } else {
+                perfCount++;
+            }
+        }
     }
 
     private static String mathHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
@@ -1029,6 +1039,126 @@ public class StaffAssignment {
                     classes[5] = "AP Studio Art";
                     classes[6] = "AP Studio Art";
                     classes[7] = "AP Studio Art";
+                }
+            }
+            int index = 0;
+            for (String classN : classes) {
+                TeacherBlock block = new TeacherBlock();
+                block.setClassName(classN);
+                if (index % 2 == 0) {
+                    block.setSemester("Fall");
+                } else {
+                    block.setSemester("Spring");
+                }
+                switch (index) {
+                    case 0, 4 -> block.setBlockNumber(1);
+                    case 1, 5 -> block.setBlockNumber(2);
+                    case 2, 6 -> block.setBlockNumber(3);
+                    case 3, 7 -> block.setBlockNumber(4);
+                }
+                block.setBlockPopulation(studentPop);
+                block.setRoom(room);
+                teacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
+                index++;
+            }
+        } else {
+            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+        }
+    }
+
+    private static void performingArtsHelper(Staff teacher, StandardSchool standardSchool, int count,  GameView view) {
+        String[] classes = new String[8];
+        String f_name = teacher.teacherName.getFirstName();
+        String l_name = teacher.teacherName.getLastName();
+        Room room = standardSchool.getRoomByStaff(teacher, "Performing Arts");
+        int choice = Randomizer.setRandom(0,4);
+        if (room != null) {
+            int studentPop = room.getStudentCapacity();
+            switch (count) {
+                case 0 -> {
+                    classes[0] = "Concert Band";
+                    classes[1] = "Concert Band";
+                    classes[2] = "Concert Band";
+                    classes[3] = "Concert Band";
+                    classes[4] = "Marching Band";
+                    classes[5] = "Marching Band";
+                    classes[6] = "Marching Band";
+                    classes[7] = "Marching Band";
+                }
+                case 1 -> {
+                    classes[0] = "Theater I";
+                    classes[1] = "Theater II";
+                    classes[2] = "Theater I";
+                    classes[3] = "Theater II";
+                    classes[4] = "Musical Theater I";
+                    classes[5] = "Musical Theater II";
+                    classes[6] = "Musical Theater I";
+                    classes[7] = "Musical Theater II";
+                }
+                case 2 -> {
+                    classes[0] = "Choir";
+                    classes[1] = "Choir";
+                    classes[2] = "Choir";
+                    classes[3] = "Choir";
+                    classes[4] = "Choir";
+                    classes[5] = "Choir";
+                    classes[6] = "Choir";
+                    classes[7] = "Choir";
+                }
+                case 3 -> {
+                    classes[0] = "Theater Technology";
+                    classes[1] = "Theater Technology";
+                    classes[2] = "Theater Technology";
+                    classes[3] = "Theater Technology";
+                    classes[4] = "Theater Technology";
+                    classes[5] = "Theater Technology";
+                    classes[6] = "Theater Technology";
+                    classes[7] = "Theater Technology";
+                }
+                default -> {
+                    switch (choice) {
+                        case 0 -> {
+                            classes[0] = "Dance Techniques I";
+                            classes[1] = "Dance Techniques II";
+                            classes[2] = "Dance Techniques I";
+                            classes[3] = "Dance Techniques II";
+                            classes[4] = "Dance Techniques I";
+                            classes[5] = "Dance Techniques II";
+                            classes[6] = "Dance Techniques I";
+                            classes[7] = "Dance Techniques II";
+                        }
+                        case 1 -> {
+                            classes[0] = "Debate";
+                            classes[1] = "Debate";
+                            classes[2] = "Debate";
+                            classes[3] = "Debate";
+                            classes[4] = "Debate";
+                            classes[5] = "Debate";
+                            classes[6] = "Debate";
+                            classes[7] = "Debate";
+                        }
+                        case 2 -> {
+                            classes[0] = "Marching Band";
+                            classes[1] = "Marching Band";
+                            classes[2] = "Marching Band";
+                            classes[3] = "Marching Band";
+                            classes[4] = "Jazz Band";
+                            classes[5] = "Jazz Band";
+                            classes[6] = "Jazz Band";
+                            classes[7] = "Jazz Band";
+                        }
+                        default -> {
+                            classes[0] = "Musical Theater I";
+                            classes[1] = "Musical Theater II";
+                            classes[2] = "Musical Theater I";
+                            classes[3] = "Musical Theater II";
+                            classes[4] = "Theater I";
+                            classes[5] = "Theater II";
+                            classes[6] = "Theater I";
+                            classes[7] = "Theater II";
+                        }
+                    }
                 }
             }
             int index = 0;

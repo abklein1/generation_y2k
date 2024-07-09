@@ -948,6 +948,32 @@ public class StandardSchool implements SchoolPlan {
                     }
                 }
             }
+            case "Performing Arts" -> {
+                for (DramaRoom dramaRoom : dramaRooms) {
+                    List<Staff> staffList = dramaRoom.getAssignedStaff();
+                    for (Staff staff1 : staffList) {
+                        if(staff1.equals(staff)) {
+                            return dramaRoom;
+                        }
+                    }
+                }
+                for (MusicRoom musicRoom : musicRooms) {
+                    List<Staff> staffList = musicRoom.getAssignedStaff();
+                    for (Staff staff1 : staffList) {
+                        if(staff1.equals(staff)) {
+                            return musicRoom;
+                        }
+                    }
+                }
+                for (Auditorium auditorium : auditoriums) {
+                    List<Staff> staffList = auditorium.getAssignedStaff();
+                    for (Staff staff1 : staffList) {
+                        if(staff1.equals(staff)) {
+                            return auditorium;
+                        }
+                    }
+                }
+            }
         }
         return null;
     }
