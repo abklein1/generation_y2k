@@ -314,6 +314,7 @@ public class StaffAssignment {
         List<Staff> visualArtsTeachers = getTeachersOfType(staffHashMap, StaffType.VISUAL_ARTS);
         List<Staff> performingArtsTeachers = getTeachersOfType(staffHashMap, StaffType.PERFORMING_ARTS);
         List<Staff> vocationalTeachers = getTeachersOfType(staffHashMap, StaffType.VOCATIONAL);
+        List<Staff> businessTeachers = getTeachersOfType(staffHashMap, StaffType.BUSINESS);
         int studentsInGrade;
         int classesNeeded;
         Staff selectedTeacher;
@@ -570,6 +571,10 @@ public class StaffAssignment {
         //Vocational Assignment
         for(Staff teacher : vocationalTeachers) {
             vocationalHelper(teacher, standardSchool, view);
+        }
+        //Business Assignment
+        for(Staff teacher : businessTeachers) {
+            businessHelper(teacher, standardSchool, view);
         }
     }
 
@@ -1300,6 +1305,72 @@ public class StaffAssignment {
                     classes[5] = "Intro to Programming";
                     classes[6] = "Intro to Programming";
                     classes[7] = "Intro to Programming";
+                }
+            }
+            int index = 0;
+            for (String classN : classes) {
+                TeacherBlock block = new TeacherBlock();
+                block.setClassName(classN);
+                if (index % 2 == 0) {
+                    block.setSemester("Fall");
+                } else {
+                    block.setSemester("Spring");
+                }
+                switch (index) {
+                    case 0, 4 -> block.setBlockNumber(1);
+                    case 1, 5 -> block.setBlockNumber(2);
+                    case 2, 6 -> block.setBlockNumber(3);
+                    case 3, 7 -> block.setBlockNumber(4);
+                }
+                block.setBlockPopulation(studentPop);
+                block.setRoom(room);
+                teacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
+                index++;
+            }
+        } else {
+            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+        }
+    }
+
+    private static void businessHelper(Staff teacher, StandardSchool standardSchool, GameView view) {
+        String[] classes = new String[8];
+        String f_name = teacher.teacherName.getFirstName();
+        String l_name = teacher.teacherName.getLastName();
+        Room room = standardSchool.getRoomByStaff(teacher, "Business");
+        int choice = Randomizer.setRandom(0,2);
+        if (room != null) {
+            int studentPop = room.getStudentCapacity();
+            switch (choice) {
+                case 0 -> {
+                    classes[0] = "Introduction to Business";
+                    classes[1] = "Entrepreneurial Skills";
+                    classes[2] = "Introduction to Business";
+                    classes[3] = "Entrepreneurial Skills";
+                    classes[4] = "Introduction to Business";
+                    classes[5] = "Entrepreneurial Skills";
+                    classes[6] = "Introduction to Business";
+                    classes[7] = "Entrepreneurial Skills";
+                }
+                case 1 -> {
+                    classes[0] = "Business Management";
+                    classes[1] = "Marketing";
+                    classes[2] = "Business Management";
+                    classes[3] = "Marketing";
+                    classes[4] = "Business Management";
+                    classes[5] = "Marketing";
+                    classes[6] = "Business Management";
+                    classes[7] = "Marketing";
+                }
+                case 2 -> {
+                    classes[0] = "Personal Finance";
+                    classes[1] = "Accounting";
+                    classes[2] = "Personal Finance";
+                    classes[3] = "Accounting";
+                    classes[4] = "Personal Finance";
+                    classes[5] = "Accounting";
+                    classes[6] = "Personal Finance";
+                    classes[7] = "Accounting";
                 }
             }
             int index = 0;
