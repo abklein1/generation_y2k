@@ -974,6 +974,16 @@ public class StandardSchool implements SchoolPlan {
                     }
                 }
             }
+            case "Vocational" -> {
+                for (VocationalRoom vocationalRoom : vocationalRooms) {
+                    List<Staff> staffList = vocationalRoom.getAssignedStaff();
+                    for (Staff staff1 : staffList) {
+                        if(staff1.equals(staff)) {
+                            return vocationalRoom;
+                        }
+                    }
+                }
+            }
         }
         return null;
     }

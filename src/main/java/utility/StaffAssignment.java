@@ -313,6 +313,7 @@ public class StaffAssignment {
         List<Staff> gymTeachers = getTeachersOfType(staffHashMap, StaffType.PHYSICAL_ED);
         List<Staff> visualArtsTeachers = getTeachersOfType(staffHashMap, StaffType.VISUAL_ARTS);
         List<Staff> performingArtsTeachers = getTeachersOfType(staffHashMap, StaffType.PERFORMING_ARTS);
+        List<Staff> vocationalTeachers = getTeachersOfType(staffHashMap, StaffType.VOCATIONAL);
         int studentsInGrade;
         int classesNeeded;
         Staff selectedTeacher;
@@ -565,6 +566,10 @@ public class StaffAssignment {
             } else {
                 perfCount++;
             }
+        }
+        //Vocational Assignment
+        for(Staff teacher : vocationalTeachers) {
+            vocationalHelper(teacher, standardSchool, view);
         }
     }
 
@@ -1139,10 +1144,10 @@ public class StaffAssignment {
                             classes[7] = "Debate";
                         }
                         case 2 -> {
-                            classes[0] = "Marching Band";
-                            classes[1] = "Marching Band";
-                            classes[2] = "Marching Band";
-                            classes[3] = "Marching Band";
+                            classes[0] = "AP Music Theory";
+                            classes[1] = "AP Music Theory";
+                            classes[2] = "AP Music Theory";
+                            classes[3] = "AP Music Theory";
                             classes[4] = "Jazz Band";
                             classes[5] = "Jazz Band";
                             classes[6] = "Jazz Band";
@@ -1159,6 +1164,142 @@ public class StaffAssignment {
                             classes[7] = "Theater II";
                         }
                     }
+                }
+            }
+            int index = 0;
+            for (String classN : classes) {
+                TeacherBlock block = new TeacherBlock();
+                block.setClassName(classN);
+                if (index % 2 == 0) {
+                    block.setSemester("Fall");
+                } else {
+                    block.setSemester("Spring");
+                }
+                switch (index) {
+                    case 0, 4 -> block.setBlockNumber(1);
+                    case 1, 5 -> block.setBlockNumber(2);
+                    case 2, 6 -> block.setBlockNumber(3);
+                    case 3, 7 -> block.setBlockNumber(4);
+                }
+                block.setBlockPopulation(studentPop);
+                block.setRoom(room);
+                teacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
+                index++;
+            }
+        } else {
+            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+        }
+    }
+
+    private static void vocationalHelper(Staff teacher, StandardSchool standardSchool, GameView view) {
+        String[] classes = new String[8];
+        String f_name = teacher.teacherName.getFirstName();
+        String l_name = teacher.teacherName.getLastName();
+        Room room = standardSchool.getRoomByStaff(teacher, "Vocational");
+        int choice = Randomizer.setRandom(0,9);
+        if(room != null) {
+            int studentPop = room.getStudentCapacity();
+            switch (choice) {
+                case 0 -> {
+                    classes[0] = "Computer Aided Drafting I";
+                    classes[1] = "Computer Aided Drafting II";
+                    classes[2] = "Computer Aided Drafting I";
+                    classes[3] = "Computer Aided Drafting II";
+                    classes[4] = "Computer Aided Drafting I";
+                    classes[5] = "Computer Aided Drafting II";
+                    classes[6] = "Computer Aided Drafting I";
+                    classes[7] = "Computer Aided Drafting II";
+                }
+                case 1 -> {
+                    classes[0] = "Auto Body Repair";
+                    classes[1] = "Auto Mechanics";
+                    classes[2] = "Auto Body Repair";
+                    classes[3] = "Auto Mechanics";
+                    classes[4] = "Auto Body Repair";
+                    classes[5] = "Auto Mechanics";
+                    classes[6] = "Auto Body Repair";
+                    classes[7] = "Auto Mechanics";
+                }
+                case 2 -> {
+                    classes[0] = "ROTC";
+                    classes[1] = "ROTC";
+                    classes[2] = "ROTC";
+                    classes[3] = "ROTC";
+                    classes[4] = "ROTC";
+                    classes[5] = "ROTC";
+                    classes[6] = "ROTC";
+                    classes[7] = "ROTC";
+                }
+                case 3 -> {
+                    classes[0] = "Culinary Arts";
+                    classes[1] = "Culinary Arts";
+                    classes[2] = "Culinary Arts";
+                    classes[3] = "Culinary Arts";
+                    classes[4] = "Culinary Arts";
+                    classes[5] = "Culinary Arts";
+                    classes[6] = "Culinary Arts";
+                    classes[7] = "Culinary Arts";
+                }
+                case 4 -> {
+                    classes[0] = "Keyboarding";
+                    classes[1] = "Word Processing";
+                    classes[2] = "Keyboarding";
+                    classes[3] = "Word Processing";
+                    classes[4] = "Keyboarding";
+                    classes[5] = "Word Processing";
+                    classes[6] = "Keyboarding";
+                    classes[7] = "Word Processing";
+                }
+                case 5 -> {
+                    classes[0] = "Digital Production Technology";
+                    classes[1] = "Film Production";
+                    classes[2] = "Digital Production Technology";
+                    classes[3] = "Film Production";
+                    classes[4] = "Digital Production Technology";
+                    classes[5] = "Film Production";
+                    classes[6] = "Digital Production Technology";
+                    classes[7] = "Film Production";
+                }
+                case 6 -> {
+                    classes[0] = "Woodworking";
+                    classes[1] = "Building Construction and Technology";
+                    classes[2] = "Woodworking";
+                    classes[3] = "Building Construction and Technology";
+                    classes[4] = "Woodworking";
+                    classes[5] = "Building Construction and Technology";
+                    classes[6] = "Woodworking";
+                    classes[7] = "Building Construction and Technology";
+                }
+                case 7 -> {
+                    classes[0] = "Philosophy";
+                    classes[1] = "AP Psychology";
+                    classes[2] = "Philosophy";
+                    classes[3] = "AP Psychology";
+                    classes[4] = "Philosophy";
+                    classes[5] = "AP Psychology";
+                    classes[6] = "Philosophy";
+                    classes[7] = "AP Psychology";
+                }
+                case 8 -> {
+                    classes[0] = "Home Economics";
+                    classes[1] = "Family Studies";
+                    classes[2] = "Home Economics";
+                    classes[3] = "Family Studies";
+                    classes[4] = "Home Economics";
+                    classes[5] = "Family Studies";
+                    classes[6] = "Home Economics";
+                    classes[7] = "Family Studies";
+                }
+                case 9 -> {
+                    classes[0] = "Intro to Programming";
+                    classes[1] = "Intro to Programming";
+                    classes[2] = "Intro to Programming";
+                    classes[3] = "Intro to Programming";
+                    classes[4] = "Intro to Programming";
+                    classes[5] = "Intro to Programming";
+                    classes[6] = "Intro to Programming";
+                    classes[7] = "Intro to Programming";
                 }
             }
             int index = 0;
