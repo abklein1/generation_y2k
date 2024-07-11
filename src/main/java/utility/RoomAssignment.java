@@ -41,6 +41,7 @@ public class RoomAssignment {
             case PERFORMING_ARTS:
                 DramaRoom[] dramaRooms = school.getDramaRooms();
                 MusicRoom[] musicRooms = school.getMusicRooms();
+                Auditorium[] auditoriums = school.getAuditoriums();
                 for (DramaRoom dramaRoom : dramaRooms) {
                     if (dramaRoom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, dramaRoom);
@@ -53,7 +54,17 @@ public class RoomAssignment {
                     for (MusicRoom musicRoom : musicRooms) {
                         if (musicRoom.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, musicRoom);
+                            teacherAssigned = true;
                             System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + musicRoom.getRoomName());
+                            break;
+                        }
+                    }
+                }
+                if (!teacherAssigned) {
+                    for (Auditorium auditorium: auditoriums) {
+                        if (auditorium.getAssignedStaff().isEmpty()) {
+                            assignTeacherToRoom(staff, auditorium);
+                            System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + auditorium.getRoomName());
                             break;
                         }
                     }
