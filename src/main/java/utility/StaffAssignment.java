@@ -84,7 +84,7 @@ public class StaffAssignment {
         int coreMax = (int) Math.round((((studentCap / 2.0) / 30.0) / 4.00) + 4);
 
         if (type.equals(StaffType.ENGLISH)) {
-            coreMax = (int) Math.round(((studentCap / 30.0) / 4.00) + 4);
+            coreMax = (int) Math.round(((studentCap / 30.0) / 4.00) + 2);
         }
 
         for (int count = 0; count < coreMax; count++) {
