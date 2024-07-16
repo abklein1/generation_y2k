@@ -8,6 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import static utility.Inspector.*;
@@ -146,9 +149,13 @@ public class SchoolController {
         JTextArea inspectionArea = new JTextArea();
         inspectionArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(inspectionArea);
+
         if (type.equals("Staff")) {
+            ArrayList<Staff> staffList = new ArrayList<>(staffHashMap.values());
+            staffList.sort(Comparator.comparing(staff -> staff.teacherName.getLastName()));
+
             DefaultListModel<Staff> listModel = new DefaultListModel<>();
-            for (Staff staff : staffHashMap.values()) {
+            for (Staff staff : staffList) {
                 listModel.addElement(staff);
             }
 
@@ -170,16 +177,19 @@ public class SchoolController {
             HashMap<Integer, Student> studentGradeClass = standardSchool.getStudentGradeClass(type);
 
             if (studentGradeClass != null) {
+                ArrayList<Student> studentList = new ArrayList<>(studentGradeClass.values());
+                studentList.sort(Comparator.comparing(student -> student.studentName.getLastName()));
+
                 DefaultListModel<Student> listModel = new DefaultListModel<>();
-                for (Student student : studentGradeClass.values()) {
+                for (Student student : studentList) {
                     listModel.addElement(student);
                 }
 
-                JList<Student> studentList = new JList<>(listModel);
-                studentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                studentList.addListSelectionListener(e -> {
+                JList<Student> studentListComponent = new JList<>(listModel);
+                studentListComponent.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                studentListComponent.addListSelectionListener(e -> {
                     if (!e.getValueIsAdjusting()) {
-                        Student selectedStudent = studentList.getSelectedValue();
+                        Student selectedStudent = studentListComponent.getSelectedValue();
                         if (selectedStudent != null) {
                             studentInspection(selectedStudent, inspectionArea);
                         }
@@ -187,7 +197,7 @@ public class SchoolController {
                 });
 
                 inspectionFrame.setLayout(new BorderLayout());
-                inspectionFrame.add(new JScrollPane(studentList), BorderLayout.WEST);
+                inspectionFrame.add(new JScrollPane(studentListComponent), BorderLayout.WEST);
                 inspectionFrame.add(scrollPane, BorderLayout.CENTER);
             }
         }
