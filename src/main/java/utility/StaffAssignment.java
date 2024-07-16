@@ -883,20 +883,15 @@ public class StaffAssignment {
                 } else {
                     block.setSemester("Spring");
                 }
-                switch (index) {
-                    case 0, 4 -> block.setBlockNumber(1);
-                    case 1, 5 -> block.setBlockNumber(2);
-                    case 2, 6 -> block.setBlockNumber(3);
-                    case 3, 7 -> block.setBlockNumber(4);
-                }
-                block.setBlockPopulation(studentPop);
+                block.setBlockNumber(index + 1);
+                block.addClassPopulationBlock(studentPop);
                 block.setRoom(room);
                 teacher.teacherStatistics.addTeacherSchedule(block);
                 view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
                 index++;
             }
         } else {
-            System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+            System.err.println("Language room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
         }
     }
 
@@ -958,13 +953,8 @@ public class StaffAssignment {
                 } else {
                     block.setSemester("Spring");
                 }
-                switch (index) {
-                    case 0, 4 -> block.setBlockNumber(1);
-                    case 1, 5 -> block.setBlockNumber(2);
-                    case 2, 6 -> block.setBlockNumber(3);
-                    case 3, 7 -> block.setBlockNumber(4);
-                }
-                block.setBlockPopulation(studentPop);
+                block.setBlockNumber(index + 1);
+                block.addClassPopulationBlock(studentPop);
                 block.setRoom(room);
                 teacher.teacherStatistics.addTeacherSchedule(block);
                 view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
@@ -1044,13 +1034,8 @@ public class StaffAssignment {
                 } else {
                     block.setSemester("Spring");
                 }
-                switch (index) {
-                    case 0, 4 -> block.setBlockNumber(1);
-                    case 1, 5 -> block.setBlockNumber(2);
-                    case 2, 6 -> block.setBlockNumber(3);
-                    case 3, 7 -> block.setBlockNumber(4);
-                }
-                block.setBlockPopulation(studentPop);
+                block.setBlockNumber(index + 1);
+                block.addClassPopulationBlock(studentPop);
                 block.setRoom(room);
                 teacher.teacherStatistics.addTeacherSchedule(block);
                 view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
@@ -1164,13 +1149,8 @@ public class StaffAssignment {
                 } else {
                     block.setSemester("Spring");
                 }
-                switch (index) {
-                    case 0, 4 -> block.setBlockNumber(1);
-                    case 1, 5 -> block.setBlockNumber(2);
-                    case 2, 6 -> block.setBlockNumber(3);
-                    case 3, 7 -> block.setBlockNumber(4);
-                }
-                block.setBlockPopulation(studentPop);
+                block.setBlockNumber(index + 1);
+                block.addClassPopulationBlock(studentPop);
                 block.setRoom(room);
                 teacher.teacherStatistics.addTeacherSchedule(block);
                 view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
@@ -1300,13 +1280,8 @@ public class StaffAssignment {
                 } else {
                     block.setSemester("Spring");
                 }
-                switch (index) {
-                    case 0, 4 -> block.setBlockNumber(1);
-                    case 1, 5 -> block.setBlockNumber(2);
-                    case 2, 6 -> block.setBlockNumber(3);
-                    case 3, 7 -> block.setBlockNumber(4);
-                }
-                block.setBlockPopulation(studentPop);
+                block.setBlockNumber(index + 1);
+                block.addClassPopulationBlock(studentPop);
                 block.setRoom(room);
                 teacher.teacherStatistics.addTeacherSchedule(block);
                 view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);
@@ -1366,13 +1341,8 @@ public class StaffAssignment {
                 } else {
                     block.setSemester("Spring");
                 }
-                switch (index) {
-                    case 0, 4 -> block.setBlockNumber(1);
-                    case 1, 5 -> block.setBlockNumber(2);
-                    case 2, 6 -> block.setBlockNumber(3);
-                    case 3, 7 -> block.setBlockNumber(4);
-                }
-                block.setBlockPopulation(studentPop);
+                block.setBlockNumber(index + 1);
+                block.addClassPopulationBlock(studentPop);
                 block.setRoom(room);
                 teacher.teacherStatistics.addTeacherSchedule(block);
                 view.appendOutput("Assigned " + block.getClassName() + " to " + f_name + " " + l_name);

@@ -279,11 +279,15 @@ public class Inspector {
             studentListArea.append(block.getSemester());
             studentListArea.append("\n");
             students = block.getClassPopulation();
-            for (Student student : students) {
-                studentListArea.append(student.studentName.getFirstName());
-                studentListArea.append(" ");
-                studentListArea.append(student.studentName.getLastName());
-                studentListArea.append("\n");
+            if(students != null) {
+                for (Student student : students) {
+                    studentListArea.append(student.studentName.getFirstName());
+                    studentListArea.append(" ");
+                    studentListArea.append(student.studentName.getLastName());
+                    studentListArea.append("\n");
+                }
+            } else {
+                studentListArea.append("Students are null!\n");
             }
         }
         JScrollPane studentListScrollPane = new JScrollPane(studentListArea);
