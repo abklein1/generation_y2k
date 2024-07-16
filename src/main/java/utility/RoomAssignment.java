@@ -17,6 +17,7 @@ public class RoomAssignment {
         StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
         Office[] offices = school.getOffices();
         boolean teacherAssigned = false;
+
         switch (type) {
             case COMP_SCI:
                 ComputerLab[] computerLabs = school.getComputerLabs();
@@ -24,6 +25,7 @@ public class RoomAssignment {
                     if (computerLab.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, computerLab);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + computerLab.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
@@ -34,6 +36,7 @@ public class RoomAssignment {
                     if (vocationalRoom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, vocationalRoom);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + vocationalRoom.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
@@ -61,9 +64,10 @@ public class RoomAssignment {
                     }
                 }
                 if (!teacherAssigned) {
-                    for (Auditorium auditorium: auditoriums) {
+                    for (Auditorium auditorium : auditoriums) {
                         if (auditorium.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, auditorium);
+                            teacherAssigned = true;
                             System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + auditorium.getRoomName());
                             break;
                         }
@@ -76,31 +80,28 @@ public class RoomAssignment {
                     if (artStudio.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, artStudio);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + artStudio.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
                 break;
             case LIBRARY:
                 LibraryR[] libraryRS = school.getLibraries();
-                if (libraryRS.length == 1) {
-                    assignTeacherToRoom(staff, libraryRS[0]);
-                    System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + libraryRS[0].getRoomName());
-                    break;
-                } else {
-                    for (LibraryR libraryR : libraryRS) {
-                        if (libraryR.getAssignedStaff().isEmpty()) {
-                            assignTeacherToRoom(staff, libraryR);
-                            System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + libraryR.getRoomName());
-                            break;
-                        }
+                for (LibraryR libraryR : libraryRS) {
+                    if (libraryR.getAssignedStaff().isEmpty()) {
+                        assignTeacherToRoom(staff, libraryR);
+                        System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + libraryR.getRoomName());
+                        teacherAssigned = true;
+                        break;
                     }
                 }
                 break;
             case NURSE:
                 for (Office office : offices) {
-                    if (office.getRoomName().contains("Nurse")) {
+                    if (office.getRoomName().contains("Nurse") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
@@ -110,49 +111,48 @@ public class RoomAssignment {
                     if (office.getRoomName().contains("Guidance") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
                 break;
             case VICE_PRINCIPAL:
                 for (Office office : offices) {
-                    if (office.getRoomName().equals("Vice Principal's Office")) {
+                    if (office.getRoomName().equals("Vice Principal's Office") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
                 break;
             case PRINCIPAL:
                 for (Office office : offices) {
-                    if (office.getRoomName().equals("Principal's Office")) {
+                    if (office.getRoomName().equals("Principal's Office") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
                 break;
             case LUNCH:
                 Lunchroom[] lunchrooms = school.getLunchrooms();
-                if (lunchrooms.length == 1) {
-                    assignTeacherToRoom(staff, lunchrooms[0]);
-                    System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + lunchrooms[0].getRoomName());
-                    break;
-                } else {
-                    for (Lunchroom lunchroom : lunchrooms) {
-                        if (lunchroom.getAssignedStaff().isEmpty()) {
-                            assignTeacherToRoom(staff, lunchroom);
-                            System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + lunchroom.getRoomName());
-                            break;
-                        }
+                for (Lunchroom lunchroom : lunchrooms) {
+                    if (lunchroom.getAssignedStaff().isEmpty()) {
+                        assignTeacherToRoom(staff, lunchroom);
+                        System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + lunchroom.getRoomName());
+                        teacherAssigned = true;
+                        break;
                     }
                 }
                 break;
             case OFFICE:
                 for (Office office : offices) {
-                    if (office.getRoomName().equals("Front Office")) {
+                    if (office.getRoomName().equals("Front Office") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
@@ -173,12 +173,14 @@ public class RoomAssignment {
                         if (athleticField.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, athleticField);
                             System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + athleticField.getRoomName());
+                            teacherAssigned = true;
                             break;
                         }
                     }
                 }
                 break;
             case SUB:
+                // Subs might not need room assignments
                 break;
             case MAINTENANCE:
                 UtilityRoom[] utilityRooms = school.getUtilityrooms();
@@ -186,6 +188,7 @@ public class RoomAssignment {
                     if (utilityRoom.getAssignedStaff().size() < utilityRoom.getStaffCapacity()) {
                         assignTeacherToRoom(staff, utilityRoom);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + utilityRoom.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
@@ -205,6 +208,7 @@ public class RoomAssignment {
                         if (classroom.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, classroom);
                             System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + classroom.getRoomName() + " of other type!");
+                            teacherAssigned = true;
                             break;
                         }
                     }
@@ -216,10 +220,15 @@ public class RoomAssignment {
                     if (classroom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, classroom);
                         System.out.println("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + classroom.getRoomName());
+                        teacherAssigned = true;
                         break;
                     }
                 }
                 break;
+        }
+
+        if (!teacherAssigned) {
+            System.out.println("No available room found for " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
         }
     }
 

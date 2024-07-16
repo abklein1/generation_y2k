@@ -341,31 +341,25 @@ public class StaffAssignment {
         // Step 1: Assign teachers to regular English classes
         for (int gradeIndex = 0; gradeIndex < englishClasses.length; gradeIndex++) {
             studentsInGrade = studentsPerGrade[gradeIndex];
-            classesNeeded = (int) Math.ceil((double) studentsInGrade / 35);
+            classesNeeded = (int) Math.ceil((double) (studentsInGrade / 35) / 4);
 
             for (int classCount = 0; classCount < classesNeeded; classCount++) {
-                selectedTeacher = null;
                 for (Staff teacher : englishTeachers) {
-                    schedule = teacher.teacherStatistics.getTeacherSchedule();
-                    if (schedule.size() < 4) {
-                        selectedTeacher = teacher;
-                        break;
+                    if (teacher.teacherStatistics.getTeacherSchedule().size() == 0) {
+                        for (int blockNum = 1; blockNum <= 8; blockNum++) {
+                            Room selectedRoom = standardSchool.getClassroomByStaff(teacher);
+                            block = new TeacherBlock();
+                            block.setBlockNumber(blockNum);
+                            block.setClassName(englishClasses[gradeIndex]);
+                            block.setRoom(selectedRoom);
+                            block.setSemester(blockNum % 2 == 0 ? "Spring" : "Fall");
+                            block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
+
+                            teacher.teacherStatistics.addTeacherSchedule(block);
+                            view.appendOutput("Assigned " + englishClasses[gradeIndex] + " to " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+                        }
+                        break; // Move to the next teacher for the next class type
                     }
-                }
-
-                if (selectedTeacher == null) {
-                    view.appendOutput("Not enough teachers available to cover all classes.");
-                } else {
-                    Room selectedRoom = standardSchool.getClassroomByStaff(selectedTeacher);
-                    block = new TeacherBlock();
-                    block.setBlockNumber(selectedTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-                    block.setClassName(englishClasses[gradeIndex]);
-                    block.setRoom(selectedRoom);
-                    block.setSemester("Both");
-                    block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
-
-                    selectedTeacher.teacherStatistics.addTeacherSchedule(block);
-                    view.appendOutput("Assigned " + englishClasses[gradeIndex] + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
                 }
             }
         }
@@ -373,7 +367,7 @@ public class StaffAssignment {
         // Step 2: Collect remaining teachers
         List<Staff> remainingTeachers = new ArrayList<>();
         for (Staff teacher : englishTeachers) {
-            if (teacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+            if (teacher.teacherStatistics.getTeacherSchedule().size() < 8) {
                 remainingTeachers.add(teacher);
             }
         }
@@ -384,62 +378,52 @@ public class StaffAssignment {
             Staff apLangTeacher = remainingTeachers.remove(remainingTeachers.size() - 1);
 
             // Assign to AP Literature
-            while (apLitTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+            for (int blockNum = 1; blockNum <= 8; blockNum++) {
                 Room selectedRoom = standardSchool.getClassroomByStaff(apLitTeacher);
-                if (selectedRoom != null) {
-                    block = new TeacherBlock();
-                    block.setBlockNumber(apLitTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-                    block.setClassName("AP English Literature & Composition");
-                    block.setRoom(selectedRoom);
-                    block.setSemester("Both");
-                    block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
+                block = new TeacherBlock();
+                block.setBlockNumber(blockNum);
+                block.setClassName("AP English Literature & Composition");
+                block.setRoom(selectedRoom);
+                block.setSemester(blockNum % 2 == 0 ? "Spring" : "Fall");
+                block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
-                    apLitTeacher.teacherStatistics.addTeacherSchedule(block);
-                    view.appendOutput("Assigned AP English Literature & Composition to " + apLitTeacher.teacherName.getFirstName() + " " + apLitTeacher.teacherName.getLastName());
-                } else {
-                    System.out.println("AP Lit teachers could not be assigned!");
-                    break;
-                }
+                apLitTeacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned AP English Literature & Composition to " + apLitTeacher.teacherName.getFirstName() + " " + apLitTeacher.teacherName.getLastName());
             }
 
             // Assign to AP Language
-            while (apLangTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+            for (int blockNum = 1; blockNum <= 8; blockNum++) {
                 Room selectedRoom = standardSchool.getClassroomByStaff(apLangTeacher);
-                if (selectedRoom != null) {
-                    block = new TeacherBlock();
-                    block.setBlockNumber(apLangTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
-                    block.setClassName("AP English Language & Composition");
-                    block.setRoom(selectedRoom);
-                    block.setSemester("Both");
-                    block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
+                block = new TeacherBlock();
+                block.setBlockNumber(blockNum);
+                block.setClassName("AP English Language & Composition");
+                block.setRoom(selectedRoom);
+                block.setSemester(blockNum % 2 == 0 ? "Spring" : "Fall");
+                block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
-                    apLangTeacher.teacherStatistics.addTeacherSchedule(block);
-                    view.appendOutput("Assigned AP English Language & Composition to " + apLangTeacher.teacherName.getFirstName() + " " + apLangTeacher.teacherName.getLastName());
-                } else {
-                    System.out.println("AP English Language teacher could not be assigned!");
-                    break;
-                }
+                apLangTeacher.teacherStatistics.addTeacherSchedule(block);
+                view.appendOutput("Assigned AP English Language & Composition to " + apLangTeacher.teacherName.getFirstName() + " " + apLangTeacher.teacherName.getLastName());
             }
         }
 
         // Step 4: Assign any additional remaining teachers to regular English classes
         for (Staff remainingTeacher : remainingTeachers) {
-            while (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+            while (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 8) {
                 for (String englishClass : englishClasses) {
-                    if (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 4) {
+                    if (remainingTeacher.teacherStatistics.getTeacherSchedule().size() < 8) {
                         Room selectedRoom = standardSchool.getClassroomByStaff(remainingTeacher);
                         if (selectedRoom != null) {
                             block = new TeacherBlock();
                             block.setBlockNumber(remainingTeacher.teacherStatistics.getTeacherSchedule().size() + 1);
                             block.setClassName(englishClass);
                             block.setRoom(selectedRoom);
-                            block.setSemester("Both");
+                            block.setSemester(block.getBlockNumber() % 2 == 0 ? "Spring" : "Fall");
                             block.addClassPopulationBlock(selectedRoom.getStudentCapacity());
 
                             remainingTeacher.teacherStatistics.addTeacherSchedule(block);
                             view.appendOutput("Assigned " + englishClass + " to " + remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName());
                         } else {
-                            System.out.println(remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName() + " is misisng a room!");
+                            view.appendOutput("Room not available for " + remainingTeacher.teacherName.getFirstName() + " " + remainingTeacher.teacherName.getLastName());
                         }
                     } else {
                         break;

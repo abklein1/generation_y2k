@@ -28,6 +28,7 @@ public class StudentScheduleAssigner {
         String year = student.studentStatistics.getGradeLevel();
         int intelligence = student.studentStatistics.getIntelligence();
         String income = student.studentStatistics.getIncomeLevel();
+        int langChoice = Randomizer.setRandom(0,4);
 
         // Determine paths for each subject
         String englishPath = classProbabilityLoader(intelligence, income);
@@ -39,6 +40,7 @@ public class StudentScheduleAssigner {
         List<String> mathClasses = new ArrayList<>();
         List<String> scienceClasses = new ArrayList<>();
         List<String> historyClasses = new ArrayList<>();
+        List<String> languageClasses = new ArrayList<>();
 
         // Determine English classes based on path and grade level
         switch (year) {
@@ -50,7 +52,7 @@ public class StudentScheduleAssigner {
                     englishClasses.add(englishPath.equals("AP") ? "AP English Literature & Composition" : "English IV");
         }
 
-        // Determine Math and Science classes based on path and grade level
+        // Determine Math/Science/Language classes based on path and grade level
         switch (year) {
             case "Freshman" -> {
                 mathClasses.add(mathPath.equals("AP") ? "Geometry" : mathPath.equals("Honors") ? "Geometry" : "Fundamentals of Math");
@@ -135,6 +137,37 @@ public class StudentScheduleAssigner {
         for (String className : historyClasses) {
             if(classDetailsMap.containsKey(className)) {
                 assignClassToStudent(student, className, staffHashMap, StaffType.HISTORY);
+            }
+        }
+
+        // Language assignment
+        if(year.equals("Freshman")) {
+            switch (langChoice) {
+                case 0 -> {
+                    languageClasses.add("Spanish I");
+                    languageClasses.add("Spanish II");
+                }
+                case 1 -> {
+                    languageClasses.add("French I");
+                    languageClasses.add("French II");
+                }
+                case 2 -> {
+                    languageClasses.add("German I");
+                    languageClasses.add("German II");
+                }
+                case 3 -> {
+                    languageClasses.add("American Sign Language I");
+                    languageClasses.add("American Sign Language II");
+                }
+                case 4 -> {
+                    languageClasses.add("Latin I");
+                    languageClasses.add("Latin II");
+                }
+            }
+        }
+        for (String className : languageClasses) {
+            if(classDetailsMap.containsKey(className)) {
+                assignClassToStudent(student, className, staffHashMap, StaffType.LANGUAGES);
             }
         }
     }
@@ -244,46 +277,90 @@ public class StudentScheduleAssigner {
         List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, staffType);
 
         for (Staff teacher : availableTeachers) {
-            TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
-            if (availableBlock != null) {
-                // Create a new StudentBlock and assign the class
-                StudentBlock studentBlock = new StudentBlock();
-                studentBlock.setBlockNumber(availableBlock.getBlockNumber());
-                studentBlock.setClassName(className);
-                studentBlock.setTeacher(teacher);
-                studentBlock.setSemester(availableBlock.getSemester());
-                studentBlock.setRoom(availableBlock.getRoom());
+            List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
+            int i = 0;
 
-                // Assign the student block to the student's schedule
-                student.studentStatistics.getStudentSchedule().add(studentBlock);
-                // Decrease the room capacity
-                availableBlock.addStudentToBlock(student);
+            // Use a while loop to iterate through available blocks
+            while (i < teacherBlocks.size()) {
+                TeacherBlock availableBlock = teacherBlocks.get(i);
+                if (availableBlock != null && !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester())) {
+                    // TODO: hardcode but prob change later
+                    if(staffType.equals(StaffType.ENGLISH)) {
+                        StudentBlock studentBlockF = new StudentBlock();
+                        StudentBlock studentBlockS = new StudentBlock();
+                        TeacherBlock availableBlockS = teacherBlocks.get(i + 1);
 
-                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
-                return;
+                        studentBlockF.setBlockNumber(availableBlock.getBlockNumber());
+                        studentBlockS.setBlockNumber(availableBlockS.getBlockNumber());
+                        studentBlockF.setClassName(className);
+                        studentBlockS.setClassName(className);
+                        studentBlockF.setTeacher(teacher);
+                        studentBlockS.setTeacher(teacher);
+                        assert availableBlock.getSemester().equals("Fall");
+                        studentBlockF.setSemester(availableBlock.getSemester());
+                        studentBlockS.setSemester(availableBlockS.getSemester());
+                        studentBlockF.setRoom(availableBlock.getRoom());
+                        studentBlockS.setRoom(availableBlockS.getRoom());
+
+                        student.studentStatistics.getStudentSchedule().add(studentBlockF);
+                        student.studentStatistics.getStudentSchedule().add(studentBlockS);
+
+                        availableBlock.addStudentToBlock(student);
+                        availableBlockS.addStudentToBlock(student);
+                    } else {
+                        // Create a new StudentBlock and assign the class
+                        StudentBlock studentBlock = new StudentBlock();
+                        studentBlock.setBlockNumber(availableBlock.getBlockNumber());
+                        studentBlock.setClassName(className);
+                        studentBlock.setTeacher(teacher);
+                        studentBlock.setSemester(availableBlock.getSemester());
+                        studentBlock.setRoom(availableBlock.getRoom());
+
+                        // Assign the student block to the student's schedule
+                        student.studentStatistics.getStudentSchedule().add(studentBlock);
+                        // Decrease the room capacity
+                        availableBlock.addStudentToBlock(student);
+                    }
+                    System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
+                    return;
+                }
+                i++;
             }
         }
 
         // If no available teacher has room capacity left, assign to the first teacher regardless of capacity
         for (Staff teacher : availableTeachers) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
-                StudentBlock studentBlock = new StudentBlock();
-                studentBlock.setBlockNumber(block.getBlockNumber());
-                studentBlock.setClassName(className);
-                studentBlock.setTeacher(teacher);
-                studentBlock.setSemester(block.getSemester());
-                studentBlock.setRoom(block.getRoom());
+                if (hasBlockConflict(student, block.getBlockNumber(), block.getSemester())) {
+                    StudentBlock studentBlock = new StudentBlock();
+                    studentBlock.setBlockNumber(block.getBlockNumber());
+                    studentBlock.setClassName(className);
+                    studentBlock.setTeacher(teacher);
+                    studentBlock.setSemester(block.getSemester());
+                    studentBlock.setRoom(block.getRoom());
 
-                // Assign the student block to the student's schedule
-                student.studentStatistics.getStudentSchedule().add(studentBlock);
-                // Decrease the room capacity
-                block.addStudentToBlock(student);
+                    // Assign the student block to the student's schedule
+                    student.studentStatistics.getStudentSchedule().add(studentBlock);
+                    // Decrease the room capacity
+                    block.addStudentToBlock(student);
 
-                // Even though the room is over assigned, we add the student
-                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
-                return;
+                    // Even though the room is over assigned, we add the student
+                    System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
+                    return;
+                }
             }
         }
+    }
+
+
+    // Helper method to check if a block is already assigned in the student's schedule
+    private static boolean hasBlockConflict(Student student, int blockNumber, String semester) {
+        for (StudentBlock block : student.studentStatistics.getStudentSchedule().getClassSchedule()) {
+            if (block.getBlockNumber() == blockNumber && (block.getSemester().equals(semester) || block.getSemester().equals("Both"))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap, StaffType staffType) {
@@ -292,7 +369,10 @@ public class StudentScheduleAssigner {
 
         for (Staff teacher : staffTypeTeachers) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
-                availableTeachers.add(teacher);
+                if(block.getClassName().equals(className)) {
+                    availableTeachers.add(teacher);
+                    break;
+                }
             }
         }
         return availableTeachers;
