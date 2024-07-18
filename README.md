@@ -228,11 +228,15 @@ activities, but they cannot be pushed beyond their initial cap.
 
 - History, Science, Language, Vocational assignments completed for teachers
 - Student class assignments completed for most grades and requirements
+- Student and staff lists now displayed alphabetically by last name
+- Student inspection updated to show class schedule per student
 - AP class assignments are now based on income level, intelligence, and determination
 - AP class assignments are determined per class category
 - Revisions to class assignment algorithms so that students are not assigned conflicting classes
 - Math class assignment revisions for students
 - Minor bugfixes on student and teacher assignments
+
+![](src/main/java/Resources.Screencaps/proto5.JPG)
 
 ## Release 0.0.9
 
