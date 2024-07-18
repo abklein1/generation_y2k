@@ -99,7 +99,6 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 - Rival schools
 - More accurate descriptors of teachers based on age
 - Household and personal traits
-- Graduation requirements
 - Rumors
 - School and extracurricular events
 - Local businesses / points of interest
@@ -221,7 +220,19 @@ activities, but they cannot be pushed beyond their initial cap.
 - Graph visualization of rooms cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers
 - Some students aren't assigned to required classes per grade level
-- Some rooms have negative student capacity
+- Some math and history teachers are not assigned classes
+- Some teachers are not properly assigned a room
+- Student and teacher assignment algorithms do not evenly and efficiently distribute students
+
+## Release 0.0.10
+
+- History, Science, Language, Vocational assignments completed for teachers
+- Student class assignments completed for most grades and requirements
+- AP class assignments are now based on income level, intelligence, and determination
+- AP class assignments are determined per class category
+- Revisions to class assignment algorithms so that students are not assigned conflicting classes
+- Math class assignment revisions for students
+- Minor bugfixes on student and teacher assignments
 
 ## Release 0.0.9
 

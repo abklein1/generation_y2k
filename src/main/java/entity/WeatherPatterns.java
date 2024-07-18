@@ -63,7 +63,7 @@ public enum WeatherPatterns {
     PARTLY_CLOUDY_DAY("Partly Cloudy (day).png"),
     PARTLY_CLOUDY_NIGHT("Partly Cloudy (night).png"),
     PARTLY_CLOUDY_AND_WINDY_DAY("Partly Cloudy and Windy (day).png"),
-    PARTLY_CLOUDY_AND_WINDY_NIGHT("Partly Cloudy and Windy (night, revised"),
+    PARTLY_CLOUDY_AND_WINDY_NIGHT("Partly Cloudy and Windy (night, revised).png"),
     PARTLY_CLOUDY_AND_HAZY_NIGHT("Partly Cloudy and Hazy (night).png"),
     PM_THUNDERSTORMS("PM Thunderstorms.png"),
     RAIN_AND_FOG("Rain and Fog.png"),

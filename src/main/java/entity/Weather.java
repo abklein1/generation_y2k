@@ -506,7 +506,7 @@ public class Weather {
                     } else if (choice < 40) {
                         return WeatherPatterns.SCATTERED_THUNDERSTORMS_NIGHT;
                     } else if (choice < 60) {
-                        return WeatherPatterns.AM_THUNDERSTORMS;
+                        return WeatherPatterns.PM_THUNDERSTORMS;
                     } else if (choice < 80) {
                         return WeatherPatterns.STRONG_THUNDERSTORMS;
                     } else if (choice < 90) {

@@ -26,89 +26,155 @@ public class StudentScheduleAssigner {
 
     public static void scheduleStudent(Student student, HashMap<Integer, Staff> staffHashMap) {
         String year = student.studentStatistics.getGradeLevel();
-        List<String> requiredClasses = loadGradeRequirements(year);
         int intelligence = student.studentStatistics.getIntelligence();
+        int determination = student.studentStatistics.getDetermination();
         String income = student.studentStatistics.getIncomeLevel();
-        String pathSelection = classProbabilityLoader(intelligence, income);
+        int langChoice = Randomizer.setRandom(0, 4);
 
+        // Determine paths for each subject
+        String englishPath = classProbabilityLoader(intelligence, income, determination);
+        String mathPath = classProbabilityLoader(intelligence, income, determination);
+        String sciencePath = classProbabilityLoader(intelligence, income, determination);
+        String historyPath = classProbabilityLoader(intelligence, income, determination);
+
+        List<String> englishClasses = new ArrayList<>();
         List<String> mathClasses = new ArrayList<>();
-        List<String> otherClasses = new ArrayList<>();
+        List<String> scienceClasses = new ArrayList<>();
+        List<String> historyClasses = new ArrayList<>();
+        List<String> languageClasses = new ArrayList<>();
+        List<String> physEdClasses = new ArrayList<>();
 
-        if (pathSelection.equals("AP")) {
-            switch (year) {
-                case "Freshman" -> {
-                    otherClasses.add("English I");
-                    mathClasses.add("Geometry");
+        // Determine English/Math/Science/History/Language/Vocational classes based on path and grade level
+        switch (year) {
+            case "Freshman" -> {
+                mathClasses.add(mathPath.equals("AP") ? "Geometry" : mathPath.equals("Honors") ? "Geometry" : "Fundamentals of Math");
+                if (mathPath.equals("AP") || mathPath.equals("Honors")) {
                     mathClasses.add("Algebra I");
+                } else {
+                    mathClasses.add("Geometry");
                 }
-                case "Sophomore" -> {
-                    otherClasses.add("English II");
-                    mathClasses.add("Algebra II");
-                    mathClasses.add("Trigonometry");
+                englishClasses.add("English I");
+                //No science options freshman
+                scienceClasses.add("Biology");
+                historyClasses.add(historyPath.equals("AP") ? "AP Human Geography" : "World Geography");
+                physEdClasses.add("Health");
+            }
+            case "Sophomore" -> {
+                mathClasses.add(mathPath.equals("AP") ? "Algebra II" : mathPath.equals("Honors") ? "Algebra II" : "Algebra I");
+                mathClasses.add(mathPath.equals("AP") ? "Trigonometry" : mathPath.equals("Honors") ? "Trigonometry" : "Algebra II");
+                englishClasses.add("English II");
+                //Science options
+                if (sciencePath.equals("AP") || sciencePath.equals("Honors")) {
+                    scienceClasses.add("Chemistry");
+                } else {
+                    String[] onLevelScienceOptions = {"Earth and Space Science", "Physical Science"};
+                    scienceClasses.add(onLevelScienceOptions[Randomizer.setRandom(0, onLevelScienceOptions.length - 1)]);
                 }
-                case "Junior" -> {
-                    otherClasses.add("AP English Language & Composition");
-                    mathClasses.add("Precalculus");
+                historyClasses.add(historyPath.equals("AP") ? "AP World History" : "World History");
+            }
+            case "Junior" -> {
+                mathClasses.add(mathPath.equals("AP") ? "Precalculus" : mathPath.equals("Honors") ? "Precalculus" : "Trigonometry");
+                if (mathPath.equals("AP")) {
                     mathClasses.add("AP Statistics");
-                }
-                default -> {
-                    otherClasses.add("AP English Literature & Composition");
-                    mathClasses.add("AP Calculus AB");
-                    mathClasses.add("AP Calculus BC");
-                }
-            }
-        } else if (pathSelection.equals("Honors")) {
-            switch (year) {
-                case "Freshman" -> {
-                    otherClasses.add("English I");
-                    mathClasses.add("Geometry");
-                    mathClasses.add("Algebra I");
-                }
-                case "Sophomore" -> {
-                    otherClasses.add("English II");
-                    mathClasses.add("Algebra II");
-                    mathClasses.add("Trigonometry");
-                }
-                case "Junior" -> {
-                    otherClasses.add("English III");
-                    mathClasses.add("Precalculus");
-                }
-                default -> {
-                    otherClasses.add("English IV");
-                    System.out.println("No required math this year");
-                }
-            }
-        } else {
-            switch (year) {
-                case "Freshman" -> {
-                    otherClasses.add("English I");
-                    mathClasses.add("Fundamentals of Math");
-                    mathClasses.add("Geometry");
-                }
-                case "Sophomore" -> {
-                    otherClasses.add("English II");
-                    mathClasses.add("Algebra I");
-                    mathClasses.add("Algebra II");
-                }
-                case "Junior" -> {
-                    otherClasses.add("English III");
-                    mathClasses.add("Trigonometry");
+                } else if (!mathPath.equals("Honors")) {
                     mathClasses.add("Math for Data and Financial Literacy");
                 }
-                default -> {
-                    otherClasses.add("English IV");
+                englishClasses.add(englishPath.equals("AP") ? "AP English Language & Composition" : "English III");
+                if (sciencePath.equals("AP")) {
+                    String[] apScienceOptions = {"AP Biology", "AP Chemistry"};
+                    scienceClasses.add(apScienceOptions[Randomizer.setRandom(0, apScienceOptions.length - 1)]);
+                } else {
+                    scienceClasses.add("Anatomy and Physiology");
+                }
+                historyClasses.add(historyPath.equals("AP") ? "AP US History" : "US History");
+            }
+            default -> {
+                if (mathPath.equals("AP")) {
+                    mathClasses.add("AP Calculus AB");
+                    mathClasses.add("AP Calculus BC");
+                } else if (mathPath.equals("Honors")) {
+                    // No required math this year for Honors path
+                } else {
                     mathClasses.add("Precalculus");
+                }
+                englishClasses.add(englishPath.equals("AP") ? "AP English Literature & Composition" : "English IV");
+                if (sciencePath.equals("AP")) {
+                    scienceClasses.add("AP Physics B");
+                    scienceClasses.add("AP Physics C");
+                } else if (sciencePath.equals("Honors")) {
+                    scienceClasses.add("Physics");
+                } else {
+                    scienceClasses.add("Environmental Science");
+                }
+                if (historyPath.equals("AP")) {
+                    historyClasses.add("AP US Government");
+                    historyClasses.add("AP Economics Macro");
+                } else {
+                    historyClasses.add("US Government");
                 }
             }
         }
 
-        //schedule math
-        scheduleMathClasses(student, mathClasses, staffHashMap);
-
-        //English for now
-        for (String className : otherClasses) {
+        // Schedule English classes
+        for (String className : englishClasses) {
             if (classDetailsMap.containsKey(className)) {
                 assignClassToStudent(student, className, staffHashMap, StaffType.ENGLISH);
+            }
+        }
+
+        // Language assignment
+        if (year.equals("Freshman")) {
+            switch (langChoice) {
+                case 0 -> {
+                    languageClasses.add("Spanish I");
+                    languageClasses.add("Spanish II");
+                }
+                case 1 -> {
+                    languageClasses.add("French I");
+                    languageClasses.add("French II");
+                }
+                case 2 -> {
+                    languageClasses.add("German I");
+                    languageClasses.add("German II");
+                }
+                case 3 -> {
+                    languageClasses.add("American Sign Language I");
+                    languageClasses.add("American Sign Language II");
+                }
+                case 4 -> {
+                    languageClasses.add("Latin I");
+                    languageClasses.add("Latin II");
+                }
+            }
+        }
+
+        for (String className : languageClasses) {
+            if (classDetailsMap.containsKey(className)) {
+                assignClassToStudent(student, className, staffHashMap, StaffType.LANGUAGES);
+            }
+        }
+
+        // Schedule math classes
+        scheduleMathClasses(student, mathClasses, staffHashMap);
+
+        // Schedule science classes
+        for (String className : scienceClasses) {
+            if (classDetailsMap.containsKey(className)) {
+                assignClassToStudent(student, className, staffHashMap, StaffType.SCIENCE);
+            }
+        }
+
+        // Schedule history classes
+        for (String className : historyClasses) {
+            if (classDetailsMap.containsKey(className)) {
+                assignClassToStudent(student, className, staffHashMap, StaffType.HISTORY);
+            }
+        }
+
+        // Schedule vocational classes
+        if(!physEdClasses.isEmpty()) {
+            for (String className : physEdClasses) {
+                assignClassToStudent(student, className, staffHashMap, StaffType.PHYSICAL_ED);
             }
         }
     }
@@ -149,93 +215,164 @@ public class StudentScheduleAssigner {
     private static void scheduleMathClasses(Student student, List<String> mathClasses, HashMap<Integer, Staff> staffHashMap) {
         int mathClassCount = 0;
 
-        for (String className : mathClasses) {
-            if (mathClassCount >= 2) {
-                break; // Only schedule two math classes per year
-            }
+        for (int i = 0; i < mathClasses.size(); i++) {
+            String className = mathClasses.get(i);
 
+            // Ensure the class exists in the class details map
             if (classDetailsMap.containsKey(className)) {
-                int semester = mathClasses.indexOf(className);
-                List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, semester, StaffType.MATH);
-                boolean classAssigned = false;
+                List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, StaffType.MATH);
 
+                // Determine if this class is for fall or spring based on its position in the list
+                boolean isFallClass = (i == 0);
+                boolean isSpringClass = (i == 1);
+
+                // Assign to the appropriate semester
+                boolean classAssigned = false;
                 for (Staff teacher : availableTeachers) {
-                    TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
-                    if (availableBlock != null) {
-                        for (StudentBlock sb : student.studentStatistics.getStudentSchedule().getClassSchedule()) {
-                            if (sb.getRoom().getStudents().contains(student)) {
-                                System.out.println("Student already exists in class!");
-                                break;
+                    List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
+
+                    for (TeacherBlock availableBlock : teacherBlocks) {
+                        boolean isCorrectSemesterBlock = isFallClass ? isFallBlock(availableBlock) : isSpringBlock(availableBlock);
+
+                        if (availableBlock != null && isCorrectSemesterBlock &&
+                                !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester())) {
+
+                            // Create a new StudentBlock and assign the class
+                            StudentBlock studentBlock = new StudentBlock();
+                            studentBlock.setBlockNumber(availableBlock.getBlockNumber());
+                            studentBlock.setClassName(className);
+                            studentBlock.setTeacher(teacher);
+                            studentBlock.setSemester(availableBlock.getSemester());
+                            studentBlock.setRoom(availableBlock.getRoom());
+
+                            // Assign the student block to the student's schedule
+                            student.studentStatistics.getStudentSchedule().add(studentBlock);
+
+                            // Decrease the room capacity
+                            availableBlock.addStudentToBlock(student);
+
+                            System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
+
+                            mathClassCount++;
+                            classAssigned = true;
+                            break; // Move to the next class
+                        }
+                    }
+                    if (classAssigned) break;
+                }
+
+                // If no specific semester is assigned and the student can take it in any semester
+                if (!isFallClass && !isSpringClass) {
+                    for (Staff teacher : availableTeachers) {
+                        List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
+
+                        for (TeacherBlock availableBlock : teacherBlocks) {
+                            if (availableBlock != null &&
+                                    !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester())) {
+
+                                // Create a new StudentBlock and assign the class
+                                StudentBlock studentBlock = new StudentBlock();
+                                studentBlock.setBlockNumber(availableBlock.getBlockNumber());
+                                studentBlock.setClassName(className);
+                                studentBlock.setTeacher(teacher);
+                                studentBlock.setSemester(availableBlock.getSemester());
+                                studentBlock.setRoom(availableBlock.getRoom());
+
+                                // Assign the student block to the student's schedule
+                                student.studentStatistics.getStudentSchedule().add(studentBlock);
+
+                                // Decrease the room capacity
+                                availableBlock.addStudentToBlock(student);
+
+                                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
+
+                                mathClassCount++;
+                                break; // Move to the next class
                             }
                         }
-
-                        // Create a new StudentBlock and assign the class
-                        StudentBlock studentBlock = new StudentBlock();
-                        studentBlock.setBlockNumber(availableBlock.getBlockNumber());
-                        studentBlock.setClassName(className);
-                        studentBlock.setTeacher(teacher);
-                        studentBlock.setSemester(availableBlock.getSemester());
-                        studentBlock.setRoom(availableBlock.getRoom());
-
-                        // Assign the student block to the student's schedule
-                        student.studentStatistics.getStudentSchedule().add(studentBlock);
-
-                        // Decrease the room capacity
-                        availableBlock.addStudentToBlock(student);
-
-                        System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
-
-                        mathClassCount++;
-                        break;
+                        if (mathClassCount > 0) break; // Move to the next class
                     }
                 }
             }
         }
     }
 
+    // Helper methods to determine if a block is in the Fall or Spring semester
+    private static boolean isFallBlock(TeacherBlock block) {
+        return block.getBlockNumber() % 2 != 0;
+    }
+
+    private static boolean isSpringBlock(TeacherBlock block) {
+        return block.getBlockNumber() % 2 == 0;
+    }
+
     private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff> staffHashMap, StaffType staffType) {
         List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, staffType);
 
         for (Staff teacher : availableTeachers) {
-            TeacherBlock availableBlock = teacher.teacherStatistics.getTeacherSchedule().getBlockByClassNameAndAvailability(className);
-            if (availableBlock != null) {
-                // Create a new StudentBlock and assign the class
-                StudentBlock studentBlock = new StudentBlock();
-                studentBlock.setBlockNumber(availableBlock.getBlockNumber());
-                studentBlock.setClassName(className);
-                studentBlock.setTeacher(teacher);
-                studentBlock.setSemester(availableBlock.getSemester());
-                studentBlock.setRoom(availableBlock.getRoom());
+            List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
+            int i = 0;
 
-                // Assign the student block to the student's schedule
-                student.studentStatistics.getStudentSchedule().add(studentBlock);
-                studentBlock.getRoom().addStudent(student);
-                // Decrease the room capacity
-                availableBlock.getRoom().setStudentCap(availableBlock.getRoom().getStudentCapacity() - 1);
+            // Use a while loop to iterate through available blocks
+            while (i < teacherBlocks.size()) {
+                TeacherBlock availableBlock = teacherBlocks.get(i);
+                if (availableBlock != null && !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester())) {
+                    // TODO: hardcode but prob change later
+                    // Create a new StudentBlock and assign the class
+                    StudentBlock studentBlock = new StudentBlock();
+                    studentBlock.setBlockNumber(availableBlock.getBlockNumber());
+                    studentBlock.setClassName(className);
+                    studentBlock.setTeacher(teacher);
+                    studentBlock.setSemester(availableBlock.getSemester());
+                    studentBlock.setRoom(availableBlock.getRoom());
 
-                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
-                return;
+                    // Assign the student block to the student's schedule
+                    student.studentStatistics.getStudentSchedule().add(studentBlock);
+                    // Decrease the room capacity
+                    availableBlock.addStudentToBlock(student);
+                    System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
+                    return;
+                }
+                i++;
             }
         }
 
         // If no available teacher has room capacity left, assign to the first teacher regardless of capacity
         for (Staff teacher : availableTeachers) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
-                StudentBlock studentBlock = new StudentBlock();
-                studentBlock.setBlockNumber(block.getBlockNumber());
-                studentBlock.setClassName(className);
-                studentBlock.setTeacher(teacher);
-                studentBlock.setSemester(block.getSemester());
-                studentBlock.setRoom(block.getRoom());
+                if (!hasBlockConflict(student, block.getBlockNumber(), block.getSemester())) {
+                    StudentBlock studentBlock = new StudentBlock();
+                    studentBlock.setBlockNumber(block.getBlockNumber());
+                    studentBlock.setClassName(className);
+                    studentBlock.setTeacher(teacher);
+                    studentBlock.setSemester(block.getSemester());
+                    studentBlock.setRoom(block.getRoom());
 
-                student.studentStatistics.getStudentSchedule().add(studentBlock);
-                studentBlock.getRoom().addStudent(student);
+                    // Assign the student block to the student's schedule
+                    student.studentStatistics.getStudentSchedule().add(studentBlock);
+                    // Decrease the room capacity
+                    block.addStudentToBlock(student);
 
-                // Even though the room is over assigned, we add the student
-                System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
-                return;
+                    // Even though the room is over assigned, we add the student
+                    System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
+                    return;
+                }
             }
         }
+    }
+
+
+    // Helper method to check if a block is already assigned in the student's schedule
+    private static boolean hasBlockConflict(Student student, int blockNumber, String semester) {
+        //System.out.println("Checking blocks for student " + student.studentName.getFirstName() + " " + student.studentName.getLastName());
+        for (StudentBlock block : student.studentStatistics.getStudentSchedule().getClassSchedule()) {
+            if (block.getBlockNumber() == blockNumber && block.getSemester().equals(semester)) {
+                //System.out.println("Semester student " + block.getSemester() + " and teacher semester " + semester + " are equal. Student block " + block.getBlockNumber() + " and teacher block " + blockNumber + " are equal.");
+                return true;
+            }
+            //System.out.println("Semester student " + block.getSemester() + " and teacher semester " + semester + " are NOT equal. Student block " + block.getBlockNumber() + " and teacher block " + blockNumber + " are NOT equal.");
+        }
+        return false;
     }
 
     private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap, StaffType staffType) {
@@ -244,8 +381,10 @@ public class StudentScheduleAssigner {
 
         for (Staff teacher : staffTypeTeachers) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
-                availableTeachers.add(teacher);
-                break;
+                if (block.getClassName().equals(className)) {
+                    availableTeachers.add(teacher);
+                    break;
+                }
             }
         }
         return availableTeachers;
@@ -257,7 +396,7 @@ public class StudentScheduleAssigner {
 
         for (Staff teacher : staffTypeTeachers) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
-                if((block.getSemester().equals("Fall") && semester == 0) || (block.getSemester().equals("Spring") && semester == 1)) {
+                if ((block.getSemester().equals("Fall") && semester == 0) || (block.getSemester().equals("Spring") && semester == 1)) {
                     availableTeachers.add(teacher);
                     break;
                 }
@@ -266,12 +405,11 @@ public class StudentScheduleAssigner {
         return availableTeachers;
     }
 
-
-    private static String classProbabilityLoader(int intelligence, String income) {
+    private static String classProbabilityLoader(int intelligence, String income, int determination) {
         int random = Randomizer.setRandom(0, 100);
-        double apProbability = 0.0;
-        double honorsProbability = 0.0;
-        double onLevelProbability = 0.0;
+        double apProbability;
+        double honorsProbability;
+        double onLevelProbability;
 
         // Base probabilities based on intelligence
         if (intelligence >= 135) {
@@ -309,6 +447,12 @@ public class StudentScheduleAssigner {
                 break;
         }
 
+        // Adjust probabilities based on determination
+        double determinationFactor = (determination - 50) / 50.0; // Scaled so that 50 determination gives no modification
+        apProbability += apProbability * determinationFactor;
+        honorsProbability += honorsProbability * determinationFactor / 2;
+        onLevelProbability -= onLevelProbability * determinationFactor / 2;
+
         // Normalize probabilities to ensure they add up to 100
         double totalProbability = apProbability + honorsProbability + onLevelProbability;
         apProbability = (apProbability / totalProbability) * 100;
@@ -324,5 +468,4 @@ public class StudentScheduleAssigner {
             return "On-Level";
         }
     }
-
 }

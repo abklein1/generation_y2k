@@ -37,7 +37,7 @@ public class Inspector {
         String grade = student.studentStatistics.getGradeLevel();
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
-        List<String> schedule = student.studentStatistics.getStudentSchedule().toStringArray();
+        List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
 
         if (suffix != null) {
             sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix).append("\n=====================================\n");
@@ -75,7 +75,24 @@ public class Inspector {
             sb.append(firstName).append(" is not asleep.\n");
         }
         sb.append("Their family has the following income: " ).append(income).append("\n");
-        sb.append("Student schedule is: ").append(schedule);
+        for(StudentBlock block : schedule) {
+            int blockNum = block.getBlockNumber();
+            switch (blockNum) {
+                case 1,2 -> {
+                    blockNum = 1;
+                }
+                case 3,4 -> {
+                    blockNum = 2;
+                }
+                case 5,6 -> {
+                    blockNum = 3;
+                }
+                case 7,8 -> {
+                    blockNum = 4;
+                }
+            }
+            sb.append(block.getSemester()).append(" ").append(blockNum).append(" ").append(block.getTeacher()).append(" ").append(block.getClassName()).append("\n");
+        }
 
         inspectionArea.setText(sb.toString());
     }
@@ -262,11 +279,15 @@ public class Inspector {
             studentListArea.append(block.getSemester());
             studentListArea.append("\n");
             students = block.getClassPopulation();
-            for (Student student : students) {
-                studentListArea.append(student.studentName.getFirstName());
-                studentListArea.append(" ");
-                studentListArea.append(student.studentName.getLastName());
-                studentListArea.append("\n");
+            if(students != null) {
+                for (Student student : students) {
+                    studentListArea.append(student.studentName.getFirstName());
+                    studentListArea.append(" ");
+                    studentListArea.append(student.studentName.getLastName());
+                    studentListArea.append("\n");
+                }
+            } else {
+                studentListArea.append("Students are null!\n");
             }
         }
         JScrollPane studentListScrollPane = new JScrollPane(studentListArea);
