@@ -57,8 +57,10 @@ public class StudentScheduleAssigner {
         switch (year) {
             case "Freshman" -> {
                 mathClasses.add(mathPath.equals("AP") ? "Geometry" : mathPath.equals("Honors") ? "Geometry" : "Fundamentals of Math");
-                if (!mathPath.equals("AP")) {
+                if (mathPath.equals("AP") || mathPath.equals("Honors")) {
                     mathClasses.add("Algebra I");
+                } else {
+                    mathClasses.add("Geometry");
                 }
                 //No science options freshman
                 scienceClasses.add("Biology");
@@ -210,29 +212,61 @@ public class StudentScheduleAssigner {
     private static void scheduleMathClasses(Student student, List<String> mathClasses, HashMap<Integer, Staff> staffHashMap) {
         int mathClassCount = 0;
 
-        for (String className : mathClasses) {
-            if (mathClassCount >= 2) {
-                break; // Only schedule two math classes per year
-            }
+        for (int i = 0; i < mathClasses.size(); i++) {
+            String className = mathClasses.get(i);
 
+            // Ensure the class exists in the class details map
             if (classDetailsMap.containsKey(className)) {
                 List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, StaffType.MATH);
 
-                boolean classAssigned = false;
+                // Determine if this class is for fall or spring based on its position in the list
+                boolean isFallClass = (i == 0);
+                boolean isSpringClass = (i == 1);
 
-                // Assign Fall semester first
+                // Assign to the appropriate semester
+                boolean classAssigned = false;
                 for (Staff teacher : availableTeachers) {
                     List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
 
                     for (TeacherBlock availableBlock : teacherBlocks) {
-                        if (availableBlock != null && availableBlock.getSemester().equals("Fall") &&
+                        boolean isCorrectSemesterBlock = isFallClass ? isFallBlock(availableBlock) : isSpringBlock(availableBlock);
+
+                        if (availableBlock != null && isCorrectSemesterBlock &&
                                 !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester())) {
 
-                            // Ensure we don't assign the same class twice in the same semester
-                            boolean sameClassSameSemester = student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
-                                    .anyMatch(block -> block.getClassName().equals(className) && block.getSemester().equals(availableBlock.getSemester()));
+                            // Create a new StudentBlock and assign the class
+                            StudentBlock studentBlock = new StudentBlock();
+                            studentBlock.setBlockNumber(availableBlock.getBlockNumber());
+                            studentBlock.setClassName(className);
+                            studentBlock.setTeacher(teacher);
+                            studentBlock.setSemester(availableBlock.getSemester());
+                            studentBlock.setRoom(availableBlock.getRoom());
 
-                            if (!sameClassSameSemester) {
+                            // Assign the student block to the student's schedule
+                            student.studentStatistics.getStudentSchedule().add(studentBlock);
+
+                            // Decrease the room capacity
+                            availableBlock.addStudentToBlock(student);
+
+                            System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
+
+                            mathClassCount++;
+                            classAssigned = true;
+                            break; // Move to the next class
+                        }
+                    }
+                    if (classAssigned) break;
+                }
+
+                // If no specific semester is assigned and the student can take it in any semester
+                if (!isFallClass && !isSpringClass) {
+                    for (Staff teacher : availableTeachers) {
+                        List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
+
+                        for (TeacherBlock availableBlock : teacherBlocks) {
+                            if (availableBlock != null &&
+                                    !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester())) {
+
                                 // Create a new StudentBlock and assign the class
                                 StudentBlock studentBlock = new StudentBlock();
                                 studentBlock.setBlockNumber(availableBlock.getBlockNumber());
@@ -250,53 +284,23 @@ public class StudentScheduleAssigner {
                                 System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
 
                                 mathClassCount++;
-                                classAssigned = true;
                                 break; // Move to the next class
                             }
                         }
-                    }
-                    if (classAssigned) break;
-                }
-
-                // Then assign Spring semester if needed
-                if (mathClassCount < 2 && !classAssigned) {
-                    for (Staff teacher : availableTeachers) {
-                        List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
-
-                        for (TeacherBlock availableBlock : teacherBlocks) {
-                            if (availableBlock != null && availableBlock.getSemester().equals("Spring") &&
-                                    !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester())) {
-
-                                // Ensure we don't assign the same class twice in the same semester
-                                boolean sameClassSameSemester = student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
-                                        .anyMatch(block -> block.getClassName().equals(className) && block.getSemester().equals(availableBlock.getSemester()));
-
-                                if (!sameClassSameSemester) {
-                                    // Create a new StudentBlock and assign the class
-                                    StudentBlock studentBlock = new StudentBlock();
-                                    studentBlock.setBlockNumber(availableBlock.getBlockNumber());
-                                    studentBlock.setClassName(className);
-                                    studentBlock.setTeacher(teacher);
-                                    studentBlock.setSemester(availableBlock.getSemester());
-                                    studentBlock.setRoom(availableBlock.getRoom());
-
-                                    // Assign the student block to the student's schedule
-                                    student.studentStatistics.getStudentSchedule().add(studentBlock);
-
-                                    // Decrease the room capacity
-                                    availableBlock.addStudentToBlock(student);
-
-                                    System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
-
-                                    mathClassCount++;
-                                    break; // Move to the next class
-                                }
-                            }
-                        }
+                        if (mathClassCount > 0) break; // Move to the next class
                     }
                 }
             }
         }
+    }
+
+    // Helper methods to determine if a block is in the Fall or Spring semester
+    private static boolean isFallBlock(TeacherBlock block) {
+        return block.getBlockNumber() % 2 != 0;
+    }
+
+    private static boolean isSpringBlock(TeacherBlock block) {
+        return block.getBlockNumber() % 2 == 0;
     }
 
     private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff> staffHashMap, StaffType staffType) {
