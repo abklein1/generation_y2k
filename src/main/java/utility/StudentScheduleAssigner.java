@@ -42,18 +42,9 @@ public class StudentScheduleAssigner {
         List<String> scienceClasses = new ArrayList<>();
         List<String> historyClasses = new ArrayList<>();
         List<String> languageClasses = new ArrayList<>();
+        List<String> physEdClasses = new ArrayList<>();
 
-        // Determine English classes based on path and grade level
-        switch (year) {
-            case "Freshman" -> englishClasses.add("English I");
-            case "Sophomore" -> englishClasses.add("English II");
-            case "Junior" ->
-                    englishClasses.add(englishPath.equals("AP") ? "AP English Language & Composition" : "English III");
-            default ->
-                    englishClasses.add(englishPath.equals("AP") ? "AP English Literature & Composition" : "English IV");
-        }
-
-        // Determine Math/Science/Language classes based on path and grade level
+        // Determine English/Math/Science/History/Language/Vocational classes based on path and grade level
         switch (year) {
             case "Freshman" -> {
                 mathClasses.add(mathPath.equals("AP") ? "Geometry" : mathPath.equals("Honors") ? "Geometry" : "Fundamentals of Math");
@@ -62,13 +53,16 @@ public class StudentScheduleAssigner {
                 } else {
                     mathClasses.add("Geometry");
                 }
+                englishClasses.add("English I");
                 //No science options freshman
                 scienceClasses.add("Biology");
                 historyClasses.add(historyPath.equals("AP") ? "AP Human Geography" : "World Geography");
+                physEdClasses.add("Health");
             }
             case "Sophomore" -> {
                 mathClasses.add(mathPath.equals("AP") ? "Algebra II" : mathPath.equals("Honors") ? "Algebra II" : "Algebra I");
                 mathClasses.add(mathPath.equals("AP") ? "Trigonometry" : mathPath.equals("Honors") ? "Trigonometry" : "Algebra II");
+                englishClasses.add("English II");
                 //Science options
                 if (sciencePath.equals("AP") || sciencePath.equals("Honors")) {
                     scienceClasses.add("Chemistry");
@@ -85,6 +79,7 @@ public class StudentScheduleAssigner {
                 } else if (!mathPath.equals("Honors")) {
                     mathClasses.add("Math for Data and Financial Literacy");
                 }
+                englishClasses.add(englishPath.equals("AP") ? "AP English Language & Composition" : "English III");
                 if (sciencePath.equals("AP")) {
                     String[] apScienceOptions = {"AP Biology", "AP Chemistry"};
                     scienceClasses.add(apScienceOptions[Randomizer.setRandom(0, apScienceOptions.length - 1)]);
@@ -102,6 +97,7 @@ public class StudentScheduleAssigner {
                 } else {
                     mathClasses.add("Precalculus");
                 }
+                englishClasses.add(englishPath.equals("AP") ? "AP English Literature & Composition" : "English IV");
                 if (sciencePath.equals("AP")) {
                     scienceClasses.add("AP Physics B");
                     scienceClasses.add("AP Physics C");
@@ -172,6 +168,13 @@ public class StudentScheduleAssigner {
         for (String className : historyClasses) {
             if (classDetailsMap.containsKey(className)) {
                 assignClassToStudent(student, className, staffHashMap, StaffType.HISTORY);
+            }
+        }
+
+        // Schedule vocational classes
+        if(!physEdClasses.isEmpty()) {
+            for (String className : physEdClasses) {
+                assignClassToStudent(student, className, staffHashMap, StaffType.PHYSICAL_ED);
             }
         }
     }
