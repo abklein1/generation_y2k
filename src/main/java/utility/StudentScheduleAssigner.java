@@ -404,9 +404,9 @@ public class StudentScheduleAssigner {
 
     private static String classProbabilityLoader(int intelligence, String income, int determination) {
         int random = Randomizer.setRandom(0, 100);
-        double apProbability = 0.0;
-        double honorsProbability = 0.0;
-        double onLevelProbability = 0.0;
+        double apProbability;
+        double honorsProbability;
+        double onLevelProbability;
 
         // Base probabilities based on intelligence
         if (intelligence >= 135) {

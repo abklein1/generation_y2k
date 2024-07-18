@@ -510,11 +510,11 @@ public class StaffAssignment {
                 } else {
                     //fall history
                     block = new TeacherBlock();
-                    String f_name = historyHelper(block, selectedTeacher, "Fall", gradeIndex, standardSchool, scienceTeachers.indexOf(selectedTeacher));
+                    String f_name = historyHelper(block, selectedTeacher, "Fall", gradeIndex, standardSchool, historyTeachers.indexOf(selectedTeacher));
                     selectedTeacher.teacherStatistics.addTeacherSchedule(block);
                     //spring history
                     block = new TeacherBlock();
-                    String s_name = historyHelper(block, selectedTeacher, "Spring", gradeIndex, standardSchool, scienceTeachers.indexOf(selectedTeacher));
+                    String s_name = historyHelper(block, selectedTeacher, "Spring", gradeIndex, standardSchool, historyTeachers.indexOf(selectedTeacher));
                     selectedTeacher.teacherStatistics.addTeacherSchedule(block);
 
                     view.appendOutput("Assigned " + f_name + " and " + s_name + " to " + selectedTeacher.teacherName.getFirstName() + " " + selectedTeacher.teacherName.getLastName());
