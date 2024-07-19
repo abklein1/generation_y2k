@@ -8,10 +8,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StudentScheduleAssigner {
 
@@ -54,9 +51,10 @@ public class StudentScheduleAssigner {
                     mathClasses.add("Geometry");
                 }
                 englishClasses.add("English I");
-                //No science options freshman
+                // No science options freshman
                 scienceClasses.add("Biology");
                 historyClasses.add(historyPath.equals("AP") ? "AP Human Geography" : "World Geography");
+                // Freshman have to take Health
                 physEdClasses.add("Health");
             }
             case "Sophomore" -> {
@@ -71,6 +69,8 @@ public class StudentScheduleAssigner {
                     scienceClasses.add(onLevelScienceOptions[Randomizer.setRandom(0, onLevelScienceOptions.length - 1)]);
                 }
                 historyClasses.add(historyPath.equals("AP") ? "AP World History" : "World History");
+                // Sophomores have to take one phys ed class
+                physEdClasses = List.of(physicalEdDecision(student));
             }
             case "Junior" -> {
                 mathClasses.add(mathPath.equals("AP") ? "Precalculus" : mathPath.equals("Honors") ? "Precalculus" : "Trigonometry");
@@ -173,8 +173,18 @@ public class StudentScheduleAssigner {
 
         // Schedule vocational classes
         if(!physEdClasses.isEmpty()) {
-            for (String className : physEdClasses) {
-                assignClassToStudent(student, className, staffHashMap, StaffType.PHYSICAL_ED);
+            if (student.studentStatistics.getGradeLevel().equals("Sophomore")) {
+                int classLength = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
+                for (String className : physEdClasses) {
+                    assignClassToStudent(student, className, staffHashMap, StaffType.PHYSICAL_ED);
+                    if(student.studentStatistics.getStudentSchedule().getClassSchedule().size() > classLength) {
+                        break;
+                    }
+                }
+            } else {
+                for (String className : physEdClasses) {
+                    assignClassToStudent(student, className, staffHashMap, StaffType.PHYSICAL_ED);
+                }
             }
         }
     }
@@ -316,7 +326,7 @@ public class StudentScheduleAssigner {
             // Use a while loop to iterate through available blocks
             while (i < teacherBlocks.size()) {
                 TeacherBlock availableBlock = teacherBlocks.get(i);
-                if (availableBlock != null && !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester())) {
+                if (availableBlock != null && !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester()) && availableBlock.getClassPopulationBlock() < availableBlock.getBlockPopulation()) {
                     // TODO: hardcode but prob change later
                     // Create a new StudentBlock and assign the class
                     StudentBlock studentBlock = new StudentBlock();
@@ -467,5 +477,72 @@ public class StudentScheduleAssigner {
         } else {
             return "On-Level";
         }
+    }
+
+    private static String[] physicalEdDecision(Student student) {
+        String[] choiceRank = new String[5];
+        String gender =  student.studentStatistics.getGender();
+        int strength = student.studentStatistics.getStrength();
+        int determination = student.studentStatistics.getDetermination();
+
+        if (gender.equals("Male")) {
+            // If a student has high strength or low strength but high determination they choose weightlifting
+            if(strength > 60 || (strength < 29 && determination > 60)) {
+                choiceRank[0] = "Weightlifting";
+                choiceRank[1] = "Team Sports";
+                choiceRank[2] = "Specialized Sports";
+                choiceRank[3] = "Lifetime Recreation";
+                choiceRank[4] = "Dance";
+            // Student is just average and wants to do more social classes
+            } else if (strength < 60 && strength > 30) {
+                choiceRank[0] = "Team Sports";
+                choiceRank[1] = "Specialized Sports";
+                choiceRank[2] = "Weightlifting";
+                choiceRank[3] = "Lifetime Recreation";
+                choiceRank[4] = "Dance";
+            // Student is lazy and wants easy classes
+            } else if (determination < 30) {
+                choiceRank[0] = "Lifetime Recreation";
+                choiceRank[1] = "Specialized Sports";
+                choiceRank[2] = "Team Sports";
+                choiceRank[3] = "Dance";
+                choiceRank[4] = "Weightlifting";
+            } else {
+                choiceRank[0] = "Specialized Sports";
+                choiceRank[1] = "Team Sports";
+                choiceRank[2] = "Weightlifting";
+                choiceRank[3] = "Dance";
+                choiceRank[4] = "Lifetime Recreation";
+            }
+        } else {
+            if(strength > 60 || (strength < 29 && determination > 60)) {
+                choiceRank[0] = "Dance";
+                choiceRank[1] = "Team Sports";
+                choiceRank[2] = "Specialized Sports";
+                choiceRank[3] = "Weightlifting";
+                choiceRank[4] = "Lifetime Recreation";
+                // Student is just average and wants to do more social classes
+            } else if (strength < 60 && strength > 30) {
+                choiceRank[0] = "Specialized Sports";
+                choiceRank[1] = "Lifetime Recreation";
+                choiceRank[2] = "Dance";
+                choiceRank[3] = "Weightlifting";
+                choiceRank[4] = "Team Sports";
+                // Student is lazy and wants easy classes
+            } else if (determination < 30) {
+                choiceRank[0] = "Lifetime Recreation";
+                choiceRank[1] = "Specialized Sports";
+                choiceRank[2] = "Dance";
+                choiceRank[3] = "Team Sports";
+                choiceRank[4] = "Weightlifting";
+            } else {
+                choiceRank[0] = "Specialized Sports";
+                choiceRank[1] = "Team Sports";
+                choiceRank[2] = "Weightlifting";
+                choiceRank[3] = "Dance";
+                choiceRank[4] = "Lifetime Recreation";
+            }
+        }
+        return choiceRank;
     }
 }
