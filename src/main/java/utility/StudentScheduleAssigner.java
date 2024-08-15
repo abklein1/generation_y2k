@@ -8,7 +8,10 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StudentScheduleAssigner {
 
@@ -172,12 +175,12 @@ public class StudentScheduleAssigner {
         }
 
         // Schedule vocational classes
-        if(!physEdClasses.isEmpty()) {
+        if (!physEdClasses.isEmpty()) {
             if (student.studentStatistics.getGradeLevel().equals("Sophomore")) {
                 int classLength = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
                 for (String className : physEdClasses) {
                     assignClassToStudent(student, className, staffHashMap, StaffType.PHYSICAL_ED);
-                    if(student.studentStatistics.getStudentSchedule().getClassSchedule().size() > classLength) {
+                    if (student.studentStatistics.getStudentSchedule().getClassSchedule().size() > classLength) {
                         break;
                     }
                 }
@@ -481,26 +484,26 @@ public class StudentScheduleAssigner {
 
     private static String[] physicalEdDecision(Student student) {
         String[] choiceRank = new String[5];
-        String gender =  student.studentStatistics.getGender();
+        String gender = student.studentStatistics.getGender();
         int strength = student.studentStatistics.getStrength();
         int determination = student.studentStatistics.getDetermination();
 
         if (gender.equals("Male")) {
             // If a student has high strength or low strength but high determination they choose weightlifting
-            if(strength > 60 || (strength < 29 && determination > 60)) {
+            if (strength > 60 || (strength < 29 && determination > 60)) {
                 choiceRank[0] = "Weightlifting";
                 choiceRank[1] = "Team Sports";
                 choiceRank[2] = "Specialized Sports";
                 choiceRank[3] = "Lifetime Recreation";
                 choiceRank[4] = "Dance";
-            // Student is just average and wants to do more social classes
+                // Student is just average and wants to do more social classes
             } else if (strength < 60 && strength > 30) {
                 choiceRank[0] = "Team Sports";
                 choiceRank[1] = "Specialized Sports";
                 choiceRank[2] = "Weightlifting";
                 choiceRank[3] = "Lifetime Recreation";
                 choiceRank[4] = "Dance";
-            // Student is lazy and wants easy classes
+                // Student is lazy and wants easy classes
             } else if (determination < 30) {
                 choiceRank[0] = "Lifetime Recreation";
                 choiceRank[1] = "Specialized Sports";
@@ -515,7 +518,7 @@ public class StudentScheduleAssigner {
                 choiceRank[4] = "Lifetime Recreation";
             }
         } else {
-            if(strength > 60 || (strength < 29 && determination > 60)) {
+            if (strength > 60 || (strength < 29 && determination > 60)) {
                 choiceRank[0] = "Dance";
                 choiceRank[1] = "Team Sports";
                 choiceRank[2] = "Specialized Sports";
@@ -541,6 +544,550 @@ public class StudentScheduleAssigner {
                 choiceRank[2] = "Weightlifting";
                 choiceRank[3] = "Dance";
                 choiceRank[4] = "Lifetime Recreation";
+            }
+        }
+        return choiceRank;
+    }
+
+    private static String[] vocationalDecision(Student student, String semester) {
+        String[] choiceRank = new String[8];
+        int determination = student.studentStatistics.getDetermination();
+        int charisma = student.studentStatistics.getCharisma();
+        int creativity = student.studentStatistics.getCreativity();
+        int perception = student.studentStatistics.getPerception();
+        int intelligence = student.studentStatistics.getIntelligence();
+        int curiosity = student.studentStatistics.getCuriosity();
+        String year = student.studentStatistics.getGradeLevel();
+
+        if (semester.equals("Fall")) {
+            // If someone has high charisma, better than average determination and understands themselves better than the average person
+            if (charisma > 70 && determination > 50 && perception > 50) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Theater I";
+                        choiceRank[1] = "Debate";
+                        choiceRank[2] = "Musical Theater I";
+                        choiceRank[3] = "Dance Techniques I";
+                        choiceRank[4] = "Choir";
+                        choiceRank[5] = "Digital Production Technology";
+                        choiceRank[6] = "Marching Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Theater III";
+                        choiceRank[1] = "Debate";
+                        choiceRank[2] = "Choir";
+                        choiceRank[3] = "ROTC";
+                        choiceRank[4] = "Film Production";
+                        choiceRank[5] = "Introduction to Business";
+                        choiceRank[6] = "Marching Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "Theater III";
+                        choiceRank[1] = "Debate";
+                        choiceRank[2] = "Choir";
+                        choiceRank[3] = "ROTC";
+                        choiceRank[4] = "Film Production";
+                        choiceRank[5] = "Business Management";
+                        choiceRank[6] = "Marching Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    default -> {
+                        choiceRank[0] = "Debate";
+                        choiceRank[1] = "Choir";
+                        choiceRank[2] = "Marching Band";
+                        choiceRank[3] = "Concert Band";
+                        choiceRank[4] = "Film Production";
+                        choiceRank[5] = "ROTC";
+                        choiceRank[6] = "Digital Production Technology";
+                        choiceRank[7] = "Business Management";
+                    }
+                }
+                // If someone has high creativity and better than average perception
+            } else if (creativity > 130 && perception > 50) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "2D Studio Art I";
+                        choiceRank[1] = "Photography I";
+                        choiceRank[2] = "3D Studio Art I";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "Culinary Arts";
+                        choiceRank[5] = "Digital Production Technology";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "3D Studio Art I";
+                        choiceRank[1] = "2D Studio Art I";
+                        choiceRank[2] = "Photography I";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "Film Production";
+                        choiceRank[5] = "Theater Technology";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "Photography I";
+                        choiceRank[1] = "Digital Production Technology";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "AP Art History";
+                        choiceRank[5] = "Computer Aided Drafting I";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "Film Production";
+                        choiceRank[2] = "2D Studio Art I";
+                        choiceRank[3] = "3D Studio Art I";
+                        choiceRank[4] = "Printmaking";
+                        choiceRank[5] = "Photography I";
+                        choiceRank[6] = "AP Art History";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                }
+                // If determination and intelligence are high and perception is better than average
+            } else if (determination > 130 && intelligence > 105 && perception > 50) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Jazz Band";
+                        choiceRank[1] = "Concert Band";
+                        choiceRank[2] = "Marching Band";
+                        choiceRank[3] = "Computer Aided Drafting I";
+                        choiceRank[4] = "Intro to Programming";
+                        choiceRank[5] = "Debate";
+                        choiceRank[6] = "ROTC";
+                        choiceRank[7] = "Auto Body Repair";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Jazz Band";
+                        choiceRank[1] = "Concert Band";
+                        choiceRank[2] = "Marching Band";
+                        choiceRank[3] = "AP Music Theory";
+                        choiceRank[4] = "AP Philosophy";
+                        choiceRank[5] = "Intro to Programming";
+                        choiceRank[6] = "ROTC";
+                        choiceRank[7] = "Debate";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "AP Music Theory";
+                        choiceRank[1] = "Digital Production Technology";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "AP Art History";
+                        choiceRank[5] = "Computer Aided Drafting I";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "Film Production";
+                        choiceRank[2] = "2D Studio Art I";
+                        choiceRank[3] = "3D Studio Art I";
+                        choiceRank[4] = "Printmaking";
+                        choiceRank[5] = "Photography I";
+                        choiceRank[6] = "AP Art History";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                }
+                // If curiosity is high and intelligence are above average
+            } else if (curiosity > 70 && intelligence > 105 && perception > 50) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Philosophy";
+                        choiceRank[1] = "Digital Production Technology";
+                        choiceRank[2] = "Computer Aided Drafting I";
+                        choiceRank[3] = "Intro to Programming";
+                        choiceRank[4] = "Culinary Arts";
+                        choiceRank[5] = "Debate";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Philosophy";
+                        choiceRank[1] = "Digital Production Technology";
+                        choiceRank[2] = "Computer Aided Drafting I";
+                        choiceRank[3] = "Intro to Programming";
+                        choiceRank[4] = "AP Music Theory";
+                        choiceRank[5] = "Debate";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "AP Music Theory";
+                        choiceRank[1] = "Philosophy";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "AP Art History";
+                        choiceRank[5] = "Computer Aided Drafting I";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "Film Production";
+                        choiceRank[2] = "2D Studio Art I";
+                        choiceRank[3] = "3D Studio Art I";
+                        choiceRank[4] = "Printmaking";
+                        choiceRank[5] = "Photography I";
+                        choiceRank[6] = "AP Art History";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                }
+                // If someone is lacking determination
+            } else if (determination < 30) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Keyboarding";
+                        choiceRank[1] = "Home Economics";
+                        choiceRank[2] = "Woodworking";
+                        choiceRank[3] = "Auto Body Repair";
+                        choiceRank[4] = "Theater Technology";
+                        choiceRank[5] = "Culinary Arts";
+                        choiceRank[6] = "Digital Production Technology";
+                        choiceRank[7] = "2D Studio Art I";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Home Economics";
+                        choiceRank[1] = "Woodworking";
+                        choiceRank[2] = "Auto Body Repair";
+                        choiceRank[3] = "Keyboarding";
+                        choiceRank[4] = "Culinary Arts";
+                        choiceRank[5] = "Digital Production Technology";
+                        choiceRank[6] = "2D Studio Art I";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "Woodworking";
+                        choiceRank[1] = "2D Studio Art I";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "Theater Technology";
+                        choiceRank[5] = "Auto Body Repair";
+                        choiceRank[6] = "Printmaking";
+                        choiceRank[7] = "Keyboarding";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "2D Studio Art I";
+                        choiceRank[2] = "Theater Technology";
+                        choiceRank[3] = "3D Studio Art I";
+                        choiceRank[4] = "Keyboarding";
+                        choiceRank[5] = "Photography I";
+                        choiceRank[6] = "Culinary Arts";
+                        choiceRank[7] = "Woodworking";
+                    }
+                }
+            } else {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Keyboarding";
+                        choiceRank[1] = "Team Sports";
+                        choiceRank[2] = "Specialized Sports5k ";
+                        choiceRank[3] = "Auto Body Repair";
+                        choiceRank[4] = "Theater Technology";
+                        choiceRank[5] = "Culinary Arts";
+                        choiceRank[6] = "Digital Production Technology";
+                        choiceRank[7] = "2D Studio Art I";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Home Economics";
+                        choiceRank[1] = "Woodworking";
+                        choiceRank[2] = "Auto Body Repair";
+                        choiceRank[3] = "Keyboarding";
+                        choiceRank[4] = "Culinary Arts";
+                        choiceRank[5] = "Digital Production Technology";
+                        choiceRank[6] = "2D Studio Art I";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "Woodworking";
+                        choiceRank[1] = "2D Studio Art I";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "Theater Technology";
+                        choiceRank[5] = "Auto Body Repair";
+                        choiceRank[6] = "Printmaking";
+                        choiceRank[7] = "Keyboarding";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "2D Studio Art I";
+                        choiceRank[2] = "Theater Technology";
+                        choiceRank[3] = "3D Studio Art I";
+                        choiceRank[4] = "Keyboarding";
+                        choiceRank[5] = "Photography I";
+                        choiceRank[6] = "Culinary Arts";
+                        choiceRank[7] = "Woodworking";
+                    }
+                }
+            }
+        } else {
+            // If someone has high charisma, better than average determination and understands themselves better than the average person
+            if (charisma > 70 && determination > 50 && perception > 50) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Theater II";
+                        choiceRank[1] = "Debate";
+                        choiceRank[2] = "Musical Theater II";
+                        choiceRank[3] = "Dance Techniques II";
+                        choiceRank[4] = "Choir";
+                        choiceRank[5] = "Digital Production Technology";
+                        choiceRank[6] = "Marching Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Theater IV";
+                        choiceRank[1] = "Debate";
+                        choiceRank[2] = "Choir";
+                        choiceRank[3] = "ROTC";
+                        choiceRank[4] = "Digital Production Technology";
+                        choiceRank[5] = "Entrepreneurial Skills";
+                        choiceRank[6] = "Marching Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "Theater III";
+                        choiceRank[1] = "Debate";
+                        choiceRank[2] = "Choir";
+                        choiceRank[3] = "ROTC";
+                        choiceRank[4] = "Digital Production Technology";
+                        choiceRank[5] = "Marketing";
+                        choiceRank[6] = "Marching Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    default -> {
+                        choiceRank[0] = "Debate";
+                        choiceRank[1] = "Choir";
+                        choiceRank[2] = "Marching Band";
+                        choiceRank[3] = "Concert Band";
+                        choiceRank[4] = "Film Production";
+                        choiceRank[5] = "ROTC";
+                        choiceRank[6] = "Digital Production Technology";
+                        choiceRank[7] = "Marketing";
+                    }
+                }
+                // If someone has high creativity and better than average perception
+            } else if (creativity > 130 && perception > 50) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "2D Studio Art II";
+                        choiceRank[1] = "Photography II";
+                        choiceRank[2] = "3D Studio Art II";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "Culinary Arts";
+                        choiceRank[5] = "Digital Production Technology";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "3D Studio Art II";
+                        choiceRank[1] = "2D Studio Art II";
+                        choiceRank[2] = "Photography II";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "Film Production";
+                        choiceRank[5] = "Theater Technology";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "Photography II";
+                        choiceRank[1] = "Digital Production Technology";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "AP Studio History";
+                        choiceRank[5] = "Computer Aided Drafting II";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "Film Production";
+                        choiceRank[2] = "2D Studio Art II";
+                        choiceRank[3] = "3D Studio Art II";
+                        choiceRank[4] = "Printmaking";
+                        choiceRank[5] = "Photography II";
+                        choiceRank[6] = "AP Art History";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                }
+                // If determination and intelligence are high and perception is better than average
+            } else if (determination > 130 && intelligence > 105 && perception > 50) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Jazz Band";
+                        choiceRank[1] = "Concert Band";
+                        choiceRank[2] = "Marching Band";
+                        choiceRank[3] = "Computer Aided Drafting II";
+                        choiceRank[4] = "Intro to Programming";
+                        choiceRank[5] = "Debate";
+                        choiceRank[6] = "ROTC";
+                        choiceRank[7] = "Auto Body Repair";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Jazz Band";
+                        choiceRank[1] = "Concert Band";
+                        choiceRank[2] = "Marching Band";
+                        choiceRank[3] = "AP Music Theory";
+                        choiceRank[4] = "AP Philosophy";
+                        choiceRank[5] = "Intro to Programming";
+                        choiceRank[6] = "ROTC";
+                        choiceRank[7] = "Debate";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "AP Music Theory";
+                        choiceRank[1] = "Digital Production Technology";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "AP Art History";
+                        choiceRank[5] = "Computer Aided Drafting II";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "Film Production";
+                        choiceRank[2] = "2D Studio Art II";
+                        choiceRank[3] = "3D Studio Art II";
+                        choiceRank[4] = "Printmaking";
+                        choiceRank[5] = "Photography II";
+                        choiceRank[6] = "AP Art History";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                }
+                // If curiosity is high and intelligence are above average
+            } else if (curiosity > 70 && intelligence > 105 && perception > 50) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Philosophy";
+                        choiceRank[1] = "Digital Production Technology";
+                        choiceRank[2] = "Computer Aided Drafting II";
+                        choiceRank[3] = "Intro to Programming";
+                        choiceRank[4] = "Culinary Arts";
+                        choiceRank[5] = "Debate";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Philosophy";
+                        choiceRank[1] = "Digital Production Technology";
+                        choiceRank[2] = "Computer Aided Drafting II";
+                        choiceRank[3] = "Intro to Programming";
+                        choiceRank[4] = "AP Music Theory";
+                        choiceRank[5] = "Debate";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "AP Music Theory";
+                        choiceRank[1] = "Philosophy";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "AP Art History";
+                        choiceRank[5] = "Computer Aided Drafting II";
+                        choiceRank[6] = "Jazz Band";
+                        choiceRank[7] = "Concert Band";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "Film Production";
+                        choiceRank[2] = "2D Studio Art II";
+                        choiceRank[3] = "3D Studio Art II";
+                        choiceRank[4] = "Printmaking";
+                        choiceRank[5] = "Photography II";
+                        choiceRank[6] = "AP Art History";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                }
+                // If someone is lacking determination
+            } else if (determination < 30) {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Keyboarding";
+                        choiceRank[1] = "Home Economics";
+                        choiceRank[2] = "Woodworking";
+                        choiceRank[3] = "Auto Body Repair";
+                        choiceRank[4] = "Theater Technology";
+                        choiceRank[5] = "Culinary Arts";
+                        choiceRank[6] = "Digital Production Technology";
+                        choiceRank[7] = "2D Studio Art II";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Home Economics";
+                        choiceRank[1] = "Woodworking";
+                        choiceRank[2] = "Auto Body Repair";
+                        choiceRank[3] = "Keyboarding";
+                        choiceRank[4] = "Culinary Arts";
+                        choiceRank[5] = "Digital Production Technology";
+                        choiceRank[6] = "2D Studio Art II";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "Woodworking";
+                        choiceRank[1] = "2D Studio Art II";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "Theater Technology";
+                        choiceRank[5] = "Auto Body Repair";
+                        choiceRank[6] = "Printmaking";
+                        choiceRank[7] = "Keyboarding";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "2D Studio Art II";
+                        choiceRank[2] = "Theater Technology";
+                        choiceRank[3] = "3D Studio Art II";
+                        choiceRank[4] = "Keyboarding";
+                        choiceRank[5] = "Photography II";
+                        choiceRank[6] = "Culinary Arts";
+                        choiceRank[7] = "Woodworking";
+                    }
+                }
+            } else {
+                switch (year) {
+                    case "Sophomore" -> {
+                        choiceRank[0] = "Keyboarding";
+                        choiceRank[1] = "Team Sports";
+                        choiceRank[2] = "Specialized Sports5k ";
+                        choiceRank[3] = "Auto Body Repair";
+                        choiceRank[4] = "Theater Technology";
+                        choiceRank[5] = "Culinary Arts";
+                        choiceRank[6] = "Digital Production Technology";
+                        choiceRank[7] = "2D Studio Art II";
+                    }
+                    case "Junior" -> {
+                        choiceRank[0] = "Home Economics";
+                        choiceRank[1] = "Woodworking";
+                        choiceRank[2] = "Auto Body Repair";
+                        choiceRank[3] = "Keyboarding";
+                        choiceRank[4] = "Culinary Arts";
+                        choiceRank[5] = "Digital Production Technology";
+                        choiceRank[6] = "2D Studio Art II";
+                        choiceRank[7] = "Theater Technology";
+                    }
+                    case "Senior" -> {
+                        choiceRank[0] = "Woodworking";
+                        choiceRank[1] = "2D Studio Art II";
+                        choiceRank[2] = "Culinary Arts";
+                        choiceRank[3] = "Printmaking";
+                        choiceRank[4] = "Theater Technology";
+                        choiceRank[5] = "Auto Body Repair";
+                        choiceRank[6] = "Printmaking";
+                        choiceRank[7] = "Keyboarding";
+                    }
+                    default -> {
+                        choiceRank[0] = "Printmaking";
+                        choiceRank[1] = "2D Studio Art II";
+                        choiceRank[2] = "Theater Technology";
+                        choiceRank[3] = "3D Studio Art II";
+                        choiceRank[4] = "Keyboarding";
+                        choiceRank[5] = "Photography I";
+                        choiceRank[6] = "Culinary Arts";
+                        choiceRank[7] = "Woodworking";
+                    }
+                }
             }
         }
         return choiceRank;

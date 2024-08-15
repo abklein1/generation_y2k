@@ -1128,14 +1128,14 @@ public class StaffAssignment {
                             classes[7] = "Jazz Band";
                         }
                         default -> {
-                            classes[0] = "Musical Theater I";
-                            classes[1] = "Musical Theater II";
-                            classes[2] = "Musical Theater I";
-                            classes[3] = "Musical Theater II";
-                            classes[4] = "Theater I";
-                            classes[5] = "Theater II";
-                            classes[6] = "Theater I";
-                            classes[7] = "Theater II";
+                            classes[0] = "Theater III";
+                            classes[1] = "Theater IV";
+                            classes[2] = "Theater III";
+                            classes[3] = "Theater IV";
+                            classes[4] = "Theater III";
+                            classes[5] = "Theater IV";
+                            classes[6] = "Theater III";
+                            classes[7] = "Theater IV";
                         }
                     }
                 }
