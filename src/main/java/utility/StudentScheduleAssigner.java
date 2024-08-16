@@ -43,6 +43,8 @@ public class StudentScheduleAssigner {
         List<String> historyClasses = new ArrayList<>();
         List<String> languageClasses = new ArrayList<>();
         List<String> physEdClasses = new ArrayList<>();
+        List<String> vocationalClassesFall = new ArrayList<>();
+        List<String> vocationalClassesSpring = new ArrayList<>();
 
         // Determine English/Math/Science/History/Language/Vocational classes based on path and grade level
         switch (year) {
@@ -118,6 +120,9 @@ public class StudentScheduleAssigner {
             }
         }
 
+        vocationalClassesFall = List.of(vocationalDecision(student, "Fall"));
+        vocationalClassesSpring = List.of(vocationalDecision(student, "Spring"));
+
         // Schedule English classes
         for (String className : englishClasses) {
             if (classDetailsMap.containsKey(className)) {
@@ -190,6 +195,25 @@ public class StudentScheduleAssigner {
                 }
             }
         }
+
+        // Schedule additional vocational classes
+        if (!student.studentStatistics.getGradeLevel().equals("Freshman")) {
+            int classLength = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
+            for (String className : vocationalClassesFall) {
+                assignClassToStudent(student, className, staffHashMap);
+                if (classLength >= 8) {
+                    break;
+                }
+            }
+            for(String className : vocationalClassesSpring) {
+                if(classLength >= 8) {
+                    break;
+                } else {
+                    assignClassToStudent(student, className, staffHashMap);
+                }
+            }
+        }
+
     }
 
     private static List<String> loadGradeRequirements(String year) {
@@ -374,6 +398,60 @@ public class StudentScheduleAssigner {
         }
     }
 
+    private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff> staffHashMap) {
+        List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap);
+
+        for (Staff teacher : availableTeachers) {
+            List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
+            int i = 0;
+
+            // Use a while loop to iterate through available blocks
+            while (i < teacherBlocks.size()) {
+                TeacherBlock availableBlock = teacherBlocks.get(i);
+                if (availableBlock != null && !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester()) && availableBlock.getClassPopulationBlock() < availableBlock.getBlockPopulation()) {
+                    // TODO: hardcode but prob change later
+                    // Create a new StudentBlock and assign the class
+                    StudentBlock studentBlock = new StudentBlock();
+                    studentBlock.setBlockNumber(availableBlock.getBlockNumber());
+                    studentBlock.setClassName(className);
+                    studentBlock.setTeacher(teacher);
+                    studentBlock.setSemester(availableBlock.getSemester());
+                    studentBlock.setRoom(availableBlock.getRoom());
+
+                    // Assign the student block to the student's schedule
+                    student.studentStatistics.getStudentSchedule().add(studentBlock);
+                    // Decrease the room capacity
+                    availableBlock.addStudentToBlock(student);
+                    System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in room " + availableBlock.getRoom().getRoomName());
+                    return;
+                }
+                i++;
+            }
+        }
+
+        // If no available teacher has room capacity left, assign to the first teacher regardless of capacity
+        for (Staff teacher : availableTeachers) {
+            for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
+                if (!hasBlockConflict(student, block.getBlockNumber(), block.getSemester())) {
+                    StudentBlock studentBlock = new StudentBlock();
+                    studentBlock.setBlockNumber(block.getBlockNumber());
+                    studentBlock.setClassName(className);
+                    studentBlock.setTeacher(teacher);
+                    studentBlock.setSemester(block.getSemester());
+                    studentBlock.setRoom(block.getRoom());
+
+                    // Assign the student block to the student's schedule
+                    student.studentStatistics.getStudentSchedule().add(studentBlock);
+                    // Decrease the room capacity
+                    block.addStudentToBlock(student);
+
+                    // Even though the room is over assigned, we add the student
+                    System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
+                    return;
+                }
+            }
+        }
+    }
 
     // Helper method to check if a block is already assigned in the student's schedule
     private static boolean hasBlockConflict(Student student, int blockNumber, String semester) {
@@ -393,6 +471,57 @@ public class StudentScheduleAssigner {
         List<Staff> availableTeachers = new ArrayList<>();
 
         for (Staff teacher : staffTypeTeachers) {
+            for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
+                if (block.getClassName().equals(className)) {
+                    availableTeachers.add(teacher);
+                    break;
+                }
+            }
+        }
+        return availableTeachers;
+    }
+
+    private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap) {
+        List<Staff> staffTypeTeachersV = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.VOCATIONAL);
+        List<Staff> staffTypeTeachersP = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.PERFORMING_ARTS);
+        List<Staff> staffTypeTeachersA = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.VISUAL_ARTS);
+        List<Staff> staffTypeTeachersB = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.BUSINESS);
+        List<Staff> staffTypeTeachersE = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.PHYSICAL_ED);
+        List<Staff> availableTeachers = new ArrayList<>();
+
+        for (Staff teacher : staffTypeTeachersV) {
+            for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
+                if (block.getClassName().equals(className)) {
+                    availableTeachers.add(teacher);
+                    break;
+                }
+            }
+        }
+        for (Staff teacher : staffTypeTeachersP) {
+            for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
+                if (block.getClassName().equals(className)) {
+                    availableTeachers.add(teacher);
+                    break;
+                }
+            }
+        }
+        for (Staff teacher : staffTypeTeachersA) {
+            for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
+                if (block.getClassName().equals(className)) {
+                    availableTeachers.add(teacher);
+                    break;
+                }
+            }
+        }
+        for (Staff teacher : staffTypeTeachersB) {
+            for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
+                if (block.getClassName().equals(className)) {
+                    availableTeachers.add(teacher);
+                    break;
+                }
+            }
+        }
+        for (Staff teacher : staffTypeTeachersE) {
             for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
                 if (block.getClassName().equals(className)) {
                     availableTeachers.add(teacher);
