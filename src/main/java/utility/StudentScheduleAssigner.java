@@ -1179,7 +1179,7 @@ public class StudentScheduleAssigner {
                     case "Sophomore" -> {
                         choiceRank[0] = "Keyboarding";
                         choiceRank[1] = "Team Sports";
-                        choiceRank[2] = "Specialized Sports5k ";
+                        choiceRank[2] = "Specialized Sports";
                         choiceRank[3] = "Auto Body Repair";
                         choiceRank[4] = "Theater Technology";
                         choiceRank[5] = "Culinary Arts";
