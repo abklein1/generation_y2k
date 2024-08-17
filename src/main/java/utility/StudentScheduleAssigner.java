@@ -198,22 +198,25 @@ public class StudentScheduleAssigner {
 
         // Schedule additional vocational classes
         if (!student.studentStatistics.getGradeLevel().equals("Freshman")) {
-            int classLength = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
-            for (String className : vocationalClassesFall) {
-                assignClassToStudent(student, className, staffHashMap);
-                if (classLength >= 8) {
-                    break;
-                }
-            }
-            for(String className : vocationalClassesSpring) {
-                if(classLength >= 8) {
-                    break;
-                } else {
+            if(student.studentStatistics.getDetermination() < 35 && student.studentStatistics.getGradeLevel().equals("Senior")) {
+                System.out.println("No vocational classes to assign.");
+            } else {
+                int classLength = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
+                for (String className : vocationalClassesFall) {
                     assignClassToStudent(student, className, staffHashMap);
+                    if (classLength >= 8) {
+                        break;
+                    }
+                }
+                for(String className : vocationalClassesSpring) {
+                    if(classLength >= 8) {
+                        break;
+                    } else {
+                        assignClassToStudent(student, className, staffHashMap);
+                    }
                 }
             }
         }
-
     }
 
     private static List<String> loadGradeRequirements(String year) {
@@ -426,29 +429,6 @@ public class StudentScheduleAssigner {
                     return;
                 }
                 i++;
-            }
-        }
-
-        // If no available teacher has room capacity left, assign to the first teacher regardless of capacity
-        for (Staff teacher : availableTeachers) {
-            for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className)) {
-                if (!hasBlockConflict(student, block.getBlockNumber(), block.getSemester())) {
-                    StudentBlock studentBlock = new StudentBlock();
-                    studentBlock.setBlockNumber(block.getBlockNumber());
-                    studentBlock.setClassName(className);
-                    studentBlock.setTeacher(teacher);
-                    studentBlock.setSemester(block.getSemester());
-                    studentBlock.setRoom(block.getRoom());
-
-                    // Assign the student block to the student's schedule
-                    student.studentStatistics.getStudentSchedule().add(studentBlock);
-                    // Decrease the room capacity
-                    block.addStudentToBlock(student);
-
-                    // Even though the room is over assigned, we add the student
-                    System.out.println("Assigned " + className + " to " + student.studentName.getFirstName() + " " + student.studentName.getLastName() + " with " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + " in overcapacity room " + block.getRoom().getRoomName());
-                    return;
-                }
             }
         }
     }
@@ -690,7 +670,7 @@ public class StudentScheduleAssigner {
 
         if (semester.equals("Fall")) {
             // If someone has high charisma, better than average determination and understands themselves better than the average person
-            if (charisma > 70 && determination > 50 && perception > 50) {
+            if (charisma > 68 && determination > 50 && perception > 50) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Theater I";
@@ -734,7 +714,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If someone has high creativity and better than average perception
-            } else if (creativity > 130 && perception > 50) {
+            } else if (creativity > 120 && perception > 50) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "2D Studio Art I";
@@ -778,7 +758,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If determination and intelligence are high and perception is better than average
-            } else if (determination > 130 && intelligence > 105 && perception > 50) {
+            } else if (determination > 68 && intelligence > 105 && perception > 50) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Jazz Band";
@@ -822,7 +802,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If curiosity is high and intelligence are above average
-            } else if (curiosity > 70 && intelligence > 105 && perception > 50) {
+            } else if (curiosity > 68 && intelligence > 105 && perception > 50) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Philosophy";
@@ -955,7 +935,7 @@ public class StudentScheduleAssigner {
             }
         } else {
             // If someone has high charisma, better than average determination and understands themselves better than the average person
-            if (charisma > 70 && determination > 50 && perception > 50) {
+            if (charisma > 68 && determination > 50 && perception > 50) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Theater II";
@@ -999,7 +979,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If someone has high creativity and better than average perception
-            } else if (creativity > 130 && perception > 50) {
+            } else if (creativity > 120 && perception > 50) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "2D Studio Art II";
@@ -1043,7 +1023,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If determination and intelligence are high and perception is better than average
-            } else if (determination > 130 && intelligence > 105 && perception > 50) {
+            } else if (determination > 68 && intelligence > 105 && perception > 50) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Jazz Band";
@@ -1087,7 +1067,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If curiosity is high and intelligence are above average
-            } else if (curiosity > 70 && intelligence > 105 && perception > 50) {
+            } else if (curiosity > 68 && intelligence > 105 && perception > 50) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Philosophy";
