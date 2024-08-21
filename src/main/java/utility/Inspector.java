@@ -105,6 +105,7 @@ public class Inspector {
         String firstName = staff.teacherName.getFirstName();
         String lastName = staff.teacherName.getLastName();
         String gender = staff.teacherStatistics.getGender().toLowerCase();
+        String age = Integer.toString(staff.teacherStatistics.getAge());
         String hairColor = staff.teacherStatistics.getHairColor().toLowerCase();
         String hairLength = staff.teacherStatistics.getHairLength().toLowerCase();
         String hairType = staff.teacherStatistics.getHairType().toLowerCase();
@@ -115,7 +116,7 @@ public class Inspector {
         List<String> teacherSchedule = staff.teacherStatistics.getTeacherSchedule().toStringArray();
 
         sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
-        sb.append(firstName).append(" is a ").append(gender).append(" with ");
+        sb.append(firstName).append(" is a ").append(age).append(" year-old ").append(gender).append(" with ");
         sb.append(hairLength).append(", ").append(hairType).append(", ").append(hairColor);
         sb.append(" hair and ").append(eyeColor).append(" eyes. They stand ");
         sb.append(df.format(height)).append(" inches tall.\n");

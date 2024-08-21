@@ -288,6 +288,7 @@ public class TeacherStatistics implements PStatistics {
         this.height = mean + stdDev * distribution.nextGaussian();
     }
 
+    //TODO: change current year/remove hardcode values
     public void setInitStrength() {
         Random random = new Random();
         double meanBaseStr = 50;
@@ -296,9 +297,7 @@ public class TeacherStatistics implements PStatistics {
 
         double heightMod = (this.height - 60) * 0.5;
         int genderMod = this.gender.equals("Male") ? 10 : 5;
-        int currentYear = 2004;
-        int birthYear = this.birthday.getYear();
-        int age = currentYear - birthYear;
+        int age = getAge();
         double ageMod = calculateAgeModifier(age);
 
         this.strength = (int) (baseStr + heightMod + genderMod + ageMod);
@@ -365,31 +364,101 @@ public class TeacherStatistics implements PStatistics {
 
     @Override
     public void setInitHairLength(int choice) {
-        if (this.gender.equals("Male")) {
-            if (choice <= 3) {
-                this.hairLength = "waist-length";
-            } else if (choice <= 25) {
-                this.hairLength = "shoulder-length";
-            } else if (choice <= 325) {
-                this.hairLength = "long";
-            } else if (choice <= 600) {
-                this.hairLength = "chin-length";
+        int age = getAge();
+
+        if (this.gender.equals("male")) {
+            if (age <= 29) {
+                if (choice <= 30) {
+                    this.hairLength = "waist-length";
+                } else if (choice <= 250) {
+                    this.hairLength = "shoulder-length";
+                } else if (choice <= 3250) {
+                    this.hairLength = "long";
+                } else if (choice <= 4000) {
+                    this.hairLength = "chin-length";
+                } else if (choice <= 5300){
+                    this.hairLength = "balding";
+                } else if (choice <= 5600) {
+                    this.hairLength = "bald";
+                } else {
+                    this.hairLength = "short";
+                }
+            } else if (age <= 49) {
+                if (choice <= 30) {
+                    this.hairLength = "waist-length";
+                } else if (choice <= 150) {
+                    this.hairLength = "shoulder-length";
+                } else if (choice <= 1750) {
+                    this.hairLength = "long";
+                } else if (choice <= 2750) {
+                    this.hairLength = "chin-length";
+                } else if (choice <= 7750){
+                    this.hairLength = "balding";
+                } else if (choice <= 8250) {
+                    this.hairLength = "bald";
+                } else {
+                    this.hairLength = "short";
+                }
             } else {
-                this.hairLength = "short";
+                if (choice <= 20) {
+                    this.hairLength = "waist-length";
+                } else if (choice <= 150) {
+                    this.hairLength = "shoulder-length";
+                } else if (choice <= 950) {
+                    this.hairLength = "long";
+                } else if (choice <= 1500) {
+                    this.hairLength = "chin-length";
+                } else if (choice <= 6000) {
+                    this.hairLength = "balding";
+                } else if (choice <= 7000) {
+                    this.hairLength = "bald";
+                } else {
+                    this.hairLength = "short";
+                }
             }
         } else {
-            if (choice <= 4) {
-                this.hairLength = "extremely long";
-            } else if (choice <= 78) {
-                this.hairLength = "waist-length";
-            } else if (choice <= 321) {
-                this.hairLength = "shoulder-length";
-            } else if (choice <= 1621) {
-                this.hairLength = "long";
-            } else if (choice <= 8300) {
-                this.hairLength = "chin-length";
+            if (age <= 30) {
+                if (choice <= 40) {
+                    this.hairLength = "extremely long";
+                } else if (choice <= 78) {
+                    this.hairLength = "waist-length";
+                } else if (choice <= 321) {
+                    this.hairLength = "shoulder-length";
+                } else if (choice <= 1621) {
+                    this.hairLength = "long";
+                } else if (choice <= 8300) {
+                    this.hairLength = "chin-length";
+                } else {
+                    this.hairLength = "short";
+                }
+            } else if (age <= 50) {
+                if (choice <= 20) {
+                    this.hairLength = "extremely long";
+                } else if (choice <= 60) {
+                    this.hairLength = "waist-length";
+                } else if (choice <= 400) {
+                    this.hairLength = "shoulder-length";
+                } else if (choice <= 1600) {
+                    this.hairLength = "long";
+                } else if (choice <= 7000) {
+                    this.hairLength = "chin-length";
+                } else {
+                    this.hairLength = "short";
+                }
             } else {
-                this.hairLength = "short";
+                if (choice <= 20) {
+                    this.hairLength = "extremely long";
+                } else if (choice <= 30) {
+                    this.hairLength = "waist-length";
+                } else if (choice <= 200) {
+                    this.hairLength = "shoulder-length";
+                } else if (choice <= 1000) {
+                    this.hairLength = "long";
+                } else if (choice <= 4000) {
+                    this.hairLength = "chin-length";
+                } else {
+                    this.hairLength = "short";
+                }
             }
         }
     }
@@ -434,6 +503,12 @@ public class TeacherStatistics implements PStatistics {
 
     public void addTeacherSchedule(TeacherBlock block) {
         teacherSchedule.add(block);
+    }
+
+    public int getAge() {
+        int currentYear = 2004;
+        int birthYear = this.birthday.getYear();
+        return currentYear - birthYear;
     }
 
 }
