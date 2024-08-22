@@ -13,60 +13,270 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class TraitSelection {
 
-    private static Integer setRandom(int min, int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
-    }
     // TODO: Make these hair descriptions more accurate to teachers/older people
-    public static String hairSelection(int selection) {
-        if (selection >= 0 && selection <= 21) {
-            return "black";
-        } else if (selection >= 22 && selection <= 37) {
-            return "dark brown";
-        } else if (selection >= 38 && selection <= 48) {
-            return "medium brown";
-        } else if (selection >= 49 && selection <= 56) {
-            return "light brown";
-        } else if (selection >= 57 && selection <= 64) {
-            return "blond";
-        } else if (selection >= 65 && selection <= 71) {
-            return "chestnut";
-        } else if (selection >= 72 && selection <= 78) {
-            return "mahogany";
-        } else if (selection >= 79 && selection <= 84) {
-            return "dirty blond";
-        } else if (selection >= 85 && selection <= 89) {
-            return "golden blond";
-        } else if (selection >= 90 && selection <= 93) {
-            return "light blond";
-        } else if (selection >= 94 && selection < 96) {
-            return "golden brown";
-        } else if (selection == 97) {
-            return "caramel";
-        } else if (selection == 98) {
-            return "strawberry blond";
-        } else if (selection == 99) {
-            return "copper";
-        } else if (selection == 100) {
-            return "red";
-        } else if (selection == 101) {
-            return "platinum blond";
-        } else {
-            int random = setRandom(0, 6);
-            if (random == 0) {
-                return "auburn";
-            } else if (random == 1) {
-                return "amber";
-            } else if (random == 2) {
-                return "titian";
-            } else if (random == 3) {
-                return "white";
-            } else if (random == 4) {
-                return "no";
-            } else if (random == 5) {
-                return "gray";
+    public static String hairSelection(int selection, int age, String hairLength) {
+        if (hairLength.equals("bald")) {
+            return "";
+        }
+        if (age <= 37) {
+            if (selection >= 0 && selection <= 21) {
+                return "black";
+            } else if (selection >= 22 && selection <= 37) {
+                return "dark brown";
+            } else if (selection >= 38 && selection <= 48) {
+                return "medium brown";
+            } else if (selection >= 49 && selection <= 56) {
+                return "light brown";
+            } else if (selection >= 57 && selection <= 64) {
+                return "blond";
+            } else if (selection >= 65 && selection <= 71) {
+                return "chestnut";
+            } else if (selection >= 72 && selection <= 78) {
+                return "mahogany";
+            } else if (selection >= 79 && selection <= 84) {
+                return "dirty blond";
+            } else if (selection >= 85 && selection <= 89) {
+                return "golden blond";
+            } else if (selection >= 90 && selection <= 93) {
+                return "light blond";
+            } else if (selection >= 94 && selection < 96) {
+                return "golden brown";
+            } else if (selection == 97) {
+                return "caramel";
+            } else if (selection == 98) {
+                return "strawberry blond";
+            } else if (selection == 99) {
+                return "copper";
+            } else if (selection == 100) {
+                return "red";
+            } else if (selection == 101) {
+                return "platinum blond";
             } else {
-                return "champagne";
+                int random = Randomizer.setRandom(0, 5);
+                if (random == 0) {
+                    return "auburn";
+                } else if (random == 1) {
+                    return "amber";
+                } else if (random == 2) {
+                    return "titian";
+                } else if (random == 3) {
+                    return "white";
+                } else if (random == 4) {
+                    return "gray";
+                } else {
+                    return "champagne";
+                }
             }
+        } else if (age <= 45) {
+            String hairColor = "";
+            if (selection > 90 ) {
+                hairColor = "graying";
+            }
+            if (selection >= 0 && selection <= 21) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", black";
+                } else {
+                    hairColor = "black";
+                }
+            } else if (selection >= 22 && selection <= 37) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", dark brown";
+                } else {
+                    hairColor = "dark brown";
+                }
+            } else if (selection >= 38 && selection <= 48) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", medium brown";
+                } else {
+                    hairColor = "medium brown";
+                }
+            } else if (selection >= 49 && selection <= 56) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", light brown";
+                } else {
+                    hairColor = "light brown";
+                }
+            } else if (selection >= 57 && selection <= 64) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", blond";
+                } else {
+                    hairColor = "blond";
+                }
+            } else if (selection >= 65 && selection <= 71) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", chestnut";
+                } else {
+                    hairColor = "chestnut";
+                }
+            } else if (selection >= 72 && selection <= 78) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", mahogany";
+                } else {
+                    hairColor = "mahogany";
+                }
+            } else if (selection >= 79 && selection <= 84) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", dirty blond";
+                } else {
+                    hairColor = "dirty blond";
+                }
+            } else if (selection >= 85 && selection <= 89) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", golden blond";
+                } else {
+                    hairColor = "golden blond";
+                }
+            } else if (selection >= 90 && selection <= 93) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", light blond";
+                } else {
+                    hairColor = "light blond";
+                }
+            } else if (selection >= 94 && selection < 96) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", golden brown";
+                } else {
+                    hairColor = "golden brown";
+                }
+            } else if (selection == 97) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", caramel";
+                } else {
+                    hairColor = "caramel";
+                }
+            } else if (selection == 98) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", strawberry blond";
+                } else {
+                    hairColor = "strawberry blond";
+                }
+            } else if (selection == 99) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", copper";
+                } else {
+                    hairColor = "copper";
+                }
+            } else if (selection == 100) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", red";
+                } else {
+                    hairColor = "red";
+                }
+            } else if (selection == 101) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", platinum blond";
+                } else {
+                    hairColor = "platinum blond";
+                }
+            } else {
+                return "gray";
+            }
+            return hairColor;
+        } else {
+            String hairColor = "";
+            if (selection > 28) {
+                hairColor = "graying";
+            }
+            if (selection >= 0 && selection <= 15) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", black";
+                } else {
+                    hairColor = "black";
+                }
+            } else if (selection >= 16 && selection <= 22) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", dark brown";
+                } else {
+                    hairColor = "dark brown";
+                }
+            } else if (selection >= 23 && selection <= 29) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", medium brown";
+                } else {
+                    hairColor = "medium brown";
+                }
+            } else if (selection >= 30 && selection <= 35) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", light brown";
+                } else {
+                    hairColor = "light brown";
+                }
+            } else if (selection >= 36 && selection <= 40) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", blond";
+                } else {
+                    hairColor = "blond";
+                }
+            } else if (selection >= 41 && selection <= 43) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", chestnut";
+                } else {
+                    hairColor = "chestnut";
+                }
+            } else if (selection >= 44 && selection <= 46) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", mahogany";
+                } else {
+                    hairColor = "mahogany";
+                }
+            } else if (selection >= 47 && selection <= 50) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", dirty blond";
+                } else {
+                    hairColor = "dirty blond";
+                }
+            } else if (selection >= 51 && selection <= 53) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", golden blond";
+                } else {
+                    hairColor = "golden blond";
+                }
+            } else if (selection >= 54 && selection <= 56) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", light blond";
+                } else {
+                    hairColor = "light blond";
+                }
+            } else if (selection >= 57 && selection < 59) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", golden brown";
+                } else {
+                    hairColor = "golden brown";
+                }
+            } else if (selection == 60) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", caramel";
+                } else {
+                    hairColor = "caramel";
+                }
+            } else if (selection == 61) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", strawberry blond";
+                } else {
+                    hairColor = "strawberry blond";
+                }
+            } else if (selection == 62) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", copper";
+                } else {
+                    hairColor = "copper";
+                }
+            } else if (selection == 63) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", red";
+                } else {
+                    hairColor = "red";
+                }
+            } else if (selection == 64) {
+                if(!hairColor.isBlank()) {
+                    hairColor = hairColor + ", platinum blond";
+                } else {
+                    hairColor = "platinum blond";
+                }
+            } else {
+                return "gray";
+            }
+            return hairColor;
         }
     }
 
@@ -96,10 +306,7 @@ public class TraitSelection {
         }
     }
 
-    public static String hairType(int selection, String hairColor) {
-        if(hairColor.equals("no")) {
-            return "";
-        }
+    public static String hairType(int selection) {
         if (selection >= 0 && selection <= 50) {
             return "fine, straight";
         } else if (selection >= 51 && selection <= 250) {

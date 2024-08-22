@@ -39,7 +39,6 @@ public class TeacherPopGenerator {
 
             Staff staff = staffHashMap.get(l);
 
-            staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102)));
             staff.teacherStatistics.setEyeColor(TraitSelection.eyeSelection(setRandom(0, 109)));
             staff.teacherStatistics.setBirthday(BirthdayGenerator.generateRandomBirthdayStaff());
             staff.teacherStatistics.setGender(GenderLoader.genderSelection());
@@ -64,7 +63,8 @@ public class TeacherPopGenerator {
             staff.teacherName.setLastName(l_name);
             String hairColor = staff.teacherStatistics.getHairColor();
             staff.teacherStatistics.setInitHairLength(setRandom(0,10000));
-            staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975), hairColor));
+            staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975)));
+            staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102), staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
             view.appendOutput("   Generated staff " + f_name + " " + l_name);
         }
 

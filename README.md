@@ -89,7 +89,6 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 *Coming soon*
 
 - School schedules/ bell schedule
-- Initial school state machine
 - More status effects for people
 - Social links as weighted graphs
 - Items
@@ -155,6 +154,8 @@ An example of a staff generated and displayed in the inspector:
   distribution : https://www.pewresearch.org/short-reads/2022/04/20/how-the-american-middle-class-has-changed-in-the-past-five-decades/
 - Weather Data per region : https://www.ncei.noaa.gov/access/search/data-search/daily-summaries
 - Student AP participation rates : https://newsroom.collegeboard.org/student-participation-and-performance-advanced-placement-rise-tandem#:~:text=The%20percentage%20of%20low%2Dincome,responsibilities%20for%20the%20College%20Board.
+- Rates of male pattern baldness : https://pubmed.ncbi.nlm.nih.gov/9865198/
+- Rates of gray hair per age bracket : https://pubmed.ncbi.nlm.nih.gov/22716034/
 
 ## Gameplay Mechanics
 
