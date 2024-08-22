@@ -114,6 +114,7 @@ public class Inspector {
         LocalDate birth = staff.teacherStatistics.getBirthday();
         String assignment = staff.teacherStatistics.getStaffType().toString().toLowerCase();
         List<String> teacherSchedule = staff.teacherStatistics.getTeacherSchedule().toStringArray();
+        String yearsOfExperience = Integer.toString(staff.teacherStatistics.getYearsOfExperience());
 
         sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
         sb.append(firstName).append(" is a ").append(age).append(" year-old ").append(gender).append(". ");
@@ -139,6 +140,7 @@ public class Inspector {
         sb.append("\n   Resilience: ").append(staff.teacherStatistics.getResilience()).append("\n   Curiosity: ");
         sb.append(staff.teacherStatistics.getCuriosity()).append("\n   Responsibility: ").append(staff.teacherStatistics.getResponsibility());
         sb.append("\n   Open-Mindedness: ").append(staff.teacherStatistics.getOpenMindedness()).append("\n");
+        sb.append("They have ").append(yearsOfExperience).append(" year(s) of teaching experience.").append("\n");
         sb.append(firstName).append(" has the following status effects:\n");
         if (staff.teacherStatistics.getBoredom() == 0) {
             sb.append(firstName).append(" is not bored.\n");

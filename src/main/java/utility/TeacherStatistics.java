@@ -36,6 +36,7 @@ public class TeacherStatistics implements PStatistics {
     private int openmindedness;
     private Enum staffType;
     private TeacherSchedule teacherSchedule;
+    private int yearsOfExperience;
 
     public TeacherStatistics() {
         this.height = 0;
@@ -64,6 +65,7 @@ public class TeacherStatistics implements PStatistics {
         this.openmindedness = 0;
         this.staffType = null;
         this.teacherSchedule = new TeacherSchedule();
+        this.yearsOfExperience = 0;
     }
 
     @Override
@@ -511,4 +513,11 @@ public class TeacherStatistics implements PStatistics {
         return currentYear - birthYear;
     }
 
+    public void setYearsOfExperience(int yearsOfExperience) {
+        this.yearsOfExperience = yearsOfExperience;
+    }
+
+    public int getYearsOfExperience() {
+        return this.yearsOfExperience;
+    }
 }
