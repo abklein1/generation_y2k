@@ -116,10 +116,16 @@ public class Inspector {
         List<String> teacherSchedule = staff.teacherStatistics.getTeacherSchedule().toStringArray();
 
         sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
-        sb.append(firstName).append(" is a ").append(age).append(" year-old ").append(gender).append(" with ");
-        sb.append(hairLength).append(", ").append(hairType).append(", ").append(hairColor);
-        sb.append(" hair and ").append(eyeColor).append(" eyes. They stand ");
-        sb.append(df.format(height)).append(" inches tall.\n");
+        sb.append(firstName).append(" is a ").append(age).append(" year-old ").append(gender).append(". ");
+
+        if (hairLength.equalsIgnoreCase("bald")) {
+            sb.append("They are bald and have ").append(eyeColor).append(" eyes. ");
+        } else {
+            sb.append("They have ").append(hairLength).append(", ").append(hairType).append(", ").append(hairColor)
+                    .append(" hair and ").append(eyeColor).append(" eyes. ");
+        }
+
+        sb.append("They stand ").append(df.format(height)).append(" inches tall.\n");
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
         sb.append("They have the following stats:\n   INTELLIGENCE: ").append(staff.teacherStatistics.getIntelligence());
         sb.append("\n   CHARISMA: ").append(staff.teacherStatistics.getCharisma()).append("\n   AGILITY: ");
@@ -145,7 +151,7 @@ public class Inspector {
             sb.append(firstName).append(" is not asleep.\n");
         }
         sb.append("They are assigned as: ").append(assignment).append("\n");
-        sb.append("Teacher schedule is : ").append(teacherSchedule);
+        sb.append("Teacher schedule is: ").append(teacherSchedule);
 
         inspectionArea.setText(sb.toString());
     }

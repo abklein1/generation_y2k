@@ -96,7 +96,6 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 - Moods
 - Nicknames
 - Rival schools
-- More accurate descriptors of teachers based on age
 - Household and personal traits
 - Rumors
 - School and extracurricular events

@@ -67,7 +67,7 @@ public class TraitSelection {
                     return "champagne";
                 }
             }
-        } else if (age <= 45) {
+        } else if (age <= 47) {
             String hairColor = "";
             if (selection > 90 ) {
                 hairColor = "graying";
