@@ -6,6 +6,7 @@ import utility.Randomizer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ConferenceRoom implements Room, Serializable {
@@ -20,6 +21,7 @@ public class ConferenceRoom implements Room, Serializable {
     private final List<Staff> staffAssign;
     private final List<Student> students;
     private Student[][] seats;
+    private HashMap<Integer, Student[][]> seatingArrangements;
 
     public ConferenceRoom() {
         this.numOfConnections = 0;
@@ -32,6 +34,7 @@ public class ConferenceRoom implements Room, Serializable {
         this.studentRestriction = false;
         this.staffAssign = new ArrayList<>();
         this.students = new ArrayList<>();
+        this.seatingArrangements = new HashMap<>();
     }
 
     @Override
@@ -217,4 +220,14 @@ public class ConferenceRoom implements Room, Serializable {
     public void addStudent(Student student) {students.add(student);}
     @Override
     public List<Student> getStudents() { return this.students;}
+
+    @Override
+    public void setPeriodSeatingArrangement(int period, Student[][] seatArrangement) {
+        seatingArrangements.put(period, seatArrangement);
+    }
+
+    @Override
+    public HashMap<Integer, Student[][]> getPeriodSeatingArrangement() {
+        return seatingArrangements;
+    }
 }

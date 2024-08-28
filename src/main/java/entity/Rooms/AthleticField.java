@@ -2,10 +2,10 @@ package entity.Rooms;
 
 import entity.Staff;
 import entity.Student;
-import utility.Randomizer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AthleticField implements Room, Serializable {
@@ -21,6 +21,7 @@ public class AthleticField implements Room, Serializable {
     private String roomNumber;
     private boolean studentRestriction;
     private Student[][] seats;
+    private HashMap<Integer, Student[][]> seatingArrangements;
 
     public AthleticField() {
         this.numOfConnections = 0;
@@ -33,6 +34,7 @@ public class AthleticField implements Room, Serializable {
         this.studentRestriction = false;
         this.staffAssign = new ArrayList<>();
         this.students = new ArrayList<>();
+        this.seatingArrangements = new HashMap<>();
     }
 
     @Override
@@ -124,8 +126,8 @@ public class AthleticField implements Room, Serializable {
     public void setSeatArrangement() {
         // Smaller field
         if (studentCap <= 250) {
-           seats = new Student[25][10];
-        // Larger field
+            seats = new Student[25][10];
+            // Larger field
         } else {
             seats = new Student[20][25];
         }
@@ -190,11 +192,28 @@ public class AthleticField implements Room, Serializable {
     }
 
     @Override
-    public int getRoomCapacity() {return this.studentCap + this.staffCap;}
+    public int getRoomCapacity() {
+        return this.studentCap + this.staffCap;
+    }
 
     @Override
-    public void addStudent(Student student) {students.add(student);}
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
     @Override
-    public List<Student> getStudents() { return this.students;}
+    public List<Student> getStudents() {
+        return this.students;
+    }
+
+    @Override
+    public void setPeriodSeatingArrangement(int period, Student[][] seatArrangement) {
+        seatingArrangements.put(period, seatArrangement);
+    }
+
+    @Override
+    public HashMap<Integer, Student[][]> getPeriodSeatingArrangement() {
+        return seatingArrangements;
+    }
 
 }

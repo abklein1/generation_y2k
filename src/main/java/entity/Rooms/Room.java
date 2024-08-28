@@ -10,6 +10,7 @@ package entity.Rooms;//*********************************************************
 import entity.Staff;
 import entity.Student;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface Room {
@@ -67,5 +68,9 @@ public interface Room {
     void addStudent(Student student);
 
     List<Student> getStudents();
+
+    void setPeriodSeatingArrangement(int period, Student[][] seatArrangement);
+
+    HashMap<Integer,Student[][]> getPeriodSeatingArrangement();
 
 }

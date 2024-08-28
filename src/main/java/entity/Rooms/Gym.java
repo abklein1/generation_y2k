@@ -13,9 +13,12 @@ import utility.Randomizer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Gym implements Room, Serializable {
+    private final List<Staff> staffAssign;
+    private final List<Student> students;
     private int numOfConnections;
     private int windowCount;
     private String roomName;
@@ -24,9 +27,8 @@ public class Gym implements Room, Serializable {
     private int studentCap;
     private String roomNumber;
     private boolean studentRestriction;
-    private final List<Staff> staffAssign;
-    private final List<Student> students;
     private Student[][] seats;
+    private HashMap<Integer, Student[][]> seatingArrangements;
 
     public Gym() {
         this.numOfConnections = 0;
@@ -39,6 +41,7 @@ public class Gym implements Room, Serializable {
         this.studentRestriction = false;
         this.staffAssign = new ArrayList<>();
         this.students = new ArrayList<>();
+        this.seatingArrangements = new HashMap<>();
     }
 
     @Override
@@ -111,13 +114,13 @@ public class Gym implements Room, Serializable {
     }
 
     @Override
-    public void setAssignedStaff(Staff staff) {
-        staffAssign.add(staff);
+    public List<Staff> getAssignedStaff() {
+        return this.staffAssign;
     }
 
     @Override
-    public List<Staff> getAssignedStaff() {
-        return this.staffAssign;
+    public void setAssignedStaff(Staff staff) {
+        staffAssign.add(staff);
     }
 
     @Override
@@ -128,7 +131,7 @@ public class Gym implements Room, Serializable {
     // TODO: Later we can make desk arrangements that are not only squares/rectangles
     @Override
     public void setSeatArrangement() {
-        int choice = Randomizer.setRandom(0,2);
+        int choice = Randomizer.setRandom(0, 2);
         if (studentCap <= 100) {
             if (choice == 0) {
                 seats = new Student[10][10];
@@ -170,9 +173,9 @@ public class Gym implements Room, Serializable {
     @Override
     public int[] getStudentSeatCoordinate(Student student) {
         int[] coords = new int[2];
-        for(int i = 0; i < seats.length; i++) {
-            for(int j = 0; j < seats[i].length; j++) {
-                if(seats[i][j].equals(student)) {
+        for (int i = 0; i < seats.length; i++) {
+            for (int j = 0; j < seats[i].length; j++) {
+                if (seats[i][j].equals(student)) {
                     coords[0] = i;
                     coords[1] = j;
                     return coords;
@@ -185,7 +188,7 @@ public class Gym implements Room, Serializable {
 
     @Override
     public void addStudentToSeat(Student student, int x, int y) {
-        if(seats[x][y] != null) {
+        if (seats[x][y] != null) {
             System.out.println(student.studentName + " can't be assigned to seat because there is already someone there!");
         } else {
             seats[x][y] = student;
@@ -216,10 +219,27 @@ public class Gym implements Room, Serializable {
     }
 
     @Override
-    public int getRoomCapacity() {return this.studentCap + this.staffCap;}
+    public int getRoomCapacity() {
+        return this.studentCap + this.staffCap;
+    }
 
     @Override
-    public void addStudent(Student student) {students.add(student);}
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
     @Override
-    public List<Student> getStudents() { return this.students;}
+    public List<Student> getStudents() {
+        return this.students;
+    }
+
+    @Override
+    public void setPeriodSeatingArrangement(int period, Student[][] seatArrangement) {
+        seatingArrangements.put(period, seatArrangement);
+    }
+
+    @Override
+    public HashMap<Integer, Student[][]> getPeriodSeatingArrangement() {
+        return seatingArrangements;
+    }
 }

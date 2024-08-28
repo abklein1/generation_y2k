@@ -32,6 +32,7 @@ public class Classroom implements Room, Serializable {
     private boolean studentRestriction;
     private String classRoomType;
     private Student[][] seats;
+    private HashMap<Integer, Student[][]> seatingArrangements;
 
     public Classroom() {
         this.numOfConnections = 0;
@@ -45,6 +46,7 @@ public class Classroom implements Room, Serializable {
         this.classRoomType = null;
         this.staffAssign = new ArrayList<>();
         this.students = new ArrayList<>();
+        this.seatingArrangements = new HashMap<>();
     }
 
     @Override
@@ -291,5 +293,15 @@ public class Classroom implements Room, Serializable {
     public void addStudent(Student student) {students.add(student);}
     @Override
     public List<Student> getStudents() { return this.students;}
+
+    @Override
+    public void setPeriodSeatingArrangement(int period, Student[][] seatArrangement) {
+        seatingArrangements.put(period, seatArrangement);
+    }
+
+    @Override
+    public HashMap<Integer, Student[][]> getPeriodSeatingArrangement() {
+        return seatingArrangements;
+    }
 
 }

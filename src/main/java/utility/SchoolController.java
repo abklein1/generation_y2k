@@ -100,6 +100,7 @@ public class SchoolController {
                 StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
                 try {
                     StudentScheduleAssigner.scheduleAllStudents(studentHashMap, staffHashMap);
+                    StudentSeatingAssigner.seatInitialStudents(standardSchool);
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("some exception");
