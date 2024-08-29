@@ -7,6 +7,7 @@ import entity.Rooms.Room;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.RoundingMode;
@@ -223,10 +224,9 @@ public class Inspector {
         String roomName = room.getRoomName();
         List<Staff> staff = room.getAssignedStaff();
         int studentCap = room.getStudentCapacity();
-        Student[][] seats = room.getSeatArrangement();
+        HashMap<Integer, Student[][]> seatingArrangements = ((Classroom) room).getPeriodSeatingArrangement();
         TeacherSchedule teacherSchedule = room.getAssignedStaff().get(0).teacherStatistics.getTeacherSchedule();
         List<TeacherBlock> teacherBlocks = teacherSchedule.getTeacherSchedule();
-        List<Student> students;
 
         StringBuilder roomDetails = new StringBuilder();
         roomDetails.append("Welcome to ").append(roomName).append("\n");
@@ -235,44 +235,65 @@ public class Inspector {
             roomDetails.append(value.teacherName.getFirstName()).append(" ").append(value.teacherName.getLastName()).append("\n");
         }
         roomDetails.append("It has a student capacity of ").append(studentCap).append("\n");
-        if (room instanceof Classroom) {
-            String abbrev = ((Classroom) room).getClassRoomType();
-            roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");
-        }
+        String abbrev = ((Classroom) room).getClassRoomType();
+        roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");
 
         JTextArea roomInfoArea = new JTextArea(roomDetails.toString());
         roomInfoArea.setEditable(false);
 
-        String[] columnNames = new String[seats[0].length];
-        for (int i = 0; i < seats[0].length; i++) {
+        // Create a panel for block buttons
+        JPanel blockButtonPanel = new JPanel();
+        blockButtonPanel.setLayout(new GridLayout(1, 8));
+        JButton[] blockButtons = new JButton[8];
+
+        // Create a table model to update the seating arrangement
+        String[] columnNames = new String[seatingArrangements.get(1)[0].length];
+        for (int i = 0; i < columnNames.length; i++) {
             columnNames[i] = "Col " + (i + 1);
         }
-
-        Object[][] data = new Object[seats.length][seats[0].length];
-        for (int row = 0; row < seats.length; row++) {
-            for (int col = 0; col < seats[0].length; col++) {
-                if (seats[row][col] != null) {
-                    data[row][col] = seats[row][col].studentName.getFirstName() + " " + seats[row][col].studentName.getLastName();
-                } else {
-                    data[row][col] = "Empty";
-                }
-            }
-        }
-
-        JTable studentTable = new JTable(new DefaultTableModel(data, columnNames));
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, seatingArrangements.get(1).length);
+        JTable studentTable = new JTable(tableModel);
         studentTable.setFillsViewportHeight(true);
+
         studentTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int row = studentTable.rowAtPoint(e.getPoint());
                 int col = studentTable.columnAtPoint(e.getPoint());
-                if (seats[row][col] != null) {
+                if (!"Empty".equals(tableModel.getValueAt(row, col))) {
+                    Student student = seatingArrangements.get(1)[row][col];
                     JTextArea studentInfoArea = new JTextArea();
-                    studentInspection(seats[row][col], studentInfoArea);
+                    studentInspection(student, studentInfoArea);
                     JOptionPane.showMessageDialog(null, new JScrollPane(studentInfoArea), "Student Details", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
+
+        // ActionListener for the buttons to update the seating arrangement
+        ActionListener blockButtonListener = e -> {
+            int blockNumber = Integer.parseInt(e.getActionCommand());
+            Student[][] seats = seatingArrangements.get(blockNumber);
+            for (int row = 0; row < seats.length; row++) {
+                for (int col = 0; col < seats[0].length; col++) {
+                    if (seats[row][col] != null) {
+                        tableModel.setValueAt(seats[row][col].studentName.getFirstName() + " " + seats[row][col].studentName.getLastName(), row, col);
+                    } else {
+                        tableModel.setValueAt("Empty", row, col);
+                    }
+                }
+            }
+        };
+
+        // Create and add buttons for each block
+        for (int i = 0; i < 8; i++) {
+            blockButtons[i] = new JButton("Block " + (i + 1));
+            blockButtons[i].setActionCommand(String.valueOf(i + 1));
+            blockButtons[i].addActionListener(blockButtonListener);
+            blockButtonPanel.add(blockButtons[i]);
+        }
+
+        // Initialize with the first block
+        blockButtons[0].doClick();
 
         JScrollPane studentScrollPane = new JScrollPane(studentTable);
         studentScrollPane.setPreferredSize(new Dimension(400, 200));
@@ -287,8 +308,8 @@ public class Inspector {
             studentListArea.append("\n");
             studentListArea.append(block.getSemester());
             studentListArea.append("\n");
-            students = block.getClassPopulation();
-            if(students != null) {
+            List<Student> students = block.getClassPopulation();
+            if (students != null) {
                 for (Student student : students) {
                     studentListArea.append(student.studentName.getFirstName());
                     studentListArea.append(" ");
@@ -303,11 +324,12 @@ public class Inspector {
         studentListScrollPane.setPreferredSize(new Dimension(200, 200));
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, studentListScrollPane, studentScrollPane);
-        splitPane.setResizeWeight(0.5);
+        splitPane.setResizeWeight(0.3);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.add(roomInfoArea, BorderLayout.NORTH);
+        panel.add(blockButtonPanel, BorderLayout.SOUTH); // Buttons at the bottom
         panel.add(splitPane, BorderLayout.CENTER);
 
         JOptionPane.showMessageDialog(null, panel, "Room Details", JOptionPane.INFORMATION_MESSAGE);

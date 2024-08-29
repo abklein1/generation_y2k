@@ -8,10 +8,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StudentScheduleAssigner {
 
@@ -261,7 +258,7 @@ public class StudentScheduleAssigner {
             // Ensure the class exists in the class details map
             if (classDetailsMap.containsKey(className)) {
                 List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, StaffType.MATH);
-
+                Collections.shuffle(availableTeachers);
                 // Determine if this class is for fall or spring based on its position in the list
                 boolean isFallClass = (i == 0);
                 boolean isSpringClass = (i == 1);
@@ -270,7 +267,7 @@ public class StudentScheduleAssigner {
                 boolean classAssigned = false;
                 for (Staff teacher : availableTeachers) {
                     List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
-
+                    Collections.shuffle(teacherBlocks);
                     for (TeacherBlock availableBlock : teacherBlocks) {
                         boolean isCorrectSemesterBlock = isFallClass ? isFallBlock(availableBlock) : isSpringBlock(availableBlock);
 
@@ -348,16 +345,17 @@ public class StudentScheduleAssigner {
 
     private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff> staffHashMap, StaffType staffType) {
         List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap, staffType);
+        Collections.shuffle(availableTeachers);  // Shuffle the teachers
 
         for (Staff teacher : availableTeachers) {
             List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
-            int i = 0;
+            Collections.shuffle(teacherBlocks);  // Shuffle the blocks for each teacher
 
+            int i = 0;
             // Use a while loop to iterate through available blocks
             while (i < teacherBlocks.size()) {
                 TeacherBlock availableBlock = teacherBlocks.get(i);
                 if (availableBlock != null && !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester()) && availableBlock.getClassPopulationBlock() < availableBlock.getBlockPopulation()) {
-                    // TODO: hardcode but prob change later
                     // Create a new StudentBlock and assign the class
                     StudentBlock studentBlock = new StudentBlock();
                     studentBlock.setBlockNumber(availableBlock.getBlockNumber());
@@ -403,16 +401,17 @@ public class StudentScheduleAssigner {
 
     private static void assignClassToStudent(Student student, String className, HashMap<Integer, Staff> staffHashMap) {
         List<Staff> availableTeachers = getAvailableTeachersForClass(className, staffHashMap);
+        Collections.shuffle(availableTeachers);  // Shuffle the teachers
 
         for (Staff teacher : availableTeachers) {
             List<TeacherBlock> teacherBlocks = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(className);
-            int i = 0;
+            Collections.shuffle(teacherBlocks);  // Shuffle the blocks for each teacher
 
+            int i = 0;
             // Use a while loop to iterate through available blocks
             while (i < teacherBlocks.size()) {
                 TeacherBlock availableBlock = teacherBlocks.get(i);
                 if (availableBlock != null && !hasBlockConflict(student, availableBlock.getBlockNumber(), availableBlock.getSemester()) && availableBlock.getClassPopulationBlock() < availableBlock.getBlockPopulation()) {
-                    // TODO: hardcode but prob change later
                     // Create a new StudentBlock and assign the class
                     StudentBlock studentBlock = new StudentBlock();
                     studentBlock.setBlockNumber(availableBlock.getBlockNumber());

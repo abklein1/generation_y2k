@@ -219,10 +219,9 @@ activities, but they cannot be pushed beyond their initial cap.
 - Graph visualization of rooms can be hard to read due to overlapping labels
 - Graph visualization of rooms cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers
-- Some students aren't assigned to required classes per grade level
-- Some math and history teachers are not assigned classes
+- Too many students assigned to theater technology
 - Some teachers are not properly assigned a room
-- Student and teacher assignment algorithms do not evenly and efficiently distribute students
+- Sometimes math classes are not assigned to freshmen
 
 ## Release 0.0.10
 
