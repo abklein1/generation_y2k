@@ -282,6 +282,7 @@ public class Inspector {
                     }
                 }
             }
+            tableModel.fireTableDataChanged(); // Ensure the table model refreshes
         };
 
         // Create and add buttons for each block
@@ -332,6 +333,14 @@ public class Inspector {
         panel.add(blockButtonPanel, BorderLayout.SOUTH); // Buttons at the bottom
         panel.add(splitPane, BorderLayout.CENTER);
 
-        JOptionPane.showMessageDialog(null, panel, "Room Details", JOptionPane.INFORMATION_MESSAGE);
+        // Create a resizable JDialog
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Room Details");
+        dialog.setContentPane(panel);
+        dialog.setModal(true);
+        dialog.pack();
+        dialog.setSize(800, 600); // Initial size
+        dialog.setLocationRelativeTo(null); // Center on screen
+        dialog.setVisible(true);
     }
 }
