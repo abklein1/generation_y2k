@@ -355,7 +355,7 @@ public class NameLoader {
         roll = r.nextInt(100)+1;
 
         if(roll <= 50) {
-            return "JR.";
+            return "Jr.";
         } else if (roll <= 80) {
             return "II";
         } else if (roll <= 95) {

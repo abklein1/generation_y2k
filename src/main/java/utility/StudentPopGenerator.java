@@ -79,9 +79,9 @@ public class StudentPopGenerator {
             student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
             student.studentStatistics.setInitIncomeLevel(setRandom(0,100));
             if(suffix != null) {
-                view.appendOutput("   Generated student " + f_name + " " + lastName + " " + suffix);
+                view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {
-                view.appendOutput("   Generated student " + f_name + " " + lastName);
+                view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName());
             }
         }
     }
