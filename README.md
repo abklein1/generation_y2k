@@ -222,6 +222,8 @@ activities, but they cannot be pushed beyond their initial cap.
 - Too many students assigned to theater technology
 - Some teachers are not properly assigned a room
 - Sometimes math classes are not assigned to freshmen
+- Some last name capitalization is wrong
+- Overcapacity rate in classrooms is relatively high/ some blocks still under 5 students assigned
 
 ## Release 0.0.10
 

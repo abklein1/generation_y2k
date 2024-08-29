@@ -65,7 +65,7 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975)));
             staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102), staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
             staff.teacherStatistics.setYearsOfExperience(setRandom(0,(staff.teacherStatistics.getAge() - 23)));
-            view.appendOutput("   Generated staff " + f_name + " " + l_name);
+            view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName());
         }
 
         //Clear map for new values
