@@ -17,7 +17,7 @@ public class TeacherName implements PName {
 
     @Override
     public void setLastName(String lastName) {
-        this.lastName = capitalizeName(lastName);
+        this.lastName = lastName;
     }
 
     @Override

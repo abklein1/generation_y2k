@@ -22,7 +22,7 @@ public class StudentName implements PName {
 
     @Override
     public void setLastName(String lastName) {
-        this.lastName = capitalizeName(lastName);
+        this.lastName = lastName;
     }
 
     @Override
@@ -44,6 +44,10 @@ public class StudentName implements PName {
 
     public String capitalizeName(String name) {
         if (name == null || name.isEmpty()) {
+            return name;
+        }
+
+        if (name.contains("-")) {
             return name;
         }
 

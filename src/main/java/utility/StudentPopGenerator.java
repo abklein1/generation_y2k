@@ -48,9 +48,15 @@ public class StudentPopGenerator {
             String lastName = l_name[0];
             String race = l_name[1];
             student.studentName.setFirstName(f_name);
+            lastName = student.studentName.capitalizeName(lastName);
             student.studentName.setLastName(lastName);
             if(setRandom(0,170) == 100) {
-                student.studentName.setSuffix(NameLoader.middleNameGenerator(student.studentStatistics.getGender()));
+                student.studentName.setSuffix(NameLoader.suffixNameGenerator(student.studentStatistics.getGender()));
+            }
+            if(setRandom(0,100) < 3) {
+                String hyphenName = NameLoader.selectWeightedRandom()[0];
+                hyphenName = student.studentName.capitalizeName(hyphenName);
+                student.studentName.setLastName(lastName + "-" + hyphenName);
             }
             String suffix = student.studentName.getSuffix();
             student.studentStatistics.setRace(race);

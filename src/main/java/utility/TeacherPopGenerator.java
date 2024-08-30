@@ -60,6 +60,12 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setInitResponsibility();
             staff.teacherStatistics.setInitOpenMind();
             staff.teacherName.setFirstName(f_name);
+            l_name = staff.teacherName.capitalizeName(l_name);
+            if(setRandom(0,100) < 4) {
+                String hyphenName = lNameReference.get(setRandom(0,lNameReference.size()));
+                hyphenName= staff.teacherName.capitalizeName(hyphenName);
+                staff.teacherName.setLastName(l_name + " " + hyphenName);
+            }
             staff.teacherName.setLastName(l_name);
             staff.teacherStatistics.setInitHairLength(setRandom(0,10000));
             staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975)));

@@ -344,7 +344,7 @@ public class NameLoader {
         }
     }
 
-    public static String middleNameGenerator(String gender) {
+    public static String suffixNameGenerator(String gender) {
         Random r = new Random();
         int roll = 0;
 
