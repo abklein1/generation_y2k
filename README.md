@@ -155,6 +155,7 @@ An example of a staff generated and displayed in the inspector:
 - Student AP participation rates : https://newsroom.collegeboard.org/student-participation-and-performance-advanced-placement-rise-tandem#:~:text=The%20percentage%20of%20low%2Dincome,responsibilities%20for%20the%20College%20Board.
 - Rates of male pattern baldness : https://pubmed.ncbi.nlm.nih.gov/9865198/
 - Rates of gray hair per age bracket : https://pubmed.ncbi.nlm.nih.gov/22716034/
+- Living arrangements of children in 2004 : https://www2.census.gov/library/publications/2008/demo/p70-114.pdf
 
 ## Gameplay Mechanics
 
