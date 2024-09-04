@@ -174,7 +174,7 @@ public class TeacherStatistics implements PStatistics {
     }
 
     @Override
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 

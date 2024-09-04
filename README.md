@@ -156,6 +156,8 @@ An example of a staff generated and displayed in the inspector:
 - Rates of male pattern baldness : https://pubmed.ncbi.nlm.nih.gov/9865198/
 - Rates of gray hair per age bracket : https://pubmed.ncbi.nlm.nih.gov/22716034/
 - Living arrangements of children in 2004 : https://www2.census.gov/library/publications/2008/demo/p70-114.pdf
+- Rate of multiple births per ethnicity : https://www.statista.com/statistics/244913/twin-birth-rates-in-the-united-states-by-ethnicity/#:~:text=Fraternal%20twins%2C%20although%20born%20at,siblings%20born%20at%20different%20times.&text=The%20birth%20rate%20for%20twins,1%2C000%20live%20births%20in%202022.
+- Trends in intermarriage : https://www.pewresearch.org/social-trends/2017/05/18/1-trends-and-patterns-in-intermarriage/
 
 ## Gameplay Mechanics
 

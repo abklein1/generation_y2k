@@ -1,5 +1,6 @@
 package utility;
 
+import entity.Student;
 import entity.StudentBlock;
 import entity.StudentSchedule;
 
@@ -43,6 +44,9 @@ public class StudentStatistics implements PStatistics {
     private String incomeLevel;
     private ArrayList<String> completedClasses;
     private StudentSchedule studentSchedule;
+    private ArrayList<Student> siblingsInSchool;
+    private ArrayList<String> siblingsNotInSchool;
+
 
     public StudentStatistics() {
         this.height = 0;
@@ -80,6 +84,8 @@ public class StudentStatistics implements PStatistics {
         this.incomeLevel = null;
         this.completedClasses = new ArrayList<>();
         this.studentSchedule = new StudentSchedule();
+        this.siblingsInSchool = new ArrayList<>();
+        this.siblingsNotInSchool = new ArrayList<>();
     }
 
     @Override
@@ -188,7 +194,7 @@ public class StudentStatistics implements PStatistics {
     }
 
     @Override
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 
@@ -235,6 +241,10 @@ public class StudentStatistics implements PStatistics {
             case 2 -> this.gradeLevel = "Junior";
             case 3 -> this.gradeLevel = "Senior";
         }
+    }
+
+    public void setGradeLevel(String gradeLevel) {
+        this.gradeLevel = gradeLevel;
     }
 
     public String getGender() {
@@ -567,6 +577,30 @@ public class StudentStatistics implements PStatistics {
     }
 
     public void removeStudentSchedule(StudentBlock block) {
+        this.studentSchedule.remove(block);
+    }
 
+    public void addSiblingsInSchool(Student sibling) {
+        this.siblingsInSchool.add(sibling);
+    }
+
+    public void removeSiblingsInSchool(Student sibling) {
+        this.siblingsInSchool.remove(sibling);
+    }
+
+    public ArrayList<Student> getSiblingsInSchool() {
+        return  siblingsInSchool;
+    }
+
+    public void addSiblingsNotInSchool(String name) {
+        this.siblingsNotInSchool.add(name);
+    }
+
+    public void removeSiblingsNotInSchool(String name) {
+        this.siblingsNotInSchool.remove(name);
+    }
+
+    public ArrayList<String> getSiblingsNotInSchool() {
+        return this.siblingsNotInSchool;
     }
 }

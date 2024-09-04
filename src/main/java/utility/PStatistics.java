@@ -1,7 +1,7 @@
 package utility;
 
 public interface PStatistics {
-    void setHeight(int height);
+    void setHeight(double height);
 
     void setEyeColor(String eyeColor);
 
