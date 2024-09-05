@@ -278,6 +278,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        while (f_name.equals(student.studentName.getFirstName())) {
+            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        }
         // chance of having different last name than sibling
         if (setRandom(0,3) == 2) {
             l_name = NameLoader.selectWeightedRandom();
@@ -355,7 +358,11 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setGradeLevel(setRandom(0,3));
         studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
+        // Make sure sibling names don't equal each other
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        while (f_name.equals(student.studentName.getFirstName())) {
+            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        }
         lastName = student.studentName.getLastName();
         studentCopy.studentName.setFirstName(f_name);
         studentCopy.studentName.setLastName(lastName);
@@ -422,6 +429,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        while (f_name.equals(student.studentName.getFirstName())) {
+            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        }
         l_name = student.studentName.getLastName();
         studentCopy.studentName.setFirstName(f_name);
         studentCopy.studentName.setLastName(l_name);
@@ -481,6 +491,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setBirthday(student.studentStatistics.getBirthday());
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        while (f_name.equals(student.studentName.getFirstName())) {
+            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        }
         l_name = student.studentName.getLastName();
         studentCopy.studentName.setFirstName(f_name);
         studentCopy.studentName.setLastName(l_name);
@@ -537,6 +550,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setBirthday(student.studentStatistics.getBirthday());
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        while (f_name.equals(student.studentName.getFirstName())) {
+            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        }
         l_name = student.studentName.getLastName();
         studentCopy.studentName.setFirstName(f_name);
         studentCopy.studentName.setLastName(l_name);
