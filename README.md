@@ -92,7 +92,6 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 - More status effects for people
 - Social links as weighted graphs
 - Items
-- Siblings
 - Moods
 - Nicknames
 - Rival schools
@@ -227,6 +226,19 @@ activities, but they cannot be pushed beyond their initial cap.
 - Sometimes math classes are not assigned to freshmen
 - Some last name capitalization is wrong
 - Overcapacity rate in classrooms is relatively high/ some blocks still under 5 students assigned
+- Duplicate student seating assignments per block
+- Buttons to switch seat assignment charts per block not working yet
+- Only generated student displays related siblings. Siblings do not show relation to student
+
+## Release 0.0.11
+- Students now have vocational class assignments based on traits, which now means each student has a full schedule
+- Teacher descriptions have been revised to account for age and a bug was fixed that used female hair length distributions for male teachers. Teachers are capable of having graying or gray hair as well as can be bald or balding
+- Teachers now have a teaching experience stat based on number of years teaching
+- An algorithm has been constructed to place students in seats for each classroom and block
+- Last names are now properly capitalized and no longer all caps
+- Last names have the possibility of being hyphenated
+- Students now capable of having generated siblings (twins, triplets, half, step) that are either in or out of school. This forms the foundation for future social links feature
+- Various bugfixes
 
 ## Release 0.0.10
 
