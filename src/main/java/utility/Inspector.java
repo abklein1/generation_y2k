@@ -39,6 +39,8 @@ public class Inspector {
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
         List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
+        List<String> siblingsNotInSchool = student.studentStatistics.getSiblingsNotInSchool();
+        List<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
 
         if (suffix != null) {
             sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix).append("\n=====================================\n");
@@ -76,6 +78,18 @@ public class Inspector {
             sb.append(firstName).append(" is not asleep.\n");
         }
         sb.append("Their family has the following income: " ).append(income).append("\n");
+        if(!siblingsInSchool.isEmpty()) {
+            sb.append("They have the following siblings in school: ").append("\n");
+            for (Student sibling : siblingsInSchool) {
+                sb.append(sibling.studentName.getFirstName()).append(" ").append(sibling.studentName.getLastName()).append("\n");
+            }
+        }
+        if(!siblingsNotInSchool.isEmpty()) {
+            sb.append("They have the following siblings not in school: ").append("\n");
+            for (String sibling : siblingsNotInSchool) {
+                sb.append(sibling).append("\n");
+            }
+        }
         for(StudentBlock block : schedule) {
             int blockNum = block.getBlockNumber();
             switch (blockNum) {
