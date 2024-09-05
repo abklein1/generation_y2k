@@ -240,6 +240,8 @@ activities, but they cannot be pushed beyond their initial cap.
 - Students now capable of having generated siblings (twins, triplets, half, step) that are either in or out of school. This forms the foundation for future social links feature
 - Various bugfixes
 
+![](src/main/java/Resources.Screencaps/proto6.JPG)
+
 ## Release 0.0.10
 
 - History, Science, Language, Vocational assignments completed for teachers
