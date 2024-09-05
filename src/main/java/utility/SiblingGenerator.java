@@ -530,6 +530,8 @@ public class SiblingGenerator {
         Random distribution = new Random();
         String f_name;
         String l_name;
+        String studentGrade = student.studentStatistics.getGradeLevel();
+        String siblingGrade;
         int int_stdDev = 15;
         int int_mean = 100;
         int chr_stdDev = 15;
@@ -546,6 +548,12 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setLevel(1);
         studentCopy.studentStatistics.setExperience(0);
         studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
+        siblingGrade = studentCopy.studentStatistics.getGradeLevel();
+        // Ensure min age gap between true siblings
+        do {
+            studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
+            siblingGrade = studentCopy.studentStatistics.getGradeLevel();
+        } while (studentGrade.equals(siblingGrade));
         studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
