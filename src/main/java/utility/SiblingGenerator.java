@@ -2,7 +2,6 @@ package utility;
 
 import entity.Student;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -32,7 +31,7 @@ public class SiblingGenerator {
             int siblings = siblingProbabilityLoader();
             Student sibling;
             boolean finishedGeneration = false;
-            boolean hasTwins = setRandom(0,MULTI_BIRTH_SAMPLE_SIZE) < TWIN_RATE;
+            boolean hasTwins = setRandom(0, MULTI_BIRTH_SAMPLE_SIZE) < TWIN_RATE;
             boolean hasTriplets = setRandom(0, MULTI_BIRTH_SAMPLE_SIZE) < TRIPLET_RATE;
             boolean hasStepSibling = setRandom(0, SIBLING_SAMPLE_SIZE) < STEP_SIBLING_RATE;
             boolean hasAdoptedSibling = setRandom(0, SIBLING_SAMPLE_SIZE) < ADOPTED_SIBLING_RATE;
@@ -46,50 +45,50 @@ public class SiblingGenerator {
                     addedStudents.put(studentCap, sibling);
                 } else if (hasStepSibling) {
                     // Higher chance step-sibling is around same age and therefore in school
-                    if (setRandom(0,10) > 3) {
+                    if (setRandom(0, 12) <= 3) {
                         studentCap++;
                         sibling = generateStepSibling(student.getValue());
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     } else {
                         // Otherwise, student is not in school and younger or older
-                        String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
+                        String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                     }
                 } else if (hasAdoptedSibling) {
-                    if (setRandom(0,10) > 3) {
+                    if (setRandom(0, 12) <= 3) {
                         studentCap++;
                         sibling = generateAdoptedSibling(student.getValue());
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     } else {
-                        String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
+                        String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                     }
                 } else if (hasHalfSibling) {
-                    if (setRandom(0,10) > 3) {
+                    if (setRandom(0, 12) <= 3) {
                         studentCap++;
                         sibling = generateHalfSibling(student.getValue());
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     } else {
-                        String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
+                        String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                     }
                 } else {
-                    if (setRandom(0,10) > 5) {
+                    if (setRandom(0, 12) <= 3) {
                         studentCap++;
                         sibling = generateSibling(student.getValue());
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     } else {
-                        String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
+                        String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                     }
                 }
             } else if (siblings == 2) {
                 if (hasTriplets) {
-                    for(int x = 0; x < siblings; x++) {
+                    for (int x = 0; x < siblings; x++) {
                         studentCap++;
                         sibling = generateTwinOrTriplet(student.getValue());
                         addedStudents.put(studentCap, sibling);
@@ -106,7 +105,7 @@ public class SiblingGenerator {
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                             siblings--;
                         } else {
-                            if (setRandom(0,10) <= 5) {
+                            if (setRandom(0, 12) <= 3) {
                                 // Generate twin sibling first and then copy sibling
                                 studentCap++;
                                 Student twinSibling = generateSibling(student.getValue());
@@ -119,10 +118,10 @@ public class SiblingGenerator {
                                 student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                             } else {
                                 // add two twins not in school
-                                for(int i = 0; i < siblings; i ++) {
-                                     String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
-                                     student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
-                                 }
+                                for (int i = 0; i < siblings; i++) {
+                                    String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                                    student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                                }
                             }
                             finishedGeneration = true;
                         }
@@ -131,7 +130,7 @@ public class SiblingGenerator {
                 // chance of other siblings being any other type
                 if (!finishedGeneration) {
                     for (int i = 0; i < siblings; i++) {
-                        if (setRandom(0, 10) <= 5) {
+                        if (setRandom(0, 12) <= 3) {
                             studentCap++;
                             if (hasStepSibling) {
                                 sibling = generateStepSibling(student.getValue());
@@ -148,15 +147,15 @@ public class SiblingGenerator {
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
-                            String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
+                            String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                             student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                         }
                     }
                 }
             } else if (siblings >= 3) {
                 if (hasTriplets) {
-                    if (setRandom(0,1) == 1) {
-                        for(int x = 0; x < siblings; x++) {
+                    if (setRandom(0, 1) == 1) {
+                        for (int x = 0; x < siblings; x++) {
                             studentCap++;
                             sibling = generateTwinOrTriplet(student.getValue());
                             addedStudents.put(studentCap, sibling);
@@ -164,7 +163,7 @@ public class SiblingGenerator {
                             siblings--;
                         }
                     } else {
-                        if (setRandom(0,10) <= 5) {
+                        if (setRandom(0, 12) <= 3) {
                             // Generate triplet sibling first and then copy sibling
                             studentCap++;
                             Student tripletSibling = generateSibling(student.getValue());
@@ -179,7 +178,7 @@ public class SiblingGenerator {
                             siblings--;
                         } else {
                             for (int i = 0; i < 3; i++) {
-                                String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
+                                String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                                 student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                                 siblings--;
                             }
@@ -195,7 +194,7 @@ public class SiblingGenerator {
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                             siblings--;
                         } else {
-                            if (setRandom(0, 10) <= 5) {
+                            if (setRandom(0, 12) <= 3) {
                                 // Generate twin sibling first and then copy sibling
                                 studentCap++;
                                 Student twinSibling = generateSibling(student.getValue());
@@ -210,7 +209,7 @@ public class SiblingGenerator {
                                 siblings--;
                             } else {
                                 for (int i = 0; i < 2; i++) {
-                                    String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
+                                    String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                                     student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                                     siblings--;
                                 }
@@ -221,7 +220,7 @@ public class SiblingGenerator {
                 // chance of other siblings being any other type
                 if (siblings > 0) {
                     for (int i = 0; i < siblings; i++) {
-                        if (setRandom(0, 10) <= 5) {
+                        if (setRandom(0, 12) <= 3) {
                             studentCap++;
                             if (hasStepSibling) {
                                 sibling = generateStepSibling(student.getValue());
@@ -238,7 +237,7 @@ public class SiblingGenerator {
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
-                            String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
+                            String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                             student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                         }
                     }
@@ -274,7 +273,7 @@ public class SiblingGenerator {
 
         studentCopy.studentStatistics.setLevel(1);
         studentCopy.studentStatistics.setExperience(0);
-        studentCopy.studentStatistics.setGradeLevel(setRandom(0,3));
+        studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
         studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
@@ -282,7 +281,7 @@ public class SiblingGenerator {
             f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
         }
         // chance of having different last name than sibling
-        if (setRandom(0,3) == 2) {
+        if (setRandom(0, 3) == 2) {
             l_name = NameLoader.selectWeightedRandom();
             lastName = l_name[0];
         } else {
@@ -291,8 +290,8 @@ public class SiblingGenerator {
         studentCopy.studentName.setFirstName(f_name);
         studentCopy.studentName.setLastName(lastName);
         // General trends in intermarriage dictate chance of step-sibling having different race 
-        if (setRandom(0,10) < 2) {
-            if(l_name[1] != null) {
+        if (setRandom(0, 10) < 2) {
+            if (l_name[1] != null) {
                 race = l_name[1];
                 studentCopy.studentStatistics.setRace(race);
             } else {
@@ -306,7 +305,7 @@ public class SiblingGenerator {
         }
         studentCopy.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
         String eyes = studentCopy.studentStatistics.getEyeColor();
-        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
+        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
         String hairColor = studentCopy.studentStatistics.getHairColor();
         studentCopy.studentStatistics.setInitHeight();
         studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
@@ -324,7 +323,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setInitCuriosity();
         studentCopy.studentStatistics.setInitResponsibility();
         studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0,10000));
+        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
         studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
@@ -355,7 +354,7 @@ public class SiblingGenerator {
 
         studentCopy.studentStatistics.setLevel(1);
         studentCopy.studentStatistics.setExperience(0);
-        studentCopy.studentStatistics.setGradeLevel(setRandom(0,3));
+        studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
         studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         // Make sure sibling names don't equal each other
@@ -367,7 +366,7 @@ public class SiblingGenerator {
         studentCopy.studentName.setFirstName(f_name);
         studentCopy.studentName.setLastName(lastName);
         // General trends in intermarriage dictate chance of half-sibling having different race
-        if (setRandom(0,10) < 1) {
+        if (setRandom(0, 10) < 1) {
             race = NameLoader.selectWeightedRandom()[1];
             studentCopy.studentStatistics.setRace(race);
         } else {
@@ -376,7 +375,7 @@ public class SiblingGenerator {
         }
         studentCopy.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
         String eyes = studentCopy.studentStatistics.getEyeColor();
-        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
+        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
         String hairColor = studentCopy.studentStatistics.getHairColor();
         studentCopy.studentStatistics.setInitHeight();
         studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
@@ -394,7 +393,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setInitCuriosity();
         studentCopy.studentStatistics.setInitResponsibility();
         studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0,10000));
+        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
         studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
@@ -425,7 +424,7 @@ public class SiblingGenerator {
 
         studentCopy.studentStatistics.setLevel(1);
         studentCopy.studentStatistics.setExperience(0);
-        studentCopy.studentStatistics.setGradeLevel(setRandom(0,3));
+        studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
         studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
@@ -439,7 +438,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setRace(race);
         studentCopy.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
         String eyes = studentCopy.studentStatistics.getEyeColor();
-        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
+        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
         String hairColor = studentCopy.studentStatistics.getHairColor();
         studentCopy.studentStatistics.setInitHeight();
         studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
@@ -457,7 +456,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setInitCuriosity();
         studentCopy.studentStatistics.setInitResponsibility();
         studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0,10000));
+        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
         studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
@@ -516,7 +515,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setInitCuriosity();
         studentCopy.studentStatistics.setInitResponsibility();
         studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0,10000));
+        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
         studentCopy.studentStatistics.setHairType(student.studentStatistics.getHairType());
         studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
@@ -546,8 +545,8 @@ public class SiblingGenerator {
 
         studentCopy.studentStatistics.setLevel(1);
         studentCopy.studentStatistics.setExperience(0);
-        studentCopy.studentStatistics.setGradeLevel(student.studentStatistics.getGradeLevel());
-        studentCopy.studentStatistics.setBirthday(student.studentStatistics.getBirthday());
+        studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
+        studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
         studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
         f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
@@ -575,7 +574,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setInitCuriosity();
         studentCopy.studentStatistics.setInitResponsibility();
         studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0,10000));
+        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
         studentCopy.studentStatistics.setHairType(student.studentStatistics.getHairType());
         studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
@@ -598,13 +597,13 @@ public class SiblingGenerator {
         } else if (choice <= NO_SIBLING_RATE + ONE_SIBLING_RATE + TWO_SIBLING_RATE + THREE_SIBLING_RATE) {
             siblings = 3;
         } else {
-            int moreSib = setRandom(0,10);
+            int moreSib = setRandom(0, 10);
             if (moreSib <= 7) {
                 siblings = 4;
-            } else if ( moreSib <= 9) {
+            } else if (moreSib <= 9) {
                 siblings = 5;
             } else {
-                siblings = setRandom(6,10);
+                siblings = setRandom(6, 10);
             }
         }
 
