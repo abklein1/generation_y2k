@@ -327,6 +327,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        studentCopy.studentStatistics.addSiblingsInSchool(student);
 
         System.out.println("   Generated step-sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
@@ -408,6 +409,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        studentCopy.studentStatistics.addSiblingsInSchool(student);
 
         System.out.println("   Generated half-sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
@@ -471,6 +473,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        studentCopy.studentStatistics.addSiblingsInSchool(student);
 
         System.out.println("   Generated adopted sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
@@ -530,6 +533,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairType(student.studentStatistics.getHairType());
         studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        studentCopy.studentStatistics.addSiblingsInSchool(student);
 
         System.out.println("   Generated twin or triplet " + f_name + " " + studentCopy.studentName.getLastName());
 
@@ -596,6 +600,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairType(student.studentStatistics.getHairType());
         studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        studentCopy.studentStatistics.addSiblingsInSchool(student);
 
         System.out.println("   Generated sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
