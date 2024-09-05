@@ -25,6 +25,8 @@ import static utility.Randomizer.setRandom;
 
 public class StandardSchool implements SchoolPlan {
 
+    double TOTAL_STUDENT_CAP_MODIFIER = 0.65;
+
     String schoolName;
     String schoolMascot;
     String[] schoolColors;
@@ -94,7 +96,7 @@ public class StandardSchool implements SchoolPlan {
         }
 
         // We don't want school to be at total capacity to begin with
-        return (int) ((class_total ) * 0.70);
+        return (int) ((class_total ) * TOTAL_STUDENT_CAP_MODIFIER);
     }
 
     public int getMinimumStaffRequirements() {

@@ -79,6 +79,7 @@ public class SchoolController {
                 publish("Populating school...");
                 // Set for student population generation
                 StudentPopGenerator.generateStudents(student_cap, studentHashMap, view);
+                SiblingGenerator.siblingGenerator(studentHashMap, student_cap);
                 standardSchool.setStudentGradeClass(studentHashMap, view);
                 //Set for staff population generation
                 TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, view);

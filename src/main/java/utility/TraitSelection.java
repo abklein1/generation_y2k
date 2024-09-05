@@ -427,7 +427,7 @@ public class TraitSelection {
         // Get the main eye color weights for the specified race
         JSONObject raceData = (JSONObject) choices.get(race);
         if (raceData == null) {
-            throw new IllegalArgumentException("Race not found in the dataset");
+            throw new IllegalArgumentException("Race " + race + " not found in the dataset");
         }
 
         // Lists to hold main eye color categories and their weights

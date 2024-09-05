@@ -2,6 +2,7 @@ package utility;
 
 import entity.Student;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -24,6 +25,8 @@ public class SiblingGenerator {
     private static final int HALF_SIBLING_RATE = 8567;
 
     public static void siblingGenerator(HashMap<Integer, Student> studentHashMap, int studentCap) {
+        HashMap<Integer, Student> addedStudents = new HashMap<>();
+        HashMap<Integer, Student> combinedStudent = new HashMap<>();
 
         for (Map.Entry<Integer, Student> student : studentHashMap.entrySet()) {
             int siblings = siblingProbabilityLoader();
@@ -35,16 +38,18 @@ public class SiblingGenerator {
             boolean hasAdoptedSibling = setRandom(0, SIBLING_SAMPLE_SIZE) < ADOPTED_SIBLING_RATE;
             boolean hasHalfSibling = setRandom(0, SIBLING_SAMPLE_SIZE) < HALF_SIBLING_RATE;
 
+
             if (siblings == 1) {
-                studentCap++;
                 if (hasTwins) {
+                    studentCap++;
                     sibling = generateTwinOrTriplet(student.getValue());
-                    studentHashMap.put(studentCap, sibling);
+                    addedStudents.put(studentCap, sibling);
                 } else if (hasStepSibling) {
                     // Higher chance step-sibling is around same age and therefore in school
                     if (setRandom(0,10) > 3) {
+                        studentCap++;
                         sibling = generateStepSibling(student.getValue());
-                        studentHashMap.put(studentCap, sibling);
+                        addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     } else {
                         // Otherwise, student is not in school and younger or older
@@ -53,8 +58,9 @@ public class SiblingGenerator {
                     }
                 } else if (hasAdoptedSibling) {
                     if (setRandom(0,10) > 3) {
+                        studentCap++;
                         sibling = generateAdoptedSibling(student.getValue());
-                        studentHashMap.put(studentCap, sibling);
+                        addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     } else {
                         String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
@@ -62,8 +68,9 @@ public class SiblingGenerator {
                     }
                 } else if (hasHalfSibling) {
                     if (setRandom(0,10) > 3) {
+                        studentCap++;
                         sibling = generateHalfSibling(student.getValue());
-                        studentHashMap.put(studentCap, sibling);
+                        addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     } else {
                         String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
@@ -71,8 +78,9 @@ public class SiblingGenerator {
                     }
                 } else {
                     if (setRandom(0,10) > 5) {
+                        studentCap++;
                         sibling = generateSibling(student.getValue());
-                        studentHashMap.put(studentCap, sibling);
+                        addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     } else {
                         String siblingName = NameLoader.nameGenerator(setRandom(1986,1990).toString(), GenderLoader.genderSelection());
@@ -84,7 +92,7 @@ public class SiblingGenerator {
                     for(int x = 0; x < siblings; x++) {
                         studentCap++;
                         sibling = generateTwinOrTriplet(student.getValue());
-                        studentHashMap.put(studentCap, sibling);
+                        addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                     }
                     finishedGeneration = true;
@@ -94,7 +102,7 @@ public class SiblingGenerator {
                         if (setRandom(0, 1) == 1) {
                             studentCap++;
                             sibling = generateTwinOrTriplet(student.getValue());
-                            studentHashMap.put(studentCap, sibling);
+                            addedStudents.put(studentCap, sibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                             siblings--;
                         } else {
@@ -102,12 +110,12 @@ public class SiblingGenerator {
                                 // Generate twin sibling first and then copy sibling
                                 studentCap++;
                                 Student twinSibling = generateSibling(student.getValue());
-                                studentHashMap.put(studentCap, twinSibling);
+                                addedStudents.put(studentCap, twinSibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(twinSibling);
                                 // add second twin
                                 studentCap++;
                                 sibling = generateTwinOrTriplet(twinSibling);
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                             } else {
                                 // add two twins not in school
@@ -127,16 +135,16 @@ public class SiblingGenerator {
                             studentCap++;
                             if (hasStepSibling) {
                                 sibling = generateStepSibling(student.getValue());
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                             } else if (hasAdoptedSibling) {
                                 sibling = generateAdoptedSibling(student.getValue());
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                             } else if (hasHalfSibling) {
                                 sibling = generateHalfSibling(student.getValue());
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                             } else {
                                 sibling = generateSibling(student.getValue());
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
@@ -151,7 +159,7 @@ public class SiblingGenerator {
                         for(int x = 0; x < siblings; x++) {
                             studentCap++;
                             sibling = generateTwinOrTriplet(student.getValue());
-                            studentHashMap.put(studentCap, sibling);
+                            addedStudents.put(studentCap, sibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                             siblings--;
                         }
@@ -160,13 +168,13 @@ public class SiblingGenerator {
                             // Generate triplet sibling first and then copy sibling
                             studentCap++;
                             Student tripletSibling = generateSibling(student.getValue());
-                            studentHashMap.put(studentCap, tripletSibling);
+                            addedStudents.put(studentCap, tripletSibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(tripletSibling);
                             siblings--;
                             // add second twin
                             studentCap++;
                             sibling = generateTwinOrTriplet(tripletSibling);
-                            studentHashMap.put(studentCap, sibling);
+                            addedStudents.put(studentCap, sibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                             siblings--;
                         } else {
@@ -183,7 +191,7 @@ public class SiblingGenerator {
                         if (setRandom(0, 1) == 1) {
                             studentCap++;
                             sibling = generateTwinOrTriplet(student.getValue());
-                            studentHashMap.put(studentCap, sibling);
+                            addedStudents.put(studentCap, sibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                             siblings--;
                         } else {
@@ -191,13 +199,13 @@ public class SiblingGenerator {
                                 // Generate twin sibling first and then copy sibling
                                 studentCap++;
                                 Student twinSibling = generateSibling(student.getValue());
-                                studentHashMap.put(studentCap, twinSibling);
+                                addedStudents.put(studentCap, twinSibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(twinSibling);
                                 siblings--;
                                 // add second twin
                                 studentCap++;
                                 sibling = generateTwinOrTriplet(twinSibling);
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                                 siblings--;
                             } else {
@@ -217,16 +225,16 @@ public class SiblingGenerator {
                             studentCap++;
                             if (hasStepSibling) {
                                 sibling = generateStepSibling(student.getValue());
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                             } else if (hasAdoptedSibling) {
                                 sibling = generateAdoptedSibling(student.getValue());
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                             } else if (hasHalfSibling) {
                                 sibling = generateHalfSibling(student.getValue());
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                             } else {
                                 sibling = generateSibling(student.getValue());
-                                studentHashMap.put(studentCap, sibling);
+                                addedStudents.put(studentCap, sibling);
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
@@ -239,6 +247,8 @@ public class SiblingGenerator {
                 System.out.println("No siblings to generate");
             }
         }
+
+        studentHashMap.putAll(addedStudents);
     }
 
     //TODO: Possibly centralize this under StudentPop in future
@@ -279,15 +289,21 @@ public class SiblingGenerator {
         studentCopy.studentName.setLastName(lastName);
         // General trends in intermarriage dictate chance of step-sibling having different race 
         if (setRandom(0,10) < 2) {
-            race = l_name[1];
-            studentCopy.studentStatistics.setRace(race);
+            if(l_name[1] != null) {
+                race = l_name[1];
+                studentCopy.studentStatistics.setRace(race);
+            } else {
+                race = student.studentStatistics.getRace();
+                studentCopy.studentStatistics.setRace(race);
+            }
+
         } else {
             race = student.studentStatistics.getRace();
             studentCopy.studentStatistics.setRace(race);
         }
         studentCopy.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
         String eyes = studentCopy.studentStatistics.getEyeColor();
-        student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
+        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
         String hairColor = studentCopy.studentStatistics.getHairColor();
         studentCopy.studentStatistics.setInitHeight();
         studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
@@ -309,6 +325,8 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setInitIncomeLevel(setRandom(0,100));
+
+        System.out.println("   Generated step-sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
         return studentCopy;
     }
@@ -351,7 +369,7 @@ public class SiblingGenerator {
         }
         studentCopy.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
         String eyes = studentCopy.studentStatistics.getEyeColor();
-        student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
+        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
         String hairColor = studentCopy.studentStatistics.getHairColor();
         studentCopy.studentStatistics.setInitHeight();
         studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
@@ -373,6 +391,8 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setInitIncomeLevel(setRandom(0,100));
+
+        System.out.println("   Generated half-sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
         return studentCopy;
     }
@@ -432,6 +452,8 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
         studentCopy.studentStatistics.setInitIncomeLevel(setRandom(0,100));
 
+        System.out.println("   Generated adopted sibling " + f_name + " " + studentCopy.studentName.getLastName());
+
         return studentCopy;
     }
 
@@ -485,6 +507,8 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairType(student.studentStatistics.getHairType());
         studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
 
+        System.out.println("   Generated twin or triplet " + f_name + " " + studentCopy.studentName.getLastName());
+
         return studentCopy;
     }
 
@@ -537,6 +561,8 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setInitHairLength(setRandom(0,10000));
         studentCopy.studentStatistics.setHairType(student.studentStatistics.getHairType());
         studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
+
+        System.out.println("   Generated sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
         return studentCopy;
     }
