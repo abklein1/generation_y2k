@@ -231,6 +231,7 @@ public final class SchoolConstants {
     public static final int PARKING_STUDENT_CAPACITY_UPPER_LIMIT = 150;
     public static final int PARKING_NUMBER_LOWER_LIMIT = 100;
     public static final int PARKING_NUMBER_UPPER_LIMIT = 999;
+
     private SchoolConstants() {
     }
 
