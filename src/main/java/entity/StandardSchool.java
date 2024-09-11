@@ -21,11 +21,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import static constants.SchoolConstants.*;
 import static utility.Randomizer.setRandom;
 
 public class StandardSchool implements SchoolPlan {
-
-    double TOTAL_STUDENT_CAP_MODIFIER = 0.65;
 
     String schoolName;
     String schoolMascot;
@@ -66,13 +65,13 @@ public class StandardSchool implements SchoolPlan {
             utilityrooms[i].setRoomName("UtilityRoom" + i);
             view.appendOutput("       Generating " + utilityrooms[i].getRoomName());
             utilityrooms[i].setStudentRestriction(true);
-            utilityrooms[i].setDoors(2);
-            utilityrooms[i].setConnections(2);
-            utilityrooms[i].setWindowCount(0);
-            utilityrooms[i].setInitialStaff(setRandom(1, 3));
-            utilityrooms[i].setStudentCap(setRandom(1,4));
+            utilityrooms[i].setDoors(UTILITY_CONNECTION_COUNT);
+            utilityrooms[i].setConnections(UTILITY_CONNECTION_COUNT);
+            utilityrooms[i].setWindowCount(UTILITY_WINDOW_COUNT);
+            utilityrooms[i].setInitialStaff(setRandom(UTILITY_STAFF_LOWER_LIMIT, UTILITY_STAFF_UPPER_LIMIT));
+            utilityrooms[i].setStudentCap(setRandom(UTILITY_STUDENT_CAP_LOWER_LIMIT, UTILITY_STUDENT_CAP_UPPER_LIMIT));
             utilityrooms[i].setSeatArrangement();
-            utilityrooms[i].setRoomNumber("U" + i + setRandom(0, 9));
+            utilityrooms[i].setRoomNumber("U" + i + setRandom(UTILITY_ROOM_NUMBER_LOWER_LIMIT, UTILITY_ROOM_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -89,6 +88,7 @@ public class StandardSchool implements SchoolPlan {
     }
 
     public int getTotalStudentCapacity() {
+
         int class_total = 0;
 
         for (Classroom classroom : classrooms) {
@@ -96,7 +96,7 @@ public class StandardSchool implements SchoolPlan {
         }
 
         // We don't want school to be at total capacity to begin with
-        return (int) ((class_total ) * TOTAL_STUDENT_CAP_MODIFIER);
+        return (int) ((class_total) * TOTAL_STUDENT_CAP_MODIFIER);
     }
 
     public int getMinimumStaffRequirements() {
@@ -115,9 +115,9 @@ public class StandardSchool implements SchoolPlan {
         int vocation_count = 0;
 
         class_count = classrooms.length;
-        office_count = offices.length / 2;
-        maint_count = utilityrooms.length + 2;
-        library_count = libraries.length * 2;
+        office_count = offices.length / OFFICE_NUMBER_MODIFIER;
+        maint_count = utilityrooms.length + UTILITY_ROOM_NUMBER_MODIFIER;
+        library_count = libraries.length * LIBRARY_ROOM_NUMBER_MODIFIER;
         drama_count = dramaRooms.length;
         music_count = musicRooms.length;
 
@@ -147,14 +147,14 @@ public class StandardSchool implements SchoolPlan {
         // Going to over-assign staff for now
         total = class_count + office_count + maint_count +
                 lunch_count + library_count + gym_count +
-                art_count + field_count + drama_count + music_count + vocation_count + ((int) Math.round(getTotalStudentCapacity() * 0.025)) ;
+                art_count + field_count + drama_count + music_count + vocation_count + ((int) Math.round(getTotalStudentCapacity() * TOTAL_STAFF_CAP_MODIFIER));
 
         return total;
     }
 
     private String schoolNameLoader() {
         String schoolName;
-        int selection = setRandom(1, 20);
+        int selection = setRandom(SCHOOL_NAME_SELECTION_LOWER_LIMIT, SCHOOL_NAME_SELECTION_UPPER_LIMIT);
         Object object;
         try {
             object = new JSONParser().parse(new FileReader("src/main/java/Resources/highschool_gen.json"));
@@ -163,7 +163,7 @@ public class StandardSchool implements SchoolPlan {
         }
         JSONObject choices = (JSONObject) object;
 
-        if (selection <= 14) {
+        if (selection <= SCHOOL_NAME_PLACES_WEIGHT) {
             Object names1 = choices.get("Place1");
             Object names2 = choices.get("Place2");
             JSONArray names_1 = (JSONArray) names1;
@@ -174,7 +174,7 @@ public class StandardSchool implements SchoolPlan {
 
             selection = setRandom(0, names_2.size() - 1);
             schoolName = schoolName + " " + names_2.get(selection).toString();
-        } else if (selection <= 17) {
+        } else if (selection <= SCHOOL_NAME_SINGLE_WEIGHT) {
             Object names1 = choices.get("Single");
             JSONArray names_1 = (JSONArray) names1;
             selection = setRandom(0, names_1.size() - 1);
@@ -252,30 +252,30 @@ public class StandardSchool implements SchoolPlan {
         view.appendOutput("   Generating " + number + " bathrooms...");
         for (int i = 0; i < number; i++) {
             bathrooms[i] = new Bathroom();
-            int cap = setRandom(4,20);
+            int cap = setRandom(BATHROOM_CAPACITY_LOWER_LIMIT, BATHROOM_CAPACITY_UPPER_LIMIT);
             if (i % 2 == 0) {
                 bathrooms[i].setRoomName("Female_Bathroom" + i);
                 view.appendOutput("      Generating " + bathrooms[i].getRoomName());
                 bathrooms[i].setRoomRestrictions(true, false);
-                bathrooms[i].setConnections(2);
-                bathrooms[i].setDoors(2);
-                bathrooms[i].setWindowCount(setRandom(1, 3));
+                bathrooms[i].setConnections(BATHROOM_CONNECTION_COUNT);
+                bathrooms[i].setDoors(BATHROOM_CONNECTION_COUNT);
+                bathrooms[i].setWindowCount(setRandom(BATHROOM_WINDOW_LOWER_COUNT, BATHROOM_WINDOW_UPPER_COUNT));
                 bathrooms[i].setStudentCap(cap);
-                bathrooms[i].setInitialStaff(0);
-                bathrooms[i].setStallNumber(setRandom(3, 7));
+                bathrooms[i].setInitialStaff(BATHROOM_INITIAL_STAFF);
+                bathrooms[i].setStallNumber(setRandom(STALL_NUMBER_LOWER_LIMIT, STALL_NUMBER_UPPER_LIMIT));
                 bathrooms[i].setSeatArrangement();
             } else {
                 bathrooms[i].setRoomName("Male_Bathroom" + i);
                 view.appendOutput("      Generating " + bathrooms[i].getRoomName());
                 bathrooms[i].setRoomRestrictions(false, true);
-                bathrooms[i].setConnections(2);
-                bathrooms[i].setDoors(2);
-                bathrooms[i].setWindowCount(setRandom(1, 3));
+                bathrooms[i].setConnections(BATHROOM_CONNECTION_COUNT);
+                bathrooms[i].setDoors(BATHROOM_CONNECTION_COUNT);
+                bathrooms[i].setWindowCount(setRandom(BATHROOM_WINDOW_LOWER_COUNT, BATHROOM_WINDOW_UPPER_COUNT));
                 bathrooms[i].setStudentCap(cap);
-                bathrooms[i].setStallNumber(setRandom(2, 5));
-                bathrooms[i].setInitialStaff(0);
+                bathrooms[i].setStallNumber(setRandom(STALL_NUMBER_LOWER_LIMIT, STALL_NUMBER_UPPER_LIMIT));
+                bathrooms[i].setInitialStaff(BATHROOM_INITIAL_STAFF);
                 bathrooms[i].setSeatArrangement();
-                bathrooms[i].setRoomNumber("WC" + i + setRandom(0, 9));
+                bathrooms[i].setRoomNumber("WC" + i + setRandom(BATHROOM_NUMBER_LOWER_LIMIT, BATHROOM_NUMBER_UPPER_LIMIT));
             }
         }
     }
@@ -289,18 +289,18 @@ public class StandardSchool implements SchoolPlan {
         breakrooms = new Breakroom[number];
         view.appendOutput("   Generating " + number + " breakroom(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(1, 2);
+            int connectN = setRandom(BREAKROOM_CONNECTION_LOWER_LIMIT, BREAKROOM_CONNECTION_UPPER_LIMIT);
             breakrooms[i] = new Breakroom();
             breakrooms[i].setRoomName("Breakroom" + i);
             view.appendOutput("      Generating " + breakrooms[i].getRoomName());
             breakrooms[i].setStudentRestriction(true);
             breakrooms[i].setConnections(connectN);
             breakrooms[i].setDoors(connectN);
-            breakrooms[i].setWindowCount(setRandom(2, 6));
-            breakrooms[i].setInitialStaff(setRandom(10, 25));
-            breakrooms[i].setStudentCap(0);
+            breakrooms[i].setWindowCount(setRandom(BREAKROOM_WINDOW_LOWER_COUNT, BREAKROOM_WINDOW_UPPER_COUNT));
+            breakrooms[i].setInitialStaff(setRandom(BREAKROOM_INITIAL_STAFF_LOWER_LIMIT, BREAKROOM_INITIAL_STAFF_UPPER_LIMIT));
+            breakrooms[i].setStudentCap(BREAKROOM_STUDENT_CAPACITY);
             breakrooms[i].setSeatArrangement();
-            breakrooms[i].setRoomNumber("B" + i + setRandom(0, 9));
+            breakrooms[i].setRoomNumber("B" + i + setRandom(BREAKROOM_NUMBER_LOWER_LIMIT, BREAKROOM_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -310,23 +310,22 @@ public class StandardSchool implements SchoolPlan {
 
     @Override
     public void setClassrooms(int number, GameView view) {
-        int WEIGHT = 7;
         int decision;
         classrooms = new Classroom[number];
         view.appendOutput("   Generating " + number + " classrooms...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(3, 5);
-            decision = i % WEIGHT;
+            int connectN = setRandom(CLASSROOM_CONNECTION_LOWER_LIMIT, CLASSROOM_CONNECTION_UPPER_LIMIT);
+            decision = i % CLASSROOM_WEIGHT;
             classrooms[i] = new Classroom();
             classrooms[i].setRoomName("Classroom" + i);
             view.appendOutput("      Generating " + classrooms[i].getRoomName());
             classrooms[i].setConnections(connectN);
             classrooms[i].setDoors(connectN);
             classrooms[i].setClassroomType(decision);
-            classrooms[i].setInitialStaff(1);
-            classrooms[i].setStudentCap(setRandom(20,30));
+            classrooms[i].setInitialStaff(CLASSROOM_INITIAL_STAFF);
+            classrooms[i].setStudentCap(setRandom(CLASSROOM_STUDENT_CAPACITY_LOWER_LIMIT, CLASSROOM_STUDENT_CAPACITY_UPPER_LIMIT));
             classrooms[i].setSeatArrangement();
-            classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(0, 99));
+            classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(CLASSROOM_NUMBER_LOWER_LIMIT, CLASSROOM_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -339,15 +338,15 @@ public class StandardSchool implements SchoolPlan {
         computerLabs = new ComputerLab[number];
         view.appendOutput("   Generating " + number + " Computer lab(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(2, 6);
+            int connectN = setRandom(COMPUTER_CONNECTION_LOWER_LIMIT, COMPUTER_CONNECTION_UPPER_LIMIT);
             computerLabs[i] = new ComputerLab();
             computerLabs[i].setRoomName("ComputerLab" + i);
             view.appendOutput("      Generating " + computerLabs[i].getRoomName());
-            computerLabs[i].setWindowCount(0);
+            computerLabs[i].setWindowCount(COMPUTER_WINDOW_COUNT);
             computerLabs[i].setConnections(connectN);
             computerLabs[i].setDoors(connectN);
-            computerLabs[i].setInitialStaff(setRandom(0, 1));
-            computerLabs[i].setStudentCap(setRandom(15,45));
+            computerLabs[i].setInitialStaff(setRandom(COMPUTER_INITIAL_STAFF_LOWER_LIMIT, COMPUTER_INITIAL_STAFF_UPPER_LIMIT));
+            computerLabs[i].setStudentCap(setRandom(COMPUTER_STUDENT_CAPACITY_LOWER_LIMIT, COMPUTER_STUDENT_CAPACITY_UPPER_LIMIT));
             computerLabs[i].setSeatArrangement();
             computerLabs[i].setRoomNumber("COM" + i);
         }
@@ -365,11 +364,11 @@ public class StandardSchool implements SchoolPlan {
             courtyards[i] = new Courtyard();
             courtyards[i].setRoomName("Courtyard" + i);
             view.appendOutput("      Generating " + courtyards[i].getRoomName());
-            courtyards[i].setWindowCount(0);
-            courtyards[i].setConnections(16);
-            courtyards[i].setDoors(16);
-            courtyards[i].setInitialStaff(0);
-            courtyards[i].setStudentCap(setRandom(35,150));
+            courtyards[i].setWindowCount(COURTYARD_WINDOW_COUNT);
+            courtyards[i].setConnections(COURTYARD_CONNECTION_COUNT);
+            courtyards[i].setDoors(COURTYARD_CONNECTION_COUNT);
+            courtyards[i].setInitialStaff(COURTYARD_INITIAL_STAFF);
+            courtyards[i].setStudentCap(setRandom(COURTYARD_STUDENT_CAPACITY_LOWER_LIMIT, COURTYARD_STUDENT_CAPACITY_UPPER_LIMIT));
             courtyards[i].setSeatArrangement();
             courtyards[i].setRoomNumber("C" + i);
         }
@@ -384,17 +383,17 @@ public class StandardSchool implements SchoolPlan {
         gyms = new Gym[number];
         view.appendOutput("   Generating " + number + " gym(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(6, 9);
+            int connectN = setRandom(GYM_CONNECTION_LOWER_LIMIT, GYM_CONNECTION_UPPER_LIMIT);
             gyms[i] = new Gym();
             gyms[i].setRoomName("Gym" + i);
             view.appendOutput("      Generating " + gyms[i].getRoomName());
             gyms[i].setConnections(connectN);
             gyms[i].setDoors(connectN);
-            gyms[i].setWindowCount(setRandom(4, 16));
-            gyms[i].setInitialStaff(0);
-            gyms[i].setStudentCap(setRandom(100,450));
+            gyms[i].setWindowCount(setRandom(GYM_WINDOW_LOWER_LIMIT, GYM_WINDOW_UPPER_LIMIT));
+            gyms[i].setInitialStaff(GYM_INITIAL_STAFF);
+            gyms[i].setStudentCap(setRandom(GYM_STUDENT_CAPACITY_LOWER_LIMIT, GYM_STUDENT_CAPACITY_UPPER_LIMIT));
             gyms[i].setSeatArrangement();
-            gyms[i].setRoomNumber("G" + i + setRandom(0, 9));
+            gyms[i].setRoomNumber("G" + i + setRandom(GYM_ROOM_NUMBER_LOWER_LIMIT, GYM_ROOM_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -411,15 +410,15 @@ public class StandardSchool implements SchoolPlan {
         hallways = new Hallway[number];
         view.appendOutput("   Generating " + number + " hallways...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(8, 16);
+            int connectN = setRandom(HALLWAY_CONNECTION_LOWER_LIMIT, HALLWAY_CONNECTION_UPPER_LIMIT);
             hallways[i] = new Hallway();
             hallways[i].setRoomName("Hallway" + i);
             view.appendOutput("      Generating " + hallways[i].getRoomName());
             hallways[i].setConnections(connectN);
             hallways[i].setDoors(connectN);
-            hallways[i].setWindowCount(setRandom(0, 6));
-            hallways[i].setInitialStaff(0);
-            hallways[i].setStudentCap(setRandom(35,75));
+            hallways[i].setWindowCount(setRandom(HALLWAY_WINDOW_LOWER_LIMIT, HALLWAY_WINDOW_UPPER_LIMIT));
+            hallways[i].setInitialStaff(HALLWAY_INITIAL_STAFF);
+            hallways[i].setStudentCap(setRandom(HALLWAY_STUDENT_CAPACITY_LOWER_LIMIT, HALLWAY_STUDENT_CAPACITY_UPPER_LIMIT));
             hallways[i].setSeatArrangement();
             hallways[i].setRoomNumber("H" + i);
         }
@@ -434,17 +433,17 @@ public class StandardSchool implements SchoolPlan {
         libraries = new LibraryR[number];
         view.appendOutput("   Generating " + number + " libraries...");
         for (int i = 0; i < number; i++) {
-            int connectorN = setRandom(3, 8);
+            int connectorN = setRandom(LIBRARY_CONNECTION_LOWER_LIMIT, LIBRARY_CONNECTION_UPPER_LIMIT);
             libraries[i] = new LibraryR();
             libraries[i].setRoomName("Library" + i);
             view.appendOutput("      Generating " + libraries[i].getRoomName());
-            libraries[i].setWindowCount(setRandom(4, 20));
+            libraries[i].setWindowCount(setRandom(LIBRARY_WINDOW_LOWER_LIMIT, LIBRARY_WINDOW_UPPER_LIMIT));
             libraries[i].setConnections(connectorN);
             libraries[i].setDoors(connectorN);
-            libraries[i].setInitialStaff(2);
-            libraries[i].setStudentCap(setRandom(30,200));
+            libraries[i].setInitialStaff(LIBRARY_INITIAL_STAFF);
+            libraries[i].setStudentCap(setRandom(LIBRARY_STUDENT_CAPACITY_LOWER_LIMIT, LIBRARY_STUDENT_CAPACITY_UPPER_LIMIT));
             libraries[i].setSeatArrangement();
-            libraries[i].setRoomNumber("L" + i + setRandom(0, 9));
+            libraries[i].setRoomNumber("L" + i + setRandom(LIBRARY_NUMBER_LOWER_LIMIT, LIBRARY_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -461,17 +460,17 @@ public class StandardSchool implements SchoolPlan {
         lunchrooms = new Lunchroom[number];
         view.appendOutput("   Generating " + number + " lunchroom(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(6, 8);
+            int connectN = setRandom(LUNCH_CONNECTION_LOWER_LIMIT, LUNCH_CONNECTION_UPPER_LIMIT);
             lunchrooms[i] = new Lunchroom();
             lunchrooms[i].setRoomName("Lunchroom" + i);
             view.appendOutput("      Generating " + lunchrooms[i].getRoomName());
-            lunchrooms[i].setWindowCount(setRandom(5, 24));
+            lunchrooms[i].setWindowCount(setRandom(LUNCH_WINDOW_LOWER_LIMIT, LUNCH_WINDOW_UPPER_LIMIT));
             lunchrooms[i].setConnections(connectN);
             lunchrooms[i].setDoors(connectN);
-            lunchrooms[i].setInitialStaff(setRandom(3, 10));
-            lunchrooms[i].setStudentCap(setRandom(50,250));
+            lunchrooms[i].setInitialStaff(setRandom(LUNCH_INITIAL_STAFF_LOWER_LIMIT, LUNCH_INITIAL_STAFF_UPPER_LIMIT));
+            lunchrooms[i].setStudentCap(setRandom(LUNCH_STUDENT_CAPACITY_LOWER_LIMIT, LUNCH_STUDENT_CAPACITY_UPPER_LIMIT));
             lunchrooms[i].setSeatArrangement();
-            lunchrooms[i].setRoomNumber("L" + i + setRandom(0, 9));
+            lunchrooms[i].setRoomNumber("L" + i + setRandom(LUNCH_NUMBER_LOWER_LIMIT, LUNCH_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -489,82 +488,84 @@ public class StandardSchool implements SchoolPlan {
                 case 0 -> {
                     offices[i].setRoomName("Principal's Office");
                     view.appendOutput("      Generating Principal's office");
-                    offices[i].setDoors(2);
-                    offices[i].setWindowCount(3);
-                    offices[i].setInitialStaff(1);
-                    offices[i].setInitialStudents(0);
-                    offices[i].setStudentCap(4);
-                    offices[i].setConnections(2);
+                    offices[i].setDoors(PRINCIPAL_CONNECTION_COUNT);
+                    offices[i].setWindowCount(PRINCIPAL_WINDOW_COUNT);
+                    offices[i].setInitialStaff(PRINCIPAL_INITIAL_STAFF);
+                    offices[i].setInitialStudents(PRINCIPAL_INITIAL_STUDENTS);
+                    offices[i].setStudentCap(PRINCIPAL_STUDENT_CAP);
+                    offices[i].setConnections(PRINCIPAL_CONNECTION_COUNT);
                     offices[i].setSeatArrangement();
                     offices[i].setRoomNumber("O-100");
                 }
                 case 1 -> {
                     offices[i].setRoomName("Vice Principal's Office");
                     view.appendOutput("      Generating Vice Principal's office");
-                    offices[i].setDoors(2);
-                    offices[i].setWindowCount(2);
-                    offices[i].setInitialStaff(1);
-                    offices[i].setInitialStudents(0);
-                    offices[i].setStudentCap(4);
-                    offices[i].setConnections(2);
+                    offices[i].setDoors(VICE_PRINCIPAL_CONNECTION_COUNT);
+                    offices[i].setWindowCount(VICE_PRINCIPAL_WINDOW_COUNT);
+                    offices[i].setInitialStaff(VICE_PRINCIPAL_INITIAL_STAFF);
+                    offices[i].setInitialStudents(VICE_PRINCIPAL_INITIAL_STUDENTS);
+                    offices[i].setStudentCap(VICE_PRINCIPAL_STUDENT_CAP);
+                    offices[i].setConnections(VICE_PRINCIPAL_CONNECTION_COUNT);
                     offices[i].setSeatArrangement();
                     offices[i].setRoomNumber("O-101");
                 }
                 case 2 -> {
                     offices[i].setRoomName("Guidance Councilor's Office");
                     view.appendOutput("      Generating Councilor's Office");
-                    offices[i].setDoors(2);
-                    offices[i].setWindowCount(2);
-                    offices[i].setInitialStaff(1);
-                    offices[i].setInitialStudents(0);
-                    offices[i].setStudentCap(4);
-                    offices[i].setConnections(2);
+                    offices[i].setDoors(GUIDANCE_CONNECTION_COUNT);
+                    offices[i].setWindowCount(GUIDANCE_WINDOW_COUNT);
+                    offices[i].setInitialStaff(GUIDANCE_INITIAL_STAFF);
+                    offices[i].setInitialStudents(GUIDANCE_INITIAL_STUDENTS);
+                    offices[i].setStudentCap(GUIDANCE_STUDENT_CAP);
+                    offices[i].setConnections(GUIDANCE_CONNECTION_COUNT);
                     offices[i].setSeatArrangement();
                     offices[i].setRoomNumber("O-102");
                 }
                 case 3 -> {
                     offices[i].setRoomName("Front Office");
                     view.appendOutput("      Generating Front Office");
-                    offices[i].setDoors(12);
-                    offices[i].setWindowCount(2);
-                    offices[i].setInitialStaff(2);
-                    offices[i].setInitialStudents(0);
-                    offices[i].setStudentCap(15);
-                    offices[i].setConnections(12);
+                    offices[i].setDoors(FRONT_OFFICE_CONNECTION_COUNT);
+                    offices[i].setWindowCount(FRONT_OFFICE_WINDOW_COUNT);
+                    offices[i].setInitialStaff(FRONT_OFFICE_INITIAL_STAFF);
+                    offices[i].setInitialStudents(FRONT_OFFICE_INITIAL_STUDENTS);
+                    offices[i].setStudentCap(FRONT_OFFICE_STUDENT_CAP);
+                    offices[i].setConnections(FRONT_OFFICE_CONNECTION_COUNT);
                     offices[i].setSeatArrangement();
                     offices[i].setRoomNumber("O-103");
                 }
                 case 4 -> {
                     offices[i].setRoomName("Nurse's Office");
                     view.appendOutput("      Generating Nurse's Office");
-                    offices[i].setDoors(3);
-                    offices[i].setWindowCount(1);
-                    offices[i].setInitialStaff(2);
-                    offices[i].setInitialStudents(0);
-                    offices[i].setStudentCap(6);
-                    offices[i].setConnections(3);
+                    offices[i].setDoors(NURSE_CONNECTION_COUNT);
+                    offices[i].setWindowCount(NURSE_WINDOW_COUNT);
+                    offices[i].setInitialStaff(NURSE_INITIAL_STAFF);
+                    offices[i].setInitialStudents(NURSE_INITIAL_STUDENTS);
+                    offices[i].setStudentCap(NURSE_STUDENT_CAP);
+                    offices[i].setConnections(NURSE_CONNECTION_COUNT);
                     offices[i].setSeatArrangement();
                     offices[i].setRoomNumber("O-104");
                 }
                 case 5 -> {
                     offices[i].setRoomName("Guidance Councilor's Office");
                     view.appendOutput("      Generating Councilor's Office");
-                    offices[i].setDoors(2);
-                    offices[i].setWindowCount(2);
-                    offices[i].setInitialStaff(1);
-                    offices[i].setInitialStudents(0);
-                    offices[i].setStudentCap(6);
-                    offices[i].setConnections(2);
+                    offices[i].setDoors(GUIDANCE_CONNECTION_COUNT);
+                    offices[i].setWindowCount(GUIDANCE_WINDOW_COUNT);
+                    offices[i].setInitialStaff(GUIDANCE_INITIAL_STAFF);
+                    offices[i].setInitialStudents(GUIDANCE_INITIAL_STUDENTS);
+                    offices[i].setStudentCap(GUIDANCE_STUDENT_CAP);
+                    offices[i].setConnections(GUIDANCE_CONNECTION_COUNT);
                     offices[i].setSeatArrangement();
                     offices[i].setRoomNumber("O-103");
                 }
                 default -> {
                     offices[i].setRoomName("Office" + i);
                     view.appendOutput("      Generating " + offices[i].getRoomName());
-                    offices[i].setConnections(2);
-                    offices[i].setDoors(2);
-                    offices[i].setInitialStaff(1);
-                    offices[i].setStudentCap(setRandom(2, 6));
+                    offices[i].setConnections(DEFAULT_OFFICE_CONNECTION_COUNT);
+                    offices[i].setDoors(DEFAULT_OFFICE_CONNECTION_COUNT);
+                    offices[i].setWindowCount(DEFAULT_OFFICE_WINDOW_COUNT);
+                    offices[i].setInitialStaff(DEFAULT_OFFICE_INITIAL_STAFF);
+                    offices[i].setInitialStudents(DEFAULT_OFFICE_INITIAL_STUDENTS);
+                    offices[i].setStudentCap(setRandom(DEFAULT_OFFICE_STUDENT_CAP_LOWER_LIMIT, DEFAULT_OFFICE_STUDENT_CAP_UPPER_LIMIT));
                     offices[i].setSeatArrangement();
                     offices[i].setRoomNumber("O" + "-1" + i);
                 }
@@ -587,17 +588,17 @@ public class StandardSchool implements SchoolPlan {
         artStudios = new ArtStudio[number];
         view.appendOutput("   Generating " + number + " art studio(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(4, 6);
+            int connectN = setRandom(ART_CONNECTION_LOWER_LIMIT, ART_CONNECTION_UPPER_LIMIT);
             artStudios[i] = new ArtStudio();
             artStudios[i].setRoomName("Art Room" + i);
             view.appendOutput("      Generating " + artStudios[i].getRoomName());
-            artStudios[i].setWindowCount(setRandom(5, 10));
+            artStudios[i].setWindowCount(setRandom(ART_WINDOW_LOWER_LIMIT, ART_WINDOW_UPPER_LIMIT));
             artStudios[i].setConnections(connectN);
             artStudios[i].setDoors(connectN);
-            artStudios[i].setInitialStaff(setRandom(1, 2));
-            artStudios[i].setStudentCap(setRandom(15, 35));
+            artStudios[i].setInitialStaff(setRandom(ART_INITIAL_STAFF_LOWER_LIMIT, ART_INITIAL_STAFF_UPPER_LIMIT));
+            artStudios[i].setStudentCap(setRandom(ART_STUDENT_CAPACITY_LOWER_LIMIT, ART_STUDENT_CAPACITY_UPPER_LIMIT));
             artStudios[i].setSeatArrangement();
-            artStudios[i].setRoomNumber("AT" + i + setRandom(100, 999));
+            artStudios[i].setRoomNumber("AT" + i + setRandom(ART_NUMBER_LOWER_LIMIT, ART_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -613,13 +614,13 @@ public class StandardSchool implements SchoolPlan {
             athleticFields[i] = new AthleticField();
             athleticFields[i].setRoomName("Field" + i);
             view.appendOutput("      Generating " + athleticFields[i].getRoomName());
-            athleticFields[i].setWindowCount(0);
-            athleticFields[i].setConnections(16);
-            athleticFields[i].setDoors(16);
-            athleticFields[i].setInitialStaff(setRandom(0, 2));
-            athleticFields[i].setStudentCap(setRandom(150,500));
+            athleticFields[i].setWindowCount(ATHLETIC_WINDOW_COUNT);
+            athleticFields[i].setConnections(ATHLETIC_CONNECTION_COUNT);
+            athleticFields[i].setDoors(ATHLETIC_CONNECTION_COUNT);
+            athleticFields[i].setInitialStaff(setRandom(ATHLETIC_INITIAL_STAFF_LOWER_LIMIT, ATHLETIC_INITIAL_STAFF_UPPER_LIMIT));
+            athleticFields[i].setStudentCap(setRandom(ATHLETIC_STUDENT_CAPACITY_LOWER_LIMIT, ATHLETIC_STUDENT_CAPACITY_UPPER_LIMIT));
             athleticFields[i].setSeatArrangement();
-            athleticFields[i].setRoomNumber("F" + i + setRandom(100, 999));
+            athleticFields[i].setRoomNumber("F" + i + setRandom(ATHLETIC_NUMBER_LOWER_LIMIT, ATHLETIC_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -635,13 +636,13 @@ public class StandardSchool implements SchoolPlan {
             auditoriums[i] = new Auditorium();
             auditoriums[i].setRoomName("Auditorium" + i);
             view.appendOutput("      Generating " + auditoriums[i].getRoomName());
-            auditoriums[i].setWindowCount(0);
-            auditoriums[i].setConnections(16);
-            auditoriums[i].setDoors(16);
-            auditoriums[i].setInitialStaff(0);
-            auditoriums[i].setStudentCap(setRandom(150,500));
+            auditoriums[i].setWindowCount(AUDITORIUM_WINDOW_COUNT);
+            auditoriums[i].setConnections(AUDITORIUM_CONNECTION_COUNT);
+            auditoriums[i].setDoors(AUDITORIUM_CONNECTION_COUNT);
+            auditoriums[i].setInitialStaff(AUDITORIUM_INITIAL_STAFF);
+            auditoriums[i].setStudentCap(setRandom(AUDITORIUM_STUDENT_CAPACITY_LOWER_LIMIT, AUDITORIUM_STUDENT_CAPACITY_UPPER_LIMIT));
             auditoriums[i].setSeatArrangement();
-            auditoriums[i].setRoomNumber("AD" + i + setRandom(100, 999));
+            auditoriums[i].setRoomNumber("AD" + i + setRandom(AUDITORIUM_NUMBER_LOWER_LIMIT, AUDITORIUM_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -654,17 +655,17 @@ public class StandardSchool implements SchoolPlan {
         dramaRooms = new DramaRoom[number];
         view.appendOutput("   Generating " + number + " Drama Room(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(2, 6);
+            int connectN = setRandom(DRAMA_CONNECTION_LOWER_LIMIT, DRAMA_CONNECTION_UPPER_LIMIT);
             dramaRooms[i] = new DramaRoom();
             dramaRooms[i].setRoomName("Drama" + i);
             view.appendOutput("      Generating " + dramaRooms[i].getRoomName());
-            dramaRooms[i].setWindowCount(setRandom(0, 6));
+            dramaRooms[i].setWindowCount(setRandom(DRAMA_WINDOW_LOWER_LIMIT, DRAMA_WINDOW_UPPER_LIMIT));
             dramaRooms[i].setConnections(connectN);
             dramaRooms[i].setDoors(connectN);
-            dramaRooms[i].setInitialStaff(1);
-            dramaRooms[i].setStudentCap(setRandom(15,35));
+            dramaRooms[i].setInitialStaff(DRAMA_INITIAL_STAFF);
+            dramaRooms[i].setStudentCap(setRandom(DRAMA_STUDENT_CAPACITY_LOWER_LIMIT, DRAMA_STUDENT_CAPACITY_UPPER_LIMIT));
             dramaRooms[i].setSeatArrangement();
-            dramaRooms[i].setRoomNumber("D" + i + setRandom(100, 999));
+            dramaRooms[i].setRoomNumber("D" + i + setRandom(DRAMA_NUMBER_LOWER_LIMIT, DRAMA_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -677,17 +678,17 @@ public class StandardSchool implements SchoolPlan {
         lockerRooms = new LockerRoom[number];
         view.appendOutput("   Generating " + number + " Locker Room(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(2, 6);
+            int connectN = setRandom(LOCKER_CONNECTION_LOWER_LIMIT, LOCKER_CONNECTION_UPPER_LIMIT);
             lockerRooms[i] = new LockerRoom();
             lockerRooms[i].setRoomName("Locker Room" + i);
             view.appendOutput("      Generating " + lockerRooms[i].getRoomName());
-            lockerRooms[i].setWindowCount(0);
+            lockerRooms[i].setWindowCount(LOCKER_WINDOW_COUNT);
             lockerRooms[i].setConnections(connectN);
             lockerRooms[i].setDoors(connectN);
-            lockerRooms[i].setInitialStaff(0);
-            lockerRooms[i].setStudentCap(setRandom(30,90));
+            lockerRooms[i].setInitialStaff(LOCKER_INITIAL_STAFF);
+            lockerRooms[i].setStudentCap(setRandom(LOCKER_STUDENT_CAPACITY_LOWER_LIMIT, LOCKER_STUDENT_CAPACITY_UPPER_LIMIT));
             lockerRooms[i].setSeatArrangement();
-            lockerRooms[i].setRoomNumber("LK" + i + setRandom(100, 999));
+            lockerRooms[i].setRoomNumber("LK" + i + setRandom(LOCKER_NUMBER_LOWER_LIMIT, LOCKER_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -700,17 +701,17 @@ public class StandardSchool implements SchoolPlan {
         musicRooms = new MusicRoom[number];
         view.appendOutput("   Generating " + number + " Music Room(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(3, 7);
+            int connectN = setRandom(MUSIC_CONNECTION_LOWER_LIMIT, MUSIC_CONNECTION_UPPER_LIMIT);
             musicRooms[i] = new MusicRoom();
             musicRooms[i].setRoomName("Music Room" + i);
             view.appendOutput("      Generating " + musicRooms[i].getRoomName());
-            musicRooms[i].setWindowCount(setRandom(0, 4));
+            musicRooms[i].setWindowCount(setRandom(MUSIC_WINDOW_LOWER_LIMIT, MUSIC_WINDOW_UPPER_LIMIT));
             musicRooms[i].setConnections(connectN);
             musicRooms[i].setDoors(connectN);
-            musicRooms[i].setInitialStaff(1);
-            musicRooms[i].setStudentCap(setRandom(30, 90));
+            musicRooms[i].setInitialStaff(MUSIC_INITIAL_STAFF);
+            musicRooms[i].setStudentCap(setRandom(MUSIC_STUDENT_CAPACITY_LOWER_LIMIT, MUSIC_STUDENT_CAPACITY_UPPER_LIMIT));
             musicRooms[i].setSeatArrangement();
-            musicRooms[i].setRoomNumber("MR" + i + setRandom(100, 999));
+            musicRooms[i].setRoomNumber("MR" + i + setRandom(MUSIC_NUMBER_LOWER_LIMIT, MUSIC_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -723,17 +724,17 @@ public class StandardSchool implements SchoolPlan {
         scienceLabs = new ScienceLab[number];
         view.appendOutput("   Generating " + number + " Science Lab(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(2, 4);
+            int connectN = setRandom(SCIENCE_LAB_CONNECTION_LOWER_LIMIT, SCIENCE_LAB_CONNECTION_UPPER_LIMIT);
             scienceLabs[i] = new ScienceLab();
             scienceLabs[i].setRoomName("Science Lab" + i);
             view.appendOutput("      Generating " + scienceLabs[i].getRoomName());
-            scienceLabs[i].setWindowCount(0);
+            scienceLabs[i].setWindowCount(SCIENCE_LAB_WINDOW_COUNT);
             scienceLabs[i].setConnections(connectN);
             scienceLabs[i].setDoors(connectN);
-            scienceLabs[i].setInitialStaff(0);
-            scienceLabs[i].setStudentCap(setRandom(15, 35));
+            scienceLabs[i].setInitialStaff(SCIENCE_LAB_INITIAL_STAFF);
+            scienceLabs[i].setStudentCap(setRandom(SCIENCE_LAB_STUDENT_CAPACITY_LOWER_LIMIT, SCIENCE_LAB_STUDENT_CAPACITY_UPPER_LIMIT));
             scienceLabs[i].setSeatArrangement();
-            scienceLabs[i].setRoomNumber("Lab" + i + setRandom(100, 999));
+            scienceLabs[i].setRoomNumber("Lab" + i + setRandom(SCIENCE_LAB_NUMBER_LOWER_LIMIT, SCIENCE_LAB_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -791,17 +792,17 @@ public class StandardSchool implements SchoolPlan {
         conferenceRooms = new ConferenceRoom[number];
         view.appendOutput("   Generating " + number + " Conference Room(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(3, 4);
+            int connectN = setRandom(CONFERENCE_CONNECTION_LOWER_LIMIT, CONFERENCE_CONNECTION_UPPER_LIMIT);
             conferenceRooms[i] = new ConferenceRoom();
             conferenceRooms[i].setRoomName("Conference Room" + i);
             view.appendOutput("      Generating " + conferenceRooms[i].getRoomName());
-            conferenceRooms[i].setWindowCount(setRandom(1, 5));
+            conferenceRooms[i].setWindowCount(setRandom(CONFERENCE_WINDOW_LOWER_LIMIT, CONFERENCE_WINDOW_UPPER_LIMIT));
             conferenceRooms[i].setConnections(connectN);
             conferenceRooms[i].setDoors(connectN);
-            conferenceRooms[i].setInitialStaff(0);
-            conferenceRooms[i].setStudentCap(setRandom(15, 30));
+            conferenceRooms[i].setInitialStaff(CONFERENCE_INITIAL_STAFF);
+            conferenceRooms[i].setStudentCap(setRandom(CONFERENCE_STUDENT_CAPACITY_LOWER_LIMIT, CONFERENCE_STUDENT_CAPACITY_UPPER_LIMIT));
             conferenceRooms[i].setSeatArrangement();
-            conferenceRooms[i].setRoomNumber("Conference" + i + setRandom(100, 999));
+            conferenceRooms[i].setRoomNumber("Conference" + i + setRandom(CONFERENCE_NUMBER_LOWER_LIMIT, CONFERENCE_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -813,17 +814,17 @@ public class StandardSchool implements SchoolPlan {
         vocationalRooms = new VocationalRoom[number];
         view.appendOutput("   Generating " + number + " Vocational room(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = setRandom(3, 5);
+            int connectN = setRandom(VOCATIONAL_CONNECTION_LOWER_LIMIT, VOCATIONAL_CONNECTION_UPPER_LIMIT);
             vocationalRooms[i] = new VocationalRoom();
             vocationalRooms[i].setRoomName("Vocational Room" + i);
             view.appendOutput("      Generating " + vocationalRooms[i].getRoomName());
-            vocationalRooms[i].setWindowCount(setRandom(1, 6));
+            vocationalRooms[i].setWindowCount(setRandom(VOCATIONAL_WINDOW_LOWER_LIMIT, VOCATIONAL_WINDOW_UPPER_LIMIT));
             vocationalRooms[i].setConnections(connectN);
             vocationalRooms[i].setDoors(connectN);
-            vocationalRooms[i].setInitialStaff(1);
-            vocationalRooms[i].setStudentCap(setRandom(25, 35));
+            vocationalRooms[i].setInitialStaff(VOCATIONAL_INITIAL_STAFF);
+            vocationalRooms[i].setStudentCap(setRandom(VOCATIONAL_STUDENT_CAPACITY_LOWER_LIMIT, VOCATIONAL_STUDENT_CAPACITY_UPPER_LIMIT));
             vocationalRooms[i].setSeatArrangement();
-            vocationalRooms[i].setRoomNumber("Vocational" + i + setRandom(100, 999));
+            vocationalRooms[i].setRoomNumber("Vocational" + i + setRandom(VOCATIONAL_NUMBER_LOWER_LIMIT, VOCATIONAL_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -835,17 +836,17 @@ public class StandardSchool implements SchoolPlan {
         parkingLots = new ParkingLot[number];
         view.appendOutput("   Generating " + number + " Parking Lot(s)...");
         for (int i = 0; i < number; i++) {
-            int connectN = 16;
+            int connectN = PARKING_CONNECTION_COUNT;
             parkingLots[i] = new ParkingLot();
             parkingLots[i].setRoomName("Parking Lot" + i);
             view.appendOutput("      Generating " + parkingLots[i].getRoomName());
-            parkingLots[i].setWindowCount(0);
+            parkingLots[i].setWindowCount(PARKING_WINDOW_COUNT);
             parkingLots[i].setConnections(connectN);
-            parkingLots[i].setDoors(0);
-            parkingLots[i].setInitialStaff(0);
-            parkingLots[i].setStudentCap(setRandom(100, 300));
+            parkingLots[i].setDoors(connectN);
+            parkingLots[i].setInitialStaff(PARKING_INITIAL_STAFF);
+            parkingLots[i].setStudentCap(setRandom(PARKING_STUDENT_CAPACITY_LOWER_LIMIT, PARKING_STUDENT_CAPACITY_UPPER_LIMIT));
             parkingLots[i].setSeatArrangement();
-            parkingLots[i].setRoomNumber("ParkingLot" + i + setRandom(100, 999));
+            parkingLots[i].setRoomNumber("ParkingLot" + i + setRandom(PARKING_NUMBER_LOWER_LIMIT, PARKING_NUMBER_UPPER_LIMIT));
         }
     }
 
@@ -899,8 +900,8 @@ public class StandardSchool implements SchoolPlan {
     public Room getClassroomByStaff(Staff staff) {
         for (Classroom classroom : classrooms) {
             List<Staff> staffList = classroom.getAssignedStaff();
-            for(Staff staff1 : staffList) {
-                if(staff1.equals(staff)) {
+            for (Staff staff1 : staffList) {
+                if (staff1.equals(staff)) {
                     return classroom;
                 }
             }
@@ -914,16 +915,16 @@ public class StandardSchool implements SchoolPlan {
             case "Physical Education" -> {
                 for (Gym gym : gyms) {
                     List<Staff> staffList = gym.getAssignedStaff();
-                    for(Staff staff1 : staffList) {
-                        if(staff1.equals(staff)){
+                    for (Staff staff1 : staffList) {
+                        if (staff1.equals(staff)) {
                             return gym;
                         }
                     }
                 }
                 for (AthleticField field : athleticFields) {
                     List<Staff> staffList = field.getAssignedStaff();
-                    for(Staff staff1 : staffList) {
-                        if(staff1.equals(staff)) {
+                    for (Staff staff1 : staffList) {
+                        if (staff1.equals(staff)) {
                             return field;
                         }
                     }
@@ -933,7 +934,7 @@ public class StandardSchool implements SchoolPlan {
                 for (Office office : offices) {
                     List<Staff> staffList = office.getAssignedStaff();
                     for (Staff staff1 : staffList) {
-                        if(staff1.equals(staff)) {
+                        if (staff1.equals(staff)) {
                             return office;
                         }
                     }
@@ -943,7 +944,7 @@ public class StandardSchool implements SchoolPlan {
                 for (ArtStudio artStudio : artStudios) {
                     List<Staff> staffList = artStudio.getAssignedStaff();
                     for (Staff staff1 : staffList) {
-                        if(staff1.equals(staff)) {
+                        if (staff1.equals(staff)) {
                             return artStudio;
                         }
                     }
@@ -953,7 +954,7 @@ public class StandardSchool implements SchoolPlan {
                 for (DramaRoom dramaRoom : dramaRooms) {
                     List<Staff> staffList = dramaRoom.getAssignedStaff();
                     for (Staff staff1 : staffList) {
-                        if(staff1.equals(staff)) {
+                        if (staff1.equals(staff)) {
                             return dramaRoom;
                         }
                     }
@@ -961,7 +962,7 @@ public class StandardSchool implements SchoolPlan {
                 for (MusicRoom musicRoom : musicRooms) {
                     List<Staff> staffList = musicRoom.getAssignedStaff();
                     for (Staff staff1 : staffList) {
-                        if(staff1.equals(staff)) {
+                        if (staff1.equals(staff)) {
                             return musicRoom;
                         }
                     }
@@ -969,7 +970,7 @@ public class StandardSchool implements SchoolPlan {
                 for (Auditorium auditorium : auditoriums) {
                     List<Staff> staffList = auditorium.getAssignedStaff();
                     for (Staff staff1 : staffList) {
-                        if(staff1.equals(staff)) {
+                        if (staff1.equals(staff)) {
                             return auditorium;
                         }
                     }
@@ -979,7 +980,7 @@ public class StandardSchool implements SchoolPlan {
                 for (VocationalRoom vocationalRoom : vocationalRooms) {
                     List<Staff> staffList = vocationalRoom.getAssignedStaff();
                     for (Staff staff1 : staffList) {
-                        if(staff1.equals(staff)) {
+                        if (staff1.equals(staff)) {
                             return vocationalRoom;
                         }
                     }
@@ -989,7 +990,7 @@ public class StandardSchool implements SchoolPlan {
                 for (Classroom classroom : classrooms) {
                     List<Staff> staffList = classroom.getAssignedStaff();
                     for (Staff staff1 : staffList) {
-                        if(staff1.equals(staff)) {
+                        if (staff1.equals(staff)) {
                             return classroom;
                         }
                     }
