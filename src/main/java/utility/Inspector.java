@@ -287,16 +287,18 @@ public class Inspector {
         ActionListener blockButtonListener = e -> {
             int blockNumber = Integer.parseInt(e.getActionCommand());
             Student[][] seats = seatingArrangements.get(blockNumber);
-            for (int row = 0; row < seats.length; row++) {
-                for (int col = 0; col < seats[0].length; col++) {
-                    if (seats[row][col] != null) {
-                        tableModel.setValueAt(seats[row][col].studentName.getFirstName() + " " + seats[row][col].studentName.getLastName(), row, col);
-                    } else {
-                        tableModel.setValueAt("Empty", row, col);
+            if (seats != null) {
+                for (int row = 0; row < seats.length; row++) {
+                    for (int col = 0; col < seats[0].length; col++) {
+                        if (seats[row][col] != null) {
+                            tableModel.setValueAt(seats[row][col].studentName.getFirstName() + " " + seats[row][col].studentName.getLastName(), row, col);
+                        } else {
+                            tableModel.setValueAt("Empty", row, col);
+                        }
                     }
                 }
+                tableModel.fireTableDataChanged();
             }
-            tableModel.fireTableDataChanged(); // Ensure the table model refreshes
         };
 
         // Create and add buttons for each block
