@@ -10,8 +10,6 @@ import java.util.ArrayList;
 //TODO: think about different seating arrangements and settings based on teacher experience and student stats/preferences
 public class StudentSeatingAssigner {
     public static void seatInitialStudents(StandardSchool standardSchool) {
-        // ... existing code ...
-
         for (Room room : getAllRooms(standardSchool)) {
             seatHelper(room);
         }

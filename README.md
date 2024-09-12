@@ -226,8 +226,6 @@ activities, but they cannot be pushed beyond their initial cap.
 - Sometimes math classes are not assigned to freshmen
 - Some last name capitalization is wrong
 - Overcapacity rate in classrooms is relatively high/ some blocks still under 5 students assigned
-- Duplicate student seating assignments per block
-- Buttons to switch seat assignment charts per block not working yet
 - Only generated student displays related siblings. Siblings do not show relation to student
 
 ## Release 0.0.11
