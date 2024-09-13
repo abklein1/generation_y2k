@@ -3,7 +3,9 @@ package utility;
 import entity.Student;
 import view.GameView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -29,6 +31,7 @@ public class SiblingGenerator {
 
         for (Map.Entry<Integer, Student> student : studentHashMap.entrySet()) {
             int siblings = siblingProbabilityLoader();
+            List<Student> generatedSiblings = new ArrayList<>();
             Student sibling;
             boolean finishedGeneration = false;
             boolean hasTwins = setRandom(0, MULTI_BIRTH_SAMPLE_SIZE) < TWIN_RATE;
@@ -50,6 +53,7 @@ public class SiblingGenerator {
                         sibling = generateStepSibling(student.getValue(), view);
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     } else {
                         // Otherwise, student is not in school and younger or older
                         String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
@@ -61,6 +65,7 @@ public class SiblingGenerator {
                         sibling = generateAdoptedSibling(student.getValue(), view);
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     } else {
                         String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
@@ -71,6 +76,7 @@ public class SiblingGenerator {
                         sibling = generateHalfSibling(student.getValue(), view);
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     } else {
                         String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
@@ -81,6 +87,7 @@ public class SiblingGenerator {
                         sibling = generateSibling(student.getValue(), view);
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     } else {
                         String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
@@ -93,6 +100,7 @@ public class SiblingGenerator {
                         sibling = generateTwinOrTriplet(student.getValue(), view);
                         addedStudents.put(studentCap, sibling);
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     }
                     finishedGeneration = true;
                 } else {
@@ -103,6 +111,7 @@ public class SiblingGenerator {
                             sibling = generateTwinOrTriplet(student.getValue(), view);
                             addedStudents.put(studentCap, sibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                            generatedSiblings.add(sibling);
                             siblings--;
                         } else {
                             if (setRandom(0, 12) <= 3) {
@@ -111,12 +120,14 @@ public class SiblingGenerator {
                                 Student twinSibling = generateSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, twinSibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(twinSibling);
+                                generatedSiblings.add(twinSibling);
                                 // add second twin
                                 studentCap++;
                                 sibling = generateTwinOrTriplet(twinSibling, view);
                                 //TODO: think about this one for reverse add
                                 addedStudents.put(studentCap, sibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                                generatedSiblings.add(sibling);
                             } else {
                                 // add two twins not in school
                                 for (int i = 0; i < siblings; i++) {
@@ -136,15 +147,19 @@ public class SiblingGenerator {
                             if (hasStepSibling) {
                                 sibling = generateStepSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, sibling);
+                                generatedSiblings.add(sibling);
                             } else if (hasAdoptedSibling) {
                                 sibling = generateAdoptedSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, sibling);
+                                generatedSiblings.add(sibling);
                             } else if (hasHalfSibling) {
                                 sibling = generateHalfSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, sibling);
+                                generatedSiblings.add(sibling);
                             } else {
                                 sibling = generateSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, sibling);
+                                generatedSiblings.add(sibling);
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
@@ -161,6 +176,7 @@ public class SiblingGenerator {
                             sibling = generateTwinOrTriplet(student.getValue(), view);
                             addedStudents.put(studentCap, sibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                            generatedSiblings.add(sibling);
                             siblings--;
                         }
                     } else {
@@ -170,12 +186,14 @@ public class SiblingGenerator {
                             Student tripletSibling = generateSibling(student.getValue(), view);
                             addedStudents.put(studentCap, tripletSibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(tripletSibling);
+                            generatedSiblings.add(tripletSibling);
                             siblings--;
                             // add second twin
                             studentCap++;
                             sibling = generateTwinOrTriplet(tripletSibling, view);
                             addedStudents.put(studentCap, sibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                            generatedSiblings.add(sibling);
                             siblings--;
                         } else {
                             for (int i = 0; i < 3; i++) {
@@ -193,6 +211,7 @@ public class SiblingGenerator {
                             sibling = generateTwinOrTriplet(student.getValue(), view);
                             addedStudents.put(studentCap, sibling);
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                            generatedSiblings.add(sibling);
                             siblings--;
                         } else {
                             if (setRandom(0, 12) <= 3) {
@@ -201,12 +220,14 @@ public class SiblingGenerator {
                                 Student twinSibling = generateSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, twinSibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(twinSibling);
+                                generatedSiblings.add(twinSibling);
                                 siblings--;
                                 // add second twin
                                 studentCap++;
                                 sibling = generateTwinOrTriplet(twinSibling, view);
                                 addedStudents.put(studentCap, sibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(sibling);
+                                generatedSiblings.add(sibling);
                                 siblings--;
                             } else {
                                 for (int i = 0; i < 2; i++) {
@@ -226,15 +247,19 @@ public class SiblingGenerator {
                             if (hasStepSibling) {
                                 sibling = generateStepSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, sibling);
+                                generatedSiblings.add(sibling);
                             } else if (hasAdoptedSibling) {
                                 sibling = generateAdoptedSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, sibling);
+                                generatedSiblings.add(sibling);
                             } else if (hasHalfSibling) {
                                 sibling = generateHalfSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, sibling);
+                                generatedSiblings.add(sibling);
                             } else {
                                 sibling = generateSibling(student.getValue(), view);
                                 addedStudents.put(studentCap, sibling);
+                                generatedSiblings.add(sibling);
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
@@ -245,6 +270,19 @@ public class SiblingGenerator {
                 }
             } else {
                 System.out.println("No siblings to generate");
+            }
+
+            // Update sibling lists for all generated siblings
+            for (Student generatedSibling : generatedSiblings) {
+                for (Student otherSibling : generatedSiblings) {
+                    if (!generatedSibling.equals(otherSibling)) {
+                        generatedSibling.studentStatistics.addSiblingsInSchool(otherSibling);
+                    }
+                }
+                // Copy siblingsNotInSchool from the original student to each generated sibling
+                for (String siblingNotInSchool : student.getValue().studentStatistics.getSiblingsNotInSchool()) {
+                    generatedSibling.studentStatistics.addSiblingsNotInSchool(siblingNotInSchool);
+                }
             }
         }
 

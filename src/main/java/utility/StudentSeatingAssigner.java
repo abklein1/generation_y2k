@@ -16,15 +16,29 @@ public class StudentSeatingAssigner {
     }
 
     private static void seatHelper(Room room) {
-        Staff teacher = room.getAssignedStaff().get(0);
+        List<Staff> assignedStaff = room.getAssignedStaff();
+        if (assignedStaff == null || assignedStaff.isEmpty() || assignedStaff.get(0) == null) {
+            System.out.println("Warning: Room " + room.getRoomName() + " has no assigned teacher.");
+            return;
+        }
+
+        Staff teacher = assignedStaff.get(0);
         TeacherSchedule teacherSchedule = teacher.teacherStatistics.getTeacherSchedule();
         List<TeacherBlock> teacherBlocks = teacherSchedule.getTeacherSchedule();
+        Student[][] seats = null;
 
         for (TeacherBlock block : teacherBlocks) {
             int blockNumber = block.getBlockNumber();
             List<Student> students = block.getClassPopulation();
-            Student[][] seats = new Student[room.getSeatArrangement().length][room.getSeatArrangement()[0].length];
+            seats = room.getSeatArrangement();
+            
+            if (seats == null) {
+                System.out.println("Warning: Room " + room.getRoomName() + " has a null seat arrangement.");
+                continue;
+            }
 
+            seats = new Student[seats.length][seats[0].length];
+        
             for (Student student : students) {
                 seatStudent(student, seats);
             }
@@ -35,12 +49,22 @@ public class StudentSeatingAssigner {
 
     private static void seatStudent(Student student, Student[][] seats) {
         int maxAttempts = seats.length * seats[0].length;
+        // Initially try to seat the student in a random empty seat
         for (int attempt = 0; attempt < maxAttempts; attempt++) {
             int x = Randomizer.setRandom(0, seats.length - 1);
             int y = Randomizer.setRandom(0, seats[0].length - 1);
             if (seats[x][y] == null) {
                 seats[x][y] = student;
                 return;
+            }
+        }
+        // If unable to seat the student in a random empty seat, try to seat them in the first empty seat
+        for (int x = 0; x < seats.length; x++) {
+            for (int y = 0; y < seats[0].length; y++) {
+                if (seats[x][y] == null) {
+                    seats[x][y] = student;
+                    return;
+                }
             }
         }
         System.out.println("Warning: Unable to seat student " + student.studentName.getFirstName() + " " + student.studentName.getLastName());

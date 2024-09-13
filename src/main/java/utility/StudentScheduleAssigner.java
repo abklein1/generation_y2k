@@ -232,8 +232,10 @@ public class StudentScheduleAssigner {
 
                     if (classes instanceof JSONArray) {
                         // Add each class to the list
-                        for (Object className : (JSONArray) classes) {
-                            availableClasses.add((String) className);
+                        JSONArray classesArray = (JSONArray) classes;
+                        for (int i = 0; i < classesArray.size(); i++) {
+                            String className = (String) classesArray.get(i);
+                            availableClasses.add(className);
                         }
                     } else if (classes instanceof Long) {
                         // Handle the "Elective" case
@@ -776,7 +778,7 @@ public class StudentScheduleAssigner {
                         choiceRank[3] = "AP Music Theory";
                         choiceRank[4] = "AP Philosophy";
                         choiceRank[5] = "Intro to Programming";
-                        choiceRank[6] = "ROTC";
+                        choiceRank[6] = "Spanish III";
                         choiceRank[7] = "Debate";
                     }
                     case "Senior" -> {
@@ -785,7 +787,7 @@ public class StudentScheduleAssigner {
                         choiceRank[2] = "Culinary Arts";
                         choiceRank[3] = "Printmaking";
                         choiceRank[4] = "AP Art History";
-                        choiceRank[5] = "Computer Aided Drafting I";
+                        choiceRank[5] = "Spanish IV";
                         choiceRank[6] = "Jazz Band";
                         choiceRank[7] = "Concert Band";
                     }
@@ -821,7 +823,7 @@ public class StudentScheduleAssigner {
                         choiceRank[4] = "AP Music Theory";
                         choiceRank[5] = "Debate";
                         choiceRank[6] = "Jazz Band";
-                        choiceRank[7] = "Concert Band";
+                        choiceRank[7] = "Spanish III";
                     }
                     case "Senior" -> {
                         choiceRank[0] = "AP Music Theory";
@@ -831,7 +833,7 @@ public class StudentScheduleAssigner {
                         choiceRank[4] = "AP Art History";
                         choiceRank[5] = "Computer Aided Drafting I";
                         choiceRank[6] = "Jazz Band";
-                        choiceRank[7] = "Concert Band";
+                        choiceRank[7] = "Spanish IV";
                     }
                     default -> {
                         choiceRank[0] = "Printmaking";
@@ -1041,14 +1043,14 @@ public class StudentScheduleAssigner {
                         choiceRank[3] = "AP Music Theory";
                         choiceRank[4] = "AP Philosophy";
                         choiceRank[5] = "Intro to Programming";
-                        choiceRank[6] = "ROTC";
+                        choiceRank[6] = "AP Spanish Literature";
                         choiceRank[7] = "Debate";
                     }
                     case "Senior" -> {
                         choiceRank[0] = "AP Music Theory";
                         choiceRank[1] = "Digital Production Technology";
                         choiceRank[2] = "Culinary Arts";
-                        choiceRank[3] = "Printmaking";
+                        choiceRank[3] = "AP Spanish Language";
                         choiceRank[4] = "AP Art History";
                         choiceRank[5] = "Computer Aided Drafting II";
                         choiceRank[6] = "Jazz Band";
@@ -1084,7 +1086,7 @@ public class StudentScheduleAssigner {
                         choiceRank[2] = "Computer Aided Drafting II";
                         choiceRank[3] = "Intro to Programming";
                         choiceRank[4] = "AP Music Theory";
-                        choiceRank[5] = "Debate";
+                        choiceRank[5] = "AP Spanish Literature";
                         choiceRank[6] = "Jazz Band";
                         choiceRank[7] = "Concert Band";
                     }
@@ -1092,7 +1094,7 @@ public class StudentScheduleAssigner {
                         choiceRank[0] = "AP Music Theory";
                         choiceRank[1] = "Philosophy";
                         choiceRank[2] = "Culinary Arts";
-                        choiceRank[3] = "Printmaking";
+                        choiceRank[3] = "AP Spanish Language";
                         choiceRank[4] = "AP Art History";
                         choiceRank[5] = "Computer Aided Drafting II";
                         choiceRank[6] = "Jazz Band";
