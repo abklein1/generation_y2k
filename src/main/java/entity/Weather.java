@@ -23,7 +23,7 @@ public class Weather {
             locations = new String[]{"alaska", "spokane", "new_york"};
             location = locations[setRandom(0, 2)];
         } else if (schoolName.contains("Ocean") || schoolName.contains("Sea") || schoolName.contains("Bay") || schoolName.contains("Cape") ||
-                schoolName.contains("Shore") || schoolName.contains("Sound") || schoolName.contains("Port")) {
+                schoolName.contains("Shore") || schoolName.contains("Sound") || schoolName.contains("Port") || schoolName.contains("Palm") || schoolName.contains("Palmetto")) {
             locations = new String[]{"alaska", "spokane", "los_angeles", "west_palm", "new_york"};
             location = locations[setRandom(0, 4)];
         } else if (schoolName.contains("Prairie") || schoolName.contains("Valley") || schoolName.contains("Grande") ||
