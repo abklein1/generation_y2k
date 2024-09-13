@@ -150,6 +150,14 @@ public class MusicRoom implements Room, Serializable {
             } else {
                 seats = new Student[10][10];
             }
+        } else if (studentCap <= 200) {
+            if (choice == 0) {
+                seats = new Student[20][10];
+            } else if (choice == 1) {
+                seats = new Student[10][20];
+            } else {
+                seats = new Student[40][5];
+            }
         } else {
             // TODO: Better error handling later
             System.out.println("Can't find student cap!");
