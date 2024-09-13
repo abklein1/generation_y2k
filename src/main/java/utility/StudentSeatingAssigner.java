@@ -1,11 +1,11 @@
 package utility;
 
-import entity.Rooms.*;
+import entity.Rooms.Room;
 import entity.*;
 
-import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 //TODO: think about different seating arrangements and settings based on teacher experience and student stats/preferences
 public class StudentSeatingAssigner {
@@ -19,16 +19,16 @@ public class StudentSeatingAssigner {
         Staff teacher = room.getAssignedStaff().get(0);
         TeacherSchedule teacherSchedule = teacher.teacherStatistics.getTeacherSchedule();
         List<TeacherBlock> teacherBlocks = teacherSchedule.getTeacherSchedule();
-        
+
         for (TeacherBlock block : teacherBlocks) {
             int blockNumber = block.getBlockNumber();
             List<Student> students = block.getClassPopulation();
             Student[][] seats = new Student[room.getSeatArrangement().length][room.getSeatArrangement()[0].length];
-            
+
             for (Student student : students) {
                 seatStudent(student, seats);
             }
-            
+
             room.setPeriodSeatingArrangement(blockNumber, seats);
         }
     }
