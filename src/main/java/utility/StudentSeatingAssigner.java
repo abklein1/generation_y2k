@@ -43,14 +43,30 @@ public class StudentSeatingAssigner {
                 return;
             }
         }
-        System.out.println("Warning: Unable to seat student " + student.studentName);
+        System.out.println("Warning: Unable to seat student " + student.studentName.getFirstName() + " " + student.studentName.getLastName());
     }
 
     private static List<Room> getAllRooms(StandardSchool school) {
         List<Room> allRooms = new ArrayList<>();
         allRooms.addAll(Arrays.asList(school.getClassrooms()));
         allRooms.addAll(Arrays.asList(school.getArtStudios()));
-        // Add other room types...
+        allRooms.addAll(Arrays.asList(school.getDramaRooms()));
+        allRooms.addAll(Arrays.asList(school.getMusicRooms()));
+        allRooms.addAll(Arrays.asList(school.getAthleticFields()));
+        allRooms.addAll(Arrays.asList(school.getAuditoriums()));
+        allRooms.addAll(Arrays.asList(school.getBreakrooms()));
+        allRooms.addAll(Arrays.asList(school.getBathrooms()));
+        allRooms.addAll(Arrays.asList(school.getComputerLabs()));
+        allRooms.addAll(Arrays.asList(school.getConferenceRooms()));
+        allRooms.addAll(Arrays.asList(school.getCourtyards()));
+        allRooms.addAll(Arrays.asList(school.getScienceLabs()));
+        allRooms.addAll(Arrays.asList(school.getGyms()));
+        allRooms.addAll(Arrays.asList(school.getLibraries()));
+        allRooms.addAll(Arrays.asList(school.getVocationalRooms()));
+        allRooms.addAll(Arrays.asList(school.getHallways()));
+        allRooms.addAll(Arrays.asList(school.getUtilityrooms()));
+        allRooms.addAll(Arrays.asList(school.getOffices()));
+        allRooms.addAll(Arrays.asList(school.getParkingLots()));
         return allRooms;
     }
 }

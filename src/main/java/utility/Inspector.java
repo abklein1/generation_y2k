@@ -236,21 +236,29 @@ public class Inspector {
 
     public static void inspectRoom(Room room) {
         String roomName = room.getRoomName();
+        StringBuilder roomDetails = new StringBuilder();
         List<Staff> staff = room.getAssignedStaff();
         int studentCap = room.getStudentCapacity();
-        HashMap<Integer, Student[][]> seatingArrangements = ((Classroom) room).getPeriodSeatingArrangement();
-        TeacherSchedule teacherSchedule = room.getAssignedStaff().get(0).teacherStatistics.getTeacherSchedule();
-        List<TeacherBlock> teacherBlocks = teacherSchedule.getTeacherSchedule();
-
-        StringBuilder roomDetails = new StringBuilder();
+        List<TeacherBlock> teacherBlocks = null;
+        HashMap<Integer, Student[][]> seatingArrangements = room.getPeriodSeatingArrangement();
+        if (room.getAssignedStaff().isEmpty()) {
+            roomDetails.append("There are no staff assigned to this room.\n");
+        } else {
+            TeacherSchedule teacherSchedule = room.getAssignedStaff().get(0).teacherStatistics.getTeacherSchedule();
+            teacherBlocks = teacherSchedule.getTeacherSchedule();
+        }
         roomDetails.append("Welcome to ").append(roomName).append("\n");
         roomDetails.append("The room contains the following staff:\n");
         for (Staff value : staff) {
             roomDetails.append(value.teacherName.getFirstName()).append(" ").append(value.teacherName.getLastName()).append("\n");
         }
         roomDetails.append("It has a student capacity of ").append(studentCap).append("\n");
-        String abbrev = ((Classroom) room).getClassRoomType();
-        roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");
+        if (room instanceof Classroom) {
+            String abbrev = ((Classroom) room).getClassRoomType();
+            roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");
+        } else {
+            roomDetails.append("It is a ").append(room.getRoomName()).append("\n");
+        }
 
         JTextArea roomInfoArea = new JTextArea(roomDetails.toString());
         roomInfoArea.setEditable(false);
@@ -317,25 +325,29 @@ public class Inspector {
 
         JTextArea studentListArea = new JTextArea();
         studentListArea.setEditable(false);
-        for (TeacherBlock block : teacherBlocks) {
-            studentListArea.append("Block: ");
-            studentListArea.append(String.valueOf(block.getBlockNumber()));
-            studentListArea.append("\n");
-            studentListArea.append(block.getClassName());
-            studentListArea.append("\n");
-            studentListArea.append(block.getSemester());
-            studentListArea.append("\n");
-            List<Student> students = block.getClassPopulation();
-            if (students != null) {
-                for (Student student : students) {
-                    studentListArea.append(student.studentName.getFirstName());
-                    studentListArea.append(" ");
-                    studentListArea.append(student.studentName.getLastName());
-                    studentListArea.append("\n");
+        if (teacherBlocks != null) {
+            for (TeacherBlock block : teacherBlocks) {
+                studentListArea.append("Block: ");
+                studentListArea.append(String.valueOf(block.getBlockNumber()));
+                studentListArea.append("\n");
+                studentListArea.append(block.getClassName());
+                studentListArea.append("\n");
+                studentListArea.append(block.getSemester());
+                studentListArea.append("\n");
+                List<Student> students = block.getClassPopulation();
+                if (students != null) {
+                    for (Student student : students) {
+                        studentListArea.append(student.studentName.getFirstName());
+                        studentListArea.append(" ");
+                        studentListArea.append(student.studentName.getLastName());
+                        studentListArea.append("\n");
+                    }
+                } else {
+                    studentListArea.append("Students are null!\n");
                 }
-            } else {
-                studentListArea.append("Students are null!\n");
             }
+        } else {
+            roomDetails.append("There are no teacher blocks for this room\n");
         }
         JScrollPane studentListScrollPane = new JScrollPane(studentListArea);
         studentListScrollPane.setPreferredSize(new Dimension(200, 200));
