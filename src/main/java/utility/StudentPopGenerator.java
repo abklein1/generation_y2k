@@ -6,6 +6,7 @@ import view.GameView;
 import java.util.HashMap;
 import java.util.Random;
 
+import static constants.SimConstants.*;
 import static utility.Randomizer.setRandom;
 
 // TODO: improve performance. It is horrible
@@ -50,10 +51,10 @@ public class StudentPopGenerator {
             student.studentName.setFirstName(f_name);
             lastName = student.studentName.capitalizeName(lastName);
             student.studentName.setLastName(lastName);
-            if(setRandom(0,170) == 100) {
+            if(setRandom(0,SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
                 student.studentName.setSuffix(NameLoader.suffixNameGenerator(student.studentStatistics.getGender()));
             }
-            if(setRandom(0,100) < 3) {
+            if(setRandom(0,HYPHEN_GENERATION_SAMPLE_SIZE) < HYPHEN_GENERATION_RATE) {
                 String hyphenName = NameLoader.selectWeightedRandom()[0];
                 hyphenName = student.studentName.capitalizeName(hyphenName);
                 student.studentName.setLastName(lastName + "-" + hyphenName);
@@ -80,10 +81,10 @@ public class StudentPopGenerator {
             student.studentStatistics.setInitCuriosity();
             student.studentStatistics.setInitResponsibility();
             student.studentStatistics.setInitOpenMind();
-            student.studentStatistics.setInitHairLength(setRandom(0,10000));
+            student.studentStatistics.setInitHairLength(setRandom(0, STUDENT_HAIR_LENGTH_SAMPLE_SIZE));
             student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
             student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
-            student.studentStatistics.setInitIncomeLevel(setRandom(0,100));
+            student.studentStatistics.setInitIncomeLevel(setRandom(0, STUDENT_INCOME_LEVEL_SAMPLE_SIZE));
             if(suffix != null) {
                 view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {

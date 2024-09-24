@@ -63,7 +63,7 @@ public class Director {
         view.appendOutput("Building utility rooms...");
         standardSchool.setUtilityRooms(setRandom(UTILITY_AMOUNT_LOWER_LIMIT, UTILITY_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building conference rooms...");
-        standardSchool.setConferenceRooms(setRandom(CONFERENCE_CONNECTION_LOWER_LIMIT, CONFERENCE_CONNECTION_UPPER_LIMIT), view);
+        standardSchool.setConferenceRooms(setRandom(CONFERENCE_AMOUNT_LOWER_LIMIT, CONFERENCE_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building parking lots...");
         standardSchool.setParkingLots(setRandom(PARKING_AMOUNT_LOWER_LIMIT, PARKING_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building bathrooms...");
