@@ -3,6 +3,7 @@ package constants;
 public final class SchoolConstants {
     // OVERALL MODIFIERS
     public static final int TOTAL_SCHOOL_PERIODS = 8;
+
     // STUDENT CAP MODIFIERS
     public static final double TOTAL_STUDENT_CAP_MODIFIER = 0.55;
     // STAFF REQUIREMENT MODIFIERS
@@ -233,7 +234,47 @@ public final class SchoolConstants {
     public static final int PARKING_STUDENT_CAPACITY_UPPER_LIMIT = 150;
     public static final int PARKING_NUMBER_LOWER_LIMIT = 100;
     public static final int PARKING_NUMBER_UPPER_LIMIT = 999;
+    // AMOUNT OF EACH ROOM
+    public static final int ART_AMOUNT_LOWER_LIMIT = 1;
+    public static final int ART_AMOUNT_UPPER_LIMIT = 4;
+    public static final int ATHLETIC_AMOUNT_LOWER_LIMIT = 1;
+    public static final int ATHLETIC_AMOUNT_UPPER_LIMIT = 3;
+    public static final int AUDITORIUM_AMOUNT_LOWER_LIMIT = 1;
+    public static final int AUDITORIUM_AMOUNT_UPPER_LIMIT = 2;
+    public static final int BREAKROOM_AMOUNT_LOWER_LIMIT = 1;
+    public static final int BREAKROOM_AMOUNT_UPPER_LIMIT = 4;
+    public static final int CLASSROOM_AMOUNT_LOWER_LIMIT = 29;
+    public static final int CLASSROOM_AMOUNT_UPPER_LIMIT = 78;
+    public static final int CONFERENCE_AMOUNT_LOWER_LIMIT = 1;
+    public static final int CONFERENCE_AMOUNT_UPPER_LIMIT = 4;
+    public static final int COMPUTER_LAB_AMOUNT_LOWER_LIMIT = 1;
+    public static final int COMPUTER_LAB_AMOUNT_UPPER_LIMIT = 3;
+    public static final int COURTYARD_AMOUNT_LOWER_LIMIT = 2;
+    public static final int COURTYARD_AMOUNT_UPPER_LIMIT = 5;
+    public static final int DRAMA_AMOUNT_LOWER_LIMIT = 1;
+    public static final int DRAMA_AMOUNT_UPPER_LIMIT = 2;
+    public static final int GYM_AMOUNT_LOWER_LIMIT = 1;
+    public static final int GYM_AMOUNT_UPPER_LIMIT = 3;
+    public static final int HALLWAY_AMOUNT_LOWER_LIMIT = 9;
+    public static final int HALLWAY_AMOUNT_UPPER_LIMIT = 12;
+    public static final int LIBRARY_AMOUNT_LOWER_LIMIT = 1;
+    public static final int LIBRARY_AMOUNT_UPPER_LIMIT = 2;
+    public static final int LUNCHROOM_AMOUNT_LOWER_LIMIT = 1;
+    public static final int LUNCHROOM_AMOUNT_UPPER_LIMIT = 2;
+    public static final int MUSIC_AMOUNT_LOWER_LIMIT = 1;
+    public static final int MUSIC_AMOUNT_UPPER_LIMIT = 2;
+    public static final int OFFICE_AMOUNT_LOWER_LIMIT = 5;
+    public static final int SCIENCE_LAB_AMOUNT_LOWER_LIMIT = 2;
+    public static final int SCIENCE_LAB_AMOUNT_UPPER_LIMIT = 6;
+    public static final int UTILITY_AMOUNT_LOWER_LIMIT = 5;
+    public static final int UTILITY_AMOUNT_UPPER_LIMIT = 10;
+    public static final int VOCATIONAL_AMOUNT_LOWER_LIMIT = 4;
+    public static final int VOCATIONAL_AMOUNT_UPPER_LIMIT = 14;
+    public static final int PARKING_AMOUNT_LOWER_LIMIT = 2;
+    public static final int PARKING_AMOUNT_UPPER_LIMIT = 6;
+    public static final int BATHROOM_AMOUNT = 15;
 
+    public static final int LOCKER_ROOM_MODIFIER = 2;
     private SchoolConstants() {
     }
 

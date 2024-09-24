@@ -11,6 +11,7 @@ package utility;
 
 import entity.StandardSchool;
 import view.GameView;
+import static constants.SchoolConstants.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -19,7 +20,6 @@ import static utility.Randomizer.setRandom;
 public class Director {
     //TODO: Change this to be dependent on staff/student caps
     //TODO: Create staff bathrooms
-    final int BATHNUM = 15;
 
     public Director(StandardSchool standardSchool, GameView view) {
         setStandardSchool(standardSchool, view);
@@ -27,47 +27,47 @@ public class Director {
     //TODO: Seed these values
     public void setStandardSchool(StandardSchool standardSchool, GameView view) {
         view.appendOutput("Building art studios...");
-        standardSchool.setArtStudios(setRandom(1, 4), view);
+        standardSchool.setArtStudios(setRandom(ART_AMOUNT_LOWER_LIMIT, ART_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building athletic fields...");
-        standardSchool.setAthleticFields(setRandom(1, 3), view);
+        standardSchool.setAthleticFields(setRandom(ATHLETIC_AMOUNT_LOWER_LIMIT, ATHLETIC_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building auditoriums...");
-        standardSchool.setAuditoriums(setRandom(1, 2), view);
+        standardSchool.setAuditoriums(setRandom(AUDITORIUM_AMOUNT_LOWER_LIMIT, AUDITORIUM_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building breakrooms...");
-        standardSchool.setBreakrooms(setRandom(1, 4), view);
+        standardSchool.setBreakrooms(setRandom(BREAKROOM_AMOUNT_LOWER_LIMIT, BREAKROOM_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building classrooms...");
-        standardSchool.setClassrooms(setRandom(29, 78), view);
+        standardSchool.setClassrooms(setRandom(CLASSROOM_AMOUNT_LOWER_LIMIT, CLASSROOM_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building vocational rooms...");
-        standardSchool.setVocationalRooms(setRandom(4,14), view);
+        standardSchool.setVocationalRooms(setRandom(VOCATIONAL_AMOUNT_LOWER_LIMIT, VOCATIONAL_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building computer labs...");
-        standardSchool.setComputerLabs(setRandom(1, 3), view);
+        standardSchool.setComputerLabs(setRandom(COMPUTER_LAB_AMOUNT_LOWER_LIMIT, COMPUTER_LAB_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building courtyards...");
-        standardSchool.setCourtyards(setRandom(2, 5), view);
+        standardSchool.setCourtyards(setRandom(COURTYARD_AMOUNT_LOWER_LIMIT, COURTYARD_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building drama rooms...");
-        standardSchool.setDramaRooms(setRandom(1, 2), view);
+        standardSchool.setDramaRooms(setRandom(DRAMA_AMOUNT_LOWER_LIMIT, DRAMA_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building gyms...");
-        standardSchool.setGyms(setRandom(1, 3), view);
+        standardSchool.setGyms(setRandom(GYM_AMOUNT_LOWER_LIMIT, GYM_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building hallways...");
-        standardSchool.setHallways(setRandom(9, 12), view);
+        standardSchool.setHallways(setRandom(HALLWAY_AMOUNT_LOWER_LIMIT, HALLWAY_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building libraries...");
-        standardSchool.setLibraries(setRandom(1, 2), view);
+        standardSchool.setLibraries(setRandom(LIBRARY_AMOUNT_LOWER_LIMIT, LIBRARY_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building locker rooms...");
-        standardSchool.setLockerRooms((standardSchool.getGyms().length + standardSchool.getAthleticFields().length) * 2, view);
+        standardSchool.setLockerRooms((standardSchool.getGyms().length + standardSchool.getAthleticFields().length) * LOCKER_ROOM_MODIFIER, view);
         view.appendOutput("Building lunchrooms...");
-        standardSchool.setLunchrooms(setRandom(1, 2), view);
+        standardSchool.setLunchrooms(setRandom(LUNCHROOM_AMOUNT_LOWER_LIMIT, LUNCHROOM_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building music rooms...");
-        standardSchool.setMusicRooms(setRandom(1, 2), view);
+        standardSchool.setMusicRooms(setRandom(MUSIC_AMOUNT_LOWER_LIMIT, MUSIC_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building offices...");
-        standardSchool.setOffices(setRandom(5, standardSchool.getClassrooms().length), view);
+        standardSchool.setOffices(setRandom(OFFICE_AMOUNT_LOWER_LIMIT, standardSchool.getClassrooms().length), view);
         view.appendOutput("Building science labs...");
-        standardSchool.setScienceLabs(setRandom(2, 6), view);
+        standardSchool.setScienceLabs(setRandom(SCIENCE_LAB_AMOUNT_LOWER_LIMIT, SCIENCE_LAB_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building utility rooms...");
-        standardSchool.setUtilityRooms(setRandom(5, 10), view);
+        standardSchool.setUtilityRooms(setRandom(UTILITY_AMOUNT_LOWER_LIMIT, UTILITY_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building conference rooms...");
-        standardSchool.setConferenceRooms(setRandom(1,4), view);
+        standardSchool.setConferenceRooms(setRandom(CONFERENCE_CONNECTION_LOWER_LIMIT, CONFERENCE_CONNECTION_UPPER_LIMIT), view);
         view.appendOutput("Building parking lots...");
-        standardSchool.setParkingLots(setRandom(2,6), view);
+        standardSchool.setParkingLots(setRandom(PARKING_AMOUNT_LOWER_LIMIT, PARKING_AMOUNT_UPPER_LIMIT), view);
         view.appendOutput("Building bathrooms...");
-        standardSchool.setBathrooms(BATHNUM, view);
+        standardSchool.setBathrooms(BATHROOM_AMOUNT, view);
         view.appendOutput("Setting school name...");
         standardSchool.setSchoolName();
         view.appendOutput("Setting school mascot...");
