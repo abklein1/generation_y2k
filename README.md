@@ -92,7 +92,7 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 - More status effects for people
 - Social links as weighted graphs
 - Items
-- Moods
+- Moods / Allostatic load
 - Nicknames
 - Rival schools
 - Household and personal traits
@@ -157,6 +157,7 @@ An example of a staff generated and displayed in the inspector:
 - Living arrangements of children in 2004 : https://www2.census.gov/library/publications/2008/demo/p70-114.pdf
 - Rate of multiple births per ethnicity : https://www.statista.com/statistics/244913/twin-birth-rates-in-the-united-states-by-ethnicity/#:~:text=Fraternal%20twins%2C%20although%20born%20at,siblings%20born%20at%20different%20times.&text=The%20birth%20rate%20for%20twins,1%2C000%20live%20births%20in%202022.
 - Trends in intermarriage : https://www.pewresearch.org/social-trends/2017/05/18/1-trends-and-patterns-in-intermarriage/
+- Overview of Allostatic load : https://karger.com/pps/article/90/1/11/294736/Allostatic-Load-and-Its-Impact-on-Health-A
 
 ## Gameplay Mechanics
 
@@ -226,7 +227,7 @@ activities, but they cannot be pushed beyond their initial cap.
 - Sometimes math classes are not assigned to freshmen
 - Some last name capitalization is wrong
 - Overcapacity rate in classrooms is relatively high/ some blocks still under 5 students assigned
-- Only generated student displays related siblings. Siblings do not show relation to student
+- Auditorium seating display does not work sometimes
 
 ## Release 0.0.11
 - Students now have vocational class assignments based on traits, which now means each student has a full schedule

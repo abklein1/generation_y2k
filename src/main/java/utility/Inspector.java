@@ -1,8 +1,8 @@
 package utility;
 
-import entity.*;
 import entity.Rooms.Classroom;
 import entity.Rooms.Room;
+import entity.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,7 +15,6 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class Inspector {
@@ -77,32 +76,32 @@ public class Inspector {
         } else {
             sb.append(firstName).append(" is not asleep.\n");
         }
-        sb.append("Their family has the following income: " ).append(income).append("\n");
-        if(!siblingsInSchool.isEmpty()) {
+        sb.append("Their family has the following income: ").append(income).append("\n");
+        if (!siblingsInSchool.isEmpty()) {
             sb.append("They have the following siblings in school: ").append("\n");
             for (Student sibling : siblingsInSchool) {
                 sb.append(sibling.studentName.getFirstName()).append(" ").append(sibling.studentName.getLastName()).append("\n");
             }
         }
-        if(!siblingsNotInSchool.isEmpty()) {
+        if (!siblingsNotInSchool.isEmpty()) {
             sb.append("They have the following siblings not in school: ").append("\n");
             for (String sibling : siblingsNotInSchool) {
                 sb.append(sibling).append("\n");
             }
         }
-        for(StudentBlock block : schedule) {
+        for (StudentBlock block : schedule) {
             int blockNum = block.getBlockNumber();
             switch (blockNum) {
-                case 1,2 -> {
+                case 1, 2 -> {
                     blockNum = 1;
                 }
-                case 3,4 -> {
+                case 3, 4 -> {
                     blockNum = 2;
                 }
-                case 5,6 -> {
+                case 5, 6 -> {
                     blockNum = 3;
                 }
-                case 7,8 -> {
+                case 7, 8 -> {
                     blockNum = 4;
                 }
             }
@@ -241,12 +240,15 @@ public class Inspector {
         int studentCap = room.getStudentCapacity();
         List<TeacherBlock> teacherBlocks = null;
         HashMap<Integer, Student[][]> seatingArrangements = room.getPeriodSeatingArrangement();
-        if (room.getAssignedStaff().isEmpty()) {
+        JPanel panel = new JPanel();
+
+        if (staff.isEmpty()) {
             roomDetails.append("There are no staff assigned to this room.\n");
         } else {
-            TeacherSchedule teacherSchedule = room.getAssignedStaff().get(0).teacherStatistics.getTeacherSchedule();
+            TeacherSchedule teacherSchedule = staff.get(0).teacherStatistics.getTeacherSchedule();
             teacherBlocks = teacherSchedule.getTeacherSchedule();
         }
+
         roomDetails.append("Welcome to ").append(roomName).append("\n");
         roomDetails.append("The room contains the following staff:\n");
         for (Staff value : staff) {
@@ -268,12 +270,12 @@ public class Inspector {
         blockButtonPanel.setLayout(new GridLayout(1, 8));
         JButton[] blockButtons = new JButton[8];
 
-        // Create a table model to update the seating arrangement
-        String[] columnNames = new String[seatingArrangements.get(1)[0].length];
+        Student[][] firstArrangement = seatingArrangements.values().iterator().next();
+        String[] columnNames = new String[firstArrangement[0].length];
         for (int i = 0; i < columnNames.length; i++) {
             columnNames[i] = "Col " + (i + 1);
         }
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, seatingArrangements.get(1).length);
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, firstArrangement.length);
         JTable studentTable = new JTable(tableModel);
         studentTable.setFillsViewportHeight(true);
 
@@ -305,8 +307,15 @@ public class Inspector {
                         }
                     }
                 }
-                tableModel.fireTableDataChanged();
+            } else {
+                // If no seating arrangement for this block, set all cells to "Empty"
+                for (int row = 0; row < tableModel.getRowCount(); row++) {
+                    for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                        tableModel.setValueAt("Empty", row, col);
+                    }
+                }
             }
+            tableModel.fireTableDataChanged();
         };
 
         // Create and add buttons for each block
@@ -325,7 +334,7 @@ public class Inspector {
 
         JTextArea studentListArea = new JTextArea();
         studentListArea.setEditable(false);
-        if (teacherBlocks != null) {
+        if (teacherBlocks != null && !teacherBlocks.isEmpty()) {
             for (TeacherBlock block : teacherBlocks) {
                 studentListArea.append("Block: ");
                 studentListArea.append(String.valueOf(block.getBlockNumber()));
@@ -347,7 +356,7 @@ public class Inspector {
                 }
             }
         } else {
-            roomDetails.append("There are no teacher blocks for this room\n");
+            studentListArea.append("No teacher blocks or students assigned to this room.\n");
         }
         JScrollPane studentListScrollPane = new JScrollPane(studentListArea);
         studentListScrollPane.setPreferredSize(new Dimension(200, 200));
@@ -355,11 +364,11 @@ public class Inspector {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, studentListScrollPane, studentScrollPane);
         splitPane.setResizeWeight(0.3);
 
-        JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.add(roomInfoArea, BorderLayout.NORTH);
         panel.add(blockButtonPanel, BorderLayout.SOUTH); // Buttons at the bottom
         panel.add(splitPane, BorderLayout.CENTER);
+
 
         // Create a resizable JDialog
         JDialog dialog = new JDialog();

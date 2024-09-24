@@ -73,4 +73,6 @@ public interface Room {
 
     HashMap<Integer,Student[][]> getPeriodSeatingArrangement();
 
+    void initializeSeatingArrangements(int totalPeriods);
+
 }

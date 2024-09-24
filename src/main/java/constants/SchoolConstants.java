@@ -1,6 +1,8 @@
 package constants;
 
 public final class SchoolConstants {
+    // OVERALL MODIFIERS
+    public static final int TOTAL_SCHOOL_PERIODS = 8;
     // STUDENT CAP MODIFIERS
     public static final double TOTAL_STUDENT_CAP_MODIFIER = 0.55;
     // STAFF REQUIREMENT MODIFIERS

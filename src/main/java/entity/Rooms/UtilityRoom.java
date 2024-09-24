@@ -228,4 +228,11 @@ public class UtilityRoom implements Room, Serializable {
         IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
     }
 
+    @Override
+    public void initializeSeatingArrangements(int totalPeriods) {
+        for(int period = 0; period < totalPeriods; period++) {
+            setPeriodSeatingArrangement(period,getSeatArrangement());
+        }
+    }
+
 }

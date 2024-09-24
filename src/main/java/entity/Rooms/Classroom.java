@@ -304,4 +304,11 @@ public class Classroom implements Room, Serializable {
         return seatingArrangements;
     }
 
+    @Override
+    public void initializeSeatingArrangements(int totalPeriods) {
+        for(int period = 0; period < totalPeriods; period++) {
+            setPeriodSeatingArrangement(period,getSeatArrangement());
+        }
+    }
+
 }

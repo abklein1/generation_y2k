@@ -264,6 +264,7 @@ public class StandardSchool implements SchoolPlan {
                 bathrooms[i].setInitialStaff(BATHROOM_INITIAL_STAFF);
                 bathrooms[i].setStallNumber(setRandom(STALL_NUMBER_LOWER_LIMIT, STALL_NUMBER_UPPER_LIMIT));
                 bathrooms[i].setSeatArrangement();
+                bathrooms[i].setRoomNumber("WC" + i + setRandom(BATHROOM_NUMBER_LOWER_LIMIT, BATHROOM_NUMBER_UPPER_LIMIT));
             } else {
                 bathrooms[i].setRoomName("Male_Bathroom" + i);
                 view.appendOutput("      Generating " + bathrooms[i].getRoomName());
@@ -277,6 +278,7 @@ public class StandardSchool implements SchoolPlan {
                 bathrooms[i].setSeatArrangement();
                 bathrooms[i].setRoomNumber("WC" + i + setRandom(BATHROOM_NUMBER_LOWER_LIMIT, BATHROOM_NUMBER_UPPER_LIMIT));
             }
+            bathrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
         }
     }
 
@@ -301,6 +303,7 @@ public class StandardSchool implements SchoolPlan {
             breakrooms[i].setStudentCap(BREAKROOM_STUDENT_CAPACITY);
             breakrooms[i].setSeatArrangement();
             breakrooms[i].setRoomNumber("B" + i + setRandom(BREAKROOM_NUMBER_LOWER_LIMIT, BREAKROOM_NUMBER_UPPER_LIMIT));
+            breakrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
         }
     }
 
@@ -325,6 +328,7 @@ public class StandardSchool implements SchoolPlan {
             classrooms[i].setInitialStaff(CLASSROOM_INITIAL_STAFF);
             classrooms[i].setStudentCap(setRandom(CLASSROOM_STUDENT_CAPACITY_LOWER_LIMIT, CLASSROOM_STUDENT_CAPACITY_UPPER_LIMIT));
             classrooms[i].setSeatArrangement();
+            classrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(CLASSROOM_NUMBER_LOWER_LIMIT, CLASSROOM_NUMBER_UPPER_LIMIT));
         }
     }
@@ -348,6 +352,7 @@ public class StandardSchool implements SchoolPlan {
             computerLabs[i].setInitialStaff(setRandom(COMPUTER_INITIAL_STAFF_LOWER_LIMIT, COMPUTER_INITIAL_STAFF_UPPER_LIMIT));
             computerLabs[i].setStudentCap(setRandom(COMPUTER_STUDENT_CAPACITY_LOWER_LIMIT, COMPUTER_STUDENT_CAPACITY_UPPER_LIMIT));
             computerLabs[i].setSeatArrangement();
+            computerLabs[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             computerLabs[i].setRoomNumber("COM" + i);
         }
     }
@@ -370,6 +375,7 @@ public class StandardSchool implements SchoolPlan {
             courtyards[i].setInitialStaff(COURTYARD_INITIAL_STAFF);
             courtyards[i].setStudentCap(setRandom(COURTYARD_STUDENT_CAPACITY_LOWER_LIMIT, COURTYARD_STUDENT_CAPACITY_UPPER_LIMIT));
             courtyards[i].setSeatArrangement();
+            courtyards[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             courtyards[i].setRoomNumber("C" + i);
         }
     }
@@ -393,6 +399,7 @@ public class StandardSchool implements SchoolPlan {
             gyms[i].setInitialStaff(GYM_INITIAL_STAFF);
             gyms[i].setStudentCap(setRandom(GYM_STUDENT_CAPACITY_LOWER_LIMIT, GYM_STUDENT_CAPACITY_UPPER_LIMIT));
             gyms[i].setSeatArrangement();
+            gyms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             gyms[i].setRoomNumber("G" + i + setRandom(GYM_ROOM_NUMBER_LOWER_LIMIT, GYM_ROOM_NUMBER_UPPER_LIMIT));
         }
     }
@@ -420,6 +427,7 @@ public class StandardSchool implements SchoolPlan {
             hallways[i].setInitialStaff(HALLWAY_INITIAL_STAFF);
             hallways[i].setStudentCap(setRandom(HALLWAY_STUDENT_CAPACITY_LOWER_LIMIT, HALLWAY_STUDENT_CAPACITY_UPPER_LIMIT));
             hallways[i].setSeatArrangement();
+            hallways[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             hallways[i].setRoomNumber("H" + i);
         }
     }
@@ -443,6 +451,7 @@ public class StandardSchool implements SchoolPlan {
             libraries[i].setInitialStaff(LIBRARY_INITIAL_STAFF);
             libraries[i].setStudentCap(setRandom(LIBRARY_STUDENT_CAPACITY_LOWER_LIMIT, LIBRARY_STUDENT_CAPACITY_UPPER_LIMIT));
             libraries[i].setSeatArrangement();
+            libraries[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             libraries[i].setRoomNumber("L" + i + setRandom(LIBRARY_NUMBER_LOWER_LIMIT, LIBRARY_NUMBER_UPPER_LIMIT));
         }
     }
@@ -470,6 +479,7 @@ public class StandardSchool implements SchoolPlan {
             lunchrooms[i].setInitialStaff(setRandom(LUNCH_INITIAL_STAFF_LOWER_LIMIT, LUNCH_INITIAL_STAFF_UPPER_LIMIT));
             lunchrooms[i].setStudentCap(setRandom(LUNCH_STUDENT_CAPACITY_LOWER_LIMIT, LUNCH_STUDENT_CAPACITY_UPPER_LIMIT));
             lunchrooms[i].setSeatArrangement();
+            lunchrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             lunchrooms[i].setRoomNumber("L" + i + setRandom(LUNCH_NUMBER_LOWER_LIMIT, LUNCH_NUMBER_UPPER_LIMIT));
         }
     }
@@ -570,6 +580,7 @@ public class StandardSchool implements SchoolPlan {
                     offices[i].setRoomNumber("O" + "-1" + i);
                 }
             }
+            offices[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             offices[i].setStudentRestriction(true);
 
         }
@@ -598,6 +609,7 @@ public class StandardSchool implements SchoolPlan {
             artStudios[i].setInitialStaff(setRandom(ART_INITIAL_STAFF_LOWER_LIMIT, ART_INITIAL_STAFF_UPPER_LIMIT));
             artStudios[i].setStudentCap(setRandom(ART_STUDENT_CAPACITY_LOWER_LIMIT, ART_STUDENT_CAPACITY_UPPER_LIMIT));
             artStudios[i].setSeatArrangement();
+            artStudios[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             artStudios[i].setRoomNumber("AT" + i + setRandom(ART_NUMBER_LOWER_LIMIT, ART_NUMBER_UPPER_LIMIT));
         }
     }
@@ -620,6 +632,7 @@ public class StandardSchool implements SchoolPlan {
             athleticFields[i].setInitialStaff(setRandom(ATHLETIC_INITIAL_STAFF_LOWER_LIMIT, ATHLETIC_INITIAL_STAFF_UPPER_LIMIT));
             athleticFields[i].setStudentCap(setRandom(ATHLETIC_STUDENT_CAPACITY_LOWER_LIMIT, ATHLETIC_STUDENT_CAPACITY_UPPER_LIMIT));
             athleticFields[i].setSeatArrangement();
+            athleticFields[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             athleticFields[i].setRoomNumber("F" + i + setRandom(ATHLETIC_NUMBER_LOWER_LIMIT, ATHLETIC_NUMBER_UPPER_LIMIT));
         }
     }
@@ -642,6 +655,7 @@ public class StandardSchool implements SchoolPlan {
             auditoriums[i].setInitialStaff(AUDITORIUM_INITIAL_STAFF);
             auditoriums[i].setStudentCap(setRandom(AUDITORIUM_STUDENT_CAPACITY_LOWER_LIMIT, AUDITORIUM_STUDENT_CAPACITY_UPPER_LIMIT));
             auditoriums[i].setSeatArrangement();
+            auditoriums[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             auditoriums[i].setRoomNumber("AD" + i + setRandom(AUDITORIUM_NUMBER_LOWER_LIMIT, AUDITORIUM_NUMBER_UPPER_LIMIT));
         }
     }
@@ -665,6 +679,7 @@ public class StandardSchool implements SchoolPlan {
             dramaRooms[i].setInitialStaff(DRAMA_INITIAL_STAFF);
             dramaRooms[i].setStudentCap(setRandom(DRAMA_STUDENT_CAPACITY_LOWER_LIMIT, DRAMA_STUDENT_CAPACITY_UPPER_LIMIT));
             dramaRooms[i].setSeatArrangement();
+            dramaRooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             dramaRooms[i].setRoomNumber("D" + i + setRandom(DRAMA_NUMBER_LOWER_LIMIT, DRAMA_NUMBER_UPPER_LIMIT));
         }
     }
@@ -688,6 +703,7 @@ public class StandardSchool implements SchoolPlan {
             lockerRooms[i].setInitialStaff(LOCKER_INITIAL_STAFF);
             lockerRooms[i].setStudentCap(setRandom(LOCKER_STUDENT_CAPACITY_LOWER_LIMIT, LOCKER_STUDENT_CAPACITY_UPPER_LIMIT));
             lockerRooms[i].setSeatArrangement();
+            lockerRooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             lockerRooms[i].setRoomNumber("LK" + i + setRandom(LOCKER_NUMBER_LOWER_LIMIT, LOCKER_NUMBER_UPPER_LIMIT));
         }
     }
@@ -711,6 +727,7 @@ public class StandardSchool implements SchoolPlan {
             musicRooms[i].setInitialStaff(MUSIC_INITIAL_STAFF);
             musicRooms[i].setStudentCap(setRandom(MUSIC_STUDENT_CAPACITY_LOWER_LIMIT, MUSIC_STUDENT_CAPACITY_UPPER_LIMIT));
             musicRooms[i].setSeatArrangement();
+            musicRooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             musicRooms[i].setRoomNumber("MR" + i + setRandom(MUSIC_NUMBER_LOWER_LIMIT, MUSIC_NUMBER_UPPER_LIMIT));
         }
     }
@@ -734,6 +751,7 @@ public class StandardSchool implements SchoolPlan {
             scienceLabs[i].setInitialStaff(SCIENCE_LAB_INITIAL_STAFF);
             scienceLabs[i].setStudentCap(setRandom(SCIENCE_LAB_STUDENT_CAPACITY_LOWER_LIMIT, SCIENCE_LAB_STUDENT_CAPACITY_UPPER_LIMIT));
             scienceLabs[i].setSeatArrangement();
+            scienceLabs[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             scienceLabs[i].setRoomNumber("Lab" + i + setRandom(SCIENCE_LAB_NUMBER_LOWER_LIMIT, SCIENCE_LAB_NUMBER_UPPER_LIMIT));
         }
     }
@@ -824,6 +842,7 @@ public class StandardSchool implements SchoolPlan {
             vocationalRooms[i].setInitialStaff(VOCATIONAL_INITIAL_STAFF);
             vocationalRooms[i].setStudentCap(setRandom(VOCATIONAL_STUDENT_CAPACITY_LOWER_LIMIT, VOCATIONAL_STUDENT_CAPACITY_UPPER_LIMIT));
             vocationalRooms[i].setSeatArrangement();
+            vocationalRooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             vocationalRooms[i].setRoomNumber("Vocational" + i + setRandom(VOCATIONAL_NUMBER_LOWER_LIMIT, VOCATIONAL_NUMBER_UPPER_LIMIT));
         }
     }
@@ -846,6 +865,7 @@ public class StandardSchool implements SchoolPlan {
             parkingLots[i].setInitialStaff(PARKING_INITIAL_STAFF);
             parkingLots[i].setStudentCap(setRandom(PARKING_STUDENT_CAPACITY_LOWER_LIMIT, PARKING_STUDENT_CAPACITY_UPPER_LIMIT));
             parkingLots[i].setSeatArrangement();
+            parkingLots[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             parkingLots[i].setRoomNumber("ParkingLot" + i + setRandom(PARKING_NUMBER_LOWER_LIMIT, PARKING_NUMBER_UPPER_LIMIT));
         }
     }
