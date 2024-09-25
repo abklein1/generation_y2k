@@ -68,5 +68,6 @@ public final class SimConstants {
     public static final int TEACHER_POP_LUCK_MEAN = 0;
     public static final int TEACHER_POP_LUCK_STANDARD_DEVIATION = 10;
 
-    private SimConstants(){}
+    private SimConstants() {
+    }
 }

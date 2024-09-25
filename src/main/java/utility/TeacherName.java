@@ -4,10 +4,11 @@ public class TeacherName implements PName {
 
     private String firstName;
     private String lastName;
-
+    private String suffix;
     public TeacherName(){
         this.firstName = null;
         this.lastName = null;
+        this.suffix = null;
     }
 
     @Override
@@ -29,6 +30,9 @@ public class TeacherName implements PName {
     public String getLastName() {
         return this.lastName;
     }
+
+    public void setSuffix(String suffix) {this.suffix = suffix;}
+    public String getSuffix() {return this.suffix;}
 
     public String capitalizeName(String name) {
         if (name == null || name.isEmpty()) {
