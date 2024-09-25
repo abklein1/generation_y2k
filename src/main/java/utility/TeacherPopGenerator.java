@@ -6,6 +6,7 @@ import view.GameView;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import static constants.SimConstants.*;
 
 import static utility.Randomizer.setRandom;
 
@@ -17,16 +18,6 @@ public class TeacherPopGenerator {
         String f_name;
         String l_name;
         Random distribution = new Random();
-        int int_stdDev = 15;
-        int int_mean = 100;
-        int chr_stdDev = 15;
-        int chr_mean = 50;
-        int agl_stdDev = 15;
-        int agl_mean = 50;
-        int det_stdDev = 15;
-        int det_mean = 50;
-        int lck_stdDev = 10;
-        int lck_mean = 0;
 
         //Store staff objects in another hashmap
         for (int j = 0; j < staffCap; j++) {
@@ -45,11 +36,12 @@ public class TeacherPopGenerator {
             f_name = NameLoader.nameGenerator(String.valueOf(staff.teacherStatistics.getBirthday().getYear()), staff.teacherStatistics.getGender());
             l_name = lNameReference.get(setRandom(0, lNameReference.size()));
             staff.teacherStatistics.setInitHeight();
-            staff.teacherStatistics.setIntelligence((int) (distribution.nextGaussian()*int_stdDev+int_mean));
-            staff.teacherStatistics.setCharisma((int) (distribution.nextGaussian()*chr_stdDev+chr_mean));
-            staff.teacherStatistics.setAgility((int) (distribution.nextGaussian()*agl_stdDev+agl_mean));
-            staff.teacherStatistics.setDetermination((int) (distribution.nextGaussian()*det_stdDev+det_mean));
-            staff.teacherStatistics.setLuck((int) (distribution.nextGaussian()*lck_stdDev+lck_mean));
+            staff.teacherStatistics.setIntelligence((int) (distribution.nextGaussian()*TEACHER_POP_INTELLIGENCE_STANDARD_DEVIATION+TEACHER_POP_INTELLIGENCE_MEAN));
+            staff.teacherStatistics.setCharisma((int) (distribution.nextGaussian()*TEACHER_POP_CHARISMA_STANDARD_DEVIATION+TEACHER_POP_CHARISMA_MEAN));
+            staff.teacherStatistics.setAgility((int) (distribution.nextGaussian()*TEACHER_POP_AGILITY_STANDARD_DEVIATION+TEACHER_POP_AGILITY_MEAN));
+            staff.teacherStatistics.setDetermination((int) (distribution.nextGaussian()*TEACHER_POP_DETERMINATION_STANDARD_DEVIATION+TEACHER_POP_DETERMINATION_MEAN));
+            staff.teacherStatistics.setPerception((int) (distribution.nextGaussian()*TEACHER_POP_PERCEPTION_STANDARD_DEVIATION+TEACHER_POP_PERCEPTION_MEAN));
+            staff.teacherStatistics.setLuck((int) (distribution.nextGaussian()*TEACHER_POP_LUCK_STANDARD_DEVIATION+TEACHER_POP_LUCK_MEAN));
             staff.teacherStatistics.setInitStrength();
             staff.teacherStatistics.setInitCreativity();
             staff.teacherStatistics.setInitEmpathy();
@@ -61,16 +53,19 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setInitOpenMind();
             staff.teacherName.setFirstName(f_name);
             l_name = staff.teacherName.capitalizeName(l_name);
-            if(setRandom(0,100) < 4) {
+            staff.teacherName.setLastName(l_name);
+            if (setRandom(0, SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
+                staff.teacherName.setSuffix(NameLoader.suffixNameGenerator(staff.teacherStatistics.getGender()));
+            }
+            if(setRandom(0, TEACHER_HYPHEN_GENERATION_SAMPLE_SIZE) < TEACHER_HYPHEN_GENERATION_RATE) {
                 String hyphenName = lNameReference.get(setRandom(0,lNameReference.size()));
                 hyphenName= staff.teacherName.capitalizeName(hyphenName);
                 staff.teacherName.setLastName(l_name + " " + hyphenName);
             }
-            staff.teacherName.setLastName(l_name);
-            staff.teacherStatistics.setInitHairLength(setRandom(0,10000));
-            staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, 975)));
-            staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, 102), staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
-            staff.teacherStatistics.setYearsOfExperience(setRandom(0,(staff.teacherStatistics.getAge() - 23)));
+            staff.teacherStatistics.setInitHairLength(setRandom(0,TEACHER_HAIR_LENGTH_SAMPLE_SIZE));
+            staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, TEACHER_HAIR_TYPE_SAMPLE_SIZE)));
+            staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, TEACHER_HAIR_SELECTION_SAMPLE_SIZE), staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
+            staff.teacherStatistics.setYearsOfExperience(setRandom(0,(staff.teacherStatistics.getAge() - TEACHER_YEARS_OF_EXPERIENCE_MODIFIER)));
             view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName());
         }
 

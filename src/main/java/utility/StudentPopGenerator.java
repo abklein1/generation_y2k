@@ -42,7 +42,7 @@ public class StudentPopGenerator {
             if(setRandom(0,SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
                 student.studentName.setSuffix(NameLoader.suffixNameGenerator(student.studentStatistics.getGender()));
             }
-            if(setRandom(0,HYPHEN_GENERATION_SAMPLE_SIZE) < HYPHEN_GENERATION_RATE) {
+            if(setRandom(0,STUDENT_HYPHEN_GENERATION_SAMPLE_SIZE) < STUDENT_HYPHEN_GENERATION_RATE) {
                 String hyphenName = NameLoader.selectWeightedRandom()[0];
                 hyphenName = student.studentName.capitalizeName(hyphenName);
                 student.studentName.setLastName(lastName + "-" + hyphenName);
