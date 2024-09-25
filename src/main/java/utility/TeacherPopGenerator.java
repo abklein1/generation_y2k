@@ -60,13 +60,18 @@ public class TeacherPopGenerator {
             if(setRandom(0, TEACHER_HYPHEN_GENERATION_SAMPLE_SIZE) < TEACHER_HYPHEN_GENERATION_RATE) {
                 String hyphenName = lNameReference.get(setRandom(0,lNameReference.size()));
                 hyphenName= staff.teacherName.capitalizeName(hyphenName);
-                staff.teacherName.setLastName(l_name + " " + hyphenName);
+                staff.teacherName.setLastName(l_name + "-" + hyphenName);
             }
+            String suffix = staff.teacherName.getSuffix();
             staff.teacherStatistics.setInitHairLength(setRandom(0,TEACHER_HAIR_LENGTH_SAMPLE_SIZE));
             staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, TEACHER_HAIR_TYPE_SAMPLE_SIZE)));
             staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, TEACHER_HAIR_SELECTION_SAMPLE_SIZE), staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
             staff.teacherStatistics.setYearsOfExperience(setRandom(0,(staff.teacherStatistics.getAge() - TEACHER_YEARS_OF_EXPERIENCE_MODIFIER)));
-            view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName());
+            if(suffix != null) {
+                view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName() + " " + suffix);
+            } else {
+                view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName());
+            }
         }
 
         //Clear map for new values

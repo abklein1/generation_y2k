@@ -9,50 +9,49 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+import static constants.SimConstants.*;
 
 public class TraitSelection {
-
-    // TODO: Make these hair descriptions more accurate to teachers/older people
+    
     public static String hairSelection(int selection, int age, String hairLength) {
         if (hairLength.equals("bald")) {
             return "";
         }
-        if (age <= 37) {
-            if (selection >= 0 && selection <= 21) {
+        if (age <= TEACHER_YOUNGER_AGE_HAIR_COLOR_THRESHOLD) {
+            if (selection >= TEACHER_BLACK_HAIR_LOWER_BOUND && selection <= TEACHER_BLACK_HAIR_UPPER_BOUND) {
                 return "black";
-            } else if (selection >= 22 && selection <= 37) {
+            } else if (selection >= TEACHER_DARK_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_DARK_BROWN_HAIR_UPPER_BOUND) {
                 return "dark brown";
-            } else if (selection >= 38 && selection <= 48) {
+            } else if (selection >= TEACHER_MEDIUM_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
                 return "medium brown";
-            } else if (selection >= 49 && selection <= 56) {
+            } else if (selection >= TEACHER_LIGHT_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_LIGHT_BROWN_HAIR_UPPER_BOUND) {
                 return "light brown";
-            } else if (selection >= 57 && selection <= 64) {
+            } else if (selection >= TEACHER_BLONDE_HAIR_LOWER_BOUND && selection <= TEACHER_BLONDE_HAIR_UPPER_BOUND) {
                 return "blond";
-            } else if (selection >= 65 && selection <= 71) {
+            } else if (selection >= TEACHER_CHESTNUT_HAIR_LOWER_BOUND && selection <= TEACHER_CHESTNUT_HAIR_UPPER_BOUND) {
                 return "chestnut";
-            } else if (selection >= 72 && selection <= 78) {
+            } else if (selection >= TEACHER_MAHOGANY_HAIR_LOWER_BOUND && selection <= TEACHER_MAHOGANY_HAIR_UPPER_BOUND) {
                 return "mahogany";
-            } else if (selection >= 79 && selection <= 84) {
+            } else if (selection >= TEACHER_DIRTY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_DIRTY_BLOND_HAIR_UPPER_BOUND) {
                 return "dirty blond";
-            } else if (selection >= 85 && selection <= 89) {
+            } else if (selection >= TEACHER_GOLDEN_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
                 return "golden blond";
-            } else if (selection >= 90 && selection <= 93) {
+            } else if (selection >= TEACHER_LIGHT_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_LIGHT_BLOND_HAIR_UPPER_BOUND) {
                 return "light blond";
-            } else if (selection >= 94 && selection < 96) {
+            } else if (selection >= TEACHER_GOLDEN_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
                 return "golden brown";
-            } else if (selection == 97) {
+            } else if (selection >= TEACHER_CARAMEL_HAIR_LOWER_BOUND && selection <= TEACHER_CARAMEL_HAIR_UPPER_BOUND) {
                 return "caramel";
-            } else if (selection == 98) {
+            } else if (selection >= TEACHER_STRAWBERRY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
                 return "strawberry blond";
-            } else if (selection == 99) {
+            } else if (selection >= TEACHER_COPPER_HAIR_LOWER_BOUND && selection <= TEACHER_COPPER_HAIR_UPPER_BOUND) {
                 return "copper";
-            } else if (selection == 100) {
+            } else if (selection >= TEACHER_RED_HAIR_LOWER_BOUND && selection <= TEACHER_RED_HAIR_UPPER_BOUND) {
                 return "red";
-            } else if (selection == 101) {
+            } else if (selection >= TEACHER_PLATINUM_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
                 return "platinum blond";
             } else {
-                int random = Randomizer.setRandom(0, 5);
+                int random = Randomizer.setRandom(0, TEACHER_OTHER_HAIR_SAMPLE_SIZE);
                 if (random == 0) {
                     return "auburn";
                 } else if (random == 1) {
@@ -67,102 +66,102 @@ public class TraitSelection {
                     return "champagne";
                 }
             }
-        } else if (age <= 47) {
+        } else if (age <= TEACHER_MIDDLE_AGE_HAIR_COLOR_THRESHOLD) {
             String hairColor = "";
-            if (selection > 90 ) {
+            if (selection > TEACHER_MIDDLE_AGE_GRAY_HAIR_THRESHOLD ) {
                 hairColor = "graying";
             }
-            if (selection >= 0 && selection <= 21) {
+            if (selection >= TEACHER_MIDDLE_AGE_BLACK_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_BLACK_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", black";
                 } else {
                     hairColor = "black";
                 }
-            } else if (selection >= 22 && selection <= 37) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_DARK_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_DARK_BROWN_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", dark brown";
                 } else {
                     hairColor = "dark brown";
                 }
-            } else if (selection >= 38 && selection <= 48) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_MEDIUM_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", medium brown";
                 } else {
                     hairColor = "medium brown";
                 }
-            } else if (selection >= 49 && selection <= 56) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_LIGHT_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_LIGHT_BROWN_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", light brown";
                 } else {
                     hairColor = "light brown";
                 }
-            } else if (selection >= 57 && selection <= 64) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_BLONDE_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_BLONDE_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", blond";
                 } else {
                     hairColor = "blond";
                 }
-            } else if (selection >= 65 && selection <= 71) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_CHESTNUT_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_CHESTNUT_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", chestnut";
                 } else {
                     hairColor = "chestnut";
                 }
-            } else if (selection >= 72 && selection <= 78) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_MAHOGANY_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_MAHOGANY_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", mahogany";
                 } else {
                     hairColor = "mahogany";
                 }
-            } else if (selection >= 79 && selection <= 84) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_DIRTY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_DIRTY_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", dirty blond";
                 } else {
                     hairColor = "dirty blond";
                 }
-            } else if (selection >= 85 && selection <= 89) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_GOLDEN_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", golden blond";
                 } else {
                     hairColor = "golden blond";
                 }
-            } else if (selection >= 90 && selection <= 93) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_LIGHT_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_LIGHT_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", light blond";
                 } else {
                     hairColor = "light blond";
                 }
-            } else if (selection >= 94 && selection < 96) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_GOLDEN_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", golden brown";
                 } else {
                     hairColor = "golden brown";
                 }
-            } else if (selection == 97) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_CARAMEL_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_CARAMEL_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", caramel";
                 } else {
                     hairColor = "caramel";
                 }
-            } else if (selection == 98) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_STRAWBERRY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", strawberry blond";
                 } else {
                     hairColor = "strawberry blond";
                 }
-            } else if (selection == 99) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_COPPER_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_COPPER_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", copper";
                 } else {
                     hairColor = "copper";
                 }
-            } else if (selection == 100) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_RED_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_RED_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", red";
                 } else {
                     hairColor = "red";
                 }
-            } else if (selection == 101) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_PLATINUM_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", platinum blond";
                 } else {
@@ -174,100 +173,100 @@ public class TraitSelection {
             return hairColor;
         } else {
             String hairColor = "";
-            if (selection > 28) {
+            if (selection > TEACHER_OLD_AGE_GRAY_HAIR_THRESHOLD) {
                 hairColor = "graying";
             }
-            if (selection >= 0 && selection <= 15) {
+            if (selection >= TEACHER_OLD_AGE_BLACK_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_BLACK_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", black";
                 } else {
                     hairColor = "black";
                 }
-            } else if (selection >= 16 && selection <= 22) {
+            } else if (selection >= TEACHER_OLD_AGE_DARK_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_DARK_BROWN_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", dark brown";
                 } else {
                     hairColor = "dark brown";
                 }
-            } else if (selection >= 23 && selection <= 29) {
+            } else if (selection >= TEACHER_OLD_AGE_MEDIUM_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", medium brown";
                 } else {
                     hairColor = "medium brown";
                 }
-            } else if (selection >= 30 && selection <= 35) {
+            } else if (selection >= TEACHER_OLD_AGE_LIGHT_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_LIGHT_BROWN_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", light brown";
                 } else {
                     hairColor = "light brown";
                 }
-            } else if (selection >= 36 && selection <= 40) {
+            } else if (selection >= TEACHER_OLD_AGE_BLONDE_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_BLONDE_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", blond";
                 } else {
                     hairColor = "blond";
                 }
-            } else if (selection >= 41 && selection <= 43) {
+            } else if (selection >= TEACHER_OLD_AGE_CHESTNUT_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_CHESTNUT_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", chestnut";
                 } else {
                     hairColor = "chestnut";
                 }
-            } else if (selection >= 44 && selection <= 46) {
+            } else if (selection >= TEACHER_OLD_AGE_MAHOGANY_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_MAHOGANY_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", mahogany";
                 } else {
                     hairColor = "mahogany";
                 }
-            } else if (selection >= 47 && selection <= 50) {
+            } else if (selection >= TEACHER_OLD_AGE_DIRTY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_DIRTY_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", dirty blond";
                 } else {
                     hairColor = "dirty blond";
                 }
-            } else if (selection >= 51 && selection <= 53) {
+            } else if (selection >= TEACHER_OLD_AGE_GOLDEN_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", golden blond";
                 } else {
                     hairColor = "golden blond";
                 }
-            } else if (selection >= 54 && selection <= 56) {
+            } else if (selection >= TEACHER_OLD_AGE_LIGHT_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_LIGHT_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", light blond";
                 } else {
                     hairColor = "light blond";
                 }
-            } else if (selection >= 57 && selection < 59) {
+            } else if (selection >= TEACHER_OLD_AGE_GOLDEN_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", golden brown";
                 } else {
                     hairColor = "golden brown";
                 }
-            } else if (selection == 60) {
+            } else if (selection >= TEACHER_OLD_AGE_CARAMEL_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_CARAMEL_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", caramel";
                 } else {
                     hairColor = "caramel";
                 }
-            } else if (selection == 61) {
+            } else if (selection >= TEACHER_OLD_AGE_STRAWBERRY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", strawberry blond";
                 } else {
                     hairColor = "strawberry blond";
                 }
-            } else if (selection == 62) {
+            } else if (selection >= TEACHER_OLD_AGE_COPPER_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_COPPER_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", copper";
                 } else {
                     hairColor = "copper";
                 }
-            } else if (selection == 63) {
+            } else if (selection >= TEACHER_OLD_AGE_RED_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_RED_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", red";
                 } else {
                     hairColor = "red";
                 }
-            } else if (selection == 64) {
+            } else if (selection >= TEACHER_OLD_AGE_PLATINUM_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
                 if(!hairColor.isBlank()) {
                     hairColor = hairColor + ", platinum blond";
                 } else {
@@ -281,25 +280,25 @@ public class TraitSelection {
     }
 
     public static String eyeSelection(int selection) {
-        if (selection >= 0 && selection <= 52) {
+        if (selection >= TEACHER_DARK_BROWN_EYE_LOWER_BOUND && selection <= TEACHER_DARK_BROWN_EYE_UPPER_BOUND) {
             return "dark brown";
-        } else if (selection >= 53 && selection <= 75) {
+        } else if (selection >= TEACHER_LIGHT_BROWN_EYE_LOWER_BOUND && selection <= TEACHER_LIGHT_BROWN_EYE_UPPER_BOUND) {
             return "light brown";
-        } else if (selection >= 76 && selection <= 83) {
+        } else if (selection >= TEACHER_BLUE_EYE_LOWER_BOUND && selection <= TEACHER_BLUE_EYE_UPPER_BOUND) {
             return "blue";
-        } else if (selection >= 84 && selection <= 90) {
+        } else if (selection >= TEACHER_LIGHT_BLUE_EYE_LOWER_BOUND && selection <= TEACHER_LIGHT_BLUE_EYE_UPPER_BOUND) {
             return "light blue";
-        } else if (selection >= 91 && selection <= 96) {
+        } else if (selection >= TEACHER_HAZEL_EYE_LOWER_BOUND && selection <= TEACHER_HAZEL_EYE_UPPER_BOUND) {
             return "hazel";
-        } else if (selection >= 97 && selection <= 102) {
+        } else if (selection >= TEACHER_AMBER_EYE_LOWER_BOUND && selection <= TEACHER_AMBER_EYE_UPPER_BOUND) {
             return "amber";
-        } else if (selection >= 103 && selection <= 105) {
+        } else if (selection >= TEACHER_GREEN_EYE_LOWER_BOUND && selection <= TEACHER_GREEN_EYE_UPPER_BOUND) {
             return "green";
-        } else if (selection == 106) {
+        } else if (selection >= TEACHER_GRAY_EYE_LOWER_BOUND && selection <= TEACHER_GRAY_EYE_UPPER_BOUND) {
             return "gray";
-        } else if (selection == 107) {
+        } else if (selection >= TEACHER_VIOLET_EYE_LOWER_BOUND && selection <= TEACHER_VIOLET_EYE_UPPER_BOUND) {
             return "violet";
-        } else if (selection == 108) {
+        } else if (selection >= TEACHER_BLACK_EYE_LOWER_BOUND && selection <= TEACHER_BLACK_EYE_UPPER_BOUND) {
             return "black";
         } else {
             return "heterochromatic";
@@ -307,27 +306,27 @@ public class TraitSelection {
     }
 
     public static String hairType(int selection) {
-        if (selection >= 0 && selection <= 50) {
+        if (selection >= TEACHER_FINE_STRAIGHT_HAIR_LOWER_BOUND && selection <= TEACHER_FINE_STRAIGHT_HAIR_UPPER_BOUND) {
             return "fine, straight";
-        } else if (selection >= 51 && selection <= 250) {
+        } else if (selection >= TEACHER_STRAIGHT_HAIR_LOWER_BOUND && selection <= TEACHER_STRAIGHT_HAIR_UPPER_BOUND) {
             return "straight";
-        } else if (selection >= 251 && selection <= 350) {
+        } else if (selection >= TEACHER_COARSE_STRAIGHT_HAIR_LOWER_BOUND && selection <= TEACHER_COARSE_STRAIGHT_HAIR_UPPER_BOUND) {
             return "coarse, straight";
-        } else if (selection >= 351 && selection <= 400) {
+        } else if (selection >= TEACHER_THIN_WAVEY_HAIR_LOWER_BOUND && selection <= TEACHER_THIN_WAVEY_HAIR_UPPER_BOUND) {
             return "thin, wavy";
-        } else if (selection >= 401 && selection <= 550) {
+        } else if (selection >= TEACHER_WAVEY_HAIR_LOWER_BOUND && selection <= TEACHER_WAVEY_HAIR_UPPER_BOUND) {
             return "wavy";
-        } else if (selection >= 551 && selection <= 650) {
+        } else if (selection >= TEACHER_THICK_WAVEY_HAIR_LOWER_BOUND && selection <= TEACHER_THICK_WAVEY_HAIR_UPPER_BOUND) {
             return "thick, wavy";
-        } else if (selection >= 651 && selection <= 700) {
+        } else if (selection >= TEACHER_LOOSE_CURLY_HAIR_LOWER_BOUND && selection <= TEACHER_LOOSE_CURLY_HAIR_UPPER_BOUND) {
             return "loose, curly";
-        } else if (selection >= 701 && selection <= 750) {
+        } else if (selection >= TEACHER_CURLY_HAIR_LOWER_BOUND && selection <= TEACHER_CURLY_HAIR_UPPER_BOUND) {
             return "curly";
-        } else if (selection >= 751 && selection <= 800) {
+        } else if (selection >= TEACHER_DENSE_CURLY_HAIR_LOWER_BOUND && selection <= TEACHER_DENSE_CURLY_HAIR_UPPER_BOUND) {
             return "dense, curly";
-        } else if (selection >= 851 && selection <= 900) {
+        } else if (selection >= TEACHER_TIGHT_COILY_HAIR_LOWER_BOUND && selection <= TEACHER_TIGHT_COILY_HAIR_UPPER_BOUND) {
             return "tight, coily";
-        } else if (selection >= 901 && selection <= 950) {
+        } else if (selection >= TEACHER_COILY_HAIR_LOWER_BOUND && selection <= TEACHER_COILY_HAIR_UPPER_BOUND) {
             return "coily";
         } else {
             return "dense, coily";
