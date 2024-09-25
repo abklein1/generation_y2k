@@ -16,18 +16,6 @@ public class StudentPopGenerator {
         String f_name;
         String[] l_name;
         Random distribution = new Random();
-        int int_stdDev = 15;
-        int int_mean = 100;
-        int chr_stdDev = 15;
-        int chr_mean = 50;
-        int agl_stdDev = 15;
-        int agl_mean = 50;
-        int det_stdDev = 15;
-        int det_mean = 50;
-        int per_stdDev = 15;
-        int per_mean = 50;
-        int lck_stdDev = 10;
-        int lck_mean = 0;
 
         for (int i = 0; i < studentCap; i++) {
             studentHashMap.put(i, new Student());
@@ -66,12 +54,12 @@ public class StudentPopGenerator {
             student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
             String hairColor = student.studentStatistics.getHairColor();
             student.studentStatistics.setInitHeight();
-            student.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
-            student.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
-            student.studentStatistics.setAgility((int) (distribution.nextGaussian() * agl_stdDev + agl_mean));
-            student.studentStatistics.setDetermination((int) (distribution.nextGaussian() * det_stdDev + det_mean));
-            student.studentStatistics.setPerception((int) (distribution.nextGaussian() * per_stdDev + per_mean));
-            student.studentStatistics.setLuck((int) (distribution.nextGaussian() * lck_stdDev + lck_mean));
+            student.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION + STUDENT_POP_INTELLIGENCE_MEAN));
+            student.studentStatistics.setCharisma((int) (distribution.nextGaussian() * STUDENT_POP_CHARISMA_STANDARD_DEVIATION + STUDENT_POP_CHARISMA_MEAN));
+            student.studentStatistics.setAgility((int) (distribution.nextGaussian() * STUDENT_POP_AGILITY_STANDARD_DEVIATION + STUDENT_POP_AGILITY_MEAN));
+            student.studentStatistics.setDetermination((int) (distribution.nextGaussian() * STUDENT_POP_DETERMINATION_STANDARD_DEVIATION + STUDENT_POP_DETERMINATION_MEAN));
+            student.studentStatistics.setPerception((int) (distribution.nextGaussian() * STUDENT_POP_PERCEPTION_STANDARD_DEVIATION + STUDENT_POP_PERCEPTION_MEAN));
+            student.studentStatistics.setLuck((int) (distribution.nextGaussian() * STUDENT_POP_LUCK_STANDARD_DEVIATION + STUDENT_POP_LUCK_MEAN));
             student.studentStatistics.setInitStrength();
             student.studentStatistics.setInitCreativity();
             student.studentStatistics.setInitEmpathy();

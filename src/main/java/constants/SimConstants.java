@@ -26,5 +26,19 @@ public final class SimConstants {
     // INCOME LEVEL
     public static final int STUDENT_INCOME_LEVEL_SAMPLE_SIZE = 100;
 
+    // STUDENT POP STAT DISTRIBUTION
+    public static final int STUDENT_POP_INTELLIGENCE_MEAN = 100;
+    public static final int STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION = 15;
+    public static final int STUDENT_POP_CHARISMA_MEAN = 50;
+    public static final int STUDENT_POP_CHARISMA_STANDARD_DEVIATION = 15;
+    public static final int STUDENT_POP_AGILITY_MEAN = 50;
+    public static final int STUDENT_POP_AGILITY_STANDARD_DEVIATION = 15;
+    public static final int STUDENT_POP_DETERMINATION_MEAN = 50;
+    public static final int STUDENT_POP_DETERMINATION_STANDARD_DEVIATION = 15;
+    public static final int STUDENT_POP_PERCEPTION_MEAN = 50;
+    public static final int STUDENT_POP_PERCEPTION_STANDARD_DEVIATION = 15;
+    public static final int STUDENT_POP_LUCK_MEAN = 0;
+    public static final int STUDENT_POP_LUCK_STANDARD_DEVIATION = 15;
+
     private SimConstants(){}
 }
