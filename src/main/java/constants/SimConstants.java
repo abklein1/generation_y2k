@@ -218,7 +218,10 @@ public final class SimConstants {
     public static final int TEACHER_COILY_HAIR_UPPER_BOUND = 900;
     public static final int TEACHER_DENSE_COILY_HAIR_LOWER_BOUND = 901;
     public static final int TEACHER_DENSE_COILY_HAIR_UPPER_BOUND = 950;
-    
+
+    // SOCIAL LINK ADJUSTMENT
+    public static final int SOCIAL_LINK_MEAN = 0;
+    public static final int SOCIAL_LINK_STANDARD_DEVIATION = 25;
     
     private SimConstants() {
     }

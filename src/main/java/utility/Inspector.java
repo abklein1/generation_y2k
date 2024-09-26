@@ -18,6 +18,101 @@ import java.util.List;
 import java.util.Map;
 
 public class Inspector {
+    public static void studentInspection(Student student, JTextArea inspectionArea, SocialLinkConnector socialLinkConnector) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        StringBuilder sb = new StringBuilder();
+        String firstName = student.studentName.getFirstName();
+        String lastName = student.studentName.getLastName();
+        String suffix = student.studentName.getSuffix();
+        String gender = student.studentStatistics.getGender();
+        //String race = student.studentStatistics.getRace();
+        String hairColor = student.studentStatistics.getHairColor();
+        String eyeColor = student.studentStatistics.getEyeColor();
+        String skinColor = student.studentStatistics.getSkinColor();
+        String hairLength = student.studentStatistics.getHairLength();
+        String hairType = student.studentStatistics.getHairType();
+        double height = student.studentStatistics.getHeight();
+        String grade = student.studentStatistics.getGradeLevel();
+        String income = student.studentStatistics.getIncomeLevel();
+        LocalDate birth = student.studentStatistics.getBirthday();
+        List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
+        List<String> siblingsNotInSchool = student.studentStatistics.getSiblingsNotInSchool();
+        List<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
+
+        if (suffix != null) {
+            sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix).append("\n=====================================\n");
+        } else {
+            sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
+        }
+        sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
+        sb.append(skinColor).append(" colored skin and ");
+        sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ").append(hairColor.toLowerCase());
+        sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
+        sb.append("They stand ").append(df.format(height)).append(" inches tall.\n");
+        sb.append(firstName).append(" is a ").append(grade).append(".\n");
+        sb.append(firstName).append(" was born on ").append(birth).append(".\n");
+        sb.append("They have the following base stats:\n   INTELLIGENCE: ").append(student.studentStatistics.getIntelligence());
+        sb.append("\n   CHARISMA: ").append(student.studentStatistics.getCharisma()).append("\n   AGILITY: ");
+        sb.append(student.studentStatistics.getAgility()).append("\n   DETERMINATION: ").append(student.studentStatistics.getDetermination());
+        sb.append("\n   PERCEPTION: ").append(student.studentStatistics.getPerception()).append("\n   STRENGTH: ");
+        sb.append(student.studentStatistics.getStrength()).append("\n   LUCK: ").append(student.studentStatistics.getLuck()).append("\n");
+        sb.append("   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
+        sb.append("They have the following secondary stats:\n   Creativity: ").append(student.studentStatistics.getCreativity());
+        sb.append("\n   Empathy: ").append(student.studentStatistics.getEmpathy()).append("\n   Adaptability: ");
+        sb.append(student.studentStatistics.getAdaptability()).append("\n   Initiative: ").append(student.studentStatistics.getInitiative());
+        sb.append("\n   Resilience: ").append(student.studentStatistics.getResilience()).append("\n   Curiosity: ");
+        sb.append(student.studentStatistics.getCuriosity()).append("\n   Responsibility: ").append(student.studentStatistics.getResponsibility());
+        sb.append("\n   Open-Mindedness: ").append(student.studentStatistics.getOpenMindedness()).append("\n");
+        sb.append(firstName).append(" has the following status effects:\n");
+        if (student.studentStatistics.getBoredom() == 0) {
+            sb.append(firstName).append(" is not bored.\n");
+        } else {
+            sb.append(firstName).append(" is slightly bored.\n");
+        }
+        if (student.studentStatistics.getSleepState()) {
+            sb.append(firstName).append(" is asleep!\n");
+        } else {
+            sb.append(firstName).append(" is not asleep.\n");
+        }
+        sb.append("Their family has the following income: ").append(income).append("\n");
+        if (!siblingsInSchool.isEmpty()) {
+            sb.append("They have the following siblings in school: ").append("\n");
+            for (Student sibling : siblingsInSchool) {
+                sb.append(sibling.studentName.getFirstName()).append(" ").append(sibling.studentName.getLastName()).append("\n");
+            }
+        }
+        if (!siblingsNotInSchool.isEmpty()) {
+            sb.append("They have the following siblings not in school: ").append("\n");
+            for (String sibling : siblingsNotInSchool) {
+                sb.append(sibling).append("\n");
+            }
+        }
+        for (StudentBlock block : schedule) {
+            int blockNum = block.getBlockNumber();
+            switch (blockNum) {
+                case 1, 2 -> {
+                    blockNum = 1;
+                }
+                case 3, 4 -> {
+                    blockNum = 2;
+                }
+                case 5, 6 -> {
+                    blockNum = 3;
+                }
+                case 7, 8 -> {
+                    blockNum = 4;
+                }
+            }
+            sb.append(block.getSemester()).append(" ").append(blockNum).append(" ").append(block.getTeacher()).append(" ").append(block.getClassName()).append("\n");
+        }
+
+        inspectionArea.setText(sb.toString());
+
+        socialLinkConnector.studentVisualizer(student);
+    }
+
     public static void studentInspection(Student student, JTextArea inspectionArea) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -189,49 +284,6 @@ public class Inspector {
         }
         return sb.toString();
     }
-
-    public static void findHighestStudent(HashMap<Integer, Student> studentHashMap, JTextArea inspectionArea) {
-        Student temp;
-        Student high = null;
-        int total;
-        int top = 0;
-
-        for (Map.Entry<Integer, Student> entry : studentHashMap.entrySet()) {
-            temp = entry.getValue();
-            total = temp.studentStatistics.getIntelligence() + temp.studentStatistics.getCharisma()
-                    + temp.studentStatistics.getAgility() + temp.studentStatistics.getDetermination()
-                    + temp.studentStatistics.getPerception() + temp.studentStatistics.getStrength();
-            if (total > top) {
-                top = total;
-                high = temp;
-            }
-        }
-
-        assert high != null;
-        studentInspection(high, inspectionArea);
-    }
-
-    public static void findLowestStudent(HashMap<Integer, Student> studentHashMap, JTextArea inspectionArea) {
-        Student temp;
-        Student low = null;
-        int total;
-        int bottom = 1000;
-
-        for (Map.Entry<Integer, Student> entry : studentHashMap.entrySet()) {
-            temp = entry.getValue();
-            total = temp.studentStatistics.getIntelligence() + temp.studentStatistics.getCharisma()
-                    + temp.studentStatistics.getAgility() + temp.studentStatistics.getDetermination()
-                    + temp.studentStatistics.getPerception() + temp.studentStatistics.getStrength();
-            if (total < bottom) {
-                bottom = total;
-                low = temp;
-            }
-        }
-
-        assert low != null;
-        studentInspection(low, inspectionArea);
-    }
-
 
     public static void inspectRoom(Room room) {
         String roomName = room.getRoomName();

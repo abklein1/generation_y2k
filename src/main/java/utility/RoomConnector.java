@@ -22,8 +22,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static utility.Randomizer.setRandom;
@@ -719,7 +717,7 @@ public class RoomConnector {
         frame.add(graphComponent);
         mxFastOrganicLayout layout = new mxFastOrganicLayout(graphAdapter);
         layout.setForceConstant(50);
-        layout.setMinDistanceLimit(2.0);
+        layout.setMinDistanceLimit(2.5);
         layout.setInitialTemp(200);
         layout.setMaxIterations(1000);
         layout.execute(graphAdapter.getDefaultParent());

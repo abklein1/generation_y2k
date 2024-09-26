@@ -17,6 +17,7 @@ import static utility.Inspector.*;
 public class SchoolController {
     private final GameView view;
     private RoomConnector roomConnector;
+    private SocialLinkConnector socialLinkConnector;
     private StandardSchool standardSchool;
     private final Time time;
     HashMap<Integer, Staff> staffHashMap;
@@ -126,6 +127,8 @@ public class SchoolController {
                 for (Auditorium auditorium : auditoriums) {
                     RoomNameGenerator.generateRoomName(auditorium, standardSchool);
                 }
+                publish("Initializing social links...");
+                socialLinkConnector = new SocialLinkConnector(studentHashMap);
 
             } catch (Throwable t) {
                 t.printStackTrace();
@@ -214,7 +217,7 @@ public class SchoolController {
                     if (!e.getValueIsAdjusting()) {
                         Student selectedStudent = studentListComponent.getSelectedValue();
                         if (selectedStudent != null) {
-                            studentInspection(selectedStudent, inspectionArea);
+                            studentInspection(selectedStudent, inspectionArea, socialLinkConnector);
                         }
                     }
                 });
