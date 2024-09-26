@@ -367,4 +367,10 @@ public class NameLoader {
         }
     }
 
+    public static char generateMiddleInitial() {
+        Random r = new Random();
+        char middleInitial = (char) (r.nextInt(26) + 'A');
+        return middleInitial;
+    }
+
 }

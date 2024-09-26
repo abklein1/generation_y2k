@@ -242,11 +242,27 @@ public class StaffAssignment {
         }
     }
 
+    // TODO: Might need to fix this further
     public static void reassignSubToRoom(HashMap<Integer, Staff> staffHashMap, GameView view, Room room) {
         List<Staff> subs = getTeachersOfType(staffHashMap, StaffType.SUB);
         if (subs.isEmpty()) {
             view.appendOutput("List of subs is empty!");
+            return;
         }
+
+        if (subs.size() == 1) {
+            view.appendOutput("Subs list is only of size 1");
+            Staff sub = subs.get(0);
+
+            StaffType type = selectRandomCoreType();
+
+            sub.teacherStatistics.setStaffType(type);
+
+            room.setAssignedStaff(sub);
+            view.appendOutput(sub.teacherName.getFirstName() + " " + sub.teacherName.getLastName() + " reassigned to " + sub.teacherStatistics.getStaffType() + " in " + room.getRoomName());
+            return;
+        }
+
         int choice = Randomizer.setRandom(0, subs.size() - 1);
         Staff sub = subs.get(choice);
 

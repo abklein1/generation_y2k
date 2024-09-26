@@ -87,6 +87,10 @@ public class StandardSchool implements SchoolPlan {
         this.schoolMascot = schoolMascotLoader();
     }
 
+    public String getMascot() {
+        return this.schoolMascot;
+    }
+
     public int getTotalStudentCapacity() {
 
         int class_total = 0;

@@ -1,7 +1,7 @@
 package utility;
 
 import entity.*;
-import entity.Rooms.Classroom;
+import entity.Rooms.*;
 import view.GameView;
 
 import javax.swing.*;
@@ -65,6 +65,10 @@ public class SchoolController {
                 int staff_cap;
                 String[] colors;
                 Classroom[] classrooms;
+                Gym[] gyms;
+                AthleticField[] athleticFields;
+                LibraryR[] libraries;
+                Auditorium[] auditoriums;
                 //String[] colorsHex;
 
                 //Generate a new standard school with rooms
@@ -105,6 +109,24 @@ public class SchoolController {
                     e.printStackTrace();
                     System.out.println("some exception");
                 }
+                // Add names to rooms
+                gyms = standardSchool.getGyms();
+                for (Gym gym : gyms) {
+                    RoomNameGenerator.generateRoomName(gym, standardSchool);
+                }
+                athleticFields = standardSchool.getAthleticFields();
+                for (AthleticField athleticField : athleticFields) {
+                    RoomNameGenerator.generateRoomName(athleticField, standardSchool);
+                }
+                libraries = standardSchool.getLibraries();
+                for (LibraryR library : libraries) {
+                    RoomNameGenerator.generateRoomName(library, standardSchool);
+                }
+                auditoriums = standardSchool.getAuditoriums();
+                for (Auditorium auditorium : auditoriums) {
+                    RoomNameGenerator.generateRoomName(auditorium, standardSchool);
+                }
+
             } catch (Throwable t) {
                 t.printStackTrace();
                 publish("Caught an exception: " + t.getMessage());
