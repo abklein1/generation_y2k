@@ -217,7 +217,11 @@ public class SchoolController {
                     if (!e.getValueIsAdjusting()) {
                         Student selectedStudent = studentListComponent.getSelectedValue();
                         if (selectedStudent != null) {
-                            studentInspection(selectedStudent, inspectionArea, socialLinkConnector);
+                            if(selectedStudent.studentStatistics.getSiblingsInSchool().isEmpty()) {
+                                studentInspection(selectedStudent, inspectionArea);
+                            } else {
+                                studentInspection(selectedStudent, inspectionArea, socialLinkConnector);
+                            }
                         }
                     }
                 });
