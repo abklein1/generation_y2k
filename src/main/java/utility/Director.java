@@ -74,5 +74,7 @@ public class Director {
         standardSchool.setSchoolMascot();
         view.appendOutput("Setting school colors...");
         standardSchool.schoolColorsLoader();
+        view.appendOutput("Setting school founded year...");
+        standardSchool.setSchoolFoundedYear();
     }
 }

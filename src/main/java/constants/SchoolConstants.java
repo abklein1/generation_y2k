@@ -3,6 +3,16 @@ package constants;
 public final class SchoolConstants {
     // OVERALL MODIFIERS
     public static final int TOTAL_SCHOOL_PERIODS = 8;
+    public static final int SCHOOL_FOUNDED_YEAR_2000s_CHANCE = 21;
+    public static final int SCHOOL_FOUNDED_YEAR_1960s_CHANCE = 34;
+    public static final int SCHOOL_FOUNDED_YEAR_1950s_CHANCE = 46;
+    public static final int SCHOOL_FOUNDED_2000s_LOWER_LIMIT = 2001;
+    public static final int SCHOOL_FOUNDED_1960s_LOWER_LIMIT = 1960;
+    public static final int SCHOOL_FOUNDED_1960s_UPPER_LIMIT = 1969;
+    public static final int SCHOOL_FOUNDED_1950s_LOWER_LIMIT = 1900;
+    public static final int SCHOOL_FOUNDED_1950s_UPPER_LIMIT = 1949;
+    public static final int SCHOOL_FOUNDED_OTHER_LOWER_LIMIT = 1950;
+    public static final int SCHOOL_FOUNDED_OTHER_UPPER_LIMIT = 2000;
 
     // STUDENT CAP MODIFIERS
     public static final double TOTAL_STUDENT_CAP_MODIFIER = 0.55;

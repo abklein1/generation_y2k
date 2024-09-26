@@ -91,7 +91,7 @@ public class SchoolController {
                 RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
                 publish("Done creating school and students");
                 publish("+++++++++++++++++++++++++++++++++++++++++");
-                publish("Welcome to " + standardSchool.getSchoolName());
+                publish("Welcome to " + standardSchool.getSchoolName() + " founded in " + standardSchool.getSchoolFoundedYear() + "!");
                 publish("Home of the " + standardSchool.getSchoolMascot() + "!");
                 colors = standardSchool.getSchoolColors();
                 publish("The school colors are " + colors[0] + " and " + colors[1]);

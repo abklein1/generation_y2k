@@ -22,12 +22,14 @@ import java.io.IOException;
 import java.util.*;
 
 import static constants.SchoolConstants.*;
+import static constants.SimConstants.STARTING_YEAR;
 import static utility.Randomizer.setRandom;
 
 public class StandardSchool implements SchoolPlan {
 
     String schoolName;
     String schoolMascot;
+    String schoolFoundedYear;
     String[] schoolColors;
     String[] schoolColorsHex;
     ArtStudio[] artStudios;
@@ -248,6 +250,35 @@ public class StandardSchool implements SchoolPlan {
 
     public Bathroom[] getBathrooms() {
         return bathrooms;
+    }
+
+    public String getSchoolFoundedYear() {
+        return this.schoolFoundedYear;
+    }
+
+    public void setSchoolFoundedYear() {
+        this.schoolFoundedYear = schoolFoundedYearLoader();
+    }
+
+    private String schoolFoundedYearLoader() {
+        int year;
+        double random = Math.random() * 100;
+
+        if (random < SCHOOL_FOUNDED_YEAR_2000s_CHANCE) {
+            // 21% chance: Built after 2000
+            year = setRandom(SCHOOL_FOUNDED_2000s_LOWER_LIMIT, STARTING_YEAR);
+        } else if (random < SCHOOL_FOUNDED_YEAR_1960s_CHANCE) {
+            // 13% chance: Built in the 1960s
+            year = setRandom(SCHOOL_FOUNDED_1960s_LOWER_LIMIT, SCHOOL_FOUNDED_1960s_UPPER_LIMIT);
+        } else if (random < SCHOOL_FOUNDED_YEAR_1950s_CHANCE) {
+            // 12% chance: Built before the 1950s
+            year = setRandom(SCHOOL_FOUNDED_1950s_LOWER_LIMIT, SCHOOL_FOUNDED_1950s_UPPER_LIMIT);
+        } else {
+            // Remaining 54% chance: Built between 1950 and 2000
+            year = setRandom(SCHOOL_FOUNDED_OTHER_LOWER_LIMIT, SCHOOL_FOUNDED_OTHER_UPPER_LIMIT);
+        }
+
+        return String.valueOf(year);
     }
 
     @Override
