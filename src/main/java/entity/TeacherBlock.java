@@ -76,12 +76,12 @@ public class TeacherBlock {
         classPopulation.add(student);
     }
 
-    public void setBlockPopulation(int studentCap) {
-        capacity = studentCap;
-    }
-
     public int getBlockPopulation() {
         return capacity;
+    }
+
+    public void setBlockPopulation(int studentCap) {
+        capacity = studentCap;
     }
 
     public List<Student> getClassPopulation() {

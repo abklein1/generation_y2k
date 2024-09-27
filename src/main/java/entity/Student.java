@@ -1,23 +1,22 @@
 package entity;
 
+import utility.StudentFactory;
 import utility.StudentName;
 import utility.StudentStatistics;
-import utility.StudentFactory;
 
 import java.io.Serializable;
 
 public class Student implements Serializable {
 
-    public StudentName studentName;
-    public StudentStatistics studentStatistics;
     private final StudentUpperT studentUpperT;
     private final StudentLegs studentLegs;
     private final StudentArms studentArms;
     private final Backpack backpack;
-
+    public StudentName studentName;
+    public StudentStatistics studentStatistics;
     StudentFactory studentFactory = new StudentFactory();
-    
-    public Student(){
+
+    public Student() {
         studentName = studentFactory.createName();
         studentUpperT = studentFactory.createUpperTorso();
         studentLegs = studentFactory.createLegs();

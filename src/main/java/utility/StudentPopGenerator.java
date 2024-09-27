@@ -39,10 +39,10 @@ public class StudentPopGenerator {
             student.studentName.setFirstName(f_name);
             lastName = student.studentName.capitalizeName(lastName);
             student.studentName.setLastName(lastName);
-            if(setRandom(0,SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
+            if (setRandom(0, SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
                 student.studentName.setSuffix(NameLoader.suffixNameGenerator(student.studentStatistics.getGender()));
             }
-            if(setRandom(0,STUDENT_HYPHEN_GENERATION_SAMPLE_SIZE) < STUDENT_HYPHEN_GENERATION_RATE) {
+            if (setRandom(0, STUDENT_HYPHEN_GENERATION_SAMPLE_SIZE) < STUDENT_HYPHEN_GENERATION_RATE) {
                 String hyphenName = NameLoader.selectWeightedRandom()[0];
                 hyphenName = student.studentName.capitalizeName(hyphenName);
                 student.studentName.setLastName(lastName + "-" + hyphenName);
@@ -51,7 +51,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setRace(race);
             student.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
             String eyes = student.studentStatistics.getEyeColor();
-            student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race,eyes));
+            student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
             String hairColor = student.studentStatistics.getHairColor();
             student.studentStatistics.setInitHeight();
             student.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION + STUDENT_POP_INTELLIGENCE_MEAN));
@@ -73,7 +73,7 @@ public class StudentPopGenerator {
             student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
             student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
             student.studentStatistics.setInitIncomeLevel(setRandom(0, STUDENT_INCOME_LEVEL_SAMPLE_SIZE));
-            if(suffix != null) {
+            if (suffix != null) {
                 view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {
                 view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName());

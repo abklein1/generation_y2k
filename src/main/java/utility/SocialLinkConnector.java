@@ -1,13 +1,14 @@
 package utility;
 
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.swing.mxGraphComponent;
 import entity.Student;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.ext.JGraphXAdapter;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.layout.mxFastOrganicLayout;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -15,10 +16,8 @@ import java.util.Random;
 import static constants.SimConstants.SOCIAL_LINK_MEAN;
 import static constants.SimConstants.SOCIAL_LINK_STANDARD_DEVIATION;
 
-import javax.swing.JFrame;
-
 public class SocialLinkConnector {
-    
+
     Graph<Student, DefaultWeightedEdge> socialGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
     public SocialLinkConnector(HashMap<Integer, Student> studentHashMap) {
@@ -59,11 +58,11 @@ public class SocialLinkConnector {
 
     public void studentVisualizer(Student student) {
         String studentName = student.studentName.getFirstName() + " " + student.studentName.getLastName();
-        
+
         // Create a subgraph for the specific student and their connections
         Graph<Student, DefaultWeightedEdge> subGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
         subGraph.addVertex(student);
-        
+
         for (DefaultWeightedEdge edge : socialGraph.edgesOf(student)) {
             Student source = socialGraph.getEdgeSource(edge);
             Student target = socialGraph.getEdgeTarget(edge);
@@ -72,7 +71,7 @@ public class SocialLinkConnector {
             DefaultWeightedEdge subEdge = subGraph.addEdge(source, target);
             subGraph.setEdgeWeight(subEdge, socialGraph.getEdgeWeight(edge));
         }
-        
+
         JGraphXAdapter<Student, DefaultWeightedEdge> graphAdapter = new JGraphXAdapter<>(subGraph);
         JFrame frame = new JFrame(studentName);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

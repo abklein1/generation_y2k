@@ -11,10 +11,8 @@ package utility;
 
 import entity.StandardSchool;
 import view.GameView;
+
 import static constants.SchoolConstants.*;
-
-import java.util.concurrent.ThreadLocalRandom;
-
 import static utility.Randomizer.setRandom;
 
 public class Director {
@@ -24,6 +22,7 @@ public class Director {
     public Director(StandardSchool standardSchool, GameView view) {
         setStandardSchool(standardSchool, view);
     }
+
     //TODO: Seed these values
     public void setStandardSchool(StandardSchool standardSchool, GameView view) {
         view.appendOutput("Building art studios...");

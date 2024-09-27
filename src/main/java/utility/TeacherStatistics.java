@@ -1,6 +1,5 @@
 package utility;
 
-import entity.Rooms.Room;
 import entity.StaffType;
 import entity.TeacherBlock;
 import entity.TeacherSchedule;
@@ -35,7 +34,7 @@ public class TeacherStatistics implements PStatistics {
     private int responsibility;
     private int openmindedness;
     private Enum staffType;
-    private TeacherSchedule teacherSchedule;
+    private final TeacherSchedule teacherSchedule;
     private int yearsOfExperience;
 
     public TeacherStatistics() {
@@ -378,7 +377,7 @@ public class TeacherStatistics implements PStatistics {
                     this.hairLength = "long";
                 } else if (choice <= 4000) {
                     this.hairLength = "chin-length";
-                } else if (choice <= 5300){
+                } else if (choice <= 5300) {
                     this.hairLength = "balding";
                 } else if (choice <= 5600) {
                     this.hairLength = "bald";
@@ -394,7 +393,7 @@ public class TeacherStatistics implements PStatistics {
                     this.hairLength = "long";
                 } else if (choice <= 2750) {
                     this.hairLength = "chin-length";
-                } else if (choice <= 7750){
+                } else if (choice <= 7750) {
                     this.hairLength = "balding";
                 } else if (choice <= 8250) {
                     this.hairLength = "bald";
@@ -513,11 +512,11 @@ public class TeacherStatistics implements PStatistics {
         return currentYear - birthYear;
     }
 
-    public void setYearsOfExperience(int yearsOfExperience) {
-        this.yearsOfExperience = yearsOfExperience;
-    }
-
     public int getYearsOfExperience() {
         return this.yearsOfExperience;
+    }
+
+    public void setYearsOfExperience(int yearsOfExperience) {
+        this.yearsOfExperience = yearsOfExperience;
     }
 }

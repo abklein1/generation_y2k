@@ -285,6 +285,7 @@ public final class SchoolConstants {
     public static final int BATHROOM_AMOUNT = 15;
 
     public static final int LOCKER_ROOM_MODIFIER = 2;
+
     private SchoolConstants() {
     }
 

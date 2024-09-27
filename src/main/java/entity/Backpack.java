@@ -34,8 +34,10 @@ public class Backpack implements Carry, Serializable {
     }
 
     @Override
-    public void addItem() {}
+    public void addItem() {
+    }
 
     @Override
-    public void removeItem() {}
+    public void removeItem() {
+    }
 }

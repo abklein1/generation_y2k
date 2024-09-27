@@ -29,7 +29,7 @@ public class Main {
             }
         }
 
-        SwingUtilities.invokeLater(() ->{
+        SwingUtilities.invokeLater(() -> {
             GameView view = new GameView();
             SchoolController controller = new SchoolController(view);
         });

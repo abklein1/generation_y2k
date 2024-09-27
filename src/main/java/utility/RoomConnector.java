@@ -184,7 +184,7 @@ public class RoomConnector {
         }
     }
 
-    private void populateAthleticFields(GameView view ) {
+    private void populateAthleticFields(GameView view) {
         Room[] athleticFields = roomPool[1];
         Room[] lockerRooms = roomPool[12];
 
@@ -597,7 +597,7 @@ public class RoomConnector {
     private void populateVocationalRooms(GameView view) {
         Room[] vocationalRooms = roomPool[20];
 
-        for(Room vocationalRoom : vocationalRooms) {
+        for (Room vocationalRoom : vocationalRooms) {
             Room connectRoom = findCentralRoom(view);
             schoolConnect.addEdge(vocationalRoom, connectRoom);
             connectRoom.setConnections(connectRoom.getConnections() - 1);

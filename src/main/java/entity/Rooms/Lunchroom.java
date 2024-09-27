@@ -28,7 +28,7 @@ public class Lunchroom implements Room, Serializable {
     private String roomNumber;
     private boolean studentRestriction;
     private Student[][] seats;
-    private HashMap<Integer, Student[][]> seatingArrangements;
+    private final HashMap<Integer, Student[][]> seatingArrangements;
 
     public Lunchroom() {
         this.numOfConnections = 0;
@@ -247,8 +247,8 @@ public class Lunchroom implements Room, Serializable {
 
     @Override
     public void initializeSeatingArrangements(int totalPeriods) {
-        for(int period = 0; period < totalPeriods; period++) {
-            setPeriodSeatingArrangement(period,getSeatArrangement());
+        for (int period = 0; period < totalPeriods; period++) {
+            setPeriodSeatingArrangement(period, getSeatArrangement());
         }
     }
 }

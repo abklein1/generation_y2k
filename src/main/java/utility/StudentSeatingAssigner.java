@@ -31,14 +31,14 @@ public class StudentSeatingAssigner {
             int blockNumber = block.getBlockNumber();
             List<Student> students = block.getClassPopulation();
             seats = room.getSeatArrangement();
-            
+
             if (seats == null) {
                 System.out.println("Warning: Room " + room.getRoomName() + " has a null seat arrangement.");
                 continue;
             }
 
             seats = new Student[seats.length][seats[0].length];
-        
+
             for (Student student : students) {
                 seatStudent(student, seats);
             }

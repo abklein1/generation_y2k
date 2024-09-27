@@ -10,8 +10,9 @@ import static constants.SimConstants.*;
 public class Time {
     private final Calendar calendar;
     private final Format f;
-    private int dayCounter;
     private final SimpleDateFormat simpleDateFormat;
+    private int dayCounter;
+
     public Time() {
         this.dayCounter = 1;
         this.calendar = Calendar.getInstance();

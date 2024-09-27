@@ -195,7 +195,7 @@ public class StudentScheduleAssigner {
 
         // Schedule additional vocational classes
         if (!student.studentStatistics.getGradeLevel().equals("Freshman")) {
-            if(student.studentStatistics.getDetermination() < 35 && student.studentStatistics.getGradeLevel().equals("Senior")) {
+            if (student.studentStatistics.getDetermination() < 35 && student.studentStatistics.getGradeLevel().equals("Senior")) {
                 System.out.println("No vocational classes to assign.");
             } else {
                 int classLength = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
@@ -205,8 +205,8 @@ public class StudentScheduleAssigner {
                         break;
                     }
                 }
-                for(String className : vocationalClassesSpring) {
-                    if(classLength >= 8) {
+                for (String className : vocationalClassesSpring) {
+                    if (classLength >= 8) {
                         break;
                     } else {
                         assignClassToStudent(student, className, staffHashMap);

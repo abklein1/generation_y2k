@@ -32,7 +32,7 @@ public class Classroom implements Room, Serializable {
     private boolean studentRestriction;
     private String classRoomType;
     private Student[][] seats;
-    private HashMap<Integer, Student[][]> seatingArrangements;
+    private final HashMap<Integer, Student[][]> seatingArrangements;
 
     public Classroom() {
         this.numOfConnections = 0;
@@ -180,7 +180,7 @@ public class Classroom implements Room, Serializable {
     public void reassignClassroomByTeacher(HashMap<Integer, Staff> staffHashMap, GameView view) {
         String roomType = getClassRoomType();
         String staffType;
-        if(!getAssignedStaff().isEmpty()) {
+        if (!getAssignedStaff().isEmpty()) {
             staffType = getAssignedStaff().get(0).teacherStatistics.getStaffType().toString();
             if (!roomType.equals(staffType)) {
                 setClassRoomType(staffType);
@@ -188,7 +188,7 @@ public class Classroom implements Room, Serializable {
             }
         } else {
             view.appendOutput("Classroom " + getRoomName() + " has no staff!");
-            StaffAssignment.reassignSubToRoom(staffHashMap,view,this);
+            StaffAssignment.reassignSubToRoom(staffHashMap, view, this);
             // recursive call be careful here
             reassignClassroomByTeacher(staffHashMap, view);
         }
@@ -287,12 +287,19 @@ public class Classroom implements Room, Serializable {
     }
 
     @Override
-    public int getRoomCapacity() {return this.studentCap + this.staffCap;}
+    public int getRoomCapacity() {
+        return this.studentCap + this.staffCap;
+    }
 
     @Override
-    public void addStudent(Student student) {students.add(student);}
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
     @Override
-    public List<Student> getStudents() { return this.students;}
+    public List<Student> getStudents() {
+        return this.students;
+    }
 
     @Override
     public void setPeriodSeatingArrangement(int period, Student[][] seatArrangement) {
@@ -306,8 +313,8 @@ public class Classroom implements Room, Serializable {
 
     @Override
     public void initializeSeatingArrangements(int totalPeriods) {
-        for(int period = 0; period < totalPeriods; period++) {
-            setPeriodSeatingArrangement(period,getSeatArrangement());
+        for (int period = 0; period < totalPeriods; period++) {
+            setPeriodSeatingArrangement(period, getSeatArrangement());
         }
     }
 

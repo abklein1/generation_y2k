@@ -1,11 +1,11 @@
 package utility;
 
 public interface PName {
-    void setFirstName(String firstName);
-
-    void setLastName(String lastName);
-
     String getFirstName();
 
+    void setFirstName(String firstName);
+
     String getLastName();
+
+    void setLastName(String lastName);
 }

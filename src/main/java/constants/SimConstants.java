@@ -192,7 +192,7 @@ public final class SimConstants {
     public static final int TEACHER_VIOLET_EYE_UPPER_BOUND = 107;
     public static final int TEACHER_BLACK_EYE_LOWER_BOUND = 108;
     public static final int TEACHER_BLACK_EYE_UPPER_BOUND = 108;
-    
+
     // TEACHER HAIR TYPE DISTRIBUTION
     public static final int TEACHER_FINE_STRAIGHT_HAIR_LOWER_BOUND = 0;
     public static final int TEACHER_FINE_STRAIGHT_HAIR_UPPER_BOUND = 50;
@@ -222,7 +222,7 @@ public final class SimConstants {
     // SOCIAL LINK ADJUSTMENT
     public static final int SOCIAL_LINK_MEAN = 0;
     public static final int SOCIAL_LINK_STANDARD_DEVIATION = 25;
-    
+
     private SimConstants() {
     }
 }

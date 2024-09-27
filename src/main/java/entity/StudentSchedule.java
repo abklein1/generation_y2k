@@ -27,7 +27,7 @@ public class StudentSchedule {
     public List<String> toStringArray() {
         List<String> studentScheduleString = new ArrayList<>();
 
-        for(StudentBlock block : classSchedule) {
+        for (StudentBlock block : classSchedule) {
             studentScheduleString.add(block.getClassName());
         }
 

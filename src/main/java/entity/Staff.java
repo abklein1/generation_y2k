@@ -1,23 +1,23 @@
 package entity;
 
+import utility.TeacherFactory;
 import utility.TeacherName;
 import utility.TeacherStatistics;
-import utility.TeacherFactory;
 
 import java.io.Serializable;
 
 public class Staff implements Serializable {
 
-    public TeacherName teacherName;
     private final TeacherUpperT teacherUpperT;
     private final TeacherLegs teacherLegs;
     private final TeacherArms teacherArms;
     private final ShoulderBag shoulderBag;
+    public TeacherName teacherName;
     public TeacherStatistics teacherStatistics;
 
     TeacherFactory teacherFactory = new TeacherFactory();
 
-    public Staff(){
+    public Staff() {
         teacherName = teacherFactory.createName();
         teacherUpperT = teacherFactory.createUpperTorso();
         teacherLegs = teacherFactory.createLegs();

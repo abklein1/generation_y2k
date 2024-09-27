@@ -42,7 +42,7 @@ public class NameLoader {
             String f_line;
 
             while ((f_line = fr.readLine()) != null) {
-                String [] parts = f_line.split(",");
+                String[] parts = f_line.split(",");
                 if (parts.length == 3) {
                     String name = parts[0].trim();
                     char gen = parts[1].trim().charAt(0);
@@ -95,6 +95,7 @@ public class NameLoader {
             }
         }
     }
+
     // TODO: bad code to refactor later for readability
     public static String nameGenerator(String year, String genderR) {
         if (Integer.parseInt(year) < 1986) {
@@ -111,7 +112,7 @@ public class NameLoader {
         switch (year) {
             case "1986":
                 for (int i = 0; i < gender1986.size(); i++) {
-                    char currentGender= gender1986.get(i);
+                    char currentGender = gender1986.get(i);
 
                     if (currentGender == genR) {
                         targetGenderFound = true;
@@ -124,7 +125,7 @@ public class NameLoader {
                 break;
             case "1987":
                 for (int i = 0; i < gender1987.size(); i++) {
-                    char currentGender= gender1987.get(i);
+                    char currentGender = gender1987.get(i);
 
                     if (currentGender == genR) {
                         targetGenderFound = true;
@@ -137,7 +138,7 @@ public class NameLoader {
                 break;
             case "1988":
                 for (int i = 0; i < gender1988.size(); i++) {
-                    char currentGender= gender1988.get(i);
+                    char currentGender = gender1988.get(i);
 
                     if (currentGender == genR) {
                         targetGenderFound = true;
@@ -150,7 +151,7 @@ public class NameLoader {
                 break;
             case "1989":
                 for (int i = 0; i < gender1989.size(); i++) {
-                    char currentGender= gender1989.get(i);
+                    char currentGender = gender1989.get(i);
 
                     if (currentGender == genR) {
                         targetGenderFound = true;
@@ -163,7 +164,7 @@ public class NameLoader {
                 break;
             case "1990":
                 for (int i = 0; i < gender1990.size(); i++) {
-                    char currentGender= gender1990.get(i);
+                    char currentGender = gender1990.get(i);
 
                     if (currentGender == genR) {
                         targetGenderFound = true;
@@ -176,7 +177,7 @@ public class NameLoader {
                 break;
             default:
                 for (int i = 0; i < gender.size(); i++) {
-                    char currentGender= gender.get(i);
+                    char currentGender = gender.get(i);
 
                     if (currentGender == genR) {
                         targetGenderFound = true;
@@ -211,7 +212,7 @@ public class NameLoader {
 
         for (int i = 0; i < names.size(); i++) {
             cumulativeWeight += weights.get(i);
-            if(value < cumulativeWeight) {
+            if (value < cumulativeWeight) {
                 return names.get(i);
             }
         }
@@ -307,7 +308,6 @@ public class NameLoader {
         double cumulativeWeight = 0.0;
 
 
-
         for (Map.Entry<String, NameData> entry : lastNamesStudent.entrySet()) {
             cumulativeWeight += entry.getValue().weight;
             if (cumulativeWeight >= value) {
@@ -334,16 +334,6 @@ public class NameLoader {
         return "unknown"; // Fallback in case of error
     }
 
-    static class NameData {
-        double weight;
-        Map<String, Double> raceDistribution;
-
-        NameData(double weight, Map<String, Double> raceDistribution) {
-            this.weight = weight;
-            this.raceDistribution = raceDistribution;
-        }
-    }
-
     public static String suffixNameGenerator(String gender) {
         Random r = new Random();
         int roll = 0;
@@ -352,9 +342,9 @@ public class NameLoader {
             return "";
         }
 
-        roll = r.nextInt(100)+1;
+        roll = r.nextInt(100) + 1;
 
-        if(roll <= 50) {
+        if (roll <= 50) {
             return "Jr.";
         } else if (roll <= 80) {
             return "II";
@@ -371,6 +361,16 @@ public class NameLoader {
         Random r = new Random();
         char middleInitial = (char) (r.nextInt(26) + 'A');
         return middleInitial;
+    }
+
+    static class NameData {
+        double weight;
+        Map<String, Double> raceDistribution;
+
+        NameData(double weight, Map<String, Double> raceDistribution) {
+            this.weight = weight;
+            this.raceDistribution = raceDistribution;
+        }
     }
 
 }

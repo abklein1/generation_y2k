@@ -27,7 +27,7 @@ public class UtilityRoom implements Room, Serializable {
     private String roomNumber;
     private boolean studentRestriction;
     private Student[][] seats;
-    private HashMap<Integer, Student[][]> seatingArrangements;
+    private final HashMap<Integer, Student[][]> seatingArrangements;
 
     public UtilityRoom() {
         this.numOfConnections = 0;
@@ -224,15 +224,15 @@ public class UtilityRoom implements Room, Serializable {
         return seatingArrangements;
     }
 
-    private enum utilityType {
-        IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
-    }
-
     @Override
     public void initializeSeatingArrangements(int totalPeriods) {
-        for(int period = 0; period < totalPeriods; period++) {
-            setPeriodSeatingArrangement(period,getSeatArrangement());
+        for (int period = 0; period < totalPeriods; period++) {
+            setPeriodSeatingArrangement(period, getSeatArrangement());
         }
+    }
+
+    private enum utilityType {
+        IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
     }
 
 }

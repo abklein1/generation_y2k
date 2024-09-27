@@ -3,11 +3,7 @@ package utility;
 import entity.Student;
 import view.GameView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static utility.Randomizer.setRandom;
 
@@ -397,7 +393,7 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setLevel(1);
         studentCopy.studentStatistics.setExperience(0);
         // Half sibling can either come from mother or father. if father the age gap can be closer
-        if (setRandom(0,10) <= 5) {
+        if (setRandom(0, 10) <= 5) {
             studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
         } else {
             // Ensure min age gap between siblings from same mother

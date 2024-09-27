@@ -5,20 +5,11 @@ public class TeacherName implements PName {
     private String firstName;
     private String lastName;
     private String suffix;
-    public TeacherName(){
+
+    public TeacherName() {
         this.firstName = null;
         this.lastName = null;
         this.suffix = null;
-    }
-
-    @Override
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    @Override
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     @Override
@@ -27,12 +18,27 @@ public class TeacherName implements PName {
     }
 
     @Override
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Override
     public String getLastName() {
         return this.lastName;
     }
 
-    public void setSuffix(String suffix) {this.suffix = suffix;}
-    public String getSuffix() {return this.suffix;}
+    @Override
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getSuffix() {
+        return this.suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
 
     public String capitalizeName(String name) {
         if (name == null || name.isEmpty()) {

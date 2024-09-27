@@ -11,7 +11,7 @@ public class StudentBlock {
     Room room;
     String semester;
 
-    public StudentBlock(){
+    public StudentBlock() {
         blockNumber = 0;
         className = "";
         teacher = null;

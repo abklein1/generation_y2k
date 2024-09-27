@@ -5,7 +5,9 @@ import entity.StudentBlock;
 import entity.StudentSchedule;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class StudentStatistics implements PStatistics {
 
@@ -42,10 +44,10 @@ public class StudentStatistics implements PStatistics {
     private int responsibility;
     private int openmindedness;
     private String incomeLevel;
-    private ArrayList<String> completedClasses;
-    private StudentSchedule studentSchedule;
-    private ArrayList<Student> siblingsInSchool;
-    private ArrayList<String> siblingsNotInSchool;
+    private final ArrayList<String> completedClasses;
+    private final StudentSchedule studentSchedule;
+    private final ArrayList<Student> siblingsInSchool;
+    private final ArrayList<String> siblingsNotInSchool;
 
 
     public StudentStatistics() {
@@ -544,12 +546,12 @@ public class StudentStatistics implements PStatistics {
         this.luck = luck;
     }
 
-    public void setIncomeLevel(String incomeLevel) {
-        this.incomeLevel = incomeLevel;
-    }
-
     public String getIncomeLevel() {
         return incomeLevel;
+    }
+
+    public void setIncomeLevel(String incomeLevel) {
+        this.incomeLevel = incomeLevel;
     }
 
     public void setInitIncomeLevel(int choice) {
@@ -562,7 +564,9 @@ public class StudentStatistics implements PStatistics {
         }
     }
 
-    public ArrayList<String> getCompletedClasses() {return this.completedClasses;}
+    public ArrayList<String> getCompletedClasses() {
+        return this.completedClasses;
+    }
 
     public void addToCompletedClasses(String completedClass) {
         this.completedClasses.add(completedClass);
@@ -589,7 +593,7 @@ public class StudentStatistics implements PStatistics {
     }
 
     public ArrayList<Student> getSiblingsInSchool() {
-        return  siblingsInSchool;
+        return siblingsInSchool;
     }
 
     public void addSiblingsNotInSchool(String name) {

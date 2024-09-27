@@ -1,15 +1,15 @@
 package utility;
 
 import entity.ClassDetail;
-import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ClassDetailsLoader {
@@ -37,7 +37,7 @@ public class ClassDetailsLoader {
 
                         JSONArray prereqArray = (JSONArray) classDetails2.get("Prerequisite");
                         List<String> prerequisite = new ArrayList<>();
-                        if(!(prereqArray == null)) {
+                        if (!(prereqArray == null)) {
                             for (Object prereq : prereqArray) {
                                 prerequisite.add((String) prereq);
                             }
@@ -45,7 +45,7 @@ public class ClassDetailsLoader {
 
                         JSONArray altArray = (JSONArray) classDetails2.get("Alternatives");
                         List<String> alternatives = new ArrayList<>();
-                        if(!(altArray == null)) {
+                        if (!(altArray == null)) {
                             for (Object alt : altArray) {
                                 alternatives.add((String) alt);
                             }
@@ -53,7 +53,7 @@ public class ClassDetailsLoader {
 
                         JSONArray gradeArray = (JSONArray) classDetails2.get("Grade Level");
                         List<Integer> gradeLevel = new ArrayList<>();
-                        if(!(gradeArray == null)) {
+                        if (!(gradeArray == null)) {
                             for (Object grade : gradeArray) {
                                 gradeLevel.add(((Long) grade).intValue());
                             }

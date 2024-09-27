@@ -1,7 +1,5 @@
 package entity;
 
-import entity.Arms;
-
 import java.io.Serializable;
 
 public class StudentArms implements Arms, Serializable {

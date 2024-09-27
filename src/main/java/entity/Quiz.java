@@ -1,7 +1,5 @@
 package entity;
 
-import entity.Boss;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Quiz implements Boss {

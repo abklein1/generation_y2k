@@ -1,7 +1,5 @@
 package entity;
 
-import entity.Carry;
-
 import java.io.Serializable;
 
 public class ShoulderBag implements Carry, Serializable {
@@ -36,10 +34,12 @@ public class ShoulderBag implements Carry, Serializable {
     }
 
     @Override
-    public void addItem() {}
+    public void addItem() {
+    }
 
     @Override
-    public void removeItem(){}
+    public void removeItem() {
+    }
 
 
 }

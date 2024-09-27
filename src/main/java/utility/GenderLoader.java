@@ -1,9 +1,9 @@
 package utility;
 
 import java.util.concurrent.ThreadLocalRandom;
-import constants.SimConstants.*;
 
-import static constants.SimConstants.*;
+import static constants.SimConstants.GENDER_MALE_RATE;
+import static constants.SimConstants.GENDER_SAMPLE_SIZE;
 
 // TODO: Revise this as needed. May set up for seeding
 // TODO: Add input for year based on gender table to change gender distribution

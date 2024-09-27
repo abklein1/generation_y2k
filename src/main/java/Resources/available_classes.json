@@ -411,7 +411,9 @@
         "Honors": true,
         "OnLevel": true,
         "Required": true,
-        "Prerequisite": ["Algebra I"],
+        "Prerequisite": [
+          "Algebra I"
+        ],
         "Alternatives": [
           "Algebra 1",
           "Geometry"

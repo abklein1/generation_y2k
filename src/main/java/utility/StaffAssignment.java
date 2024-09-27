@@ -562,18 +562,18 @@ public class StaffAssignment {
         //Performing Arts Assignment
         for (Staff teacher : performingArtsTeachers) {
             performingArtsHelper(teacher, standardSchool, perfCount, view);
-            if(perfCount >= 4) {
+            if (perfCount >= 4) {
                 perfCount = 0;
             } else {
                 perfCount++;
             }
         }
         //Vocational Assignment
-        for(Staff teacher : vocationalTeachers) {
+        for (Staff teacher : vocationalTeachers) {
             vocationalHelper(teacher, standardSchool, view);
         }
         //Business Assignment
-        for(Staff teacher : businessTeachers) {
+        for (Staff teacher : businessTeachers) {
             businessHelper(teacher, standardSchool, view);
         }
     }
@@ -986,7 +986,7 @@ public class StaffAssignment {
         String f_name = teacher.teacherName.getFirstName();
         String l_name = teacher.teacherName.getLastName();
         Room room = standardSchool.getRoomByStaff(teacher, "Visual Arts");
-        int choice = Randomizer.setRandom(0,4);
+        int choice = Randomizer.setRandom(0, 4);
         if (room != null) {
             int studentPop = room.getStudentCapacity();
             switch (choice) {
@@ -1062,12 +1062,12 @@ public class StaffAssignment {
         }
     }
 
-    private static void performingArtsHelper(Staff teacher, StandardSchool standardSchool, int count,  GameView view) {
+    private static void performingArtsHelper(Staff teacher, StandardSchool standardSchool, int count, GameView view) {
         String[] classes = new String[8];
         String f_name = teacher.teacherName.getFirstName();
         String l_name = teacher.teacherName.getLastName();
         Room room = standardSchool.getRoomByStaff(teacher, "Performing Arts");
-        int choice = Randomizer.setRandom(0,4);
+        int choice = Randomizer.setRandom(0, 4);
         if (room != null) {
             int studentPop = room.getStudentCapacity();
             switch (count) {
@@ -1182,8 +1182,8 @@ public class StaffAssignment {
         String f_name = teacher.teacherName.getFirstName();
         String l_name = teacher.teacherName.getLastName();
         Room room = standardSchool.getRoomByStaff(teacher, "Vocational");
-        int choice = Randomizer.setRandom(0,9);
-        if(room != null) {
+        int choice = Randomizer.setRandom(0, 9);
+        if (room != null) {
             int studentPop = room.getStudentCapacity();
             switch (choice) {
                 case 0 -> {
@@ -1313,7 +1313,7 @@ public class StaffAssignment {
         String f_name = teacher.teacherName.getFirstName();
         String l_name = teacher.teacherName.getLastName();
         Room room = standardSchool.getRoomByStaff(teacher, "Business");
-        int choice = Randomizer.setRandom(0,2);
+        int choice = Randomizer.setRandom(0, 2);
         if (room != null) {
             int studentPop = room.getStudentCapacity();
             switch (choice) {

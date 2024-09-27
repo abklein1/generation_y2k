@@ -1,7 +1,5 @@
 package entity;
 
-import entity.Legs;
-
 import java.io.Serializable;
 
 public class StudentLegs implements Legs, Serializable {

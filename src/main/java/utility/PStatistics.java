@@ -1,85 +1,85 @@
 package utility;
 
 public interface PStatistics {
-    void setHeight(double height);
-
-    void setEyeColor(String eyeColor);
-
-    void setHairColor(String hairColor);
-
-    void setBuild(String build);
-
-    void setIntelligence(int intelligence);
-
-    void setCharisma(int charisma);
-
-    void setAgility(int agility);
-
-    void setDetermination(int determination);
-
-    void setStrength(int strength);
-
-    void setSleepState(boolean sleepState);
+    int getBoredom();
 
     void setBoredom(int boredom);
 
-    int getBoredom();
-
     boolean getSleepState();
+
+    void setSleepState(boolean sleepState);
 
     int getStrength();
 
+    void setStrength(int strength);
+
     int getDetermination();
+
+    void setDetermination(int determination);
 
     int getAgility();
 
+    void setAgility(int agility);
+
     int getCharisma();
+
+    void setCharisma(int charisma);
 
     int getIntelligence();
 
+    void setIntelligence(int intelligence);
+
     String getBuild();
+
+    void setBuild(String build);
 
     String getHairColor();
 
+    void setHairColor(String hairColor);
+
     String getEyeColor();
+
+    void setEyeColor(String eyeColor);
 
     double getHeight();
 
-    void setCreativity(int creativity);
+    void setHeight(double height);
 
     int getCreativity();
 
-    void setEmpathy(int empathy);
+    void setCreativity(int creativity);
 
     int getEmpathy();
 
-    void setAdaptability(int adaptability);
+    void setEmpathy(int empathy);
 
     int getAdaptability();
 
-    void setInitiative(int initiative);
+    void setAdaptability(int adaptability);
 
     int getInitiative();
 
-    void setResilience(int resilience);
+    void setInitiative(int initiative);
 
     int getResilience();
 
-    void setCuriosity(int curiosity);
+    void setResilience(int resilience);
 
     int getCuriosity();
 
-    void setResponsibility(int responsibility);
+    void setCuriosity(int curiosity);
 
     int getResponsibility();
 
-    void setOpenMindedness(int openMindedness);
+    void setResponsibility(int responsibility);
 
     int getOpenMindedness();
 
-    void setPerception(int perception);
+    void setOpenMindedness(int openMindedness);
 
     int getPerception();
+
+    void setPerception(int perception);
 
     void setInitHairLength(int choice);
 

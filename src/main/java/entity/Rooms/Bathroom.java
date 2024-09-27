@@ -30,7 +30,7 @@ public class Bathroom implements Room, Serializable {
     private boolean studentRestriction;
     private int stallNumber;
     private Student[][] seats;
-    private HashMap<Integer, Student[][]> seatingArrangements;
+    private final HashMap<Integer, Student[][]> seatingArrangements;
 
     public Bathroom() {
         this.numOfConnections = 0;
@@ -233,8 +233,8 @@ public class Bathroom implements Room, Serializable {
 
     @Override
     public void initializeSeatingArrangements(int totalPeriods) {
-        for(int period = 0; period < totalPeriods; period++) {
-            setPeriodSeatingArrangement(period,getSeatArrangement());
+        for (int period = 0; period < totalPeriods; period++) {
+            setPeriodSeatingArrangement(period, getSeatArrangement());
         }
     }
 }

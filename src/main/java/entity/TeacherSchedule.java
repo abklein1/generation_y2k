@@ -1,6 +1,5 @@
 package entity;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,9 @@ public class TeacherSchedule {
         teacherSchedule.remove(block);
     }
 
-    public int size() {return teacherSchedule.size();}
+    public int size() {
+        return teacherSchedule.size();
+    }
 
     public List<TeacherBlock> getBlocksByClassName(String className) {
         List<TeacherBlock> blocks = new ArrayList<>();
@@ -44,7 +45,7 @@ public class TeacherSchedule {
     public List<String> toStringArray() {
         List<String> teacherScheduleString = new ArrayList<>();
 
-        for(TeacherBlock block : teacherSchedule) {
+        for (TeacherBlock block : teacherSchedule) {
             teacherScheduleString.add(block.getClassName());
         }
 

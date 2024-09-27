@@ -17,13 +17,11 @@ public interface Room {
 
     void reset();
 
-    void setConnections(int connections);
-
     int getConnections();
 
-    void setWindowCount(int windows);
+    void setConnections(int connections);
 
-    void setRoomName(String roomName);
+    void setWindowCount(int windows);
 
     void setDoors(int doors);
 
@@ -41,9 +39,11 @@ public interface Room {
 
     String getRoomName();
 
-    void setAssignedStaff(Staff staff);
+    void setRoomName(String roomName);
 
     List<Staff> getAssignedStaff();
+
+    void setAssignedStaff(Staff staff);
 
     void removeAssignedStaff(Staff staff);
 
@@ -71,7 +71,7 @@ public interface Room {
 
     void setPeriodSeatingArrangement(int period, Student[][] seatArrangement);
 
-    HashMap<Integer,Student[][]> getPeriodSeatingArrangement();
+    HashMap<Integer, Student[][]> getPeriodSeatingArrangement();
 
     void initializeSeatingArrangements(int totalPeriods);
 
