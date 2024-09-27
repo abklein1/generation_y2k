@@ -288,6 +288,15 @@ Strong Positive and Strong Positive / Strong Negative and Strong Negative
 These people are best friends or worst enemies, or frenemies. More mechanics will have to be developed to support
 complexity in all of these relationships.
 
+### Notes on Allostatic Load as a Future Gameplay Mechanic
+
+I plan to use a real-world metric known as "allostatic load" which is a combination of multiple measurements that attempts to capture how repeated or chronic stressors affect the mind and body over time. For the purpose of this simulation, we will be using type 2 allostatic load, which is more tied to social/environmental factors.
+Allostatic load in this simulation will likely be tracked through a single measurement on a fixed scale. While some sims rely on a "mood" meter to represent an individual's overall status, I believe it is important to include a metric such as allostatic load/overload to represent long-term stressors and their affects on the body, while allowing individuals to still experience different moods in the short-term.
+It will be important to manage allostatic load in the game. Pushing a character too far will build allostatic load over time and lead to lasting negative effects. Allostatic load/overload can be mitigated through various strategies. Some people will be able to tolerate more load than others.
+Repeated allostatic overload will likely reduce the overall amount of allostatic load a person may tolerate. 
+
+
+
 ## Known Bugs
 
 - Graph visualization of rooms/social links can be hard to read due to overlapping labels
