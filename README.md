@@ -90,7 +90,6 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 
 - School schedules/ bell schedule
 - More status effects for people
-- Social links as weighted graphs
 - Items
 - Moods / Allostatic load
 - Nicknames
@@ -151,16 +150,22 @@ An example of a staff generated and displayed in the inspector:
 - Approximate Household income
   distribution : https://www.pewresearch.org/short-reads/2022/04/20/how-the-american-middle-class-has-changed-in-the-past-five-decades/
 - Weather Data per region : https://www.ncei.noaa.gov/access/search/data-search/daily-summaries
-- Student AP participation rates : https://newsroom.collegeboard.org/student-participation-and-performance-advanced-placement-rise-tandem#:~:text=The%20percentage%20of%20low%2Dincome,responsibilities%20for%20the%20College%20Board.
+- Student AP participation
+  rates : https://newsroom.collegeboard.org/student-participation-and-performance-advanced-placement-rise-tandem#:~:text=The%20percentage%20of%20low%2Dincome,responsibilities%20for%20the%20College%20Board
+  .
 - Rates of male pattern baldness : https://pubmed.ncbi.nlm.nih.gov/9865198/
 - Rates of gray hair per age bracket : https://pubmed.ncbi.nlm.nih.gov/22716034/
 - Living arrangements of children in 2004 : https://www2.census.gov/library/publications/2008/demo/p70-114.pdf
-- Rate of multiple births per ethnicity : https://www.statista.com/statistics/244913/twin-birth-rates-in-the-united-states-by-ethnicity/#:~:text=Fraternal%20twins%2C%20although%20born%20at,siblings%20born%20at%20different%20times.&text=The%20birth%20rate%20for%20twins,1%2C000%20live%20births%20in%202022.
+- Rate of multiple births per
+  ethnicity : https://www.statista.com/statistics/244913/twin-birth-rates-in-the-united-states-by-ethnicity/#:~:text=Fraternal%20twins%2C%20although%20born%20at,siblings%20born%20at%20different%20times.&text=The%20birth%20rate%20for%20twins,1%2C000%20live%20births%20in%202022
+  .
 - Trends in intermarriage : https://www.pewresearch.org/social-trends/2017/05/18/1-trends-and-patterns-in-intermarriage/
 - Overview of Allostatic load : https://karger.com/pps/article/90/1/11/294736/Allostatic-Load-and-Its-Impact-on-Health-A
 - Gender tables for 2004 : https://www.test.census.gov/data/tables/2004/demo/age-and-sex/2004-age-sex-composition.html
 
 ## Gameplay Mechanics
+
+### Teacher and Student Stats
 
 Student and teacher stats are comprised of the following primary stats. Primary stats are inherent to the characters and
 do not change:
@@ -218,26 +223,114 @@ activities, but they cannot be pushed beyond their initial cap.
 - OPN / Open-Mindedness: This is a combination of intelligence and charisma. This represents the ability for the
   individual receive new ideas and accept situations and others that might exist outside their comfort-zone.
 
-### Known Bugs
+### Social Links
 
-- Graph visualization of rooms can be hard to read due to overlapping labels
-- Graph visualization of rooms cannot handle dragging of connections/ allows connections to be moved
+Students (and eventually teachers/staff) can have a number of social links that represent their feeling and status with
+various people. Social links are bidirectional and weighted and fall within a range from -100 to 100.
+A link of score 100, represents a strong attachment/ positive outlook towards that person, whereas a link of -100 would
+mean the exact opposite (0 being neutral). Since links are bidirectional, it is possible for each party, in a
+relationship, to feel differently about the other.
+Social links cannot stand on their own and will require additional systems to provide context for relationships, but the
+score acts as a core signifier of the relationship. Examples for how more context will flavor a relationship score would
+be including a list of negative emotions associated with a low score. Additionally, consideration should be given
+towards if a relationship is existing family, gender, and/or age (see examples).
+People will be limited in the amount of social links they can carry based primarily on their Charisma stat.
+People will likely have limits on how many relationships of each category they can hold. For example, a student may have
+enough Charisma to maintain three best friends/strong relationships at any time, but may hold many more acquaintances or
+casual relationships.
+If a casual friendship were to get more serious, and they were elevated to a "best friend", then other best friend
+relationships would begin to deteriorate at a quicker rate.
+
+#### Examples:
+
+Strong Positive and Neutral
+
+Person A -> Person B : Social score 100
+
+Person B -> Person A : Social score 0
+
+Person B has a neutral opinion of Person A, or has no knowledge of Person A. Person A is not counted towards Person B's
+social links count. However, Person A has a strong liking towards Person B, and does consume a social link for Person A,
+since they hold a significant portion of Person A's thoughts.
+This base social score could be used, to represent that Person A strongly admires a well-known, popular student (Person
+B), or a younger sibling admiring their older brother/sister, or Person A is a student who has a strong, unrequited
+crush on Person B.
+
+Strong Positive and Strong Negative
+
+Person C -> Person D : Social score > 75
+
+Person D -> Person C : Social score < -75
+
+This could be interpreted in a few ways depending on context. Person C could be friends with Person D, or at least
+consider them as a best friend, whereas Person D is being intentionally deceitful in order to cause harm to Person C at
+some point.
+This link could also represent a sibling (Person C) that adores another sibling (Person D) who actively and routinely
+hates them. With enough acts of betrayal, Person C will lose social score towards Person D. It may be possible the
+opposite may occur, that Person D reverses their position over time.
+Person C could possibly be an individual who has trouble interpreting social cues (low Perception, low Intelligence
+etc.) and believes that most people are their friend despite repeated evidence showing otherwise.
+
+Strong Negative and Neutral
+
+Person E -> Person F : Social score < -75
+
+Person F -> Person E : Social score 0
+
+Person E actively hates Person F, but Person F has no opinion or barely knows Person E. This could be someone who feels
+underrepresented in school hating a popular student, or someone who is jealous of a popular student who doesn't know
+they exist.
+This person (Person E) could also be a friend of someone who is being bullied or was broken up with by Person F, who
+simply doesn't like someone because of what has been done to their friend.
+
+Strong Positive and Strong Positive / Strong Negative and Strong Negative
+
+These people are best friends or worst enemies, or frenemies. More mechanics will have to be developed to support
+complexity in all of these relationships.
+
+## Known Bugs
+
+- Graph visualization of rooms/social links can be hard to read due to overlapping labels
+- Graph visualization of rooms/social links cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers
 - Too many students assigned to theater technology
 - Some teachers are not properly assigned a room
 - Sometimes math classes are not assigned to freshmen
 - Some last name capitalization is wrong
 - Overcapacity rate in classrooms is relatively high/ some blocks still under 5 students assigned
-- Auditorium seating display does not work sometimes
+
+## Release 0.0.12
+
+- Initial social connection system has been stood up as bidirectional weighted graphs. Students are capable of having
+  social connections with other students. Social connections can be visualized when clicking on a student in the
+  inspection window. Currently, social connections only apply to generated siblings
+- Fixes to seating assignment and bugs that occurred with multiple seat assignments for same student during the same
+  block as well as seating visualizations for rooms without assigned staff such as parking lots.
+- Gyms, auditoriums, fields and libraries can now have generated names ex. "Herbert J. Walker Stadium"
+- Schools now have a founding year. Setting up for generation of historical events
+- Many "magic numbers" used in various sim calculations have been centralized into constant fields. This will hopefully
+  lay the foundation for generating schools via seeds in the future as well as lends to code readability and
+  maintainability
+- Fixed a missing perception stat for teachers/staff
+- Most mutual sibling relationships have been fixed. Now, most siblings who have other siblings in school, should
+  contain the same information (each sibling has the same listings of siblings in and out of school)
+- Gender distribution based now on real census data. Table included as reference to affect gender distribution by age
+  bracket in the future
+- Clean up formatting and minor bugfixes
+
+![](src/main/java/Resources.Screencaps/proto7.JPG)
 
 ## Release 0.0.11
+
 - Students now have vocational class assignments based on traits, which now means each student has a full schedule
-- Teacher descriptions have been revised to account for age and a bug was fixed that used female hair length distributions for male teachers. Teachers are capable of having graying or gray hair as well as can be bald or balding
+- Teacher descriptions have been revised to account for age and a bug was fixed that used female hair length
+  distributions for male teachers. Teachers are capable of having graying or gray hair as well as can be bald or balding
 - Teachers now have a teaching experience stat based on number of years teaching
 - An algorithm has been constructed to place students in seats for each classroom and block
 - Last names are now properly capitalized and no longer all caps
 - Last names have the possibility of being hyphenated
-- Students now capable of having generated siblings (twins, triplets, half, step) that are either in or out of school. This forms the foundation for future social links feature
+- Students now capable of having generated siblings (twins, triplets, half, step) that are either in or out of school.
+  This forms the foundation for future social links feature
 - Various bugfixes
 
 ![](src/main/java/Resources.Screencaps/proto6.JPG)
