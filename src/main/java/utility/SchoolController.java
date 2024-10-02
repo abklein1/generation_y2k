@@ -214,6 +214,8 @@ public class SchoolController {
                 publish("Initializing social links...");
                 socialLinkConnector = new SocialLinkConnector(studentHashMap);
 
+                TraversalStorage traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
+
             } catch (Throwable t) {
                 t.printStackTrace();
                 publish("Caught an exception: " + t.getMessage());

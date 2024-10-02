@@ -10,6 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import static constants.SimConstants.*;
+import static constants.SchoolConstants.TOTAL_SCHOOL_PERIODS;
 public class StudentScheduleAssigner {
 
     private static final HashMap<String, ClassDetail> classDetailsMap = ClassDetailsLoader.loadClassDetails("src/main/java/Resources/available_classes.json");
@@ -26,7 +28,7 @@ public class StudentScheduleAssigner {
         int intelligence = student.studentStatistics.getIntelligence();
         int determination = student.studentStatistics.getDetermination();
         String income = student.studentStatistics.getIncomeLevel();
-        int langChoice = Randomizer.setRandom(0, 4);
+        int langChoice = Randomizer.setRandom(0, LANGUAGE_CHOICE_SAMPLE_SIZE);
 
         // Determine paths for each subject
         String englishPath = classProbabilityLoader(intelligence, income, determination);
@@ -195,18 +197,18 @@ public class StudentScheduleAssigner {
 
         // Schedule additional vocational classes
         if (!student.studentStatistics.getGradeLevel().equals("Freshman")) {
-            if (student.studentStatistics.getDetermination() < 35 && student.studentStatistics.getGradeLevel().equals("Senior")) {
+            if (student.studentStatistics.getDetermination() < SENIOR_VOCATIONAL_CLASS_DETERMINATION_THRESHOLD && student.studentStatistics.getGradeLevel().equals("Senior")) {
                 System.out.println("No vocational classes to assign.");
             } else {
                 int classLength = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
                 for (String className : vocationalClassesFall) {
                     assignClassToStudent(student, className, staffHashMap);
-                    if (classLength >= 8) {
+                    if (classLength >= TOTAL_SCHOOL_PERIODS) {
                         break;
                     }
                 }
                 for (String className : vocationalClassesSpring) {
-                    if (classLength >= 8) {
+                    if (classLength >= TOTAL_SCHOOL_PERIODS) {
                         break;
                     } else {
                         assignClassToStudent(student, className, staffHashMap);
@@ -529,52 +531,56 @@ public class StudentScheduleAssigner {
     }
 
     private static String classProbabilityLoader(int intelligence, String income, int determination) {
-        int random = Randomizer.setRandom(0, 100);
+        int random = Randomizer.setRandom(0, CLASS_PROBABILITY_LOADER_SAMPLE_SIZE);
         double apProbability;
         double honorsProbability;
         double onLevelProbability;
 
         // Base probabilities based on intelligence
-        if (intelligence >= 135) {
-            apProbability = 80.0;
-            honorsProbability = 10.0;
-            onLevelProbability = 10.0;
-        } else if (intelligence >= 120) {
-            apProbability = 50.0;
-            honorsProbability = 30.0;
-            onLevelProbability = 20.0;
-        } else if (intelligence >= 100) {
-            apProbability = 20.0;
-            honorsProbability = 30.0;
-            onLevelProbability = 50.0;
+        if (intelligence >= CLASS_PROBABILITY_LOADER_GIFTED_INTELLIGENCE_THRESHOLD) {
+            apProbability = CLASS_PROBABILITY_LOADER_GIFTED_AP_PROBABILITY;
+            honorsProbability = CLASS_PROBABILITY_LOADER_GIFTED_HONORS_PROBABILITY;
+            onLevelProbability = CLASS_PROBABILITY_LOADER_GIFTED_ON_LEVEL_PROBABILITY;
+        } else if (intelligence >= CLASS_PROBABILITY_LOADER_HIGH_INTELLIGENCE_THRESHOLD) {
+            apProbability = CLASS_PROBABILITY_LOADER_HIGH_AP_PROBABILITY;
+            honorsProbability = CLASS_PROBABILITY_LOADER_HIGH_HONORS_PROBABILITY;
+            onLevelProbability = CLASS_PROBABILITY_LOADER_HIGH_ON_LEVEL_PROBABILITY;
+        } else if (intelligence >= CLASS_PROBABILITY_LOADER_AVERAGE_INTELLIGENCE_THRESHOLD) {
+            apProbability = CLASS_PROBABILITY_LOADER_AVERAGE_AP_PROBABILITY;
+            honorsProbability = CLASS_PROBABILITY_LOADER_AVERAGE_HONORS_PROBABILITY;
+            onLevelProbability = CLASS_PROBABILITY_LOADER_AVERAGE_ON_LEVEL_PROBABILITY;
+        } else if (intelligence <= CLASS_PROBABILITY_LOADER_LOW_INTELLIGENCE_THRESHOLD) {
+            apProbability = CLASS_PROBABILITY_LOADER_LOW_AP_PROBABILITY;
+            honorsProbability = CLASS_PROBABILITY_LOADER_LOW_HONORS_PROBABILITY;
+            onLevelProbability = CLASS_PROBABILITY_LOADER_LOW_ON_LEVEL_PROBABILITY;
         } else {
-            apProbability = 5.0;
-            honorsProbability = 20.0;
-            onLevelProbability = 75.0;
+            apProbability = CLASS_PROBABILITY_LOADER_OTHER_AP_PROBABILITY;
+            honorsProbability = CLASS_PROBABILITY_LOADER_OTHER_HONORS_PROBABILITY;
+            onLevelProbability = CLASS_PROBABILITY_LOADER_OTHER_ON_LEVEL_PROBABILITY;
         }
 
         // Adjust probabilities based on income level
         switch (income) {
             case "high":
-                apProbability *= 1.2;
-                honorsProbability *= 1.1;
-                onLevelProbability *= 0.9;
+                apProbability *= CLASS_PROBABILITY_LOADER_INCOME_HIGH_AP_ADJUSTMENT;
+                honorsProbability *= CLASS_PROBABILITY_LOADER_INCOME_HIGH_HONORS_ADJUSTMENT;
+                onLevelProbability *= CLASS_PROBABILITY_LOADER_INCOME_HIGH_ON_LEVEL_ADJUSTMENT;
                 break;
             case "middle":
                 // No adjustment for middle income
                 break;
             case "low":
-                apProbability *= 0.7;
-                honorsProbability *= 0.9;
-                onLevelProbability *= 1.2;
+                apProbability *= CLASS_PROBABILITY_LOADER_INCOME_LOW_AP_ADJUSTMENT;
+                honorsProbability *= CLASS_PROBABILITY_LOADER_INCOME_LOW_HONORS_ADJUSTMENT;
+                onLevelProbability *= CLASS_PROBABILITY_LOADER_INCOME_LOW_ON_LEVEL_ADJUSTMENT;
                 break;
         }
 
         // Adjust probabilities based on determination
-        double determinationFactor = (determination - 50) / 50.0; // Scaled so that 50 determination gives no modification
+        double determinationFactor = (determination - CLASS_PROBABILITY_LOADER_DETERMINATION_THRESHOLD) / CLASS_PROBABILITY_LOADER_DETERMINATION_FACTOR_DIVISOR; // Scaled so that 50 determination gives no modification
         apProbability += apProbability * determinationFactor;
-        honorsProbability += honorsProbability * determinationFactor / 2;
-        onLevelProbability -= onLevelProbability * determinationFactor / 2;
+        honorsProbability += honorsProbability * determinationFactor / CLASS_PROBABILITY_LOADER_DETERMINATION_HONORS_ADJUSTMENT;
+        onLevelProbability -= onLevelProbability * determinationFactor / CLASS_PROBABILITY_LOADER_DETERMINATION_ON_LEVEL_ADJUSTMENT;
 
         // Normalize probabilities to ensure they add up to 100
         double totalProbability = apProbability + honorsProbability + onLevelProbability;
@@ -593,70 +599,44 @@ public class StudentScheduleAssigner {
     }
 
     private static String[] physicalEdDecision(Student student) {
-        String[] choiceRank = new String[5];
         String gender = student.studentStatistics.getGender();
         int strength = student.studentStatistics.getStrength();
         int determination = student.studentStatistics.getDetermination();
 
-        if (gender.equals("Male")) {
-            // If a student has high strength or low strength but high determination they choose weightlifting
-            if (strength > 60 || (strength < 29 && determination > 60)) {
-                choiceRank[0] = "Weightlifting";
-                choiceRank[1] = "Team Sports";
-                choiceRank[2] = "Specialized Sports";
-                choiceRank[3] = "Lifetime Recreation";
-                choiceRank[4] = "Dance";
-                // Student is just average and wants to do more social classes
-            } else if (strength < 60 && strength > 30) {
-                choiceRank[0] = "Team Sports";
-                choiceRank[1] = "Specialized Sports";
-                choiceRank[2] = "Weightlifting";
-                choiceRank[3] = "Lifetime Recreation";
-                choiceRank[4] = "Dance";
-                // Student is lazy and wants easy classes
-            } else if (determination < 30) {
-                choiceRank[0] = "Lifetime Recreation";
-                choiceRank[1] = "Specialized Sports";
-                choiceRank[2] = "Team Sports";
-                choiceRank[3] = "Dance";
-                choiceRank[4] = "Weightlifting";
-            } else {
-                choiceRank[0] = "Specialized Sports";
-                choiceRank[1] = "Team Sports";
-                choiceRank[2] = "Weightlifting";
-                choiceRank[3] = "Dance";
-                choiceRank[4] = "Lifetime Recreation";
-            }
+        if(gender.equals("Male")) {
+            return getMalePhysicalEdDecision(strength, determination);
         } else {
-            if (strength > 60 || (strength < 29 && determination > 60)) {
-                choiceRank[0] = "Dance";
-                choiceRank[1] = "Team Sports";
-                choiceRank[2] = "Specialized Sports";
-                choiceRank[3] = "Weightlifting";
-                choiceRank[4] = "Lifetime Recreation";
+            return getFemalePhysicalEdDecision(strength, determination);
+        }
+    }
+
+    private static String[] getMalePhysicalEdDecision(int strength, int determination) {
+            // If a student has high strength or low strength but high determination they choose weightlifting
+            if (strength > PHYSICAL_ED_MALE_STRENGTH_THRESHOLD || (strength < PHYSICAL_ED_MALE_LOW_STRENGTH_THRESHOLD && determination > PHYSICAL_ED_MALE_DETERMINATION_THRESHOLD)) {
+                return new String[] {"Weightlifting", "Team Sports", "Specialized Sports", "Lifetime Recreation", "Dance"};
                 // Student is just average and wants to do more social classes
-            } else if (strength < 60 && strength > 30) {
-                choiceRank[0] = "Specialized Sports";
-                choiceRank[1] = "Lifetime Recreation";
-                choiceRank[2] = "Dance";
-                choiceRank[3] = "Weightlifting";
-                choiceRank[4] = "Team Sports";
+            } else if (strength < PHYSICAL_ED_MALE_STRENGTH_THRESHOLD && strength > PHYSICAL_ED_MALE_LOW_STRENGTH_THRESHOLD) {
+                return new String[] {"Team Sports", "Specialized Sports", "Weightlifting", "Lifetime Recreation", "Dance"};
                 // Student is lazy and wants easy classes
-            } else if (determination < 30) {
-                choiceRank[0] = "Lifetime Recreation";
-                choiceRank[1] = "Specialized Sports";
-                choiceRank[2] = "Dance";
-                choiceRank[3] = "Team Sports";
-                choiceRank[4] = "Weightlifting";
+            } else if (determination < PHYSICAL_ED_MALE_LOW_DETERMINATION_THRESHOLD) {
+                return new String[] {"Lifetime Recreation", "Specialized Sports", "Team Sports", "Dance", "Weightlifting"};
             } else {
-                choiceRank[0] = "Specialized Sports";
-                choiceRank[1] = "Team Sports";
-                choiceRank[2] = "Weightlifting";
-                choiceRank[3] = "Dance";
-                choiceRank[4] = "Lifetime Recreation";
+                return new String[] {"Specialized Sports", "Team Sports", "Weightlifting", "Dance", "Lifetime Recreation"};
             }
         }
-        return choiceRank;
+
+    private static String[] getFemalePhysicalEdDecision(int strength, int determination) {
+            if (strength > PHYSICAL_ED_FEMALE_STRENGTH_THRESHOLD || (strength < PHYSICAL_ED_FEMALE_LOW_STRENGTH_THRESHOLD && determination > PHYSICAL_ED_FEMALE_DETERMINATION_THRESHOLD)) {
+                return new String[] {"Dance", "Team Sports", "Specialized Sports", "Weightlifting", "Lifetime Recreation"};
+                // Student is just average and wants to do more social classes
+            } else if (strength < PHYSICAL_ED_FEMALE_STRENGTH_THRESHOLD && strength > PHYSICAL_ED_FEMALE_LOW_STRENGTH_THRESHOLD) {
+                return new String[] {"Specialized Sports", "Lifetime Recreation", "Dance", "Weightlifting", "Team Sports"};
+                // Student is lazy and wants easy classes
+            } else if (determination < PHYSICAL_ED_FEMALE_LOW_DETERMINATION_THRESHOLD) {
+                return new String[] {"Lifetime Recreation", "Specialized Sports", "Dance", "Team Sports", "Weightlifting"};
+            } else {
+                return new String[] {"Specialized Sports", "Team Sports", "Weightlifting", "Dance", "Lifetime Recreation"};
+            }
     }
 
     private static String[] vocationalDecision(Student student, String semester) {

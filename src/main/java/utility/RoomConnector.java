@@ -706,6 +706,10 @@ public class RoomConnector {
         }
     }
 
+    public Graph<Room, DefaultEdge> getSchoolConnect() {
+        return this.schoolConnect;
+    }
+
     //TODO: fix visibility on graphs
     public void visualizer(StandardSchool school) {
         String schoolName = school.getSchoolName();
