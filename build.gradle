@@ -1,6 +1,9 @@
 plugins {
     id "com.github.spotbugs" version "4.5.1"
     id "checkstyle"
+    id "application"
+    id "jacoco"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 apply plugin: 'application'
@@ -9,16 +12,16 @@ apply plugin: 'jacoco'
 
 mainClassName = 'game.Main'
 
-// In this section you declare where to find the dependencies of your project
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
-// In this section you declare the dependencies for your production and test code
 dependencies {
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
-    compile "junit:junit:4.12"
+    compile 'junit:junit:4.12'
     compile files('cls/')
+    compile 'org.jgrapht:jgrapht-core:1.5.1'
+    compile 'org.jheaps:jheaps:0.7.1'
 }
 
 // Set Java version compatibility
@@ -68,4 +71,8 @@ spotbugs {
     ignoreFailures = true
     showProgress = true
     effort = 'max'
+}
+
+shadowJar {
+    archiveClassifier.set('')
 }
