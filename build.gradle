@@ -3,31 +3,25 @@ plugins {
     id "checkstyle"
     id "application"
     id "jacoco"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-apply plugin: 'application'
-apply plugin: 'jacoco'
-
-
-mainClassName = 'game.Main'
+application {
+    mainClass = 'game.Main'
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile 'com.googlecode.json-simple:json-simple:1.1.1'
-    compile 'junit:junit:4.12'
-    compile files('cls/')
-    compile 'org.jgrapht:jgrapht-core:1.5.1'
-    compile 'org.jheaps:jheaps:0.7.1'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    testImplementation 'junit:junit:4.12'
+    implementation files('cls/')
+    implementation 'org.jgrapht:jgrapht-core:1.5.1'
+    implementation 'org.jheaps:jheaps:0.7.1'
 }
 
-// Set Java version compatibility
-sourceCompatibility = '17'
-targetCompatibility = '17'
-
+// Set Java version compatibility using toolchains
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -35,44 +29,38 @@ java {
 }
 
 test {}
+
 ///////////////////////////////////////////////////////////////////////
 // Configure Checkstyle
-/////////////////////////////////////////////////////////////////////
-apply plugin: 'checkstyle'
+///////////////////////////////////////////////////////////////////////
 checkstyle {
-    // Keep checkstyle a little quieter
+    // Keep Checkstyle a little quieter
     ignoreFailures = true
     showViolations = false
-}
-
-tasks.withType(Checkstyle) {
-    reports {
-        html.enabled = true
-        xml.enabled = false
-    }
-}
-checkstyle {
     toolVersion = "8.29"
 }
 
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        html.required.set(true)
+        xml.required.set(false)
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////
 // Configure SpotBugs
 ///////////////////////////////////////////////////////////////////////
 // To generate an HTML report instead of XML
-spotbugsMain {
+tasks.named("spotbugsMain") {
     reports {
-        xml.enabled = false
-        html.enabled = true
+        xml.required.set(false)
+        html.required.set(true)
     }
 }
+
 spotbugs {
     toolVersion = '4.0.0-beta4'
     ignoreFailures = true
     showProgress = true
     effort = 'max'
-}
-
-shadowJar {
-    archiveClassifier.set('')
 }
