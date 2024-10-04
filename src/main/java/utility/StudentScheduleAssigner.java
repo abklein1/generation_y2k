@@ -651,7 +651,7 @@ public class StudentScheduleAssigner {
 
         if (semester.equals("Fall")) {
             // If someone has high charisma, better than average determination and understands themselves better than the average person
-            if (charisma > 68 && determination > 50 && perception > 50) {
+            if (charisma > CHARISMA_VOCATIONAL_LOWER_BOUND && determination > DETERMINATION_VOCATIONAL_LOWER_BOUND && perception > PERCEPTION_VOCATIONAL_LOWER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Theater I";
@@ -695,7 +695,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If someone has high creativity and better than average perception
-            } else if (creativity > 120 && perception > 50) {
+            } else if (creativity > CREATIVITY_VOCATIONAL_LOWER_BOUND && perception > PERCEPTION_VOCATIONAL_LOWER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "2D Studio Art I";
@@ -739,7 +739,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If determination and intelligence are high and perception is better than average
-            } else if (determination > 68 && intelligence > 105 && perception > 50) {
+            } else if (determination > DETERMINATION_VOCATIONAL_LOWER_BOUND_BAND && intelligence > INTELLIGENCE_VOCATIONAL_LOWER_BOUND && perception > PERCEPTION_VOCATIONAL_LOWER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Jazz Band";
@@ -783,7 +783,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If curiosity is high and intelligence are above average
-            } else if (curiosity > 68 && intelligence > 105 && perception > 50) {
+            } else if (curiosity > CURIOSITY_VOCATIONAL_LOWER_BOUND && intelligence > INTELLIGENCE_VOCATIONAL_LOWER_BOUND && perception > PERCEPTION_VOCATIONAL_LOWER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Philosophy";
@@ -827,7 +827,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If someone is lacking determination
-            } else if (determination < 30) {
+            } else if (determination < LOW_DETERMINATION_VOCATIONAL_UPPER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Keyboarding";
@@ -916,7 +916,7 @@ public class StudentScheduleAssigner {
             }
         } else {
             // If someone has high charisma, better than average determination and understands themselves better than the average person
-            if (charisma > 68 && determination > 50 && perception > 50) {
+            if (charisma > CHARISMA_VOCATIONAL_LOWER_BOUND && determination > DETERMINATION_VOCATIONAL_LOWER_BOUND && perception > PERCEPTION_VOCATIONAL_LOWER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Theater II";
@@ -960,7 +960,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If someone has high creativity and better than average perception
-            } else if (creativity > 120 && perception > 50) {
+            } else if (creativity > CREATIVITY_VOCATIONAL_LOWER_BOUND && perception > PERCEPTION_VOCATIONAL_LOWER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "2D Studio Art II";
@@ -1004,7 +1004,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If determination and intelligence are high and perception is better than average
-            } else if (determination > 68 && intelligence > 105 && perception > 50) {
+            } else if (determination > DETERMINATION_VOCATIONAL_LOWER_BOUND_BAND && intelligence > INTELLIGENCE_VOCATIONAL_LOWER_BOUND && perception > INTELLIGENCE_VOCATIONAL_LOWER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Jazz Band";
@@ -1048,7 +1048,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If curiosity is high and intelligence are above average
-            } else if (curiosity > 68 && intelligence > 105 && perception > 50) {
+            } else if (curiosity > CURIOSITY_VOCATIONAL_LOWER_BOUND && intelligence > INTELLIGENCE_VOCATIONAL_LOWER_BOUND && perception > PERCEPTION_VOCATIONAL_LOWER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Philosophy";
@@ -1092,7 +1092,7 @@ public class StudentScheduleAssigner {
                     }
                 }
                 // If someone is lacking determination
-            } else if (determination < 30) {
+            } else if (determination < LOW_DETERMINATION_VOCATIONAL_UPPER_BOUND) {
                 switch (year) {
                     case "Sophomore" -> {
                         choiceRank[0] = "Keyboarding";

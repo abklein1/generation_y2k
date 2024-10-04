@@ -265,6 +265,16 @@ public final class SimConstants {
     public static final int PHYSICAL_ED_FEMALE_DETERMINATION_THRESHOLD = 50;
     public static final int PHYSICAL_ED_FEMALE_LOW_DETERMINATION_THRESHOLD = 29;
 
+    // Student Vocational Decision Values
+    public static final int CHARISMA_VOCATIONAL_LOWER_BOUND = 68;
+    public static final int DETERMINATION_VOCATIONAL_LOWER_BOUND = 50;
+    public static final int PERCEPTION_VOCATIONAL_LOWER_BOUND = 50;
+    public static final int CREATIVITY_VOCATIONAL_LOWER_BOUND = 120;
+    public static final int DETERMINATION_VOCATIONAL_LOWER_BOUND_BAND = 68;
+    public static final int INTELLIGENCE_VOCATIONAL_LOWER_BOUND = 105;
+    public static final int CURIOSITY_VOCATIONAL_LOWER_BOUND = 68;
+    public static final int LOW_DETERMINATION_VOCATIONAL_UPPER_BOUND = 30;
+
     private SimConstants() {
     }
 }
