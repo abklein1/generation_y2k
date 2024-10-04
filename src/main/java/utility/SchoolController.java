@@ -212,7 +212,7 @@ public class SchoolController {
                     RoomNameGenerator.generateRoomName(auditorium, standardSchool);
                 }
                 publish("Initializing social links...");
-                socialLinkConnector = new SocialLinkConnector(studentHashMap);
+                socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
                 TraversalStorage traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
 

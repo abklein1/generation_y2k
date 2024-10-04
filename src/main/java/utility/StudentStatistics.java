@@ -48,6 +48,9 @@ public class StudentStatistics implements PStatistics {
     private final StudentSchedule studentSchedule;
     private final ArrayList<Student> siblingsInSchool;
     private final ArrayList<String> siblingsNotInSchool;
+    private final ArrayList<Student> friendsInSchool;
+    private int maxBestFriends;
+
 
 
     public StudentStatistics() {
@@ -88,6 +91,8 @@ public class StudentStatistics implements PStatistics {
         this.studentSchedule = new StudentSchedule();
         this.siblingsInSchool = new ArrayList<>();
         this.siblingsNotInSchool = new ArrayList<>();
+        this.friendsInSchool = new ArrayList<>();
+        this.maxBestFriends = 0;
     }
 
     @Override
@@ -606,5 +611,21 @@ public class StudentStatistics implements PStatistics {
 
     public ArrayList<String> getSiblingsNotInSchool() {
         return this.siblingsNotInSchool;
+    }
+
+    public ArrayList<Student> getFriendsInSchool() {
+        return friendsInSchool;
+    }
+
+    public void addFriendInSchool(Student friend) {
+        this.friendsInSchool.add(friend);
+    }
+
+    public int getMaxBestFriends() {
+        return maxBestFriends;
+    }
+
+    public void setMaxBestFriends(int maxBestFriends) {
+        this.maxBestFriends = maxBestFriends;
     }
 }

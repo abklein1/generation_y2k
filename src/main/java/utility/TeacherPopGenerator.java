@@ -5,6 +5,7 @@ import view.GameView;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Map;
 
 import static constants.SimConstants.*;
 import static utility.Randomizer.setRandom;
@@ -13,7 +14,7 @@ import static utility.Randomizer.setRandom;
 public class TeacherPopGenerator {
     public static void generateTeachers(int staffCap, HashMap<Integer, Staff> staffHashMap, GameView view) {
 
-        HashMap<Integer, String> lNameReference = new HashMap<>();
+        Map<Integer, String> lNameReference = new HashMap<>();
         String f_name;
         String l_name;
         Random distribution = new Random();

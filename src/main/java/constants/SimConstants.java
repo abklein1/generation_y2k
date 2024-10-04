@@ -222,6 +222,17 @@ public final class SimConstants {
     // SOCIAL LINK ADJUSTMENT
     public static final int SOCIAL_LINK_MEAN = 0;
     public static final int SOCIAL_LINK_STANDARD_DEVIATION = 25;
+    public static final int SOCIAL_LINK_FRIEND_INITIAL_SAMPLE_SIZE = 100;
+    public static final int SOCIAL_LINK_FRIEND_INITIAL_THRESHOLD = 50;
+    public static final int SOCIAL_LINK_FRIEND_MAXIMUM = 10;
+    public static final double SOCIAL_LINK_FRIEND_CHARISMA_MODIFIER = 0.8;
+    public static final double SOCIAL_LINK_FRIEND_EMPATHY_MODIFIER = 0.5;
+    public static final double SOCIAL_LINK_FRIEND_LUCK_MODIFIER = 0.2;
+    public static final double SOCIAL_LINK_FRIEND_VARIABILITY = 0.1;
+    public static final int SOCIAL_LINK_GRADE_CLASSMATE_SAMPLE_SIZE = 100;
+    public static final int SOCIAL_LINK_GRADE_CLASSMATE_THRESHOLD = 90;
+    public static final int SOCIAL_LINK_ADJACENT_GRADE_SAMPLE_SIZE = 100;
+    public static final int SOCIAL_LINK_ADJACENT_GRADE_THRESHOLD = 75;
 
     // STUDENT SCHEDULE ASSIGNMENT
     public static final int LANGUAGE_CHOICE_SAMPLE_SIZE = 4;

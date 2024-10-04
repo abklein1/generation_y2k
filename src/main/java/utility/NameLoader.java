@@ -220,7 +220,7 @@ public class NameLoader {
         return null;
     }
 
-    public static HashMap readCSVLast() {
+    public static HashMap<Integer, String> readCSVLast() {
         String csvLast = "src/main/java/Resources.People/surname_2.txt";
         HashMap<Integer, String> lastNames = new HashMap<Integer, String>();
         BufferedReader lr = null;
