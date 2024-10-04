@@ -1,0 +1,8 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "java.configuration.maven.globalSettings": "",
+    "java.import.gradle.enabled": true,
+    "java.configuration.updateBuildConfiguration": "interactive"
+}

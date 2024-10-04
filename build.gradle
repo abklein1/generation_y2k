@@ -17,8 +17,10 @@ dependencies {
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     testImplementation 'junit:junit:4.12'
     implementation files('cls/')
-    implementation 'org.jgrapht:jgrapht-core:1.5.1'
-    implementation 'org.jheaps:jheaps:0.7.1'
+    implementation 'org.jgrapht:jgrapht-core:1.5.2'
+    implementation 'com.mxgraph:jgraphx:4.2.2'
+    implementation 'org.jheaps:jheaps:0.14'
+    implementation 'org.jgrapht:jgrapht-ext:1.5.2'
 }
 
 // Set Java version compatibility using toolchains
