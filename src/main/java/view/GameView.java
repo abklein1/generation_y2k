@@ -23,7 +23,7 @@ public class GameView {
     private final JMenu inspectionMenu;
     private final JPanel amPanel;
     private final JPanel pmPanel;
-
+    private final JButton socialGraphButton;
     public GameView() {
         frame = new JFrame("generation_y2k");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,7 +49,9 @@ public class GameView {
 
         generateButton = new JButton("Generate new school");
         visualizeButton = new JButton("Show school layout");
+        socialGraphButton = new JButton("Show social graph");
         visualizeButton.setEnabled(false);
+        socialGraphButton.setEnabled(false);
 
         statusOutput = new JTextArea(20, 40);
         statusOutput.setEditable(false);
@@ -64,6 +66,7 @@ public class GameView {
         buttonPanel.add(generateButton);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(visualizeButton);
+        buttonPanel.add(socialGraphButton);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // time label
@@ -151,6 +154,10 @@ public class GameView {
         visualizeButton.setEnabled(enabled);
     }
 
+    public void setSocialGraphButtonEnabled(boolean enabled) {
+        socialGraphButton.setEnabled(enabled);
+    }
+
     public void setInspectionMenuEnabled(boolean enabled) {
         inspectionMenu.setEnabled(enabled);
     }
@@ -219,4 +226,9 @@ public class GameView {
             }
         }
     }
+
+    public void addSocialGraphButtonListener(ActionListener listener) {
+        socialGraphButton.addActionListener(listener);
+    }
+
 }

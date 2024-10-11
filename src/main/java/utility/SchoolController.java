@@ -19,14 +19,17 @@ public class SchoolController {
     private final GameView view;
     private final Time time;
     HashMap<Integer, Staff> staffHashMap;
+    HashMap<Integer, Student> studentHashMap;
     private RoomConnector roomConnector;
     private SocialLinkConnector socialLinkConnector;
     private StandardSchool standardSchool;
+
 
     public SchoolController(GameView view) {
         this.view = view;
         this.view.addGenerateButtonListener(new GenerateButtonListener());
         this.view.addVisualizeButtonListener(new VisualizeButtonListener());
+        this.view.addSocialGraphButtonListener(new SocialGraphButtonListener());
         this.view.addInspectionMenuListener(new InspectionMenuListener());
         this.time = new Time();
     }
@@ -138,13 +141,21 @@ public class SchoolController {
         }
     }
 
+    class SocialGraphButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            socialLinkConnector.schoolSocialLinkVisualizer(standardSchool);
+        }
+    }
+
     private class SchoolGenerationWorker extends SwingWorker<Void, String> {
 
         @Override
         protected Void doInBackground() {
             try {
                 //Create hash maps for storage
-                HashMap<Integer, Student> studentHashMap = new HashMap<Integer, Student>();
+                studentHashMap = new HashMap<Integer, Student>();
                 staffHashMap = new HashMap<Integer, Staff>();
                 int student_cap;
                 int staff_cap;
@@ -235,6 +246,7 @@ public class SchoolController {
             view.displayMessage("School generated successfully!");
             view.setVisualizeButtonEnabled(true);
             view.setInspectionMenuEnabled(true);
+            view.setSocialGraphButtonEnabled(true);
         }
 
     }
