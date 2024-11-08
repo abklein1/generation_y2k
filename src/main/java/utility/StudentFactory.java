@@ -1,9 +1,9 @@
 package utility;
 
 import entity.Backpack;
-import entity.StudentArms;
-import entity.StudentLegs;
-import entity.StudentUpperT;
+import entity.Body.StudentArms;
+import entity.Body.StudentLegs;
+import entity.Body.StudentUpperT;
 
 //TODO: Figure out why student factory is null when students are generated
 public class StudentFactory implements PersonFactory {

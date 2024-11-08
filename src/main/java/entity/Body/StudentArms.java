@@ -1,8 +1,10 @@
-package entity;
+package entity.Body;
+
+import entity.Body.Arms;
 
 import java.io.Serializable;
 
-public class TeacherUpperT implements UpperTorso, Serializable {
+public class StudentArms implements Arms, Serializable {
     @Override
     public void setAttire() {
 

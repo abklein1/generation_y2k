@@ -1,5 +1,7 @@
 package entity;
 
+import entity.Body.Carry;
+
 import java.io.Serializable;
 
 public class Backpack implements Carry, Serializable {

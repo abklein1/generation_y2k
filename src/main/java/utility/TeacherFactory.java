@@ -1,9 +1,9 @@
 package utility;
 
 import entity.ShoulderBag;
-import entity.TeacherArms;
-import entity.TeacherLegs;
-import entity.TeacherUpperT;
+import entity.Body.TeacherArms;
+import entity.Body.TeacherLegs;
+import entity.Body.TeacherUpperT;
 
 public class TeacherFactory implements PersonFactory {
     @Override

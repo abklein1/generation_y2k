@@ -1,11 +1,8 @@
 package utility;
 
-
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.*;
 import com.mxgraph.view.mxGraph;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,23 +10,26 @@ import java.util.Random;
 import entity.Student;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
 
 import entity.StandardSchool;
 import static constants.SimConstants.*;
 
 public class SocialLinkConnector {
 
+    // Directed graph to maintain distinct edges for each direction
     Graph<Student, DefaultWeightedEdge> socialGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
     private JSlider zoomSlider;
     private mxGraph graph;
     private mxGraphComponent graphComponent;
+    private Random random = new Random(); // Single Random instance
+    private HashMap<Student, Object> vertexToCellMap = new HashMap<>();
+
 
     /**
      * Constructor to initialize social links.
@@ -38,6 +38,7 @@ public class SocialLinkConnector {
      * @param standardSchool  The standard school entity.
      */
     public SocialLinkConnector(HashMap<Integer, Student> studentHashMap, StandardSchool standardSchool) {
+        this(); // Call the default constructor to initialize graphComponent
         initializeSocialLinks(studentHashMap, standardSchool);
     }
 
@@ -66,113 +67,89 @@ public class SocialLinkConnector {
      */
     public void initializeSocialLinks(HashMap<Integer, Student> studentHashMap, StandardSchool standardSchool) {
         
-        Random random = new Random();
-        
+        if (studentHashMap == null || standardSchool == null) {
+            throw new IllegalArgumentException("Student hash map and standard school cannot be null.");
+        }
+
         for (Student student : studentHashMap.values()) {
             ArrayList<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
             
+            // Add sibling relationships
             for (Student sibling : siblingsInSchool) {
-                // Add vertices
+                if (sibling == null) {
+                    continue; // Skip if sibling is null
+                }
+
+                // Add vertices if they don't already exist
                 socialGraph.addVertex(student);
                 socialGraph.addVertex(sibling);
                 
-                // Add edge from Student to Sibling
-                DefaultWeightedEdge edgeToSibling = socialGraph.addEdge(student, sibling);
-                if (edgeToSibling != null) {
-                    socialGraph.setEdgeWeight(edgeToSibling, assignInitialWeight());
-                } else {
-                    System.out.println("Edge from " + student + " to " + sibling + " is null");
-                }
-                
-                // Add edge from Sibling to Student
-                DefaultWeightedEdge edgeFromSibling = socialGraph.addEdge(sibling, student);
-                if (edgeFromSibling != null) {
-                    socialGraph.setEdgeWeight(edgeFromSibling, assignInitialWeight());
-                } else {
-                    System.out.println("Edge from " + sibling + " to " + student + " is null");
-                }
+                // Add edge from Student to Sibling if it doesn't already exist
+                addEdgeWithCheck(student, sibling);
+
+                // Add edge from Sibling to Student if it doesn't already exist
+                addEdgeWithCheck(sibling, student);
             }
 
+            // Set maximum number of best friends for the student
             setMaxBestFriends(student);
             
-            // Initialize the simulation with some friends for each student
+            // Initialize the simulation with some best friends for each student
             for (int i = 0; i < student.studentStatistics.getMaxBestFriends(); i++) {
-                // Students are most likely to befriend other students from same grade
-                Student potentialFriend;
+                // Students are most likely to befriend other students from the same grade
                 if (random.nextInt(SOCIAL_LINK_FRIEND_INITIAL_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_INITIAL_THRESHOLD) {
-                    potentialFriend = findPotentialFriend(student, standardSchool);
+                    Student potentialFriend = findPotentialFriend(student, standardSchool);
+                    
+                    if (potentialFriend == null) {
+                        continue; // Skip to the next iteration
+                    }
+
+                    // Ensure valid potential friend and no existing edge in either direction
                     if (!student.studentStatistics.getFriendsInSchool().contains(potentialFriend) && 
                         !socialGraph.containsEdge(student, potentialFriend) && 
-                        potentialFriend != student) {
+                        !socialGraph.containsEdge(potentialFriend, student) && 
+                        !student.equals(potentialFriend)) {
                         
+                        // Add best friend relationship
                         student.studentStatistics.addFriendInSchool(potentialFriend);
                         
-                        // Add vertices
+                        // Add vertices if they don't already exist
                         socialGraph.addVertex(student);
                         socialGraph.addVertex(potentialFriend);
                         
                         // Add edge from Student to Potential Friend
-                        DefaultWeightedEdge edgeToFriend = socialGraph.addEdge(student, potentialFriend);
-                        if (edgeToFriend != null) {
-                            socialGraph.setEdgeWeight(edgeToFriend, assignInitialWeight());
-                        } else {
-                            System.out.println("Edge from " + student + " to " + potentialFriend + " is null");
-                        }
+                        addEdgeWithCheck(student, potentialFriend);
                         
-                        // Add edge from Potential Friend to Student
-                        DefaultWeightedEdge edgeFromFriend = socialGraph.addEdge(potentialFriend, student);
-                        if (edgeFromFriend != null) {
-                            socialGraph.setEdgeWeight(edgeFromFriend, assignInitialWeight());
-                        } else {
-                            System.out.println("Edge from " + potentialFriend + " to " + student + " is null");
-                        }
+                        // Optionally, add edge from Potential Friend to Student
+                        // Uncomment the following line if mutual perception is needed
+                        // addEdgeWithCheck(potentialFriend, student);
                     }
                 }
             }
         }
+
+        // After initializing all social links, visualize the graph
+        schoolSocialLinkVisualizer();
     }
 
     /**
-     * Finds a potential friend for a student based on grade level.
+     * Adds an edge from source to target if it doesn't already exist.
      *
-     * @param student         The student seeking friends.
-     * @param standardSchool  The standard school entity.
-     * @return                A potential friend.
+     * @param source The source student.
+     * @param target The target student.
      */
-    private Student findPotentialFriend(Student student, StandardSchool standardSchool) {
-        String gradeLevel = student.studentStatistics.getGradeLevel();
-        Random random = new Random();
-        HashMap<Integer, Student> gradeClassmates = standardSchool.getStudentGradeClass(gradeLevel);
-        ArrayList<Student> potentialFriends = new ArrayList<>();
-        if (random.nextInt(SOCIAL_LINK_GRADE_CLASSMATE_SAMPLE_SIZE) < SOCIAL_LINK_GRADE_CLASSMATE_THRESHOLD) {
-            for (Student otherStudent : gradeClassmates.values()) {
-                if (otherStudent.studentStatistics.getGradeLevel().equals(gradeLevel)) {    
-                    potentialFriends.add(otherStudent);
-                }
+    private void addEdgeWithCheck(Student source, Student target) {
+        if (!socialGraph.containsEdge(source, target)) {
+            DefaultWeightedEdge edge = socialGraph.addEdge(source, target);
+            if (edge != null) {
+                socialGraph.setEdgeWeight(edge, assignInitialWeight());
+            } else {
+                System.out.println("Failed to add edge from " + source + " to " + target);
             }
         } else {
-            // If not a grade classmate, students are more likely to befriend students from nearby grades
-            if (random.nextInt(SOCIAL_LINK_ADJACENT_GRADE_SAMPLE_SIZE) < SOCIAL_LINK_ADJACENT_GRADE_THRESHOLD) {
-                String[] adjacentGrades = gradeLevel.equals("Freshman") ? new String[] {"Sophomore"} 
-                                      : gradeLevel.equals("Senior") ? new String[] {"Junior"} 
-                                      : new String[] {"Freshman", "Sophomore"};
-                for (String grade : adjacentGrades) {
-                    HashMap<Integer, Student> adjacentGradeClassmates = standardSchool.getStudentGradeClass(grade);
-                    potentialFriends.addAll(adjacentGradeClassmates.values());
-                }
-            } else {
-                String[] otherGrades = gradeLevel.equals("Freshman") ? new String[] {"Junior", "Senior"} 
-                                      : gradeLevel.equals("Sophomore") ? new String[] {"Freshman", "Junior"} 
-                                      : new String[] {"Sophomore", "Senior"};
-                for (String grade : otherGrades) {
-                    HashMap<Integer, Student> otherGradeClassmates = standardSchool.getStudentGradeClass(grade);
-                    potentialFriends.addAll(otherGradeClassmates.values());
-                }
-            }
+            System.out.println("Edge from " + source + " to " + target + " already exists.");
         }
-        return potentialFriends.get(random.nextInt(potentialFriends.size()));
     }
-
 
     /**
      * Sets the maximum number of best friends for a student based on attributes.
@@ -183,8 +160,6 @@ public class SocialLinkConnector {
         int charisma = student.studentStatistics.getCharisma();
         int luck = student.studentStatistics.getLuck();
         int empathy = student.studentStatistics.getEmpathy();
-
-        Random random = new Random();
 
         // Calculate a composite score based on attributes and their modifiers
         double compositeScore = (charisma * SOCIAL_LINK_FRIEND_CHARISMA_MODIFIER) +
@@ -201,58 +176,149 @@ public class SocialLinkConnector {
         double normalizedScore = Math.max(0, Math.min(1, variedScore / SOCIAL_LINK_FRIEND_SCALING_FACTOR));
 
         // Map the normalized score to the desired range of max best friends
-        int maxFriends = SOCIAL_LINK_FRIEND_MAXIMUM;
 
         // Calculate maxBestFriends based on the normalized score
-        int maxBestFriends = (int) Math.round(maxFriends * normalizedScore);
+        int maxBestFriends = (int) Math.round(SOCIAL_LINK_FRIEND_MAXIMUM * normalizedScore);
 
         student.studentStatistics.setMaxBestFriends(maxBestFriends);
     }
 
+    /**
+     * Finds a potential friend for a student based on grade level.
+     *
+     * @param student         The student seeking friends.
+     * @param standardSchool  The standard school entity.
+     * @return                A potential friend or null if none found.
+     */
+    private Student findPotentialFriend(Student student, StandardSchool standardSchool) {
+        String gradeLevel = student.studentStatistics.getGradeLevel();
+        ArrayList<Student> potentialFriends = new ArrayList<>();
+
+        if (random.nextInt(SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD) {
+            // Prefer same grade friends
+            HashMap<Integer, Student> gradeClassmates = standardSchool.getStudentGradeClass(gradeLevel);
+            if (gradeClassmates != null) {
+                for (Student otherStudent : gradeClassmates.values()) {
+                    if (otherStudent.studentStatistics.getGradeLevel().equals(gradeLevel) && 
+                        !otherStudent.equals(student)) {    
+                        potentialFriends.add(otherStudent);
+                    }
+                }
+            }
+        } else {
+            // Consider adjacent or other grades
+            if (random.nextInt(SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD) {
+                String[] adjacentGrades = getAdjacentGrades(gradeLevel);
+                for (String grade : adjacentGrades) {
+                    HashMap<Integer, Student> adjacentGradeClassmates = standardSchool.getStudentGradeClass(grade);
+                    if (adjacentGradeClassmates != null) {
+                        potentialFriends.addAll(adjacentGradeClassmates.values());
+                    }
+                }
+            } else {
+                String[] otherGrades = getOtherGrades(gradeLevel);
+                for (String grade : otherGrades) {
+                    HashMap<Integer, Student> otherGradeClassmates = standardSchool.getStudentGradeClass(grade);
+                    if (otherGradeClassmates != null) {
+                        potentialFriends.addAll(otherGradeClassmates.values());
+                    }
+                }
+            }
+        }
+
+        if (potentialFriends.isEmpty()) {
+            return null;
+        }
+
+        return potentialFriends.get(random.nextInt(potentialFriends.size()));
+    }
+
+    // Helper methods to determine adjacent and other grades
+    private String[] getAdjacentGrades(String gradeLevel) {
+        return switch (gradeLevel) {
+            case "Freshman" -> new String[]{"Sophomore"};
+            case "Senior" -> new String[]{"Junior"};
+            default -> new String[]{};
+        };
+    }
+
+    private String[] getOtherGrades(String gradeLevel) {
+        return switch (gradeLevel) {
+            case "Freshman" -> new String[]{"Junior", "Senior"};
+            case "Sophomore" -> new String[]{"Freshman", "Junior", "Senior"};
+            case "Junior" -> new String[]{"Freshman", "Sophomore", "Senior"};
+            case "Senior" -> new String[]{"Freshman", "Sophomore"};
+            default -> new String[]{};
+        };
+    }
 
     /**
-     * Assigns an initial weight to an edge using a Gaussian distribution.
+     * Assigns an initial weight to an edge.
      *
-     * @return The assigned weight.
+     * @return The initial weight.
      */
     private double assignInitialWeight() {
-        Random distribution = new Random();
-        return (distribution.nextGaussian() * SOCIAL_LINK_STANDARD_DEVIATION + SOCIAL_LINK_MEAN);
+        // Example: Assign a random weight between 1.0 and 5.0
+        return 1.0 + (4.0 * random.nextDouble());
     }
 
-    /**
-     * Retrieves the social graph.
-     *
-     * @return The social graph.
-     */
-    public Graph<Student, DefaultWeightedEdge> getSocialGraph() {
-        return socialGraph;
-    }
 
     /**
-     * Sets the weight of an edge between two students.
-     *
-     * @param student1 The first student.
-     * @param student2 The second student.
-     * @param weight   The weight to set.
+     * Visualizes the social graph using mxGraph.
      */
-    public void setEdgeWeight(Student student1, Student student2, double weight) {
-        DefaultWeightedEdge edge = socialGraph.getEdge(student1, student2);
-        if (edge != null) {
-            socialGraph.setEdgeWeight(edge, weight);
+    public void schoolSocialLinkVisualizer() {
+        // Use JGraphXAdapter to adapt JGraphT graph to JGraphX
+        JGraphXAdapter<Student, DefaultWeightedEdge> graphAdapter = new JGraphXAdapter<>(socialGraph);
+        graphAdapter.setAllowDanglingEdges(false);
+
+        graph = new mxGraph();
+        graph.getModel().beginUpdate();
+        try {
+            Object parent = graph.getDefaultParent();
+
+            // Insert all vertices and map them to mxCells
+            for (Student student : socialGraph.vertexSet()) {
+                Object cell = graph.insertVertex(parent, null, student.toString(), 0, 0, 30, 30);
+                vertexToCellMap.put(student, cell);
+            }
+
+            // Insert all edges using the mapped mxCells
+            for (DefaultWeightedEdge edge : socialGraph.edgeSet()) {
+                Student source = socialGraph.getEdgeSource(edge);
+                Student target = socialGraph.getEdgeTarget(edge);
+                Object sourceCell = vertexToCellMap.get(source);
+                Object targetCell = vertexToCellMap.get(target);
+
+                // Ensure that both source and target cells exist
+                if (sourceCell != null && targetCell != null) {
+                    graph.insertEdge(parent, null, "", sourceCell, targetCell);
+                } else {
+                    System.err.println("Source or Target cell is null for edge: " + edge);
+                }
+            }
+
+        } finally {
+            graph.getModel().endUpdate();
         }
+
+        // Apply layout (mxCircleLayout for evenly spaced nodes)
+        mxCircleLayout layout = new mxCircleLayout(graph);
+        layout.setRadius(150); // Adjust radius as needed
+        layout.execute(graph.getDefaultParent());
+
+        // Update the graph in the component
+        graphComponent.setGraph(graph);
+        graphComponent.refresh();
+
+        // Additional visualization settings can be applied here
     }
 
-    /**
-     * Visualizes a specific student's social connections.
-     *
-     * @param student The student to visualize.
-     */
+
     public void studentVisualizer(Student student) {
         String studentName = student.studentName.getFirstName() + " " + student.studentName.getLastName();
 
         // Create a subgraph for the specific student and their connections
-        Graph<Student, DefaultWeightedEdge> subGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+        Graph<Student, DefaultEdge> subGraph = new DefaultDirectedWeightedGraph<>(DefaultEdge.class);
         subGraph.addVertex(student);
 
         for (DefaultWeightedEdge edge : socialGraph.edgesOf(student)) {
@@ -260,233 +326,19 @@ public class SocialLinkConnector {
             Student target = socialGraph.getEdgeTarget(edge);
             subGraph.addVertex(source);
             subGraph.addVertex(target);
-            DefaultWeightedEdge subEdge = subGraph.addEdge(source, target);
-            subGraph.setEdgeWeight(subEdge, socialGraph.getEdgeWeight(edge));
+            subGraph.addEdge(source, target);
+            subGraph.setEdgeWeight(source, target, socialGraph.getEdgeWeight(edge));
         }
 
-        JGraphXAdapter<Student, DefaultWeightedEdge> graphAdapter = new JGraphXAdapter<>(subGraph);
+        JGraphXAdapter<Student, DefaultEdge> graphAdapter = new JGraphXAdapter<>(subGraph);
         JFrame frame = new JFrame(studentName);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(800, 600);
         mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
         frame.add(graphComponent);
-
-        // Adjust layout settings using mxFastOrganicLayout with increased spacing
         mxFastOrganicLayout layout = new mxFastOrganicLayout(graphAdapter);
-        layout.setForceConstant(150); // Increase the force constant for better spacing
-        layout.setMinDistanceLimit(100); // Set minimum distance between nodes
-        layout.setMaxDistanceLimit(200); // Set maximum distance between nodes
         layout.execute(graphAdapter.getDefaultParent());
-
         frame.pack();
         frame.setVisible(true);
     }
-
-    /**
-     * Visualizes the entire social graph of the school with zoom functionality.
-     *
-     * @param standardSchool The standard school entity.
-     */
-    public void schoolSocialLinkVisualizer(StandardSchool standardSchool) {
-        // Create the adapter and graph component
-        String schoolName = standardSchool.getSchoolName();
-        JGraphXAdapter<Student, DefaultWeightedEdge> graphAdapter = new JGraphXAdapter<>(socialGraph);
-        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-        graphComponent.setConnectable(false);
-        graphComponent.getGraph().setAllowDanglingEdges(false);
-
-        // Initialize frame
-        JFrame frame = new JFrame(schoolName);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLayout(new BorderLayout());
-
-        // Apply mxCircleLayout instead of mxFastOrganicLayout for increased spacing
-        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-        layout.setRadius(5); // Adjust radius to increase distance between nodes
-        layout.execute(graphAdapter.getDefaultParent());
-
-        // Create toolbar with zoom controls
-        JToolBar toolBar = new JToolBar();
-        JButton zoomInButton = new JButton("Zoom In");
-        JButton zoomOutButton = new JButton("Zoom Out");
-        JButton resetZoomButton = new JButton("Reset Zoom");
-
-        // Add zoom in action
-        zoomInButton.addActionListener(e -> {
-            graphComponent.zoomIn();
-            updateZoomSlider(zoomSlider, graphComponent);
-        });
-
-        // Add zoom out action
-        zoomOutButton.addActionListener(e -> {
-            graphComponent.zoomOut();
-            updateZoomSlider(zoomSlider, graphComponent);
-        });
-
-        // Add reset zoom action
-        resetZoomButton.addActionListener(e -> {
-            graphComponent.zoomActual();
-            zoomSlider.setValue(100);
-        });
-
-        toolBar.add(zoomInButton);
-        toolBar.add(zoomOutButton);
-        toolBar.add(resetZoomButton);
-
-        // Initialize the class member zoomSlider instead of creating a new local variable
-        zoomSlider = new JSlider(10, 400, 100); // Represents 10% to 400%
-        zoomSlider.setPreferredSize(new Dimension(150, 20));
-        zoomSlider.setToolTipText("Zoom");
-        zoomSlider.addChangeListener(e -> {
-            if (!zoomSlider.getValueIsAdjusting()) {
-                double scale = zoomSlider.getValue() / 100.0;
-                graphComponent.zoomTo(scale, true);
-            }
-        });
-        toolBar.add(new JLabel("Zoom: "));
-        toolBar.add(zoomSlider);
-
-        // Add the toolbar to the north
-        frame.add(toolBar, BorderLayout.NORTH);
-
-        // Implement Mouse Wheel Zooming
-        graphComponent.addMouseWheelListener(e -> {
-            if (e.isControlDown()) { // Zoom only when Ctrl is pressed
-                if (e.getWheelRotation() < 0) {
-                    graphComponent.zoomIn();
-                    zoomSlider.setValue(Math.min(zoomSlider.getValue() + 10, zoomSlider.getMaximum()));
-                } else {
-                    graphComponent.zoomOut();
-                    zoomSlider.setValue(Math.max(zoomSlider.getValue() - 10, zoomSlider.getMinimum()));
-                }
-                e.consume();
-            }
-        });
-
-        // Listen for SCALE events to update the slider
-        graphComponent.getGraph().getView().addListener(mxEvent.SCALE, new mxEventSource.mxIEventListener() {
-            @Override
-            public void invoke(Object sender, mxEventObject evt) {
-                double currentScale = graphComponent.getGraph().getView().getScale();
-                int sliderValue = (int) (currentScale * 100);
-                zoomSlider.setValue(sliderValue);
-            }
-        });
-
-        // Add Keyboard Shortcuts
-        addKeyboardShortcuts(graphComponent, zoomSlider);
-
-        // Add Context Menu for Zooming
-        addContextMenu(graphComponent, zoomSlider);
-
-        // Finalize and display the frame
-        frame.add(graphComponent, BorderLayout.CENTER);
-        frame.setVisible(true);
-
-        // Removed scaleGraph(2) as it's no longer necessary
-    }
-
-    /**
-     * Adds keyboard shortcuts for zooming.
-     *
-     * @param graphComponent The graph component.
-     * @param zoomSlider     The zoom slider.
-     */
-    private void addKeyboardShortcuts(mxGraphComponent graphComponent, JSlider zoomSlider) {
-        // Key Bindings for Zoom In (Ctrl + +)
-        graphComponent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke('+', InputEvent.CTRL_DOWN_MASK), "zoomIn");
-        graphComponent.getActionMap().put("zoomIn", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                graphComponent.zoomIn();
-                zoomSlider.setValue(Math.min(zoomSlider.getValue() + 10, zoomSlider.getMaximum()));
-            }
-        });
-
-
-        // Key Bindings for Zoom Out (Ctrl + -)
-        graphComponent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke('-', InputEvent.CTRL_DOWN_MASK), "zoomOut");
-        graphComponent.getActionMap().put("zoomOut", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                graphComponent.zoomOut();
-                zoomSlider.setValue(Math.max(zoomSlider.getValue() - 10, zoomSlider.getMinimum()));
-            }
-        });
-
-        // Key Bindings for Reset Zoom (Ctrl + 0)
-        graphComponent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke('0', InputEvent.CTRL_DOWN_MASK), "resetZoom");
-        graphComponent.getActionMap().put("resetZoom", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                graphComponent.zoomActual();
-                zoomSlider.setValue(100);
-            }
-        });
-    }
-
-    /**
-     * Adds a context menu with zoom options.
-     *
-     * @param graphComponent The graph component.
-     * @param zoomSlider     The zoom slider.
-     */
-    private void addContextMenu(mxGraphComponent graphComponent, JSlider zoomSlider) {
-        JPopupMenu contextMenu = new JPopupMenu();
-
-        JMenuItem zoomInMenuItem = new JMenuItem("Zoom In");
-        zoomInMenuItem.addActionListener(e -> {
-            graphComponent.zoomIn();
-            zoomSlider.setValue(Math.min(zoomSlider.getValue() + 10, zoomSlider.getMaximum()));
-        });
-        contextMenu.add(zoomInMenuItem);
-
-        JMenuItem zoomOutMenuItem = new JMenuItem("Zoom Out");
-        zoomOutMenuItem.addActionListener(e -> {
-            graphComponent.zoomOut();
-            zoomSlider.setValue(Math.max(zoomSlider.getValue() - 10, zoomSlider.getMinimum()));
-        });
-        contextMenu.add(zoomOutMenuItem);
-
-        JMenuItem resetZoomMenuItem = new JMenuItem("Reset Zoom");
-        resetZoomMenuItem.addActionListener(e -> {
-            graphComponent.zoomActual();
-            zoomSlider.setValue(100);
-        });
-        contextMenu.add(resetZoomMenuItem);
-
-        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    contextMenu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    contextMenu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-        });
-    }
-
-    /**
-     * Updates the zoom slider based on the current scale.
-     *
-     * @param zoomSlider     The zoom slider.
-     * @param graphComponent The graph component.
-     */
-    private void updateZoomSlider(JSlider zoomSlider, mxGraphComponent graphComponent) {
-        double currentScale = graphComponent.getGraph().getView().getScale();
-        int sliderValue = (int) (currentScale * 100);
-        zoomSlider.setValue(sliderValue);
-    }
-
-    // Removed applyEnhancedLayout() and scaleGraph() methods as they are no longer needed
 }

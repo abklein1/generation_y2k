@@ -145,7 +145,7 @@ public class SchoolController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            socialLinkConnector.schoolSocialLinkVisualizer(standardSchool);
+            socialLinkConnector.schoolSocialLinkVisualizer();
         }
     }
 

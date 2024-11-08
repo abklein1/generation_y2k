@@ -1,5 +1,8 @@
 package entity;
 
+import entity.Body.TeacherArms;
+import entity.Body.TeacherLegs;
+import entity.Body.TeacherUpperT;
 import utility.TeacherFactory;
 import utility.TeacherName;
 import utility.TeacherStatistics;

@@ -1,4 +1,4 @@
-package entity;
+package entity.Body;
 
 public interface Legs {
     void setAttire();

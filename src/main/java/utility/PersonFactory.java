@@ -1,9 +1,9 @@
 package utility;
 
-import entity.Arms;
-import entity.Carry;
-import entity.Legs;
-import entity.UpperTorso;
+import entity.Body.Arms;
+import entity.Body.Carry;
+import entity.Body.Legs;
+import entity.Body.UpperTorso;
 
 public interface PersonFactory {
     PName createName();
