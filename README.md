@@ -302,11 +302,20 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Graph visualization of rooms/social links can be hard to read due to overlapping labels
 - Graph visualization of rooms/social links cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers
-- Too many students assigned to theater technology
 - Some teachers are not properly assigned a room
 - Sometimes math classes are not assigned to freshmen
 - Some last name capitalization is wrong
 - Overcapacity rate in classrooms is relatively high/ some blocks still under 5 students assigned
+- Student friend distribution not ideal
+
+## Release 0.0.13
+
+- Student traversal between classrooms has been mapped for each student. This will allow for chances to interact
+  with other students and teachers between scheduled classes
+- Students now have initial social links that are not just family members. This still needs work, but this is
+  progress towards having a school-wide social network
+- Student social connections can be viewed for the entire school
+- Mostly refactoring and cleaning up issues in the code, including updating gradle version
 
 ## Release 0.0.12
 
