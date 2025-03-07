@@ -3,7 +3,7 @@ package entity.Rooms;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ArtStudio extends roomBase {
+public class ArtStudio extends Room {
 
     public ArtStudio() {
         this.numOfConnections = 0;

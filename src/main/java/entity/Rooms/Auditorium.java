@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Auditorium extends roomBase {
+public class Auditorium extends Room {
 
     public Auditorium() {
         this.numOfConnections = 0;

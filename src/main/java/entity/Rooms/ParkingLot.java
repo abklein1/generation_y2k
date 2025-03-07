@@ -3,7 +3,7 @@ package entity.Rooms;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ParkingLot extends roomBase {
+public class ParkingLot extends Room {
 
     public ParkingLot() {
         this.numOfConnections = 0;

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AthleticField extends roomBase {
+public class AthleticField extends Room {
 
     public AthleticField() {
         this.numOfConnections = 0;

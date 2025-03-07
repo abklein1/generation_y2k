@@ -10,7 +10,7 @@ package entity.Rooms;//*********************************************************
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Lunchroom extends roomBase {
+public class Lunchroom extends Room {
 
     public Lunchroom() {
         this.numOfConnections = 0;

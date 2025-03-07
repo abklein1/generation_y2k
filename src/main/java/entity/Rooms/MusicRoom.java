@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 // TODO: Attach to school director and room generator
-public class MusicRoom extends roomBase {
+public class MusicRoom extends Room {
 
     public MusicRoom() {
         this.numOfConnections = 0;

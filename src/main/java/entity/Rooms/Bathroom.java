@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Bathroom extends roomBase {
+public class Bathroom extends Room {
 
     public Bathroom() {
         this.numOfConnections = 0;
