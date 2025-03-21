@@ -336,7 +336,6 @@ public class StandardSchool implements SchoolPlan {
             breakrooms[i].setWindowCount(setRandom(BREAKROOM_WINDOW_LOWER_COUNT, BREAKROOM_WINDOW_UPPER_COUNT));
             breakrooms[i].setInitialStaff(setRandom(BREAKROOM_INITIAL_STAFF_LOWER_LIMIT, BREAKROOM_INITIAL_STAFF_UPPER_LIMIT));
             breakrooms[i].setStudentCap(BREAKROOM_STUDENT_CAPACITY);
-            breakrooms[i].setSeatArrangement();
             breakrooms[i].setRoomNumber("B" + i + setRandom(BREAKROOM_NUMBER_LOWER_LIMIT, BREAKROOM_NUMBER_UPPER_LIMIT));
             breakrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
         }

@@ -5,7 +5,6 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import entity.Rooms.Bathroom;
 import entity.Rooms.Classroom;
-import entity.Rooms.Room;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
@@ -25,6 +24,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static utility.Randomizer.setRandom;
+
+import entity.Rooms.Room;
 
 
 // Procedural generation that builds the school by connecting rooms. Room connection starts

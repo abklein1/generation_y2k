@@ -1,9 +1,8 @@
 package entity;
 
-import entity.Rooms.Room;
-
 import java.util.ArrayList;
 import java.util.List;
+import entity.Rooms.Room;
 
 public class TeacherBlock {
     int blockNumber;

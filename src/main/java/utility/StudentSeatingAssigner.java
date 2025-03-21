@@ -1,11 +1,9 @@
 package utility;
 
-import entity.Rooms.Room;
 import entity.*;
+import entity.Rooms.Room;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 //TODO: think about different seating arrangements and settings based on teacher experience and student stats/preferences
 public class StudentSeatingAssigner {
@@ -93,4 +91,60 @@ public class StudentSeatingAssigner {
         allRooms.addAll(Arrays.asList(school.getParkingLots()));
         return allRooms;
     }
+
+    public static Student[][] initialSeatingGenerator(int studentCap) {
+        int[] selections = selectFactors(findTotalFactors(studentCap));
+        return new Student[selections[0]][selections[1]];
+    }
+
+    public static ArrayList<Integer> findTotalFactors(int studentCap) {
+        double base = Math.ceil(Math.sqrt(studentCap));
+        // find the next perfect square value that will serve as upper limit
+        int upperLimit = (int) Math.pow(base, 2);
+        ArrayList<Integer> factors = new ArrayList<>();
+        if (studentCap <= 4) {
+            factors.add(2);
+            factors.add(2);
+        } else {
+            // Iterate from studentCap (the lowest range) to next perfect square (the highest range)
+            for (int j = studentCap; j <= upperLimit; j++) {
+                int step = j % 2 == 0 ? 1 : 2;
+                for (int i = 1; i <= Math.sqrt(j); i += step) {
+                    // Do not store factors where i is less than 2 so rooms aren't narrow
+                    // e.g. 2 x 50 or 1 x 100
+                    if (j % i == 0 && (i > 2)) {
+                        factors.add(i);
+                        factors.add(j / i);
+                    }
+                }
+            }
+        }
+        return factors;
+    }
+
+    public static int[] selectFactors(ArrayList<Integer> factors) {
+        int [] factorStore = new int[2];
+        // TODO: better error handling
+        if (factors.size() <= 1) {
+            System.out.println("Factors missing for room");
+        } else if (factors.size() == 2) {
+            factorStore[0] = factors.get(0);
+            factorStore[1] = factors.get(1);
+        } else {
+            int random = Randomizer.setRandom(1, factors.size() - 2);
+            factorStore[0] = factors.get(random);
+            // Get next selection since factors are stored in pairs. If they are even move forward
+            // since random + 1 will be the factor pair, otherwise move back
+            if(random % 2 == 0) {
+                random++;
+            } else {
+                random--;
+            }
+            factorStore[1] = factors.get(random);
+        }
+
+        return factorStore;
+    }
+
+
 }

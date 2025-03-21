@@ -1,6 +1,5 @@
 package utility;
 
-import entity.Rooms.Room;
 import entity.Student;
 import entity.StudentBlock;
 import org.jgrapht.Graph;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import entity.Rooms.Room;
 
 public class TraversalStorage {
     

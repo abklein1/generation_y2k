@@ -1,78 +1,271 @@
-package entity.Rooms;//*******************************************************************
-//  entity.Rooms.Room.java
-//  Description: This is a room interface used to supply methods for entity.Rooms.Room type objects
-//  Bugs:
-//
-//  @author     Alex Klein
-//  @version    04242022
-//*******************************************************************
+package entity.Rooms;
 
 import entity.Staff;
 import entity.Student;
+import utility.Randomizer;
+import utility.StaffAssignment;
+import view.GameView;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public interface Room {
+import static utility.StudentSeatingAssigner.initialSeatingGenerator;
 
-    void reset();
+public abstract class Room implements Serializable {
 
-    int getConnections();
+    protected List<Staff> staffAssign;
+    protected List<Student> students;
+    protected HashMap<Integer, Student[][]> seatingArrangements;
+    protected int numOfConnections;
+    protected int windowCount;
+    protected String roomName;
+    protected int numOfDoors;
+    protected int staffCap;
+    protected int studentCap;
+    protected String roomNumber;
+    protected boolean studentRestriction;
+    protected Student[][] seats;
+    protected int stallNumber;
+    protected boolean restrictM;
+    protected boolean restrictF;
+    protected String classRoomType;
 
-    void setConnections(int connections);
+    public Room() {
+        this.numOfConnections = 0;
+        this.windowCount = 0;
+        this.roomName = null;
+        this.numOfDoors = 0;
+        this.staffCap = 0;
+        this.studentCap = 0;
+        this.roomNumber = null;
+        this.studentRestriction = false;
+        this.stallNumber = 0;
+        this.staffAssign = new ArrayList<>();
+        this.students = new ArrayList<>();
+        this.seatingArrangements = new HashMap<>();
+    }
 
-    void setWindowCount(int windows);
+    public void reset() {
+    }
 
-    void setDoors(int doors);
+    public int getConnections() {
+        return this.numOfConnections;
+    }
 
-    void setInitialStaff(int staffCount);
+    public void setConnections(int connections) {
+        this.numOfConnections = connections;
+    }
 
-    void setInitialStudents(int studentCount);
+    public void setWindowCount(int windows) {
+        this.windowCount = windows;
+    }
 
-    void setRoomNumber(String roomNumber);
+    public void setDoors(int doors) {
+        this.numOfDoors = doors;
+    }
 
-    void setStudentRestriction(boolean studentRestriction);
+    public void setInitialStaff(int staffCount) {
+        this.staffCap = staffCount;
+    }
 
-    int getStudentCapacity();
+    public void setInitialStudents(int studentCount) {
+        this.studentCap = studentCount;
+    }
 
-    int getStaffCapacity();
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 
-    String getRoomName();
+    public void setStudentRestriction(boolean studentRestriction) {
+        this.studentRestriction = studentRestriction;
+    }
 
-    void setRoomName(String roomName);
+    public int getStudentCapacity() {
+        return studentCap;
+    }
 
-    List<Staff> getAssignedStaff();
+    public int getStaffCapacity() {
+        return staffCap;
+    }
 
-    void setAssignedStaff(Staff staff);
+    public String getRoomName() {
+        return this.roomName;
+    }
 
-    void removeAssignedStaff(Staff staff);
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
 
-    void setSeatArrangement();
+    public List<Staff> getAssignedStaff() {
+        return this.staffAssign;
+    }
 
-    Student[][] getSeatArrangement();
+    public void setAssignedStaff(Staff staff) {
+        staffAssign.add(staff);
+    }
 
-    Student getStudentInSeat(int x, int y);
+    public void removeAssignedStaff(Staff staff) {
+        staffAssign.remove(staff);
+    }
+    // TODO: add logic for different rooms since this is now a base class and remove magic numbers
+    public void setSeatArrangement() {
+        seats = initialSeatingGenerator(studentCap);
+    }
 
-    int[] getStudentSeatCoordinate(Student student);
+    public Student[][] getSeatArrangement() {
+        return seats;
+    }
 
-    void addStudentToSeat(Student student, int x, int y);
+    public Student getStudentInSeat(int x, int y) {
+        return seats[x][y];
+    }
 
-    void removeStudentFromSeat(Student student);
+    public int[] getStudentSeatCoordinate(Student student) {
+        int[] coords = new int[2];
+        for (int i = 0; i < seats.length; i++) {
+            for (int j = 0; j < seats[i].length; j++) {
+                if (seats[i][j].equals(student)) {
+                    coords[0] = i;
+                    coords[1] = j;
+                    return coords;
+                }
+            }
+        }
+        System.out.println("Can't find student " + student.studentName);
+        return coords;
+    }
 
-    void swapStudentSeats(Student student1, Student student2);
+    public void addStudentToSeat(Student student, int x, int y) {
+        if (seats[x][y] != null) {
+            System.out.println(student.studentName + " can't be assigned to seat because there is already someone there!");
+        } else {
+            seats[x][y] = student;
+        }
+    }
 
-    int getRoomCapacity();
+    public void removeStudentFromSeat(Student student) {
+        int[] coords = getStudentSeatCoordinate(student);
+        seats[coords[0]][coords[1]] = null;
+    }
 
-    void setStudentCap(int studentCap);
+    public void swapStudentSeats(Student student1, Student student2) {
+        int[] coords1 = getStudentSeatCoordinate(student1);
+        int[] coords2 = getStudentSeatCoordinate(student2);
 
-    void addStudent(Student student);
+        removeStudentFromSeat(student1);
+        removeStudentFromSeat(student2);
 
-    List<Student> getStudents();
+        addStudentToSeat(student1, coords2[0], coords2[1]);
+        addStudentToSeat(student2, coords1[0], coords1[1]);
+    }
 
-    void setPeriodSeatingArrangement(int period, Student[][] seatArrangement);
+    public int getRoomCapacity() {
+        return this.studentCap + this.staffCap;
+    }
 
-    HashMap<Integer, Student[][]> getPeriodSeatingArrangement();
+    public void setStudentCap(int studentCap) {
+        this.studentCap = studentCap;
+    }
 
-    void initializeSeatingArrangements(int totalPeriods);
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
+    public List<Student> getStudents() {
+        return this.students;
+    }
+
+    public void setPeriodSeatingArrangement(int period, Student[][] seatArrangement) {
+        seatingArrangements.put(period, seatArrangement);
+    }
+
+    public HashMap<Integer, Student[][]> getPeriodSeatingArrangement() {
+        return seatingArrangements;
+    }
+
+    public void initializeSeatingArrangements(int totalPeriods) {
+        for (int period = 0; period < totalPeriods; period++) {
+            setPeriodSeatingArrangement(period, getSeatArrangement());
+        }
+    }
+
+    public void setStallNumber(int stallNumber) {
+        this.stallNumber = stallNumber;
+    }
+
+    public void setRoomRestrictions(boolean restrictM, boolean restrictF) {
+        this.restrictM = restrictM;
+        this.restrictF = restrictF;
+    }
+
+    public void reassignClassroomByTeacher(HashMap<Integer, Staff> staffHashMap, GameView view) {
+        String roomType = getClassRoomType();
+        String staffType;
+        if (!getAssignedStaff().isEmpty()) {
+            staffType = getAssignedStaff().get(0).teacherStatistics.getStaffType().toString();
+            if (!roomType.equals(staffType)) {
+                setClassRoomType(staffType);
+                view.appendOutput("Classroom " + getRoomName() + " reassigned to " + staffType + " from " + roomType);
+            }
+        } else {
+            view.appendOutput("Classroom " + getRoomName() + " has no staff!");
+            StaffAssignment.reassignSubToRoom(staffHashMap, view, this);
+            // recursive call be careful here
+            reassignClassroomByTeacher(staffHashMap, view);
+        }
+    }
+
+    public void setClassroomType(int select) {
+        switch (select) {
+            case 0 -> this.classRoomType = "Math";
+            case 1 -> this.classRoomType = "English";
+            case 2 -> this.classRoomType = "Science";
+            case 3 -> this.classRoomType = "History";
+            case 4 -> this.classRoomType = "Language";
+            case 5 -> this.classRoomType = "Electives";
+            case 6 -> this.classRoomType = "Study Hall";
+        }
+    }
+
+    public void setDetention() {
+        this.classRoomType = "Detention";
+    }
+
+    public String getClassTypeAbbr() {
+        String abbr = null;
+        String type = getClassRoomType();
+
+        switch (type) {
+            case "Math" -> abbr = "MAT";
+            case "English" -> abbr = "ENG";
+            case "Science" -> abbr = "SCI";
+            case "History" -> abbr = "HST";
+            case "Language" -> abbr = "LNG";
+            case "Vocational" -> abbr = "VOC";
+            case "Consumer Science", "Business", "Computer Science" -> abbr = "ELC";
+            case "Study Hall" -> abbr = "STY";
+            default -> System.out.println("No known class type!");
+        }
+
+        return abbr;
+
+    }
+
+    public String getClassRoomType() {
+        return classRoomType;
+    }
+
+    public void setClassRoomType(String type) {
+        this.classRoomType = type;
+    }
+
+    public void setUtilityType(UtilityRoom.utilityType utilityType) {
+    }
+
+    protected enum utilityType {
+        IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
+    }
 
 }
