@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static utility.StudentSeatingAssigner.initialSeatingGenerator;
+
 public abstract class Room implements Serializable {
 
     protected List<Staff> staffAssign;
@@ -109,35 +111,7 @@ public abstract class Room implements Serializable {
     }
     // TODO: add logic for different rooms since this is now a base class and remove magic numbers
     public void setSeatArrangement() {
-        int choice = Randomizer.setRandom(0, 2);
-        if (studentCap <= 16) {
-            if (choice == 0) {
-                seats = new Student[4][4];
-            } else if (choice == 1) {
-                seats = new Student[4][5];
-            } else {
-                seats = new Student[5][4];
-            }
-        } else if (studentCap <= 25) {
-            if (choice == 0) {
-                seats = new Student[5][5];
-            } else if (choice == 1) {
-                seats = new Student[5][6];
-            } else {
-                seats = new Student[6][5];
-            }
-        } else if (studentCap <= 48) {
-            if (choice == 0) {
-                seats = new Student[6][8];
-            } else if (choice == 1) {
-                seats = new Student[8][6];
-            } else {
-                seats = new Student[12][4];
-            }
-        } else {
-            // TODO: Better error handling later
-            System.out.println("Can't find student cap!");
-        }
+        seats = initialSeatingGenerator(studentCap);
     }
 
     public Student[][] getSeatArrangement() {
