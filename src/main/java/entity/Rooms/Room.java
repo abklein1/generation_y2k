@@ -268,4 +268,9 @@ public abstract class Room implements Serializable {
         IT_CLOSET, JANITOR, KITCHEN, POWER_PLANT, STORAGE
     }
 
+    @Override
+    public String toString() {
+        return this.roomName;
+    }
+
 }
