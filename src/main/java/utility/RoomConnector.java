@@ -432,14 +432,14 @@ public class RoomConnector {
         Room[] hallways = roomPool[10];
         boolean connected = false;
 
-        int choice = setRandom(0, 80);
-        if (choice < 50) {
+        int choice = setRandom(0, 100);
+        if (choice < 30) {
             choice = setRandom(0, classrooms.length - 1);
             schoolConnect.addEdge(classrooms[choice], office);
             classrooms[choice].setConnections(classrooms[choice].getConnections() - 1);
             office.setConnections(office.getConnections() - 1);
             connected = true;
-        } else if (50 < choice && choice < 60) {
+        } else if (30 <= choice && choice < 45) {
             choice = setRandom(0, gyms.length - 1);
             if (gyms[choice].getConnections() > 0) {
                 schoolConnect.addEdge(gyms[choice], office);
@@ -447,7 +447,7 @@ public class RoomConnector {
                 office.setConnections(office.getConnections() - 1);
                 connected = true;
             }
-        } else if (60 < choice && choice < 70) {
+        } else if (45 <= choice && choice < 60) {
             choice = setRandom(0, musicRooms.length - 1);
             if (musicRooms[choice].getConnections() > 0) {
                 schoolConnect.addEdge(musicRooms[choice], office);
@@ -455,7 +455,7 @@ public class RoomConnector {
                 office.setConnections(office.getConnections() - 1);
                 connected = true;
             }
-        } else {
+        } else if (60 <= choice && choice < 75) {
             choice = setRandom(0, artRooms.length - 1);
             if (artRooms[choice].getConnections() > 0) {
                 schoolConnect.addEdge(artRooms[choice], office);

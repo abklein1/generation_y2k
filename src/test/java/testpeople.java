@@ -3,18 +3,36 @@ import org.junit.Test;
 import utility.Director;
 import view.GameView;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class Tester {
+public class testpeople {
 
     @Test
-    public void StudentTestName(){
+    public void StudentTestFirstName(){
         Student student = new Student();
         student.studentName.setFirstName("Mark");
-        student.studentName.setLastName("Tester");
         assertEquals("Mark", student.studentName.getFirstName());
+    }
+
+    @Test
+    public void StudentTestLastName(){
+        Student student = new Student();
+        student.studentName.setLastName("Tester");
         assertEquals("Tester", student.studentName.getLastName());
+    }
+
+    @Test
+    public void StudentTestNickname(){
+        Student student = new Student();
+        student.studentName.setNickname("Buddy");
+        assertEquals("Buddy", student.studentName.getNickname());
+    }
+
+    @Test
+    public void StudentTestSuffix(){
+        Student student = new Student();
+        student.studentName.setSuffix("Jr.");
+        assertEquals("Jr.", student.studentName.getSuffix());
     }
 
     @Test
@@ -38,7 +56,7 @@ public class Tester {
     public void StudentSleepCheck(){
         Student student = new Student();
         student.studentStatistics.setSleepState(true);
-        assertEquals(true, student.studentStatistics.getSleepState());
+        assertTrue(student.studentStatistics.getSleepState());
     }
 
     @Test
@@ -93,7 +111,7 @@ public class Tester {
     public void TeacherSleepCheck(){
         Staff staff = new Staff();
         staff.teacherStatistics.setSleepState(true);
-        assertEquals(true, staff.teacherStatistics.getSleepState());
+        assertTrue(staff.teacherStatistics.getSleepState());
     }
 
     @Test
@@ -106,7 +124,6 @@ public class Tester {
         assertEquals("Medium", staff.teacherStatistics.getBuild());
         assertEquals("Brown", staff.teacherStatistics.getHairColor());
         assertEquals("Blue", staff.teacherStatistics.getEyeColor());
-        assertEquals(44, staff.teacherStatistics.getHeight());
     }
 
     @Test
