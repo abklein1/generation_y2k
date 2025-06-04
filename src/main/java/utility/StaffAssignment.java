@@ -6,6 +6,10 @@ import entity.Rooms.Room;
 import view.GameView;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static constants.SimConstants.*;
+import static constants.SchoolConstants.TOTAL_SCHOOL_PERIODS;
 
 public class StaffAssignment {
 
@@ -590,76 +594,30 @@ public class StaffAssignment {
 
         if (semester.equals("Fall")) {
             if (gradeIndex == 0) {
-                if (count % 2 == 0) {
-                    classname = "Geometry";
-                } else {
-                    classname = "Fundamentals of Math";
-                }
-                block.setClassName(classname);
-                return classname;
+                classname = "Geometry";
             } else if (gradeIndex == 1) {
-                if (count % 2 == 0) {
-                    classname = "Algebra II";
-                } else {
-                    classname = "Algebra I";
-                }
-                block.setClassName(classname);
-                return classname;
+                classname = "Algebra II";
             } else if (gradeIndex == 2) {
-                if (count % 2 == 0) {
-                    classname = "Precalculus";
-                } else {
-                    classname = "Trigonometry";
-                }
-                block.setClassName(classname);
-                return classname;
+                classname = "Precalculus";
             } else {
-                if (count % 2 == 0) {
-                    classname = "AP Calculus AB";
-                } else {
-                    classname = "Precalculus";
-                }
-                block.setClassName(classname);
-                return classname;
+                classname = "AP Calculus AB";
             }
         } else if (semester.equals("Spring")) {
             if (gradeIndex == 0) {
-                if (count % 2 == 0) {
-                    classname = "Algebra I";
-                } else {
-                    classname = "Geometry";
-                }
-                block.setClassName(classname);
-                return classname;
+                classname = "Algebra I";
             } else if (gradeIndex == 1) {
-                if (count % 2 == 0) {
-                    classname = "Trigonometry";
-                } else {
-                    classname = "Algebra II";
-                }
-                block.setClassName(classname);
-                return classname;
+                classname = "Trigonometry";
             } else if (gradeIndex == 2) {
-                if (count % 2 == 0) {
-                    classname = "AP Statistics";
-                } else {
-                    classname = "Math for Data and Financial Literacy";
-                }
-                block.setClassName(classname);
-                return classname;
+                classname = "AP Statistics";
             } else {
-                if (count % 2 == 0) {
-                    classname = "AP Calculus BC";
-                } else {
-                    classname = "Algebra II";
-                }
-                block.setClassName(classname);
-                return classname;
+                classname = "AP Calculus BC";
             }
         } else {
             System.err.println("Can't find semester");
             return "";
         }
+        block.setClassName(classname);
+        return classname;
     }
 
     private static String scienceHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
@@ -677,58 +635,22 @@ public class StaffAssignment {
             if (semester.equals("Fall")) {
                 if (gradeIndex == 0) {
                     classname = "Biology";
-                    block.setClassName(classname);
-                    return classname;
                 } else if (gradeIndex == 1) {
                     classname = "Chemistry";
-                    block.setClassName(classname);
-                    return classname;
                 } else if (gradeIndex == 2) {
-                    if (count % 2 == 0) {
-                        classname = "AP Biology";
-                    } else {
-                        classname = "Anatomy and Physiology";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "AP Biology";
                 } else {
-                    if (count % 2 == 0) {
-                        classname = "AP Physics B";
-                    } else {
-                        classname = "Physics";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "AP Physics B";
                 }
             } else if (semester.equals("Spring")) {
                 if (gradeIndex == 0) {
                     classname = "Biology";
-                    block.setClassName(classname);
-                    return classname;
                 } else if (gradeIndex == 1) {
-                    if (count % 2 == 0) {
-                        classname = "Earth and Space Science";
-                    } else {
-                        classname = "Physical Science";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "Earth and Space Science";
                 } else if (gradeIndex == 2) {
-                    if (count % 2 == 0) {
-                        classname = "AP Chemistry";
-                    } else {
-                        classname = "Anatomy and Physiology";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "AP Chemistry";
                 } else {
-                    if (count % 2 == 0) {
-                        classname = "AP Physics C";
-                    } else {
-                        classname = "Environmental Science";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "AP Physics C";
                 }
             } else {
                 System.err.println("Can't find semester");
@@ -738,6 +660,8 @@ public class StaffAssignment {
             System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
             return "";
         }
+        block.setClassName(classname);
+        return classname;
     }
 
     private static String historyHelper(TeacherBlock block, Staff teacher, String semester, int gradeIndex, StandardSchool standardSchool, int count) {
@@ -754,62 +678,22 @@ public class StaffAssignment {
             if (semester.equals("Fall")) {
                 if (gradeIndex == 0) {
                     classname = "World Geography";
-                    block.setClassName(classname);
-                    return classname;
                 } else if (gradeIndex == 1) {
-                    if (count % 2 == 0) {
-                        classname = "World History";
-                    } else {
-                        classname = "AP World History";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "AP World History";
                 } else if (gradeIndex == 2) {
-                    if (count % 2 == 0) {
-                        classname = "US History";
-                    } else {
-                        classname = "AP US History";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "US History";
                 } else {
-                    if (count % 2 == 0) {
-                        classname = "US Government";
-                    } else {
-                        classname = "AP US Government";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "AP US Government";
                 }
             } else if (semester.equals("Spring")) {
                 if (gradeIndex == 0) {
                     classname = "AP Human Geography";
-                    block.setClassName(classname);
-                    return classname;
                 } else if (gradeIndex == 1) {
-                    if (count % 2 == 0) {
-                        classname = "World History";
-                    } else {
-                        classname = "AP World History";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "AP World History";
                 } else if (gradeIndex == 2) {
-                    if (count % 2 == 0) {
-                        classname = "US History";
-                    } else {
-                        classname = "AP US History";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "US History";
                 } else {
-                    if (count % 2 == 0) {
-                        classname = "US Government";
-                    } else {
-                        classname = "AP Economics Macro";
-                    }
-                    block.setClassName(classname);
-                    return classname;
+                    classname = "AP Economics Macro";
                 }
             } else {
                 System.err.println("Can't find semester");
@@ -819,6 +703,8 @@ public class StaffAssignment {
             System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
             return "";
         }
+        block.setClassName(classname);
+        return classname;
     }
 
     private static void languageHelper(Staff teacher, StandardSchool standardSchool, int count, GameView view) {
@@ -1366,6 +1252,157 @@ public class StaffAssignment {
             }
         } else {
             System.err.println("Room is null " + " for teacher " + teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+        }
+    }
+
+    /**
+     * Analyzes current teacher assignments and reassigns unused teachers
+     */
+    public static void assignClassesToStaffDynamic(HashMap<Integer, Student> studentHashMap, 
+                                                  HashMap<Integer, Staff> staffHashMap, 
+                                                  StandardSchool standardSchool, GameView view) {
+        System.out.println("=== DYNAMIC TEACHER ASSIGNMENT ===");
+        
+        // Step 1: Run the standard assignment
+        assignClassesToStaff(staffHashMap, standardSchool, view);
+        
+        // Step 2: Identify underutilized teachers
+        System.out.println("Analyzing teacher utilization...");
+        
+        List<Staff> underutilizedTeachers = new ArrayList<>();
+        Map<Enum, List<Staff>> teachersByType = new HashMap<>();
+        
+        for (Staff staff : staffHashMap.values()) {
+            Enum type = staff.teacherStatistics.getStaffType();
+            teachersByType.computeIfAbsent(type, k -> new ArrayList<>()).add(staff);
+            
+            int blocks = staff.teacherStatistics.getTeacherSchedule().size();
+            if (blocks == 0) {
+                underutilizedTeachers.add(staff);
+                System.out.println("UNUSED TEACHER: " + staff.teacherName.getFirstName() + " " + 
+                                 staff.teacherName.getLastName() + " (" + type + ")");
+            }
+        }
+        
+        // Step 3: Reassign classes to underutilized teachers
+        System.out.println("Reassigning classes to " + underutilizedTeachers.size() + " unused teachers...");
+        
+        for (Staff underutilizedTeacher : underutilizedTeachers) {
+            assignClassesToUnderutilizedTeacher(underutilizedTeacher, teachersByType, standardSchool, view);
+        }
+        
+        // Step 4: Print final utilization stats
+        printFinalUtilizationStats(staffHashMap);
+    }
+    
+    /**
+     * Assigns classes to a single underutilized teacher
+     */
+    private static void assignClassesToUnderutilizedTeacher(Staff teacher, Map<Enum, List<Staff>> teachersByType, 
+                                                           StandardSchool standardSchool, GameView view) {
+        Enum teacherType = teacher.teacherStatistics.getStaffType();
+        Room teacherRoom = standardSchool.getClassroomByStaff(teacher);
+        
+        if (teacherRoom == null) {
+            System.out.println("No room assigned to " + teacher.teacherName.getFirstName() + " " + 
+                             teacher.teacherName.getLastName() + " - skipping");
+            return;
+        }
+        
+        // Find what classes other teachers of the same type are teaching
+        List<Staff> sameTypeTeachers = teachersByType.get(teacherType);
+        Set<String> availableClasses = new HashSet<>();
+        
+        for (Staff otherTeacher : sameTypeTeachers) {
+            if (otherTeacher != teacher && otherTeacher.teacherStatistics.getTeacherSchedule().size() > 0) {
+                for (TeacherBlock block : otherTeacher.teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
+                    availableClasses.add(block.getClassName());
+                }
+            }
+        }
+        
+        // Assign up to 8 blocks to this teacher
+        List<String> classesToAssign = new ArrayList<>(availableClasses);
+        Collections.shuffle(classesToAssign);
+        
+        int blocksAssigned = 0;
+        for (String className : classesToAssign) {
+            if (blocksAssigned >= 8) break;
+            
+            // Assign fall and spring versions
+            TeacherBlock fallBlock = new TeacherBlock();
+            fallBlock.setClassName(className);
+            fallBlock.setBlockNumber(blocksAssigned + 1);
+            fallBlock.setSemester("Fall");
+            fallBlock.setRoom(teacherRoom);
+            fallBlock.addClassPopulationBlock(teacherRoom.getStudentCapacity());
+            teacher.teacherStatistics.addTeacherSchedule(fallBlock);
+            blocksAssigned++;
+            
+            if (blocksAssigned < 8) {
+                TeacherBlock springBlock = new TeacherBlock();
+                springBlock.setClassName(className);
+                springBlock.setBlockNumber(blocksAssigned + 1);
+                springBlock.setSemester("Spring");
+                springBlock.setRoom(teacherRoom);
+                springBlock.addClassPopulationBlock(teacherRoom.getStudentCapacity());
+                teacher.teacherStatistics.addTeacherSchedule(springBlock);
+                blocksAssigned++;
+            }
+            
+            System.out.println("Assigned " + className + " (Fall/Spring) to " + 
+                             teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+        }
+        
+        System.out.println("Assigned " + blocksAssigned + " blocks to " + 
+                         teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
+    }
+    
+    /**
+     * Prints final teacher utilization statistics
+     */
+    private static void printFinalUtilizationStats(HashMap<Integer, Staff> staffHashMap) {
+        System.out.println("=== FINAL TEACHER UTILIZATION ===");
+        
+        Map<Enum, List<Staff>> teachersByType = new HashMap<>();
+        for (Staff staff : staffHashMap.values()) {
+            Enum type = staff.teacherStatistics.getStaffType();
+            teachersByType.computeIfAbsent(type, k -> new ArrayList<>()).add(staff);
+        }
+        
+        Enum[] coreTypes = new Enum[]{StaffType.ENGLISH, StaffType.MATH, StaffType.SCIENCE, StaffType.HISTORY};
+        
+        for (Enum type : coreTypes) {
+            List<Staff> teachers = teachersByType.get(type);
+            if (teachers != null && !teachers.isEmpty()) {
+                System.out.println(type + " Teachers:");
+                
+                int totalBlocks = 0;
+                int unusedCount = 0;
+                
+                for (Staff teacher : teachers) {
+                    int blocks = teacher.teacherStatistics.getTeacherSchedule().size();
+                    totalBlocks += blocks;
+                    
+                    if (blocks == 0) {
+                        System.out.println("  ✗ " + teacher.teacherName.getFirstName() + " " + 
+                                         teacher.teacherName.getLastName() + ": " + blocks + " blocks (UNUSED)");
+                        unusedCount++;
+                    } else if (blocks < 8) {
+                        System.out.println("  △ " + teacher.teacherName.getFirstName() + " " + 
+                                         teacher.teacherName.getLastName() + ": " + blocks + " blocks");
+                    } else {
+                        System.out.println("  ✓ " + teacher.teacherName.getFirstName() + " " + 
+                                         teacher.teacherName.getLastName() + ": " + blocks + " blocks");
+                    }
+                }
+                
+                double avgBlocks = (double) totalBlocks / teachers.size();
+                System.out.println("  Summary: " + teachers.size() + " teachers, avg " + 
+                                 String.format("%.1f", avgBlocks) + " blocks/teacher, " + 
+                                 unusedCount + " unused");
+                System.out.println();
+            }
         }
     }
 }

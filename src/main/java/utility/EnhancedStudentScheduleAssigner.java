@@ -1,6 +1,8 @@
 package utility;
 
 import entity.*;
+import view.GameView;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,8 +24,22 @@ public class EnhancedStudentScheduleAssigner {
      * Enhanced entry point that performs demand analysis before assignment
      */
     public static void scheduleAllStudentsEnhanced(HashMap<Integer, Student> studentHashMap, 
-                                                  HashMap<Integer, Staff> staffHashMap) {
+                                                  HashMap<Integer, Staff> staffHashMap,
+                                                  StandardSchool standardSchool, 
+                                                  GameView view) {
         System.out.println("Starting enhanced scheduling for " + studentHashMap.size() + " students");
+        
+        // *** CRITICAL FIX: Clear all existing student schedules to prevent duplicates ***
+        System.out.println("Clearing all existing student schedules...");
+        for (Student student : studentHashMap.values()) {
+            student.studentStatistics.getStudentSchedule().getClassSchedule().clear();
+        }
+        System.out.println("All schedules cleared - starting fresh assignment");
+        
+        // *** NEW: Use dynamic teacher assignment that analyzes actual student demand ***
+        System.out.println("Assigning teacher blocks dynamically based on student demand...");
+        StaffAssignment.assignClassesToStaffDynamic(studentHashMap, staffHashMap, 
+                                                   standardSchool, view);
         
         // Phase 1: Analyze student demands using existing trait logic
         analyzeDemandWithTraits(studentHashMap, staffHashMap);
@@ -46,7 +62,18 @@ public class EnhancedStudentScheduleAssigner {
         // Phase 5: Handle waitlisted students
         processWaitlists(studentHashMap, staffHashMap);
         
+        // *** NEW: Final duplicate detection check ***
+        detectAndReportDuplicates(studentHashMap);
+        
         printEnhancedStatistics();
+    }
+    
+    /**
+     * Backward compatibility method - calls enhanced version with null parameters
+     */
+    public static void scheduleAllStudentsEnhanced(HashMap<Integer, Student> studentHashMap, 
+                                                  HashMap<Integer, Staff> staffHashMap) {
+        scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, null, null);
     }
 
     /**
@@ -124,7 +151,7 @@ public class EnhancedStudentScheduleAssigner {
             
             // Debug output for specific classes
             if (className.equals("World Geography") || className.equals("Health") || className.equals("AP Human Geography")) {
-                System.out.println("DEBUG: Processing " + className + " with demand: " + demand.getTotalDemand());
+                System.out.println("DEBUG: Processing " + className + " with demand: " + demand.totalDemand());
                 List<Staff> qualifiedTeachers = getQualifiedTeachers(className, staffHashMap);
                 System.out.println("DEBUG: Found " + qualifiedTeachers.size() + " qualified teachers for " + className);
                 for (Staff teacher : qualifiedTeachers) {
@@ -135,24 +162,24 @@ public class EnhancedStudentScheduleAssigner {
             
             if (isCoreSubject(className)) {
                 // Core subjects: ensure minimum enrollment
-                if (demand.getTotalDemand() >= MIN_CLASS_SIZE) {
+                if (demand.totalDemand() >= MIN_CLASS_SIZE) {
                     createSectionsForClass(className, demand, staffHashMap);
                 } else {
                     System.out.println("WARNING: Core class " + className + 
-                                     " has insufficient demand: " + demand.getTotalDemand());
+                                     " has insufficient demand: " + demand.totalDemand());
                     // Still create section but flag for monitoring
                     createSectionsForClass(className, demand, staffHashMap);
                 }
             } else {
                 // Electives: apply stricter minimum
                 int minRequired = className.contains("AP") ? MIN_AP_CLASS_SIZE : MIN_ELECTIVE_SIZE;
-                if (demand.getTotalDemand() >= minRequired) {
+                if (demand.totalDemand() >= minRequired) {
                     createSectionsForClass(className, demand, staffHashMap);
                 } else {
                     System.out.println("Canceling elective " + className + 
-                                     " due to insufficient enrollment: " + demand.getTotalDemand());
+                                     " due to insufficient enrollment: " + demand.totalDemand());
                     // Add students to waitlist for alternative assignment
-                    classWaitlists.put(className, demand.getInterestedStudents());
+                    classWaitlists.put(className, demand.interestedStudents());
                 }
             }
         }
@@ -253,11 +280,11 @@ public class EnhancedStudentScheduleAssigner {
                     .sum();
             }
             
-            int shortage = demand.getTotalDemand() - currentCapacity;
+            int shortage = demand.totalDemand() - currentCapacity;
             
             ResourceShortage resourceShortage = new ResourceShortage(
                 className, 
-                demand.getTotalDemand(), 
+                demand.totalDemand(),
                 currentCapacity, 
                 shortage
             );
@@ -349,10 +376,11 @@ public class EnhancedStudentScheduleAssigner {
 
     /**
      * Enhanced assignment that prioritizes core classes and can rearrange schedules
+     * NOW WITH DUPLICATE DETECTION
      */
     private static void assignStudentsWithOptimization(HashMap<Integer, Student> studentHashMap, 
                                                       HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("Assigning students with priority-based optimization...");
+        System.out.println("Assigning students with priority-based optimization (WITH DUPLICATE PREVENTION)...");
         
         // Sort students by priority (seniors first, then by intelligence for tie-breaking)
         List<Student> sortedStudents = studentHashMap.values().stream()
@@ -635,6 +663,7 @@ public class EnhancedStudentScheduleAssigner {
 
     /**
      * Enhanced assignment with schedule rearrangement capability
+     * NOW WITH DUPLICATE PREVENTION
      */
     private static void assignSubjectWithPriorityAndRearrangement(String subjectArea, List<Student> students, 
                                                                 HashMap<Integer, Staff> staffHashMap, boolean allowRearrangement) {
@@ -651,6 +680,16 @@ public class EnhancedStudentScheduleAssigner {
             }
             
             for (String className : subjectClasses) {
+                // *** CRITICAL FIX: Check for duplicates before assignment ***
+                if (studentAlreadyHasClass(student, className)) {
+                    if (student.studentStatistics.getGradeLevel().equals("Senior")) {
+                        System.out.println("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " + 
+                                         student.studentName.getLastName() + " already has " + className + 
+                                         " - skipping duplicate assignment");
+                    }
+                    continue; // Skip this class - student already has it
+                }
+                
                 boolean assigned = false;
                 
                 if (classSections.containsKey(className)) {
@@ -816,7 +855,7 @@ public class EnhancedStudentScheduleAssigner {
             case "Freshman": return 8; // English, Math(2), Science, History, Language(2), PE
             case "Sophomore": return 6; // English, Math(2), Science, History, PE
             case "Junior": return 6; // English, Math, Science, History, Electives(2)
-            case "Senior": return 4; // English, Math, Science, History
+            case "Senior": return 6; // English, Math, Science, History, Electives(2) - Increased from 4
             default: return 6;
         }
     }
@@ -849,7 +888,25 @@ public class EnhancedStudentScheduleAssigner {
                 classes.add(path.equals("AP") || path.equals("Honors") ? "Algebra II" : "Algebra I");
                 classes.add(path.equals("AP") || path.equals("Honors") ? "Trigonometry" : "Algebra II");
             }
-            // ... rest of logic
+            case "Junior" -> {
+                classes.add(path.equals("AP") ? "Precalculus" : path.equals("Honors") ? "Precalculus" : "Trigonometry");
+                if (path.equals("AP")) {
+                    classes.add("AP Statistics");
+                } else if (!path.equals("Honors")) {
+                    classes.add("Math for Data and Financial Literacy");
+                }
+            }
+            case "Senior" -> {
+                if (path.equals("AP")) {
+                    classes.add("AP Calculus AB");
+                    classes.add("AP Calculus BC");
+                } else if (path.equals("Honors")) {
+                    // Honors students should still take some math in senior year
+                    classes.add("Precalculus");
+                } else {
+                    classes.add("Precalculus");
+                }
+            }
         }
         return classes;
     }
@@ -866,7 +923,24 @@ public class EnhancedStudentScheduleAssigner {
                     classes.add(options[Randomizer.setRandom(0, options.length - 1)]);
                 }
             }
-            // ... rest of logic
+            case "Junior" -> {
+                if (path.equals("AP")) {
+                    String[] apScienceOptions = {"AP Biology", "AP Chemistry"};
+                    classes.add(apScienceOptions[Randomizer.setRandom(0, apScienceOptions.length - 1)]);
+                } else {
+                    classes.add("Anatomy and Physiology");
+                }
+            }
+            case "Senior" -> {
+                if (path.equals("AP")) {
+                    classes.add("AP Physics B");
+                    classes.add("AP Physics C");
+                } else if (path.equals("Honors")) {
+                    classes.add("Physics");
+                } else {
+                    classes.add("Environmental Science");
+                }
+            }
         }
         return classes;
     }
@@ -918,11 +992,18 @@ public class EnhancedStudentScheduleAssigner {
     private static List<String> determineVocationalClasses(String year, Student student) {
         List<String> classes = new ArrayList<>();
         if (!year.equals("Freshman")) {
-            if (student.studentStatistics.getDetermination() >= SENIOR_VOCATIONAL_CLASS_DETERMINATION_THRESHOLD || !year.equals("Senior")) {
+            // Modified logic: Seniors always get electives, other grades depend on determination
+            if (year.equals("Senior") || student.studentStatistics.getDetermination() >= SENIOR_VOCATIONAL_CLASS_DETERMINATION_THRESHOLD) {
                 String[] fallChoices = vocationalDecision(student, "Fall");
                 String[] springChoices = vocationalDecision(student, "Spring");
                 classes.add(fallChoices[0]); // Add top choice for each semester
                 classes.add(springChoices[0]);
+                
+                // Seniors get additional electives to fill their schedule
+                if (year.equals("Senior")) {
+                    if (fallChoices.length > 1) classes.add(fallChoices[1]);
+                    if (springChoices.length > 1) classes.add(springChoices[1]);
+                }
             }
         }
         return classes;
@@ -981,7 +1062,7 @@ public class EnhancedStudentScheduleAssigner {
         // Enhanced debugging for World Geography
         if (className.equals("World Geography")) {
             System.out.println("=== ENHANCED DEBUGGING: World Geography Section Creation ===");
-            System.out.println("Demand: " + demand.getTotalDemand() + " students");
+            System.out.println("Demand: " + demand.totalDemand() + " students");
             System.out.println("Available teachers: " + availableTeachers.size());
             
             for (Staff teacher : availableTeachers) {
@@ -1024,11 +1105,11 @@ public class EnhancedStudentScheduleAssigner {
             .mapToInt(s -> s.capacity)
             .sum();
         System.out.println("Created " + sections.size() + " sections for " + className + 
-                          " (demand: " + demand.getTotalDemand() + ", total capacity: " + totalCapacity + ")");
+                          " (demand: " + demand.totalDemand() + ", total capacity: " + totalCapacity + ")");
         
-        if (totalCapacity < demand.getTotalDemand()) {
+        if (totalCapacity < demand.totalDemand()) {
             System.out.println("WARNING: Total capacity (" + totalCapacity + 
-                             ") is less than demand (" + demand.getTotalDemand() + ") for " + className);
+                             ") is less than demand (" + demand.totalDemand() + ") for " + className);
         }
         
         // Additional debugging for World Geography to show block distribution
@@ -1073,14 +1154,39 @@ public class EnhancedStudentScheduleAssigner {
     
     private static Student findMovableStudent(ClassSection fromSection, ClassSection toSection) {
         for (Student student : fromSection.getEnrolledStudents()) {
+            // Check for schedule conflicts
             if (!hasBlockConflict(student, toSection.getTeacherBlock())) {
-                return student;
+                // *** NEW: Check for potential duplicates ***
+                String className = toSection.getClassName();
+                long currentCount = student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
+                    .mapToLong(block -> block.getClassName().equals(className) ? 1 : 0)
+                    .sum();
+                
+                // Only consider students who don't already have duplicates of this class
+                if (currentCount <= 1) {
+                    return student;
+                }
             }
         }
         return null;
     }
     
     private static void moveStudentBetweenSections(Student student, ClassSection fromSection, ClassSection toSection) {
+        // *** CRITICAL FIX: Prevent moves that would create duplicates ***
+        String className = toSection.getClassName();
+        
+        // Count how many times the student already has this class
+        long currentCount = student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
+            .mapToLong(block -> block.getClassName().equals(className) ? 1 : 0)
+            .sum();
+        
+        if (currentCount > 1) {
+            System.out.println("DUPLICATE PREVENTION: Blocking move of " + student.studentName.getFirstName() + " " + 
+                             student.studentName.getLastName() + " for " + className + 
+                             " - already has " + currentCount + " instances");
+            return; // Don't move - would create/worsen duplicates
+        }
+        
         // Remove from old section
         fromSection.removeStudent(student);
         
@@ -1088,7 +1194,8 @@ public class EnhancedStudentScheduleAssigner {
         List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
         schedule.removeIf(block -> 
             block.getClassName().equals(fromSection.getClassName()) &&
-            block.getBlockNumber() == fromSection.getTeacherBlock().getBlockNumber());
+            block.getBlockNumber() == fromSection.getTeacherBlock().getBlockNumber() &&
+            block.getSemester().equals(fromSection.getTeacherBlock().getSemester()));
         
         // Add to new section
         assignStudentToSection(student, toSection, false);
@@ -1108,30 +1215,28 @@ public class EnhancedStudentScheduleAssigner {
     }
     
     private static boolean belongsToSubjectArea(String className, String subjectArea) {
-        switch (subjectArea.toLowerCase()) {
-            case "english": 
-                return className.toLowerCase().contains("english") || className.toLowerCase().contains("ap english");
-            case "math": 
-                return className.toLowerCase().contains("math") || className.toLowerCase().contains("algebra") || 
-                       className.toLowerCase().contains("geometry") || className.toLowerCase().contains("calculus") ||
-                       className.toLowerCase().contains("trigonometry") || className.toLowerCase().contains("precalculus");
-            case "science": 
-                return className.toLowerCase().contains("biology") || className.toLowerCase().contains("chemistry") || 
-                       className.toLowerCase().contains("physics") || className.toLowerCase().contains("science");
-            case "history": 
-                return className.toLowerCase().contains("history") || className.toLowerCase().contains("government") || 
-                       className.toLowerCase().contains("geography") || className.toLowerCase().contains("economics");
-            case "physical education": 
-                return className.toLowerCase().contains("health") || className.toLowerCase().contains("sports") || 
-                       className.toLowerCase().contains("weightlifting") || className.toLowerCase().contains("dance") ||
-                       className.toLowerCase().contains("recreation");
-            case "language": 
-                return className.toLowerCase().contains("spanish") || className.toLowerCase().contains("french") || 
-                       className.toLowerCase().contains("german") || className.toLowerCase().contains("latin") ||
-                       className.toLowerCase().contains("sign language");
-            default: 
-                return false;
-        }
+        return switch (subjectArea.toLowerCase()) {
+            case "english" ->
+                    className.toLowerCase().contains("english") || className.toLowerCase().contains("ap english");
+            case "math" -> className.toLowerCase().contains("math") || className.toLowerCase().contains("algebra") ||
+                    className.toLowerCase().contains("geometry") || className.toLowerCase().contains("calculus") ||
+                    className.toLowerCase().contains("trigonometry") || className.toLowerCase().contains("precalculus");
+            case "science" ->
+                    className.toLowerCase().contains("biology") || className.toLowerCase().contains("chemistry") ||
+                            className.toLowerCase().contains("physics") || className.toLowerCase().contains("science");
+            case "history" ->
+                    className.toLowerCase().contains("history") || className.toLowerCase().contains("government") ||
+                            className.toLowerCase().contains("geography") || className.toLowerCase().contains("economics");
+            case "physical education" ->
+                    className.toLowerCase().contains("health") || className.toLowerCase().contains("sports") ||
+                            className.toLowerCase().contains("weightlifting") || className.toLowerCase().contains("dance") ||
+                            className.toLowerCase().contains("recreation");
+            case "language" ->
+                    className.toLowerCase().contains("spanish") || className.toLowerCase().contains("french") ||
+                            className.toLowerCase().contains("german") || className.toLowerCase().contains("latin") ||
+                            className.toLowerCase().contains("sign language");
+            default -> false;
+        };
     }
     
     private static boolean isCoreSubject(String className) {
@@ -1159,6 +1264,14 @@ public class EnhancedStudentScheduleAssigner {
             List<String> vocationalClasses = determineVocationalClasses(student.studentStatistics.getGradeLevel(), student);
             
             for (String className : vocationalClasses) {
+                // *** DUPLICATE PREVENTION for electives ***
+                if (studentAlreadyHasClass(student, className)) {
+                    System.out.println("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " + 
+                                     student.studentName.getLastName() + " already has elective " + className + 
+                                     " - skipping duplicate assignment");
+                    continue;
+                }
+                
                 if (classSections.containsKey(className)) {
                     ClassSection bestSection = findOptimalSection(student, className);
                     if (bestSection != null) {
@@ -1289,20 +1402,8 @@ public class EnhancedStudentScheduleAssigner {
         public TeacherBlock getTeacherBlock() { return teacherBlock; }
         public Set<Student> getEnrolledStudents() { return enrolledStudents; }
     }
-    
-    private static class StudentDemand {
-        private final String className;
-        private final int totalDemand;
-        private final Set<Student> interestedStudents;
-        
-        public StudentDemand(String className, int totalDemand, Set<Student> interestedStudents) {
-            this.className = className;
-            this.totalDemand = totalDemand;
-            this.interestedStudents = interestedStudents;
-        }
-        
-        public int getTotalDemand() { return totalDemand; }
-        public Set<Student> getInterestedStudents() { return interestedStudents; }
+
+    private record StudentDemand(String className, int totalDemand, Set<Student> interestedStudents) {
     }
 
     private static String classProbabilityLoader(int intelligence, String income, int determination) {
@@ -1336,16 +1437,16 @@ public class EnhancedStudentScheduleAssigner {
 
         // Income adjustments (EXACT SAME LOGIC)
         switch (income) {
-            case "high":
+            case "high" -> {
                 apProbability *= CLASS_PROBABILITY_LOADER_INCOME_HIGH_AP_ADJUSTMENT;
                 honorsProbability *= CLASS_PROBABILITY_LOADER_INCOME_HIGH_HONORS_ADJUSTMENT;
                 onLevelProbability *= CLASS_PROBABILITY_LOADER_INCOME_HIGH_ON_LEVEL_ADJUSTMENT;
-                break;
-            case "low":
+            }
+            case "low" -> {
                 apProbability *= CLASS_PROBABILITY_LOADER_INCOME_LOW_AP_ADJUSTMENT;
                 honorsProbability *= CLASS_PROBABILITY_LOADER_INCOME_LOW_HONORS_ADJUSTMENT;
                 onLevelProbability *= CLASS_PROBABILITY_LOADER_INCOME_LOW_ON_LEVEL_ADJUSTMENT;
-                break;
+            }
         }
 
         // Determination adjustments (EXACT SAME LOGIC)
@@ -1402,8 +1503,21 @@ public class EnhancedStudentScheduleAssigner {
 
     /**
      * Enhanced assignment that preserves existing logic structure
+     * NOW WITH DUPLICATE PREVENTION AT THE CORE
      */
     private static void assignStudentToSection(Student student, ClassSection section, boolean logAssignment) {
+        String className = section.getClassName();
+        
+        // *** CRITICAL FIX: Prevent duplicate assignments at the source ***
+        if (studentAlreadyHasClass(student, className)) {
+            if (logAssignment) {
+                System.out.println("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " + 
+                                 student.studentName.getLastName() + " already has " + className + 
+                                 " - blocking assignment");
+            }
+            return; // Don't assign - student already has this class
+        }
+        
         // Create student block (same as existing logic)
         StudentBlock studentBlock = new StudentBlock();
         studentBlock.setBlockNumber(section.getTeacherBlock().getBlockNumber());
@@ -2097,7 +2211,7 @@ public class EnhancedStudentScheduleAssigner {
                 
                 ClassUtilization util = new ClassUtilization(
                     className, 
-                    demand.getTotalDemand(), 
+                    demand.totalDemand(),
                     totalCapacity, 
                     currentEnrollment,
                     emptyBlocks,
@@ -2114,9 +2228,9 @@ public class EnhancedStudentScheduleAssigner {
             double utilizationPercent = util.totalCapacity > 0 ? 
                 (double) util.currentEnrollment / util.totalCapacity * 100 : 0;
             
-            System.out.println(String.format("%s: Demand=%d, Capacity=%d, Enrolled=%d (%.1f%%), Empty blocks=%d",
-                util.className, util.demand, util.totalCapacity, util.currentEnrollment, 
-                utilizationPercent, util.emptyBlocks));
+            System.out.printf("%s: Demand=%d, Capacity=%d, Enrolled=%d (%.1f%%), Empty blocks=%d%n",
+                util.className, util.demand, util.totalCapacity, util.currentEnrollment,
+                utilizationPercent, util.emptyBlocks);
         }
         
         // Step 4: Find optimization opportunities
@@ -2147,14 +2261,12 @@ public class EnhancedStudentScheduleAssigner {
         
         // Sort by utilization - find classes with empty blocks and classes with unmet demand
         List<ClassUtilization> underutilized = utilizations.stream()
-            .filter(u -> u.emptyBlocks > 0)
-            .sorted((u1, u2) -> Integer.compare(u2.emptyBlocks, u1.emptyBlocks)) // Most empty blocks first
-            .collect(Collectors.toList());
+                .filter(u -> u.emptyBlocks > 0)
+                .sorted((u1, u2) -> Integer.compare(u2.emptyBlocks, u1.emptyBlocks)).toList();
         
         List<ClassUtilization> overdemanded = utilizations.stream()
-            .filter(u -> u.demand > u.totalCapacity)
-            .sorted((u1, u2) -> Integer.compare((u2.demand - u2.totalCapacity), (u1.demand - u1.totalCapacity))) // Highest shortage first
-            .collect(Collectors.toList());
+                .filter(u -> u.demand > u.totalCapacity)
+                .sorted((u1, u2) -> Integer.compare((u2.demand - u2.totalCapacity), (u1.demand - u1.totalCapacity))).toList();
         
         System.out.println("Classes with empty blocks: " + underutilized.size());
         System.out.println("Classes with unmet demand: " + overdemanded.size());
@@ -2327,19 +2439,65 @@ public class EnhancedStudentScheduleAssigner {
             this.totalSections = totalSections;
         }
     }
-    
-    private static class BlockReassignmentOpportunity {
-        final String fromClass;
-        final String toClass;
-        final int blocksToReassign;
-        final List<Staff> availableTeachers;
+
+    private record BlockReassignmentOpportunity(String fromClass, String toClass, int blocksToReassign,
+                                                List<Staff> availableTeachers) {
+    }
+
+    /**
+     * Checks if a student already has a specific class in their schedule
+     */
+    private static boolean studentAlreadyHasClass(Student student, String className) {
+        return student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
+            .anyMatch(block -> block.getClassName().equals(className));
+    }
+
+    /**
+     * Comprehensive duplicate detection and reporting
+     */
+    private static void detectAndReportDuplicates(HashMap<Integer, Student> studentHashMap) {
+        System.out.println("=== FINAL DUPLICATE DETECTION CHECK ===");
         
-        BlockReassignmentOpportunity(String fromClass, String toClass, int blocksToReassign, 
-                                   List<Staff> availableTeachers) {
-            this.fromClass = fromClass;
-            this.toClass = toClass;
-            this.blocksToReassign = blocksToReassign;
-            this.availableTeachers = availableTeachers;
+        int studentsWithDuplicates = 0;
+        int totalDuplicates = 0;
+        
+        for (Student student : studentHashMap.values()) {
+            Map<String, Integer> classCount = new HashMap<>();
+            List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
+            
+            // Count occurrences of each class
+            for (StudentBlock block : schedule) {
+                String className = block.getClassName();
+                classCount.put(className, classCount.getOrDefault(className, 0) + 1);
+            }
+            
+            // Check for duplicates
+            boolean hasDuplicates = false;
+            for (Map.Entry<String, Integer> entry : classCount.entrySet()) {
+                if (entry.getValue() > 1) {
+                    if (!hasDuplicates) {
+                        studentsWithDuplicates++;
+                        hasDuplicates = true;
+                        System.out.println("DUPLICATE DETECTED: " + student.studentName.getFirstName() + " " + 
+                                         student.studentName.getLastName() + " (" + 
+                                         student.studentStatistics.getGradeLevel() + ")");
+                    }
+                    System.out.println("  - " + entry.getKey() + ": " + entry.getValue() + " instances");
+                    totalDuplicates += (entry.getValue() - 1); // Count extra instances
+                }
+            }
         }
+        
+        System.out.println("DUPLICATE SUMMARY:");
+        System.out.println("Students with duplicates: " + studentsWithDuplicates + "/" + studentHashMap.size());
+        System.out.println("Total duplicate assignments: " + totalDuplicates);
+        
+        if (studentsWithDuplicates == 0) {
+            System.out.println("✓ NO DUPLICATES FOUND - All students have unique class assignments!");
+        } else {
+            System.out.println("✗ DUPLICATES DETECTED - Investigation needed");
+        }
+        
+        System.out.println("=== END DUPLICATE DETECTION ===");
     }
 } 

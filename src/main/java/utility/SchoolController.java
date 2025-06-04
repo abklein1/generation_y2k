@@ -199,7 +199,7 @@ public class SchoolController {
                 }
                 StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
                 try {
-                    EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(studentHashMap, staffHashMap);
+                    EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view);
                     StudentSeatingAssigner.seatInitialStudents(standardSchool);
                 } catch (Exception e) {
                     e.printStackTrace();
