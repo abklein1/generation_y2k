@@ -2160,7 +2160,7 @@ public class EnhancedStudentScheduleAssigner {
         System.out.println("=== BLOCK ASSIGNMENT OPTIMIZATION WITHIN SUBJECT AREAS ===");
         
         // Define subject areas to optimize
-        String[] subjectAreas = {"English", "Math", "Science", "History", "Language"};
+        String[] subjectAreas = {"English", "Math", "Science", "History", "Language", "Vocational"};
         
         for (String subjectArea : subjectAreas) {
             System.out.println("Optimizing " + subjectArea + " block assignments...");

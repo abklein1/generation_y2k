@@ -180,30 +180,31 @@ public class SubstituteReallocationTest {
     }
     
     private static boolean belongsToSubjectArea(String className, String subjectArea) {
-        switch (subjectArea.toLowerCase()) {
-            case "english": 
-                return className.toLowerCase().contains("english") || className.toLowerCase().contains("ap english");
-            case "math": 
-                return className.toLowerCase().contains("math") || className.toLowerCase().contains("algebra") || 
-                       className.toLowerCase().contains("geometry") || className.toLowerCase().contains("calculus") ||
-                       className.toLowerCase().contains("trigonometry") || className.toLowerCase().contains("precalculus");
-            case "science": 
-                return className.toLowerCase().contains("biology") || className.toLowerCase().contains("chemistry") || 
-                       className.toLowerCase().contains("physics") || className.toLowerCase().contains("science");
-            case "history": 
-                return className.toLowerCase().contains("history") || className.toLowerCase().contains("government") || 
-                       className.toLowerCase().contains("geography") || className.toLowerCase().contains("economics");
-            case "physical education": 
-                return className.toLowerCase().contains("health") || className.toLowerCase().contains("sports") || 
-                       className.toLowerCase().contains("weightlifting") || className.toLowerCase().contains("dance") ||
-                       className.toLowerCase().contains("recreation");
-            case "language": 
-                return className.toLowerCase().contains("spanish") || className.toLowerCase().contains("french") || 
-                       className.toLowerCase().contains("german") || className.toLowerCase().contains("latin") ||
-                       className.toLowerCase().contains("sign language");
-            default: 
-                return false;
-        }
+        return switch (subjectArea.toLowerCase()) {
+            case "english" ->
+                    className.toLowerCase().contains("english") || className.toLowerCase().contains("ap english");
+            case "math" -> className.toLowerCase().contains("math") || className.toLowerCase().contains("algebra") ||
+                    className.toLowerCase().contains("geometry") || className.toLowerCase().contains("calculus") ||
+                    className.toLowerCase().contains("trigonometry") || className.toLowerCase().contains("precalculus");
+            case "science" ->
+                    className.toLowerCase().contains("biology") || className.toLowerCase().contains("chemistry") ||
+                            className.toLowerCase().contains("physics") || className.toLowerCase().contains("science");
+            case "history" ->
+                    className.toLowerCase().contains("history") || className.toLowerCase().contains("government") ||
+                            className.toLowerCase().contains("geography") || className.toLowerCase().contains("economics");
+            case "physical education" ->
+                    className.toLowerCase().contains("health") || className.toLowerCase().contains("sports") ||
+                            className.toLowerCase().contains("weightlifting") || className.toLowerCase().contains("dance") ||
+                            className.toLowerCase().contains("recreation");
+            case "language" ->
+                    className.toLowerCase().contains("spanish") || className.toLowerCase().contains("french") ||
+                            className.toLowerCase().contains("german") || className.toLowerCase().contains("latin") ||
+                            className.toLowerCase().contains("sign language");
+            case "vocational" ->
+                    className.toLowerCase().contains("theater") || className.toLowerCase().contains("debate") || className.toLowerCase().contains("choir") ||
+                            className.toLowerCase().contains("band") || className.toLowerCase().contains("rotc");
+            default -> false;
+        };
     }
     
     private static boolean isCoreSubject(String className) {
