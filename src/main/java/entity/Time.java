@@ -45,4 +45,13 @@ public class Time {
     public Date getCurrentDate() {
         return calendar.getTime();
     }
+
+    public void stepForwardMinutes(int minutes) {
+        calendar.add(Calendar.MINUTE, minutes);
+    }
+
+    public void stepForwardHours(int hours) {
+        calendar.add(Calendar.HOUR, hours);
+    }
+
 }
