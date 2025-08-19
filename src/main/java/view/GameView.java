@@ -24,6 +24,7 @@ public class GameView {
     private final JPanel amPanel;
     private final JPanel pmPanel;
     private final JButton socialGraphButton;
+    private final JButton createCharacterButton;
     public GameView() {
         frame = new JFrame("generation_y2k");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,6 +53,8 @@ public class GameView {
         socialGraphButton = new JButton("Show social graph");
         visualizeButton.setEnabled(false);
         socialGraphButton.setEnabled(false);
+        createCharacterButton = new JButton("Create Player Character");
+        createCharacterButton.setEnabled(true);
 
         statusOutput = new JTextArea(20, 40);
         statusOutput.setEditable(false);
@@ -67,6 +70,7 @@ public class GameView {
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(visualizeButton);
         buttonPanel.add(socialGraphButton);
+        buttonPanel.add(createCharacterButton);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // time label
@@ -229,6 +233,10 @@ public class GameView {
 
     public void addSocialGraphButtonListener(ActionListener listener) {
         socialGraphButton.addActionListener(listener);
+    }
+
+    public void addCreateCharacterButtonListener(ActionListener listener) {
+        createCharacterButton.addActionListener(listener);
     }
 
 }

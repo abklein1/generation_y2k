@@ -6,8 +6,6 @@ package game;
     Description: Here is the driver for the program
  */
 
-//TODO: Optimize Imports
-
 import utility.SchoolController;
 import view.GameView;
 

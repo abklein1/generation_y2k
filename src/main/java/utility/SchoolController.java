@@ -31,6 +31,7 @@ public class SchoolController {
         this.view.addVisualizeButtonListener(new VisualizeButtonListener());
         this.view.addSocialGraphButtonListener(new SocialGraphButtonListener());
         this.view.addInspectionMenuListener(new InspectionMenuListener());
+        this.view.addCreateCharacterButtonListener(new CreateCharacterButtonListener());
         this.time = new Time();
     }
 
@@ -117,6 +118,82 @@ public class SchoolController {
         inspectionFrame.setVisible(true);
     }
 
+    private void showCharacterCreationMenu() {
+        JDialog dialog = new JDialog((Frame) null, "Create Player Character", true);
+        dialog.setLayout(new GridLayout(0, 2));
+
+        // First Name
+        dialog.add(new JLabel("First Name:"));
+        JTextField firstNameField = new JTextField();
+        dialog.add(firstNameField);
+
+        // Last Name
+        dialog.add(new JLabel("Last Name:"));
+        JTextField lastNameField = new JTextField();
+        dialog.add(lastNameField);
+
+        // Suffix
+        dialog.add(new JLabel("Suffix:"));
+        JComboBox<String> suffixDropdown = new JComboBox<>(new String[]{"Jr.", "Sr.", "III", "II", "IV", "V"}); // Example suffixes
+        dialog.add(suffixDropdown);
+
+        // Gender
+        dialog.add(new JLabel("Gender:"));
+        JComboBox<String> genderDropdown = new JComboBox<>(new String[]{"Male", "Female", "Other"});
+        dialog.add(genderDropdown);
+
+        // Eye Color
+        dialog.add(new JLabel("Eye Color:"));
+        JComboBox<String> eyeColorDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/eye_color.json")); // Example colors
+        dialog.add(eyeColorDropdown);
+
+        // Hair Color
+        dialog.add(new JLabel("Hair Color:"));
+        JComboBox<String> hairColorDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/hair_color.json")); // Example colors
+        dialog.add(hairColorDropdown);
+
+        // Hair Length
+        dialog.add(new JLabel("Hair Length:"));
+        JComboBox<String> hairLengthDropdown = new JComboBox<>(new String[]{"Short", "Medium", "Long"});
+        dialog.add(hairLengthDropdown);
+
+        // Hair Type
+        dialog.add(new JLabel("Hair Type:"));
+        JComboBox<String> hairTypeDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/hair_type.json"));
+        dialog.add(hairTypeDropdown);
+
+        // Height
+        dialog.add(new JLabel("Height:"));
+        JComboBox<String> heightDropdown = new JComboBox<>(new String[]{"Short", "Average", "Tall"}); // Example heights
+        dialog.add(heightDropdown);
+
+        // Birthdate
+        dialog.add(new JLabel("Birthdate:"));
+        JTextField birthdateField = new JTextField();
+        dialog.add(birthdateField);
+
+        // Family Income
+        dialog.add(new JLabel("Family Income:"));
+        JComboBox<String> incomeDropdown = new JComboBox<>(new String[]{"Low", "Middle", "High"});
+        dialog.add(incomeDropdown);
+
+        // Number of Siblings
+        dialog.add(new JLabel("Number of Siblings:"));
+        JComboBox<Integer> siblingsDropdown = new JComboBox<>(new Integer[]{0, 1, 2, 3, 4, 5});
+        dialog.add(siblingsDropdown);
+
+        // OK Button
+        JButton okButton = new JButton("OK");
+        okButton.addActionListener(e -> {
+            // Handle input and create PlayerCharacter
+            dialog.dispose();
+        });
+        dialog.add(okButton);
+
+        dialog.pack();
+        dialog.setVisible(true);
+    }
+
     class GenerateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -146,6 +223,13 @@ public class SchoolController {
         @Override
         public void actionPerformed(ActionEvent e) {
             socialLinkConnector.schoolSocialLinkVisualizer();
+        }
+    }
+
+    class CreateCharacterButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            showCharacterCreationMenu();
         }
     }
 
