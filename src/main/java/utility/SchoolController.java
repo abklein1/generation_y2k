@@ -190,12 +190,37 @@ public class SchoolController {
         // Birthdate
         dialog.add(new JLabel("Birthdate:"));
         UtilDateModel model = new UtilDateModel();
+        model.setDate(1989, 9, 1);
+        model.setSelected(true);
+        // Set the default date to today
         Properties p = new Properties();
         p.put("text.today", "Today");
         p.put("text.month", "Month");
         p.put("text.year", "Year");
+
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        
+        datePicker.addActionListener(e -> {
+            java.util.Date selectedDate = (java.util.Date) datePicker.getModel().getValue();
+            if (selectedDate != null) {
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                cal.setTime(selectedDate);
+
+                java.util.Calendar minDate = java.util.Calendar.getInstance();
+                minDate.set(1989, java.util.Calendar.SEPTEMBER, 1);
+        
+                java.util.Calendar maxDate = java.util.Calendar.getInstance();
+                maxDate.set(1990, java.util.Calendar.AUGUST, 31);
+        
+                if (cal.before(minDate) || cal.after(maxDate)) {
+                    // Reset to initial date if out of range
+                    model.setDate(1989, 8, 1);
+                    model.setSelected(true);
+                }
+            }
+        });
+
         dialog.add(datePicker);
 
         // Family Income
