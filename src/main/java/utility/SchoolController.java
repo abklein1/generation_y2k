@@ -190,7 +190,7 @@ public class SchoolController {
         // Birthdate
         dialog.add(new JLabel("Birthdate:"));
         UtilDateModel model = new UtilDateModel();
-        model.setDate(1989, 9, 1);
+        model.setDate(1989, 8, 1);
         model.setSelected(true);
         // Set the default date to today
         Properties p = new Properties();
@@ -208,10 +208,10 @@ public class SchoolController {
                 cal.setTime(selectedDate);
 
                 java.util.Calendar minDate = java.util.Calendar.getInstance();
-                minDate.set(1989, java.util.Calendar.SEPTEMBER, 1);
+                minDate.set(1989, java.util.Calendar.AUGUST, 1);
         
                 java.util.Calendar maxDate = java.util.Calendar.getInstance();
-                maxDate.set(1990, java.util.Calendar.AUGUST, 31);
+                maxDate.set(1990, java.util.Calendar.SEPTEMBER, 31);
         
                 if (cal.before(minDate) || cal.after(maxDate)) {
                     // Reset to initial date if out of range
@@ -236,7 +236,23 @@ public class SchoolController {
         // OK Button
         JButton okButton = new JButton("OK");
         okButton.addActionListener(e -> {
-            // Handle input and create PlayerCharacter
+            PlayerCharacter playerCharacter = new PlayerCharacter();
+            playerCharacter.studentName.setFirstName(firstNameField.getText());
+            playerCharacter.studentName.setLastName(lastNameField.getText());
+            playerCharacter.studentName.setSuffix(suffixDropdown.getSelectedItem().toString());
+            playerCharacter.studentStatistics.setGender(genderDropdown.getSelectedItem().toString());
+            playerCharacter.studentStatistics.setEyeColor(eyeColorDropdown.getSelectedItem().toString());
+            playerCharacter.studentStatistics.setHairColor(hairColorDropdown.getSelectedItem().toString());
+            playerCharacter.studentStatistics.setHairLength(hairLengthDropdown.getSelectedItem().toString());
+            playerCharacter.studentStatistics.setHairType(hairTypeDropdown.getSelectedItem().toString());
+            playerCharacter.studentStatistics.setGradeLevel(0);
+            java.util.Date selectedDate = (java.util.Date) datePicker.getModel().getValue();
+            if (selectedDate != null) {
+                java.time.LocalDate localDate = selectedDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+                playerCharacter.studentStatistics.setBirthday(localDate);
+            }
+            playerCharacter.studentStatistics.setIncomeLevel(incomeDropdown.getSelectedItem().toString());
+            playerCharacter.setSiblings((Integer) siblingsDropdown.getSelectedItem());
             dialog.dispose();
         });
         dialog.add(okButton);

@@ -628,4 +628,5 @@ public class StudentStatistics implements PStatistics {
     public void setMaxBestFriends(int maxBestFriends) {
         this.maxBestFriends = maxBestFriends;
     }
+
 }
