@@ -14,6 +14,13 @@ import java.util.HashMap;
 
 import static utility.Inspector.staffInspection;
 import static utility.Inspector.studentInspection;
+import org.jdatepicker.impl.UtilDateModel;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import javax.swing.JFormattedTextField.AbstractFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 public class SchoolController {
     private final GameView view;
@@ -134,13 +141,26 @@ public class SchoolController {
 
         // Suffix
         dialog.add(new JLabel("Suffix:"));
-        JComboBox<String> suffixDropdown = new JComboBox<>(new String[]{"Jr.", "Sr.", "III", "II", "IV", "V"}); // Example suffixes
+        JComboBox<String> suffixDropdown = new JComboBox<>(new String[]{"Jr.", "Sr.", "III", "II", "IV", "V"});
         dialog.add(suffixDropdown);
 
         // Gender
         dialog.add(new JLabel("Gender:"));
         JComboBox<String> genderDropdown = new JComboBox<>(new String[]{"Male", "Female", "Other"});
         dialog.add(genderDropdown);
+
+        // Add an action listener to enable/disable the suffix dropdown based on gender selection
+        genderDropdown.addActionListener(e -> {
+            String selectedGender = (String) genderDropdown.getSelectedItem();
+            if ("Male".equals(selectedGender) || "Other".equals(selectedGender)) {
+                suffixDropdown.setEnabled(true);
+            } else {
+                suffixDropdown.setEnabled(false);
+            }
+        });
+
+        // Set initial state of suffix dropdown
+        suffixDropdown.setEnabled(false);
 
         // Eye Color
         dialog.add(new JLabel("Eye Color:"));
@@ -169,8 +189,14 @@ public class SchoolController {
 
         // Birthdate
         dialog.add(new JLabel("Birthdate:"));
-        JTextField birthdateField = new JTextField();
-        dialog.add(birthdateField);
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        dialog.add(datePicker);
 
         // Family Income
         dialog.add(new JLabel("Family Income:"));
@@ -192,6 +218,26 @@ public class SchoolController {
 
         dialog.pack();
         dialog.setVisible(true);
+    }
+
+    private class DateLabelFormatter extends AbstractFormatter {
+        private String datePattern = "yyyy-MM-dd";
+        private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+
+        @Override
+        public Object stringToValue(String text) throws ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) throws ParseException {
+            if (value != null) {
+                java.util.Calendar cal = (java.util.Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+
+            return "";
+        }
     }
 
     class GenerateButtonListener implements ActionListener {
