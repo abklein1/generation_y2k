@@ -24,6 +24,9 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
+import java.util.Random;
+
+import static constants.SimConstants.*;
 
 public class SchoolController {
     private final GameView view;
@@ -185,11 +188,6 @@ public class SchoolController {
         JComboBox<String> hairTypeDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/hair_type.json"));
         dialog.add(hairTypeDropdown);
 
-        // Height
-        dialog.add(new JLabel("Height:"));
-        JComboBox<String> heightDropdown = new JComboBox<>(new String[]{"Short", "Average", "Tall"}); // Example heights
-        dialog.add(heightDropdown);
-
         // Birthdate
         dialog.add(new JLabel("Birthdate:"));
         UtilDateModel model = new UtilDateModel();
@@ -252,15 +250,30 @@ public class SchoolController {
             PlayerCharacter playerCharacter = new PlayerCharacter();
             playerCharacter.studentName.setFirstName(firstNameField.getText());
             playerCharacter.studentName.setLastName(lastNameField.getText());
-            if (suffixDropdown.getSelectedItem().toString() != "None") {
+            if (suffixDropdown.getSelectedItem().toString() != "None" || suffixDropdown.getSelectedItem().toString() != null) {
                 playerCharacter.studentName.setSuffix(suffixDropdown.getSelectedItem().toString());
+            } else {
+                playerCharacter.studentName.setSuffix("");
             }
             playerCharacter.studentStatistics.setGender(genderDropdown.getSelectedItem().toString());
             playerCharacter.studentStatistics.setEyeColor(eyeColorDropdown.getSelectedItem().toString());
-            playerCharacter.studentStatistics.setHairColor(hairColorDropdown.getSelectedItem().toString());
-            playerCharacter.studentStatistics.setHairLength(hairLengthDropdown.getSelectedItem().toString());
-            playerCharacter.studentStatistics.setHairType(hairTypeDropdown.getSelectedItem().toString());
+            if (hairColorDropdown.getSelectedItem().toString() != "None" || hairColorDropdown.getSelectedItem().toString() != null) {
+                playerCharacter.studentStatistics.setHairColor(hairColorDropdown.getSelectedItem().toString());
+            } else {
+                playerCharacter.studentStatistics.setHairColor("");
+            }
+            if (hairLengthDropdown.getSelectedItem().toString() != "None" || hairLengthDropdown.getSelectedItem().toString() != null) {
+                playerCharacter.studentStatistics.setHairLength(hairLengthDropdown.getSelectedItem().toString());
+            } else {
+                playerCharacter.studentStatistics.setHairLength("");
+            }
+            if (hairTypeDropdown.getSelectedItem().toString() != "None" || hairTypeDropdown.getSelectedItem().toString() != null) {
+                playerCharacter.studentStatistics.setHairType(hairTypeDropdown.getSelectedItem().toString());
+            } else {
+                playerCharacter.studentStatistics.setHairType("");
+            }
             playerCharacter.studentStatistics.setGradeLevel(0);
+            playerCharacter.studentStatistics.setInitHeight();
             java.util.Date selectedDate = (java.util.Date) datePicker.getModel().getValue();
             if (selectedDate != null) {
                 java.time.LocalDate localDate = selectedDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
@@ -270,6 +283,17 @@ public class SchoolController {
             playerCharacter.setSiblings((Integer) siblingsDropdown.getSelectedItem());
 
             // Append simple story points to the output window
+            storyOutput.append("Generating base stats...\n");
+            playerCharacter.studentStatistics.setInitStrength();
+            Random distribution = new Random();
+            playerCharacter.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION + STUDENT_POP_INTELLIGENCE_MEAN));
+            playerCharacter.studentStatistics.setCharisma((int) (distribution.nextGaussian() * STUDENT_POP_CHARISMA_STANDARD_DEVIATION + STUDENT_POP_CHARISMA_MEAN));
+            playerCharacter.studentStatistics.setAgility((int) (distribution.nextGaussian() * STUDENT_POP_AGILITY_STANDARD_DEVIATION + STUDENT_POP_AGILITY_MEAN));
+            playerCharacter.studentStatistics.setDetermination((int) (distribution.nextGaussian() * STUDENT_POP_DETERMINATION_STANDARD_DEVIATION + STUDENT_POP_DETERMINATION_MEAN));
+            playerCharacter.studentStatistics.setPerception((int) (distribution.nextGaussian() * STUDENT_POP_PERCEPTION_STANDARD_DEVIATION + STUDENT_POP_PERCEPTION_MEAN));
+            playerCharacter.studentStatistics.setLuck((int) (distribution.nextGaussian() * STUDENT_POP_LUCK_STANDARD_DEVIATION + STUDENT_POP_LUCK_MEAN));
+            PlayerStoryGenerator.reportBaseStats(playerCharacter, storyOutput);
+
             storyOutput.append("Generating your story...\n");
             PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
         });
