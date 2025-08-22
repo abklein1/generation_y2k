@@ -11,6 +11,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import javax.swing.text.DefaultCaret;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import static utility.Inspector.staffInspection;
 import static utility.Inspector.studentInspection;
@@ -141,7 +144,7 @@ public class SchoolController {
 
         // Suffix
         dialog.add(new JLabel("Suffix:"));
-        JComboBox<String> suffixDropdown = new JComboBox<>(new String[]{"Jr.", "Sr.", "III", "II", "IV", "V"});
+        JComboBox<String> suffixDropdown = new JComboBox<>(new String[]{"Jr.", "Sr.", "III", "II", "IV", "V", "None"});
         dialog.add(suffixDropdown);
 
         // Gender
@@ -233,13 +236,25 @@ public class SchoolController {
         JComboBox<Integer> siblingsDropdown = new JComboBox<>(new Integer[]{0, 1, 2, 3, 4, 5});
         dialog.add(siblingsDropdown);
 
-        // OK Button
-        JButton okButton = new JButton("OK");
-        okButton.addActionListener(e -> {
+        // Story Output Area (scrollable)
+        dialog.add(new JLabel("Story Output:"));
+        JTextArea storyOutput = new JTextArea(8, 30);
+        storyOutput.setEditable(false);
+        DefaultCaret storyCaret = (DefaultCaret) storyOutput.getCaret();
+        storyCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        JScrollPane storyScrollPane = new JScrollPane(storyOutput);
+        dialog.add(storyScrollPane);
+
+        // Generate Character Button
+        JButton generateButton = new JButton("Generate Character");
+        JButton cancelButton = new JButton("Cancel");
+        generateButton.addActionListener(e -> {
             PlayerCharacter playerCharacter = new PlayerCharacter();
             playerCharacter.studentName.setFirstName(firstNameField.getText());
             playerCharacter.studentName.setLastName(lastNameField.getText());
-            playerCharacter.studentName.setSuffix(suffixDropdown.getSelectedItem().toString());
+            if (suffixDropdown.getSelectedItem().toString() != "None") {
+                playerCharacter.studentName.setSuffix(suffixDropdown.getSelectedItem().toString());
+            }
             playerCharacter.studentStatistics.setGender(genderDropdown.getSelectedItem().toString());
             playerCharacter.studentStatistics.setEyeColor(eyeColorDropdown.getSelectedItem().toString());
             playerCharacter.studentStatistics.setHairColor(hairColorDropdown.getSelectedItem().toString());
@@ -253,9 +268,39 @@ public class SchoolController {
             }
             playerCharacter.studentStatistics.setIncomeLevel(incomeDropdown.getSelectedItem().toString());
             playerCharacter.setSiblings((Integer) siblingsDropdown.getSelectedItem());
+
+            // Append simple story points to the output window
+            storyOutput.append("Generating your story...\n");
+            PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
+        });
+        cancelButton.addActionListener(e -> {
             dialog.dispose();
         });
-        dialog.add(okButton);
+
+        // Disable generate until required fields are filled
+        generateButton.setEnabled(false);
+        DocumentListener docListener = new DocumentListener() {
+            private void validateForm() {
+                boolean hasFirst = firstNameField.getText() != null && !firstNameField.getText().trim().isEmpty();
+                boolean hasLast = lastNameField.getText() != null && !lastNameField.getText().trim().isEmpty();
+                boolean hasGender = genderDropdown.getSelectedItem() != null;
+                boolean hasBirthday = datePicker.getModel().getValue() != null;
+                generateButton.setEnabled(hasFirst && hasLast && hasGender && hasBirthday);
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) { validateForm(); }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) { validateForm(); }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) { validateForm(); }
+        };
+        firstNameField.getDocument().addDocumentListener(docListener);
+        lastNameField.getDocument().addDocumentListener(docListener);
+        dialog.add(generateButton);
+        dialog.add(cancelButton);
 
         dialog.pack();
         dialog.setVisible(true);
