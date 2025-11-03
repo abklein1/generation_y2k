@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.Random;
 
+import static utility.Randomizer.setRandom;
 import static constants.SimConstants.*;
 
 public class SchoolController {
@@ -155,6 +156,11 @@ public class SchoolController {
         JComboBox<String> genderDropdown = new JComboBox<>(new String[]{"Male", "Female", "Other"});
         dialog.add(genderDropdown);
 
+        // Race
+        dialog.add(new JLabel("Race:"));
+        JComboBox<String> raceDropdown = new JComboBox<>(new String[]{"White", "Black", "Asian", "Latino", "Other"});
+        dialog.add(raceDropdown);
+
         // Add an action listener to enable/disable the suffix dropdown based on gender selection
         genderDropdown.addActionListener(e -> {
             String selectedGender = (String) genderDropdown.getSelectedItem();
@@ -245,11 +251,13 @@ public class SchoolController {
 
         // Generate Character Button
         JButton generateButton = new JButton("Generate Character");
+        JButton randomizeButton = new JButton("Randomize");
         JButton cancelButton = new JButton("Cancel");
         generateButton.addActionListener(e -> {
             PlayerCharacter playerCharacter = new PlayerCharacter();
             playerCharacter.studentName.setFirstName(firstNameField.getText());
             playerCharacter.studentName.setLastName(lastNameField.getText());
+            playerCharacter.studentStatistics.setRace(raceDropdown.getSelectedItem().toString());
             if (suffixDropdown.getSelectedItem().toString() != "None" || suffixDropdown.getSelectedItem().toString() != null) {
                 playerCharacter.studentName.setSuffix(suffixDropdown.getSelectedItem().toString());
             } else {
@@ -300,7 +308,87 @@ public class SchoolController {
         cancelButton.addActionListener(e -> {
             dialog.dispose();
         });
+        randomizeButton.addActionListener(e -> {
+            // Ensure datasets are loaded for name and race distributions
+            NameLoader.readCSVFirst("1986");
+            NameLoader.readCSVFirst("1987");
+            NameLoader.readCSVFirst("1988");
+            NameLoader.readCSVFirst("1989");
+            NameLoader.readCSVFirst("1990");
+            NameLoader.readCSVLastStudent();
 
+            // Core generated attributes
+            String gender = GenderLoader.genderSelection();
+            String[] lastNameAndRace = NameLoader.selectWeightedRandom();
+            String lastName = lastNameAndRace[0];
+            String raceCode = lastNameAndRace[1];
+
+            // Birthday within freshman range
+            String gradeLevel = "Freshman";
+            java.time.LocalDate birthday = BirthdayGenerator.generateDateFromClass(gradeLevel);
+
+            // First name by birth year and gender
+            String firstName = NameLoader.nameGenerator(String.valueOf(birthday.getYear()), gender);
+
+            // Capitalize last name and optionally hyphenate
+            PlayerCharacter temp = new PlayerCharacter();
+            lastName = temp.studentName.capitalizeName(lastName);
+            if (setRandom(0, STUDENT_HYPHEN_GENERATION_SAMPLE_SIZE) < STUDENT_HYPHEN_GENERATION_RATE) {
+                String hyphenName = NameLoader.selectWeightedRandom()[0];
+                hyphenName = temp.studentName.capitalizeName(hyphenName);
+                lastName = lastName + "-" + hyphenName;
+            }
+
+            // Suffix (male-biased)
+            String suffixValue = "None";
+            if (gender != null && gender.equalsIgnoreCase("Male") && setRandom(0, SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
+                suffixValue = NameLoader.suffixNameGenerator(gender);
+            }
+
+            // Map internal race code to UI selection
+            String raceUi;
+            switch (raceCode) {
+                case "white" -> raceUi = "White";
+                case "black" -> raceUi = "Black";
+                case "api" -> raceUi = "Asian";
+                case "hispanic" -> raceUi = "Latino";
+                default -> raceUi = "Other";
+            }
+
+            // Eye and hair traits driven by race
+            String eyeColor = TraitSelection.studentEyeColorSelection(raceCode);
+            String hairColor = TraitSelection.studentHairSelection(raceCode, eyeColor);
+            String hairType = TraitSelection.studentHairType(raceCode, hairColor);
+
+            // Hair length from available UI options
+            int hlCount = hairLengthDropdown.getItemCount();
+            String hairLength = hairLengthDropdown.getItemAt(setRandom(0, hlCount - 1));
+
+            // Income distribution: Low (25%), Middle (60%), High (15%)
+            int incomeRoll = setRandom(0, 100);
+            String incomeUi = (incomeRoll <= 25) ? "Low" : (incomeRoll <= 85) ? "Middle" : "High";
+
+            // Siblings: 0-5
+            int siblings = setRandom(0, 5);
+
+            // Populate UI controls
+            firstNameField.setText(firstName);
+            lastNameField.setText(lastName);
+            String genderUi = gender == null || gender.isBlank() ? "Other" : (Character.toUpperCase(gender.charAt(0)) + gender.substring(1).toLowerCase());
+            genderDropdown.setSelectedItem(genderUi);
+            suffixDropdown.setSelectedItem(suffixValue);
+            raceDropdown.setSelectedItem(raceUi);
+            eyeColorDropdown.setSelectedItem(eyeColor);
+            hairColorDropdown.setSelectedItem(hairColor);
+            hairTypeDropdown.setSelectedItem(hairType);
+            hairLengthDropdown.setSelectedItem(hairLength);
+            incomeDropdown.setSelectedItem(incomeUi);
+            siblingsDropdown.setSelectedItem(siblings);
+
+            // Set birthdate
+            model.setDate(birthday.getYear(), birthday.getMonthValue() - 1, birthday.getDayOfMonth());
+            model.setSelected(true);
+        });
         // Disable generate until required fields are filled
         generateButton.setEnabled(false);
         DocumentListener docListener = new DocumentListener() {
@@ -324,6 +412,7 @@ public class SchoolController {
         firstNameField.getDocument().addDocumentListener(docListener);
         lastNameField.getDocument().addDocumentListener(docListener);
         dialog.add(generateButton);
+        dialog.add(randomizeButton);
         dialog.add(cancelButton);
 
         dialog.pack();
