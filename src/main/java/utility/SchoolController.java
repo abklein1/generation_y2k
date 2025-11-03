@@ -384,7 +384,19 @@ public class SchoolController {
             FamilyInfo family = new FamilyInfo();
             // Parents: use staff name generation approach (adult birth years)
             java.time.LocalDate fatherBirth = BirthdayGenerator.generateRandomBirthdayStaff();
-            String fatherFirst = NameLoader.nameGenerator(String.valueOf(fatherBirth.getYear()), "Male");
+            String fatherFirst;
+            String playerSuffixVal = playerCharacter.studentName.getSuffix();
+            if (playerSuffixVal != null && (
+                    playerSuffixVal.equals("Jr.") ||
+                    playerSuffixVal.equals("II") ||
+                    playerSuffixVal.equals("III") ||
+                    playerSuffixVal.equals("IV") ||
+                    playerSuffixVal.equals("V")
+            )) {
+                fatherFirst = playerCharacter.studentName.getFirstName();
+            } else {
+                fatherFirst = NameLoader.nameGenerator(String.valueOf(fatherBirth.getYear()), "Male");
+            }
             java.time.LocalDate motherBirth = BirthdayGenerator.generateRandomBirthdayStaff();
             String motherFirst = NameLoader.nameGenerator(String.valueOf(motherBirth.getYear()), "Female");
             family.setFather(new ParentInfo("Father", fatherFirst));
