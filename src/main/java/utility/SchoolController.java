@@ -134,32 +134,56 @@ public class SchoolController {
 
     private void showCharacterCreationMenu() {
         JDialog dialog = new JDialog((Frame) null, "Create Player Character", true);
-        dialog.setLayout(new GridLayout(0, 2));
+        dialog.getContentPane().setLayout(new BorderLayout(10, 10));
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(4, 6, 4, 6);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        int row = 0;
 
         // First Name
-        dialog.add(new JLabel("First Name:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("First Name:"), gbc);
         JTextField firstNameField = new JTextField();
-        dialog.add(firstNameField);
+        firstNameField.setColumns(12);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(firstNameField, gbc);
+        row++;
 
         // Last Name
-        dialog.add(new JLabel("Last Name:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Last Name:"), gbc);
         JTextField lastNameField = new JTextField();
-        dialog.add(lastNameField);
+        lastNameField.setColumns(12);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(lastNameField, gbc);
+        row++;
 
         // Suffix
-        dialog.add(new JLabel("Suffix:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Suffix:"), gbc);
         JComboBox<String> suffixDropdown = new JComboBox<>(new String[]{"Jr.", "Sr.", "III", "II", "IV", "V", "None"});
-        dialog.add(suffixDropdown);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(suffixDropdown, gbc);
+        row++;
 
         // Gender
-        dialog.add(new JLabel("Gender:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Gender:"), gbc);
         JComboBox<String> genderDropdown = new JComboBox<>(new String[]{"Male", "Female", "Other"});
-        dialog.add(genderDropdown);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(genderDropdown, gbc);
+        row++;
 
         // Race
-        dialog.add(new JLabel("Race:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Race:"), gbc);
         JComboBox<String> raceDropdown = new JComboBox<>(new String[]{"White", "Black", "Asian", "Latino", "Other"});
-        dialog.add(raceDropdown);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(raceDropdown, gbc);
+        row++;
 
         // Add an action listener to enable/disable the suffix dropdown based on gender selection
         genderDropdown.addActionListener(e -> {
@@ -175,27 +199,40 @@ public class SchoolController {
         suffixDropdown.setEnabled(false);
 
         // Eye Color
-        dialog.add(new JLabel("Eye Color:"));
-        JComboBox<String> eyeColorDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/eye_color.json")); // Example colors
-        dialog.add(eyeColorDropdown);
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Eye Color:"), gbc);
+        JComboBox<String> eyeColorDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/eye_color.json"));
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(eyeColorDropdown, gbc);
+        row++;
 
         // Hair Color
-        dialog.add(new JLabel("Hair Color:"));
-        JComboBox<String> hairColorDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/hair_color.json")); // Example colors
-        dialog.add(hairColorDropdown);
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Hair Color:"), gbc);
+        JComboBox<String> hairColorDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/hair_color.json"));
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(hairColorDropdown, gbc);
+        row++;
 
         // Hair Length
-        dialog.add(new JLabel("Hair Length:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Hair Length:"), gbc);
         JComboBox<String> hairLengthDropdown = new JComboBox<>(new String[]{"Short", "Medium", "Long"});
-        dialog.add(hairLengthDropdown);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(hairLengthDropdown, gbc);
+        row++;
 
         // Hair Type
-        dialog.add(new JLabel("Hair Type:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Hair Type:"), gbc);
         JComboBox<String> hairTypeDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/hair_type.json"));
-        dialog.add(hairTypeDropdown);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(hairTypeDropdown, gbc);
+        row++;
 
         // Birthdate
-        dialog.add(new JLabel("Birthdate:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Birthdate:"), gbc);
         UtilDateModel model = new UtilDateModel();
         model.setDate(1989, 8, 1);
         model.setSelected(true);
@@ -228,26 +265,37 @@ public class SchoolController {
             }
         });
 
-        dialog.add(datePicker);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(datePicker, gbc);
+        row++;
 
         // Family Income
-        dialog.add(new JLabel("Family Income:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Family Income:"), gbc);
         JComboBox<String> incomeDropdown = new JComboBox<>(new String[]{"Low", "Middle", "High"});
-        dialog.add(incomeDropdown);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(incomeDropdown, gbc);
+        row++;
 
         // Number of Siblings
-        dialog.add(new JLabel("Number of Siblings:"));
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Number of Siblings:"), gbc);
         JComboBox<Integer> siblingsDropdown = new JComboBox<>(new Integer[]{0, 1, 2, 3, 4, 5});
-        dialog.add(siblingsDropdown);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(siblingsDropdown, gbc);
+        row++;
 
         // Story Output Area (scrollable)
-        dialog.add(new JLabel("Story Output:"));
         JTextArea storyOutput = new JTextArea(8, 30);
         storyOutput.setEditable(false);
         DefaultCaret storyCaret = (DefaultCaret) storyOutput.getCaret();
         storyCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         JScrollPane storyScrollPane = new JScrollPane(storyOutput);
-        dialog.add(storyScrollPane);
+        JPanel storyPanel = new JPanel(new BorderLayout());
+        storyPanel.add(new JLabel("Story Output:"), BorderLayout.NORTH);
+        storyPanel.add(storyScrollPane, BorderLayout.CENTER);
+        dialog.add(formPanel, BorderLayout.NORTH);
+        dialog.add(storyPanel, BorderLayout.CENTER);
 
         // Generate Character Button
         JButton generateButton = new JButton("Generate Character");
@@ -441,9 +489,15 @@ public class SchoolController {
         };
         firstNameField.getDocument().addDocumentListener(docListener);
         lastNameField.getDocument().addDocumentListener(docListener);
-        dialog.add(generateButton);
-        dialog.add(randomizeButton);
-        dialog.add(cancelButton);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        Insets small = new Insets(2, 8, 2, 8);
+        generateButton.setMargin(small);
+        randomizeButton.setMargin(small);
+        cancelButton.setMargin(small);
+        buttonPanel.add(generateButton);
+        buttonPanel.add(randomizeButton);
+        buttonPanel.add(cancelButton);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
 
         dialog.pack();
         dialog.setVisible(true);
