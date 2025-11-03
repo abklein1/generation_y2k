@@ -287,8 +287,29 @@ public class SchoolController {
                 java.time.LocalDate localDate = selectedDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
                 playerCharacter.studentStatistics.setBirthday(localDate);
             }
-            playerCharacter.studentStatistics.setIncomeLevel(incomeDropdown.getSelectedItem().toString());
+            // Align income casing with NPC generation (low|middle|high)
+            playerCharacter.studentStatistics.setIncomeLevel(incomeDropdown.getSelectedItem().toString().toLowerCase());
             playerCharacter.setSiblings((Integer) siblingsDropdown.getSelectedItem());
+
+            // Initialize fields similar to NPC generation
+            playerCharacter.studentStatistics.setLevel(1);
+            playerCharacter.studentStatistics.setExperience(0);
+
+            // Map UI race to internal code used by trait distributions
+            String raceUi = raceDropdown.getSelectedItem().toString();
+            String raceCode;
+            switch (raceUi) {
+                case "White" -> raceCode = "white";
+                case "Black" -> raceCode = "black";
+                case "Asian" -> raceCode = "api";
+                case "Latino" -> raceCode = "hispanic";
+                default -> raceCode = "2prace"; // best available proxy for Other
+            }
+            // Compute skin color from race + eye color
+            String eyesForSkin = playerCharacter.studentStatistics.getEyeColor();
+            if (eyesForSkin != null) {
+                playerCharacter.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(raceCode, eyesForSkin));
+            }
 
             // Append simple story points to the output window
             storyOutput.append("Generating base stats...\n");
@@ -300,6 +321,15 @@ public class SchoolController {
             playerCharacter.studentStatistics.setDetermination((int) (distribution.nextGaussian() * STUDENT_POP_DETERMINATION_STANDARD_DEVIATION + STUDENT_POP_DETERMINATION_MEAN));
             playerCharacter.studentStatistics.setPerception((int) (distribution.nextGaussian() * STUDENT_POP_PERCEPTION_STANDARD_DEVIATION + STUDENT_POP_PERCEPTION_MEAN));
             playerCharacter.studentStatistics.setLuck((int) (distribution.nextGaussian() * STUDENT_POP_LUCK_STANDARD_DEVIATION + STUDENT_POP_LUCK_MEAN));
+            // Derived attributes mirroring NPC generation
+            playerCharacter.studentStatistics.setInitCreativity();
+            playerCharacter.studentStatistics.setInitEmpathy();
+            playerCharacter.studentStatistics.setInitAdaptability();
+            playerCharacter.studentStatistics.setInitInitiative();
+            playerCharacter.studentStatistics.setInitResilience();
+            playerCharacter.studentStatistics.setInitCuriosity();
+            playerCharacter.studentStatistics.setInitResponsibility();
+            playerCharacter.studentStatistics.setInitOpenMind();
             PlayerStoryGenerator.reportBaseStats(playerCharacter, storyOutput);
 
             storyOutput.append("Generating your story...\n");
