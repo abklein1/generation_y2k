@@ -9,7 +9,7 @@ public class PlayerStoryGenerator {
     }
 
     public static void initialBirthMessage(PlayerCharacter playerCharacter, JTextArea storyOutput) {
-        storyOutput.append("You are born on " + playerCharacter.studentStatistics.getBirthday().toString() + ".\n");
+        storyOutput.append("You are born on " + playerCharacter.studentStatistics.getBirthday().toString() + " to parents " + playerCharacter.getFamilyInfo().getMother().getFirstName() + " and " + playerCharacter.getFamilyInfo().getFather().getFirstName() + ".\n");
     }
 
     public static void reportBaseStats(PlayerCharacter playerCharacter, JTextArea storyOutput) {

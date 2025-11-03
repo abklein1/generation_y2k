@@ -380,10 +380,7 @@ public class SchoolController {
             playerCharacter.studentStatistics.setInitOpenMind();
             PlayerStoryGenerator.reportBaseStats(playerCharacter, storyOutput);
 
-            storyOutput.append("Generating your story...\n");
-            PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
-
-            // Generate and attach family info (parents and siblings)
+            // Generate and attach family info (parents and siblings) BEFORE story generation
             FamilyInfo family = new FamilyInfo();
             // Parents: use staff name generation approach (adult birth years)
             java.time.LocalDate fatherBirth = BirthdayGenerator.generateRandomBirthdayStaff();
@@ -400,6 +397,9 @@ public class SchoolController {
                 family.addSibling(info);
             }
             playerCharacter.setFamilyInfo(family);
+
+            storyOutput.append("Generating your story...\n");
+            PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
         });
         cancelButton.addActionListener(e -> {
             dialog.dispose();
