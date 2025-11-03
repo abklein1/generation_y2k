@@ -301,12 +301,22 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 
 - Graph visualization of rooms/social links can be hard to read due to overlapping labels
 - Graph visualization of rooms/social links cannot handle dragging of connections/ allows connections to be moved
-- Initial staff assignment is not efficient and sometimes runs out of available teachers
+- Initial staff assignment is not efficient and sometimes runs out of available teachers. This happens less frequently now
 - Some teachers are not properly assigned a room
-- Sometimes math classes are not assigned to freshmen
 - Some last name capitalization is wrong
-- Overcapacity rate in classrooms is relatively high/ some blocks still under 5 students assigned
+- Classroom distribution is not ideal for students. Some students are still missing required classes
 - Student friend distribution not ideal
+
+## Release 0.0.14
+
+- Attempts made to refactor rooms and how staff and students are assigned. Now, more classrooms are used efficiently and students
+  aren't overassigned to certain classrooms. Also, student schedules are more full and freshmen are missing less requirements. There
+  is still quite a bit to fix, but, overall, the process is better.
+- Main character UI and generation is now possible. Main character can have randomized traits or the player can choose. Parents and
+  siblings are generated for the main character.
+- Wider range of birth years added for first name generation which means more accurate names for people born before 1985 and after 1990
+- Starting framework of the main character story
+- Initial framework for different bell schedules and A/B days prototyped but still needs more time
 
 ## Release 0.0.13
 
