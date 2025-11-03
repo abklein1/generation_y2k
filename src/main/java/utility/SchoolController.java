@@ -382,6 +382,24 @@ public class SchoolController {
 
             storyOutput.append("Generating your story...\n");
             PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
+
+            // Generate and attach family info (parents and siblings)
+            FamilyInfo family = new FamilyInfo();
+            // Parents: use staff name generation approach (adult birth years)
+            java.time.LocalDate fatherBirth = BirthdayGenerator.generateRandomBirthdayStaff();
+            String fatherFirst = NameLoader.nameGenerator(String.valueOf(fatherBirth.getYear()), "Male");
+            java.time.LocalDate motherBirth = BirthdayGenerator.generateRandomBirthdayStaff();
+            String motherFirst = NameLoader.nameGenerator(String.valueOf(motherBirth.getYear()), "Female");
+            family.setFather(new ParentInfo("Father", fatherFirst));
+            family.setMother(new ParentInfo("Mother", motherFirst));
+
+            // Siblings: produce names and birthdays using sibling generator logic
+            int sibCount = playerCharacter.getSiblings();
+            java.util.List<SiblingInfo> sibInfos = SiblingGenerator.generateSiblingInfosForPlayer(playerCharacter, sibCount, view);
+            for (SiblingInfo info : sibInfos) {
+                family.addSibling(info);
+            }
+            playerCharacter.setFamilyInfo(family);
         });
         cancelButton.addActionListener(e -> {
             dialog.dispose();

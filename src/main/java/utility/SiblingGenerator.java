@@ -22,6 +22,68 @@ public class SiblingGenerator {
     private static final int ADOPTED_SIBLING_RATE = 1128;
     private static final int HALF_SIBLING_RATE = 8567;
 
+    private static String generateNotInSchoolSiblingFirstName(Student student) {
+        boolean older = setRandom(0, 1) == 0;
+        int year;
+        if (older) {
+            year = setRandom(1982, 1985);
+        } else {
+            year = setRandom(1992, 2000);
+        }
+        String yearStr = String.valueOf(year);
+        NameLoader.readCSVFirst(yearStr);
+        String gender = GenderLoader.genderSelection();
+        return NameLoader.nameGenerator(yearStr, gender);
+    }
+
+    // Helper for player family generation: create sibling infos without touching global maps
+    public static java.util.List<entity.SiblingInfo> generateSiblingInfosForPlayer(entity.Student player, int count, view.GameView view) {
+        java.util.List<entity.SiblingInfo> infos = new java.util.ArrayList<>();
+
+        for (int i = 0; i < count; i++) {
+            // Decide if sibling is in school with the player
+            boolean inSchool = setRandom(0, 12) <= 3;
+            if (inSchool) {
+                int choice = setRandom(0, SIBLING_SAMPLE_SIZE);
+                entity.Student sib;
+                if (choice < STEP_SIBLING_RATE) {
+                    sib = generateStepSibling(player, view);
+                } else if (choice < STEP_SIBLING_RATE + ADOPTED_SIBLING_RATE) {
+                    sib = generateAdoptedSibling(player, view);
+                } else if (choice < STEP_SIBLING_RATE + ADOPTED_SIBLING_RATE + HALF_SIBLING_RATE) {
+                    sib = generateHalfSibling(player, view);
+                } else {
+                    sib = generateSibling(player, view);
+                }
+                infos.add(new entity.SiblingInfo(sib.studentName.getFirstName(), sib.studentStatistics.getBirthday(), true));
+            } else {
+                // Not in school: pick older or younger and synthesize birthday
+                boolean older = setRandom(0, 1) == 0;
+                java.time.LocalDate birthday;
+                if (older) {
+                    // Older sibling: 1982–1985
+                    int year = setRandom(1982, 1985);
+                    int month = setRandom(1, 12);
+                    int day = setRandom(1, java.time.Month.of(month).length(false));
+                    birthday = java.time.LocalDate.of(year, month, day);
+                } else {
+                    // Younger sibling: after 1990
+                    int year = setRandom(1992, 2000);
+                    int month = setRandom(1, 12);
+                    int day = setRandom(1, java.time.Month.of(month).length(false));
+                    birthday = java.time.LocalDate.of(year, month, day);
+                }
+                String gen = GenderLoader.genderSelection();
+                // Ensure name data for the selected year is loaded
+                NameLoader.readCSVFirst(String.valueOf(birthday.getYear()));
+                String first = NameLoader.nameGenerator(String.valueOf(birthday.getYear()), gen);
+                infos.add(new entity.SiblingInfo(first, birthday, false));
+            }
+        }
+
+        return infos;
+    }
+
     public static void siblingGenerator(HashMap<Integer, Student> studentHashMap, int studentCap, GameView view) {
         HashMap<Integer, Student> addedStudents = new HashMap<>();
 
@@ -52,7 +114,7 @@ public class SiblingGenerator {
                         generatedSiblings.add(sibling);
                     } else {
                         // Otherwise, student is not in school and younger or older
-                        String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                        String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                     }
                 } else if (hasAdoptedSibling) {
@@ -63,7 +125,7 @@ public class SiblingGenerator {
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         generatedSiblings.add(sibling);
                     } else {
-                        String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                        String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                     }
                 } else if (hasHalfSibling) {
@@ -74,7 +136,7 @@ public class SiblingGenerator {
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         generatedSiblings.add(sibling);
                     } else {
-                        String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                        String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                     }
                 } else {
@@ -85,7 +147,7 @@ public class SiblingGenerator {
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         generatedSiblings.add(sibling);
                     } else {
-                        String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                        String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                         student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                     }
                 }
@@ -127,7 +189,7 @@ public class SiblingGenerator {
                             } else {
                                 // add two twins not in school
                                 for (int i = 0; i < siblings; i++) {
-                                    String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                                    String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                                     student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                                 }
                             }
@@ -159,7 +221,7 @@ public class SiblingGenerator {
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
-                            String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                            String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                             student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                         }
                     }
@@ -193,7 +255,7 @@ public class SiblingGenerator {
                             siblings--;
                         } else {
                             for (int i = 0; i < 3; i++) {
-                                String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                                String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                                 student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                                 siblings--;
                             }
@@ -227,7 +289,7 @@ public class SiblingGenerator {
                                 siblings--;
                             } else {
                                 for (int i = 0; i < 2; i++) {
-                                    String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                                    String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                                     student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                                     siblings--;
                                 }
@@ -259,7 +321,7 @@ public class SiblingGenerator {
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
-                            String siblingName = NameLoader.nameGenerator(setRandom(1986, 1990).toString(), GenderLoader.genderSelection());
+                            String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
                             student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
                         }
                     }
