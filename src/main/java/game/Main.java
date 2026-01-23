@@ -14,7 +14,6 @@ import javax.swing.*;
 public class Main {
     // Seed-based random generation is now supported via GameRandom class
     // The seed is displayed in the console when generating a school
-    // TODO: Add UI for entering custom seeds to recreate specific worlds
     public static void main(String[] args) {
 
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
