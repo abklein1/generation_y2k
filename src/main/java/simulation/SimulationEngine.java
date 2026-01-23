@@ -22,15 +22,19 @@ public class SimulationEngine {
     private HashMap<Integer, Staff> staff;
     private BellScheduleManager bellSchedule;
     private boolean isPaused;
-    private int tickIntervalMinutes;
+    private int ticksPerUpdate;          // How many ticks to process per timer fire
+    private int minutesPerTick;          // In-game minutes per tick (fixed at 1)
     private int currentTick;
     private final List<SimulationListener> listeners;
     
-    // Simulation speed options
-    public static final int SPEED_SLOW = 10;      // 10 minutes per tick
-    public static final int SPEED_NORMAL = 5;     // 5 minutes per tick  
-    public static final int SPEED_FAST = 2;       // 2 minutes per tick
-    public static final int SPEED_VERY_FAST = 1;  // 1 minute per tick
+    // Simulation speed options (ticks per real-time second)
+    public static final int SPEED_SLOW = 1;       // 1 tick per second
+    public static final int SPEED_NORMAL = 2;     // 2 ticks per second  
+    public static final int SPEED_FAST = 4;       // 4 ticks per second
+    public static final int SPEED_VERY_FAST = 8;  // 8 ticks per second
+    
+    // Fixed in-game time progression
+    public static final int MINUTES_PER_TICK = 1; // Each tick = 1 in-game minute
     
     /**
      * Interface for listening to simulation events.
@@ -50,7 +54,8 @@ public class SimulationEngine {
      */
     public SimulationEngine() {
         this.isPaused = true;
-        this.tickIntervalMinutes = SPEED_NORMAL;
+        this.ticksPerUpdate = SPEED_NORMAL;
+        this.minutesPerTick = MINUTES_PER_TICK;
         this.currentTick = 0;
         this.listeners = new ArrayList<>();
         this.bellSchedule = new BellScheduleManager();
@@ -117,18 +122,45 @@ public class SimulationEngine {
     }
     
     /**
-     * Executes one tick of the simulation.
+     * Executes the simulation update. Processes multiple ticks based on current speed.
+     * Call this method on a fixed timer interval (e.g., once per second).
      */
-    public void tick() {
+    public void update() {
         if (isPaused || time == null) {
             return;
         }
         
+        // Process the appropriate number of ticks based on speed
+        for (int i = 0; i < ticksPerUpdate; i++) {
+            processSingleTick();
+            
+            // Stop processing if day ended
+            if (bellSchedule.isAfterSchool(time)) {
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Executes exactly one tick of the simulation (for step functionality).
+     * This processes one tick regardless of speed setting.
+     */
+    public void tick() {
+        if (time == null) {
+            return;
+        }
+        processSingleTick();
+    }
+    
+    /**
+     * Internal method to process a single simulation tick.
+     */
+    private void processSingleTick() {
         int previousPeriod = bellSchedule.getCurrentPeriod(time);
         boolean wasTransition = bellSchedule.isTransitionTime(time);
         
-        // 1. Advance time
-        time.stepForwardMinutes(tickIntervalMinutes);
+        // 1. Advance time by fixed amount (1 minute per tick)
+        time.stepForwardMinutes(minutesPerTick);
         currentTick++;
         
         // 2. Check for period transitions
@@ -150,7 +182,7 @@ public class SimulationEngine {
         // 3. Update expected locations based on schedule
         updateExpectedLocations();
         
-        // 4. Process NPC behavior trees
+        // 4. Process NPC behavior trees (every tick, regardless of speed)
         processStudentBehaviors();
         processStaffBehaviors();
         
@@ -372,21 +404,37 @@ public class SimulationEngine {
     }
     
     /**
-     * Sets the simulation speed.
+     * Sets the simulation speed (ticks per update cycle).
      *
-     * @param minutesPerTick minutes to advance each tick
+     * @param ticksPerSecond number of ticks to process per update
      */
-    public void setSpeed(int minutesPerTick) {
-        this.tickIntervalMinutes = Math.max(1, Math.min(60, minutesPerTick));
+    public void setSpeed(int ticksPerSecond) {
+        this.ticksPerUpdate = Math.max(1, Math.min(16, ticksPerSecond));
     }
     
     /**
-     * Gets the current speed.
+     * Sets the simulation speed by index.
+     * 0=Slow (1x), 1=Normal (2x), 2=Fast (4x), 3=Very Fast (8x)
      *
-     * @return minutes per tick
+     * @param speedIndex the speed index
+     */
+    public void setSpeedByIndex(int speedIndex) {
+        switch (speedIndex) {
+            case 0 -> setSpeed(SPEED_SLOW);
+            case 1 -> setSpeed(SPEED_NORMAL);
+            case 2 -> setSpeed(SPEED_FAST);
+            case 3 -> setSpeed(SPEED_VERY_FAST);
+            default -> setSpeed(SPEED_NORMAL);
+        }
+    }
+    
+    /**
+     * Gets the current speed (ticks per update).
+     *
+     * @return ticks per update
      */
     public int getSpeed() {
-        return tickIntervalMinutes;
+        return ticksPerUpdate;
     }
     
     /**

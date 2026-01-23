@@ -6,7 +6,6 @@ import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 /**
  * Main game view with redesigned UI for simulation and game modes.
@@ -37,11 +36,19 @@ public class GameView {
     
     // Simulation controls
     private final JPanel simulationControlPanel;
-    private final JButton playPauseButton;
-    private final JButton stepButton;
-    private final JComboBox<String> speedComboBox;
+    private JButton playPauseButton;
+    private JButton stepButton;
+    private JComboBox<String> speedComboBox;
     private final JLabel periodLabel;
     private final JLabel simulationStatusLabel;
+    
+    // Menu items for simulation
+    private JMenuItem playPauseMenuItem;
+    private JMenuItem stepMenuItem;
+    private JMenuItem slowSpeedItem;
+    private JMenuItem normalSpeedItem;
+    private JMenuItem fastSpeedItem;
+    private JMenuItem veryFastSpeedItem;
     
     // Seed options (moved to dialog)
     private JTextField seedInputField;
@@ -88,9 +95,9 @@ public class GameView {
         JMenuItem juniorsItem = new JMenuItem("Junior");
         JMenuItem seniorsItem = new JMenuItem("Senior");
         JMenuItem staffItem = new JMenuItem("Staff");
-        inspectionMenu.addSeparator();
         visualizeItem = new JMenuItem("School Layout...");
         socialGraphItem = new JMenuItem("Social Graph...");
+        // Add items in correct order (grade levels first, then separator, then tools)
         inspectionMenu.add(freshmanItem);
         inspectionMenu.add(sophomoresItem);
         inspectionMenu.add(juniorsItem);
@@ -104,17 +111,17 @@ public class GameView {
         
         // Simulation Menu
         simulationMenu = new JMenu("Simulation");
-        JMenuItem playPauseMenuItem = new JMenuItem("Play/Pause");
-        JMenuItem stepMenuItem = new JMenuItem("Step Forward");
+        playPauseMenuItem = new JMenuItem("Play/Pause");
+        stepMenuItem = new JMenuItem("Step Forward");
         JMenu speedMenu = new JMenu("Speed");
-        JMenuItem slowSpeed = new JMenuItem("Slow (10 min/tick)");
-        JMenuItem normalSpeed = new JMenuItem("Normal (5 min/tick)");
-        JMenuItem fastSpeed = new JMenuItem("Fast (2 min/tick)");
-        JMenuItem veryFastSpeed = new JMenuItem("Very Fast (1 min/tick)");
-        speedMenu.add(slowSpeed);
-        speedMenu.add(normalSpeed);
-        speedMenu.add(fastSpeed);
-        speedMenu.add(veryFastSpeed);
+        slowSpeedItem = new JMenuItem("Slow (1 tick/sec)");
+        normalSpeedItem = new JMenuItem("Normal (2 ticks/sec)");
+        fastSpeedItem = new JMenuItem("Fast (4 ticks/sec)");
+        veryFastSpeedItem = new JMenuItem("Very Fast (8 ticks/sec)");
+        speedMenu.add(slowSpeedItem);
+        speedMenu.add(normalSpeedItem);
+        speedMenu.add(fastSpeedItem);
+        speedMenu.add(veryFastSpeedItem);
         simulationMenu.add(playPauseMenuItem);
         simulationMenu.add(stepMenuItem);
         simulationMenu.add(speedMenu);
@@ -181,7 +188,8 @@ public class GameView {
         // Weather panel layout
         JPanel weatherPanel = new JPanel(new BorderLayout());
         weatherPanel.setBorder(BorderFactory.createTitledBorder("Weather"));
-        weatherPanel.setPreferredSize(new Dimension(200, 120));
+        weatherPanel.setPreferredSize(new Dimension(180, 110));
+        weatherPanel.setMinimumSize(new Dimension(180, 110));
 
         JPanel weatherIconsPanel = new JPanel(new GridLayout(1, 2, 5, 0));
         amPanel = new JPanel(new BorderLayout());
@@ -190,7 +198,6 @@ public class GameView {
         amPanel.add(amLabel, BorderLayout.NORTH);
         amPanel.add(weatherAMIconLabel, BorderLayout.CENTER);
         amPanel.add(weatherAMTempLabel, BorderLayout.SOUTH);
-        amPanel.setVisible(false);
         weatherIconsPanel.add(amPanel);
 
         pmPanel = new JPanel(new BorderLayout());
@@ -199,7 +206,6 @@ public class GameView {
         pmPanel.add(pmLabel, BorderLayout.NORTH);
         pmPanel.add(weatherPMIconLabel, BorderLayout.CENTER);
         pmPanel.add(weatherPMTempLabel, BorderLayout.SOUTH);
-        pmPanel.setVisible(false);
         weatherIconsPanel.add(pmPanel);
 
         weatherPanel.add(dayLabel, BorderLayout.NORTH);
@@ -254,11 +260,98 @@ public class GameView {
         copySeedButton = new JButton();
         startSimulationButton = new JButton();
         startGameButton = new JButton();
-        playPauseButton = new JButton();
-        stepButton = new JButton();
-        speedComboBox = new JComboBox<>();
 
         frame.setVisible(true);
+    }
+    
+    // ===== SIMULATION CONTROL LISTENER METHODS =====
+    
+    /**
+     * Adds a listener for play/pause button clicks.
+     *
+     * @param listener the action listener
+     */
+    public void addPlayPauseListener(ActionListener listener) {
+        if (playPauseButton != null) {
+            playPauseButton.addActionListener(listener);
+        }
+        if (playPauseMenuItem != null) {
+            playPauseMenuItem.addActionListener(listener);
+        }
+    }
+    
+    /**
+     * Adds a listener for step button clicks.
+     *
+     * @param listener the action listener
+     */
+    public void addStepListener(ActionListener listener) {
+        if (stepButton != null) {
+            stepButton.addActionListener(listener);
+        }
+        if (stepMenuItem != null) {
+            stepMenuItem.addActionListener(listener);
+        }
+    }
+    
+    /**
+     * Adds a listener for speed changes.
+     *
+     * @param listener the action listener
+     */
+    public void addSpeedChangeListener(ActionListener listener) {
+        if (speedComboBox != null) {
+            speedComboBox.addActionListener(listener);
+        }
+        if (slowSpeedItem != null) {
+            slowSpeedItem.addActionListener(e -> {
+                speedComboBox.setSelectedIndex(0);
+                listener.actionPerformed(e);
+            });
+        }
+        if (normalSpeedItem != null) {
+            normalSpeedItem.addActionListener(e -> {
+                speedComboBox.setSelectedIndex(1);
+                listener.actionPerformed(e);
+            });
+        }
+        if (fastSpeedItem != null) {
+            fastSpeedItem.addActionListener(e -> {
+                speedComboBox.setSelectedIndex(2);
+                listener.actionPerformed(e);
+            });
+        }
+        if (veryFastSpeedItem != null) {
+            veryFastSpeedItem.addActionListener(e -> {
+                speedComboBox.setSelectedIndex(3);
+                listener.actionPerformed(e);
+            });
+        }
+    }
+    
+    /**
+     * Gets the currently selected speed index.
+     * 0=Slow (1x), 1=Normal (2x), 2=Fast (4x), 3=Very Fast (8x)
+     *
+     * @return the speed index
+     */
+    public int getSelectedSpeedIndex() {
+        if (speedComboBox != null) {
+            return speedComboBox.getSelectedIndex();
+        }
+        return 1; // Default to normal
+    }
+    
+    /**
+     * Updates the play/pause button to show play or pause state.
+     *
+     * @param isPlaying true if simulation is playing
+     */
+    public void updatePlayPauseButton(boolean isPlaying) {
+        if (playPauseButton != null) {
+            playPauseButton.setText(isPlaying ? "\u23F8" : "\u25B6"); // Pause or Play symbol
+            playPauseButton.setToolTipText(isPlaying ? "Pause simulation" : "Play simulation");
+        }
     }
     
     /**
@@ -306,26 +399,26 @@ public class GameView {
         
         // Play/Pause and Step buttons
         JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
-        JButton playBtn = new JButton("\u25B6"); // Play symbol
-        playBtn.setToolTipText("Play/Pause simulation");
-        playBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
-        playBtn.setPreferredSize(new Dimension(50, 30));
+        playPauseButton = new JButton("\u25B6"); // Play symbol
+        playPauseButton.setToolTipText("Play/Pause simulation");
+        playPauseButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        playPauseButton.setPreferredSize(new Dimension(50, 30));
         
-        JButton stepBtn = new JButton("\u23E9"); // Step symbol
-        stepBtn.setToolTipText("Step forward one tick");
-        stepBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
-        stepBtn.setPreferredSize(new Dimension(50, 30));
+        stepButton = new JButton("\u23E9"); // Step symbol
+        stepButton.setToolTipText("Step forward one tick");
+        stepButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        stepButton.setPreferredSize(new Dimension(50, 30));
         
-        buttonRow.add(playBtn);
-        buttonRow.add(stepBtn);
+        buttonRow.add(playPauseButton);
+        buttonRow.add(stepButton);
         
         // Speed control
         JPanel speedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         speedPanel.add(new JLabel("Speed:"));
-        String[] speeds = {"Slow", "Normal", "Fast", "Very Fast"};
-        JComboBox<String> speedBox = new JComboBox<>(speeds);
-        speedBox.setSelectedIndex(1); // Normal
-        speedPanel.add(speedBox);
+        String[] speeds = {"Slow (1x)", "Normal (2x)", "Fast (4x)", "Very Fast (8x)"};
+        speedComboBox = new JComboBox<>(speeds);
+        speedComboBox.setSelectedIndex(1); // Normal
+        speedPanel.add(speedComboBox);
         
         panel.add(Box.createVerticalStrut(10));
         panel.add(buttonRow);
@@ -463,14 +556,26 @@ public class GameView {
     /**
      * Updates the period display.
      *
+     * @param period the current period (1-4) or 0 for non-class time
+     * @param periodStatus descriptive status ("Before School", "Transition", "After School", or null for default)
+     */
+    public void updatePeriod(int period, String periodStatus) {
+        if (period > 0) {
+            periodLabel.setText("Period: " + period);
+        } else if (periodStatus != null) {
+            periodLabel.setText("Period: " + periodStatus);
+        } else {
+            periodLabel.setText("Period: --");
+        }
+    }
+    
+    /**
+     * Updates the period display (legacy method for backward compatibility).
+     *
      * @param period the current period (1-4) or 0 for transition
      */
     public void updatePeriod(int period) {
-        if (period > 0) {
-            periodLabel.setText("Period: " + period);
-        } else {
-            periodLabel.setText("Period: Transition");
-        }
+        updatePeriod(period, period == 0 ? "Transition" : null);
     }
     
     /**
@@ -525,26 +630,50 @@ public class GameView {
 
     public void updateWeatherIcons(String amIconPath, String pmIconPath, String amName, String pmName) {
         try {
-            BufferedImage amImage = ImageIO.read(Objects.requireNonNull(getClass().getResource(amIconPath)));
+            // Convert resource path to file path (remove leading slash and prepend src/main/java)
+            String basePath = "src/main/java";
+            String amFilePath = basePath + amIconPath;
+            String pmFilePath = basePath + pmIconPath;
+            
+            // Load and set AM icon using file-based loading
+            java.io.File amFile = new java.io.File(amFilePath);
+            BufferedImage amImage = ImageIO.read(amFile);
+            if (amImage == null) {
+                System.err.println("Failed to load AM weather icon: " + amFilePath);
+                return;
+            }
             Image scaledAmImage = amImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             ImageIcon weatherAMIcon = new ImageIcon(scaledAmImage);
             weatherAMIconLabel.setIcon(weatherAMIcon);
             weatherAMIconLabel.setToolTipText(amName);
             weatherAMIconLabel.setVisible(true);
             weatherAMTempLabel.setVisible(true);
-            amPanel.setVisible(true);
 
-            BufferedImage pmImage = ImageIO.read(Objects.requireNonNull(getClass().getResource(pmIconPath)));
+            // Load and set PM icon using file-based loading
+            java.io.File pmFile = new java.io.File(pmFilePath);
+            BufferedImage pmImage = ImageIO.read(pmFile);
+            if (pmImage == null) {
+                System.err.println("Failed to load PM weather icon: " + pmFilePath);
+                return;
+            }
             Image scaledPmImage = pmImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             ImageIcon weatherPMIcon = new ImageIcon(scaledPmImage);
             weatherPMIconLabel.setIcon(weatherPMIcon);
             weatherPMIconLabel.setToolTipText(pmName);
             weatherPMIconLabel.setVisible(true);
             weatherPMTempLabel.setVisible(true);
-            pmPanel.setVisible(true);
 
             dayLabel.setVisible(true);
+            
+            // Force layout update
+            amPanel.revalidate();
+            amPanel.repaint();
+            pmPanel.revalidate();
+            pmPanel.repaint();
+            frame.revalidate();
+            frame.repaint();
         } catch (Exception e) {
+            System.err.println("Error loading weather icons: " + e.getMessage());
             e.printStackTrace();
         }
     }

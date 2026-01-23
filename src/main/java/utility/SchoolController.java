@@ -54,7 +54,37 @@ public class SchoolController {
         this.view.addSocialGraphButtonListener(new SocialGraphButtonListener());
         this.view.addInspectionMenuListener(new InspectionMenuListener());
         this.view.addCreateCharacterButtonListener(new CreateCharacterButtonListener());
+        
+        // Wire up simulation controls
+        this.view.addPlayPauseListener(e -> toggleSimulation());
+        this.view.addStepListener(e -> stepSimulation());
+        this.view.addSpeedChangeListener(e -> updateSimulationSpeed());
+        
         this.time = new Time();
+    }
+    
+    /**
+     * Toggles the simulation between playing and paused states.
+     */
+    private void toggleSimulation() {
+        if (simulationRunning) {
+            pauseSimulation();
+        } else {
+            startSimulation();
+        }
+        view.updatePlayPauseButton(simulationRunning);
+    }
+    
+    /**
+     * Updates the simulation speed based on UI selection.
+     */
+    private void updateSimulationSpeed() {
+        if (simulationEngine != null) {
+            int speedIndex = view.getSelectedSpeedIndex();
+            simulationEngine.setSpeedByIndex(speedIndex);
+            String[] speedNames = {"Slow (1x)", "Normal (2x)", "Fast (4x)", "Very Fast (8x)"};
+            view.appendOutput("Simulation speed set to: " + speedNames[speedIndex]);
+        }
     }
     
     /**
@@ -76,7 +106,7 @@ public class SchoolController {
             public void onTick(int tickNumber, Time time) {
                 SwingUtilities.invokeLater(() -> {
                     updateTimeLabel();
-                    view.updatePeriod(time.getCurrentPeriod());
+                    updatePeriodDisplay();
                     view.updateSimulationStatus(simulationRunning ? "Running" : "Paused");
                 });
             }
@@ -85,7 +115,7 @@ public class SchoolController {
             public void onPeriodChange(int oldPeriod, int newPeriod) {
                 SwingUtilities.invokeLater(() -> {
                     view.appendOutput("Period changed: " + oldPeriod + " -> " + newPeriod);
-                    view.updatePeriod(newPeriod);
+                    updatePeriodDisplay();
                 });
             }
             
@@ -93,7 +123,7 @@ public class SchoolController {
             public void onTransitionStart() {
                 SwingUtilities.invokeLater(() -> {
                     view.appendOutput("Transition period started - students moving to next class");
-                    view.updatePeriod(0);
+                    updatePeriodDisplay();
                 });
             }
             
@@ -127,15 +157,20 @@ public class SchoolController {
             }
         });
         
-        // Create timer for automatic simulation ticks (1 second = 1 tick)
+        // Create timer for automatic simulation updates
+        // Timer fires once per second, engine processes multiple ticks based on speed
         simulationTimer = new Timer(1000, e -> {
             if (simulationRunning && simulationEngine != null) {
-                simulationEngine.tick();
+                simulationEngine.update();
             }
         });
         
+        // Set initial speed based on UI
+        updateSimulationSpeed();
+        
         view.appendOutput("Simulation engine initialized!");
         view.appendOutput("Behavior trees assigned to " + studentHashMap.size() + " students");
+        view.appendOutput("Use Play/Pause button or Simulation menu to control the simulation.");
     }
     
     /**
@@ -147,6 +182,7 @@ public class SchoolController {
             simulationEngine.start();
             simulationTimer.start();
             view.updateSimulationStatus("Running");
+            view.updatePlayPauseButton(true);
         }
     }
     
@@ -162,6 +198,7 @@ public class SchoolController {
             simulationTimer.stop();
         }
         view.updateSimulationStatus("Paused");
+        view.updatePlayPauseButton(false);
     }
     
     /**
@@ -173,13 +210,18 @@ public class SchoolController {
             simulationTimer.stop();
         }
         view.updateSimulationStatus("Stopped");
+        view.updatePlayPauseButton(false);
     }
     
     /**
-     * Steps the simulation forward by one tick.
+     * Steps the simulation forward by one tick (regardless of speed).
      */
     public void stepSimulation() {
         if (simulationEngine != null) {
+            // Pause if running, then step
+            if (simulationRunning) {
+                pauseSimulation();
+            }
             simulationEngine.tick();
         }
     }
@@ -198,6 +240,41 @@ public class SchoolController {
     private void updateTimeLabel() {
         String formattedDate = time.getFormattedDate();
         view.updateTime("Today is " + formattedDate);
+    }
+    
+    /**
+     * Gets the appropriate period status string based on current time.
+     *
+     * @return "Before School", "Transition", "After School", or null if in a regular period
+     */
+    private String getPeriodStatus() {
+        if (simulationEngine == null) {
+            return null;
+        }
+        
+        var bellSchedule = simulationEngine.getBellSchedule();
+        if (bellSchedule == null) {
+            return null;
+        }
+        
+        if (bellSchedule.isBeforeSchool(time)) {
+            return "Before School";
+        } else if (bellSchedule.isAfterSchool(time)) {
+            return "After School";
+        } else if (bellSchedule.isTransitionTime(time)) {
+            return "Transition";
+        }
+        
+        return null; // In a regular period
+    }
+    
+    /**
+     * Updates the period display with the current period and status.
+     */
+    private void updatePeriodDisplay() {
+        int period = time.getCurrentPeriod();
+        String status = getPeriodStatus();
+        view.updatePeriod(period, status);
     }
 
     private void updateWeatherLabels() {
@@ -443,11 +520,22 @@ public class SchoolController {
         dialog.add(formPanel, BorderLayout.NORTH);
         dialog.add(storyPanel, BorderLayout.CENTER);
 
-        // Generate Character Button
-        JButton generateButton = new JButton("Generate Character");
+        // Character Creation Buttons
+        JButton previewButton = new JButton("Preview Character");
+        JButton startGameButton = new JButton("Start Game");
         JButton randomizeButton = new JButton("Randomize");
         JButton cancelButton = new JButton("Cancel");
-        generateButton.addActionListener(e -> {
+        
+        // Start Game is disabled until character is previewed
+        startGameButton.setEnabled(false);
+        startGameButton.setToolTipText("Preview your character first");
+        
+        // Start Game closes the dialog and proceeds
+        startGameButton.addActionListener(e -> {
+            dialog.dispose();
+        });
+        
+        previewButton.addActionListener(e -> {
             PlayerCharacter playerCharacter = new PlayerCharacter();
             playerCharacter.studentName.setFirstName(firstNameField.getText());
             playerCharacter.studentName.setLastName(lastNameField.getText());
@@ -557,6 +645,11 @@ public class SchoolController {
 
             storyOutput.append("Generating your story...\n");
             PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
+            
+            // Enable Start Game button after preview is complete
+            startGameButton.setEnabled(true);
+            startGameButton.setToolTipText("Begin your adventure!");
+            storyOutput.append("\n--- Character ready! Click 'Start Game' to begin. ---\n");
         });
         cancelButton.addActionListener(e -> {
             dialog.dispose();
@@ -642,15 +735,15 @@ public class SchoolController {
             model.setDate(birthday.getYear(), birthday.getMonthValue() - 1, birthday.getDayOfMonth());
             model.setSelected(true);
         });
-        // Disable generate until required fields are filled
-        generateButton.setEnabled(false);
+        // Disable preview until required fields are filled
+        previewButton.setEnabled(false);
         DocumentListener docListener = new DocumentListener() {
             private void validateForm() {
                 boolean hasFirst = firstNameField.getText() != null && !firstNameField.getText().trim().isEmpty();
                 boolean hasLast = lastNameField.getText() != null && !lastNameField.getText().trim().isEmpty();
                 boolean hasGender = genderDropdown.getSelectedItem() != null;
                 boolean hasBirthday = datePicker.getModel().getValue() != null;
-                generateButton.setEnabled(hasFirst && hasLast && hasGender && hasBirthday);
+                previewButton.setEnabled(hasFirst && hasLast && hasGender && hasBirthday);
             }
 
             @Override
@@ -666,11 +759,13 @@ public class SchoolController {
         lastNameField.getDocument().addDocumentListener(docListener);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         Insets small = new Insets(2, 8, 2, 8);
-        generateButton.setMargin(small);
+        previewButton.setMargin(small);
+        startGameButton.setMargin(small);
         randomizeButton.setMargin(small);
         cancelButton.setMargin(small);
-        buttonPanel.add(generateButton);
         buttonPanel.add(randomizeButton);
+        buttonPanel.add(previewButton);
+        buttonPanel.add(startGameButton);
         buttonPanel.add(cancelButton);
         dialog.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -701,6 +796,11 @@ public class SchoolController {
     class GenerateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            // For game mode, show character creation BEFORE generating the world
+            if (view.isGameMode()) {
+                showCharacterCreationMenu();
+            }
+            // Then generate the world (in both modes)
             new SchoolGenerationWorker().execute();
         }
     }
@@ -742,6 +842,14 @@ public class SchoolController {
         @Override
         protected Void doInBackground() {
             try {
+                // Stop any running simulation first
+                if (simulationRunning) {
+                    stopSimulation();
+                }
+                
+                // Reset time to starting values
+                time.reset();
+                
                 //Create hash maps for storage
                 studentHashMap = new HashMap<Integer, Student>();
                 staffHashMap = new HashMap<Integer, Staff>();
@@ -863,12 +971,9 @@ public class SchoolController {
             
             // Show simulation controls
             view.showSimulationControls();
-            view.updatePeriod(time.getCurrentPeriod());
+            updatePeriodDisplay();
             
-            // If in game mode, show character creation
-            if (view.isGameMode()) {
-                showCharacterCreationMenu();
-            }
+            // Character creation is now shown BEFORE generation in GenerateButtonListener
         }
 
     }

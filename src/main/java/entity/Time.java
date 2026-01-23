@@ -220,5 +220,20 @@ public class Time {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
     }
+    
+    /**
+     * Resets the time to the starting values.
+     * Call this when starting a new game/simulation.
+     */
+    public void reset() {
+        this.dayCounter = 1;
+        this.calendar.set(Calendar.YEAR, STARTING_YEAR);
+        this.calendar.set(Calendar.MONTH, STARTING_MONTH);
+        this.calendar.set(Calendar.DATE, STARTING_DATE);
+        this.calendar.set(Calendar.HOUR, STARTING_HOUR);
+        this.calendar.set(Calendar.MINUTE, STARTING_MINUTE);
+        this.calendar.set(Calendar.SECOND, 0);
+        this.calendar.set(Calendar.MILLISECOND, 0);
+    }
 
 }
