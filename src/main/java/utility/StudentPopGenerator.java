@@ -4,7 +4,6 @@ import entity.Student;
 import view.GameView;
 
 import java.util.HashMap;
-import java.util.Random;
 
 import static constants.SimConstants.*;
 import static utility.Randomizer.setRandom;
@@ -15,7 +14,6 @@ public class StudentPopGenerator {
 
         String f_name;
         String[] l_name;
-        Random distribution = new Random();
 
         for (int i = 0; i < studentCap; i++) {
             studentHashMap.put(i, new Student());
@@ -54,12 +52,12 @@ public class StudentPopGenerator {
             student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
             String hairColor = student.studentStatistics.getHairColor();
             student.studentStatistics.setInitHeight();
-            student.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION + STUDENT_POP_INTELLIGENCE_MEAN));
-            student.studentStatistics.setCharisma((int) (distribution.nextGaussian() * STUDENT_POP_CHARISMA_STANDARD_DEVIATION + STUDENT_POP_CHARISMA_MEAN));
-            student.studentStatistics.setAgility((int) (distribution.nextGaussian() * STUDENT_POP_AGILITY_STANDARD_DEVIATION + STUDENT_POP_AGILITY_MEAN));
-            student.studentStatistics.setDetermination((int) (distribution.nextGaussian() * STUDENT_POP_DETERMINATION_STANDARD_DEVIATION + STUDENT_POP_DETERMINATION_MEAN));
-            student.studentStatistics.setPerception((int) (distribution.nextGaussian() * STUDENT_POP_PERCEPTION_STANDARD_DEVIATION + STUDENT_POP_PERCEPTION_MEAN));
-            student.studentStatistics.setLuck((int) (distribution.nextGaussian() * STUDENT_POP_LUCK_STANDARD_DEVIATION + STUDENT_POP_LUCK_MEAN));
+            student.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(STUDENT_POP_INTELLIGENCE_MEAN, STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION));
+            student.studentStatistics.setCharisma((int) GameRandom.nextGaussian(STUDENT_POP_CHARISMA_MEAN, STUDENT_POP_CHARISMA_STANDARD_DEVIATION));
+            student.studentStatistics.setAgility((int) GameRandom.nextGaussian(STUDENT_POP_AGILITY_MEAN, STUDENT_POP_AGILITY_STANDARD_DEVIATION));
+            student.studentStatistics.setDetermination((int) GameRandom.nextGaussian(STUDENT_POP_DETERMINATION_MEAN, STUDENT_POP_DETERMINATION_STANDARD_DEVIATION));
+            student.studentStatistics.setPerception((int) GameRandom.nextGaussian(STUDENT_POP_PERCEPTION_MEAN, STUDENT_POP_PERCEPTION_STANDARD_DEVIATION));
+            student.studentStatistics.setLuck((int) GameRandom.nextGaussian(STUDENT_POP_LUCK_MEAN, STUDENT_POP_LUCK_STANDARD_DEVIATION));
             student.studentStatistics.setInitStrength();
             student.studentStatistics.setInitCreativity();
             student.studentStatistics.setInitEmpathy();

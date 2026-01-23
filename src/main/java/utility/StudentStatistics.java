@@ -7,7 +7,6 @@ import entity.StudentSchedule;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class StudentStatistics implements PStatistics {
 
@@ -353,7 +352,6 @@ public class StudentStatistics implements PStatistics {
     //TODO: remove calculation from Student stats
     public void setInitHeight() {
 
-        Random random = new Random();
         double mean = 0;
         double stdDev = 0;
 
@@ -393,7 +391,7 @@ public class StudentStatistics implements PStatistics {
             }
         }
 
-        this.height = mean + stdDev * random.nextGaussian();
+        this.height = GameRandom.nextGaussian(mean, stdDev);
 
         this.height = Math.max(this.height, mean - 3 * stdDev);
         this.height = Math.min(this.height, mean + 3 * stdDev);
@@ -411,10 +409,9 @@ public class StudentStatistics implements PStatistics {
     }
 
     public void setInitStrength() {
-        Random random = new Random();
         double meanBaseStr = 50;
         double stdDevStr = 10;
-        int baseStr = (int) (meanBaseStr + stdDevStr * random.nextGaussian());
+        int baseStr = (int) GameRandom.nextGaussian(meanBaseStr, stdDevStr);
 
         double heightMod = (this.height - 60) * 0.5;
         int genderMod = this.gender.equals("Male") ? 10 : 5;

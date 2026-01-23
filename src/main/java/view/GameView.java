@@ -25,6 +25,11 @@ public class GameView {
     private final JPanel pmPanel;
     private final JButton socialGraphButton;
     private final JButton createCharacterButton;
+    private final JTextField seedInputField;
+    private final JCheckBox useCustomSeedCheckbox;
+    private final JLabel currentSeedLabel;
+    private final JButton copySeedButton;
+
     public GameView() {
         frame = new JFrame("generation_y2k");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,6 +61,27 @@ public class GameView {
         createCharacterButton = new JButton("Create Player Character");
         createCharacterButton.setEnabled(true);
 
+        // Seed controls
+        seedInputField = new JTextField(15);
+        seedInputField.setToolTipText("Enter a seed number to recreate a specific world");
+        seedInputField.setEnabled(false);
+        useCustomSeedCheckbox = new JCheckBox("Use custom seed");
+        useCustomSeedCheckbox.setToolTipText("Check to use a specific seed instead of random");
+        useCustomSeedCheckbox.addActionListener(e -> seedInputField.setEnabled(useCustomSeedCheckbox.isSelected()));
+        currentSeedLabel = new JLabel("Current Seed: (none)");
+        currentSeedLabel.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        copySeedButton = new JButton("Copy");
+        copySeedButton.setToolTipText("Copy seed to clipboard");
+        copySeedButton.setMargin(new Insets(2, 6, 2, 6));
+        copySeedButton.setEnabled(false);
+        copySeedButton.addActionListener(e -> {
+            String seedText = currentSeedLabel.getText().replace("Current Seed: ", "");
+            if (!seedText.equals("(none)")) {
+                java.awt.datatransfer.StringSelection selection = new java.awt.datatransfer.StringSelection(seedText);
+                java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+            }
+        });
+
         statusOutput = new JTextArea(20, 40);
         statusOutput.setEditable(false);
 
@@ -64,9 +90,31 @@ public class GameView {
 
         JScrollPane scrollPane = new JScrollPane(statusOutput);
 
+        // Seed panel
+        JPanel seedPanel = new JPanel();
+        seedPanel.setLayout(new BoxLayout(seedPanel, BoxLayout.Y_AXIS));
+        seedPanel.setBorder(BorderFactory.createTitledBorder("World Seed"));
+        
+        JPanel seedInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+        seedInputPanel.add(useCustomSeedCheckbox);
+        
+        JPanel seedFieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+        seedFieldPanel.add(new JLabel("Seed:"));
+        seedFieldPanel.add(seedInputField);
+        
+        JPanel currentSeedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+        currentSeedPanel.add(currentSeedLabel);
+        currentSeedPanel.add(copySeedButton);
+        
+        seedPanel.add(seedInputPanel);
+        seedPanel.add(seedFieldPanel);
+        seedPanel.add(currentSeedPanel);
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.add(generateButton);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(seedPanel);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(visualizeButton);
         buttonPanel.add(socialGraphButton);
@@ -237,6 +285,53 @@ public class GameView {
 
     public void addCreateCharacterButtonListener(ActionListener listener) {
         createCharacterButton.addActionListener(listener);
+    }
+
+    /**
+     * Check if the user wants to use a custom seed.
+     * @return true if custom seed checkbox is selected
+     */
+    public boolean isCustomSeedEnabled() {
+        return useCustomSeedCheckbox.isSelected();
+    }
+
+    /**
+     * Get the custom seed value from the input field.
+     * @return The parsed seed value, or null if invalid/empty
+     */
+    public Long getCustomSeed() {
+        String text = seedInputField.getText().trim();
+        if (text.isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.parseLong(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Update the displayed current seed after generation.
+     * @param seed The seed that was used
+     */
+    public void updateCurrentSeed(long seed) {
+        currentSeedLabel.setText("Current Seed: " + seed);
+        copySeedButton.setEnabled(true);
+        // Also populate the input field if it was a random seed
+        if (!useCustomSeedCheckbox.isSelected()) {
+            seedInputField.setText(String.valueOf(seed));
+        }
+    }
+
+    /**
+     * Show an error message for invalid seed input.
+     */
+    public void showSeedError() {
+        JOptionPane.showMessageDialog(frame, 
+            "Invalid seed format. Please enter a valid number.\nExample: 1737570000000", 
+            "Invalid Seed", 
+            JOptionPane.ERROR_MESSAGE);
     }
 
 }

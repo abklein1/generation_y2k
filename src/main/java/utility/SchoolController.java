@@ -24,7 +24,6 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
-import java.util.Random;
 
 import static utility.Randomizer.setRandom;
 import static constants.SimConstants.*;
@@ -362,13 +361,12 @@ public class SchoolController {
             // Append simple story points to the output window
             storyOutput.append("Generating base stats...\n");
             playerCharacter.studentStatistics.setInitStrength();
-            Random distribution = new Random();
-            playerCharacter.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION + STUDENT_POP_INTELLIGENCE_MEAN));
-            playerCharacter.studentStatistics.setCharisma((int) (distribution.nextGaussian() * STUDENT_POP_CHARISMA_STANDARD_DEVIATION + STUDENT_POP_CHARISMA_MEAN));
-            playerCharacter.studentStatistics.setAgility((int) (distribution.nextGaussian() * STUDENT_POP_AGILITY_STANDARD_DEVIATION + STUDENT_POP_AGILITY_MEAN));
-            playerCharacter.studentStatistics.setDetermination((int) (distribution.nextGaussian() * STUDENT_POP_DETERMINATION_STANDARD_DEVIATION + STUDENT_POP_DETERMINATION_MEAN));
-            playerCharacter.studentStatistics.setPerception((int) (distribution.nextGaussian() * STUDENT_POP_PERCEPTION_STANDARD_DEVIATION + STUDENT_POP_PERCEPTION_MEAN));
-            playerCharacter.studentStatistics.setLuck((int) (distribution.nextGaussian() * STUDENT_POP_LUCK_STANDARD_DEVIATION + STUDENT_POP_LUCK_MEAN));
+            playerCharacter.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(STUDENT_POP_INTELLIGENCE_MEAN, STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setCharisma((int) GameRandom.nextGaussian(STUDENT_POP_CHARISMA_MEAN, STUDENT_POP_CHARISMA_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setAgility((int) GameRandom.nextGaussian(STUDENT_POP_AGILITY_MEAN, STUDENT_POP_AGILITY_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setDetermination((int) GameRandom.nextGaussian(STUDENT_POP_DETERMINATION_MEAN, STUDENT_POP_DETERMINATION_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setPerception((int) GameRandom.nextGaussian(STUDENT_POP_PERCEPTION_MEAN, STUDENT_POP_PERCEPTION_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setLuck((int) GameRandom.nextGaussian(STUDENT_POP_LUCK_MEAN, STUDENT_POP_LUCK_STANDARD_DEVIATION));
             // Derived attributes mirroring NPC generation
             playerCharacter.studentStatistics.setInitCreativity();
             playerCharacter.studentStatistics.setInitEmpathy();
@@ -609,6 +607,28 @@ public class SchoolController {
                 LibraryR[] libraries;
                 Auditorium[] auditoriums;
                 //String[] colorsHex;
+
+                // Initialize the seeded random generator
+                long seed;
+                if (view.isCustomSeedEnabled()) {
+                    Long customSeed = view.getCustomSeed();
+                    if (customSeed != null) {
+                        GameRandom.initialize(customSeed);
+                        seed = customSeed;
+                        publish("Using custom seed: " + seed);
+                    } else {
+                        // Invalid seed input, show error and use random
+                        javax.swing.SwingUtilities.invokeLater(() -> view.showSeedError());
+                        seed = GameRandom.initialize();
+                        publish("Invalid seed input - using random seed: " + seed);
+                    }
+                } else {
+                    seed = GameRandom.initialize();
+                    publish("World Seed: " + seed);
+                }
+                final long finalSeed = seed;
+                javax.swing.SwingUtilities.invokeLater(() -> view.updateCurrentSeed(finalSeed));
+                publish("(Save this seed to recreate the same world!)");
 
                 //Generate a new standard school with rooms
                 publish("Generating the school...");

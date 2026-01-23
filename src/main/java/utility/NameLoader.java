@@ -3,7 +3,10 @@ package utility;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class NameLoader {
     private static final HashMap<Integer, String> firstNames = new HashMap<Integer, String>();
@@ -207,7 +210,7 @@ public class NameLoader {
             totalWeight += weight;
         }
 
-        long value = (long) (Math.random() * totalWeight);
+        long value = (long) (GameRandom.nextDouble() * totalWeight);
         long cumulativeWeight = 0;
 
         for (int i = 0; i < names.size(); i++) {
@@ -304,7 +307,7 @@ public class NameLoader {
     public static String[] selectWeightedRandom() {
 
         double totalWeight = lastNamesStudent.values().stream().mapToDouble(nd -> nd.weight).sum();
-        double value = Math.random() * totalWeight;
+        double value = GameRandom.nextDouble() * totalWeight;
         double cumulativeWeight = 0.0;
 
 
@@ -322,7 +325,7 @@ public class NameLoader {
     // Weighted random selection for race
     private static String selectRace(Map<String, Double> raceDist) {
         double total = raceDist.values().stream().mapToDouble(Double::doubleValue).sum();
-        double roll = Math.random() * total;
+        double roll = GameRandom.nextDouble() * total;
         double cumulative = 0.0;
 
         for (Map.Entry<String, Double> entry : raceDist.entrySet()) {
@@ -335,14 +338,11 @@ public class NameLoader {
     }
 
     public static String suffixNameGenerator(String gender) {
-        Random r = new Random();
-        int roll = 0;
-
         if (gender.equals("female")) {
             return "";
         }
 
-        roll = r.nextInt(100) + 1;
+        int roll = GameRandom.nextInt(1, 100);
 
         if (roll <= 50) {
             return "Jr.";
@@ -358,8 +358,7 @@ public class NameLoader {
     }
 
     public static char generateMiddleInitial() {
-        Random r = new Random();
-        char middleInitial = (char) (r.nextInt(26) + 'A');
+        char middleInitial = (char) (GameRandom.nextInt(26) + 'A');
         return middleInitial;
     }
 

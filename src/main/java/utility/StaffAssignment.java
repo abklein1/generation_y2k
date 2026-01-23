@@ -294,13 +294,12 @@ public class StaffAssignment {
 
     //TODO: explore efficiency of optionality
     private static Optional<Staff> selectRandomTeacher(HashMap<Integer, Staff> staffHashMap, GameView view) {
-        Random random = new Random();
         int counter = 0;
         List<Integer> keys = new ArrayList<>(staffHashMap.keySet());
         int randomIndex;
         int key;
         do {
-            randomIndex = random.nextInt(keys.size());
+            randomIndex = GameRandom.nextInt(keys.size());
             key = keys.get(randomIndex);
             counter++;
         } while (staffHashMap.get(key).teacherStatistics.getStaffType() != null && counter < staffHashMap.size());

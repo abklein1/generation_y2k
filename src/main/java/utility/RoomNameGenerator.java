@@ -4,7 +4,6 @@ import entity.Rooms.*;
 import entity.StandardSchool;
 
 import java.util.HashMap;
-import java.util.Random;
 
 import static utility.BirthdayGenerator.generateRandomBirthdayStaff;
 import static utility.GenderLoader.genderSelection;
@@ -50,8 +49,7 @@ public class RoomNameGenerator {
         String lastName = lNameReference.get(setRandom(0, lNameReference.size()));
         char middleInitial = generateMiddleInitial();
         String athleticFieldChoice = fieldOrComplexOrStadiumOrFieldHouse();
-        Random r = new Random();
-        int roll = r.nextInt(100) + 1;
+        int roll = GameRandom.nextInt(1, 100);
 
         if (roll <= 25) {
             return standardSchool.getSchoolName() + " " + athleticFieldChoice;
@@ -83,8 +81,7 @@ public class RoomNameGenerator {
     }
 
     private static String gymOrGymnasium() {
-        Random r = new Random();
-        int roll = r.nextInt(100) + 1;
+        int roll = GameRandom.nextInt(1, 100);
 
         if (roll <= 50) {
             return "Gym";
@@ -94,8 +91,7 @@ public class RoomNameGenerator {
     }
 
     private static String fieldOrComplexOrStadiumOrFieldHouse() {
-        Random r = new Random();
-        int roll = r.nextInt(100) + 1;
+        int roll = GameRandom.nextInt(1, 100);
 
         if (roll <= 25) {
             return "Field";

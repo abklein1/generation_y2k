@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static constants.SimConstants.*;
 
@@ -411,7 +410,7 @@ public class TraitSelection {
             totalWeight += weight;
         }
 
-        double random = new Random().nextDouble() * totalWeight;
+        double random = GameRandom.nextDouble() * totalWeight;
         for (int i = 0; i < items.size(); i++) {
             random -= weights.get(i);
             if (random <= 0.0) {
@@ -480,7 +479,7 @@ public class TraitSelection {
             totalWeight += weight;
         }
 
-        double random = new Random().nextDouble() * totalWeight;
+        double random = GameRandom.nextDouble() * totalWeight;
         for (int i = 0; i < items.size(); i++) {
             random -= weights.get(i);
             if (random <= 0.0) {

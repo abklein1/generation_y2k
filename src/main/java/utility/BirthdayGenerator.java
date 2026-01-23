@@ -1,8 +1,11 @@
 package utility;
 
 import java.time.LocalDate;
-import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Generates random birthdays for students and staff.
+ * Uses GameRandom for seedable, reproducible random generation.
+ */
 public class BirthdayGenerator {
 
     public static LocalDate generateDateFromClass(String gradClass) {
@@ -32,7 +35,7 @@ public class BirthdayGenerator {
         }
         startEpochDay = start.toEpochDay();
         endEpochDay = end.toEpochDay();
-        randomDate = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay);
+        randomDate = GameRandom.nextLong(startEpochDay, endEpochDay);
         return LocalDate.ofEpochDay(randomDate);
     }
 
@@ -41,7 +44,7 @@ public class BirthdayGenerator {
         LocalDate end = LocalDate.of(1981, 1, 1);
         long startEpochDay = start.toEpochDay();
         long endEpochDay = end.toEpochDay();
-        long randomDate = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay);
+        long randomDate = GameRandom.nextLong(startEpochDay, endEpochDay);
         return LocalDate.ofEpochDay(randomDate);
     }
 }

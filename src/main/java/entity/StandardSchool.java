@@ -262,7 +262,7 @@ public class StandardSchool implements SchoolPlan {
 
     private String schoolFoundedYearLoader() {
         int year;
-        double random = Math.random() * 100;
+        double random = utility.GameRandom.nextDouble(100);
 
         if (random < SCHOOL_FOUNDED_YEAR_2000s_CHANCE) {
             // 21% chance: Built after 2000

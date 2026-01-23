@@ -350,7 +350,6 @@ public class SiblingGenerator {
     //TODO: Possibly centralize this under StudentPop in future
     private static Student generateStepSibling(Student student, GameView view) {
         Student studentCopy = new Student();
-        Random distribution = new Random();
         String f_name;
         String race;
         String[] l_name = new String[2];
@@ -405,12 +404,12 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
         String hairColor = studentCopy.studentStatistics.getHairColor();
         studentCopy.studentStatistics.setInitHeight();
-        studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
-        studentCopy.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
-        studentCopy.studentStatistics.setAgility((int) (distribution.nextGaussian() * agl_stdDev + agl_mean));
-        studentCopy.studentStatistics.setDetermination((int) (distribution.nextGaussian() * det_stdDev + det_mean));
-        studentCopy.studentStatistics.setPerception((int) (distribution.nextGaussian() * per_stdDev + per_mean));
-        studentCopy.studentStatistics.setLuck((int) (distribution.nextGaussian() * lck_stdDev + lck_mean));
+        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
+        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
+        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
+        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
+        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
+        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
         studentCopy.studentStatistics.setInitStrength();
         studentCopy.studentStatistics.setInitCreativity();
         studentCopy.studentStatistics.setInitEmpathy();
@@ -433,7 +432,6 @@ public class SiblingGenerator {
 
     private static Student generateHalfSibling(Student student, GameView view) {
         Student studentCopy = new Student();
-        Random distribution = new Random();
         String f_name;
         String race;
         String lastName;
@@ -487,12 +485,12 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
         String hairColor = studentCopy.studentStatistics.getHairColor();
         studentCopy.studentStatistics.setInitHeight();
-        studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
-        studentCopy.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
-        studentCopy.studentStatistics.setAgility((int) (distribution.nextGaussian() * agl_stdDev + agl_mean));
-        studentCopy.studentStatistics.setDetermination((int) (distribution.nextGaussian() * det_stdDev + det_mean));
-        studentCopy.studentStatistics.setPerception((int) (distribution.nextGaussian() * per_stdDev + per_mean));
-        studentCopy.studentStatistics.setLuck((int) (distribution.nextGaussian() * lck_stdDev + lck_mean));
+        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
+        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
+        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
+        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
+        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
+        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
         studentCopy.studentStatistics.setInitStrength();
         studentCopy.studentStatistics.setInitCreativity();
         studentCopy.studentStatistics.setInitEmpathy();
@@ -515,7 +513,6 @@ public class SiblingGenerator {
 
     private static Student generateAdoptedSibling(Student student, GameView view) {
         Student studentCopy = new Student();
-        Random distribution = new Random();
         String f_name;
         String l_name;
         String race;
@@ -551,12 +548,12 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
         String hairColor = studentCopy.studentStatistics.getHairColor();
         studentCopy.studentStatistics.setInitHeight();
-        studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
-        studentCopy.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
-        studentCopy.studentStatistics.setAgility((int) (distribution.nextGaussian() * agl_stdDev + agl_mean));
-        studentCopy.studentStatistics.setDetermination((int) (distribution.nextGaussian() * det_stdDev + det_mean));
-        studentCopy.studentStatistics.setPerception((int) (distribution.nextGaussian() * per_stdDev + per_mean));
-        studentCopy.studentStatistics.setLuck((int) (distribution.nextGaussian() * lck_stdDev + lck_mean));
+        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
+        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
+        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
+        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
+        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
+        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
         studentCopy.studentStatistics.setInitStrength();
         studentCopy.studentStatistics.setInitCreativity();
         studentCopy.studentStatistics.setInitEmpathy();
@@ -579,7 +576,6 @@ public class SiblingGenerator {
 
     private static Student generateTwinOrTriplet(Student student, GameView view) {
         Student studentCopy = new Student();
-        Random distribution = new Random();
         String f_name;
         String l_name;
         int int_stdDev = 15;
@@ -611,12 +607,12 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
         studentCopy.studentStatistics.setHairColor(student.studentStatistics.getHairColor());
         studentCopy.studentStatistics.setHeight(student.studentStatistics.getHeight());
-        studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
-        studentCopy.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
-        studentCopy.studentStatistics.setAgility((int) (distribution.nextGaussian() * agl_stdDev + agl_mean));
-        studentCopy.studentStatistics.setDetermination((int) (distribution.nextGaussian() * det_stdDev + det_mean));
-        studentCopy.studentStatistics.setPerception((int) (distribution.nextGaussian() * per_stdDev + per_mean));
-        studentCopy.studentStatistics.setLuck((int) (distribution.nextGaussian() * lck_stdDev + lck_mean));
+        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
+        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
+        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
+        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
+        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
+        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
         studentCopy.studentStatistics.setInitStrength();
         studentCopy.studentStatistics.setInitCreativity();
         studentCopy.studentStatistics.setInitEmpathy();
@@ -639,7 +635,6 @@ public class SiblingGenerator {
 
     private static Student generateSibling(Student student, GameView view) {
         Student studentCopy = new Student();
-        Random distribution = new Random();
         String f_name;
         String l_name;
         String studentGrade = student.studentStatistics.getGradeLevel();
@@ -678,12 +673,12 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
         studentCopy.studentStatistics.setHairColor(student.studentStatistics.getHairColor());
         studentCopy.studentStatistics.setHeight(student.studentStatistics.getHeight());
-        studentCopy.studentStatistics.setIntelligence((int) (distribution.nextGaussian() * int_stdDev + int_mean));
-        studentCopy.studentStatistics.setCharisma((int) (distribution.nextGaussian() * chr_stdDev + chr_mean));
-        studentCopy.studentStatistics.setAgility((int) (distribution.nextGaussian() * agl_stdDev + agl_mean));
-        studentCopy.studentStatistics.setDetermination((int) (distribution.nextGaussian() * det_stdDev + det_mean));
-        studentCopy.studentStatistics.setPerception((int) (distribution.nextGaussian() * per_stdDev + per_mean));
-        studentCopy.studentStatistics.setLuck((int) (distribution.nextGaussian() * lck_stdDev + lck_mean));
+        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
+        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
+        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
+        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
+        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
+        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
         studentCopy.studentStatistics.setInitStrength();
         studentCopy.studentStatistics.setInitCreativity();
         studentCopy.studentStatistics.setInitEmpathy();

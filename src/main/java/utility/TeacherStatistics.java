@@ -5,7 +5,6 @@ import entity.TeacherBlock;
 import entity.TeacherSchedule;
 
 import java.time.LocalDate;
-import java.util.Random;
 
 public class TeacherStatistics implements PStatistics {
     private double height;
@@ -274,7 +273,6 @@ public class TeacherStatistics implements PStatistics {
     }
 
     public void setInitHeight() {
-        Random distribution = new Random();
         double mean = 0;
         double stdDev = 0;
 
@@ -286,15 +284,14 @@ public class TeacherStatistics implements PStatistics {
             stdDev = 2.58;
         }
 
-        this.height = mean + stdDev * distribution.nextGaussian();
+        this.height = GameRandom.nextGaussian(mean, stdDev);
     }
 
     //TODO: change current year/remove hardcode values
     public void setInitStrength() {
-        Random random = new Random();
         double meanBaseStr = 50;
         double stdDevStr = 10;
-        int baseStr = (int) (meanBaseStr + stdDevStr * random.nextGaussian());
+        int baseStr = (int) GameRandom.nextGaussian(meanBaseStr, stdDevStr);
 
         double heightMod = (this.height - 60) * 0.5;
         int genderMod = this.gender.equals("Male") ? 10 : 5;

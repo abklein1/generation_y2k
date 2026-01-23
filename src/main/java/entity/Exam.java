@@ -1,6 +1,6 @@
 package entity;
 
-import java.util.concurrent.ThreadLocalRandom;
+import utility.GameRandom;
 
 public class Exam implements Boss {
 
@@ -10,15 +10,10 @@ public class Exam implements Boss {
     private String fullName;
 
     public Exam() {
-        this.questions = setRandom(6, 50);
-        this.time = setRandom(30, 130);
-        this.difficulty = setRandom(30, 200);
+        this.questions = GameRandom.nextInt(6, 50);
+        this.time = GameRandom.nextInt(30, 130);
+        this.difficulty = GameRandom.nextInt(30, 200);
         this.fullName = "entity.Exam";
-    }
-
-    private static Integer setRandom(int min, int max) {
-        int random = ThreadLocalRandom.current().nextInt(min, max + 1);
-        return random;
     }
 
     @Override

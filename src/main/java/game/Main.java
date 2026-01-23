@@ -12,7 +12,9 @@ import view.GameView;
 import javax.swing.*;
 
 public class Main {
-    //TODO: Create seed ingestion for recreating specific schools or scenarios
+    // Seed-based random generation is now supported via GameRandom class
+    // The seed is displayed in the console when generating a school
+    // TODO: Add UI for entering custom seeds to recreate specific worlds
     public static void main(String[] args) {
 
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {

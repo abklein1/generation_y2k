@@ -4,7 +4,6 @@ import entity.Staff;
 import view.GameView;
 
 import java.util.HashMap;
-import java.util.Random;
 import java.util.Map;
 
 import static constants.SimConstants.*;
@@ -17,7 +16,6 @@ public class TeacherPopGenerator {
         Map<Integer, String> lNameReference = new HashMap<>();
         String f_name;
         String l_name;
-        Random distribution = new Random();
 
         //Store staff objects in another hashmap
         for (int j = 0; j < staffCap; j++) {
@@ -36,12 +34,12 @@ public class TeacherPopGenerator {
             f_name = NameLoader.nameGenerator(String.valueOf(staff.teacherStatistics.getBirthday().getYear()), staff.teacherStatistics.getGender());
             l_name = lNameReference.get(setRandom(0, lNameReference.size()));
             staff.teacherStatistics.setInitHeight();
-            staff.teacherStatistics.setIntelligence((int) (distribution.nextGaussian() * TEACHER_POP_INTELLIGENCE_STANDARD_DEVIATION + TEACHER_POP_INTELLIGENCE_MEAN));
-            staff.teacherStatistics.setCharisma((int) (distribution.nextGaussian() * TEACHER_POP_CHARISMA_STANDARD_DEVIATION + TEACHER_POP_CHARISMA_MEAN));
-            staff.teacherStatistics.setAgility((int) (distribution.nextGaussian() * TEACHER_POP_AGILITY_STANDARD_DEVIATION + TEACHER_POP_AGILITY_MEAN));
-            staff.teacherStatistics.setDetermination((int) (distribution.nextGaussian() * TEACHER_POP_DETERMINATION_STANDARD_DEVIATION + TEACHER_POP_DETERMINATION_MEAN));
-            staff.teacherStatistics.setPerception((int) (distribution.nextGaussian() * TEACHER_POP_PERCEPTION_STANDARD_DEVIATION + TEACHER_POP_PERCEPTION_MEAN));
-            staff.teacherStatistics.setLuck((int) (distribution.nextGaussian() * TEACHER_POP_LUCK_STANDARD_DEVIATION + TEACHER_POP_LUCK_MEAN));
+            staff.teacherStatistics.setIntelligence((int) GameRandom.nextGaussian(TEACHER_POP_INTELLIGENCE_MEAN, TEACHER_POP_INTELLIGENCE_STANDARD_DEVIATION));
+            staff.teacherStatistics.setCharisma((int) GameRandom.nextGaussian(TEACHER_POP_CHARISMA_MEAN, TEACHER_POP_CHARISMA_STANDARD_DEVIATION));
+            staff.teacherStatistics.setAgility((int) GameRandom.nextGaussian(TEACHER_POP_AGILITY_MEAN, TEACHER_POP_AGILITY_STANDARD_DEVIATION));
+            staff.teacherStatistics.setDetermination((int) GameRandom.nextGaussian(TEACHER_POP_DETERMINATION_MEAN, TEACHER_POP_DETERMINATION_STANDARD_DEVIATION));
+            staff.teacherStatistics.setPerception((int) GameRandom.nextGaussian(TEACHER_POP_PERCEPTION_MEAN, TEACHER_POP_PERCEPTION_STANDARD_DEVIATION));
+            staff.teacherStatistics.setLuck((int) GameRandom.nextGaussian(TEACHER_POP_LUCK_MEAN, TEACHER_POP_LUCK_STANDARD_DEVIATION));
             staff.teacherStatistics.setInitStrength();
             staff.teacherStatistics.setInitCreativity();
             staff.teacherStatistics.setInitEmpathy();
