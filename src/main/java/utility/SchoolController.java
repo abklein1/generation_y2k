@@ -1,7 +1,10 @@
 package utility;
 
+import behavior.StudentBehaviorTreeBuilder;
 import entity.Rooms.*;
 import entity.*;
+import simulation.EntityStateManager;
+import simulation.SimulationEngine;
 import view.GameView;
 
 import javax.swing.*;
@@ -36,6 +39,12 @@ public class SchoolController {
     private RoomConnector roomConnector;
     private SocialLinkConnector socialLinkConnector;
     private StandardSchool standardSchool;
+    
+    // Simulation components
+    private SimulationEngine simulationEngine;
+    private EntityStateManager entityStateManager;
+    private Timer simulationTimer;
+    private boolean simulationRunning = false;
 
 
     public SchoolController(GameView view) {
@@ -46,6 +55,144 @@ public class SchoolController {
         this.view.addInspectionMenuListener(new InspectionMenuListener());
         this.view.addCreateCharacterButtonListener(new CreateCharacterButtonListener());
         this.time = new Time();
+    }
+    
+    /**
+     * Initializes the simulation engine after world generation.
+     */
+    private void initializeSimulation() {
+        // Create simulation engine
+        simulationEngine = new SimulationEngine(time, standardSchool, studentHashMap, staffHashMap);
+        
+        // Create entity state manager and initialize all entities
+        entityStateManager = new EntityStateManager(studentHashMap, staffHashMap, standardSchool, time);
+        entityStateManager.initializeAll();
+        entityStateManager.placeStudentsAtStartOfDay();
+        entityStateManager.placeStaffAtStartOfDay();
+        
+        // Add simulation listener to update UI
+        simulationEngine.addListener(new SimulationEngine.SimulationListener() {
+            @Override
+            public void onTick(int tickNumber, Time time) {
+                SwingUtilities.invokeLater(() -> {
+                    updateTimeLabel();
+                    view.updatePeriod(time.getCurrentPeriod());
+                    view.updateSimulationStatus(simulationRunning ? "Running" : "Paused");
+                });
+            }
+            
+            @Override
+            public void onPeriodChange(int oldPeriod, int newPeriod) {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Period changed: " + oldPeriod + " -> " + newPeriod);
+                    view.updatePeriod(newPeriod);
+                });
+            }
+            
+            @Override
+            public void onTransitionStart() {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Transition period started - students moving to next class");
+                    view.updatePeriod(0);
+                });
+            }
+            
+            @Override
+            public void onTransitionEnd() {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Transition ended - classes resuming");
+                });
+            }
+            
+            @Override
+            public void onLunchStart(String lunchPeriod) {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Lunch " + lunchPeriod + " has started");
+                });
+            }
+            
+            @Override
+            public void onLunchEnd(String lunchPeriod) {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Lunch " + lunchPeriod + " has ended");
+                });
+            }
+            
+            @Override
+            public void onDayEnd() {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("School day has ended!");
+                    stopSimulation();
+                });
+            }
+        });
+        
+        // Create timer for automatic simulation ticks (1 second = 1 tick)
+        simulationTimer = new Timer(1000, e -> {
+            if (simulationRunning && simulationEngine != null) {
+                simulationEngine.tick();
+            }
+        });
+        
+        view.appendOutput("Simulation engine initialized!");
+        view.appendOutput("Behavior trees assigned to " + studentHashMap.size() + " students");
+    }
+    
+    /**
+     * Starts the simulation.
+     */
+    public void startSimulation() {
+        if (simulationEngine != null) {
+            simulationRunning = true;
+            simulationEngine.start();
+            simulationTimer.start();
+            view.updateSimulationStatus("Running");
+        }
+    }
+    
+    /**
+     * Pauses the simulation.
+     */
+    public void pauseSimulation() {
+        simulationRunning = false;
+        if (simulationEngine != null) {
+            simulationEngine.pause();
+        }
+        if (simulationTimer != null) {
+            simulationTimer.stop();
+        }
+        view.updateSimulationStatus("Paused");
+    }
+    
+    /**
+     * Stops the simulation.
+     */
+    public void stopSimulation() {
+        simulationRunning = false;
+        if (simulationTimer != null) {
+            simulationTimer.stop();
+        }
+        view.updateSimulationStatus("Stopped");
+    }
+    
+    /**
+     * Steps the simulation forward by one tick.
+     */
+    public void stepSimulation() {
+        if (simulationEngine != null) {
+            simulationEngine.tick();
+        }
+    }
+    
+    /**
+     * Sets the simulation speed.
+     *
+     * @param speed speed in minutes per tick
+     */
+    public void setSimulationSpeed(int speed) {
+        if (simulationEngine != null) {
+            simulationEngine.setSpeed(speed);
+        }
     }
 
     private void updateTimeLabel() {
@@ -710,6 +857,18 @@ public class SchoolController {
             view.setVisualizeButtonEnabled(true);
             view.setInspectionMenuEnabled(true);
             view.setSocialGraphButtonEnabled(true);
+            
+            // Initialize simulation engine
+            initializeSimulation();
+            
+            // Show simulation controls
+            view.showSimulationControls();
+            view.updatePeriod(time.getCurrentPeriod());
+            
+            // If in game mode, show character creation
+            if (view.isGameMode()) {
+                showCharacterCreationMenu();
+            }
         }
 
     }
