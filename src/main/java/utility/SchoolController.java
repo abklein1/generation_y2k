@@ -355,7 +355,13 @@ public class SchoolController {
         inspectionFrame.setVisible(true);
     }
 
-    private void showCharacterCreationMenu() {
+    /**
+     * Shows the character creation menu.
+     *
+     * @return true if character was created, false if cancelled
+     */
+    private boolean showCharacterCreationMenu() {
+        final boolean[] characterCreated = {false};
         JDialog dialog = new JDialog((Frame) null, "Create Player Character", true);
         dialog.getContentPane().setLayout(new BorderLayout(10, 10));
         JPanel formPanel = new JPanel(new GridBagLayout());
@@ -400,13 +406,35 @@ public class SchoolController {
         formPanel.add(genderDropdown, gbc);
         row++;
 
-        // Race
+        // Race (checkboxes - multiple selections map to multiracial)
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
         formPanel.add(new JLabel("Race:"), gbc);
-        JComboBox<String> raceDropdown = new JComboBox<>(new String[]{"White", "Black", "Asian", "Latino", "Other"});
+        JPanel racePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        JCheckBox whiteCheckbox = new JCheckBox("White");
+        JCheckBox blackCheckbox = new JCheckBox("Black");
+        JCheckBox asianCheckbox = new JCheckBox("Asian");
+        JCheckBox latinoCheckbox = new JCheckBox("Latino");
+        racePanel.add(whiteCheckbox);
+        racePanel.add(blackCheckbox);
+        racePanel.add(asianCheckbox);
+        racePanel.add(latinoCheckbox);
         gbc.gridx = 1; gbc.weightx = 1.0;
-        formPanel.add(raceDropdown, gbc);
+        formPanel.add(racePanel, gbc);
         row++;
+        
+        // Helper to get race code from checkboxes
+        java.util.function.Supplier<String> getRaceCode = () -> {
+            int count = 0;
+            String singleRace = null;
+            if (whiteCheckbox.isSelected()) { count++; singleRace = "white"; }
+            if (blackCheckbox.isSelected()) { count++; singleRace = "black"; }
+            if (asianCheckbox.isSelected()) { count++; singleRace = "api"; }
+            if (latinoCheckbox.isSelected()) { count++; singleRace = "hispanic"; }
+            
+            if (count == 0) return null; // No race selected
+            if (count > 1) return "2prace"; // Multiracial
+            return singleRace; // Single race
+        };
 
         // Add an action listener to enable/disable the suffix dropdown based on gender selection
         genderDropdown.addActionListener(e -> {
@@ -530,8 +558,9 @@ public class SchoolController {
         startGameButton.setEnabled(false);
         startGameButton.setToolTipText("Preview your character first");
         
-        // Start Game closes the dialog and proceeds
+        // Start Game closes the dialog and proceeds with game
         startGameButton.addActionListener(e -> {
+            characterCreated[0] = true;
             dialog.dispose();
         });
         
@@ -539,7 +568,14 @@ public class SchoolController {
             PlayerCharacter playerCharacter = new PlayerCharacter();
             playerCharacter.studentName.setFirstName(firstNameField.getText());
             playerCharacter.studentName.setLastName(lastNameField.getText());
-            playerCharacter.studentStatistics.setRace(raceDropdown.getSelectedItem().toString());
+            
+            // Get race code from checkboxes
+            String raceCode = getRaceCode.get();
+            if (raceCode == null) {
+                storyOutput.append("Error: Please select at least one race.\n");
+                return;
+            }
+            playerCharacter.studentStatistics.setRace(raceCode);
             if (suffixDropdown.getSelectedItem().toString() != "None" || suffixDropdown.getSelectedItem().toString() != null) {
                 playerCharacter.studentName.setSuffix(suffixDropdown.getSelectedItem().toString());
             } else {
@@ -577,16 +613,6 @@ public class SchoolController {
             playerCharacter.studentStatistics.setLevel(1);
             playerCharacter.studentStatistics.setExperience(0);
 
-            // Map UI race to internal code used by trait distributions
-            String raceUi = raceDropdown.getSelectedItem().toString();
-            String raceCode;
-            switch (raceUi) {
-                case "White" -> raceCode = "white";
-                case "Black" -> raceCode = "black";
-                case "Asian" -> raceCode = "api";
-                case "Latino" -> raceCode = "hispanic";
-                default -> raceCode = "2prace"; // best available proxy for Other
-            }
             // Compute skin color from race + eye color
             String eyesForSkin = playerCharacter.studentStatistics.getEyeColor();
             if (eyesForSkin != null) {
@@ -646,6 +672,9 @@ public class SchoolController {
             storyOutput.append("Generating your story...\n");
             PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
             
+            // Display flavor text after story generation
+            FlavorTextLoader.appendToTextArea(storyOutput);
+            
             // Enable Start Game button after preview is complete
             startGameButton.setEnabled(true);
             startGameButton.setToolTipText("Begin your adventure!");
@@ -691,14 +720,25 @@ public class SchoolController {
                 suffixValue = NameLoader.suffixNameGenerator(gender);
             }
 
-            // Map internal race code to UI selection
-            String raceUi;
+            // Set race checkboxes based on internal code
+            whiteCheckbox.setSelected(false);
+            blackCheckbox.setSelected(false);
+            asianCheckbox.setSelected(false);
+            latinoCheckbox.setSelected(false);
             switch (raceCode) {
-                case "white" -> raceUi = "White";
-                case "black" -> raceUi = "Black";
-                case "api" -> raceUi = "Asian";
-                case "hispanic" -> raceUi = "Latino";
-                default -> raceUi = "Other";
+                case "white" -> whiteCheckbox.setSelected(true);
+                case "black" -> blackCheckbox.setSelected(true);
+                case "api" -> asianCheckbox.setSelected(true);
+                case "hispanic" -> latinoCheckbox.setSelected(true);
+                case "2prace" -> {
+                    // For multiracial, randomly select 2 races
+                    int first = setRandom(0, 3);
+                    int second;
+                    do { second = setRandom(0, 3); } while (second == first);
+                    JCheckBox[] boxes = {whiteCheckbox, blackCheckbox, asianCheckbox, latinoCheckbox};
+                    boxes[first].setSelected(true);
+                    boxes[second].setSelected(true);
+                }
             }
 
             // Eye and hair traits driven by race
@@ -723,7 +763,7 @@ public class SchoolController {
             String genderUi = gender == null || gender.isBlank() ? "Other" : (Character.toUpperCase(gender.charAt(0)) + gender.substring(1).toLowerCase());
             genderDropdown.setSelectedItem(genderUi);
             suffixDropdown.setSelectedItem(suffixValue);
-            raceDropdown.setSelectedItem(raceUi);
+            // Race checkboxes are already set above
             eyeColorDropdown.setSelectedItem(eyeColor);
             hairColorDropdown.setSelectedItem(hairColor);
             hairTypeDropdown.setSelectedItem(hairType);
@@ -771,6 +811,8 @@ public class SchoolController {
 
         dialog.pack();
         dialog.setVisible(true);
+        
+        return characterCreated[0];
     }
 
     private class DateLabelFormatter extends AbstractFormatter {
@@ -798,9 +840,13 @@ public class SchoolController {
         public void actionPerformed(ActionEvent e) {
             // For game mode, show character creation BEFORE generating the world
             if (view.isGameMode()) {
-                showCharacterCreationMenu();
+                boolean characterCreated = showCharacterCreationMenu();
+                if (!characterCreated) {
+                    // User cancelled character creation, don't generate world
+                    return;
+                }
             }
-            // Then generate the world (in both modes)
+            // Generate the world (only if not game mode, or if character was created)
             new SchoolGenerationWorker().execute();
         }
     }

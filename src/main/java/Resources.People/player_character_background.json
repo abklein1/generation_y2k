@@ -1,0 +1,34 @@
+{
+  "intro": {
+    "description": "Opening text displayed after character stats are generated",
+    "text": [
+      "The summer of 2004 is drawing to a close.",
+      "In just a few days, you'll be starting your freshman year of high school.",
+      ""
+    ]
+  },
+  "background": {
+    "description": "Background flavor about the character's situation",
+    "text": [
+      "TODO: Add your background flavor text here.",
+      "Each line in this array will be displayed on its own line.",
+      ""
+    ]
+  },
+  "situation": {
+    "description": "The current situation before school starts",
+    "text": [
+      "TODO: Add situational flavor text here.",
+      "Describe what's happening as the school year approaches.",
+      ""
+    ]
+  },
+  "closing": {
+    "description": "Closing text before the game begins",
+    "text": [
+      "TODO: Add closing flavor text here.",
+      "This is the final message before starting the simulation.",
+      ""
+    ]
+  }
+}
