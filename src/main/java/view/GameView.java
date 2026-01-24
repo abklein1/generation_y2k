@@ -50,6 +50,12 @@ public class GameView {
     private JMenuItem fastSpeedItem;
     private JMenuItem veryFastSpeedItem;
     
+    // School info labels
+    private final JLabel schoolNameLabel;
+    private final JLabel schoolFoundedLabel;
+    private final JLabel schoolMascotLabel;
+    private final JLabel schoolColorsLabel;
+    
     // Seed options (moved to dialog)
     private JTextField seedInputField;
     private JCheckBox useCustomSeedCheckbox;
@@ -224,6 +230,27 @@ public class GameView {
         statusPanel.add(Box.createVerticalStrut(5));
         statusPanel.add(simulationStatusLabel);
 
+        // School Info panel
+        schoolNameLabel = new JLabel("School: --");
+        schoolNameLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+        schoolFoundedLabel = new JLabel("Founded: --");
+        schoolFoundedLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        schoolMascotLabel = new JLabel("Mascot: --");
+        schoolMascotLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        schoolColorsLabel = new JLabel("Colors: --");
+        schoolColorsLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBorder(BorderFactory.createTitledBorder("School Info"));
+        infoPanel.add(schoolNameLabel);
+        infoPanel.add(Box.createVerticalStrut(3));
+        infoPanel.add(schoolFoundedLabel);
+        infoPanel.add(Box.createVerticalStrut(3));
+        infoPanel.add(schoolMascotLabel);
+        infoPanel.add(Box.createVerticalStrut(3));
+        infoPanel.add(schoolColorsLabel);
+
         // Bottom info panel
         JPanel bottomPanel = new JPanel(new BorderLayout(10, 0));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -231,6 +258,7 @@ public class GameView {
         JPanel bottomLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         bottomLeftPanel.add(weatherPanel);
         bottomLeftPanel.add(statusPanel);
+        bottomLeftPanel.add(infoPanel);
         
         bottomPanel.add(bottomLeftPanel, BorderLayout.WEST);
         bottomPanel.add(timeLabel, BorderLayout.EAST);
@@ -585,6 +613,32 @@ public class GameView {
      */
     public void updateSimulationStatus(String status) {
         simulationStatusLabel.setText("Status: " + status);
+    }
+    
+    /**
+     * Updates the school info panel with school details.
+     *
+     * @param name the school name
+     * @param foundedYear the year the school was founded
+     * @param mascot the school mascot
+     * @param color1 the first school color
+     * @param color2 the second school color
+     */
+    public void updateSchoolInfo(String name, String foundedYear, String mascot, String color1, String color2) {
+        schoolNameLabel.setText(name);
+        schoolFoundedLabel.setText("Founded: " + foundedYear);
+        schoolMascotLabel.setText("Mascot: " + mascot);
+        schoolColorsLabel.setText("Colors: " + color1 + " & " + color2);
+    }
+    
+    /**
+     * Clears the school info panel (resets to default values).
+     */
+    public void clearSchoolInfo() {
+        schoolNameLabel.setText("School: --");
+        schoolFoundedLabel.setText("Founded: --");
+        schoolMascotLabel.setText("Mascot: --");
+        schoolColorsLabel.setText("Colors: --");
     }
 
     // ===== LEGACY METHODS FOR BACKWARD COMPATIBILITY =====

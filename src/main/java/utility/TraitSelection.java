@@ -524,4 +524,70 @@ public class TraitSelection {
             throw new RuntimeException("Failed to load skin color data", e);
         }
     }
+
+    /**
+     * Determines if a student has braces based on race, income level, and grade level.
+     * 
+     * Base rates from research data:
+     * - White: 31% receive orthodontic treatment
+     * - Hispanic/Mexican American: 11% receive orthodontic treatment
+     * - Black/African American: 8% receive orthodontic treatment
+     * 
+     * Income significantly affects access:
+     * - Suburban/affluent areas: 50%+ utilization
+     * - Inner city/low income: less than 10% utilization
+     * 
+     * Grade level adjustment (braces are less common later in high school
+     * as many students have had them removed by junior/senior year):
+     * - Freshman: highest probability
+     * - Sophomore: slightly lower
+     * - Junior: lower (many getting removed)
+     * - Senior: lowest (most have completed treatment)
+     *
+     * @param race the student's race category
+     * @param incomeLevel the family income level (low, middle, high)
+     * @param gradeLevel the student's grade level (Freshman, Sophomore, Junior, Senior)
+     * @return true if the student has braces, false otherwise
+     */
+    public static boolean determineBraces(String race, String incomeLevel, String gradeLevel) {
+        // Base rates by race (from orthodontic research data)
+        double baseRate = switch (race) {
+            case "white" -> 0.31;       // 31% of White teenagers
+            case "hispanic" -> 0.11;    // 11% of Mexican American teenagers
+            case "black" -> 0.08;       // 8% of Black teenagers
+            case "api" -> 0.25;         // Estimated based on income demographics
+            case "aian" -> 0.10;        // Estimated similar to other minorities
+            case "2prace" -> 0.18;      // Weighted average of groups
+            default -> 0.15;            // Default fallback
+        };
+
+        // Income multiplier (reflects suburban affluent vs inner city disparity)
+        // High income areas have 50%+ utilization, low income less than 10%
+        double incomeMultiplier = switch (incomeLevel) {
+            case "high" -> 1.6;     // Affluent areas have ~50%+ for white students
+            case "middle" -> 1.0;   // Base rates apply
+            case "low" -> 0.3;      // Low income areas have <10% utilization
+            default -> 1.0;
+        };
+
+        // Grade level multiplier (braces less common in later high school years)
+        // Many students get braces in middle school/early high school and
+        // have them removed by junior/senior year
+        double gradeMultiplier = switch (gradeLevel) {
+            case "Freshman" -> 1.2;     // Just got braces or in active treatment
+            case "Sophomore" -> 1.1;    // Still commonly in treatment
+            case "Junior" -> 0.85;      // Many getting braces removed
+            case "Senior" -> 0.65;      // Most have completed treatment
+            default -> 1.0;
+        };
+
+        // Calculate final probability
+        double probability = baseRate * incomeMultiplier * gradeMultiplier;
+
+        // Cap probability at reasonable bounds (5% to 60%)
+        probability = Math.max(0.05, Math.min(0.60, probability));
+
+        // Random determination
+        return GameRandom.nextDouble() < probability;
+    }
 }

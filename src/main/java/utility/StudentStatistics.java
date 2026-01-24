@@ -49,6 +49,7 @@ public class StudentStatistics implements PStatistics {
     private final ArrayList<String> siblingsNotInSchool;
     private final ArrayList<Student> friendsInSchool;
     private int maxBestFriends;
+    private boolean hasBraces;
 
 
 
@@ -92,6 +93,7 @@ public class StudentStatistics implements PStatistics {
         this.siblingsNotInSchool = new ArrayList<>();
         this.friendsInSchool = new ArrayList<>();
         this.maxBestFriends = 0;
+        this.hasBraces = false;
     }
 
     @Override
@@ -624,6 +626,14 @@ public class StudentStatistics implements PStatistics {
 
     public void setMaxBestFriends(int maxBestFriends) {
         this.maxBestFriends = maxBestFriends;
+    }
+
+    public boolean getHasBraces() {
+        return hasBraces;
+    }
+
+    public void setHasBraces(boolean hasBraces) {
+        this.hasBraces = hasBraces;
     }
 
 }

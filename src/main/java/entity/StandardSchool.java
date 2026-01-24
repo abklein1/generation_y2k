@@ -19,6 +19,7 @@ import view.GameView;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static constants.SchoolConstants.*;
@@ -29,7 +30,7 @@ public class StandardSchool implements SchoolPlan {
 
     String schoolName;
     String schoolMascot;
-    String schoolFoundedYear;
+    Date schoolFoundedDate;
     String[] schoolColors;
     String[] schoolColorsHex;
     ArtStudio[] artStudios;
@@ -252,15 +253,33 @@ public class StandardSchool implements SchoolPlan {
         return bathrooms;
     }
 
+    /**
+     * Gets the school founded date as a formatted string for display.
+     *
+     * @return the formatted date string (e.g., "September 15, 1975")
+     */
     public String getSchoolFoundedYear() {
-        return this.schoolFoundedYear;
+        if (this.schoolFoundedDate == null) {
+            return "--";
+        }
+        SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM d, yyyy");
+        return displayFormat.format(this.schoolFoundedDate);
+    }
+
+    /**
+     * Gets the raw Date object for the school founding date.
+     *
+     * @return the Date object
+     */
+    public Date getSchoolFoundedDate() {
+        return this.schoolFoundedDate;
     }
 
     public void setSchoolFoundedYear() {
-        this.schoolFoundedYear = schoolFoundedYearLoader();
+        this.schoolFoundedDate = schoolFoundedDateLoader();
     }
 
-    private String schoolFoundedYearLoader() {
+    private Date schoolFoundedDateLoader() {
         int year;
         double random = utility.GameRandom.nextDouble(100);
 
@@ -278,7 +297,23 @@ public class StandardSchool implements SchoolPlan {
             year = setRandom(SCHOOL_FOUNDED_OTHER_LOWER_LIMIT, SCHOOL_FOUNDED_OTHER_UPPER_LIMIT);
         }
 
-        return String.valueOf(year);
+        // Generate random month (0-11) and day
+        int month = setRandom(0, 11);
+        
+        // Determine max days for the month
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        int maxDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int day = setRandom(1, maxDay);
+        
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        return cal.getTime();
     }
 
     @Override

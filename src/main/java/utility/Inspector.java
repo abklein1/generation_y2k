@@ -34,6 +34,7 @@ public class Inspector {
         String hairLength = student.studentStatistics.getHairLength();
         String hairType = student.studentStatistics.getHairType();
         double height = student.studentStatistics.getHeight();
+        boolean hasBraces = student.studentStatistics.getHasBraces();
         String grade = student.studentStatistics.getGradeLevel();
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
@@ -50,7 +51,11 @@ public class Inspector {
         sb.append(skinColor).append(" colored skin and ");
         sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ").append(hairColor.toLowerCase());
         sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
-        sb.append("They stand ").append(df.format(height)).append(" inches tall.\n");
+        sb.append("They stand ").append(df.format(height)).append(" inches tall.");
+        if (hasBraces) {
+            sb.append(" They have braces.");
+        }
+        sb.append("\n");
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
         sb.append("They have the following base stats:\n   INTELLIGENCE: ").append(student.studentStatistics.getIntelligence());
@@ -129,6 +134,7 @@ public class Inspector {
         String hairLength = student.studentStatistics.getHairLength();
         String hairType = student.studentStatistics.getHairType();
         double height = student.studentStatistics.getHeight();
+        boolean hasBraces = student.studentStatistics.getHasBraces();
         String grade = student.studentStatistics.getGradeLevel();
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
@@ -145,7 +151,11 @@ public class Inspector {
         sb.append(skinColor).append(" colored skin and ");
         sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ").append(hairColor.toLowerCase());
         sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
-        sb.append("They stand ").append(df.format(height)).append(" inches tall.\n");
+        sb.append("They stand ").append(df.format(height)).append(" inches tall.");
+        if (hasBraces) {
+            sb.append(" They have braces.");
+        }
+        sb.append("\n");
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
         sb.append("They have the following base stats:\n   INTELLIGENCE: ").append(student.studentStatistics.getIntelligence());
