@@ -132,7 +132,7 @@ An example of a staff generated and displayed in the inspector:
 ![](src/main/java/Resources.Screencaps/staff_proto1.JPG)
 
 ## Datasets and References
-
+s
 - US Census Data for Surnames (Use File B) :  https://www.census.gov/topics/population/genealogy/data/2000_surnames.html
 - US Census Data for First Names : https://www.ssa.gov/oact/babynames/limits.html (Use the National Data folder)
 - US Mascot Frequency Database : https://masseyratings.com/mascots
@@ -162,6 +162,7 @@ An example of a staff generated and displayed in the inspector:
 - Trends in intermarriage : https://www.pewresearch.org/social-trends/2017/05/18/1-trends-and-patterns-in-intermarriage/
 - Overview of Allostatic load : https://karger.com/pps/article/90/1/11/294736/Allostatic-Load-and-Its-Impact-on-Health-A
 - Gender tables for 2004 : https://www.test.census.gov/data/tables/2004/demo/age-and-sex/2004-age-sex-composition.html
+- Rates of braces in 2004 and breakdowns along demographics : https://www.sciencedirect.com/science/article/abs/pii/S0889540608006070#:~:text=Orthodontic-,Conclusions,late%20childhood%20or%20early%20adolescent , https://pmc.ncbi.nlm.nih.gov/articles/PMC4813324/#:~:text=Using%20survey%20data%20from%20over,%2C%20and%208%25%2C%20respectively.&text=Orthodontic%20use%20in%20schools%20located,lower%2Dincome%2C%20minority%20students.&text=The%20federal%20Early%20and%20Periodic,enrollees%20through%20age%2021%20years.&text=Based%20on%20previous%20findings%2C9,care%20exist%20within%20Medicaid%20programs.
 
 ## Gameplay Mechanics
 
