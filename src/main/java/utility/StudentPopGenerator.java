@@ -71,10 +71,15 @@ public class StudentPopGenerator {
             student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
             student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
             student.studentStatistics.setInitIncomeLevel(setRandom(0, STUDENT_INCOME_LEVEL_SAMPLE_SIZE));
-            student.studentStatistics.setHasBraces(TraitSelection.determineBraces(
+            boolean hasBraces = TraitSelection.determineBraces(
                     race,
                     student.studentStatistics.getIncomeLevel(),
-                    student.studentStatistics.getGradeLevel()));
+                    student.studentStatistics.getGradeLevel());
+            student.studentStatistics.setHasBraces(hasBraces);
+            if (hasBraces) {
+                student.studentStatistics.setBracesBandColor(TraitSelection.selectBracesBandColor());
+                student.studentStatistics.setBracesBracketType(TraitSelection.selectBracesBracketType());
+            }
             if (suffix != null) {
                 view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {

@@ -50,6 +50,8 @@ public class StudentStatistics implements PStatistics {
     private final ArrayList<Student> friendsInSchool;
     private int maxBestFriends;
     private boolean hasBraces;
+    private String bracesBandColor;
+    private String bracesBracketType;
 
 
 
@@ -94,6 +96,8 @@ public class StudentStatistics implements PStatistics {
         this.friendsInSchool = new ArrayList<>();
         this.maxBestFriends = 0;
         this.hasBraces = false;
+        this.bracesBandColor = null;
+        this.bracesBracketType = null;
     }
 
     @Override
@@ -634,6 +638,22 @@ public class StudentStatistics implements PStatistics {
 
     public void setHasBraces(boolean hasBraces) {
         this.hasBraces = hasBraces;
+    }
+
+    public String getBracesBandColor() {
+        return bracesBandColor;
+    }
+
+    public void setBracesBandColor(String bracesBandColor) {
+        this.bracesBandColor = bracesBandColor;
+    }
+
+    public String getBracesBracketType() {
+        return bracesBracketType;
+    }
+
+    public void setBracesBracketType(String bracesBracketType) {
+        this.bracesBracketType = bracesBracketType;
     }
 
 }

@@ -525,6 +525,36 @@ public class TraitSelection {
         }
     }
 
+    private static final String[] BRACES_BAND_COLORS = {
+            "blue", "red", "green", "purple", "pink", "orange", "yellow", "teal",
+            "black", "silver", "gold", "light blue", "dark blue", "turquoise",
+            "lime green", "hot pink", "navy", "maroon", "white", "gray"
+    };
+
+    private static final String[] BRACES_BRACKET_TYPES = {
+            "clear", "metal"
+    };
+
+    /**
+     * Selects a random band color for braces.
+     *
+     * @return a randomly selected band color
+     */
+    public static String selectBracesBandColor() {
+        int index = (int) (GameRandom.nextDouble() * BRACES_BAND_COLORS.length);
+        return BRACES_BAND_COLORS[index];
+    }
+
+    /**
+     * Selects a random bracket type for braces.
+     *
+     * @return either "clear" or "metal"
+     */
+    public static String selectBracesBracketType() {
+        int index = (int) (GameRandom.nextDouble() * BRACES_BRACKET_TYPES.length);
+        return BRACES_BRACKET_TYPES[index];
+    }
+
     /**
      * Determines if a student has braces based on race, income level, and grade level.
      * 

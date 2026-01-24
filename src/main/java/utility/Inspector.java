@@ -35,6 +35,8 @@ public class Inspector {
         String hairType = student.studentStatistics.getHairType();
         double height = student.studentStatistics.getHeight();
         boolean hasBraces = student.studentStatistics.getHasBraces();
+        String bracesBandColor = student.studentStatistics.getBracesBandColor();
+        String bracesBracketType = student.studentStatistics.getBracesBracketType();
         String grade = student.studentStatistics.getGradeLevel();
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
@@ -53,7 +55,7 @@ public class Inspector {
         sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
         sb.append("They stand ").append(df.format(height)).append(" inches tall.");
         if (hasBraces) {
-            sb.append(" They have braces.");
+            sb.append(" They have braces with ").append(bracesBandColor).append(" bands and ").append(bracesBracketType).append(" brackets.");
         }
         sb.append("\n");
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
@@ -135,6 +137,8 @@ public class Inspector {
         String hairType = student.studentStatistics.getHairType();
         double height = student.studentStatistics.getHeight();
         boolean hasBraces = student.studentStatistics.getHasBraces();
+        String bracesBandColor = student.studentStatistics.getBracesBandColor();
+        String bracesBracketType = student.studentStatistics.getBracesBracketType();
         String grade = student.studentStatistics.getGradeLevel();
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
@@ -153,7 +157,7 @@ public class Inspector {
         sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
         sb.append("They stand ").append(df.format(height)).append(" inches tall.");
         if (hasBraces) {
-            sb.append(" They have braces.");
+            sb.append(" They have braces with ").append(bracesBandColor).append(" bands and ").append(bracesBracketType).append(" brackets.");
         }
         sb.append("\n");
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
