@@ -966,6 +966,9 @@ public class SchoolController {
                 publish("Connecting rooms...");
                 roomConnector = new RoomConnector(standardSchool, view);
                 publish("Populating school...");
+                // Set school colors for braces band color selection before generating students
+                StudentPopGenerator.setSchoolColors(standardSchool.getSchoolColors());
+                SiblingGenerator.setSchoolColors(standardSchool.getSchoolColors());
                 // Set for student population generation
                 StudentPopGenerator.generateStudents(student_cap, studentHashMap, view);
                 SiblingGenerator.siblingGenerator(studentHashMap, student_cap, view);

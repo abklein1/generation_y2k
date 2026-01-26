@@ -43,6 +43,8 @@ public class Inspector {
         double height = student.studentStatistics.getHeight();
         boolean hasBraces = student.studentStatistics.getHasBraces();
         String bracesBandColor = student.studentStatistics.getBracesBandColor();
+        String bracesSecondBandColor = student.studentStatistics.getBracesSecondBandColor();
+        boolean hasAlternatingBands = student.studentStatistics.hasAlternatingBandColors();
         String bracesBracketType = student.studentStatistics.getBracesBracketType();
         boolean bracesHasElastics = student.studentStatistics.getBracesHasElastics();
         String bracesElasticColor = student.studentStatistics.getBracesElasticColor();
@@ -73,8 +75,14 @@ public class Inspector {
         sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
         sb.append("They stand ").append(df.format(height)).append(" inches tall.");
         if (hasBraces) {
-            sb.append(" They have braces with ").append(bracesBandColor).append(" bands, ")
-                    .append(bracesBracketType).append(" brackets");
+            sb.append(" They have braces with ");
+            if (hasAlternatingBands) {
+                sb.append("alternating ").append(bracesBandColor).append(" and ")
+                        .append(bracesSecondBandColor).append(" bands, ");
+            } else {
+                sb.append(bracesBandColor).append(" bands, ");
+            }
+            sb.append(bracesBracketType).append(" brackets");
             if (bracesHasElastics) {
                 sb.append(", and a pair of ").append(bracesElasticColor).append(" ").append(bracesElasticType);
             }
@@ -146,8 +154,8 @@ public class Inspector {
         // Braces history
         if (hasBraces) {
             if (bracesStartDate != null && bracesEndDate != null) {
-                sb.append(" (Got braces: ").append(bracesStartDate).append(", Expected removal: ").append(bracesEndDate)
-                        .append(")");
+                sb.append("(Got braces: ").append(bracesStartDate).append(", Expected removal: ").append(bracesEndDate)
+                        .append(")").append("\n");
             }
         } else if (hadBracesRemoved) {
             sb.append(" They previously had braces");

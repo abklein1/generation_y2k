@@ -51,6 +51,7 @@ public class StudentStatistics implements PStatistics {
     private int maxBestFriends;
     private boolean hasBraces;
     private String bracesBandColor;
+    private String bracesSecondBandColor;  // For alternating band colors
     private String bracesBracketType;
     // Braces timing - when they were put on and when they'll be removed
     private LocalDate bracesStartDate;
@@ -108,6 +109,7 @@ public class StudentStatistics implements PStatistics {
         this.maxBestFriends = 0;
         this.hasBraces = false;
         this.bracesBandColor = null;
+        this.bracesSecondBandColor = null;
         this.bracesBracketType = null;
         this.bracesStartDate = null;
         this.bracesEndDate = null;
@@ -664,6 +666,23 @@ public class StudentStatistics implements PStatistics {
 
     public void setBracesBandColor(String bracesBandColor) {
         this.bracesBandColor = bracesBandColor;
+    }
+
+    public String getBracesSecondBandColor() {
+        return bracesSecondBandColor;
+    }
+
+    public void setBracesSecondBandColor(String bracesSecondBandColor) {
+        this.bracesSecondBandColor = bracesSecondBandColor;
+    }
+
+    /**
+     * Checks if the student has alternating band colors on their braces.
+     *
+     * @return true if the student has two band colors, false otherwise
+     */
+    public boolean hasAlternatingBandColors() {
+        return bracesSecondBandColor != null && !bracesSecondBandColor.isEmpty();
     }
 
     public String getBracesBracketType() {

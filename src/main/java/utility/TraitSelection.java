@@ -557,6 +557,69 @@ public class TraitSelection {
     }
 
     /**
+     * Determines if a student has alternating band colors on their braces.
+     * This is relatively uncommon.
+     *
+     * @return true if the student has alternating band colors
+     */
+    public static boolean determineAlternatingBandColors() {
+        return Randomizer.setRandom(0, BRACES_ALTERNATING_BAND_SAMPLE_SIZE) < BRACES_ALTERNATING_BAND_PROBABILITY;
+    }
+
+    /**
+     * Selects band colors for braces, with option to use school colors.
+     * When alternating bands are chosen, there's a higher chance of using school colors.
+     *
+     * @param useSchoolColors whether to use school colors
+     * @param schoolColors the school's colors array (may be null)
+     * @param firstColor the first color already selected (to avoid duplicates)
+     * @return a randomly selected band color
+     */
+    public static String selectBracesBandColorWithSchoolOption(boolean useSchoolColors, 
+                                                                String[] schoolColors, 
+                                                                String firstColor) {
+        if (useSchoolColors && schoolColors != null && schoolColors.length >= 2) {
+            // Determine if we should use school colors (60% chance when alternating)
+            if (Randomizer.setRandom(0, BRACES_SCHOOL_COLOR_SAMPLE_SIZE) < BRACES_SCHOOL_COLOR_PROBABILITY) {
+                // Return the school color that isn't already used as the first color
+                if (firstColor != null && firstColor.equalsIgnoreCase(schoolColors[0])) {
+                    return schoolColors[1].toLowerCase();
+                } else if (firstColor != null && firstColor.equalsIgnoreCase(schoolColors[1])) {
+                    return schoolColors[0].toLowerCase();
+                } else {
+                    // First color wasn't a school color, pick one randomly
+                    return schoolColors[Randomizer.setRandom(0, 1)].toLowerCase();
+                }
+            }
+        }
+
+        // Otherwise, pick a random color that's different from the first color
+        String secondColor;
+        do {
+            secondColor = selectBracesBandColor();
+        } while (secondColor.equals(firstColor));
+
+        return secondColor;
+    }
+
+    /**
+     * Selects the first band color, potentially using school colors if alternating.
+     *
+     * @param hasAlternating whether the student has alternating band colors
+     * @param schoolColors the school's colors array (may be null)
+     * @return the first band color
+     */
+    public static String selectFirstBandColor(boolean hasAlternating, String[] schoolColors) {
+        if (hasAlternating && schoolColors != null && schoolColors.length >= 2) {
+            // When alternating, higher chance to use school colors
+            if (Randomizer.setRandom(0, BRACES_SCHOOL_COLOR_SAMPLE_SIZE) < BRACES_SCHOOL_COLOR_PROBABILITY) {
+                return schoolColors[0].toLowerCase();
+            }
+        }
+        return selectBracesBandColor();
+    }
+
+    /**
      * Selects a random bracket type for braces.
      *
      * @return either "clear" or "metal"
@@ -670,17 +733,46 @@ public class TraitSelection {
      * Students in later grades have a higher chance of having less time left,
      * since they are older and presumably had braces put on further in the past.
      *
+     * Certain orthodontic modifiers (like ligature ties or power chains) indicate
+     * more complex treatment, which tends to extend duration towards the upper range.
+     *
      * @param gradeLevel the student's grade level
      * @param gameStartDate the date the game starts (typically August 2004)
+     * @param hasElastics whether the student has orthodontic elastics
+     * @param elasticType the type of elastics (may be null if no elastics)
      * @return an array of two LocalDates: [startDate, endDate]
      */
-    public static LocalDate[] generateBracesTiming(String gradeLevel, LocalDate gameStartDate) {
-        // Generate total treatment duration (12-36 months, normally distributed around 24)
-        int totalDurationMonths = (int) GameRandom.nextGaussian(
-                BRACES_MEAN_DURATION_MONTHS,
-                BRACES_DURATION_STANDARD_DEVIATION);
-        totalDurationMonths = Math.max(BRACES_MIN_DURATION_MONTHS,
-                Math.min(BRACES_MAX_DURATION_MONTHS, totalDurationMonths));
+    public static LocalDate[] generateBracesTiming(String gradeLevel, LocalDate gameStartDate,
+                                                    boolean hasElastics, String elasticType) {
+        // Base duration parameters
+        int baseMean = BRACES_MEAN_DURATION_MONTHS;
+        int baseMin = BRACES_MIN_DURATION_MONTHS;
+        int baseMax = BRACES_MAX_DURATION_MONTHS;
+
+        // Adjust duration based on elastic type - certain modifiers indicate longer treatment
+        if (hasElastics && elasticType != null) {
+            switch (elasticType) {
+                case "ligature ties" -> {
+                    // Ligature ties often used for complex alignment, longer treatment
+                    baseMean += 4;  // Shift mean towards upper range
+                    baseMin += 3;   // Higher minimum duration
+                }
+                case "power chains" -> {
+                    // Power chains used to close gaps, indicates moderate complexity
+                    baseMean += 2;  // Slight increase in mean duration
+                    baseMin += 2;
+                }
+                case "rubber bands" -> {
+                    // Rubber bands for bite correction, moderate complexity
+                    baseMean += 1;
+                }
+                // "elastic bands" - standard, no adjustment needed
+            }
+        }
+
+        // Generate total treatment duration (normally distributed around adjusted mean)
+        int totalDurationMonths = (int) GameRandom.nextGaussian(baseMean, BRACES_DURATION_STANDARD_DEVIATION);
+        totalDurationMonths = Math.max(baseMin, Math.min(baseMax, totalDurationMonths));
 
         // Determine how far into treatment the student is based on grade level
         // Older students have been wearing braces longer on average

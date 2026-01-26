@@ -11,6 +11,18 @@ import static utility.Randomizer.setRandom;
 
 public class SiblingGenerator {
 
+    // School colors for braces band color selection
+    private static String[] schoolColors = null;
+
+    /**
+     * Sets the school colors for use in braces band color selection.
+     *
+     * @param colors the school colors array
+     */
+    public static void setSchoolColors(String[] colors) {
+        schoolColors = colors;
+    }
+
     private static final int SAMPLE_SIZE = 73227;
     private static final int NO_SIBLING_RATE = 15524;
     private static final int ONE_SIBLING_RATE = 28368;
@@ -758,22 +770,40 @@ public class SiblingGenerator {
         student.studentStatistics.setHasBraces(hasBraces);
 
         if (hasBraces) {
-            // Set basic braces cosmetics
-            student.studentStatistics.setBracesBandColor(TraitSelection.selectBracesBandColor());
+            // Determine if student has alternating band colors (relatively rare)
+            boolean hasAlternating = TraitSelection.determineAlternatingBandColors();
+
+            // Set braces band colors (with potential for alternating/school colors)
+            String firstBandColor = TraitSelection.selectFirstBandColor(hasAlternating, schoolColors);
+            student.studentStatistics.setBracesBandColor(firstBandColor);
+
+            if (hasAlternating) {
+                // Select second color, with higher chance of school colors
+                String secondBandColor = TraitSelection.selectBracesBandColorWithSchoolOption(
+                        true, schoolColors, firstBandColor);
+                student.studentStatistics.setBracesSecondBandColor(secondBandColor);
+            }
+
+            // Set bracket type
             student.studentStatistics.setBracesBracketType(TraitSelection.selectBracesBracketType());
 
-            // Generate braces timing
-            LocalDate[] bracesTiming = TraitSelection.generateBracesTiming(gradeLevel, gameStartDate);
-            student.studentStatistics.setBracesStartDate(bracesTiming[0]);
-            student.studentStatistics.setBracesEndDate(bracesTiming[1]);
-
-            // Determine if student has orthodontic elastics
+            // Determine if student has orthodontic elastics FIRST
+            // (elastic type affects treatment duration)
             boolean hasElastics = TraitSelection.determineHasElastics();
+            String elasticType = null;
             student.studentStatistics.setBracesHasElastics(hasElastics);
             if (hasElastics) {
                 student.studentStatistics.setBracesElasticColor(TraitSelection.selectBracesElasticColor());
-                student.studentStatistics.setBracesElasticType(TraitSelection.selectBracesElasticType());
+                elasticType = TraitSelection.selectBracesElasticType();
+                student.studentStatistics.setBracesElasticType(elasticType);
             }
+
+            // Generate braces timing
+            // Certain modifiers like ligature ties extend treatment duration
+            LocalDate[] bracesTiming = TraitSelection.generateBracesTiming(
+                    gradeLevel, gameStartDate, hasElastics, elasticType);
+            student.studentStatistics.setBracesStartDate(bracesTiming[0]);
+            student.studentStatistics.setBracesEndDate(bracesTiming[1]);
 
             // Recalculate charisma-dependent stats with braces penalty
             student.studentStatistics.recalculateCharismaDependentStats();

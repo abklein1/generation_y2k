@@ -309,6 +309,13 @@ public final class SimConstants {
     public static final int BRACES_ELASTIC_PROBABILITY = 60;
     public static final int BRACES_ELASTIC_SAMPLE_SIZE = 100;
 
+    // Alternating band colors (relatively low chance)
+    public static final int BRACES_ALTERNATING_BAND_PROBABILITY = 15;  // 15% chance
+    public static final int BRACES_ALTERNATING_BAND_SAMPLE_SIZE = 100;
+    // When alternating, higher chance of using school colors
+    public static final int BRACES_SCHOOL_COLOR_PROBABILITY = 60;  // 60% chance when alternating
+    public static final int BRACES_SCHOOL_COLOR_SAMPLE_SIZE = 100;
+
     // Past braces rates by race (from 2004 Ohio study - total orthodontic treatment rates)
     // These represent the total who have EVER had braces (current + past)
     // Current braces rates are already defined in TraitSelection
