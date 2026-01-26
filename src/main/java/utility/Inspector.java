@@ -32,8 +32,6 @@ public class Inspector {
 
         StringBuilder sb = new StringBuilder();
         String firstName = student.studentName.getFirstName();
-        String lastName = student.studentName.getLastName();
-        String suffix = student.studentName.getSuffix();
         String gender = student.studentStatistics.getGender();
         String hairColor = student.studentStatistics.getHairColor();
         String eyeColor = student.studentStatistics.getEyeColor();
@@ -59,13 +57,8 @@ public class Inspector {
         List<String> siblingsNotInSchool = student.studentStatistics.getSiblingsNotInSchool();
         List<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
 
-        // Header with name
-        if (suffix != null) {
-            sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix)
-                    .append("\n=====================================\n");
-        } else {
-            sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
-        }
+        // Header with name (using getFullName for consistency)
+        sb.append(student.studentName.getFullName()).append("\n=====================================\n");
         
         // Physical description
         sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
@@ -88,6 +81,10 @@ public class Inspector {
             }
             sb.append(".");
         }
+        // Add glasses to physical description (contacts are not visible)
+        if (student.studentStatistics.getHasGlasses() && !student.studentStatistics.getHasContacts()) {
+            sb.append(" They wear glasses.");
+        }
         sb.append("\n");
         
         // Grade and birthday
@@ -104,9 +101,17 @@ public class Inspector {
             sb.append(" (boosted by past braces)");
         }
         sb.append("\n   AGILITY: ");
-        sb.append(student.studentStatistics.getAgility()).append("\n   DETERMINATION: ")
+        sb.append(student.studentStatistics.getEffectiveAgility());
+        if (student.studentStatistics.hasUncorrectedVision()) {
+            sb.append(" (reduced by uncorrected vision)");
+        }
+        sb.append("\n   DETERMINATION: ")
                 .append(student.studentStatistics.getDetermination());
-        sb.append("\n   PERCEPTION: ").append(student.studentStatistics.getPerception()).append("\n   STRENGTH: ");
+        sb.append("\n   PERCEPTION: ").append(student.studentStatistics.getEffectivePerception());
+        if (student.studentStatistics.hasUncorrectedVision()) {
+            sb.append(" (reduced by uncorrected vision)");
+        }
+        sb.append("\n   STRENGTH: ");
         sb.append(student.studentStatistics.getStrength()).append("\n   LUCK: ")
                 .append(student.studentStatistics.getLuck()).append("\n");
         sb.append("   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
@@ -134,14 +139,30 @@ public class Inspector {
         } else {
             sb.append(firstName).append(" is not asleep.\n");
         }
+        // Vision issues and corrective lenses
+        if (student.studentStatistics.hasVisionIssue()) {
+            String visionDescription = student.studentStatistics.getVisionIssueDescription();
+            sb.append(firstName).append(" has ").append(visionDescription);
+            if (student.studentStatistics.hasVisionCorrection()) {
+                String correctionDesc = student.studentStatistics.getVisionCorrectionDescription();
+                sb.append(", corrected with ").append(correctionDesc).append(".\n");
+            } else {
+                sb.append(" (uncorrected - Perception -")
+                        .append(student.studentStatistics.getVisionPerceptionPenalty())
+                        .append(", Agility -")
+                        .append(student.studentStatistics.getVisionAgilityPenalty())
+                        .append(").\n");
+            }
+        } else {
+            sb.append(firstName).append(" has normal vision.\n");
+        }
         
         // Family info
         sb.append("Their family has the following income: ").append(income).append("\n");
         if (!siblingsInSchool.isEmpty()) {
             sb.append("They have the following siblings in school: ").append("\n");
             for (Student sibling : siblingsInSchool) {
-                sb.append(sibling.studentName.getFirstName()).append(" ").append(sibling.studentName.getLastName())
-                        .append("\n");
+                sb.append(sibling.studentName.getFullName()).append("\n");
             }
         }
         if (!siblingsNotInSchool.isEmpty()) {
@@ -221,7 +242,12 @@ public class Inspector {
                     .append(" hair and ").append(eyeColor).append(" eyes. ");
         }
 
-        sb.append("They stand ").append(df.format(height)).append(" inches tall.\n");
+        sb.append("They stand ").append(df.format(height)).append(" inches tall.");
+        // Add glasses to physical description (contacts are not visible)
+        if (staff.teacherStatistics.getHasGlasses() && !staff.teacherStatistics.getHasContacts()) {
+            sb.append(" They wear glasses.");
+        }
+        sb.append("\n");
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
         sb.append("They have the following stats:\n   INTELLIGENCE: ")
                 .append(staff.teacherStatistics.getIntelligence());
@@ -252,6 +278,19 @@ public class Inspector {
         } else {
             sb.append(firstName).append(" is not asleep.\n");
         }
+        // Vision issues and corrective lenses
+        if (staff.teacherStatistics.hasVisionIssue()) {
+            String visionDescription = staff.teacherStatistics.getVisionIssueDescription();
+            sb.append(firstName).append(" has ").append(visionDescription);
+            if (staff.teacherStatistics.hasVisionCorrection()) {
+                String correctionDesc = staff.teacherStatistics.getVisionCorrectionDescription();
+                sb.append(", corrected with ").append(correctionDesc).append(".\n");
+            } else {
+                sb.append(" (uncorrected).\n");
+            }
+        } else {
+            sb.append(firstName).append(" has normal vision.\n");
+        }
         sb.append("They are assigned as: ").append(assignment).append("\n");
         sb.append("Teacher schedule is: ").append(teacherSchedule);
 
@@ -262,8 +301,7 @@ public class Inspector {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Integer, Student> entry : studentGradeClass.entrySet()) {
             Student student = entry.getValue();
-            sb.append(student.studentName.getFirstName()).append(" ").append(student.studentName.getLastName())
-                    .append("\n");
+            sb.append(student.studentName.getFullName()).append("\n");
         }
         return sb.toString();
     }
@@ -348,8 +386,7 @@ public class Inspector {
                 for (int row = 0; row < seats.length; row++) {
                     for (int col = 0; col < seats[0].length; col++) {
                         if (seats[row][col] != null) {
-                            tableModel.setValueAt(seats[row][col].studentName.getFirstName() + " "
-                                    + seats[row][col].studentName.getLastName(), row, col);
+                            tableModel.setValueAt(seats[row][col].studentName.getFullName(), row, col);
                         } else {
                             tableModel.setValueAt("Empty", row, col);
                         }
@@ -394,9 +431,7 @@ public class Inspector {
                 List<Student> students = block.getClassPopulation();
                 if (students != null) {
                     for (Student student : students) {
-                        studentListArea.append(student.studentName.getFirstName());
-                        studentListArea.append(" ");
-                        studentListArea.append(student.studentName.getLastName());
+                        studentListArea.append(student.studentName.getFullName());
                         studentListArea.append("\n");
                     }
                 } else {

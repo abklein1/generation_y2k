@@ -65,6 +65,23 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, TEACHER_HAIR_TYPE_SAMPLE_SIZE)));
             staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, TEACHER_HAIR_SELECTION_SAMPLE_SIZE), staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
             staff.teacherStatistics.setYearsOfExperience(setRandom(0, (staff.teacherStatistics.getAge() - TEACHER_YEARS_OF_EXPERIENCE_MODIFIER)));
+
+            // Determine vision issues based on age and gender
+            int age = staff.teacherStatistics.getAge();
+            String gender = staff.teacherStatistics.getGender();
+            boolean[] visionIssues = TraitSelection.determineAdultVisionIssues(age, gender);
+            staff.teacherStatistics.setHasMyopia(visionIssues[0]);
+            staff.teacherStatistics.setHasHyperopia(visionIssues[1]);
+            staff.teacherStatistics.setHasAstigmatism(visionIssues[2]);
+
+            // Determine corrective lenses if staff has vision issues
+            // Adults are much more likely to have corrective lenses
+            if (staff.teacherStatistics.hasVisionIssue()) {
+                boolean[] correctiveLenses = TraitSelection.determineAdultCorrectiveLensesComplete(age);
+                staff.teacherStatistics.setHasGlasses(correctiveLenses[0]);
+                staff.teacherStatistics.setHasContacts(correctiveLenses[1]);
+            }
+
             if (suffix != null) {
                 view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName() + " " + suffix);
             } else {

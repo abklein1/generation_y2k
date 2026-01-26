@@ -899,4 +899,379 @@ public class TraitSelection {
 
         return new LocalDate[]{bracesStartDate, bracesEndDate};
     }
+
+    /**
+     * Determines if a student has myopia (nearsightedness) based on race and gender.
+     * 
+     * Based on 1999-2004 NHANES vision examination data:
+     * - Overall age-standardized prevalence: 33.1%
+     * - Females (20-39): 40%
+     * - Males (20-39): 33%
+     * - Non-Hispanic whites: 35.2%
+     * - Non-Hispanic blacks: 28.6%
+     * - Mexican Americans: 25.1%
+     * 
+     * A youth multiplier is applied since myopia often develops/worsens during teen years.
+     *
+     * @param race the student's race category
+     * @param gender the student's gender
+     * @return true if the student has myopia, false otherwise
+     */
+    public static boolean determineMyopia(String race, String gender) {
+        // Base rate by race (from NHANES data)
+        double baseRate = switch (race) {
+            case "white" -> VISION_MYOPIA_WHITE_RATE;
+            case "black" -> VISION_MYOPIA_BLACK_RATE;
+            case "hispanic" -> VISION_MYOPIA_HISPANIC_RATE;
+            case "api" -> VISION_MYOPIA_API_RATE;
+            case "aian" -> VISION_MYOPIA_AIAN_RATE;
+            case "2prace" -> VISION_MYOPIA_2PRACE_RATE;
+            default -> VISION_MYOPIA_BASE_RATE;
+        };
+
+        // Apply gender adjustment (20-39 age group data)
+        // Females have higher myopia rate than males
+        if (gender.equalsIgnoreCase("Female")) {
+            // Adjust towards female rate
+            baseRate = baseRate * (VISION_MYOPIA_FEMALE_RATE / VISION_MYOPIA_BASE_RATE);
+        } else {
+            // Adjust towards male rate
+            baseRate = baseRate * (VISION_MYOPIA_MALE_RATE / VISION_MYOPIA_BASE_RATE);
+        }
+
+        // Apply youth multiplier (myopia tends to develop in teen years)
+        baseRate *= VISION_YOUTH_MYOPIA_MULTIPLIER;
+
+        // Cap at reasonable bounds
+        baseRate = Math.min(0.50, baseRate);
+
+        return GameRandom.nextDouble() < baseRate;
+    }
+
+    /**
+     * Determines if a student has hyperopia (farsightedness).
+     * 
+     * Based on 1999-2004 NHANES vision examination data:
+     * - Age-standardized prevalence: 3.6%
+     * - Less common in younger persons (aged <60 years)
+     * 
+     * Note: Hyperopia and myopia are generally mutually exclusive.
+     * This method should only be called if the student does NOT have myopia.
+     *
+     * @return true if the student has hyperopia, false otherwise
+     */
+    public static boolean determineHyperopia() {
+        // Hyperopia is less common in young people
+        // Base rate from NHANES is 3.6% for adults, but lower for teens
+        double baseRate = VISION_HYPEROPIA_BASE_RATE * 0.7;  // Reduce for youth
+
+        return GameRandom.nextDouble() < baseRate;
+    }
+
+    /**
+     * Determines if a student has astigmatism.
+     * 
+     * Based on 1999-2004 NHANES vision examination data:
+     * - Age-standardized prevalence: 36.2%
+     * - Persons aged ≥60 years were more likely to have astigmatism
+     * 
+     * Astigmatism can occur alongside myopia or hyperopia.
+     *
+     * @return true if the student has astigmatism, false otherwise
+     */
+    public static boolean determineAstigmatism() {
+        // Astigmatism is slightly less common in younger people
+        double baseRate = VISION_ASTIGMATISM_BASE_RATE * 0.85;  // Reduce for youth
+
+        return GameRandom.nextDouble() < baseRate;
+    }
+
+    /**
+     * Determines all vision issues for a student.
+     * Returns a boolean array: [hasMyopia, hasHyperopia, hasAstigmatism]
+     * 
+     * Note: Myopia and hyperopia are mutually exclusive (can't have both).
+     * Astigmatism can occur with either myopia or hyperopia.
+     *
+     * @param race the student's race category
+     * @param gender the student's gender
+     * @return boolean array with [hasMyopia, hasHyperopia, hasAstigmatism]
+     */
+    public static boolean[] determineVisionIssues(String race, String gender) {
+        boolean hasMyopia = determineMyopia(race, gender);
+        boolean hasHyperopia = false;
+        boolean hasAstigmatism = determineAstigmatism();
+
+        // Only check for hyperopia if they don't have myopia
+        // (myopia and hyperopia are mutually exclusive)
+        if (!hasMyopia) {
+            hasHyperopia = determineHyperopia();
+        }
+
+        return new boolean[]{hasMyopia, hasHyperopia, hasAstigmatism};
+    }
+
+    /**
+     * Determines if a student with vision issues has corrective lenses (glasses or contacts).
+     * 
+     * Based on 1988 Medical Expenditure Panel Survey:
+     * - 25.4% of children 6-18 had corrective lenses
+     * - Girls had greater odds than boys (OR 1.41)
+     * - Income/insurance significantly affects access
+     * - For higher income families, odds increase with age
+     * 
+     * This method assumes the student already has a vision issue.
+     *
+     * @param race the student's race category
+     * @param gender the student's gender
+     * @param incomeLevel the family income level (low, middle, high)
+     * @param gradeLevel the student's grade level
+     * @return true if the student has corrective lenses, false otherwise
+     */
+    public static boolean determineCorrectionLenses(String race, String gender, 
+                                                     String incomeLevel, String gradeLevel) {
+        // Base rate - majority of people with vision issues have glasses
+        double baseRate = CORRECTIVE_LENS_BASE_RATE;
+
+        // Apply gender multiplier (girls 1.41x more likely)
+        if (gender.equalsIgnoreCase("Female")) {
+            baseRate *= CORRECTIVE_LENS_FEMALE_MULTIPLIER;
+        } else {
+            baseRate *= CORRECTIVE_LENS_MALE_MULTIPLIER;
+        }
+
+        // Apply income multiplier
+        double incomeMultiplier = switch (incomeLevel) {
+            case "high" -> CORRECTIVE_LENS_HIGH_INCOME_MULTIPLIER;
+            case "middle" -> CORRECTIVE_LENS_MIDDLE_INCOME_MULTIPLIER;
+            case "low" -> CORRECTIVE_LENS_LOW_INCOME_MULTIPLIER;
+            default -> CORRECTIVE_LENS_MIDDLE_INCOME_MULTIPLIER;
+        };
+        baseRate *= incomeMultiplier;
+
+        // Apply race multiplier
+        double raceMultiplier = switch (race) {
+            case "white" -> CORRECTIVE_LENS_WHITE_MULTIPLIER;
+            case "black" -> CORRECTIVE_LENS_BLACK_MULTIPLIER;
+            case "hispanic" -> CORRECTIVE_LENS_HISPANIC_MULTIPLIER;
+            case "api" -> CORRECTIVE_LENS_API_MULTIPLIER;
+            case "aian" -> CORRECTIVE_LENS_AIAN_MULTIPLIER;
+            case "2prace" -> CORRECTIVE_LENS_2PRACE_MULTIPLIER;
+            default -> 1.0;
+        };
+        baseRate *= raceMultiplier;
+
+        // Apply age/grade effect (only significant for higher income families)
+        if (!incomeLevel.equals("low")) {
+            double gradeMultiplier = switch (gradeLevel) {
+                case "Senior" -> CORRECTIVE_LENS_SENIOR_MULTIPLIER;
+                case "Junior" -> CORRECTIVE_LENS_JUNIOR_MULTIPLIER;
+                case "Sophomore" -> CORRECTIVE_LENS_SOPHOMORE_MULTIPLIER;
+                case "Freshman" -> CORRECTIVE_LENS_FRESHMAN_MULTIPLIER;
+                default -> 1.0;
+            };
+            baseRate *= gradeMultiplier;
+        }
+
+        // Cap at reasonable bounds
+        baseRate = Math.max(0.20, Math.min(0.95, baseRate));
+
+        return GameRandom.nextDouble() < baseRate;
+    }
+
+    /**
+     * Determines if a student with glasses also has contact lenses.
+     * Contact lens usage varies significantly by income level.
+     * 
+     * Higher income students have much greater access to contacts.
+     *
+     * @param incomeLevel the family income level (low, middle, high)
+     * @return true if the student has contact lenses, false otherwise
+     */
+    public static boolean determineContactLenses(String incomeLevel) {
+        double contactRate = switch (incomeLevel) {
+            case "high" -> CONTACTS_HIGH_INCOME_RATE;
+            case "middle" -> CONTACTS_MIDDLE_INCOME_RATE;
+            case "low" -> CONTACTS_LOW_INCOME_RATE;
+            default -> CONTACTS_MIDDLE_INCOME_RATE;
+        };
+
+        return GameRandom.nextDouble() < contactRate;
+    }
+
+    /**
+     * Determines corrective lens status for a student with vision issues.
+     * Returns a boolean array: [hasGlasses, hasContacts]
+     * 
+     * Note: Students with contacts are assumed to also have glasses as backup.
+     *
+     * @param race the student's race category
+     * @param gender the student's gender
+     * @param incomeLevel the family income level (low, middle, high)
+     * @param gradeLevel the student's grade level
+     * @return boolean array with [hasGlasses, hasContacts]
+     */
+    public static boolean[] determineCorrectiveLenses(String race, String gender,
+                                                       String incomeLevel, String gradeLevel) {
+        boolean hasGlasses = determineCorrectionLenses(race, gender, incomeLevel, gradeLevel);
+        boolean hasContacts = false;
+
+        // Only check for contacts if they have glasses
+        // (contacts require existing vision care relationship)
+        if (hasGlasses) {
+            hasContacts = determineContactLenses(incomeLevel);
+        }
+
+        return new boolean[]{hasGlasses, hasContacts};
+    }
+
+    // ==================== ADULT/TEACHER VISION METHODS ====================
+
+    /**
+     * Determines if an adult has myopia (nearsightedness) based on age and gender.
+     * Myopia rates are relatively stable in adults but can decrease slightly with age
+     * as presbyopia (age-related farsightedness) becomes more dominant.
+     *
+     * @param age the adult's age
+     * @param gender the adult's gender
+     * @return true if they have myopia, false otherwise
+     */
+    public static boolean determineAdultMyopia(int age, String gender) {
+        // Base rate similar to general population
+        double baseRate = VISION_MYOPIA_BASE_RATE;
+
+        // Apply gender adjustment
+        if (gender.equalsIgnoreCase("Female")) {
+            baseRate *= (VISION_MYOPIA_FEMALE_RATE / VISION_MYOPIA_BASE_RATE);
+        } else {
+            baseRate *= (VISION_MYOPIA_MALE_RATE / VISION_MYOPIA_BASE_RATE);
+        }
+
+        // Myopia prevalence decreases slightly with age as hyperopia becomes more common
+        if (age >= 60) {
+            baseRate *= 0.7;  // Reduced in older adults
+        } else if (age >= 40) {
+            baseRate *= 0.9;  // Slightly reduced in middle age
+        }
+
+        return GameRandom.nextDouble() < baseRate;
+    }
+
+    /**
+     * Determines if an adult has hyperopia (farsightedness) based on age.
+     * Hyperopia/presbyopia increases significantly with age, especially after 40.
+     *
+     * @param age the adult's age
+     * @param hasMyopia whether they already have myopia (mutually exclusive)
+     * @return true if they have hyperopia, false otherwise
+     */
+    public static boolean determineAdultHyperopia(int age, boolean hasMyopia) {
+        // Hyperopia and myopia are mutually exclusive
+        if (hasMyopia) {
+            return false;
+        }
+
+        // Hyperopia rate increases significantly with age (presbyopia)
+        double baseRate;
+        if (age >= 60) {
+            baseRate = ADULT_HYPEROPIA_60_PLUS_RATE;
+        } else if (age >= 40) {
+            baseRate = ADULT_HYPEROPIA_40_TO_59_RATE;
+        } else {
+            baseRate = ADULT_HYPEROPIA_UNDER_40_RATE;
+        }
+
+        return GameRandom.nextDouble() < baseRate;
+    }
+
+    /**
+     * Determines if an adult has astigmatism based on age.
+     * Astigmatism prevalence increases with age.
+     *
+     * @param age the adult's age
+     * @return true if they have astigmatism, false otherwise
+     */
+    public static boolean determineAdultAstigmatism(int age) {
+        double baseRate = VISION_ASTIGMATISM_BASE_RATE;
+
+        // Apply age multiplier
+        if (age >= 60) {
+            baseRate *= ADULT_ASTIGMATISM_60_PLUS_MULTIPLIER;
+        } else if (age >= 40) {
+            baseRate *= ADULT_ASTIGMATISM_40_TO_59_MULTIPLIER;
+        } else {
+            baseRate *= ADULT_ASTIGMATISM_UNDER_40_MULTIPLIER;
+        }
+
+        // Cap at reasonable bounds
+        baseRate = Math.min(0.55, baseRate);
+
+        return GameRandom.nextDouble() < baseRate;
+    }
+
+    /**
+     * Determines all vision issues for an adult/teacher.
+     * Returns a boolean array: [hasMyopia, hasHyperopia, hasAstigmatism]
+     *
+     * @param age the adult's age
+     * @param gender the adult's gender
+     * @return boolean array with vision issues
+     */
+    public static boolean[] determineAdultVisionIssues(int age, String gender) {
+        boolean hasMyopia = determineAdultMyopia(age, gender);
+        boolean hasHyperopia = determineAdultHyperopia(age, hasMyopia);
+        boolean hasAstigmatism = determineAdultAstigmatism(age);
+
+        return new boolean[]{hasMyopia, hasHyperopia, hasAstigmatism};
+    }
+
+    /**
+     * Determines if an adult with vision issues has corrective lenses.
+     * Adults are much more likely to have corrective lenses than children,
+     * especially working professionals who need functional vision.
+     *
+     * @return true if they have corrective lenses, false otherwise
+     */
+    public static boolean determineAdultCorrectiveLenses() {
+        // Adults almost always have corrective lenses if needed
+        return GameRandom.nextDouble() < ADULT_CORRECTIVE_LENS_RATE;
+    }
+
+    /**
+     * Determines if an adult with glasses also has contact lenses.
+     * Contact lens usage decreases with age due to dry eye and other issues.
+     *
+     * @param age the adult's age
+     * @return true if they have contacts, false otherwise
+     */
+    public static boolean determineAdultContactLenses(int age) {
+        double contactRate;
+        if (age >= 60) {
+            contactRate = ADULT_CONTACTS_60_PLUS_RATE;
+        } else if (age >= 40) {
+            contactRate = ADULT_CONTACTS_40_TO_59_RATE;
+        } else {
+            contactRate = ADULT_CONTACTS_UNDER_40_RATE;
+        }
+
+        return GameRandom.nextDouble() < contactRate;
+    }
+
+    /**
+     * Determines corrective lens status for an adult with vision issues.
+     * Returns a boolean array: [hasGlasses, hasContacts]
+     *
+     * @param age the adult's age
+     * @return boolean array with [hasGlasses, hasContacts]
+     */
+    public static boolean[] determineAdultCorrectiveLensesComplete(int age) {
+        boolean hasGlasses = determineAdultCorrectiveLenses();
+        boolean hasContacts = false;
+
+        if (hasGlasses) {
+            hasContacts = determineAdultContactLenses(age);
+        }
+
+        return new boolean[]{hasGlasses, hasContacts};
+    }
 }

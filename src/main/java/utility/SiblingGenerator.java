@@ -394,6 +394,8 @@ public class SiblingGenerator {
         if (setRandom(0, 3) == 2) {
             l_name = NameLoader.selectWeightedRandom();
             lastName = l_name[0];
+            // Capitalize the last name (source data is in all caps)
+            lastName = studentCopy.studentName.capitalizeName(lastName);
         } else {
             lastName = student.studentName.getLastName();
         }

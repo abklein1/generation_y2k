@@ -35,6 +35,7 @@ public class RoomNameGenerator {
         String gender = genderSelection();
         String firstName = nameGenerator(year, gender);
         String lastName = lNameReference.get(setRandom(0, lNameReference.size()));
+        lastName = StudentName.capitalizeName(lastName);
         char middleInitial = generateMiddleInitial();
         String gymOrGymnasium = gymOrGymnasium();
 
@@ -47,6 +48,7 @@ public class RoomNameGenerator {
         String gender = genderSelection();
         String firstName = nameGenerator(year, gender);
         String lastName = lNameReference.get(setRandom(0, lNameReference.size()));
+        lastName = StudentName.capitalizeName(lastName);
         char middleInitial = generateMiddleInitial();
         String athleticFieldChoice = fieldOrComplexOrStadiumOrFieldHouse();
         int roll = GameRandom.nextInt(1, 100);
@@ -65,6 +67,7 @@ public class RoomNameGenerator {
         String gender = genderSelection();
         String firstName = nameGenerator(year, gender);
         String lastName = lNameReference.get(setRandom(0, lNameReference.size()));
+        lastName = StudentName.capitalizeName(lastName);
         char middleInitial = generateMiddleInitial();
 
         return firstName + " " + middleInitial + ". " + lastName + " Library";
@@ -75,6 +78,7 @@ public class RoomNameGenerator {
         String gender = genderSelection();
         String firstName = nameGenerator(year, gender);
         String lastName = lNameReference.get(setRandom(0, lNameReference.size()));
+        lastName = StudentName.capitalizeName(lastName);
         char middleInitial = generateMiddleInitial();
 
         return firstName + " " + middleInitial + ". " + lastName + " Auditorium";

@@ -35,6 +35,13 @@ public class TeacherStatistics implements PStatistics {
     private Enum staffType;
     private final TeacherSchedule teacherSchedule;
     private int yearsOfExperience;
+    // Vision issues - refractive errors
+    private boolean hasMyopia;
+    private boolean hasHyperopia;
+    private boolean hasAstigmatism;
+    // Corrective lenses
+    private boolean hasGlasses;
+    private boolean hasContacts;
 
     public TeacherStatistics() {
         this.height = 0;
@@ -64,6 +71,11 @@ public class TeacherStatistics implements PStatistics {
         this.staffType = null;
         this.teacherSchedule = new TeacherSchedule();
         this.yearsOfExperience = 0;
+        this.hasMyopia = false;
+        this.hasHyperopia = false;
+        this.hasAstigmatism = false;
+        this.hasGlasses = false;
+        this.hasContacts = false;
     }
 
     @Override
@@ -515,5 +527,106 @@ public class TeacherStatistics implements PStatistics {
 
     public void setYearsOfExperience(int yearsOfExperience) {
         this.yearsOfExperience = yearsOfExperience;
+    }
+
+    // Vision issue getters and setters
+
+    public boolean getHasMyopia() {
+        return hasMyopia;
+    }
+
+    public void setHasMyopia(boolean hasMyopia) {
+        this.hasMyopia = hasMyopia;
+    }
+
+    public boolean getHasHyperopia() {
+        return hasHyperopia;
+    }
+
+    public void setHasHyperopia(boolean hasHyperopia) {
+        this.hasHyperopia = hasHyperopia;
+    }
+
+    public boolean getHasAstigmatism() {
+        return hasAstigmatism;
+    }
+
+    public void setHasAstigmatism(boolean hasAstigmatism) {
+        this.hasAstigmatism = hasAstigmatism;
+    }
+
+    public boolean getHasGlasses() {
+        return hasGlasses;
+    }
+
+    public void setHasGlasses(boolean hasGlasses) {
+        this.hasGlasses = hasGlasses;
+    }
+
+    public boolean getHasContacts() {
+        return hasContacts;
+    }
+
+    public void setHasContacts(boolean hasContacts) {
+        this.hasContacts = hasContacts;
+    }
+
+    /**
+     * Checks if the teacher has any vision issue.
+     *
+     * @return true if they have any refractive error
+     */
+    public boolean hasVisionIssue() {
+        return hasMyopia || hasHyperopia || hasAstigmatism;
+    }
+
+    /**
+     * Checks if the teacher has any form of vision correction.
+     *
+     * @return true if they have glasses or contacts
+     */
+    public boolean hasVisionCorrection() {
+        return hasGlasses || hasContacts;
+    }
+
+    /**
+     * Gets a description of the teacher's vision issues.
+     *
+     * @return a String describing the vision issues, or null if none
+     */
+    public String getVisionIssueDescription() {
+        if (!hasVisionIssue()) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (hasMyopia && hasAstigmatism) {
+            sb.append("myopia with astigmatism");
+        } else if (hasHyperopia && hasAstigmatism) {
+            sb.append("hyperopia with astigmatism");
+        } else if (hasMyopia) {
+            sb.append("myopia");
+        } else if (hasHyperopia) {
+            sb.append("hyperopia");
+        } else if (hasAstigmatism) {
+            sb.append("astigmatism");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Gets a description of the teacher's vision correction.
+     *
+     * @return a String describing their correction
+     */
+    public String getVisionCorrectionDescription() {
+        if (hasContacts) {
+            return "contact lenses";
+        } else if (hasGlasses) {
+            return "glasses";
+        } else {
+            return "no correction";
+        }
     }
 }

@@ -156,6 +156,22 @@ public class StudentPopGenerator {
                     student.studentStatistics.recalculateCharismaDependentStats();
                 }
             }
+
+            // Determine vision issues based on NHANES data
+            String gender = student.studentStatistics.getGender();
+            boolean[] visionIssues = TraitSelection.determineVisionIssues(race, gender);
+            student.studentStatistics.setHasMyopia(visionIssues[0]);
+            student.studentStatistics.setHasHyperopia(visionIssues[1]);
+            student.studentStatistics.setHasAstigmatism(visionIssues[2]);
+
+            // Determine corrective lenses if student has vision issues
+            if (student.studentStatistics.hasVisionIssue()) {
+                boolean[] correctiveLenses = TraitSelection.determineCorrectiveLenses(
+                        race, gender, incomeLevel, gradeLevel);
+                student.studentStatistics.setHasGlasses(correctiveLenses[0]);
+                student.studentStatistics.setHasContacts(correctiveLenses[1]);
+            }
+
             if (suffix != null) {
                 view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {

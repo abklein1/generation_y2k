@@ -341,6 +341,117 @@ public final class SimConstants {
     public static final double BRACES_PAST_RATE_JUNIOR = 0.50;     // 50% of total eligible already done
     public static final double BRACES_PAST_RATE_SENIOR = 0.65;     // 65% of total eligible already done
 
+    // Vision Issues Constants (based on 1999-2004 NHANES data)
+    // Base prevalence rates for refractive errors in U.S. population aged 20+
+    // Note: High school students (14-18) may have slightly different rates
+
+    // Hyperopia (farsightedness) - 3.6% age-standardized prevalence
+    public static final double VISION_HYPEROPIA_BASE_RATE = 0.036;
+
+    // Myopia (nearsightedness) - 33.1% age-standardized prevalence
+    // Higher in younger populations due to near-work activities
+    public static final double VISION_MYOPIA_BASE_RATE = 0.331;
+
+    // Myopia gender differences (among 20-39 year olds)
+    public static final double VISION_MYOPIA_FEMALE_RATE = 0.40;  // 40% in females
+    public static final double VISION_MYOPIA_MALE_RATE = 0.33;    // 33% in males
+
+    // Myopia rates by race/ethnicity (from NHANES data)
+    public static final double VISION_MYOPIA_WHITE_RATE = 0.352;           // 35.2% non-Hispanic whites
+    public static final double VISION_MYOPIA_BLACK_RATE = 0.286;           // 28.6% non-Hispanic blacks
+    public static final double VISION_MYOPIA_HISPANIC_RATE = 0.251;        // 25.1% Mexican Americans
+    public static final double VISION_MYOPIA_API_RATE = 0.40;              // Estimated higher for Asian populations
+    public static final double VISION_MYOPIA_AIAN_RATE = 0.28;             // Estimated similar to other minorities
+    public static final double VISION_MYOPIA_2PRACE_RATE = 0.32;           // Weighted average
+
+    // Astigmatism - 36.2% age-standardized prevalence
+    // Can occur alongside myopia or hyperopia
+    public static final double VISION_ASTIGMATISM_BASE_RATE = 0.362;
+
+    // Multiplier for high school students (myopia tends to develop/worsen in teen years)
+    public static final double VISION_YOUTH_MYOPIA_MULTIPLIER = 1.1;
+
+    // Perception and Agility penalties for uncorrected vision issues
+    public static final int VISION_MYOPIA_PERCEPTION_PENALTY = 8;
+    public static final int VISION_HYPEROPIA_PERCEPTION_PENALTY = 5;
+    public static final int VISION_ASTIGMATISM_PERCEPTION_PENALTY = 4;
+    public static final int VISION_MYOPIA_AGILITY_PENALTY = 5;
+    public static final int VISION_HYPEROPIA_AGILITY_PENALTY = 3;
+    public static final int VISION_ASTIGMATISM_AGILITY_PENALTY = 2;
+
+    // Corrective Lens Constants (based on 1988 Medical Expenditure Panel Survey)
+    // 25.4% of children 6-18 had corrective lenses
+    // Note: This represents those WITH vision issues who have correction
+
+    // Base rate of having corrective lenses among those with vision issues
+    // Majority of people with vision issues have glasses
+    public static final double CORRECTIVE_LENS_BASE_RATE = 0.75;
+
+    // Gender odds ratio - girls 1.41x more likely than boys
+    public static final double CORRECTIVE_LENS_FEMALE_MULTIPLIER = 1.18;  // sqrt(1.41) to balance
+    public static final double CORRECTIVE_LENS_MALE_MULTIPLIER = 0.84;    // 1/1.18
+
+    // Income-based multipliers for corrective lens access
+    // Based on survey: uninsured black/Hispanic baseline, others have higher odds
+    public static final double CORRECTIVE_LENS_HIGH_INCOME_MULTIPLIER = 1.3;   // Better access
+    public static final double CORRECTIVE_LENS_MIDDLE_INCOME_MULTIPLIER = 1.0; // Baseline
+    public static final double CORRECTIVE_LENS_LOW_INCOME_MULTIPLIER = 0.6;    // Reduced access
+
+    // Race/ethnicity multipliers (derived from odds ratios in study)
+    // Uninsured black/Hispanic = baseline (1.0)
+    // Uninsured non-black/non-Hispanic = 2.29x
+    // These are applied additively with income effects
+    public static final double CORRECTIVE_LENS_WHITE_MULTIPLIER = 1.15;
+    public static final double CORRECTIVE_LENS_BLACK_MULTIPLIER = 0.85;
+    public static final double CORRECTIVE_LENS_HISPANIC_MULTIPLIER = 0.85;
+    public static final double CORRECTIVE_LENS_API_MULTIPLIER = 1.10;
+    public static final double CORRECTIVE_LENS_AIAN_MULTIPLIER = 0.90;
+    public static final double CORRECTIVE_LENS_2PRACE_MULTIPLIER = 1.0;
+
+    // Contact lens rates (among those with corrective lenses)
+    // Higher income = significantly higher chance of contacts
+    public static final double CONTACTS_HIGH_INCOME_RATE = 0.35;    // 35% of lens wearers
+    public static final double CONTACTS_MIDDLE_INCOME_RATE = 0.18;  // 18% of lens wearers
+    public static final double CONTACTS_LOW_INCOME_RATE = 0.05;     // 5% of lens wearers
+
+    // Age effect on corrective lens adoption (higher income families show age effect)
+    // Per the study: odds increase with age for families >=200% poverty level
+    public static final double CORRECTIVE_LENS_SENIOR_MULTIPLIER = 1.15;
+    public static final double CORRECTIVE_LENS_JUNIOR_MULTIPLIER = 1.10;
+    public static final double CORRECTIVE_LENS_SOPHOMORE_MULTIPLIER = 1.05;
+    public static final double CORRECTIVE_LENS_FRESHMAN_MULTIPLIER = 1.0;
+
+    // Adult/Teacher Vision Constants
+    // Older adults have higher rates of vision issues, especially hyperopia and astigmatism
+    // Adults are much more likely to have corrective lenses if needed
+
+    // Age multipliers for vision issues in adults
+    // Under 40: baseline rates similar to general population
+    // 40-59: increased rates (presbyopia onset around 40)
+    // 60+: significantly increased rates
+    public static final double ADULT_VISION_UNDER_40_MULTIPLIER = 1.0;
+    public static final double ADULT_VISION_40_TO_59_MULTIPLIER = 1.4;
+    public static final double ADULT_VISION_60_PLUS_MULTIPLIER = 1.8;
+
+    // Hyperopia increases significantly with age (presbyopia)
+    public static final double ADULT_HYPEROPIA_UNDER_40_RATE = 0.05;
+    public static final double ADULT_HYPEROPIA_40_TO_59_RATE = 0.25;
+    public static final double ADULT_HYPEROPIA_60_PLUS_RATE = 0.50;
+
+    // Astigmatism also increases with age
+    public static final double ADULT_ASTIGMATISM_UNDER_40_MULTIPLIER = 0.9;
+    public static final double ADULT_ASTIGMATISM_40_TO_59_MULTIPLIER = 1.1;
+    public static final double ADULT_ASTIGMATISM_60_PLUS_MULTIPLIER = 1.3;
+
+    // Adults with vision issues almost always have corrective lenses
+    // Working professionals especially need functional vision
+    public static final double ADULT_CORRECTIVE_LENS_RATE = 0.95;
+
+    // Contact lens rates for adults (decreases with age due to dry eye issues)
+    public static final double ADULT_CONTACTS_UNDER_40_RATE = 0.30;
+    public static final double ADULT_CONTACTS_40_TO_59_RATE = 0.15;
+    public static final double ADULT_CONTACTS_60_PLUS_RATE = 0.05;
+
     private SimConstants() {
     }
 }

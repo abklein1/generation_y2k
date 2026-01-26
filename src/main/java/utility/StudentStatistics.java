@@ -64,6 +64,13 @@ public class StudentStatistics implements PStatistics {
     private boolean hadBracesRemoved;
     // Store the charisma boost that was applied when braces were removed
     private int bracesCharismaBoost;
+    // Vision issues - refractive errors (can have multiple)
+    private boolean hasMyopia;          // Nearsightedness
+    private boolean hasHyperopia;       // Farsightedness
+    private boolean hasAstigmatism;     // Astigmatism (can combine with myopia or hyperopia)
+    // Corrective lenses - glasses or contacts
+    private boolean hasGlasses;         // Wears glasses
+    private boolean hasContacts;        // Wears contact lenses (may also have glasses as backup)
 
 
 
@@ -118,6 +125,11 @@ public class StudentStatistics implements PStatistics {
         this.bracesElasticType = null;
         this.hadBracesRemoved = false;
         this.bracesCharismaBoost = 0;
+        this.hasMyopia = false;
+        this.hasHyperopia = false;
+        this.hasAstigmatism = false;
+        this.hasGlasses = false;
+        this.hasContacts = false;
     }
 
     @Override
@@ -781,6 +793,218 @@ public class StudentStatistics implements PStatistics {
         this.responsibility = (int) ((getEffectiveCharisma() * 1.25) + (this.determination * 1.25)) / 2;
         // Recalculate open-mindedness
         this.openmindedness = (int) ((this.intelligence * 1.25) + (getEffectiveCharisma() * 1.25)) / 2;
+    }
+
+    // Vision issue getters and setters
+
+    public boolean getHasMyopia() {
+        return hasMyopia;
+    }
+
+    public void setHasMyopia(boolean hasMyopia) {
+        this.hasMyopia = hasMyopia;
+    }
+
+    public boolean getHasHyperopia() {
+        return hasHyperopia;
+    }
+
+    public void setHasHyperopia(boolean hasHyperopia) {
+        this.hasHyperopia = hasHyperopia;
+    }
+
+    public boolean getHasAstigmatism() {
+        return hasAstigmatism;
+    }
+
+    public void setHasAstigmatism(boolean hasAstigmatism) {
+        this.hasAstigmatism = hasAstigmatism;
+    }
+
+    /**
+     * Checks if the student has any vision issue (myopia, hyperopia, or astigmatism).
+     *
+     * @return true if the student has any refractive error
+     */
+    public boolean hasVisionIssue() {
+        return hasMyopia || hasHyperopia || hasAstigmatism;
+    }
+
+    /**
+     * Gets a description of the student's vision issues.
+     *
+     * @return a String describing the vision issues, or null if none
+     */
+    public String getVisionIssueDescription() {
+        if (!hasVisionIssue()) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (hasMyopia && hasAstigmatism) {
+            sb.append("myopia with astigmatism");
+        } else if (hasHyperopia && hasAstigmatism) {
+            sb.append("hyperopia with astigmatism");
+        } else if (hasMyopia) {
+            sb.append("myopia");
+        } else if (hasHyperopia) {
+            sb.append("hyperopia");
+        } else if (hasAstigmatism) {
+            sb.append("astigmatism");
+        }
+
+        return sb.toString();
+    }
+
+    // Corrective lens getters and setters
+
+    public boolean getHasGlasses() {
+        return hasGlasses;
+    }
+
+    public void setHasGlasses(boolean hasGlasses) {
+        this.hasGlasses = hasGlasses;
+    }
+
+    public boolean getHasContacts() {
+        return hasContacts;
+    }
+
+    public void setHasContacts(boolean hasContacts) {
+        this.hasContacts = hasContacts;
+    }
+
+    /**
+     * Checks if the student has any form of vision correction.
+     *
+     * @return true if the student has glasses or contacts
+     */
+    public boolean hasVisionCorrection() {
+        return hasGlasses || hasContacts;
+    }
+
+    /**
+     * Checks if the student has uncorrected vision issues.
+     * This means they have a vision problem but no corrective lenses.
+     *
+     * @return true if they have vision issues without correction
+     */
+    public boolean hasUncorrectedVision() {
+        return hasVisionIssue() && !hasVisionCorrection();
+    }
+
+    /**
+     * Gets a description of the student's vision correction status.
+     *
+     * @return a String describing their correction (glasses, contacts, or none)
+     */
+    public String getVisionCorrectionDescription() {
+        if (hasContacts) {
+            return "contact lenses";
+        } else if (hasGlasses) {
+            return "glasses";
+        } else {
+            return "no correction";
+        }
+    }
+
+    /**
+     * Gets the effective perception value, accounting for uncorrected vision issues.
+     * Students with uncorrected vision issues suffer perception penalties.
+     *
+     * @return the effective perception value
+     */
+    public int getEffectivePerception() {
+        int effectivePerception = this.perception;
+
+        // Only apply penalties if vision is uncorrected
+        if (hasUncorrectedVision()) {
+            if (hasMyopia) {
+                effectivePerception -= constants.SimConstants.VISION_MYOPIA_PERCEPTION_PENALTY;
+            }
+            if (hasHyperopia) {
+                effectivePerception -= constants.SimConstants.VISION_HYPEROPIA_PERCEPTION_PENALTY;
+            }
+            if (hasAstigmatism) {
+                effectivePerception -= constants.SimConstants.VISION_ASTIGMATISM_PERCEPTION_PENALTY;
+            }
+        }
+
+        // Ensure perception doesn't go below 1
+        return Math.max(1, effectivePerception);
+    }
+
+    /**
+     * Gets the effective agility value, accounting for uncorrected vision issues.
+     * Students with uncorrected vision issues suffer agility penalties due to
+     * impaired depth perception and spatial awareness.
+     *
+     * @return the effective agility value
+     */
+    public int getEffectiveAgility() {
+        int effectiveAgility = this.agility;
+
+        // Only apply penalties if vision is uncorrected
+        if (hasUncorrectedVision()) {
+            if (hasMyopia) {
+                effectiveAgility -= constants.SimConstants.VISION_MYOPIA_AGILITY_PENALTY;
+            }
+            if (hasHyperopia) {
+                effectiveAgility -= constants.SimConstants.VISION_HYPEROPIA_AGILITY_PENALTY;
+            }
+            if (hasAstigmatism) {
+                effectiveAgility -= constants.SimConstants.VISION_ASTIGMATISM_AGILITY_PENALTY;
+            }
+        }
+
+        // Ensure agility doesn't go below 1
+        return Math.max(1, effectiveAgility);
+    }
+
+    /**
+     * Gets the total perception penalty from uncorrected vision.
+     *
+     * @return the total perception penalty, or 0 if vision is corrected
+     */
+    public int getVisionPerceptionPenalty() {
+        if (!hasUncorrectedVision()) {
+            return 0;
+        }
+
+        int penalty = 0;
+        if (hasMyopia) {
+            penalty += constants.SimConstants.VISION_MYOPIA_PERCEPTION_PENALTY;
+        }
+        if (hasHyperopia) {
+            penalty += constants.SimConstants.VISION_HYPEROPIA_PERCEPTION_PENALTY;
+        }
+        if (hasAstigmatism) {
+            penalty += constants.SimConstants.VISION_ASTIGMATISM_PERCEPTION_PENALTY;
+        }
+        return penalty;
+    }
+
+    /**
+     * Gets the total agility penalty from uncorrected vision.
+     *
+     * @return the total agility penalty, or 0 if vision is corrected
+     */
+    public int getVisionAgilityPenalty() {
+        if (!hasUncorrectedVision()) {
+            return 0;
+        }
+
+        int penalty = 0;
+        if (hasMyopia) {
+            penalty += constants.SimConstants.VISION_MYOPIA_AGILITY_PENALTY;
+        }
+        if (hasHyperopia) {
+            penalty += constants.SimConstants.VISION_HYPEROPIA_AGILITY_PENALTY;
+        }
+        if (hasAstigmatism) {
+            penalty += constants.SimConstants.VISION_ASTIGMATISM_AGILITY_PENALTY;
+        }
+        return penalty;
     }
 
 }

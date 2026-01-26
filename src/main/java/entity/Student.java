@@ -92,6 +92,6 @@ public class Student implements Serializable {
 
     @Override
     public String toString() {
-        return studentName.getFirstName() + " " + studentName.getLastName();
+        return studentName.getFullName();
     }
 }
