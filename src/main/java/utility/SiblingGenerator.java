@@ -3,8 +3,10 @@ package utility;
 import entity.Student;
 import view.GameView;
 
+import java.time.LocalDate;
 import java.util.*;
 
+import static constants.SimConstants.*;
 import static utility.Randomizer.setRandom;
 
 public class SiblingGenerator {
@@ -425,6 +427,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
         studentCopy.studentStatistics.addSiblingsInSchool(student);
 
+        // Apply braces attributes (timing, cosmetics, charisma effects)
+        applyBracesAttributes(studentCopy);
+
         view.appendOutput("Generated step-sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
         return studentCopy;
@@ -506,6 +511,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
         studentCopy.studentStatistics.addSiblingsInSchool(student);
 
+        // Apply braces attributes (timing, cosmetics, charisma effects)
+        applyBracesAttributes(studentCopy);
+
         view.appendOutput("Generated half-sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
         return studentCopy;
@@ -569,6 +577,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
         studentCopy.studentStatistics.addSiblingsInSchool(student);
 
+        // Apply braces attributes (timing, cosmetics, charisma effects)
+        applyBracesAttributes(studentCopy);
+
         view.appendOutput("Generated adopted sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
         return studentCopy;
@@ -627,6 +638,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
         studentCopy.studentStatistics.addSiblingsInSchool(student);
+
+        // Apply braces attributes (timing, cosmetics, charisma effects)
+        applyBracesAttributes(studentCopy);
 
         view.appendOutput("Generated twin or triplet " + f_name + " " + studentCopy.studentName.getLastName());
 
@@ -694,6 +708,9 @@ public class SiblingGenerator {
         studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
         studentCopy.studentStatistics.addSiblingsInSchool(student);
 
+        // Apply braces attributes (timing, cosmetics, charisma effects)
+        applyBracesAttributes(studentCopy);
+
         view.appendOutput("Generated sibling " + f_name + " " + studentCopy.studentName.getLastName());
 
         return studentCopy;
@@ -723,5 +740,64 @@ public class SiblingGenerator {
         }
 
         return siblings;
+    }
+
+    /**
+     * Applies braces-related attributes to a student.
+     * This includes determining if they have/had braces, timing, cosmetics, and charisma effects.
+     *
+     * @param student the student to apply braces attributes to
+     */
+    public static void applyBracesAttributes(Student student) {
+        LocalDate gameStartDate = LocalDate.of(STARTING_YEAR, STARTING_MONTH + 1, STARTING_DATE);
+        String race = student.studentStatistics.getRace();
+        String incomeLevel = student.studentStatistics.getIncomeLevel();
+        String gradeLevel = student.studentStatistics.getGradeLevel();
+
+        boolean hasBraces = TraitSelection.determineBraces(race, incomeLevel, gradeLevel);
+        student.studentStatistics.setHasBraces(hasBraces);
+
+        if (hasBraces) {
+            // Set basic braces cosmetics
+            student.studentStatistics.setBracesBandColor(TraitSelection.selectBracesBandColor());
+            student.studentStatistics.setBracesBracketType(TraitSelection.selectBracesBracketType());
+
+            // Generate braces timing
+            LocalDate[] bracesTiming = TraitSelection.generateBracesTiming(gradeLevel, gameStartDate);
+            student.studentStatistics.setBracesStartDate(bracesTiming[0]);
+            student.studentStatistics.setBracesEndDate(bracesTiming[1]);
+
+            // Determine if student has orthodontic elastics
+            boolean hasElastics = TraitSelection.determineHasElastics();
+            student.studentStatistics.setBracesHasElastics(hasElastics);
+            if (hasElastics) {
+                student.studentStatistics.setBracesElasticColor(TraitSelection.selectBracesElasticColor());
+                student.studentStatistics.setBracesElasticType(TraitSelection.selectBracesElasticType());
+            }
+
+            // Recalculate charisma-dependent stats with braces penalty
+            student.studentStatistics.recalculateCharismaDependentStats();
+        } else {
+            // Check if student had braces in the past
+            boolean hadPastBraces = TraitSelection.determinePastBraces(race, incomeLevel, gradeLevel, false);
+
+            if (hadPastBraces) {
+                student.studentStatistics.setHadBracesRemoved(true);
+
+                // Generate past braces timing
+                LocalDate birthday = student.studentStatistics.getBirthday();
+                LocalDate[] pastTiming = TraitSelection.generatePastBracesTiming(birthday, gradeLevel, gameStartDate);
+                student.studentStatistics.setBracesStartDate(pastTiming[0]);
+                student.studentStatistics.setBracesEndDate(pastTiming[1]);
+
+                // Apply charisma boost
+                int currentCharisma = student.studentStatistics.getCharisma();
+                student.studentStatistics.setCharisma(currentCharisma + BRACES_CHARISMA_BOOST);
+                student.studentStatistics.setBracesCharismaBoost(BRACES_CHARISMA_BOOST);
+
+                // Recalculate secondary stats
+                student.studentStatistics.recalculateCharismaDependentStats();
+            }
+        }
     }
 }

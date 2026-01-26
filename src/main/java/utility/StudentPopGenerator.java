@@ -3,6 +3,7 @@ package utility;
 import entity.Student;
 import view.GameView;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 
 import static constants.SimConstants.*;
@@ -71,14 +72,57 @@ public class StudentPopGenerator {
             student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
             student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
             student.studentStatistics.setInitIncomeLevel(setRandom(0, STUDENT_INCOME_LEVEL_SAMPLE_SIZE));
-            boolean hasBraces = TraitSelection.determineBraces(
-                    race,
-                    student.studentStatistics.getIncomeLevel(),
-                    student.studentStatistics.getGradeLevel());
+            // Game starts in August 2004
+            LocalDate gameStartDate = LocalDate.of(STARTING_YEAR, STARTING_MONTH + 1, STARTING_DATE);
+            String incomeLevel = student.studentStatistics.getIncomeLevel();
+            String gradeLevel = student.studentStatistics.getGradeLevel();
+
+            boolean hasBraces = TraitSelection.determineBraces(race, incomeLevel, gradeLevel);
             student.studentStatistics.setHasBraces(hasBraces);
+
             if (hasBraces) {
+                // Set basic braces cosmetics
                 student.studentStatistics.setBracesBandColor(TraitSelection.selectBracesBandColor());
                 student.studentStatistics.setBracesBracketType(TraitSelection.selectBracesBracketType());
+
+                // Generate braces timing (when put on, when coming off)
+                LocalDate[] bracesTiming = TraitSelection.generateBracesTiming(gradeLevel, gameStartDate);
+                student.studentStatistics.setBracesStartDate(bracesTiming[0]);
+                student.studentStatistics.setBracesEndDate(bracesTiming[1]);
+
+                // Determine if student has orthodontic elastics
+                boolean hasElastics = TraitSelection.determineHasElastics();
+                student.studentStatistics.setBracesHasElastics(hasElastics);
+                if (hasElastics) {
+                    student.studentStatistics.setBracesElasticColor(TraitSelection.selectBracesElasticColor());
+                    student.studentStatistics.setBracesElasticType(TraitSelection.selectBracesElasticType());
+                }
+
+                // Recalculate charisma-dependent stats with braces penalty
+                student.studentStatistics.recalculateCharismaDependentStats();
+            } else {
+                // Check if student had braces in the past (already removed)
+                boolean hadPastBraces = TraitSelection.determinePastBraces(
+                        race, incomeLevel, gradeLevel, false);
+
+                if (hadPastBraces) {
+                    student.studentStatistics.setHadBracesRemoved(true);
+
+                    // Generate past braces timing
+                    LocalDate birthday = student.studentStatistics.getBirthday();
+                    LocalDate[] pastTiming = TraitSelection.generatePastBracesTiming(
+                            birthday, gradeLevel, gameStartDate);
+                    student.studentStatistics.setBracesStartDate(pastTiming[0]);
+                    student.studentStatistics.setBracesEndDate(pastTiming[1]);
+
+                    // Apply charisma boost for having completed braces treatment
+                    int currentCharisma = student.studentStatistics.getCharisma();
+                    student.studentStatistics.setCharisma(currentCharisma + BRACES_CHARISMA_BOOST);
+                    student.studentStatistics.setBracesCharismaBoost(BRACES_CHARISMA_BOOST);
+
+                    // Recalculate secondary stats with boosted charisma
+                    student.studentStatistics.recalculateCharismaDependentStats();
+                }
             }
             if (suffix != null) {
                 view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);

@@ -18,7 +18,15 @@ import java.util.List;
 import java.util.Map;
 
 public class Inspector {
-    public static void studentInspection(Student student, JTextArea inspectionArea, SocialLinkConnector socialLinkConnector) {
+    
+    /**
+     * Builds the inspection text for a student containing their personal info,
+     * stats, status effects, family info, and schedule.
+     *
+     * @param student the student to build inspection text for
+     * @return the formatted inspection text as a String
+     */
+    private static String buildStudentInspectionText(Student student) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
 
@@ -27,7 +35,6 @@ public class Inspector {
         String lastName = student.studentName.getLastName();
         String suffix = student.studentName.getSuffix();
         String gender = student.studentStatistics.getGender();
-        //String race = student.studentStatistics.getRace();
         String hairColor = student.studentStatistics.getHairColor();
         String eyeColor = student.studentStatistics.getEyeColor();
         String skinColor = student.studentStatistics.getSkinColor();
@@ -37,6 +44,12 @@ public class Inspector {
         boolean hasBraces = student.studentStatistics.getHasBraces();
         String bracesBandColor = student.studentStatistics.getBracesBandColor();
         String bracesBracketType = student.studentStatistics.getBracesBracketType();
+        boolean bracesHasElastics = student.studentStatistics.getBracesHasElastics();
+        String bracesElasticColor = student.studentStatistics.getBracesElasticColor();
+        String bracesElasticType = student.studentStatistics.getBracesElasticType();
+        LocalDate bracesStartDate = student.studentStatistics.getBracesStartDate();
+        LocalDate bracesEndDate = student.studentStatistics.getBracesEndDate();
+        boolean hadBracesRemoved = student.studentStatistics.getHadBracesRemoved();
         String grade = student.studentStatistics.getGradeLevel();
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
@@ -44,34 +57,64 @@ public class Inspector {
         List<String> siblingsNotInSchool = student.studentStatistics.getSiblingsNotInSchool();
         List<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
 
+        // Header with name
         if (suffix != null) {
-            sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix).append("\n=====================================\n");
+            sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix)
+                    .append("\n=====================================\n");
         } else {
             sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
         }
+        
+        // Physical description
         sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
         sb.append(skinColor).append(" colored skin and ");
-        sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ").append(hairColor.toLowerCase());
+        sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ")
+                .append(hairColor.toLowerCase());
         sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
         sb.append("They stand ").append(df.format(height)).append(" inches tall.");
         if (hasBraces) {
-            sb.append(" They have braces with ").append(bracesBandColor).append(" bands and ").append(bracesBracketType).append(" brackets.");
+            sb.append(" They have braces with ").append(bracesBandColor).append(" bands, ")
+                    .append(bracesBracketType).append(" brackets");
+            if (bracesHasElastics) {
+                sb.append(", and a pair of ").append(bracesElasticColor).append(" ").append(bracesElasticType);
+            }
+            sb.append(".");
         }
         sb.append("\n");
+        
+        // Grade and birthday
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
-        sb.append("They have the following base stats:\n   INTELLIGENCE: ").append(student.studentStatistics.getIntelligence());
-        sb.append("\n   CHARISMA: ").append(student.studentStatistics.getCharisma()).append("\n   AGILITY: ");
-        sb.append(student.studentStatistics.getAgility()).append("\n   DETERMINATION: ").append(student.studentStatistics.getDetermination());
+        
+        // Base stats
+        sb.append("They have the following base stats:\n   INTELLIGENCE: ")
+                .append(student.studentStatistics.getIntelligence());
+        sb.append("\n   CHARISMA: ").append(student.studentStatistics.getEffectiveCharisma());
+        if (hasBraces) {
+            sb.append(" (reduced by braces)");
+        } else if (hadBracesRemoved) {
+            sb.append(" (boosted by past braces)");
+        }
+        sb.append("\n   AGILITY: ");
+        sb.append(student.studentStatistics.getAgility()).append("\n   DETERMINATION: ")
+                .append(student.studentStatistics.getDetermination());
         sb.append("\n   PERCEPTION: ").append(student.studentStatistics.getPerception()).append("\n   STRENGTH: ");
-        sb.append(student.studentStatistics.getStrength()).append("\n   LUCK: ").append(student.studentStatistics.getLuck()).append("\n");
+        sb.append(student.studentStatistics.getStrength()).append("\n   LUCK: ")
+                .append(student.studentStatistics.getLuck()).append("\n");
         sb.append("   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
-        sb.append("They have the following secondary stats:\n   Creativity: ").append(student.studentStatistics.getCreativity());
+        
+        // Secondary stats
+        sb.append("They have the following secondary stats:\n   Creativity: ")
+                .append(student.studentStatistics.getCreativity());
         sb.append("\n   Empathy: ").append(student.studentStatistics.getEmpathy()).append("\n   Adaptability: ");
-        sb.append(student.studentStatistics.getAdaptability()).append("\n   Initiative: ").append(student.studentStatistics.getInitiative());
+        sb.append(student.studentStatistics.getAdaptability()).append("\n   Initiative: ")
+                .append(student.studentStatistics.getInitiative());
         sb.append("\n   Resilience: ").append(student.studentStatistics.getResilience()).append("\n   Curiosity: ");
-        sb.append(student.studentStatistics.getCuriosity()).append("\n   Responsibility: ").append(student.studentStatistics.getResponsibility());
+        sb.append(student.studentStatistics.getCuriosity()).append("\n   Responsibility: ")
+                .append(student.studentStatistics.getResponsibility());
         sb.append("\n   Open-Mindedness: ").append(student.studentStatistics.getOpenMindedness()).append("\n");
+        
+        // Status effects
         sb.append(firstName).append(" has the following status effects:\n");
         if (student.studentStatistics.getBoredom() == 0) {
             sb.append(firstName).append(" is not bored.\n");
@@ -83,11 +126,14 @@ public class Inspector {
         } else {
             sb.append(firstName).append(" is not asleep.\n");
         }
+        
+        // Family info
         sb.append("Their family has the following income: ").append(income).append("\n");
         if (!siblingsInSchool.isEmpty()) {
             sb.append("They have the following siblings in school: ").append("\n");
             for (Student sibling : siblingsInSchool) {
-                sb.append(sibling.studentName.getFirstName()).append(" ").append(sibling.studentName.getLastName()).append("\n");
+                sb.append(sibling.studentName.getFirstName()).append(" ").append(sibling.studentName.getLastName())
+                        .append("\n");
             }
         }
         if (!siblingsNotInSchool.isEmpty()) {
@@ -96,128 +142,46 @@ public class Inspector {
                 sb.append(sibling).append("\n");
             }
         }
+        
+        // Braces history
+        if (hasBraces) {
+            if (bracesStartDate != null && bracesEndDate != null) {
+                sb.append(" (Got braces: ").append(bracesStartDate).append(", Expected removal: ").append(bracesEndDate)
+                        .append(")");
+            }
+        } else if (hadBracesRemoved) {
+            sb.append(" They previously had braces");
+            if (bracesStartDate != null && bracesEndDate != null) {
+                sb.append(" (").append(bracesStartDate).append(" to ").append(bracesEndDate).append(")");
+            }
+            sb.append(".");
+            sb.append("\n");
+        }
+        
+        // Schedule
         for (StudentBlock block : schedule) {
             int blockNum = block.getBlockNumber();
             switch (blockNum) {
-                case 1, 2 -> {
-                    blockNum = 1;
-                }
-                case 3, 4 -> {
-                    blockNum = 2;
-                }
-                case 5, 6 -> {
-                    blockNum = 3;
-                }
-                case 7, 8 -> {
-                    blockNum = 4;
-                }
+                case 1, 2 -> blockNum = 1;
+                case 3, 4 -> blockNum = 2;
+                case 5, 6 -> blockNum = 3;
+                case 7, 8 -> blockNum = 4;
             }
-            sb.append(block.getSemester()).append(" ").append(blockNum).append(" ").append(block.getTeacher()).append(" ").append(block.getClassName()).append("\n");
+            sb.append(block.getSemester()).append(" ").append(blockNum).append(" ").append(block.getTeacher())
+                    .append(" ").append(block.getClassName()).append("\n");
         }
 
-        inspectionArea.setText(sb.toString());
-
-        socialLinkConnector.studentVisualizer(student);
+        return sb.toString();
     }
 
+    /**
+     * Displays student inspection information in a text area.
+     *
+     * @param student the student to inspect
+     * @param inspectionArea the text area to display the information in
+     */
     public static void studentInspection(Student student, JTextArea inspectionArea) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.CEILING);
-
-        StringBuilder sb = new StringBuilder();
-        String firstName = student.studentName.getFirstName();
-        String lastName = student.studentName.getLastName();
-        String suffix = student.studentName.getSuffix();
-        String gender = student.studentStatistics.getGender();
-        //String race = student.studentStatistics.getRace();
-        String hairColor = student.studentStatistics.getHairColor();
-        String eyeColor = student.studentStatistics.getEyeColor();
-        String skinColor = student.studentStatistics.getSkinColor();
-        String hairLength = student.studentStatistics.getHairLength();
-        String hairType = student.studentStatistics.getHairType();
-        double height = student.studentStatistics.getHeight();
-        boolean hasBraces = student.studentStatistics.getHasBraces();
-        String bracesBandColor = student.studentStatistics.getBracesBandColor();
-        String bracesBracketType = student.studentStatistics.getBracesBracketType();
-        String grade = student.studentStatistics.getGradeLevel();
-        String income = student.studentStatistics.getIncomeLevel();
-        LocalDate birth = student.studentStatistics.getBirthday();
-        List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
-        List<String> siblingsNotInSchool = student.studentStatistics.getSiblingsNotInSchool();
-        List<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
-
-        if (suffix != null) {
-            sb.append(firstName).append(" ").append(lastName).append(" ").append(suffix).append("\n=====================================\n");
-        } else {
-            sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
-        }
-        sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
-        sb.append(skinColor).append(" colored skin and ");
-        sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ").append(hairColor.toLowerCase());
-        sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
-        sb.append("They stand ").append(df.format(height)).append(" inches tall.");
-        if (hasBraces) {
-            sb.append(" They have braces with ").append(bracesBandColor).append(" bands and ").append(bracesBracketType).append(" brackets.");
-        }
-        sb.append("\n");
-        sb.append(firstName).append(" is a ").append(grade).append(".\n");
-        sb.append(firstName).append(" was born on ").append(birth).append(".\n");
-        sb.append("They have the following base stats:\n   INTELLIGENCE: ").append(student.studentStatistics.getIntelligence());
-        sb.append("\n   CHARISMA: ").append(student.studentStatistics.getCharisma()).append("\n   AGILITY: ");
-        sb.append(student.studentStatistics.getAgility()).append("\n   DETERMINATION: ").append(student.studentStatistics.getDetermination());
-        sb.append("\n   PERCEPTION: ").append(student.studentStatistics.getPerception()).append("\n   STRENGTH: ");
-        sb.append(student.studentStatistics.getStrength()).append("\n   LUCK: ").append(student.studentStatistics.getLuck()).append("\n");
-        sb.append("   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
-        sb.append("They have the following secondary stats:\n   Creativity: ").append(student.studentStatistics.getCreativity());
-        sb.append("\n   Empathy: ").append(student.studentStatistics.getEmpathy()).append("\n   Adaptability: ");
-        sb.append(student.studentStatistics.getAdaptability()).append("\n   Initiative: ").append(student.studentStatistics.getInitiative());
-        sb.append("\n   Resilience: ").append(student.studentStatistics.getResilience()).append("\n   Curiosity: ");
-        sb.append(student.studentStatistics.getCuriosity()).append("\n   Responsibility: ").append(student.studentStatistics.getResponsibility());
-        sb.append("\n   Open-Mindedness: ").append(student.studentStatistics.getOpenMindedness()).append("\n");
-        sb.append(firstName).append(" has the following status effects:\n");
-        if (student.studentStatistics.getBoredom() == 0) {
-            sb.append(firstName).append(" is not bored.\n");
-        } else {
-            sb.append(firstName).append(" is slightly bored.\n");
-        }
-        if (student.studentStatistics.getSleepState()) {
-            sb.append(firstName).append(" is asleep!\n");
-        } else {
-            sb.append(firstName).append(" is not asleep.\n");
-        }
-        sb.append("Their family has the following income: ").append(income).append("\n");
-        if (!siblingsInSchool.isEmpty()) {
-            sb.append("They have the following siblings in school: ").append("\n");
-            for (Student sibling : siblingsInSchool) {
-                sb.append(sibling.studentName.getFirstName()).append(" ").append(sibling.studentName.getLastName()).append("\n");
-            }
-        }
-        if (!siblingsNotInSchool.isEmpty()) {
-            sb.append("They have the following siblings not in school: ").append("\n");
-            for (String sibling : siblingsNotInSchool) {
-                sb.append(sibling).append("\n");
-            }
-        }
-        for (StudentBlock block : schedule) {
-            int blockNum = block.getBlockNumber();
-            switch (blockNum) {
-                case 1, 2 -> {
-                    blockNum = 1;
-                }
-                case 3, 4 -> {
-                    blockNum = 2;
-                }
-                case 5, 6 -> {
-                    blockNum = 3;
-                }
-                case 7, 8 -> {
-                    blockNum = 4;
-                }
-            }
-            sb.append(block.getSemester()).append(" ").append(blockNum).append(" ").append(block.getTeacher()).append(" ").append(block.getClassName()).append("\n");
-        }
-
-        inspectionArea.setText(sb.toString());
+        inspectionArea.setText(buildStudentInspectionText(student));
     }
 
     public static void staffInspection(Staff staff, JTextArea inspectionArea) {
@@ -251,17 +215,22 @@ public class Inspector {
 
         sb.append("They stand ").append(df.format(height)).append(" inches tall.\n");
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
-        sb.append("They have the following stats:\n   INTELLIGENCE: ").append(staff.teacherStatistics.getIntelligence());
+        sb.append("They have the following stats:\n   INTELLIGENCE: ")
+                .append(staff.teacherStatistics.getIntelligence());
         sb.append("\n   CHARISMA: ").append(staff.teacherStatistics.getCharisma()).append("\n   AGILITY: ");
-        sb.append(staff.teacherStatistics.getAgility()).append("\n   DETERMINATION: ").append(staff.teacherStatistics.getDetermination());
+        sb.append(staff.teacherStatistics.getAgility()).append("\n   DETERMINATION: ")
+                .append(staff.teacherStatistics.getDetermination());
         sb.append("\n   PERCEPTION: ").append(staff.teacherStatistics.getPerception()).append("\n   STRENGTH: ");
         sb.append(staff.teacherStatistics.getStrength()).append("\n");
         sb.append("   LUCK: ").append(staff.teacherStatistics.getLuck()).append("\n");
-        sb.append("They have the following secondary stats:\n   Creativity: ").append(staff.teacherStatistics.getCreativity());
+        sb.append("They have the following secondary stats:\n   Creativity: ")
+                .append(staff.teacherStatistics.getCreativity());
         sb.append("\n   Empathy: ").append(staff.teacherStatistics.getEmpathy()).append("\n   Adaptability: ");
-        sb.append(staff.teacherStatistics.getAdaptability()).append("\n   Initiative: ").append(staff.teacherStatistics.getInitiative());
+        sb.append(staff.teacherStatistics.getAdaptability()).append("\n   Initiative: ")
+                .append(staff.teacherStatistics.getInitiative());
         sb.append("\n   Resilience: ").append(staff.teacherStatistics.getResilience()).append("\n   Curiosity: ");
-        sb.append(staff.teacherStatistics.getCuriosity()).append("\n   Responsibility: ").append(staff.teacherStatistics.getResponsibility());
+        sb.append(staff.teacherStatistics.getCuriosity()).append("\n   Responsibility: ")
+                .append(staff.teacherStatistics.getResponsibility());
         sb.append("\n   Open-Mindedness: ").append(staff.teacherStatistics.getOpenMindedness()).append("\n");
         sb.append("They have ").append(yearsOfExperience).append(" year(s) of teaching experience.").append("\n");
         sb.append(firstName).append(" has the following status effects:\n");
@@ -285,7 +254,8 @@ public class Inspector {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Integer, Student> entry : studentGradeClass.entrySet()) {
             Student student = entry.getValue();
-            sb.append(student.studentName.getFirstName()).append(" ").append(student.studentName.getLastName()).append("\n");
+            sb.append(student.studentName.getFirstName()).append(" ").append(student.studentName.getLastName())
+                    .append("\n");
         }
         return sb.toString();
     }
@@ -294,7 +264,8 @@ public class Inspector {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Integer, Staff> entry : staffHashMap.entrySet()) {
             Staff staff = entry.getValue();
-            sb.append(staff.teacherName.getFirstName()).append(" ").append(staff.teacherName.getLastName()).append("\n");
+            sb.append(staff.teacherName.getFirstName()).append(" ").append(staff.teacherName.getLastName())
+                    .append("\n");
         }
         return sb.toString();
     }
@@ -318,7 +289,8 @@ public class Inspector {
         roomDetails.append("Welcome to ").append(roomName).append("\n");
         roomDetails.append("The room contains the following staff:\n");
         for (Staff value : staff) {
-            roomDetails.append(value.teacherName.getFirstName()).append(" ").append(value.teacherName.getLastName()).append("\n");
+            roomDetails.append(value.teacherName.getFirstName()).append(" ").append(value.teacherName.getLastName())
+                    .append("\n");
         }
         roomDetails.append("It has a student capacity of ").append(studentCap).append("\n");
         if (room instanceof Classroom) {
@@ -354,7 +326,8 @@ public class Inspector {
                     Student student = seatingArrangements.get(1)[row][col];
                     JTextArea studentInfoArea = new JTextArea();
                     studentInspection(student, studentInfoArea);
-                    JOptionPane.showMessageDialog(null, new JScrollPane(studentInfoArea), "Student Details", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, new JScrollPane(studentInfoArea), "Student Details",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -367,7 +340,8 @@ public class Inspector {
                 for (int row = 0; row < seats.length; row++) {
                     for (int col = 0; col < seats[0].length; col++) {
                         if (seats[row][col] != null) {
-                            tableModel.setValueAt(seats[row][col].studentName.getFirstName() + " " + seats[row][col].studentName.getLastName(), row, col);
+                            tableModel.setValueAt(seats[row][col].studentName.getFirstName() + " "
+                                    + seats[row][col].studentName.getLastName(), row, col);
                         } else {
                             tableModel.setValueAt("Empty", row, col);
                         }
@@ -434,7 +408,6 @@ public class Inspector {
         panel.add(roomInfoArea, BorderLayout.NORTH);
         panel.add(blockButtonPanel, BorderLayout.SOUTH); // Buttons at the bottom
         panel.add(splitPane, BorderLayout.CENTER);
-
 
         // Create a resizable JDialog
         JDialog dialog = new JDialog();

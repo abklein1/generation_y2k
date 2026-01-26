@@ -289,10 +289,12 @@ public class SchoolController {
     private void showInspectionWindow(String type) {
         JFrame inspectionFrame = new JFrame(type + " Inspection");
         inspectionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        inspectionFrame.setSize(400, 300);
+        inspectionFrame.setSize(550, 500);
 
         JTextArea inspectionArea = new JTextArea();
         inspectionArea.setEditable(false);
+        inspectionArea.setLineWrap(true);
+        inspectionArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(inspectionArea);
 
         if (type.equals("Staff")) {
@@ -332,22 +334,42 @@ public class SchoolController {
 
                 JList<Student> studentListComponent = new JList<>(listModel);
                 studentListComponent.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                
+                // Create button panel with Show Social Links button
+                JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                JButton showSocialLinksButton = new JButton("Show Social Links");
+                showSocialLinksButton.setEnabled(false);
+                showSocialLinksButton.setToolTipText("Select a student to view their social links");
+                buttonPanel.add(showSocialLinksButton);
+                
+                // Track the currently selected student for the button action
+                final Student[] currentlySelectedStudent = {null};
+                
                 studentListComponent.addListSelectionListener(e -> {
                     if (!e.getValueIsAdjusting()) {
                         Student selectedStudent = studentListComponent.getSelectedValue();
                         if (selectedStudent != null) {
-                            if (selectedStudent.studentStatistics.getSiblingsInSchool().isEmpty()) {
-                                studentInspection(selectedStudent, inspectionArea);
-                            } else {
-                                studentInspection(selectedStudent, inspectionArea, socialLinkConnector);
-                            }
+                            currentlySelectedStudent[0] = selectedStudent;
+                            studentInspection(selectedStudent, inspectionArea);
+                            showSocialLinksButton.setEnabled(true);
+                            showSocialLinksButton.setToolTipText("View social links for " + 
+                                selectedStudent.studentName.getFirstName() + " " + 
+                                selectedStudent.studentName.getLastName());
                         }
+                    }
+                });
+                
+                // Add action listener for the Show Social Links button
+                showSocialLinksButton.addActionListener(e -> {
+                    if (currentlySelectedStudent[0] != null) {
+                        socialLinkConnector.studentVisualizer(currentlySelectedStudent[0]);
                     }
                 });
 
                 inspectionFrame.setLayout(new BorderLayout());
                 inspectionFrame.add(new JScrollPane(studentListComponent), BorderLayout.WEST);
                 inspectionFrame.add(scrollPane, BorderLayout.CENTER);
+                inspectionFrame.add(buttonPanel, BorderLayout.SOUTH);
             }
         }
 
@@ -637,6 +659,10 @@ public class SchoolController {
             playerCharacter.studentStatistics.setInitCuriosity();
             playerCharacter.studentStatistics.setInitResponsibility();
             playerCharacter.studentStatistics.setInitOpenMind();
+
+            // Apply braces attributes (timing, cosmetics, charisma effects)
+            SiblingGenerator.applyBracesAttributes(playerCharacter);
+
             PlayerStoryGenerator.reportBaseStats(playerCharacter, storyOutput);
 
             // Generate and attach family info (parents and siblings) BEFORE story generation

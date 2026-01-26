@@ -292,6 +292,48 @@ public final class SimConstants {
     public static final int CURIOSITY_VOCATIONAL_LOWER_BOUND = 68;
     public static final int LOW_DETERMINATION_VOCATIONAL_UPPER_BOUND = 30;
 
+    // Braces System Constants
+    // Treatment duration in months (1-3 years typical)
+    public static final int BRACES_MIN_DURATION_MONTHS = 12;
+    public static final int BRACES_MAX_DURATION_MONTHS = 36;
+    public static final int BRACES_MEAN_DURATION_MONTHS = 24;
+    public static final int BRACES_DURATION_STANDARD_DEVIATION = 6;
+
+    // Charisma effects (less than 1 standard deviation of 15)
+    // Penalty while wearing braces
+    public static final int BRACES_CHARISMA_PENALTY = 10;
+    // Boost after removal (net positive benefit)
+    public static final int BRACES_CHARISMA_BOOST = 13;
+
+    // Probability of having elastics with braces (approximately 60% of patients)
+    public static final int BRACES_ELASTIC_PROBABILITY = 60;
+    public static final int BRACES_ELASTIC_SAMPLE_SIZE = 100;
+
+    // Past braces rates by race (from 2004 Ohio study - total orthodontic treatment rates)
+    // These represent the total who have EVER had braces (current + past)
+    // Current braces rates are already defined in TraitSelection
+    public static final double BRACES_TOTAL_RATE_WHITE = 0.31;
+    public static final double BRACES_TOTAL_RATE_HISPANIC = 0.11;
+    public static final double BRACES_TOTAL_RATE_BLACK = 0.08;
+    public static final double BRACES_TOTAL_RATE_API = 0.25;
+    public static final double BRACES_TOTAL_RATE_AIAN = 0.10;
+    public static final double BRACES_TOTAL_RATE_2PRACE = 0.18;
+    public static final double BRACES_TOTAL_RATE_DEFAULT = 0.15;
+
+    // Income multipliers for total braces rate
+    // Suburban affluent: 50%+ utilization
+    // Inner city/low income: less than 10% utilization
+    public static final double BRACES_INCOME_MULTIPLIER_HIGH = 1.6;
+    public static final double BRACES_INCOME_MULTIPLIER_MIDDLE = 1.0;
+    public static final double BRACES_INCOME_MULTIPLIER_LOW = 0.3;
+
+    // Grade-based multipliers for how likely someone is to have ALREADY had braces removed
+    // Older students are more likely to have completed treatment in the past
+    public static final double BRACES_PAST_RATE_FRESHMAN = 0.15;   // 15% of total eligible already done
+    public static final double BRACES_PAST_RATE_SOPHOMORE = 0.30;  // 30% of total eligible already done
+    public static final double BRACES_PAST_RATE_JUNIOR = 0.50;     // 50% of total eligible already done
+    public static final double BRACES_PAST_RATE_SENIOR = 0.65;     // 65% of total eligible already done
+
     private SimConstants() {
     }
 }

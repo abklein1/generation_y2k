@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.time.LocalDate;
+
 import static constants.SimConstants.*;
 
 public class TraitSelection {
@@ -535,6 +537,15 @@ public class TraitSelection {
             "clear", "metal"
     };
 
+    private static final String[] BRACES_ELASTIC_COLORS = {
+            "clear", "blue", "red", "green", "purple", "pink", "orange", "teal",
+            "light blue", "dark blue", "lime green", "hot pink", "white", "gray"
+    };
+
+    private static final String[] BRACES_ELASTIC_TYPES = {
+            "elastic bands", "rubber bands", "ligature ties", "power chains"
+    };
+
     /**
      * Selects a random band color for braces.
      *
@@ -619,5 +630,181 @@ public class TraitSelection {
 
         // Random determination
         return GameRandom.nextDouble() < probability;
+    }
+
+    /**
+     * Selects a random elastic color for braces.
+     *
+     * @return a randomly selected elastic color
+     */
+    public static String selectBracesElasticColor() {
+        int index = (int) (GameRandom.nextDouble() * BRACES_ELASTIC_COLORS.length);
+        return BRACES_ELASTIC_COLORS[index];
+    }
+
+    /**
+     * Selects a random elastic type for braces.
+     *
+     * @return a randomly selected elastic type description
+     */
+    public static String selectBracesElasticType() {
+        int index = (int) (GameRandom.nextDouble() * BRACES_ELASTIC_TYPES.length);
+        return BRACES_ELASTIC_TYPES[index];
+    }
+
+    /**
+     * Determines if a student with braces has orthodontic elastics.
+     * Approximately 60% of orthodontic patients have elastics at some point.
+     *
+     * @return true if the student has elastics, false otherwise
+     */
+    public static boolean determineHasElastics() {
+        return Randomizer.setRandom(0, BRACES_ELASTIC_SAMPLE_SIZE) < BRACES_ELASTIC_PROBABILITY;
+    }
+
+    /**
+     * Generates braces timing for a student who currently has braces.
+     * The game starts in August 2004, so we calculate when braces were put on
+     * (in the past) and when they will be removed (in the future).
+     *
+     * Students in later grades have a higher chance of having less time left,
+     * since they are older and presumably had braces put on further in the past.
+     *
+     * @param gradeLevel the student's grade level
+     * @param gameStartDate the date the game starts (typically August 2004)
+     * @return an array of two LocalDates: [startDate, endDate]
+     */
+    public static LocalDate[] generateBracesTiming(String gradeLevel, LocalDate gameStartDate) {
+        // Generate total treatment duration (12-36 months, normally distributed around 24)
+        int totalDurationMonths = (int) GameRandom.nextGaussian(
+                BRACES_MEAN_DURATION_MONTHS,
+                BRACES_DURATION_STANDARD_DEVIATION);
+        totalDurationMonths = Math.max(BRACES_MIN_DURATION_MONTHS,
+                Math.min(BRACES_MAX_DURATION_MONTHS, totalDurationMonths));
+
+        // Determine how far into treatment the student is based on grade level
+        // Older students have been wearing braces longer on average
+        double progressRatio;
+        switch (gradeLevel) {
+            case "Senior" -> progressRatio = 0.5 + (GameRandom.nextDouble() * 0.45);   // 50-95% done
+            case "Junior" -> progressRatio = 0.35 + (GameRandom.nextDouble() * 0.50);  // 35-85% done
+            case "Sophomore" -> progressRatio = 0.20 + (GameRandom.nextDouble() * 0.55); // 20-75% done
+            case "Freshman" -> progressRatio = 0.05 + (GameRandom.nextDouble() * 0.60); // 5-65% done
+            default -> progressRatio = 0.25 + (GameRandom.nextDouble() * 0.50);        // 25-75% done
+        }
+
+        int monthsElapsed = (int) (totalDurationMonths * progressRatio);
+        int monthsRemaining = totalDurationMonths - monthsElapsed;
+
+        // Calculate start date (in the past) and end date (in the future)
+        LocalDate startDate = gameStartDate.minusMonths(monthsElapsed);
+        LocalDate endDate = gameStartDate.plusMonths(monthsRemaining);
+
+        return new LocalDate[]{startDate, endDate};
+    }
+
+    /**
+     * Determines if a student has had braces removed in the past (before game start).
+     * This accounts for students who completed orthodontic treatment before high school
+     * or earlier in their high school career.
+     *
+     * The calculation ensures the total number of people who have ever had braces
+     * (current + past) matches the 2004 demographic research data.
+     *
+     * @param race the student's race category
+     * @param incomeLevel the family income level (low, middle, high)
+     * @param gradeLevel the student's grade level (Freshman, Sophomore, Junior, Senior)
+     * @param currentlyHasBraces whether the student currently has braces
+     * @return true if the student had braces removed in the past, false otherwise
+     */
+    public static boolean determinePastBraces(String race, String incomeLevel,
+                                               String gradeLevel, boolean currentlyHasBraces) {
+        // If they currently have braces, they can't have had them removed already
+        if (currentlyHasBraces) {
+            return false;
+        }
+
+        // Calculate total orthodontic treatment rate for this demographic
+        double totalRate = switch (race) {
+            case "white" -> BRACES_TOTAL_RATE_WHITE;
+            case "hispanic" -> BRACES_TOTAL_RATE_HISPANIC;
+            case "black" -> BRACES_TOTAL_RATE_BLACK;
+            case "api" -> BRACES_TOTAL_RATE_API;
+            case "aian" -> BRACES_TOTAL_RATE_AIAN;
+            case "2prace" -> BRACES_TOTAL_RATE_2PRACE;
+            default -> BRACES_TOTAL_RATE_DEFAULT;
+        };
+
+        // Apply income multiplier
+        double incomeMultiplier = switch (incomeLevel) {
+            case "high" -> BRACES_INCOME_MULTIPLIER_HIGH;
+            case "middle" -> BRACES_INCOME_MULTIPLIER_MIDDLE;
+            case "low" -> BRACES_INCOME_MULTIPLIER_LOW;
+            default -> BRACES_INCOME_MULTIPLIER_MIDDLE;
+        };
+
+        totalRate *= incomeMultiplier;
+
+        // Cap at reasonable bounds
+        totalRate = Math.max(0.05, Math.min(0.60, totalRate));
+
+        // Determine what fraction of total eligible students have already completed treatment
+        // Older grades are more likely to have already had braces removed
+        double pastRateMultiplier = switch (gradeLevel) {
+            case "Freshman" -> BRACES_PAST_RATE_FRESHMAN;
+            case "Sophomore" -> BRACES_PAST_RATE_SOPHOMORE;
+            case "Junior" -> BRACES_PAST_RATE_JUNIOR;
+            case "Senior" -> BRACES_PAST_RATE_SENIOR;
+            default -> BRACES_PAST_RATE_SOPHOMORE;
+        };
+
+        // The probability of having had braces in the past is:
+        // (total treatment rate) * (fraction already completed) for this grade
+        double pastBracesProbability = totalRate * pastRateMultiplier;
+
+        return GameRandom.nextDouble() < pastBracesProbability;
+    }
+
+    /**
+     * Generates past braces timing for a student who had braces removed before the game starts.
+     * This creates realistic start and end dates for when braces were worn.
+     *
+     * @param birthday the student's birthday
+     * @param gradeLevel the student's grade level
+     * @param gameStartDate the date the game starts
+     * @return an array of two LocalDates: [startDate, endDate] when braces were worn
+     */
+    public static LocalDate[] generatePastBracesTiming(LocalDate birthday, String gradeLevel,
+                                                        LocalDate gameStartDate) {
+        // Most orthodontic treatment happens between ages 10-16
+        // Calculate how old the student was when they got braces
+        int ageWhenStarted = 10 + Randomizer.setRandom(0, 4); // Ages 10-14 typically
+
+        // Calculate the date when braces were put on
+        LocalDate bracesStartDate = birthday.plusYears(ageWhenStarted);
+
+        // Make sure the start date is before the game start
+        if (bracesStartDate.isAfter(gameStartDate.minusMonths(BRACES_MIN_DURATION_MONTHS))) {
+            bracesStartDate = gameStartDate.minusMonths(BRACES_MIN_DURATION_MONTHS + 12);
+        }
+
+        // Generate treatment duration
+        int durationMonths = (int) GameRandom.nextGaussian(
+                BRACES_MEAN_DURATION_MONTHS,
+                BRACES_DURATION_STANDARD_DEVIATION);
+        durationMonths = Math.max(BRACES_MIN_DURATION_MONTHS,
+                Math.min(BRACES_MAX_DURATION_MONTHS, durationMonths));
+
+        LocalDate bracesEndDate = bracesStartDate.plusMonths(durationMonths);
+
+        // Ensure end date is before game start (they should have been removed already)
+        if (bracesEndDate.isAfter(gameStartDate)) {
+            // Shift both dates back so end date is before game start
+            long monthsToShift = java.time.temporal.ChronoUnit.MONTHS.between(gameStartDate, bracesEndDate) + 1;
+            bracesStartDate = bracesStartDate.minusMonths(monthsToShift);
+            bracesEndDate = bracesEndDate.minusMonths(monthsToShift);
+        }
+
+        return new LocalDate[]{bracesStartDate, bracesEndDate};
     }
 }

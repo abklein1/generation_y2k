@@ -52,6 +52,17 @@ public class StudentStatistics implements PStatistics {
     private boolean hasBraces;
     private String bracesBandColor;
     private String bracesBracketType;
+    // Braces timing - when they were put on and when they'll be removed
+    private LocalDate bracesStartDate;
+    private LocalDate bracesEndDate;
+    // Braces cosmetic modifiers - orthodontic elastics
+    private boolean bracesHasElastics;
+    private String bracesElasticColor;
+    private String bracesElasticType;
+    // Track if student previously had braces (already removed)
+    private boolean hadBracesRemoved;
+    // Store the charisma boost that was applied when braces were removed
+    private int bracesCharismaBoost;
 
 
 
@@ -98,6 +109,13 @@ public class StudentStatistics implements PStatistics {
         this.hasBraces = false;
         this.bracesBandColor = null;
         this.bracesBracketType = null;
+        this.bracesStartDate = null;
+        this.bracesEndDate = null;
+        this.bracesHasElastics = false;
+        this.bracesElasticColor = null;
+        this.bracesElasticType = null;
+        this.hadBracesRemoved = false;
+        this.bracesCharismaBoost = 0;
     }
 
     @Override
@@ -654,6 +672,96 @@ public class StudentStatistics implements PStatistics {
 
     public void setBracesBracketType(String bracesBracketType) {
         this.bracesBracketType = bracesBracketType;
+    }
+
+    public LocalDate getBracesStartDate() {
+        return bracesStartDate;
+    }
+
+    public void setBracesStartDate(LocalDate bracesStartDate) {
+        this.bracesStartDate = bracesStartDate;
+    }
+
+    public LocalDate getBracesEndDate() {
+        return bracesEndDate;
+    }
+
+    public void setBracesEndDate(LocalDate bracesEndDate) {
+        this.bracesEndDate = bracesEndDate;
+    }
+
+    public boolean getBracesHasElastics() {
+        return bracesHasElastics;
+    }
+
+    public void setBracesHasElastics(boolean bracesHasElastics) {
+        this.bracesHasElastics = bracesHasElastics;
+    }
+
+    public String getBracesElasticColor() {
+        return bracesElasticColor;
+    }
+
+    public void setBracesElasticColor(String bracesElasticColor) {
+        this.bracesElasticColor = bracesElasticColor;
+    }
+
+    public String getBracesElasticType() {
+        return bracesElasticType;
+    }
+
+    public void setBracesElasticType(String bracesElasticType) {
+        this.bracesElasticType = bracesElasticType;
+    }
+
+    public boolean getHadBracesRemoved() {
+        return hadBracesRemoved;
+    }
+
+    public void setHadBracesRemoved(boolean hadBracesRemoved) {
+        this.hadBracesRemoved = hadBracesRemoved;
+    }
+
+    public int getBracesCharismaBoost() {
+        return bracesCharismaBoost;
+    }
+
+    public void setBracesCharismaBoost(int bracesCharismaBoost) {
+        this.bracesCharismaBoost = bracesCharismaBoost;
+    }
+
+    /**
+     * Gets the effective charisma value, accounting for braces effects.
+     * Students currently wearing braces have reduced charisma.
+     * Students who previously had braces and had them removed get a permanent boost.
+     *
+     * @return the effective charisma value
+     */
+    public int getEffectiveCharisma() {
+        int effectiveCharisma = this.charisma;
+
+        // Apply penalty if currently wearing braces
+        if (hasBraces) {
+            effectiveCharisma -= constants.SimConstants.BRACES_CHARISMA_PENALTY;
+        }
+
+        // Apply boost if had braces removed (already included in charisma via bracesCharismaBoost)
+        // The boost is applied when setHadBracesRemoved is called during generation
+
+        return effectiveCharisma;
+    }
+
+    /**
+     * Recalculates secondary stats that depend on charisma.
+     * Call this after braces are applied or removed to update derived stats.
+     */
+    public void recalculateCharismaDependentStats() {
+        // Recalculate empathy (primarily driven by charisma)
+        this.empathy = (int) ((getEffectiveCharisma() * 1.5) + this.perception) / 2;
+        // Recalculate responsibility
+        this.responsibility = (int) ((getEffectiveCharisma() * 1.25) + (this.determination * 1.25)) / 2;
+        // Recalculate open-mindedness
+        this.openmindedness = (int) ((this.intelligence * 1.25) + (getEffectiveCharisma() * 1.25)) / 2;
     }
 
 }
