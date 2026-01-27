@@ -61,6 +61,20 @@ public class GameView {
     private JCheckBox useCustomSeedCheckbox;
     private long currentSeed;
     
+    // Demographics options
+    private int demographicsStudentPopulation = 1200;
+    private int demographicsStaffPopulation = 100;
+    private int demographicsExtraStudentPercent = 15;
+    private int demographicsExtraStaffPercent = 20;
+    private boolean useCustomDemographics = false;
+    
+    // Gender distribution (Male %, Female is 100 - Male)
+    private int demographicsMalePercent = 51;  // Default from SimConstants
+    
+    // Income distribution (Low %, High %, Middle is 100 - Low - High)
+    private int demographicsIncomeLowPercent = 25;   // Default from SimConstants
+    private int demographicsIncomeHighPercent = 15;  // Default from SimConstants
+    
     // Game mode tracking
     private boolean isGameMode = false;
     private boolean isSimulationRunning = false;
@@ -465,7 +479,7 @@ public class GameView {
     private void showStartDialog(boolean gameMode) {
         JDialog dialog = new JDialog(frame, gameMode ? "New Game" : "New Simulation", true);
         dialog.setLayout(new BorderLayout(10, 10));
-        dialog.setSize(400, 300);
+        dialog.setSize(500, 580);
         dialog.setLocationRelativeTo(frame);
         
         JPanel contentPanel = new JPanel();
@@ -483,6 +497,7 @@ public class GameView {
         seedPanel.setLayout(new BoxLayout(seedPanel, BoxLayout.Y_AXIS));
         seedPanel.setBorder(BorderFactory.createTitledBorder("World Seed"));
         seedPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        seedPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
         
         useCustomSeedCheckbox = new JCheckBox("Use custom seed");
         seedInputField = new JTextField(20);
@@ -499,9 +514,212 @@ public class GameView {
         seedPanel.add(Box.createVerticalStrut(5));
         seedPanel.add(seedInputRow);
         
+        // Demographics options panel
+        JPanel demographicsPanel = new JPanel();
+        demographicsPanel.setLayout(new BoxLayout(demographicsPanel, BoxLayout.Y_AXIS));
+        demographicsPanel.setBorder(BorderFactory.createTitledBorder("Town Demographics"));
+        demographicsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JCheckBox customDemographicsCheckbox = new JCheckBox("Customize demographics");
+        customDemographicsCheckbox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        // Student population slider (200 - 2000)
+        JLabel studentPopLabel = new JLabel("Student Population: " + demographicsStudentPopulation);
+        studentPopLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JSlider studentPopSlider = new JSlider(200, 2000, demographicsStudentPopulation);
+        studentPopSlider.setMajorTickSpacing(400);
+        studentPopSlider.setMinorTickSpacing(100);
+        studentPopSlider.setPaintTicks(true);
+        studentPopSlider.setPaintLabels(true);
+        studentPopSlider.setEnabled(false);
+        studentPopSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        studentPopSlider.addChangeListener(e -> {
+            demographicsStudentPopulation = studentPopSlider.getValue();
+            studentPopLabel.setText("Student Population: " + demographicsStudentPopulation);
+        });
+        
+        // Staff population slider (30 - 200)
+        JLabel staffPopLabel = new JLabel("Staff Population: " + demographicsStaffPopulation);
+        staffPopLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JSlider staffPopSlider = new JSlider(30, 200, demographicsStaffPopulation);
+        staffPopSlider.setMajorTickSpacing(40);
+        staffPopSlider.setMinorTickSpacing(10);
+        staffPopSlider.setPaintTicks(true);
+        staffPopSlider.setPaintLabels(true);
+        staffPopSlider.setEnabled(false);
+        staffPopSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        staffPopSlider.addChangeListener(e -> {
+            demographicsStaffPopulation = staffPopSlider.getValue();
+            staffPopLabel.setText("Staff Population: " + demographicsStaffPopulation);
+        });
+        
+        // Extra student pool slider (0% - 50%)
+        JLabel extraStudentLabel = new JLabel("Extra Student Pool: " + demographicsExtraStudentPercent + "%");
+        extraStudentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JSlider extraStudentSlider = new JSlider(0, 50, demographicsExtraStudentPercent);
+        extraStudentSlider.setMajorTickSpacing(10);
+        extraStudentSlider.setMinorTickSpacing(5);
+        extraStudentSlider.setPaintTicks(true);
+        extraStudentSlider.setPaintLabels(true);
+        extraStudentSlider.setEnabled(false);
+        extraStudentSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        extraStudentSlider.addChangeListener(e -> {
+            demographicsExtraStudentPercent = extraStudentSlider.getValue();
+            extraStudentLabel.setText("Extra Student Pool: " + demographicsExtraStudentPercent + "%");
+        });
+        
+        // Extra staff pool slider (0% - 50%)
+        JLabel extraStaffLabel = new JLabel("Extra Staff Pool (Substitutes): " + demographicsExtraStaffPercent + "%");
+        extraStaffLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JSlider extraStaffSlider = new JSlider(0, 50, demographicsExtraStaffPercent);
+        extraStaffSlider.setMajorTickSpacing(10);
+        extraStaffSlider.setMinorTickSpacing(5);
+        extraStaffSlider.setPaintTicks(true);
+        extraStaffSlider.setPaintLabels(true);
+        extraStaffSlider.setEnabled(false);
+        extraStaffSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        extraStaffSlider.addChangeListener(e -> {
+            demographicsExtraStaffPercent = extraStaffSlider.getValue();
+            extraStaffLabel.setText("Extra Staff Pool (Substitutes): " + demographicsExtraStaffPercent + "%");
+        });
+        
+        // Separator for distribution settings
+        JSeparator distributionSeparator = new JSeparator();
+        distributionSeparator.setAlignmentX(Component.LEFT_ALIGNMENT);
+        distributionSeparator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        
+        JLabel distributionHeaderLabel = new JLabel("Population Distributions");
+        distributionHeaderLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+        distributionHeaderLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        // Gender distribution slider (0% Male to 100% Male, Female is complement)
+        int femalePercent = 100 - demographicsMalePercent;
+        JLabel genderLabel = new JLabel("Gender: " + demographicsMalePercent + "% Male / " + femalePercent + "% Female");
+        genderLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JSlider genderSlider = new JSlider(0, 100, demographicsMalePercent);
+        genderSlider.setMajorTickSpacing(25);
+        genderSlider.setMinorTickSpacing(5);
+        genderSlider.setPaintTicks(true);
+        genderSlider.setPaintLabels(true);
+        genderSlider.setEnabled(false);
+        genderSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        genderSlider.addChangeListener(e -> {
+            demographicsMalePercent = genderSlider.getValue();
+            int female = 100 - demographicsMalePercent;
+            genderLabel.setText("Gender: " + demographicsMalePercent + "% Male / " + female + "% Female");
+        });
+        
+        // Income distribution - Low % slider
+        JLabel incomeLowLabel = new JLabel("Income - Low: " + demographicsIncomeLowPercent + "%");
+        incomeLowLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JSlider incomeLowSlider = new JSlider(0, 100, demographicsIncomeLowPercent);
+        incomeLowSlider.setMajorTickSpacing(25);
+        incomeLowSlider.setMinorTickSpacing(5);
+        incomeLowSlider.setPaintTicks(true);
+        incomeLowSlider.setPaintLabels(true);
+        incomeLowSlider.setEnabled(false);
+        incomeLowSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        // Income distribution - High % slider
+        JLabel incomeHighLabel = new JLabel("Income - High: " + demographicsIncomeHighPercent + "%");
+        incomeHighLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JSlider incomeHighSlider = new JSlider(0, 100, demographicsIncomeHighPercent);
+        incomeHighSlider.setMajorTickSpacing(25);
+        incomeHighSlider.setMinorTickSpacing(5);
+        incomeHighSlider.setPaintTicks(true);
+        incomeHighSlider.setPaintLabels(true);
+        incomeHighSlider.setEnabled(false);
+        incomeHighSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        // Income Middle label (calculated from Low + High)
+        int middlePercent = 100 - demographicsIncomeLowPercent - demographicsIncomeHighPercent;
+        JLabel incomeMiddleLabel = new JLabel("Income - Middle: " + middlePercent + "% (calculated)");
+        incomeMiddleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        incomeMiddleLabel.setFont(new Font("SansSerif", Font.ITALIC, 11));
+        
+        // Update income labels and enforce constraints
+        Runnable updateIncomeLabels = () -> {
+            int low = incomeLowSlider.getValue();
+            int high = incomeHighSlider.getValue();
+            
+            // Ensure Low + High doesn't exceed 100
+            if (low + high > 100) {
+                // Adjust the slider that was NOT just changed
+                if (incomeLowSlider.getValueIsAdjusting()) {
+                    high = 100 - low;
+                    incomeHighSlider.setValue(high);
+                } else {
+                    low = 100 - high;
+                    incomeLowSlider.setValue(low);
+                }
+            }
+            
+            demographicsIncomeLowPercent = low;
+            demographicsIncomeHighPercent = high;
+            int middle = 100 - low - high;
+            
+            incomeLowLabel.setText("Income - Low: " + low + "%");
+            incomeHighLabel.setText("Income - High: " + high + "%");
+            incomeMiddleLabel.setText("Income - Middle: " + middle + "% (calculated)");
+        };
+        
+        incomeLowSlider.addChangeListener(e -> updateIncomeLabels.run());
+        incomeHighSlider.addChangeListener(e -> updateIncomeLabels.run());
+        
+        // Enable/disable sliders based on checkbox
+        customDemographicsCheckbox.addActionListener(e -> {
+            boolean enabled = customDemographicsCheckbox.isSelected();
+            useCustomDemographics = enabled;
+            studentPopSlider.setEnabled(enabled);
+            staffPopSlider.setEnabled(enabled);
+            extraStudentSlider.setEnabled(enabled);
+            extraStaffSlider.setEnabled(enabled);
+            genderSlider.setEnabled(enabled);
+            incomeLowSlider.setEnabled(enabled);
+            incomeHighSlider.setEnabled(enabled);
+        });
+        
+        // Tooltip explaining the extra pools
+        JLabel poolInfoLabel = new JLabel("<html><i>Extra pools provide unassigned people for mid-year transfers, substitutes, etc.</i></html>");
+        poolInfoLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        poolInfoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        demographicsPanel.add(customDemographicsCheckbox);
+        demographicsPanel.add(Box.createVerticalStrut(10));
+        demographicsPanel.add(studentPopLabel);
+        demographicsPanel.add(studentPopSlider);
+        demographicsPanel.add(Box.createVerticalStrut(5));
+        demographicsPanel.add(staffPopLabel);
+        demographicsPanel.add(staffPopSlider);
+        demographicsPanel.add(Box.createVerticalStrut(5));
+        demographicsPanel.add(extraStudentLabel);
+        demographicsPanel.add(extraStudentSlider);
+        demographicsPanel.add(Box.createVerticalStrut(5));
+        demographicsPanel.add(extraStaffLabel);
+        demographicsPanel.add(extraStaffSlider);
+        demographicsPanel.add(Box.createVerticalStrut(5));
+        demographicsPanel.add(poolInfoLabel);
+        demographicsPanel.add(Box.createVerticalStrut(10));
+        demographicsPanel.add(distributionSeparator);
+        demographicsPanel.add(Box.createVerticalStrut(5));
+        demographicsPanel.add(distributionHeaderLabel);
+        demographicsPanel.add(Box.createVerticalStrut(5));
+        demographicsPanel.add(genderLabel);
+        demographicsPanel.add(genderSlider);
+        demographicsPanel.add(Box.createVerticalStrut(10));
+        demographicsPanel.add(incomeLowLabel);
+        demographicsPanel.add(incomeLowSlider);
+        demographicsPanel.add(Box.createVerticalStrut(5));
+        demographicsPanel.add(incomeHighLabel);
+        demographicsPanel.add(incomeHighSlider);
+        demographicsPanel.add(Box.createVerticalStrut(3));
+        demographicsPanel.add(incomeMiddleLabel);
+        
         contentPanel.add(modeLabel);
-        contentPanel.add(Box.createVerticalStrut(20));
+        contentPanel.add(Box.createVerticalStrut(15));
         contentPanel.add(seedPanel);
+        contentPanel.add(Box.createVerticalStrut(10));
+        contentPanel.add(demographicsPanel);
         
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -526,7 +744,12 @@ public class GameView {
         buttonPanel.add(startButton);
         buttonPanel.add(cancelButton);
         
-        dialog.add(contentPanel, BorderLayout.CENTER);
+        // Use scroll pane for content in case dialog is resized smaller
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        
+        dialog.add(scrollPane, BorderLayout.CENTER);
         dialog.add(buttonPanel, BorderLayout.SOUTH);
         dialog.setVisible(true);
     }
@@ -776,6 +999,98 @@ public class GameView {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    // ==================== Demographics Settings ====================
+    
+    /**
+     * Checks if custom demographics are enabled.
+     *
+     * @return true if the user has enabled custom demographics
+     */
+    public boolean isCustomDemographicsEnabled() {
+        return useCustomDemographics;
+    }
+
+    /**
+     * Gets the custom student population setting.
+     *
+     * @return the student population
+     */
+    public int getDemographicsStudentPopulation() {
+        return demographicsStudentPopulation;
+    }
+
+    /**
+     * Gets the custom staff population setting.
+     *
+     * @return the staff population
+     */
+    public int getDemographicsStaffPopulation() {
+        return demographicsStaffPopulation;
+    }
+
+    /**
+     * Gets the extra student pool percentage.
+     *
+     * @return the extra student pool percentage (0-50)
+     */
+    public int getDemographicsExtraStudentPercent() {
+        return demographicsExtraStudentPercent;
+    }
+
+    /**
+     * Gets the extra staff pool percentage.
+     *
+     * @return the extra staff pool percentage (0-50)
+     */
+    public int getDemographicsExtraStaffPercent() {
+        return demographicsExtraStaffPercent;
+    }
+
+    /**
+     * Gets the male percentage for gender distribution.
+     *
+     * @return the male percentage (0-100)
+     */
+    public int getDemographicsMalePercent() {
+        return demographicsMalePercent;
+    }
+
+    /**
+     * Gets the female percentage for gender distribution.
+     *
+     * @return the female percentage (0-100)
+     */
+    public int getDemographicsFemalePercent() {
+        return 100 - demographicsMalePercent;
+    }
+
+    /**
+     * Gets the low income percentage.
+     *
+     * @return the low income percentage (0-100)
+     */
+    public int getDemographicsIncomeLowPercent() {
+        return demographicsIncomeLowPercent;
+    }
+
+    /**
+     * Gets the middle income percentage (calculated from low and high).
+     *
+     * @return the middle income percentage (0-100)
+     */
+    public int getDemographicsIncomeMiddlePercent() {
+        return 100 - demographicsIncomeLowPercent - demographicsIncomeHighPercent;
+    }
+
+    /**
+     * Gets the high income percentage.
+     *
+     * @return the high income percentage (0-100)
+     */
+    public int getDemographicsIncomeHighPercent() {
+        return demographicsIncomeHighPercent;
     }
 
     public void updateCurrentSeed(long seed) {

@@ -1,6 +1,7 @@
 package utility;
 
 import entity.Student;
+import entity.StudentPool;
 import view.GameView;
 
 import java.time.LocalDate;
@@ -21,6 +22,29 @@ public class SiblingGenerator {
      */
     public static void setSchoolColors(String[] colors) {
         schoolColors = colors;
+    }
+
+    /**
+     * Generates siblings for students in a StudentPool.
+     * This is the preferred method for the new Town-based architecture.
+     *
+     * @param pool the student pool to generate siblings for
+     * @param view the game view for output
+     */
+    public static void siblingGeneratorForPool(StudentPool pool, GameView view) {
+        HashMap<Integer, Student> studentMap = pool.getAllStudents();
+        int originalCount = studentMap.size();
+        
+        // Generate siblings using the existing method
+        siblingGenerator(studentMap, originalCount, view);
+        
+        // The siblingGenerator method adds new students to the map
+        // Clear and re-add all students to the pool to include siblings
+        pool.clear();
+        pool.addStudentsFromMap(studentMap);
+        
+        view.appendOutput("Sibling generation complete. Pool now has " + pool.getTotalCount() + 
+                " students (added " + (pool.getTotalCount() - originalCount) + " siblings)");
     }
 
     private static final int SAMPLE_SIZE = 73227;

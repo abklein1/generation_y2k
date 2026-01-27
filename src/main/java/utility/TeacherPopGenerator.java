@@ -1,9 +1,12 @@
 package utility;
 
+import config.TownDemographics;
 import entity.Staff;
 import view.GameView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static constants.SimConstants.*;
@@ -11,6 +14,41 @@ import static utility.Randomizer.setRandom;
 
 // TODO: improve performance. It is horrible
 public class TeacherPopGenerator {
+
+    /**
+     * Generates staff/teachers and returns them as a list.
+     * This is the preferred method for the new Town-based architecture.
+     *
+     * @param count the number of staff to generate
+     * @param view the game view for output
+     * @return list of generated staff
+     */
+    public static List<Staff> generateStaffList(int count, GameView view) {
+        HashMap<Integer, Staff> tempMap = new HashMap<>();
+        generateTeachers(count, tempMap, view);
+        return new ArrayList<>(tempMap.values());
+    }
+
+    /**
+     * Generates staff using demographics configuration.
+     *
+     * @param demographics the demographics configuration
+     * @param view the game view for output
+     * @return list of generated staff
+     */
+    public static List<Staff> generateStaffFromDemographics(TownDemographics demographics, GameView view) {
+        int count = demographics.getTotalStaffToGenerate();
+        return generateStaffList(count, view);
+    }
+
+    /**
+     * Generates staff/teachers and populates a HashMap.
+     * This method maintains backward compatibility with existing code.
+     *
+     * @param staffCap the number of staff to generate
+     * @param staffHashMap the HashMap to populate
+     * @param view the game view for output
+     */
     public static void generateTeachers(int staffCap, HashMap<Integer, Staff> staffHashMap, GameView view) {
 
         Map<Integer, String> lNameReference = new HashMap<>();

@@ -1,5 +1,6 @@
 package utility;
 
+import constants.SimConstants;
 import entity.Student;
 import entity.StudentBlock;
 import entity.StudentSchedule;
@@ -595,9 +596,26 @@ public class StudentStatistics implements PStatistics {
     }
 
     public void setInitIncomeLevel(int choice) {
-        if (choice <= 25) {
+        if (choice <= SimConstants.INCOME_THRESHOLD_LOW) {
             this.incomeLevel = "low";
-        } else if (choice <= 85) {
+        } else if (choice <= SimConstants.INCOME_THRESHOLD_MIDDLE) {
+            this.incomeLevel = "middle";
+        } else {
+            this.incomeLevel = "high";
+        }
+    }
+
+    /**
+     * Sets income level using custom distribution percentages.
+     *
+     * @param lowPercent the percentage of low income (0.0 to 1.0)
+     * @param middlePercent the percentage of middle income (0.0 to 1.0)
+     */
+    public void setIncomeFromDistribution(double lowPercent, double middlePercent) {
+        double roll = GameRandom.nextDouble();
+        if (roll < lowPercent) {
+            this.incomeLevel = "low";
+        } else if (roll < lowPercent + middlePercent) {
             this.incomeLevel = "middle";
         } else {
             this.incomeLevel = "high";

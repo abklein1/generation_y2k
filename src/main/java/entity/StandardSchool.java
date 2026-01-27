@@ -1097,5 +1097,83 @@ public class StandardSchool implements SchoolPlan {
         return null;
     }
 
+    // ==================== Town-based Architecture Support ====================
+
+    /**
+     * Gets the total number of enrolled students across all grade levels.
+     *
+     * @return the total enrolled student count
+     */
+    public int getTotalEnrolledStudents() {
+        return freshmanClass.size() + sophomoreClass.size() + 
+               juniorClass.size() + seniorClass.size();
+    }
+
+    /**
+     * Gets a HashMap of all enrolled students (for compatibility).
+     *
+     * @return HashMap of all students keyed by sequential integers
+     */
+    public HashMap<Integer, Student> getAllEnrolledStudents() {
+        HashMap<Integer, Student> allStudents = new HashMap<>();
+        int index = 0;
+        for (Student student : freshmanClass.values()) {
+            allStudents.put(index++, student);
+        }
+        for (Student student : sophomoreClass.values()) {
+            allStudents.put(index++, student);
+        }
+        for (Student student : juniorClass.values()) {
+            allStudents.put(index++, student);
+        }
+        for (Student student : seniorClass.values()) {
+            allStudents.put(index++, student);
+        }
+        return allStudents;
+    }
+
+    /**
+     * Clears all enrolled students from grade-level classes.
+     * Useful for resetting school enrollment.
+     */
+    public void clearEnrolledStudents() {
+        freshmanClass.clear();
+        sophomoreClass.clear();
+        juniorClass.clear();
+        seniorClass.clear();
+    }
+
+    /**
+     * Gets enrollment counts by grade level.
+     *
+     * @return map of grade level to enrollment count
+     */
+    public Map<String, Integer> getEnrollmentByGrade() {
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put("Freshman", freshmanClass.size());
+        counts.put("Sophomore", sophomoreClass.size());
+        counts.put("Junior", juniorClass.size());
+        counts.put("Senior", seniorClass.size());
+        return counts;
+    }
+
+    /**
+     * Checks if the school has capacity for more students.
+     *
+     * @return true if the school can accept more students
+     */
+    public boolean hasCapacity() {
+        return getTotalEnrolledStudents() < getTotalStudentCapacity();
+    }
+
+    /**
+     * Gets the number of available spots for new students.
+     *
+     * @return the number of available enrollment spots
+     */
+    public int getAvailableCapacity() {
+        return Math.max(0, getTotalStudentCapacity() - getTotalEnrolledStudents());
+    }
+
 }
 

@@ -1,6 +1,8 @@
 package utility;
 
 import behavior.StudentBehaviorTreeBuilder;
+import config.DemographicsLoader;
+import config.TownDemographics;
 import entity.Rooms.*;
 import entity.*;
 import simulation.EntityStateManager;
@@ -40,6 +42,10 @@ public class SchoolController {
     private SocialLinkConnector socialLinkConnector;
     private StandardSchool standardSchool;
     
+    // Town-based population management (new architecture)
+    private Town town;
+    private boolean useTownBasedGeneration = true; // Toggle for new vs legacy generation
+    
     // Simulation components
     private SimulationEngine simulationEngine;
     private EntityStateManager entityStateManager;
@@ -61,6 +67,55 @@ public class SchoolController {
         this.view.addSpeedChangeListener(e -> updateSimulationSpeed());
         
         this.time = new Time();
+    }
+    
+    // ==================== Town-based Population Management ====================
+    
+    /**
+     * Gets the Town entity containing population pools.
+     * Only available when using Town-based generation.
+     *
+     * @return the Town, or null if using legacy generation
+     */
+    public Town getTown() {
+        return town;
+    }
+    
+    /**
+     * Checks if Town-based generation is enabled.
+     *
+     * @return true if using the new Town-based architecture
+     */
+    public boolean isUsingTownBasedGeneration() {
+        return useTownBasedGeneration;
+    }
+    
+    /**
+     * Enables or disables Town-based generation.
+     * Must be called before generating a world.
+     *
+     * @param enabled true to use Town-based generation
+     */
+    public void setUseTownBasedGeneration(boolean enabled) {
+        this.useTownBasedGeneration = enabled;
+    }
+    
+    /**
+     * Gets the number of available (unassigned) students in the town.
+     *
+     * @return the count of available students, or 0 if not using Town-based generation
+     */
+    public int getAvailableStudentCount() {
+        return town != null ? town.getAvailableStudentCount() : 0;
+    }
+    
+    /**
+     * Gets the number of available (unassigned) staff in the town.
+     *
+     * @return the count of available staff, or 0 if not using Town-based generation
+     */
+    public int getAvailableStaffCount() {
+        return town != null ? town.getAvailableStaffCount() : 0;
     }
     
     /**
@@ -776,9 +831,10 @@ public class SchoolController {
             int hlCount = hairLengthDropdown.getItemCount();
             String hairLength = hairLengthDropdown.getItemAt(setRandom(0, hlCount - 1));
 
-            // Income distribution: Low (25%), Middle (60%), High (15%)
-            int incomeRoll = setRandom(0, 100);
-            String incomeUi = (incomeRoll <= 25) ? "Low" : (incomeRoll <= 85) ? "Middle" : "High";
+            // Income distribution: Low (25%), Middle (60%), High (15%) - from SimConstants
+            int incomeRoll = setRandom(0, STUDENT_INCOME_LEVEL_SAMPLE_SIZE);
+            String incomeUi = (incomeRoll <= INCOME_THRESHOLD_LOW) ? "Low" 
+                    : (incomeRoll <= INCOME_THRESHOLD_MIDDLE) ? "Middle" : "High";
 
             // Siblings: 0-5
             int siblings = setRandom(0, 5);
@@ -921,19 +977,6 @@ public class SchoolController {
                 
                 // Reset time to starting values
                 time.reset();
-                
-                //Create hash maps for storage
-                studentHashMap = new HashMap<Integer, Student>();
-                staffHashMap = new HashMap<Integer, Staff>();
-                int student_cap;
-                int staff_cap;
-                String[] colors;
-                Classroom[] classrooms;
-                Gym[] gyms;
-                AthleticField[] athleticFields;
-                LibraryR[] libraries;
-                Auditorium[] auditoriums;
-                //String[] colorsHex;
 
                 // Initialize the seeded random generator
                 long seed;
@@ -957,78 +1000,224 @@ public class SchoolController {
                 javax.swing.SwingUtilities.invokeLater(() -> view.updateCurrentSeed(finalSeed));
                 publish("(Save this seed to recreate the same world!)");
 
-                //Generate a new standard school with rooms
-                publish("Generating the school...");
-                standardSchool = new StandardSchool();
-                Director director = new Director(standardSchool, view);
-                student_cap = standardSchool.getTotalStudentCapacity();
-                staff_cap = standardSchool.getMinimumStaffRequirements();
-                publish("Connecting rooms...");
-                roomConnector = new RoomConnector(standardSchool, view);
-                publish("Populating school...");
-                // Set school colors for braces band color selection before generating students
-                StudentPopGenerator.setSchoolColors(standardSchool.getSchoolColors());
-                SiblingGenerator.setSchoolColors(standardSchool.getSchoolColors());
-                // Set for student population generation
-                StudentPopGenerator.generateStudents(student_cap, studentHashMap, view);
-                SiblingGenerator.siblingGenerator(studentHashMap, student_cap, view);
-                standardSchool.setStudentGradeClass(studentHashMap, view);
-                // Set for staff population generation
-                TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, view);
-                publish("Assigning initial staff...");
-                StaffAssignment.initialAssignments(staffHashMap, student_cap, view, standardSchool);
-                RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
-                publish("Done creating school and students");
-                colors = standardSchool.getSchoolColors();
-                // Update the school info panel
-                view.updateSchoolInfo(
-                    standardSchool.getSchoolName(),
-                    standardSchool.getSchoolFoundedYear(),
-                    standardSchool.getSchoolMascot(),
-                    colors[0],
-                    colors[1]
-                );
-                updateTimeLabel();
-                updateWeatherLabels();
-                classrooms = standardSchool.getClassrooms();
-                for (Classroom classroom : classrooms) {
-                    classroom.reassignClassroomByTeacher(staffHashMap, view);
+                if (useTownBasedGeneration) {
+                    // New Town-based generation flow
+                    generateWithTown();
+                } else {
+                    // Legacy generation flow (kept for backward compatibility)
+                    generateLegacy();
                 }
-                StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
-                try {
-                    EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view);
-                    StudentSeatingAssigner.seatInitialStudents(standardSchool);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("some exception");
-                }
-                // Add names to rooms
-                gyms = standardSchool.getGyms();
-                for (Gym gym : gyms) {
-                    RoomNameGenerator.generateRoomName(gym, standardSchool);
-                }
-                athleticFields = standardSchool.getAthleticFields();
-                for (AthleticField athleticField : athleticFields) {
-                    RoomNameGenerator.generateRoomName(athleticField, standardSchool);
-                }
-                libraries = standardSchool.getLibraries();
-                for (LibraryR library : libraries) {
-                    RoomNameGenerator.generateRoomName(library, standardSchool);
-                }
-                auditoriums = standardSchool.getAuditoriums();
-                for (Auditorium auditorium : auditoriums) {
-                    RoomNameGenerator.generateRoomName(auditorium, standardSchool);
-                }
-                publish("Initializing social links...");
-                socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
-
-                TraversalStorage traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
 
             } catch (Throwable t) {
                 t.printStackTrace();
                 publish("Caught an exception: " + t.getMessage());
             }
             return null;
+        }
+        
+        /**
+         * New Town-based generation flow.
+         * Generates population independently from school, then assigns to school.
+         */
+        private void generateWithTown() {
+            String[] colors;
+            Classroom[] classrooms;
+            Gym[] gyms;
+            AthleticField[] athleticFields;
+            LibraryR[] libraries;
+            Auditorium[] auditoriums;
+            
+            // Step 1: Generate the school structure first
+            publish("Generating the school...");
+            standardSchool = new StandardSchool();
+            Director director = new Director(standardSchool, view);
+            
+            publish("Connecting rooms...");
+            roomConnector = new RoomConnector(standardSchool, view);
+            
+            // Step 2: Create Town with demographics configuration
+            publish("Creating town population...");
+            TownDemographics demographics = DemographicsLoader.loadOrDefault();
+            
+            // Check for custom demographics from UI
+            if (view.isCustomDemographicsEnabled()) {
+                publish("Using custom demographics settings...");
+                demographics.setTotalStudentPopulation(view.getDemographicsStudentPopulation());
+                demographics.setTotalStaffPopulation(view.getDemographicsStaffPopulation());
+                demographics.setExtraStudentPoolPercent(view.getDemographicsExtraStudentPercent() / 100.0);
+                demographics.setExtraStaffPoolPercent(view.getDemographicsExtraStaffPercent() / 100.0);
+                
+                // Set custom gender distribution
+                java.util.Map<String, Double> genderDist = new java.util.HashMap<>();
+                genderDist.put("Male", view.getDemographicsMalePercent() / 100.0);
+                genderDist.put("Female", view.getDemographicsFemalePercent() / 100.0);
+                demographics.setGenderDistribution(genderDist);
+                
+                // Set custom income distribution
+                java.util.Map<String, Double> incomeDist = new java.util.HashMap<>();
+                incomeDist.put("Low", view.getDemographicsIncomeLowPercent() / 100.0);
+                incomeDist.put("Middle", view.getDemographicsIncomeMiddlePercent() / 100.0);
+                incomeDist.put("High", view.getDemographicsIncomeHighPercent() / 100.0);
+                demographics.setIncomeDistribution(incomeDist);
+                
+                publish("  Students: " + demographics.getTotalStudentPopulation() + 
+                        " (+" + (int)(demographics.getExtraStudentPoolPercent() * 100) + "% pool)");
+                publish("  Staff: " + demographics.getTotalStaffPopulation() + 
+                        " (+" + (int)(demographics.getExtraStaffPoolPercent() * 100) + "% pool)");
+                publish("  Gender: " + view.getDemographicsMalePercent() + "% Male / " + 
+                        view.getDemographicsFemalePercent() + "% Female");
+                publish("  Income: " + view.getDemographicsIncomeLowPercent() + "% Low / " + 
+                        view.getDemographicsIncomeMiddlePercent() + "% Middle / " + 
+                        view.getDemographicsIncomeHighPercent() + "% High");
+            } else {
+                // Adjust demographics based on school capacity for reasonable population
+                int schoolCapacity = standardSchool.getTotalStudentCapacity();
+                int staffRequirements = standardSchool.getMinimumStaffRequirements();
+                demographics.setTotalStudentPopulation(schoolCapacity);
+                demographics.setTotalStaffPopulation(staffRequirements);
+                publish("Using school-based population: " + schoolCapacity + " students, " + staffRequirements + " staff");
+            }
+            
+            // Set school colors for braces before generating population
+            colors = standardSchool.getSchoolColors();
+            StudentPopGenerator.setSchoolColors(colors);
+            SiblingGenerator.setSchoolColors(colors);
+            
+            // Step 3: Generate the town population
+            town = TownPopulationGenerator.generateTown("Town", demographics, view);
+            town.setTownColors(colors);
+            
+            // Step 4: Assign population to school using assignment services
+            publish("Assigning population to school...");
+            SchoolAssignmentService.populateSchool(town, standardSchool, view);
+            
+            // Get HashMaps for compatibility with existing code
+            studentHashMap = SchoolAssignmentService.getStudentHashMap(town, standardSchool);
+            staffHashMap = SchoolAssignmentService.getStaffHashMap(town, standardSchool);
+            
+            publish("Done creating school and population");
+            
+            // Update the school info panel
+            view.updateSchoolInfo(
+                standardSchool.getSchoolName(),
+                standardSchool.getSchoolFoundedYear(),
+                standardSchool.getSchoolMascot(),
+                colors[0],
+                colors[1]
+            );
+            updateTimeLabel();
+            updateWeatherLabels();
+            
+            // Add names to rooms
+            gyms = standardSchool.getGyms();
+            for (Gym gym : gyms) {
+                RoomNameGenerator.generateRoomName(gym, standardSchool);
+            }
+            athleticFields = standardSchool.getAthleticFields();
+            for (AthleticField athleticField : athleticFields) {
+                RoomNameGenerator.generateRoomName(athleticField, standardSchool);
+            }
+            libraries = standardSchool.getLibraries();
+            for (LibraryR library : libraries) {
+                RoomNameGenerator.generateRoomName(library, standardSchool);
+            }
+            auditoriums = standardSchool.getAuditoriums();
+            for (Auditorium auditorium : auditoriums) {
+                RoomNameGenerator.generateRoomName(auditorium, standardSchool);
+            }
+            
+            publish("Initializing social links...");
+            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
+            
+            TraversalStorage traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
+            
+            // Log population summary
+            publish(SchoolAssignmentService.getPopulationSummary(town, standardSchool));
+        }
+        
+        /**
+         * Legacy generation flow (pre-Town architecture).
+         * Kept for backward compatibility.
+         */
+        private void generateLegacy() {
+            //Create hash maps for storage
+            studentHashMap = new HashMap<Integer, Student>();
+            staffHashMap = new HashMap<Integer, Staff>();
+            int student_cap;
+            int staff_cap;
+            String[] colors;
+            Classroom[] classrooms;
+            Gym[] gyms;
+            AthleticField[] athleticFields;
+            LibraryR[] libraries;
+            Auditorium[] auditoriums;
+
+            //Generate a new standard school with rooms
+            publish("Generating the school...");
+            standardSchool = new StandardSchool();
+            Director director = new Director(standardSchool, view);
+            student_cap = standardSchool.getTotalStudentCapacity();
+            staff_cap = standardSchool.getMinimumStaffRequirements();
+            publish("Connecting rooms...");
+            roomConnector = new RoomConnector(standardSchool, view);
+            publish("Populating school...");
+            // Set school colors for braces band color selection before generating students
+            StudentPopGenerator.setSchoolColors(standardSchool.getSchoolColors());
+            SiblingGenerator.setSchoolColors(standardSchool.getSchoolColors());
+            // Set for student population generation
+            StudentPopGenerator.generateStudents(student_cap, studentHashMap, view);
+            SiblingGenerator.siblingGenerator(studentHashMap, student_cap, view);
+            standardSchool.setStudentGradeClass(studentHashMap, view);
+            // Set for staff population generation
+            TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, view);
+            publish("Assigning initial staff...");
+            StaffAssignment.initialAssignments(staffHashMap, student_cap, view, standardSchool);
+            RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
+            publish("Done creating school and students");
+            colors = standardSchool.getSchoolColors();
+            // Update the school info panel
+            view.updateSchoolInfo(
+                standardSchool.getSchoolName(),
+                standardSchool.getSchoolFoundedYear(),
+                standardSchool.getSchoolMascot(),
+                colors[0],
+                colors[1]
+            );
+            updateTimeLabel();
+            updateWeatherLabels();
+            classrooms = standardSchool.getClassrooms();
+            for (Classroom classroom : classrooms) {
+                classroom.reassignClassroomByTeacher(staffHashMap, view);
+            }
+            StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
+            try {
+                EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view);
+                StudentSeatingAssigner.seatInitialStudents(standardSchool);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("some exception");
+            }
+            // Add names to rooms
+            gyms = standardSchool.getGyms();
+            for (Gym gym : gyms) {
+                RoomNameGenerator.generateRoomName(gym, standardSchool);
+            }
+            athleticFields = standardSchool.getAthleticFields();
+            for (AthleticField athleticField : athleticFields) {
+                RoomNameGenerator.generateRoomName(athleticField, standardSchool);
+            }
+            libraries = standardSchool.getLibraries();
+            for (LibraryR library : libraries) {
+                RoomNameGenerator.generateRoomName(library, standardSchool);
+            }
+            auditoriums = standardSchool.getAuditoriums();
+            for (Auditorium auditorium : auditoriums) {
+                RoomNameGenerator.generateRoomName(auditorium, standardSchool);
+            }
+            publish("Initializing social links...");
+            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
+
+            TraversalStorage traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
         }
 
         @Override

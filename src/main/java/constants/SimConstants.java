@@ -40,6 +40,68 @@ public final class SimConstants {
     // STUDENT INCOME LEVEL
     public static final int STUDENT_INCOME_LEVEL_SAMPLE_SIZE = 100;
 
+    // INCOME DISTRIBUTION (based on original StudentStatistics implementation)
+    // These represent cumulative thresholds out of 100: 0-25 Low, 26-85 Middle, 86-100 High
+    // Results in: Low 25%, Middle 60%, High 15%
+    public static final double INCOME_DISTRIBUTION_LOW = 0.25;
+    public static final double INCOME_DISTRIBUTION_MIDDLE = 0.60;
+    public static final double INCOME_DISTRIBUTION_HIGH = 0.15;
+    // Cumulative thresholds for random selection (out of 100)
+    public static final int INCOME_THRESHOLD_LOW = 25;
+    public static final int INCOME_THRESHOLD_MIDDLE = 85;  // 25 + 60 = 85
+
+    // GRADE DISTRIBUTION (typical US high school - slightly higher freshman due to dropout)
+    public static final double GRADE_DISTRIBUTION_FRESHMAN = 0.28;
+    public static final double GRADE_DISTRIBUTION_SOPHOMORE = 0.26;
+    public static final double GRADE_DISTRIBUTION_JUNIOR = 0.24;
+    public static final double GRADE_DISTRIBUTION_SENIOR = 0.22;
+
+    // GENDER DISTRIBUTION (already have sample size/rate, adding explicit percentages)
+    public static final double GENDER_DISTRIBUTION_MALE = 0.51;
+    public static final double GENDER_DISTRIBUTION_FEMALE = 0.49;
+
+    // RACE DISTRIBUTION (based on US Census data approximations)
+    public static final double RACE_DISTRIBUTION_WHITE = 0.50;
+    public static final double RACE_DISTRIBUTION_HISPANIC = 0.25;
+    public static final double RACE_DISTRIBUTION_BLACK = 0.13;
+    public static final double RACE_DISTRIBUTION_ASIAN = 0.06;
+    public static final double RACE_DISTRIBUTION_OTHER = 0.06;
+
+    // STAFF TYPE DISTRIBUTION (core subjects have more teachers)
+    public static final double STAFF_TYPE_ENGLISH = 0.12;
+    public static final double STAFF_TYPE_MATH = 0.12;
+    public static final double STAFF_TYPE_SCIENCE = 0.10;
+    public static final double STAFF_TYPE_HISTORY = 0.10;
+    public static final double STAFF_TYPE_LANGUAGES = 0.06;
+    public static final double STAFF_TYPE_PHYSICAL_ED = 0.06;
+    public static final double STAFF_TYPE_VISUAL_ARTS = 0.04;
+    public static final double STAFF_TYPE_PERFORMING_ARTS = 0.04;
+    public static final double STAFF_TYPE_COMP_SCI = 0.04;
+    public static final double STAFF_TYPE_VOCATIONAL = 0.04;
+    public static final double STAFF_TYPE_BUSINESS = 0.03;
+    public static final double STAFF_TYPE_CONSUMER_SCI = 0.02;
+    public static final double STAFF_TYPE_PRINCIPAL = 0.01;
+    public static final double STAFF_TYPE_VICE_PRINCIPAL = 0.01;
+    public static final double STAFF_TYPE_GUIDANCE = 0.03;
+    public static final double STAFF_TYPE_MAINTENANCE = 0.05;
+    public static final double STAFF_TYPE_LUNCH = 0.04;
+    public static final double STAFF_TYPE_OFFICE = 0.03;
+    public static final double STAFF_TYPE_LIBRARY = 0.02;
+    public static final double STAFF_TYPE_NURSE = 0.01;
+    public static final double STAFF_TYPE_SUB = 0.03;
+
+    // STAFF AGE AND EXPERIENCE BOUNDS
+    public static final int STAFF_MIN_AGE = 22;
+    public static final int STAFF_MAX_AGE = 70;
+    public static final int STAFF_MIN_EXPERIENCE = 0;
+    public static final int STAFF_MAX_EXPERIENCE = 40;
+
+    // DEFAULT POPULATION SIZES
+    public static final int DEFAULT_STUDENT_POPULATION = 1200;
+    public static final int DEFAULT_STAFF_POPULATION = 100;
+    public static final double DEFAULT_EXTRA_STUDENT_POOL_PERCENT = 0.15;
+    public static final double DEFAULT_EXTRA_STAFF_POOL_PERCENT = 0.20;
+
     // STUDENT POP STAT DISTRIBUTION
     public static final int STUDENT_POP_INTELLIGENCE_MEAN = 100;
     public static final int STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION = 15;
