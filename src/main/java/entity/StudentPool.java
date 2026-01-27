@@ -219,6 +219,51 @@ public class StudentPool implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets all students who are of high school age (eligible for scheduling).
+     *
+     * @return list of high school age students
+     */
+    public List<Student> getHighSchoolStudents() {
+        return allStudents.values().stream()
+                .filter(Student::isInHighSchool)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all students who are NOT of high school age (not eligible for scheduling).
+     * These are typically younger or older siblings.
+     *
+     * @return list of non-high-school age students
+     */
+    public List<Student> getNonHighSchoolStudents() {
+        return allStudents.values().stream()
+                .filter(s -> !s.isInHighSchool())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the count of high school age students.
+     *
+     * @return count of high school age students
+     */
+    public int getHighSchoolCount() {
+        return (int) allStudents.values().stream()
+                .filter(Student::isInHighSchool)
+                .count();
+    }
+
+    /**
+     * Gets the count of non-high-school age students.
+     *
+     * @return count of non-high-school age students
+     */
+    public int getNonHighSchoolCount() {
+        return (int) allStudents.values().stream()
+                .filter(s -> !s.isInHighSchool())
+                .count();
+    }
+
     // ==================== Statistics ====================
 
     /**
@@ -307,6 +352,8 @@ public class StudentPool implements Serializable {
     public String toString() {
         return "StudentPool{" +
                 "total=" + getTotalCount() +
+                ", highSchool=" + getHighSchoolCount() +
+                ", nonHighSchool=" + getNonHighSchoolCount() +
                 ", unassigned=" + getUnassignedCount() +
                 '}';
     }

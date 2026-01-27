@@ -60,18 +60,86 @@ public class SiblingGenerator {
     private static final int ADOPTED_SIBLING_RATE = 1128;
     private static final int HALF_SIBLING_RATE = 8567;
 
-    private static String generateNotInSchoolSiblingFirstName(Student student) {
+    /**
+     * Generates a fully simulated sibling who is not of high school age.
+     * This sibling will have inHighSchool=false and won't be assigned a schedule.
+     * Like full siblings, they have a high probability (85%) of sharing physical traits.
+     *
+     * @param student the original student to base sibling traits on
+     * @param view the game view for output
+     * @return a fully simulated Student object with inHighSchool=false
+     */
+    private static Student generateNotInSchoolSibling(Student student, GameView view) {
+        Student sibling = new Student();
+        String f_name;
+        
+        // 85% probability of inheriting each physical trait from sibling
+        final int TRAIT_INHERITANCE_PROBABILITY = 85;
+        
+        // Determine if older or younger sibling
         boolean older = setRandom(0, 1) == 0;
         int year;
         if (older) {
+            // Older sibling: 1982-1985 (graduated or in college)
             year = setRandom(1982, 1985);
         } else {
+            // Younger sibling: 1992-2000 (not yet in high school or elementary)
             year = setRandom(1992, 2000);
         }
-        String yearStr = String.valueOf(year);
-        NameLoader.readCSVFirst(yearStr);
-        String gender = GenderLoader.genderSelection();
-        return NameLoader.nameGenerator(yearStr, gender);
+        
+        // Load name data for the year
+        NameLoader.readCSVFirst(String.valueOf(year));
+        
+        // Set identity attributes
+        sibling.studentStatistics.setLevel(1);
+        sibling.studentStatistics.setExperience(0);
+        // Grade level is N/A for non-high-school students, but we set it for consistency
+        sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
+        
+        // Generate birthday based on the year
+        int month = setRandom(1, 12);
+        int day = setRandom(1, java.time.Month.of(month).length(false));
+        sibling.studentStatistics.setBirthday(java.time.LocalDate.of(year, month, day));
+        sibling.studentStatistics.setGender(GenderLoader.genderSelection());
+        
+        // Generate unique first name
+        f_name = NameLoader.nameGenerator(String.valueOf(year), sibling.studentStatistics.getGender());
+        while (f_name.equals(student.studentName.getFirstName())) {
+            f_name = NameLoader.nameGenerator(String.valueOf(year), sibling.studentStatistics.getGender());
+        }
+        sibling.studentName.setFirstName(f_name);
+        sibling.studentName.setLastName(student.studentName.getLastName());
+        
+        // Share race and income level with original student (full sibling assumption)
+        sibling.studentStatistics.setRace(student.studentStatistics.getRace());
+        sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        
+        // Apply all base attributes (stats, physical traits, braces, vision)
+        StudentPopGenerator.applyBaseAttributes(sibling);
+        
+        // Full siblings have a high probability of sharing physical traits, but not guaranteed
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
+        }
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setHairColor(student.studentStatistics.getHairColor());
+        }
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setHairType(student.studentStatistics.getHairType());
+        }
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
+        }
+        
+        // Mark as NOT in high school (won't be assigned a schedule)
+        sibling.setInHighSchool(false);
+        
+        // Link sibling relationships
+        sibling.studentStatistics.addSiblingsInSchool(student);
+
+        view.appendOutput("Generated sibling (not in school) " + f_name + " " + sibling.studentName.getLastName());
+
+        return sibling;
     }
 
     // Helper for player family generation: create sibling infos without touching global maps
@@ -151,9 +219,12 @@ public class SiblingGenerator {
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         generatedSiblings.add(sibling);
                     } else {
-                        // Otherwise, student is not in school and younger or older
-                        String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                        student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                        // Otherwise, sibling is not in high school (younger or older)
+                        studentCap++;
+                        sibling = generateNotInSchoolSibling(student.getValue(), view);
+                        addedStudents.put(studentCap, sibling);
+                        student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     }
                 } else if (hasAdoptedSibling) {
                     if (setRandom(0, 12) <= 3) {
@@ -163,8 +234,11 @@ public class SiblingGenerator {
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         generatedSiblings.add(sibling);
                     } else {
-                        String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                        student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                        studentCap++;
+                        sibling = generateNotInSchoolSibling(student.getValue(), view);
+                        addedStudents.put(studentCap, sibling);
+                        student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     }
                 } else if (hasHalfSibling) {
                     if (setRandom(0, 12) <= 3) {
@@ -174,8 +248,11 @@ public class SiblingGenerator {
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         generatedSiblings.add(sibling);
                     } else {
-                        String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                        student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                        studentCap++;
+                        sibling = generateNotInSchoolSibling(student.getValue(), view);
+                        addedStudents.put(studentCap, sibling);
+                        student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     }
                 } else {
                     if (setRandom(0, 12) <= 3) {
@@ -185,8 +262,11 @@ public class SiblingGenerator {
                         student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         generatedSiblings.add(sibling);
                     } else {
-                        String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                        student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                        studentCap++;
+                        sibling = generateNotInSchoolSibling(student.getValue(), view);
+                        addedStudents.put(studentCap, sibling);
+                        student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                        generatedSiblings.add(sibling);
                     }
                 }
             } else if (siblings == 2) {
@@ -227,8 +307,11 @@ public class SiblingGenerator {
                             } else {
                                 // add two twins not in school
                                 for (int i = 0; i < siblings; i++) {
-                                    String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                                    student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                                    studentCap++;
+                                    sibling = generateNotInSchoolSibling(student.getValue(), view);
+                                    addedStudents.put(studentCap, sibling);
+                                    student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                                    generatedSiblings.add(sibling);
                                 }
                             }
                             finishedGeneration = true;
@@ -259,8 +342,11 @@ public class SiblingGenerator {
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
-                            String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                            student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                            studentCap++;
+                            sibling = generateNotInSchoolSibling(student.getValue(), view);
+                            addedStudents.put(studentCap, sibling);
+                            student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                            generatedSiblings.add(sibling);
                         }
                     }
                 }
@@ -293,8 +379,11 @@ public class SiblingGenerator {
                             siblings--;
                         } else {
                             for (int i = 0; i < 3; i++) {
-                                String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                                student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                                studentCap++;
+                                sibling = generateNotInSchoolSibling(student.getValue(), view);
+                                addedStudents.put(studentCap, sibling);
+                                student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                                generatedSiblings.add(sibling);
                                 siblings--;
                             }
                         }
@@ -327,8 +416,11 @@ public class SiblingGenerator {
                                 siblings--;
                             } else {
                                 for (int i = 0; i < 2; i++) {
-                                    String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                                    student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                                    studentCap++;
+                                    sibling = generateNotInSchoolSibling(student.getValue(), view);
+                                    addedStudents.put(studentCap, sibling);
+                                    student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                                    generatedSiblings.add(sibling);
                                     siblings--;
                                 }
                             }
@@ -359,8 +451,11 @@ public class SiblingGenerator {
                             }
                             student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                         } else {
-                            String siblingName = generateNotInSchoolSiblingFirstName(student.getValue());
-                            student.getValue().studentStatistics.addSiblingsNotInSchool(siblingName);
+                            studentCap++;
+                            sibling = generateNotInSchoolSibling(student.getValue(), view);
+                            addedStudents.put(studentCap, sibling);
+                            student.getValue().studentStatistics.addSiblingsNotInSchool(sibling);
+                            generatedSiblings.add(sibling);
                         }
                     }
                 }
@@ -372,12 +467,19 @@ public class SiblingGenerator {
             for (Student generatedSibling : generatedSiblings) {
                 for (Student otherSibling : generatedSiblings) {
                     if (!generatedSibling.equals(otherSibling)) {
-                        generatedSibling.studentStatistics.addSiblingsInSchool(otherSibling);
+                        // Link siblings in school to each other
+                        if (otherSibling.isInHighSchool()) {
+                            generatedSibling.studentStatistics.addSiblingsInSchool(otherSibling);
+                        } else {
+                            generatedSibling.studentStatistics.addSiblingsNotInSchool(otherSibling);
+                        }
                     }
                 }
                 // Copy siblingsNotInSchool from the original student to each generated sibling
-                for (String siblingNotInSchool : student.getValue().studentStatistics.getSiblingsNotInSchool()) {
-                    generatedSibling.studentStatistics.addSiblingsNotInSchool(siblingNotInSchool);
+                for (Student siblingNotInSchool : student.getValue().studentStatistics.getSiblingsNotInSchool()) {
+                    if (!generatedSibling.equals(siblingNotInSchool)) {
+                        generatedSibling.studentStatistics.addSiblingsNotInSchool(siblingNotInSchool);
+                    }
                 }
             }
         }
@@ -385,373 +487,277 @@ public class SiblingGenerator {
         studentHashMap.putAll(addedStudents);
     }
 
-    //TODO: Possibly centralize this under StudentPop in future
+    /**
+     * Generates a step-sibling for the given student.
+     * Step-siblings may have different last names (33% chance) and different race (20% chance).
+     */
     private static Student generateStepSibling(Student student, GameView view) {
-        Student studentCopy = new Student();
+        Student sibling = new Student();
         String f_name;
         String race;
         String[] l_name = new String[2];
         String lastName;
-        int int_stdDev = 15;
-        int int_mean = 100;
-        int chr_stdDev = 15;
-        int chr_mean = 50;
-        int agl_stdDev = 15;
-        int agl_mean = 50;
-        int det_stdDev = 15;
-        int det_mean = 50;
-        int per_stdDev = 15;
-        int per_mean = 50;
-        int lck_stdDev = 10;
-        int lck_mean = 0;
 
-        studentCopy.studentStatistics.setLevel(1);
-        studentCopy.studentStatistics.setExperience(0);
-        studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
-        studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
-        studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
-        f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        // Set identity attributes
+        sibling.studentStatistics.setLevel(1);
+        sibling.studentStatistics.setExperience(0);
+        sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
+        sibling.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
+        sibling.studentStatistics.setGender(GenderLoader.genderSelection());
+        
+        // Generate unique first name
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         }
-        // chance of having different last name than sibling
+        
+        // Chance of having different last name than sibling (33%)
         if (setRandom(0, 3) == 2) {
             l_name = NameLoader.selectWeightedRandom();
             lastName = l_name[0];
-            // Capitalize the last name (source data is in all caps)
-            lastName = studentCopy.studentName.capitalizeName(lastName);
+            lastName = sibling.studentName.capitalizeName(lastName);
         } else {
             lastName = student.studentName.getLastName();
         }
-        studentCopy.studentName.setFirstName(f_name);
-        studentCopy.studentName.setLastName(lastName);
-        // General trends in intermarriage dictate chance of step-sibling having different race 
+        sibling.studentName.setFirstName(f_name);
+        sibling.studentName.setLastName(lastName);
+        
+        // Chance of step-sibling having different race (20%)
         if (setRandom(0, 10) < 2) {
             if (l_name[1] != null) {
                 race = l_name[1];
-                studentCopy.studentStatistics.setRace(race);
             } else {
                 race = student.studentStatistics.getRace();
-                studentCopy.studentStatistics.setRace(race);
             }
-
         } else {
             race = student.studentStatistics.getRace();
-            studentCopy.studentStatistics.setRace(race);
         }
-        studentCopy.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
-        String eyes = studentCopy.studentStatistics.getEyeColor();
-        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
-        String hairColor = studentCopy.studentStatistics.getHairColor();
-        studentCopy.studentStatistics.setInitHeight();
-        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
-        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
-        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
-        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
-        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
-        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
-        studentCopy.studentStatistics.setInitStrength();
-        studentCopy.studentStatistics.setInitCreativity();
-        studentCopy.studentStatistics.setInitEmpathy();
-        studentCopy.studentStatistics.setInitAdaptability();
-        studentCopy.studentStatistics.setInitInitiative();
-        studentCopy.studentStatistics.setInitResilience();
-        studentCopy.studentStatistics.setInitCuriosity();
-        studentCopy.studentStatistics.setInitResponsibility();
-        studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
-        studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
-        studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
-        studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        studentCopy.studentStatistics.addSiblingsInSchool(student);
+        sibling.studentStatistics.setRace(race);
+        
+        // Set income level (same as original student)
+        sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        
+        // Apply all base attributes (stats, physical traits, braces, vision)
+        StudentPopGenerator.applyBaseAttributes(sibling);
+        
+        // Link sibling relationships
+        sibling.studentStatistics.addSiblingsInSchool(student);
 
-        // Apply braces attributes (timing, cosmetics, charisma effects)
-        applyBracesAttributes(studentCopy);
+        view.appendOutput("Generated step-sibling " + f_name + " " + sibling.studentName.getLastName());
 
-        view.appendOutput("Generated step-sibling " + f_name + " " + studentCopy.studentName.getLastName());
-
-        return studentCopy;
+        return sibling;
     }
 
+    /**
+     * Generates a half-sibling for the given student.
+     * Half-siblings share last name and usually race (90% same).
+     * If from same mother, there's an enforced age gap.
+     */
     private static Student generateHalfSibling(Student student, GameView view) {
-        Student studentCopy = new Student();
+        Student sibling = new Student();
         String f_name;
         String race;
-        String lastName;
         String studentGrade = student.studentStatistics.getGradeLevel();
         String siblingGrade;
-        int int_stdDev = 15;
-        int int_mean = 100;
-        int chr_stdDev = 15;
-        int chr_mean = 50;
-        int agl_stdDev = 15;
-        int agl_mean = 50;
-        int det_stdDev = 15;
-        int det_mean = 50;
-        int per_stdDev = 15;
-        int per_mean = 50;
-        int lck_stdDev = 10;
-        int lck_mean = 0;
 
-        studentCopy.studentStatistics.setLevel(1);
-        studentCopy.studentStatistics.setExperience(0);
-        // Half sibling can either come from mother or father. if father the age gap can be closer
+        // Set identity attributes
+        sibling.studentStatistics.setLevel(1);
+        sibling.studentStatistics.setExperience(0);
+        
+        // Half sibling can either come from mother or father. If father the age gap can be closer
         if (setRandom(0, 10) <= 5) {
-            studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
+            sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
         } else {
             // Ensure min age gap between siblings from same mother
             do {
-                studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
-                siblingGrade = studentCopy.studentStatistics.getGradeLevel();
+                sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
+                siblingGrade = sibling.studentStatistics.getGradeLevel();
             } while (studentGrade.equals(siblingGrade));
         }
-        studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
-        studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
-        // Make sure sibling names don't equal each other
-        f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        sibling.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
+        sibling.studentStatistics.setGender(GenderLoader.genderSelection());
+        
+        // Generate unique first name
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         }
-        lastName = student.studentName.getLastName();
-        studentCopy.studentName.setFirstName(f_name);
-        studentCopy.studentName.setLastName(lastName);
-        // General trends in intermarriage dictate chance of half-sibling having different race
+        sibling.studentName.setFirstName(f_name);
+        sibling.studentName.setLastName(student.studentName.getLastName());
+        
+        // Chance of half-sibling having different race (10%)
         if (setRandom(0, 10) < 1) {
             race = NameLoader.selectWeightedRandom()[1];
-            studentCopy.studentStatistics.setRace(race);
         } else {
             race = student.studentStatistics.getRace();
-            studentCopy.studentStatistics.setRace(race);
         }
-        studentCopy.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
-        String eyes = studentCopy.studentStatistics.getEyeColor();
-        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
-        String hairColor = studentCopy.studentStatistics.getHairColor();
-        studentCopy.studentStatistics.setInitHeight();
-        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
-        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
-        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
-        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
-        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
-        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
-        studentCopy.studentStatistics.setInitStrength();
-        studentCopy.studentStatistics.setInitCreativity();
-        studentCopy.studentStatistics.setInitEmpathy();
-        studentCopy.studentStatistics.setInitAdaptability();
-        studentCopy.studentStatistics.setInitInitiative();
-        studentCopy.studentStatistics.setInitResilience();
-        studentCopy.studentStatistics.setInitCuriosity();
-        studentCopy.studentStatistics.setInitResponsibility();
-        studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
-        studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
-        studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
-        studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        studentCopy.studentStatistics.addSiblingsInSchool(student);
+        sibling.studentStatistics.setRace(race);
+        
+        // Set income level (same as original student)
+        sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        
+        // Apply all base attributes (stats, physical traits, braces, vision)
+        StudentPopGenerator.applyBaseAttributes(sibling);
+        
+        // Link sibling relationships
+        sibling.studentStatistics.addSiblingsInSchool(student);
 
-        // Apply braces attributes (timing, cosmetics, charisma effects)
-        applyBracesAttributes(studentCopy);
+        view.appendOutput("Generated half-sibling " + f_name + " " + sibling.studentName.getLastName());
 
-        view.appendOutput("Generated half-sibling " + f_name + " " + studentCopy.studentName.getLastName());
-
-        return studentCopy;
+        return sibling;
     }
 
+    /**
+     * Generates an adopted sibling for the given student.
+     * Adopted siblings share last name but always have a different race.
+     */
     private static Student generateAdoptedSibling(Student student, GameView view) {
-        Student studentCopy = new Student();
+        Student sibling = new Student();
         String f_name;
-        String l_name;
-        String race;
-        int int_stdDev = 15;
-        int int_mean = 100;
-        int chr_stdDev = 15;
-        int chr_mean = 50;
-        int agl_stdDev = 15;
-        int agl_mean = 50;
-        int det_stdDev = 15;
-        int det_mean = 50;
-        int per_stdDev = 15;
-        int per_mean = 50;
-        int lck_stdDev = 10;
-        int lck_mean = 0;
 
-        studentCopy.studentStatistics.setLevel(1);
-        studentCopy.studentStatistics.setExperience(0);
-        studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
-        studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
-        studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
-        f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        // Set identity attributes
+        sibling.studentStatistics.setLevel(1);
+        sibling.studentStatistics.setExperience(0);
+        sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
+        sibling.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
+        sibling.studentStatistics.setGender(GenderLoader.genderSelection());
+        
+        // Generate unique first name
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         }
-        l_name = student.studentName.getLastName();
-        studentCopy.studentName.setFirstName(f_name);
-        studentCopy.studentName.setLastName(l_name);
-        race = NameLoader.selectWeightedRandom()[1];
-        studentCopy.studentStatistics.setRace(race);
-        studentCopy.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
-        String eyes = studentCopy.studentStatistics.getEyeColor();
-        studentCopy.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
-        String hairColor = studentCopy.studentStatistics.getHairColor();
-        studentCopy.studentStatistics.setInitHeight();
-        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
-        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
-        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
-        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
-        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
-        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
-        studentCopy.studentStatistics.setInitStrength();
-        studentCopy.studentStatistics.setInitCreativity();
-        studentCopy.studentStatistics.setInitEmpathy();
-        studentCopy.studentStatistics.setInitAdaptability();
-        studentCopy.studentStatistics.setInitInitiative();
-        studentCopy.studentStatistics.setInitResilience();
-        studentCopy.studentStatistics.setInitCuriosity();
-        studentCopy.studentStatistics.setInitResponsibility();
-        studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
-        studentCopy.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
-        studentCopy.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
-        studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        studentCopy.studentStatistics.addSiblingsInSchool(student);
+        sibling.studentName.setFirstName(f_name);
+        sibling.studentName.setLastName(student.studentName.getLastName());
+        
+        // Adopted siblings always have a different race
+        sibling.studentStatistics.setRace(NameLoader.selectWeightedRandom()[1]);
+        
+        // Set income level (same as original student)
+        sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        
+        // Apply all base attributes (stats, physical traits, braces, vision)
+        StudentPopGenerator.applyBaseAttributes(sibling);
+        
+        // Link sibling relationships
+        sibling.studentStatistics.addSiblingsInSchool(student);
 
-        // Apply braces attributes (timing, cosmetics, charisma effects)
-        applyBracesAttributes(studentCopy);
+        view.appendOutput("Generated adopted sibling " + f_name + " " + sibling.studentName.getLastName());
 
-        view.appendOutput("Generated adopted sibling " + f_name + " " + studentCopy.studentName.getLastName());
-
-        return studentCopy;
+        return sibling;
     }
 
+    /**
+     * Generates a twin or triplet for the given student.
+     * Twins/triplets share birthday, grade level, race, eye color, hair color, height, hair type, skin color.
+     */
     private static Student generateTwinOrTriplet(Student student, GameView view) {
-        Student studentCopy = new Student();
+        Student sibling = new Student();
         String f_name;
-        String l_name;
-        int int_stdDev = 15;
-        int int_mean = 100;
-        int chr_stdDev = 15;
-        int chr_mean = 50;
-        int agl_stdDev = 15;
-        int agl_mean = 50;
-        int det_stdDev = 15;
-        int det_mean = 50;
-        int per_stdDev = 15;
-        int per_mean = 50;
-        int lck_stdDev = 10;
-        int lck_mean = 0;
 
-        studentCopy.studentStatistics.setLevel(1);
-        studentCopy.studentStatistics.setExperience(0);
-        studentCopy.studentStatistics.setGradeLevel(student.studentStatistics.getGradeLevel());
-        studentCopy.studentStatistics.setBirthday(student.studentStatistics.getBirthday());
-        studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
-        f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        // Set identity attributes - twins/triplets share grade level and birthday
+        sibling.studentStatistics.setLevel(1);
+        sibling.studentStatistics.setExperience(0);
+        sibling.studentStatistics.setGradeLevel(student.studentStatistics.getGradeLevel());
+        sibling.studentStatistics.setBirthday(student.studentStatistics.getBirthday());
+        sibling.studentStatistics.setGender(GenderLoader.genderSelection());
+        
+        // Generate unique first name
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         }
-        l_name = student.studentName.getLastName();
-        studentCopy.studentName.setFirstName(f_name);
-        studentCopy.studentName.setLastName(l_name);
-        studentCopy.studentStatistics.setRace(student.studentStatistics.getRace());
-        studentCopy.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
-        studentCopy.studentStatistics.setHairColor(student.studentStatistics.getHairColor());
-        studentCopy.studentStatistics.setHeight(student.studentStatistics.getHeight());
-        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
-        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
-        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
-        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
-        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
-        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
-        studentCopy.studentStatistics.setInitStrength();
-        studentCopy.studentStatistics.setInitCreativity();
-        studentCopy.studentStatistics.setInitEmpathy();
-        studentCopy.studentStatistics.setInitAdaptability();
-        studentCopy.studentStatistics.setInitInitiative();
-        studentCopy.studentStatistics.setInitResilience();
-        studentCopy.studentStatistics.setInitCuriosity();
-        studentCopy.studentStatistics.setInitResponsibility();
-        studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
-        studentCopy.studentStatistics.setHairType(student.studentStatistics.getHairType());
-        studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
-        studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        studentCopy.studentStatistics.addSiblingsInSchool(student);
+        sibling.studentName.setFirstName(f_name);
+        sibling.studentName.setLastName(student.studentName.getLastName());
+        
+        // Twins share race and income level
+        sibling.studentStatistics.setRace(student.studentStatistics.getRace());
+        sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        
+        // Apply all base attributes (stats, physical traits, braces, vision)
+        StudentPopGenerator.applyBaseAttributes(sibling);
+        
+        // Override physical traits to match twin (these should be inherited, not random)
+        sibling.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
+        sibling.studentStatistics.setHairColor(student.studentStatistics.getHairColor());
+        sibling.studentStatistics.setHeight(student.studentStatistics.getHeight());
+        sibling.studentStatistics.setHairType(student.studentStatistics.getHairType());
+        sibling.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
+        
+        // Link sibling relationships
+        sibling.studentStatistics.addSiblingsInSchool(student);
 
-        // Apply braces attributes (timing, cosmetics, charisma effects)
-        applyBracesAttributes(studentCopy);
+        view.appendOutput("Generated twin or triplet " + f_name + " " + sibling.studentName.getLastName());
 
-        view.appendOutput("Generated twin or triplet " + f_name + " " + studentCopy.studentName.getLastName());
-
-        return studentCopy;
+        return sibling;
     }
 
+    /**
+     * Generates a full sibling for the given student.
+     * Full siblings share race and have a high probability (85%) of sharing physical traits
+     * (eye color, hair color, height, hair type, skin color) but it's not guaranteed.
+     * They have an enforced age gap (can't be same grade level).
+     */
     private static Student generateSibling(Student student, GameView view) {
-        Student studentCopy = new Student();
+        Student sibling = new Student();
         String f_name;
-        String l_name;
         String studentGrade = student.studentStatistics.getGradeLevel();
         String siblingGrade;
-        int int_stdDev = 15;
-        int int_mean = 100;
-        int chr_stdDev = 15;
-        int chr_mean = 50;
-        int agl_stdDev = 15;
-        int agl_mean = 50;
-        int det_stdDev = 15;
-        int det_mean = 50;
-        int per_stdDev = 15;
-        int per_mean = 50;
-        int lck_stdDev = 10;
-        int lck_mean = 0;
+        
+        // 85% probability of inheriting each physical trait from sibling
+        final int TRAIT_INHERITANCE_PROBABILITY = 85;
 
-        studentCopy.studentStatistics.setLevel(1);
-        studentCopy.studentStatistics.setExperience(0);
-        studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
+        // Set identity attributes with enforced age gap
+        sibling.studentStatistics.setLevel(1);
+        sibling.studentStatistics.setExperience(0);
+        
         // Ensure min age gap between true siblings
         do {
-            studentCopy.studentStatistics.setGradeLevel(setRandom(0, 3));
-            siblingGrade = studentCopy.studentStatistics.getGradeLevel();
+            sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
+            siblingGrade = sibling.studentStatistics.getGradeLevel();
         } while (studentGrade.equals(siblingGrade));
-        studentCopy.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(studentCopy.studentStatistics.getGradeLevel()));
-        studentCopy.studentStatistics.setGender(GenderLoader.genderSelection());
-        f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+        sibling.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
+        sibling.studentStatistics.setGender(GenderLoader.genderSelection());
+        
+        // Generate unique first name
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(studentCopy.studentStatistics.getBirthday().getYear()), studentCopy.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
         }
-        l_name = student.studentName.getLastName();
-        studentCopy.studentName.setFirstName(f_name);
-        studentCopy.studentName.setLastName(l_name);
-        studentCopy.studentStatistics.setRace(student.studentStatistics.getRace());
-        studentCopy.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
-        studentCopy.studentStatistics.setHairColor(student.studentStatistics.getHairColor());
-        studentCopy.studentStatistics.setHeight(student.studentStatistics.getHeight());
-        studentCopy.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(int_mean, int_stdDev));
-        studentCopy.studentStatistics.setCharisma((int) GameRandom.nextGaussian(chr_mean, chr_stdDev));
-        studentCopy.studentStatistics.setAgility((int) GameRandom.nextGaussian(agl_mean, agl_stdDev));
-        studentCopy.studentStatistics.setDetermination((int) GameRandom.nextGaussian(det_mean, det_stdDev));
-        studentCopy.studentStatistics.setPerception((int) GameRandom.nextGaussian(per_mean, per_stdDev));
-        studentCopy.studentStatistics.setLuck((int) GameRandom.nextGaussian(lck_mean, lck_stdDev));
-        studentCopy.studentStatistics.setInitStrength();
-        studentCopy.studentStatistics.setInitCreativity();
-        studentCopy.studentStatistics.setInitEmpathy();
-        studentCopy.studentStatistics.setInitAdaptability();
-        studentCopy.studentStatistics.setInitInitiative();
-        studentCopy.studentStatistics.setInitResilience();
-        studentCopy.studentStatistics.setInitCuriosity();
-        studentCopy.studentStatistics.setInitResponsibility();
-        studentCopy.studentStatistics.setInitOpenMind();
-        studentCopy.studentStatistics.setInitHairLength(setRandom(0, 10000));
-        studentCopy.studentStatistics.setHairType(student.studentStatistics.getHairType());
-        studentCopy.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
-        studentCopy.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        studentCopy.studentStatistics.addSiblingsInSchool(student);
+        sibling.studentName.setFirstName(f_name);
+        sibling.studentName.setLastName(student.studentName.getLastName());
+        
+        // Full siblings share race and income level
+        sibling.studentStatistics.setRace(student.studentStatistics.getRace());
+        sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
+        
+        // Apply all base attributes (stats, physical traits, braces, vision)
+        StudentPopGenerator.applyBaseAttributes(sibling);
+        
+        // Full siblings have a high probability of sharing physical traits, but not guaranteed
+        // Each trait is independently determined (genetics isn't all-or-nothing)
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
+        }
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setHairColor(student.studentStatistics.getHairColor());
+        }
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setHeight(student.studentStatistics.getHeight());
+        }
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setHairType(student.studentStatistics.getHairType());
+        }
+        if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
+            sibling.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
+        }
+        
+        // Link sibling relationships
+        sibling.studentStatistics.addSiblingsInSchool(student);
 
-        // Apply braces attributes (timing, cosmetics, charisma effects)
-        applyBracesAttributes(studentCopy);
+        view.appendOutput("Generated sibling " + f_name + " " + sibling.studentName.getLastName());
 
-        view.appendOutput("Generated sibling " + f_name + " " + studentCopy.studentName.getLastName());
-
-        return studentCopy;
+        return sibling;
     }
 
     private static int siblingProbabilityLoader() {

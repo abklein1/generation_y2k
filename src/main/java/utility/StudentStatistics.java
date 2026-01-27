@@ -47,7 +47,7 @@ public class StudentStatistics implements PStatistics {
     private final ArrayList<String> completedClasses;
     private final StudentSchedule studentSchedule;
     private final ArrayList<Student> siblingsInSchool;
-    private final ArrayList<String> siblingsNotInSchool;
+    private final ArrayList<Student> siblingsNotInSchool;
     private final ArrayList<Student> friendsInSchool;
     private int maxBestFriends;
     private boolean hasBraces;
@@ -654,15 +654,15 @@ public class StudentStatistics implements PStatistics {
         return siblingsInSchool;
     }
 
-    public void addSiblingsNotInSchool(String name) {
-        this.siblingsNotInSchool.add(name);
+    public void addSiblingsNotInSchool(Student sibling) {
+        this.siblingsNotInSchool.add(sibling);
     }
 
-    public void removeSiblingsNotInSchool(String name) {
-        this.siblingsNotInSchool.remove(name);
+    public void removeSiblingsNotInSchool(Student sibling) {
+        this.siblingsNotInSchool.remove(sibling);
     }
 
-    public ArrayList<String> getSiblingsNotInSchool() {
+    public ArrayList<Student> getSiblingsNotInSchool() {
         return this.siblingsNotInSchool;
     }
 

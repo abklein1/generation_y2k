@@ -25,6 +25,9 @@ public class Student implements Serializable {
     private EntityState entityState;
     private transient BehaviorTree behaviorTree;
     private transient BehaviorContext behaviorContext;
+    
+    // Flag indicating if this student is of high school age (eligible for scheduling)
+    private boolean inHighSchool = true;
 
     public Student() {
         studentName = studentFactory.createName();
@@ -88,6 +91,25 @@ public class Student implements Serializable {
      */
     public void setBehaviorContext(BehaviorContext behaviorContext) {
         this.behaviorContext = behaviorContext;
+    }
+    
+    /**
+     * Checks if this student is of high school age and eligible for scheduling.
+     *
+     * @return true if the student is in high school age range
+     */
+    public boolean isInHighSchool() {
+        return inHighSchool;
+    }
+    
+    /**
+     * Sets whether this student is of high school age.
+     * Students not in high school (e.g., younger/older siblings) won't be assigned schedules.
+     *
+     * @param inHighSchool true if the student is in high school age range
+     */
+    public void setInHighSchool(boolean inHighSchool) {
+        this.inHighSchool = inHighSchool;
     }
 
     @Override

@@ -54,7 +54,7 @@ public class Inspector {
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
         List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
-        List<String> siblingsNotInSchool = student.studentStatistics.getSiblingsNotInSchool();
+        List<Student> siblingsNotInSchool = student.studentStatistics.getSiblingsNotInSchool();
         List<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
 
         // Header with name (using getFullName for consistency)
@@ -167,8 +167,8 @@ public class Inspector {
         }
         if (!siblingsNotInSchool.isEmpty()) {
             sb.append("They have the following siblings not in school: ").append("\n");
-            for (String sibling : siblingsNotInSchool) {
-                sb.append(sibling).append("\n");
+            for (Student sibling : siblingsNotInSchool) {
+                sb.append(sibling.studentName.getFullName()).append("\n");
             }
         }
         
