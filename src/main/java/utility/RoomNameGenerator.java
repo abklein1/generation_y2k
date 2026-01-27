@@ -1,6 +1,7 @@
 package utility;
 
 import entity.Rooms.*;
+import entity.Staff;
 import entity.StandardSchool;
 
 import java.util.HashMap;
@@ -82,6 +83,34 @@ public class RoomNameGenerator {
         char middleInitial = generateMiddleInitial();
 
         return firstName + " " + middleInitial + ". " + lastName + " Auditorium";
+    }
+
+    /**
+     * Generates a classroom name based on the assigned teacher.
+     * Format: "[Teacher Last Name]'s [Subject] Classroom"
+     * If no teacher is assigned, returns the original room name or a default.
+     *
+     * @param classroom the classroom to generate a name for
+     * @param staff the teacher assigned to the classroom (can be null)
+     * @param originalName the original name to fall back to if no teacher
+     * @return the generated classroom name
+     */
+    public static String generateClassroomName(Classroom classroom, Staff staff, String originalName) {
+        if (staff == null || staff.teacherName == null) {
+            return originalName;
+        }
+
+        String lastName = staff.teacherName.getLastName();
+        if (lastName == null || lastName.isEmpty()) {
+            return originalName;
+        }
+
+        // Get the subject from the staff type
+        Object staffType = staff.teacherStatistics.getStaffType();
+        String subject = (staffType != null) ? staffType.toString() : "General";
+
+        // Format: "LastName's Subject Classroom"
+        return lastName + "'s " + subject + " Classroom";
     }
 
     private static String gymOrGymnasium() {

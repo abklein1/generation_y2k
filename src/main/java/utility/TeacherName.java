@@ -40,6 +40,31 @@ public class TeacherName implements PName {
         this.suffix = suffix;
     }
 
+    /**
+     * Gets the full name including first name, last name, and suffix (if present).
+     *
+     * @return the full name as a formatted string
+     */
+    public String getFullName() {
+        StringBuilder sb = new StringBuilder();
+        if (firstName != null) {
+            sb.append(firstName);
+        }
+        if (lastName != null) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            sb.append(lastName);
+        }
+        if (suffix != null && !suffix.isEmpty()) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            sb.append(suffix);
+        }
+        return sb.toString();
+    }
+
     public String capitalizeName(String name) {
         if (name == null || name.isEmpty()) {
             return name;

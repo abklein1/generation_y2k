@@ -11,6 +11,13 @@ import java.util.Map;
 public class RoomAssignment {
     public static void assignTeacherToRoom(Staff staff, Room room) {
         room.setAssignedStaff(staff);
+        
+        // Rename classroom based on the assigned teacher
+        if (room instanceof Classroom classroom) {
+            String originalName = classroom.getRoomName();
+            String newName = RoomNameGenerator.generateClassroomName(classroom, staff, originalName);
+            classroom.setRoomName(newName);
+        }
     }
 
     private static void initialRoomAssignmentHelper(Staff staff, StandardSchool school) {
