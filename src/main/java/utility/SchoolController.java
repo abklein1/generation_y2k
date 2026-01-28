@@ -2,6 +2,7 @@ package utility;
 
 import behavior.StudentBehaviorTreeBuilder;
 import config.DemographicsLoader;
+import config.SchoolFundingModel;
 import config.TownDemographics;
 import entity.Rooms.*;
 import entity.*;
@@ -98,6 +99,56 @@ public class SchoolController {
      */
     public void setUseTownBasedGeneration(boolean enabled) {
         this.useTownBasedGeneration = enabled;
+    }
+    
+    /**
+     * Determines the funding level for school generation.
+     * This can be set by UI, derived from demographics, or randomized.
+     *
+     * @return the funding model to use for school generation
+     */
+    private SchoolFundingModel determineFundingLevel() {
+        // Check if custom demographics are set and derive funding from income distribution
+        if (view.isCustomDemographicsEnabled()) {
+            double lowIncome = view.getDemographicsIncomeLowPercent() / 100.0;
+            double highIncome = view.getDemographicsIncomeHighPercent() / 100.0;
+            
+            // Higher low-income percentage tends toward underfunded schools
+            // Higher high-income percentage tends toward well-funded schools
+            if (lowIncome > 0.4) {
+                return new SchoolFundingModel(SchoolFundingModel.FundingLevel.UNDERFUNDED);
+            } else if (lowIncome > 0.3) {
+                return new SchoolFundingModel(SchoolFundingModel.FundingLevel.ADEQUATE);
+            } else if (highIncome > 0.3) {
+                return new SchoolFundingModel(SchoolFundingModel.FundingLevel.WELL_FUNDED);
+            } else if (highIncome > 0.4) {
+                return new SchoolFundingModel(SchoolFundingModel.FundingLevel.EXCELLENTLY_FUNDED);
+            }
+        }
+        
+        // Default: randomize funding level with realistic distribution
+        // Most schools are adequately funded
+        int random = Randomizer.setRandom(1, 100);
+        if (random <= 10) {
+            return new SchoolFundingModel(SchoolFundingModel.FundingLevel.SEVERELY_UNDERFUNDED);
+        } else if (random <= 25) {
+            return new SchoolFundingModel(SchoolFundingModel.FundingLevel.UNDERFUNDED);
+        } else if (random <= 70) {
+            return new SchoolFundingModel(SchoolFundingModel.FundingLevel.ADEQUATE);
+        } else if (random <= 90) {
+            return new SchoolFundingModel(SchoolFundingModel.FundingLevel.WELL_FUNDED);
+        } else {
+            return new SchoolFundingModel(SchoolFundingModel.FundingLevel.EXCELLENTLY_FUNDED);
+        }
+    }
+    
+    /**
+     * Gets the current school's funding model.
+     *
+     * @return the funding model, or null if no school has been generated
+     */
+    public SchoolFundingModel getSchoolFundingModel() {
+        return standardSchool != null ? standardSchool.getFundingModel() : null;
     }
     
     /**
@@ -224,7 +275,11 @@ public class SchoolController {
         updateSimulationSpeed();
         
         view.appendOutput("Simulation engine initialized!");
-        view.appendOutput("Behavior trees assigned to " + studentHashMap.size() + " students");
+        if (studentHashMap != null) {
+            view.appendOutput("Behavior trees assigned to " + studentHashMap.size() + " students");
+        } else {
+            view.appendOutput("WARNING: No students loaded - simulation may not work correctly");
+        }
         view.appendOutput("Use Play/Pause button or Simulation menu to control the simulation.");
     }
     
@@ -1018,24 +1073,21 @@ public class SchoolController {
         /**
          * New Town-based generation flow.
          * Generates population independently from school, then assigns to school.
+         * Now supports funding levels and demand-driven staffing.
          */
         private void generateWithTown() {
             String[] colors;
-            Classroom[] classrooms;
             Gym[] gyms;
             AthleticField[] athleticFields;
             LibraryR[] libraries;
             Auditorium[] auditoriums;
             
-            // Step 1: Generate the school structure first
-            publish("Generating the school...");
-            standardSchool = new StandardSchool();
-            Director director = new Director(standardSchool, view);
+            // Step 1: Determine funding level for school
+            config.SchoolFundingModel fundingModel = determineFundingLevel();
+            publish("School funding level: " + fundingModel.getFundingLevel().getDisplayName());
             
-            publish("Connecting rooms...");
-            roomConnector = new RoomConnector(standardSchool, view);
-            
-            // Step 2: Create Town with demographics configuration
+            // Step 2: Create Town with demographics configuration FIRST
+            // This is now independent of school - the town population exists regardless
             publish("Creating town population...");
             TownDemographics demographics = DemographicsLoader.loadOrDefault();
             
@@ -1069,31 +1121,48 @@ public class SchoolController {
                 publish("  Income: " + view.getDemographicsIncomeLowPercent() + "% Low / " + 
                         view.getDemographicsIncomeMiddlePercent() + "% Middle / " + 
                         view.getDemographicsIncomeHighPercent() + "% High");
-            } else {
-                // Adjust demographics based on school capacity for reasonable population
-                int schoolCapacity = standardSchool.getTotalStudentCapacity();
-                int staffRequirements = standardSchool.getMinimumStaffRequirements();
-                demographics.setTotalStudentPopulation(schoolCapacity);
-                demographics.setTotalStaffPopulation(staffRequirements);
-                publish("Using school-based population: " + schoolCapacity + " students, " + staffRequirements + " staff");
             }
+            // Note: If not using custom demographics, we use defaults from DemographicsLoader
+            // The population is no longer dependent on school capacity
             
-            // Set school colors for braces before generating population
+            // Step 3: Generate the school structure based on funding level and target population
+            publish("Generating the school...");
+            standardSchool = new StandardSchool();
+            int targetPopulation = demographics.getTotalStudentPopulation();
+            Director director = new Director(standardSchool, fundingModel, targetPopulation, view);
+            
+            publish("Connecting rooms...");
+            roomConnector = new RoomConnector(standardSchool, view);
+            
+            publish("School capacity - Optimal: " + standardSchool.getOptimalCapacity() + 
+                   ", Physical: " + standardSchool.getPhysicalCapacity());
+            
+            // Step 4: Generate the town population (completely independent of school)
             colors = standardSchool.getSchoolColors();
             StudentPopGenerator.setSchoolColors(colors);
             SiblingGenerator.setSchoolColors(colors);
             
-            // Step 3: Generate the town population
             town = TownPopulationGenerator.generateTown("Town", demographics, view);
             town.setTownColors(colors);
             
-            // Step 4: Assign population to school using assignment services
-            publish("Assigning population to school...");
-            SchoolAssignmentService.populateSchool(town, standardSchool, view);
+            publish("Town population generated: " + town.getStudentPool().getTotalCount() + 
+                   " students, " + town.getStaffPool().getTotalCount() + " staff");
+            
+            // Step 5: Assign population to school using DEMAND-DRIVEN services
+            // This analyzes curriculum requirements first, then assigns staff by type
+            publish("Assigning population to school using demand-driven staffing...");
+            SchoolAssignmentService.populateSchoolDemandDriven(town, standardSchool, view);
             
             // Get HashMaps for compatibility with existing code
             studentHashMap = SchoolAssignmentService.getStudentHashMap(town, standardSchool);
             staffHashMap = SchoolAssignmentService.getStaffHashMap(town, standardSchool);
+            
+            // Report on school status
+            if (standardSchool.isOvercrowded()) {
+                publish("NOTE: School is overcrowded at " + 
+                       String.format("%.1f%%", standardSchool.getOvercrowdingLevel() * 100) + 
+                       " of optimal capacity");
+            }
             
             publish("Done creating school and population");
             
@@ -1156,7 +1225,7 @@ public class SchoolController {
             publish("Generating the school...");
             standardSchool = new StandardSchool();
             Director director = new Director(standardSchool, view);
-            student_cap = standardSchool.getTotalStudentCapacity();
+            student_cap = standardSchool.getOptimalCapacity(); // Use optimal instead of deprecated method
             staff_cap = standardSchool.getMinimumStaffRequirements();
             publish("Connecting rooms...");
             roomConnector = new RoomConnector(standardSchool, view);

@@ -211,8 +211,13 @@ public abstract class Room implements Serializable {
         } else {
             view.appendOutput("Classroom " + getRoomName() + " has no staff!");
             StaffAssignment.reassignSubToRoom(staffHashMap, view, this);
-            // recursive call be careful here
-            reassignClassroomByTeacher(staffHashMap, view);
+            // Only recurse if a substitute was actually assigned - prevents infinite recursion
+            if (!getAssignedStaff().isEmpty()) {
+                reassignClassroomByTeacher(staffHashMap, view);
+            } else {
+                // No substitute available - leave room without staff assignment
+                view.appendOutput("WARNING: No substitute available for " + getRoomName() + " - room will remain unassigned");
+            }
         }
     }
 

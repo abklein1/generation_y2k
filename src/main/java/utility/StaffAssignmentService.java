@@ -36,6 +36,9 @@ public class StaffAssignmentService {
 
     /**
      * Assigns a specific number of staff from the pool to a school.
+     * 
+     * @deprecated Use {@link #assignStaffByDemand(StaffPool, StandardSchool, Map, GameView)} instead
+     *             for demand-driven staffing based on curriculum requirements.
      *
      * @param pool the staff pool
      * @param school the school to assign staff to
@@ -44,6 +47,7 @@ public class StaffAssignmentService {
      * @param view the game view for output
      * @return the number of staff actually assigned
      */
+    @Deprecated
     public static int assignStaffToSchool(StaffPool pool, StandardSchool school, int count, 
                                            int studentCount, GameView view) {
         List<Staff> unassigned = pool.getUnassignedStaff();
@@ -63,8 +67,9 @@ public class StaffAssignmentService {
             }
         }
         
-        // Assign roles using existing StaffAssignment logic
-        StaffAssignment.initialAssignments(assignedMap, studentCount, view, school);
+        // NOTE: Legacy role assignment removed - use assignStaffByDemand() instead
+        // The demand-driven approach assigns roles based on curriculum requirements
+        // StaffAssignment.initialAssignments() is deprecated and should not be called here
         
         // Assign to classrooms
         RoomAssignment.initialClassroomAssignments(school, assignedMap);
@@ -221,5 +226,148 @@ public class StaffAssignmentService {
      */
     public static int getAvailableSubstituteCount(StaffPool pool) {
         return pool.getUnassignedCount();
+    }
+
+    /**
+     * Assigns staff to a school based on curriculum demand analysis.
+     * This method assigns staff by type to meet specific curriculum requirements.
+     *
+     * @param pool the staff pool
+     * @param school the school to assign staff to
+     * @param staffNeeds map of staff type to number needed
+     * @param view the game view for output
+     * @return the total number of staff assigned
+     */
+    public static int assignStaffByDemand(StaffPool pool, StandardSchool school, 
+                                          Map<StaffType, Integer> staffNeeds, GameView view) {
+        view.appendOutput("Assigning staff by curriculum demand to " + school.getSchoolName());
+        
+        HashMap<Integer, Staff> assignedMap = new HashMap<>();
+        int totalAssigned = 0;
+        int shortages = 0;
+        
+        // Assign staff by type in priority order
+        StaffType[] priorityOrder = {
+            // Core teaching staff first
+            StaffType.ENGLISH, StaffType.MATH, StaffType.SCIENCE, StaffType.HISTORY,
+            // Then specialized teaching staff
+            StaffType.LANGUAGES, StaffType.PHYSICAL_ED, StaffType.VISUAL_ARTS,
+            StaffType.PERFORMING_ARTS, StaffType.COMP_SCI, StaffType.VOCATIONAL,
+            StaffType.BUSINESS, StaffType.CONSUMER_SCI,
+            // Then support staff
+            StaffType.PRINCIPAL, StaffType.VICE_PRINCIPAL, StaffType.GUIDANCE,
+            StaffType.LIBRARY, StaffType.NURSE, StaffType.OFFICE,
+            StaffType.MAINTENANCE, StaffType.LUNCH, StaffType.SUB
+        };
+        
+        for (StaffType type : priorityOrder) {
+            int needed = staffNeeds.getOrDefault(type, 0);
+            if (needed <= 0) continue;
+            
+            // Get available staff of this type from the pool
+            List<Staff> availableOfType = pool.getAvailableStaffForSubject(type);
+            int toAssign = Math.min(needed, availableOfType.size());
+            
+            int assigned = 0;
+            for (int i = 0; i < toAssign; i++) {
+                Staff staff = availableOfType.get(i);
+                if (pool.assignToSchool(staff, school)) {
+                    // Set the staff type
+                    staff.teacherStatistics.setStaffType(type);
+                    assignedMap.put(totalAssigned, staff);
+                    assigned++;
+                    totalAssigned++;
+                }
+            }
+            
+            if (assigned < needed) {
+                int shortage = needed - assigned;
+                shortages += shortage;
+                view.appendOutput("  " + type + ": assigned " + assigned + "/" + needed + 
+                                 " (shortage: " + shortage + ")");
+            } else {
+                view.appendOutput("  " + type + ": assigned " + assigned + "/" + needed);
+            }
+        }
+        
+        // If there are shortages, try to fill with substitutes or unassigned staff
+        if (shortages > 0) {
+            view.appendOutput("  Total shortages: " + shortages + " - attempting to fill with available staff");
+            List<Staff> remaining = pool.getUnassignedStaff();
+            int filled = 0;
+            for (Staff staff : remaining) {
+                if (filled >= shortages) break;
+                if (pool.assignToSchool(staff, school)) {
+                    // Ensure staff has a type - default to SUB if null
+                    if (staff.teacherStatistics.getStaffType() == null) {
+                        staff.teacherStatistics.setStaffType(StaffType.SUB);
+                    }
+                    assignedMap.put(totalAssigned, staff);
+                    totalAssigned++;
+                    filled++;
+                }
+            }
+            if (filled > 0) {
+                view.appendOutput("  Filled " + filled + " positions with available staff");
+            }
+        }
+        
+        // Assign to classrooms
+        if (!assignedMap.isEmpty()) {
+            RoomAssignment.initialClassroomAssignments(school, assignedMap);
+            
+            // Reassign classrooms by teacher type
+            Classroom[] classrooms = school.getClassrooms();
+            for (Classroom classroom : classrooms) {
+                classroom.reassignClassroomByTeacher(assignedMap, view);
+            }
+        }
+        
+        view.appendOutput("Successfully assigned " + totalAssigned + " staff to " + school.getSchoolName());
+        return totalAssigned;
+    }
+
+    /**
+     * Checks if the school has sufficient staff for its curriculum needs.
+     *
+     * @param pool the staff pool
+     * @param school the school
+     * @param staffNeeds the required staff by type
+     * @return true if all needs are met
+     */
+    public static boolean hasAdequateStaff(StaffPool pool, StandardSchool school, 
+                                           Map<StaffType, Integer> staffNeeds) {
+        Map<StaffType, Integer> current = getStaffByType(pool, school);
+        
+        for (Map.Entry<StaffType, Integer> need : staffNeeds.entrySet()) {
+            int have = current.getOrDefault(need.getKey(), 0);
+            if (have < need.getValue()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Gets the staffing shortages for a school based on curriculum needs.
+     *
+     * @param pool the staff pool
+     * @param school the school
+     * @param staffNeeds the required staff by type
+     * @return map of staff type to shortage count (0 if adequately staffed)
+     */
+    public static Map<StaffType, Integer> getStaffingShortages(StaffPool pool, StandardSchool school, 
+                                                               Map<StaffType, Integer> staffNeeds) {
+        Map<StaffType, Integer> shortages = new HashMap<>();
+        Map<StaffType, Integer> current = getStaffByType(pool, school);
+        
+        for (Map.Entry<StaffType, Integer> need : staffNeeds.entrySet()) {
+            int have = current.getOrDefault(need.getKey(), 0);
+            int shortage = Math.max(0, need.getValue() - have);
+            if (shortage > 0) {
+                shortages.put(need.getKey(), shortage);
+            }
+        }
+        return shortages;
     }
 }

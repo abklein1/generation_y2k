@@ -231,6 +231,8 @@ public class StaffPool implements Serializable {
 
     /**
      * Gets available staff that can teach a specific subject.
+     * Includes unassigned staff with null type (new staff not yet assigned a role),
+     * substitutes, and staff with matching type.
      *
      * @param staffType the subject/staff type needed
      * @return list of available staff qualified to teach that subject
@@ -239,8 +241,8 @@ public class StaffPool implements Serializable {
         return getUnassignedStaff().stream()
                 .filter(s -> {
                     Enum<?> typeEnum = s.teacherStatistics.getStaffType();
-                    // SUB can teach any subject, or match the specific type
-                    return typeEnum == StaffType.SUB || typeEnum == staffType;
+                    // Include null type (unassigned new staff), SUB, or matching type
+                    return typeEnum == null || typeEnum == StaffType.SUB || typeEnum == staffType;
                 })
                 .collect(Collectors.toList());
     }

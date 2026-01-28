@@ -2,71 +2,181 @@ package utility;
 
 //*******************************************************************
 //  utility.Director.java
-//  Description: This directs the construction of a school from rooms
+//  Description: This directs the construction of a school from rooms.
+//  Now supports funding-based room generation for realistic school sizes.
 //  Bugs:
 //
 //  @author     Alex Klein
 //  @version    04242022
 //*******************************************************************
 
+import config.SchoolFundingModel;
 import entity.StandardSchool;
 import view.GameView;
 
 import static constants.SchoolConstants.*;
 import static utility.Randomizer.setRandom;
 
+/**
+ * Directs the construction of a school by creating rooms based on
+ * either random ranges (legacy) or funding-based calculations (new).
+ */
 public class Director {
-    //TODO: Change this to be dependent on staff/student caps
-    //TODO: Create staff bathrooms
 
+    private SchoolFundingModel fundingModel;
+
+    /**
+     * Creates a Director with default funding and builds the school.
+     * This constructor maintains backward compatibility.
+     *
+     * @param standardSchool the school to build
+     * @param view the game view for output
+     */
     public Director(StandardSchool standardSchool, GameView view) {
+        this(standardSchool, new SchoolFundingModel(), view);
+    }
+
+    /**
+     * Creates a Director with specified funding level and builds the school.
+     *
+     * @param standardSchool the school to build
+     * @param fundingModel the funding model to use for room calculations
+     * @param view the game view for output
+     */
+    public Director(StandardSchool standardSchool, SchoolFundingModel fundingModel, GameView view) {
+        this.fundingModel = fundingModel != null ? fundingModel : new SchoolFundingModel();
+        standardSchool.setFundingModel(this.fundingModel);
         setStandardSchool(standardSchool, view);
     }
 
-    //TODO: Seed these values
+    /**
+     * Creates a Director with specified funding level for a target population.
+     *
+     * @param standardSchool the school to build
+     * @param fundingModel the funding model
+     * @param targetPopulation the expected student population
+     * @param view the game view for output
+     */
+    public Director(StandardSchool standardSchool, SchoolFundingModel fundingModel, 
+                    int targetPopulation, GameView view) {
+        this.fundingModel = fundingModel != null ? fundingModel : new SchoolFundingModel();
+        standardSchool.setFundingModel(this.fundingModel);
+        setStandardSchoolForPopulation(standardSchool, targetPopulation, view);
+    }
+
+    /**
+     * Builds a school using random room counts within the standard ranges.
+     * This is the legacy behavior.
+     */
     public void setStandardSchool(StandardSchool standardSchool, GameView view) {
+        double roomModifier = fundingModel.getRoomCountModifier();
+        double specializedModifier = fundingModel.getSpecializedRoomModifier();
+
+        view.appendOutput("Building school with " + fundingModel.getFundingLevel().getDisplayName() + " funding...");
+
+        // Core classrooms - scaled by room modifier
+        int classroomCount = applyModifier(
+            setRandom(CLASSROOM_AMOUNT_LOWER_LIMIT, CLASSROOM_AMOUNT_UPPER_LIMIT), 
+            roomModifier
+        );
+        view.appendOutput("Building classrooms...");
+        standardSchool.setClassrooms(classroomCount, view);
+
+        // Specialized rooms - scaled by specialized room modifier
         view.appendOutput("Building art studios...");
-        standardSchool.setArtStudios(setRandom(ART_AMOUNT_LOWER_LIMIT, ART_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setArtStudios(
+            applyModifier(setRandom(ART_AMOUNT_LOWER_LIMIT, ART_AMOUNT_UPPER_LIMIT), specializedModifier), 
+            view
+        );
+
         view.appendOutput("Building athletic fields...");
-        standardSchool.setAthleticFields(setRandom(ATHLETIC_AMOUNT_LOWER_LIMIT, ATHLETIC_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setAthleticFields(
+            applyModifier(setRandom(ATHLETIC_AMOUNT_LOWER_LIMIT, ATHLETIC_AMOUNT_UPPER_LIMIT), specializedModifier), 
+            view
+        );
+
         view.appendOutput("Building auditoriums...");
-        standardSchool.setAuditoriums(setRandom(AUDITORIUM_AMOUNT_LOWER_LIMIT, AUDITORIUM_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setAuditoriums(
+            applyModifier(setRandom(AUDITORIUM_AMOUNT_LOWER_LIMIT, AUDITORIUM_AMOUNT_UPPER_LIMIT), specializedModifier), 
+            view
+        );
+
         view.appendOutput("Building breakrooms...");
         standardSchool.setBreakrooms(setRandom(BREAKROOM_AMOUNT_LOWER_LIMIT, BREAKROOM_AMOUNT_UPPER_LIMIT), view);
-        view.appendOutput("Building classrooms...");
-        standardSchool.setClassrooms(setRandom(CLASSROOM_AMOUNT_LOWER_LIMIT, CLASSROOM_AMOUNT_UPPER_LIMIT), view);
+
         view.appendOutput("Building vocational rooms...");
-        standardSchool.setVocationalRooms(setRandom(VOCATIONAL_AMOUNT_LOWER_LIMIT, VOCATIONAL_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setVocationalRooms(
+            applyModifier(setRandom(VOCATIONAL_AMOUNT_LOWER_LIMIT, VOCATIONAL_AMOUNT_UPPER_LIMIT), specializedModifier), 
+            view
+        );
+
         view.appendOutput("Building computer labs...");
-        standardSchool.setComputerLabs(setRandom(COMPUTER_LAB_AMOUNT_LOWER_LIMIT, COMPUTER_LAB_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setComputerLabs(
+            applyModifier(setRandom(COMPUTER_LAB_AMOUNT_LOWER_LIMIT, COMPUTER_LAB_AMOUNT_UPPER_LIMIT), specializedModifier), 
+            view
+        );
+
         view.appendOutput("Building courtyards...");
         standardSchool.setCourtyards(setRandom(COURTYARD_AMOUNT_LOWER_LIMIT, COURTYARD_AMOUNT_UPPER_LIMIT), view);
+
         view.appendOutput("Building drama rooms...");
-        standardSchool.setDramaRooms(setRandom(DRAMA_AMOUNT_LOWER_LIMIT, DRAMA_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setDramaRooms(
+            applyModifier(setRandom(DRAMA_AMOUNT_LOWER_LIMIT, DRAMA_AMOUNT_UPPER_LIMIT), specializedModifier), 
+            view
+        );
+
         view.appendOutput("Building gyms...");
         standardSchool.setGyms(setRandom(GYM_AMOUNT_LOWER_LIMIT, GYM_AMOUNT_UPPER_LIMIT), view);
+
         view.appendOutput("Building hallways...");
-        standardSchool.setHallways(setRandom(HALLWAY_AMOUNT_LOWER_LIMIT, HALLWAY_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setHallways(
+            applyModifier(setRandom(HALLWAY_AMOUNT_LOWER_LIMIT, HALLWAY_AMOUNT_UPPER_LIMIT), roomModifier), 
+            view
+        );
+
         view.appendOutput("Building libraries...");
         standardSchool.setLibraries(setRandom(LIBRARY_AMOUNT_LOWER_LIMIT, LIBRARY_AMOUNT_UPPER_LIMIT), view);
+
         view.appendOutput("Building locker rooms...");
-        standardSchool.setLockerRooms((standardSchool.getGyms().length + standardSchool.getAthleticFields().length) * LOCKER_ROOM_MODIFIER, view);
+        standardSchool.setLockerRooms(
+            (standardSchool.getGyms().length + standardSchool.getAthleticFields().length) * LOCKER_ROOM_MODIFIER, 
+            view
+        );
+
         view.appendOutput("Building lunchrooms...");
         standardSchool.setLunchrooms(setRandom(LUNCHROOM_AMOUNT_LOWER_LIMIT, LUNCHROOM_AMOUNT_UPPER_LIMIT), view);
+
         view.appendOutput("Building music rooms...");
-        standardSchool.setMusicRooms(setRandom(MUSIC_AMOUNT_LOWER_LIMIT, MUSIC_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setMusicRooms(
+            applyModifier(setRandom(MUSIC_AMOUNT_LOWER_LIMIT, MUSIC_AMOUNT_UPPER_LIMIT), specializedModifier), 
+            view
+        );
+
         view.appendOutput("Building offices...");
-        standardSchool.setOffices(setRandom(OFFICE_AMOUNT_LOWER_LIMIT, standardSchool.getClassrooms().length), view);
+        standardSchool.setOffices(
+            applyModifier(setRandom(OFFICE_AMOUNT_LOWER_LIMIT, standardSchool.getClassrooms().length), roomModifier), 
+            view
+        );
+
         view.appendOutput("Building science labs...");
-        standardSchool.setScienceLabs(setRandom(SCIENCE_LAB_AMOUNT_LOWER_LIMIT, SCIENCE_LAB_AMOUNT_UPPER_LIMIT), view);
+        standardSchool.setScienceLabs(
+            applyModifier(setRandom(SCIENCE_LAB_AMOUNT_LOWER_LIMIT, SCIENCE_LAB_AMOUNT_UPPER_LIMIT), specializedModifier), 
+            view
+        );
+
         view.appendOutput("Building utility rooms...");
         standardSchool.setUtilityRooms(setRandom(UTILITY_AMOUNT_LOWER_LIMIT, UTILITY_AMOUNT_UPPER_LIMIT), view);
+
         view.appendOutput("Building conference rooms...");
         standardSchool.setConferenceRooms(setRandom(CONFERENCE_AMOUNT_LOWER_LIMIT, CONFERENCE_AMOUNT_UPPER_LIMIT), view);
+
         view.appendOutput("Building parking lots...");
         standardSchool.setParkingLots(setRandom(PARKING_AMOUNT_LOWER_LIMIT, PARKING_AMOUNT_UPPER_LIMIT), view);
+
         view.appendOutput("Building bathrooms...");
         standardSchool.setBathrooms(BATHROOM_AMOUNT, view);
+
+        // School identity
         view.appendOutput("Setting school name...");
         standardSchool.setSchoolName();
         view.appendOutput("Setting school mascot...");
@@ -75,5 +185,155 @@ public class Director {
         standardSchool.schoolColorsLoader();
         view.appendOutput("Setting school founded year...");
         standardSchool.setSchoolFoundedYear();
+
+        view.appendOutput("School built: " + standardSchool.getClassrooms().length + " classrooms, " +
+                         "optimal capacity: " + standardSchool.getOptimalCapacity() + " students");
+    }
+
+    /**
+     * Builds a school sized for a specific target population.
+     * Room counts are calculated based on the expected student population
+     * and funding level.
+     *
+     * @param standardSchool the school to build
+     * @param targetPopulation the expected number of students
+     * @param view the game view for output
+     */
+    public void setStandardSchoolForPopulation(StandardSchool standardSchool, int targetPopulation, GameView view) {
+        double specializedModifier = fundingModel.getSpecializedRoomModifier();
+
+        view.appendOutput("Building school for " + targetPopulation + " students with " + 
+                         fundingModel.getFundingLevel().getDisplayName() + " funding...");
+
+        // Calculate classrooms needed for the target population
+        int classroomsNeeded = fundingModel.calculateClassroomsNeeded(targetPopulation, TOTAL_SCHOOL_PERIODS);
+        // Ensure we're within reasonable bounds
+        classroomsNeeded = Math.max(CLASSROOM_AMOUNT_LOWER_LIMIT, 
+                          Math.min(classroomsNeeded, CLASSROOM_AMOUNT_UPPER_LIMIT * 2));
+
+        view.appendOutput("Building classrooms...");
+        standardSchool.setClassrooms(classroomsNeeded, view);
+
+        // Scale other rooms based on classroom count and specialization modifier
+        int baseSpecialized = Math.max(1, classroomsNeeded / 10);
+
+        view.appendOutput("Building art studios...");
+        standardSchool.setArtStudios(
+            Math.max(1, (int)(baseSpecialized * specializedModifier)), 
+            view
+        );
+
+        view.appendOutput("Building athletic fields...");
+        standardSchool.setAthleticFields(
+            Math.max(1, (int)(Math.ceil(classroomsNeeded / 20.0) * specializedModifier)), 
+            view
+        );
+
+        view.appendOutput("Building auditoriums...");
+        standardSchool.setAuditoriums(
+            Math.max(1, (int)(Math.ceil(classroomsNeeded / 30.0) * specializedModifier)), 
+            view
+        );
+
+        view.appendOutput("Building breakrooms...");
+        standardSchool.setBreakrooms(Math.max(1, classroomsNeeded / 20), view);
+
+        view.appendOutput("Building vocational rooms...");
+        standardSchool.setVocationalRooms(
+            Math.max(4, (int)(baseSpecialized * 1.5 * specializedModifier)), 
+            view
+        );
+
+        view.appendOutput("Building computer labs...");
+        standardSchool.setComputerLabs(
+            Math.max(1, (int)(baseSpecialized * specializedModifier)), 
+            view
+        );
+
+        view.appendOutput("Building courtyards...");
+        standardSchool.setCourtyards(Math.max(1, classroomsNeeded / 25), view);
+
+        view.appendOutput("Building drama rooms...");
+        standardSchool.setDramaRooms(
+            Math.max(1, (int)(Math.ceil(baseSpecialized / 2.0) * specializedModifier)), 
+            view
+        );
+
+        view.appendOutput("Building gyms...");
+        standardSchool.setGyms(Math.max(1, classroomsNeeded / 25), view);
+
+        view.appendOutput("Building hallways...");
+        standardSchool.setHallways(Math.max(9, classroomsNeeded / 5), view);
+
+        view.appendOutput("Building libraries...");
+        standardSchool.setLibraries(Math.max(1, classroomsNeeded / 40), view);
+
+        view.appendOutput("Building locker rooms...");
+        standardSchool.setLockerRooms(
+            (standardSchool.getGyms().length + standardSchool.getAthleticFields().length) * LOCKER_ROOM_MODIFIER, 
+            view
+        );
+
+        view.appendOutput("Building lunchrooms...");
+        standardSchool.setLunchrooms(Math.max(1, classroomsNeeded / 30), view);
+
+        view.appendOutput("Building music rooms...");
+        standardSchool.setMusicRooms(
+            Math.max(1, (int)(Math.ceil(baseSpecialized / 2.0) * specializedModifier)), 
+            view
+        );
+
+        view.appendOutput("Building offices...");
+        standardSchool.setOffices(Math.max(OFFICE_AMOUNT_LOWER_LIMIT, classroomsNeeded / 3), view);
+
+        view.appendOutput("Building science labs...");
+        standardSchool.setScienceLabs(
+            Math.max(2, (int)(baseSpecialized * specializedModifier)), 
+            view
+        );
+
+        view.appendOutput("Building utility rooms...");
+        standardSchool.setUtilityRooms(Math.max(UTILITY_AMOUNT_LOWER_LIMIT, classroomsNeeded / 15), view);
+
+        view.appendOutput("Building conference rooms...");
+        standardSchool.setConferenceRooms(Math.max(1, classroomsNeeded / 20), view);
+
+        view.appendOutput("Building parking lots...");
+        standardSchool.setParkingLots(Math.max(1, classroomsNeeded / 15), view);
+
+        view.appendOutput("Building bathrooms...");
+        // Scale bathrooms to population
+        int bathroomCount = Math.max(BATHROOM_AMOUNT, targetPopulation / 100);
+        standardSchool.setBathrooms(bathroomCount, view);
+
+        // School identity
+        view.appendOutput("Setting school name...");
+        standardSchool.setSchoolName();
+        view.appendOutput("Setting school mascot...");
+        standardSchool.setSchoolMascot();
+        view.appendOutput("Setting school colors...");
+        standardSchool.schoolColorsLoader();
+        view.appendOutput("Setting school founded year...");
+        standardSchool.setSchoolFoundedYear();
+
+        view.appendOutput("School built: " + standardSchool.getClassrooms().length + " classrooms, " +
+                         "optimal capacity: " + standardSchool.getOptimalCapacity() + " students, " +
+                         "physical capacity: " + standardSchool.getPhysicalCapacity() + " students");
+    }
+
+    /**
+     * Applies a modifier to a room count, ensuring minimum of 1.
+     */
+    private int applyModifier(int base, double modifier) {
+        return Math.max(1, (int) Math.round(base * modifier));
+    }
+
+    /**
+     * Gets the funding model being used.
+     *
+     * @return the funding model
+     */
+    public SchoolFundingModel getFundingModel() {
+        return fundingModel;
     }
 }

@@ -25,6 +25,13 @@ public class RoomAssignment {
         Office[] offices = school.getOffices();
         boolean teacherAssigned = false;
 
+        // Handle null staff type - skip room assignment for now
+        if (type == null) {
+            System.out.println("WARNING: Staff " + staff.teacherName.getFirstName() + " " + 
+                             staff.teacherName.getLastName() + " has no assigned type, skipping room assignment");
+            return;
+        }
+
         switch (type) {
             case COMP_SCI:
                 ComputerLab[] computerLabs = school.getComputerLabs();

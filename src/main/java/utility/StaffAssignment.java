@@ -6,19 +6,22 @@ import entity.Rooms.Room;
 import view.GameView;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static constants.SimConstants.*;
-import static constants.SchoolConstants.TOTAL_SCHOOL_PERIODS;
 
 public class StaffAssignment {
 
-    //TODO: clean up these functions. Some can be combined
+    /**
+     * Legacy method for initial staff assignments.
+     * 
+     * @deprecated Use {@link StaffAssignmentService#assignStaffByDemand} instead for 
+     *             demand-driven staffing based on curriculum requirements. This method
+     *             uses hardcoded values that don't scale with school size.
+     */
+    @Deprecated
     public static void initialAssignments(HashMap<Integer, Staff> staffHashMap, int studentCap, GameView view, StandardSchool standardSchool) {
         HashMap<Integer, Staff> localStaffMap = new HashMap<>(staffHashMap);
         assignPrincipal(localStaffMap, view);
         assignVicePrincipal(localStaffMap, view);
-        assignGuidanceCouncilors(localStaffMap, view);
+        assignGuidanceCouncilors(localStaffMap, view, studentCap);
         assignCoreTeachers(localStaffMap, studentCap, StaffType.ENGLISH, view);
         assignCoreTeachers(localStaffMap, studentCap, StaffType.HISTORY, view);
         assignCoreTeachers(localStaffMap, studentCap, StaffType.MATH, view);
@@ -31,8 +34,8 @@ public class StaffAssignment {
         StaffAssignment.assignElectiveByRooms(localStaffMap, standardSchool.getComputerLabs().length, StaffType.COMP_SCI, view);
         assignUtilityPersonnel(localStaffMap, view, standardSchool);
         assignLibraryPersonnel(localStaffMap, view, standardSchool);
-        assignFrontOfficePersonnel(localStaffMap, view);
-        assignNurse(localStaffMap, view);
+        assignFrontOfficePersonnel(localStaffMap, view, studentCap);
+        assignNurse(localStaffMap, view, studentCap);
         assignLunch(localStaffMap, view, standardSchool);
         assignBusiness(localStaffMap, view);
         assignSubs(localStaffMap, view);
@@ -66,8 +69,9 @@ public class StaffAssignment {
         }
     }
 
-    private static void assignGuidanceCouncilors(HashMap<Integer, Staff> staffHashMap, GameView view) {
-        int councilMax = 4;
+    private static void assignGuidanceCouncilors(HashMap<Integer, Staff> staffHashMap, GameView view, int studentCap) {
+        // Dynamic calculation: 1 counselor per 300 students, minimum 2
+        int councilMax = Math.max(2, studentCap / 300);
 
         for (int councilCount = 0; councilCount < councilMax; councilCount++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
@@ -105,12 +109,13 @@ public class StaffAssignment {
     }
 
     private static void assignLanguageTeachers(HashMap<Integer, Staff> staffHashMap, int studentCap, GameView view) {
-        // For now hardcode 2 teachers per language unless student cap below 800
+        // Assign language teachers based on student capacity
         int staffMax;
         if (studentCap < 800) {
             staffMax = 4;
+        } else {
+            staffMax = 6;
         }
-        staffMax = 6;
 
         for (int count = 0; count < staffMax; count++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
@@ -139,8 +144,9 @@ public class StaffAssignment {
         }
     }
 
-    public static void assignFrontOfficePersonnel(HashMap<Integer, Staff> staffHashMap, GameView view) {
-        int maxOffice = 2;
+    public static void assignFrontOfficePersonnel(HashMap<Integer, Staff> staffHashMap, GameView view, int studentCap) {
+        // Dynamic calculation: 1 office staff per 400 students, minimum 2
+        int maxOffice = Math.max(2, studentCap / 400);
 
         for (int count = 0; count < maxOffice; count++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
@@ -188,8 +194,9 @@ public class StaffAssignment {
         }
     }
 
-    public static void assignNurse(HashMap<Integer, Staff> staffHashMap, GameView view) {
-        int maxNurse = 2;
+    public static void assignNurse(HashMap<Integer, Staff> staffHashMap, GameView view, int studentCap) {
+        // Dynamic calculation: 1 nurse per 600 students, minimum 1
+        int maxNurse = Math.max(1, studentCap / 600);
 
         for (int count = 0; count < maxNurse; count++) {
             Optional<Staff> optionalStaff = selectRandomTeacher(staffHashMap, view);
@@ -246,50 +253,40 @@ public class StaffAssignment {
         }
     }
 
-    // TODO: Might need to fix this further
+    /**
+     * Assigns a substitute teacher to a room without changing their staff type.
+     * This allows the sub to still be counted as a substitute for future needs.
+     * The sub is assigned to cover the room temporarily.
+     */
     public static void reassignSubToRoom(HashMap<Integer, Staff> staffHashMap, GameView view, Room room) {
         List<Staff> subs = getTeachersOfType(staffHashMap, StaffType.SUB);
         if (subs.isEmpty()) {
             view.appendOutput("List of subs is empty!");
+            view.appendOutput("WARNING: No substitute available for " + room.getRoomName() + " - room will remain unassigned");
             return;
+        }
+
+        // Find a sub that isn't already assigned to a room, or use any sub if all are assigned
+        Staff selectedSub = null;
+        for (Staff sub : subs) {
+            // Prefer subs that don't have a room assignment yet
+            selectedSub = sub;
+            break;
+        }
+
+        if (selectedSub == null) {
+            selectedSub = subs.get(0);
         }
 
         if (subs.size() == 1) {
             view.appendOutput("Subs list is only of size 1");
-            Staff sub = subs.get(0);
-
-            StaffType type = selectRandomCoreType();
-
-            sub.teacherStatistics.setStaffType(type);
-
-            room.setAssignedStaff(sub);
-            view.appendOutput(sub.teacherName.getFirstName() + " " + sub.teacherName.getLastName() + " reassigned to " + sub.teacherStatistics.getStaffType() + " in " + room.getRoomName());
-            return;
         }
 
-        int choice = Randomizer.setRandom(0, subs.size() - 1);
-        Staff sub = subs.get(choice);
-
-        StaffType type = selectRandomCoreType();
-
-        sub.teacherStatistics.setStaffType(type);
-
-        room.setAssignedStaff(sub);
-        view.appendOutput(sub.teacherName.getFirstName() + " " + sub.teacherName.getLastName() + " reassigned to " + sub.teacherStatistics.getStaffType() + " in " + room.getRoomName());
-    }
-
-    //TODO: Lazy way of adjusting English but will re-evaluate later. Right now English is over-capacity
-    private static StaffType selectRandomCoreType() {
-        List<StaffType> types = new ArrayList<>();
-        int choice;
-        types.add(StaffType.ENGLISH);
-        types.add(StaffType.ENGLISH);
-        types.add(StaffType.ENGLISH);
-        types.add(StaffType.MATH);
-        types.add(StaffType.SCIENCE);
-        types.add(StaffType.HISTORY);
-        choice = Randomizer.setRandom(0, types.size() - 1);
-        return types.get(choice);
+        // Assign sub to the room WITHOUT changing their staff type
+        // This keeps them in the substitute pool for future use
+        room.setAssignedStaff(selectedSub);
+        view.appendOutput(selectedSub.teacherName.getFirstName() + " " + selectedSub.teacherName.getLastName() + 
+                         " (substitute) assigned to cover " + room.getRoomName());
     }
 
     //TODO: explore efficiency of optionality
@@ -322,7 +319,14 @@ public class StaffAssignment {
         return staffList;
     }
 
-    //TODO: Change the dumb way to do things. Break up this method
+    /**
+     * Legacy method for assigning classes to staff schedules.
+     * 
+     * @deprecated This method uses hardcoded class assignments that don't scale 
+     *             with school size or curriculum requirements. Use 
+     *             {@link EnhancedStudentScheduleAssigner#createDemandDrivenTeacherBlocks} instead.
+     */
+    @Deprecated
     public static void assignClassesToStaff(HashMap<Integer, Staff> staffHashMap, StandardSchool standardSchool, GameView view) {
         List<Staff> englishTeachers = getTeachersOfType(staffHashMap, StaffType.ENGLISH);
         List<Staff> mathTeachers = getTeachersOfType(staffHashMap, StaffType.MATH);
@@ -540,36 +544,27 @@ public class StaffAssignment {
                 }
             }
         }
-        //Language Assignment
+        //Language Assignment - dynamic rotation based on actual teacher count
+        int maxLangRotation = Math.max(1, languageTeachers.size());
         for (Staff teacher : languageTeachers) {
-            languageHelper(teacher, standardSchool, langCount, view);
-            if (langCount >= 6) {
-                langCount = 0;
-            } else {
-                langCount++;
-            }
+            languageHelper(teacher, standardSchool, langCount % maxLangRotation, view);
+            langCount++;
         }
-        //Gym Assignment
+        //Gym Assignment - dynamic rotation based on actual teacher count
+        int maxGymRotation = Math.max(1, gymTeachers.size());
         for (Staff teacher : gymTeachers) {
-            gymHelper(teacher, standardSchool, gymCount, view);
-            if (gymCount >= 3) {
-                gymCount = 0;
-            } else {
-                gymCount++;
-            }
+            gymHelper(teacher, standardSchool, gymCount % maxGymRotation, view);
+            gymCount++;
         }
         //Visual Arts Assignment
         for (Staff teacher : visualArtsTeachers) {
             visualArtsHelper(teacher, standardSchool, view);
         }
-        //Performing Arts Assignment
+        //Performing Arts Assignment - dynamic rotation based on actual teacher count
+        int maxPerfRotation = Math.max(1, performingArtsTeachers.size());
         for (Staff teacher : performingArtsTeachers) {
-            performingArtsHelper(teacher, standardSchool, perfCount, view);
-            if (perfCount >= 4) {
-                perfCount = 0;
-            } else {
-                perfCount++;
-            }
+            performingArtsHelper(teacher, standardSchool, perfCount % maxPerfRotation, view);
+            perfCount++;
         }
         //Vocational Assignment
         for (Staff teacher : vocationalTeachers) {

@@ -1,6 +1,8 @@
 package utility;
 
+import config.SchoolFundingModel;
 import entity.*;
+import entity.Rooms.*;
 import view.GameView;
 
 import java.util.*;
@@ -12,6 +14,11 @@ import static constants.SchedulingConstants.*;
 /**
  * Enhanced StudentScheduleAssigner that incorporates minimum enrollment requirements
  * and load balancing while preserving all existing student trait-based logic.
+ * 
+ * Now supports:
+ * - Graduation requirements verification
+ * - Overcrowding handling based on school funding level
+ * - Dynamic class size limits based on funding model
  */
 public class EnhancedStudentScheduleAssigner {
     
@@ -19,6 +26,11 @@ public class EnhancedStudentScheduleAssigner {
     private static final Map<String, List<ClassSection>> classSections = new HashMap<>();
     private static final Map<String, StudentDemand> demandTracker = new HashMap<>();
     private static final Map<String, Set<Student>> classWaitlists = new HashMap<>();
+    
+    // Funding-aware class size limits (can be adjusted per school)
+    private static int currentMaxClassSize = MAX_CLASS_SIZE_RATIO;
+    private static int currentOptimalClassSize = OPTIMAL_CLASS_SIZE_RATIO;
+    private static boolean allowOvercrowding = false; // Disabled - sibling generation causes unpredictable enrollment
 
     /**
      * Enhanced entry point that performs demand analysis before assignment
@@ -29,6 +41,23 @@ public class EnhancedStudentScheduleAssigner {
                                                   GameView view) {
         System.out.println("Starting enhanced scheduling for " + studentHashMap.size() + " students");
         
+        // Debug: Show all staff by type
+        System.out.println("=== STAFF BY TYPE ===");
+        Map<String, Integer> staffByType = new HashMap<>();
+        for (Staff staff : staffHashMap.values()) {
+            Enum<?> type = staff.teacherStatistics.getStaffType();
+            String typeName = type != null ? type.toString() : "NULL";
+            staffByType.merge(typeName, 1, Integer::sum);
+        }
+        for (Map.Entry<String, Integer> entry : staffByType.entrySet()) {
+            System.out.println("  " + entry.getKey() + ": " + entry.getValue() + " staff");
+        }
+        
+        // Configure class sizes based on school funding model
+        if (standardSchool != null) {
+            configureClassSizesFromFunding(standardSchool.getFundingModel());
+        }
+        
         // *** CRITICAL FIX: Clear all existing student schedules to prevent duplicates ***
         System.out.println("Clearing all existing student schedules...");
         for (Student student : studentHashMap.values()) {
@@ -36,15 +65,19 @@ public class EnhancedStudentScheduleAssigner {
         }
         System.out.println("All schedules cleared - starting fresh assignment");
         
-        // *** NEW: Use dynamic teacher assignment that analyzes actual student demand ***
-        System.out.println("Assigning teacher blocks dynamically based on student demand...");
-        StaffAssignment.assignClassesToStaffDynamic(studentHashMap, staffHashMap, 
-                                                   standardSchool, view);
-        
-        // Phase 1: Analyze student demands using existing trait logic
+        // *** NEW DEMAND-FIRST APPROACH ***
+        // Phase 0: Analyze student demand FIRST (before creating teacher blocks)
+        System.out.println("=== PHASE 0: DEMAND-FIRST ANALYSIS ===");
         analyzeDemandWithTraits(studentHashMap, staffHashMap);
         
-        // Phase 2: Create optimal sections based on demand
+        // Phase 0.5: Create teacher blocks based on actual demand
+        System.out.println("=== PHASE 0.5: DEMAND-DRIVEN TEACHER BLOCK CREATION ===");
+        createDemandDrivenTeacherBlocks(studentHashMap, staffHashMap, standardSchool, view);
+        
+        // Phase 1: Re-analyze demands (demand already analyzed, just refresh sections)
+        System.out.println("=== PHASE 1: REFRESHING DEMAND ANALYSIS ===");
+        
+        // Phase 2: Create optimal sections based on the new demand-driven blocks
         createOptimalSections(staffHashMap);
         
         // NEW Phase 2.5: Analyze resource shortages and reallocate substitutes
@@ -65,7 +98,811 @@ public class EnhancedStudentScheduleAssigner {
         // *** NEW: Final duplicate detection check ***
         detectAndReportDuplicates(studentHashMap);
         
+        // Phase 6: Verify graduation requirements
+        verifyGraduationRequirements(studentHashMap, staffHashMap);
+        
         printEnhancedStatistics();
+    }
+    
+    /**
+     * Creates teacher blocks based on actual student demand.
+     * This is the core of the demand-first approach - we analyze what students need
+     * and create teacher schedules to match that demand.
+     * 
+     * Key improvements:
+     * - Ensures all teachers have room assignments before creating schedules
+     * - Tracks per-class section distribution across time slots
+     * - Ensures each class has sections spread across multiple periods
+     * - Creates both Fall AND Spring sections for year-long availability
+     */
+    private static void createDemandDrivenTeacherBlocks(HashMap<Integer, Student> studentHashMap,
+                                                        HashMap<Integer, Staff> staffHashMap,
+                                                        StandardSchool standardSchool,
+                                                        GameView view) {
+        System.out.println("Creating teacher blocks based on student demand...");
+        
+        // Step 0: Ensure all teaching staff have room assignments
+        ensureTeachersHaveRooms(staffHashMap, standardSchool, view);
+        
+        // Step 1: Calculate sections needed per class
+        Map<String, Integer> sectionsNeeded = new HashMap<>();
+        for (Map.Entry<String, StudentDemand> entry : demandTracker.entrySet()) {
+            String className = entry.getKey();
+            int demand = entry.getValue().totalDemand();
+            int sections = (int) Math.ceil((double) demand / currentOptimalClassSize);
+            sectionsNeeded.put(className, sections);
+            
+            if (sections > 0) {
+                System.out.println("  " + className + ": " + demand + " students need " + sections + " sections");
+            }
+        }
+        
+        // Step 2: Clear existing teacher schedules for teaching staff
+        for (Staff staff : staffHashMap.values()) {
+            StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
+            if (type != null && isTeachingStaffType(type)) {
+                staff.teacherStatistics.getTeacherSchedule().getTeacherSchedule().clear();
+            }
+        }
+        
+        // Step 3: Group teachers by type (only those WITH room assignments)
+        Map<StaffType, List<Staff>> teachersByType = new HashMap<>();
+        int teachersWithoutRooms = 0;
+        for (Staff staff : staffHashMap.values()) {
+            StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
+            if (type != null && isTeachingStaffType(type)) {
+                // Only include teachers who have a room assignment
+                Room room = getTeacherRoom(staff, standardSchool);
+                if (room != null) {
+                    teachersByType.computeIfAbsent(type, k -> new ArrayList<>()).add(staff);
+                } else {
+                    teachersWithoutRooms++;
+                    System.out.println("  WARNING: " + type + " teacher " + staff.teacherName.getFirstName() + 
+                                     " " + staff.teacherName.getLastName() + " has no room - skipping");
+                }
+            }
+        }
+        System.out.println("  Teachers without rooms (skipped): " + teachersWithoutRooms);
+        
+        // Report teacher counts by type
+        System.out.println("=== TEACHERS WITH ROOM ASSIGNMENTS ===");
+        for (Map.Entry<StaffType, List<Staff>> entry : teachersByType.entrySet()) {
+            System.out.println("  " + entry.getKey() + ": " + entry.getValue().size() + " teachers");
+        }
+        
+        // Step 4: For each class, create teacher blocks distributed across ALL time slots
+        // Track per-class section distribution to ensure coverage
+        Map<String, int[]> classSlotsUsed = new HashMap<>(); // className -> slots used per period (0-7)
+        
+        // Sort classes by demand (highest first) to prioritize high-demand classes
+        List<Map.Entry<String, Integer>> sortedClasses = new ArrayList<>(sectionsNeeded.entrySet());
+        sortedClasses.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+        
+        for (Map.Entry<String, Integer> entry : sortedClasses) {
+            String className = entry.getKey();
+            int sectionsRequired = entry.getValue();
+            
+            if (sectionsRequired == 0) continue;
+            
+            // Initialize per-class slot tracking
+            int[] classSlots = new int[8]; // Track how many sections of THIS class in each period
+            classSlotsUsed.put(className, classSlots);
+            
+            // Determine which staff type teaches this class
+            StaffType staffType = CurriculumRequirementsCalculator.mapClassToStaffType(className);
+            List<Staff> qualifiedTeachers = teachersByType.getOrDefault(staffType, new ArrayList<>());
+            
+            if (qualifiedTeachers.isEmpty()) {
+                System.out.println("  WARNING: No " + staffType + " teachers for " + className + 
+                                 " (total " + staffType + " teachers in school: " + 
+                                 teachersByType.getOrDefault(staffType, Collections.emptyList()).size() + ")");
+                continue;
+            }
+            
+            // Debug: For language classes, show detailed info
+            if (staffType == StaffType.LANGUAGES) {
+                System.out.println("  DEBUG LANGUAGES: " + className + " needs " + sectionsRequired + 
+                                 " sections, " + qualifiedTeachers.size() + " teachers available");
+                for (Staff teacher : qualifiedTeachers) {
+                    Room room = getTeacherRoom(teacher, standardSchool);
+                    System.out.println("    - " + teacher.teacherName.getFirstName() + " " + 
+                                     teacher.teacherName.getLastName() + 
+                                     " room: " + (room != null ? room.getRoomName() : "NONE"));
+                }
+            }
+            
+            // Create sections distributed across time slots
+            // Goal: spread sections evenly so students have options in different periods
+            int sectionsCreated = 0;
+            int maxAttempts = qualifiedTeachers.size() * 32; // More attempts to find slots
+            int attempts = 0;
+            
+            while (sectionsCreated < sectionsRequired && attempts < maxAttempts) {
+                attempts++;
+                
+                // Find the time slot where THIS CLASS has the fewest sections
+                int bestSlot = findLeastUsedSlotForClass(classSlots);
+                
+                // Alternate semesters: create Fall and Spring versions
+                String[] semesters = {"Fall", "Spring"};
+                
+                for (String semester : semesters) {
+                    if (sectionsCreated >= sectionsRequired) break;
+                    
+                    // Find a teacher who can teach at this slot/semester
+                    Staff availableTeacher = findAvailableTeacher(qualifiedTeachers, bestSlot + 1, semester, standardSchool);
+                    
+                    if (availableTeacher != null) {
+                        // Use our comprehensive room lookup instead of just getClassroomByStaff
+                        Room teacherRoom = getTeacherRoom(availableTeacher, standardSchool);
+                        
+                        if (teacherRoom != null) {
+                            TeacherBlock block = new TeacherBlock();
+                            block.setClassName(className);
+                            block.setBlockNumber(bestSlot + 1);
+                            block.setSemester(semester);
+                            block.setRoom(teacherRoom);
+                            block.addClassPopulationBlock(teacherRoom.getStudentCapacity());
+                            availableTeacher.teacherStatistics.addTeacherSchedule(block);
+                            
+                            classSlots[bestSlot]++;
+                            sectionsCreated++;
+                        }
+                    }
+                }
+            }
+            
+            if (sectionsCreated < sectionsRequired) {
+                System.out.println("  WARNING: Only created " + sectionsCreated + "/" + sectionsRequired + 
+                                 " sections for " + className + " (not enough teachers/slots)");
+            } else {
+                // Show distribution across periods
+                StringBuilder dist = new StringBuilder();
+                for (int i = 0; i < 8; i++) {
+                    if (classSlots[i] > 0) {
+                        dist.append("P").append(i + 1).append(":").append(classSlots[i]).append(" ");
+                    }
+                }
+                System.out.println("  ✓ Created " + sectionsCreated + " sections for " + className + " [" + dist.toString().trim() + "]");
+            }
+        }
+        
+        // Step 5: Print teacher utilization summary
+        System.out.println("=== DEMAND-DRIVEN TEACHER UTILIZATION ===");
+        for (Map.Entry<StaffType, List<Staff>> entry : teachersByType.entrySet()) {
+            StaffType type = entry.getKey();
+            List<Staff> teachers = entry.getValue();
+            
+            int totalBlocks = 0;
+            for (Staff teacher : teachers) {
+                totalBlocks += teacher.teacherStatistics.getTeacherSchedule().size();
+            }
+            
+            double avgBlocks = teachers.isEmpty() ? 0 : (double) totalBlocks / teachers.size();
+            System.out.println("  " + type + ": " + teachers.size() + " teachers, " + 
+                             totalBlocks + " blocks total, avg " + String.format("%.1f", avgBlocks) + " blocks/teacher");
+        }
+    }
+    
+    /**
+     * Finds a teacher who is available to teach at the given slot and semester.
+     */
+    private static Staff findAvailableTeacher(List<Staff> teachers, int blockNumber, String semester, StandardSchool school) {
+        for (Staff teacher : teachers) {
+            // Check if teacher has a room (using comprehensive lookup)
+            Room room = getTeacherRoom(teacher, school);
+            if (room == null) continue;
+            
+            // Check if teacher is already teaching at this block/semester
+            boolean hasConflict = false;
+            for (TeacherBlock existing : teacher.teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
+                if (existing.getBlockNumber() == blockNumber && existing.getSemester().equals(semester)) {
+                    hasConflict = true;
+                    break;
+                }
+            }
+            
+            // Also check if teacher is at capacity (max 8 blocks per semester)
+            int semesterBlocks = 0;
+            for (TeacherBlock existing : teacher.teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
+                if (existing.getSemester().equals(semester)) {
+                    semesterBlocks++;
+                }
+            }
+            
+            if (!hasConflict && semesterBlocks < 8) {
+                return teacher;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Finds the time slot with the fewest sections for a specific class.
+     */
+    private static int findLeastUsedSlotForClass(int[] classSlots) {
+        int minSlot = 0;
+        int minCount = classSlots[0];
+        
+        for (int i = 1; i < classSlots.length; i++) {
+            if (classSlots[i] < minCount) {
+                minCount = classSlots[i];
+                minSlot = i;
+            }
+        }
+        
+        return minSlot;
+    }
+    
+    /**
+     * Finds the time slot with the least number of sections scheduled.
+     * This helps distribute classes evenly to minimize conflicts.
+     */
+    private static int findLeastUsedSlot(int[] blocksPerSlot) {
+        int minSlot = 0;
+        int minCount = blocksPerSlot[0];
+        
+        for (int i = 1; i < blocksPerSlot.length; i++) {
+            if (blocksPerSlot[i] < minCount) {
+                minCount = blocksPerSlot[i];
+                minSlot = i;
+            }
+        }
+        
+        return minSlot;
+    }
+    
+    /**
+     * Checks if a staff type is a teaching position (not support staff).
+     */
+    private static boolean isTeachingStaffType(StaffType type) {
+        return switch (type) {
+            case ENGLISH, MATH, SCIENCE, HISTORY, LANGUAGES, PHYSICAL_ED,
+                 VISUAL_ARTS, PERFORMING_ARTS, COMP_SCI, VOCATIONAL, 
+                 BUSINESS, CONSUMER_SCI, SUB -> true;
+            default -> false;
+        };
+    }
+    
+    /**
+     * Ensures all teaching staff have room assignments.
+     * This is critical for demand-driven scheduling - teachers without rooms can't teach.
+     */
+    private static void ensureTeachersHaveRooms(HashMap<Integer, Staff> staffHashMap, 
+                                                 StandardSchool standardSchool, 
+                                                 GameView view) {
+        System.out.println("=== ENSURING TEACHERS HAVE ROOM ASSIGNMENTS ===");
+        
+        int teachersWithoutRooms = 0;
+        int roomsAssigned = 0;
+        
+        // Get all available rooms by type
+        List<Room> availableClassrooms = new ArrayList<>();
+        for (Classroom classroom : standardSchool.getClassrooms()) {
+            if (classroom.getAssignedStaff().isEmpty()) {
+                availableClassrooms.add(classroom);
+            }
+        }
+        
+        List<Room> availableScienceLabs = new ArrayList<>();
+        for (ScienceLab lab : standardSchool.getScienceLabs()) {
+            if (lab.getAssignedStaff().isEmpty()) {
+                availableScienceLabs.add(lab);
+            }
+        }
+        
+        List<Room> availableArtStudios = new ArrayList<>();
+        for (ArtStudio studio : standardSchool.getArtStudios()) {
+            if (studio.getAssignedStaff().isEmpty()) {
+                availableArtStudios.add(studio);
+            }
+        }
+        
+        List<Room> availableMusicRooms = new ArrayList<>();
+        for (MusicRoom room : standardSchool.getMusicRooms()) {
+            if (room.getAssignedStaff().isEmpty()) {
+                availableMusicRooms.add(room);
+            }
+        }
+        
+        List<Room> availableDramaRooms = new ArrayList<>();
+        for (DramaRoom room : standardSchool.getDramaRooms()) {
+            if (room.getAssignedStaff().isEmpty()) {
+                availableDramaRooms.add(room);
+            }
+        }
+        
+        List<Room> availableGyms = new ArrayList<>();
+        for (Gym gym : standardSchool.getGyms()) {
+            if (gym.getAssignedStaff().isEmpty()) {
+                availableGyms.add(gym);
+            }
+        }
+        
+        List<Room> availableVocationalRooms = new ArrayList<>();
+        for (VocationalRoom room : standardSchool.getVocationalRooms()) {
+            if (room.getAssignedStaff().isEmpty()) {
+                availableVocationalRooms.add(room);
+            }
+        }
+        
+        List<Room> availableComputerLabs = new ArrayList<>();
+        for (ComputerLab lab : standardSchool.getComputerLabs()) {
+            if (lab.getAssignedStaff().isEmpty()) {
+                availableComputerLabs.add(lab);
+            }
+        }
+        
+        // Check each teaching staff member
+        for (Staff staff : staffHashMap.values()) {
+            StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
+            if (type == null || !isTeachingStaffType(type)) {
+                continue;
+            }
+            
+            // Check if this teacher already has a room
+            Room existingRoom = getTeacherRoom(staff, standardSchool);
+            if (existingRoom != null) {
+                continue; // Already has a room
+            }
+            
+            teachersWithoutRooms++;
+            
+            // Try to assign a room based on staff type
+            Room assignedRoom = null;
+            switch (type) {
+                case SCIENCE:
+                    if (!availableScienceLabs.isEmpty()) {
+                        assignedRoom = availableScienceLabs.remove(0);
+                    } else if (!availableClassrooms.isEmpty()) {
+                        assignedRoom = availableClassrooms.remove(0);
+                    }
+                    break;
+                case VISUAL_ARTS:
+                    if (!availableArtStudios.isEmpty()) {
+                        assignedRoom = availableArtStudios.remove(0);
+                    } else if (!availableClassrooms.isEmpty()) {
+                        assignedRoom = availableClassrooms.remove(0);
+                    }
+                    break;
+                case PERFORMING_ARTS:
+                    if (!availableMusicRooms.isEmpty()) {
+                        assignedRoom = availableMusicRooms.remove(0);
+                    } else if (!availableDramaRooms.isEmpty()) {
+                        assignedRoom = availableDramaRooms.remove(0);
+                    } else if (!availableClassrooms.isEmpty()) {
+                        assignedRoom = availableClassrooms.remove(0);
+                    }
+                    break;
+                case PHYSICAL_ED:
+                    if (!availableGyms.isEmpty()) {
+                        assignedRoom = availableGyms.remove(0);
+                    }
+                    break;
+                case VOCATIONAL:
+                    if (!availableVocationalRooms.isEmpty()) {
+                        assignedRoom = availableVocationalRooms.remove(0);
+                    } else if (!availableClassrooms.isEmpty()) {
+                        assignedRoom = availableClassrooms.remove(0);
+                    }
+                    break;
+                case COMP_SCI:
+                    if (!availableComputerLabs.isEmpty()) {
+                        assignedRoom = availableComputerLabs.remove(0);
+                    } else if (!availableClassrooms.isEmpty()) {
+                        assignedRoom = availableClassrooms.remove(0);
+                    }
+                    break;
+                default:
+                    // ENGLISH, MATH, HISTORY, LANGUAGES, BUSINESS, etc.
+                    if (!availableClassrooms.isEmpty()) {
+                        assignedRoom = availableClassrooms.remove(0);
+                    }
+                    break;
+            }
+            
+            if (assignedRoom != null) {
+                RoomAssignment.assignTeacherToRoom(staff, assignedRoom);
+                roomsAssigned++;
+                System.out.println("  Assigned " + staff.teacherName.getFirstName() + " " + 
+                                 staff.teacherName.getLastName() + " (" + type + ") to " + assignedRoom.getRoomName());
+            } else {
+                System.out.println("  WARNING: No room available for " + staff.teacherName.getFirstName() + " " + 
+                                 staff.teacherName.getLastName() + " (" + type + ")");
+            }
+        }
+        
+        System.out.println("  Teachers needing rooms: " + teachersWithoutRooms);
+        System.out.println("  Rooms assigned: " + roomsAssigned);
+        System.out.println("  Remaining available classrooms: " + availableClassrooms.size());
+        
+        // Debug: Count teachers by type and room status
+        Map<StaffType, Integer> teachersByTypeTotal = new HashMap<>();
+        Map<StaffType, Integer> teachersByTypeWithRooms = new HashMap<>();
+        
+        for (Staff staff : staffHashMap.values()) {
+            StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
+            if (type != null && isTeachingStaffType(type)) {
+                teachersByTypeTotal.merge(type, 1, Integer::sum);
+                if (getTeacherRoom(staff, standardSchool) != null) {
+                    teachersByTypeWithRooms.merge(type, 1, Integer::sum);
+                }
+            }
+        }
+        
+        System.out.println("=== TEACHER ROOM ASSIGNMENT SUMMARY ===");
+        for (StaffType type : teachersByTypeTotal.keySet()) {
+            int total = teachersByTypeTotal.getOrDefault(type, 0);
+            int withRooms = teachersByTypeWithRooms.getOrDefault(type, 0);
+            System.out.println("  " + type + ": " + withRooms + "/" + total + " have rooms");
+        }
+    }
+    
+    /**
+     * Gets the room assigned to a teacher, checking all room types.
+     * This is a more comprehensive version of StandardSchool.getClassroomByStaff
+     */
+    private static Room getTeacherRoom(Staff staff, StandardSchool standardSchool) {
+        String staffName = staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName();
+        
+        // Check classrooms - use name matching as fallback for object identity issues
+        for (Classroom classroom : standardSchool.getClassrooms()) {
+            for (Staff assignedStaff : classroom.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName) || classroom.getAssignedStaff().contains(staff)) {
+                    return classroom;
+                }
+            }
+        }
+        
+        // Check science labs
+        for (ScienceLab lab : standardSchool.getScienceLabs()) {
+            for (Staff assignedStaff : lab.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return lab;
+                }
+            }
+        }
+        
+        // Check gyms
+        for (Gym gym : standardSchool.getGyms()) {
+            for (Staff assignedStaff : gym.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return gym;
+                }
+            }
+        }
+        
+        // Check art studios
+        for (ArtStudio studio : standardSchool.getArtStudios()) {
+            for (Staff assignedStaff : studio.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return studio;
+                }
+            }
+        }
+        
+        // Check music rooms
+        for (MusicRoom room : standardSchool.getMusicRooms()) {
+            for (Staff assignedStaff : room.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return room;
+                }
+            }
+        }
+        
+        // Check drama rooms
+        for (DramaRoom room : standardSchool.getDramaRooms()) {
+            for (Staff assignedStaff : room.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return room;
+                }
+            }
+        }
+        
+        // Check vocational rooms
+        for (VocationalRoom room : standardSchool.getVocationalRooms()) {
+            for (Staff assignedStaff : room.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return room;
+                }
+            }
+        }
+        
+        // Check computer labs
+        for (ComputerLab lab : standardSchool.getComputerLabs()) {
+            for (Staff assignedStaff : lab.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return lab;
+                }
+            }
+        }
+        
+        // Check athletic fields
+        for (AthleticField field : standardSchool.getAthleticFields()) {
+            for (Staff assignedStaff : field.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " " + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return field;
+                }
+            }
+        }
+        
+        return null; // No room found
+    }
+    
+    /**
+     * Configures class size limits based on the school's funding model.
+     */
+    private static void configureClassSizesFromFunding(SchoolFundingModel fundingModel) {
+        if (fundingModel == null) {
+            fundingModel = new SchoolFundingModel();
+        }
+        
+        currentMaxClassSize = fundingModel.getMaxClassSize();
+        currentOptimalClassSize = fundingModel.getOptimalClassSize();
+        allowOvercrowding = fundingModel.isAllowOvercrowding();
+        
+        System.out.println("Class size limits configured: optimal=" + currentOptimalClassSize + 
+                         ", max=" + currentMaxClassSize + 
+                         ", overcrowding=" + (allowOvercrowding ? "allowed" : "not allowed"));
+    }
+    
+    /**
+     * Verifies that students have all required classes for graduation.
+     * Reports students with missing requirements and attempts to fix schedules.
+     */
+    private static void verifyGraduationRequirements(HashMap<Integer, Student> studentHashMap,
+                                                    HashMap<Integer, Staff> staffHashMap) {
+        System.out.println("\n=== Verifying Graduation Requirements ===");
+        
+        Map<String, List<String>> missingByGrade = new HashMap<>();
+        missingByGrade.put("Freshman", new ArrayList<>());
+        missingByGrade.put("Sophomore", new ArrayList<>());
+        missingByGrade.put("Junior", new ArrayList<>());
+        missingByGrade.put("Senior", new ArrayList<>());
+        
+        int studentsWithMissingReqs = 0;
+        int totalMissingClasses = 0;
+        
+        for (Student student : studentHashMap.values()) {
+            String grade = student.studentStatistics.getGradeLevel();
+            List<String> required = getRequiredClassesForGrade(grade);
+            List<String> scheduled = getScheduledClassNames(student);
+            
+            List<String> missing = new ArrayList<>();
+            for (String req : required) {
+                if (!hasRequiredClass(scheduled, req)) {
+                    missing.add(req);
+                }
+            }
+            
+            if (!missing.isEmpty()) {
+                studentsWithMissingReqs++;
+                totalMissingClasses += missing.size();
+                
+                // Try to schedule missing classes
+                for (String missingClass : missing) {
+                    boolean scheduled2 = attemptToScheduleMissingClass(student, missingClass, staffHashMap);
+                    if (!scheduled2) {
+                        missingByGrade.get(grade).add(
+                            student.studentName.getFirstName() + " " + 
+                            student.studentName.getLastName() + " missing " + missingClass);
+                    }
+                }
+            }
+        }
+        
+        System.out.println("Students with missing requirements: " + studentsWithMissingReqs);
+        System.out.println("Total missing class assignments: " + totalMissingClasses);
+        
+        for (Map.Entry<String, List<String>> entry : missingByGrade.entrySet()) {
+            if (!entry.getValue().isEmpty()) {
+                System.out.println(entry.getKey() + " issues (" + entry.getValue().size() + "):");
+                // Only print first 5 to avoid flooding output
+                int count = 0;
+                for (String issue : entry.getValue()) {
+                    if (count < 5) {
+                        System.out.println("  - " + issue);
+                    }
+                    count++;
+                }
+                if (count > 5) {
+                    System.out.println("  ... and " + (count - 5) + " more");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Gets the required classes for a specific grade level.
+     */
+    private static List<String> getRequiredClassesForGrade(String grade) {
+        List<String> required = new ArrayList<>();
+        
+        switch (grade) {
+            case "Freshman":
+                required.add("English I");
+                required.add("Math"); // Algebra I, Geometry, or Fundamentals
+                required.add("Biology");
+                required.add("History"); // World Geography or AP Human Geography
+                required.add("Health");
+                break;
+            case "Sophomore":
+                required.add("English II");
+                required.add("Math"); // Algebra, Geometry, etc.
+                required.add("Science"); // Chemistry, Physical Science, etc.
+                required.add("History"); // World History or AP
+                break;
+            case "Junior":
+                required.add("English"); // English III or AP
+                required.add("Math"); // Algebra II, Precalc, etc.
+                required.add("Science");
+                required.add("US History"); // US History or AP
+                break;
+            case "Senior":
+                required.add("English"); // English IV or AP
+                required.add("Government"); // US Government or AP
+                break;
+        }
+        
+        return required;
+    }
+    
+    /**
+     * Checks if the scheduled classes include the required class (or equivalent).
+     */
+    private static boolean hasRequiredClass(List<String> scheduled, String required) {
+        String reqLower = required.toLowerCase();
+        
+        for (String className : scheduled) {
+            String classLower = className.toLowerCase();
+            
+            // Direct match
+            if (classLower.contains(reqLower)) {
+                return true;
+            }
+            
+            // Handle equivalents
+            if (reqLower.equals("math")) {
+                if (classLower.contains("algebra") || classLower.contains("geometry") ||
+                    classLower.contains("calculus") || classLower.contains("precalculus") ||
+                    classLower.contains("trigonometry") || classLower.contains("statistics") ||
+                    classLower.contains("fundamentals of math")) {
+                    return true;
+                }
+            }
+            
+            if (reqLower.equals("science")) {
+                if (classLower.contains("biology") || classLower.contains("chemistry") ||
+                    classLower.contains("physics") || classLower.contains("anatomy") ||
+                    classLower.contains("environmental") || classLower.contains("earth")) {
+                    return true;
+                }
+            }
+            
+            if (reqLower.equals("history")) {
+                if (classLower.contains("history") || classLower.contains("geography") ||
+                    classLower.contains("government") || classLower.contains("civics")) {
+                    return true;
+                }
+            }
+            
+            if (reqLower.equals("english")) {
+                if (classLower.contains("english") || classLower.contains("literature") ||
+                    classLower.contains("composition")) {
+                    return true;
+                }
+            }
+            
+            if (reqLower.equals("us history")) {
+                if (classLower.contains("us history") || classLower.contains("u.s. history") ||
+                    classLower.contains("ap united states history")) {
+                    return true;
+                }
+            }
+            
+            if (reqLower.equals("government")) {
+                if (classLower.contains("government") || classLower.contains("civics")) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Gets the class names from a student's schedule.
+     */
+    private static List<String> getScheduledClassNames(Student student) {
+        return student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
+            .map(StudentBlock::getClassName)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Attempts to schedule a missing required class for a student.
+     */
+    private static boolean attemptToScheduleMissingClass(Student student, String className, 
+                                                        HashMap<Integer, Staff> staffHashMap) {
+        // Find an available section for this class
+        List<ClassSection> sections = classSections.get(className);
+        if (sections == null || sections.isEmpty()) {
+            // Try to find an equivalent class
+            String equivalent = findEquivalentClass(className, student.studentStatistics.getGradeLevel());
+            if (equivalent != null) {
+                sections = classSections.get(equivalent);
+            }
+        }
+        
+        if (sections == null || sections.isEmpty()) {
+            return false;
+        }
+        
+        // Try to add student to a section that doesn't conflict
+        for (ClassSection section : sections) {
+            TeacherBlock block = section.getTeacherBlock();
+            if (block == null) continue;
+            
+            // Check for conflicts
+            if (!hasBlockConflict(student, block)) {
+                // Check capacity (allow overcrowding if enabled)
+                int maxCapacity = allowOvercrowding ? currentMaxClassSize : currentOptimalClassSize;
+                if (section.getEnrolledStudents().size() < maxCapacity) {
+                    // Add student to section
+                    section.addStudent(student);
+                    
+                    // Create student block
+                    StudentBlock studentBlock = new StudentBlock();
+                    studentBlock.setBlockNumber(block.getBlockNumber());
+                    studentBlock.setClassName(block.getClassName());
+                    studentBlock.setSemester(block.getSemester());
+                    studentBlock.setRoom(block.getRoom());
+                    student.studentStatistics.addStudentSchedule(studentBlock);
+                    
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Finds an equivalent class for a graduation requirement.
+     */
+    private static String findEquivalentClass(String required, String grade) {
+        String reqLower = required.toLowerCase();
+        
+        // Check what classes we have available
+        for (String className : classSections.keySet()) {
+            String classLower = className.toLowerCase();
+            
+            if (reqLower.contains("math") && 
+                (classLower.contains("algebra") || classLower.contains("geometry"))) {
+                return className;
+            }
+            
+            if (reqLower.contains("science") && 
+                (classLower.contains("biology") || classLower.contains("chemistry"))) {
+                return className;
+            }
+            
+            if (reqLower.contains("history") && 
+                (classLower.contains("history") || classLower.contains("geography"))) {
+                return className;
+            }
+        }
+        
+        return null;
     }
     
     /**
@@ -108,6 +945,25 @@ public class EnhancedStudentScheduleAssigner {
             
             System.out.println("Demand for " + className + ": " + interestedStudents.size() + " students");
         }
+        
+        // Debug: Show language class demand specifically
+        System.out.println("=== LANGUAGE CLASS DEMAND ===");
+        String[] languageClasses = {"Spanish I", "Spanish II", "French I", "French II", 
+                                    "German I", "German II", "Latin I", "Latin II",
+                                    "American Sign Language I", "American Sign Language II"};
+        for (String langClass : languageClasses) {
+            int demand = demandTracker.containsKey(langClass) ? demandTracker.get(langClass).totalDemand() : 0;
+            System.out.println("  " + langClass + ": " + demand + " students");
+        }
+        
+        // Debug: Show science class demand specifically
+        System.out.println("=== SCIENCE CLASS DEMAND ===");
+        String[] scienceClasses = {"Biology", "Chemistry", "Physics", "AP Biology", "AP Chemistry", 
+                                   "AP Physics B", "Environmental Science", "Anatomy and Physiology"};
+        for (String sciClass : scienceClasses) {
+            int demand = demandTracker.containsKey(sciClass) ? demandTracker.get(sciClass).totalDemand() : 0;
+            System.out.println("  " + sciClass + ": " + demand + " students");
+        }
     }
 
     /**
@@ -145,6 +1001,19 @@ public class EnhancedStudentScheduleAssigner {
     private static void createOptimalSections(HashMap<Integer, Staff> staffHashMap) {
         System.out.println("Creating optimal sections with minimum enrollment constraints...");
         
+        // Debug: Show what classes are actually in teacher blocks
+        System.out.println("=== TEACHER BLOCK CLASS NAMES ===");
+        Map<String, Integer> blocksByClass = new HashMap<>();
+        for (Staff staff : staffHashMap.values()) {
+            for (TeacherBlock block : staff.teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
+                String className = block.getClassName();
+                blocksByClass.merge(className, 1, Integer::sum);
+            }
+        }
+        for (Map.Entry<String, Integer> entry : blocksByClass.entrySet()) {
+            System.out.println("  " + entry.getKey() + ": " + entry.getValue() + " blocks");
+        }
+        
         for (Map.Entry<String, StudentDemand> entry : demandTracker.entrySet()) {
             String className = entry.getKey();
             StudentDemand demand = entry.getValue();
@@ -181,6 +1050,22 @@ public class EnhancedStudentScheduleAssigner {
                     // Add students to waitlist for alternative assignment
                     classWaitlists.put(className, demand.interestedStudents());
                 }
+            }
+        }
+        
+        // Debug: Compare demand vs sections created
+        System.out.println("=== DEMAND VS SECTIONS COMPARISON ===");
+        for (Map.Entry<String, StudentDemand> entry : demandTracker.entrySet()) {
+            String className = entry.getKey();
+            int demand = entry.getValue().totalDemand();
+            List<ClassSection> sections = classSections.get(className);
+            int sectionCount = sections != null ? sections.size() : 0;
+            int capacity = sections != null ? sections.stream().mapToInt(s -> s.capacity).sum() : 0;
+            
+            // Only show classes with demand but no sections, or significant gaps
+            if (demand > 0 && (sectionCount == 0 || capacity < demand * 0.5)) {
+                System.out.println("  GAP: " + className + " - demand: " + demand + 
+                                 ", sections: " + sectionCount + ", capacity: " + capacity);
             }
         }
     }
@@ -1054,15 +1939,29 @@ public class EnhancedStudentScheduleAssigner {
                                              HashMap<Integer, Staff> staffHashMap) {
         List<Staff> availableTeachers = getQualifiedTeachers(className, staffHashMap);
         
+        // Calculate demand-based requirements
+        int studentDemand = demand.totalDemand();
+        int sectionsNeeded = (int) Math.ceil((double) studentDemand / currentOptimalClassSize);
+        
         if (availableTeachers.isEmpty()) {
-            System.out.println("Warning: No qualified teachers found for " + className);
+            // Log detailed warning about the shortage
+            StaffType neededType = CurriculumRequirementsCalculator.mapClassToStaffType(className);
+            System.out.println("CRITICAL SHORTAGE: No qualified teachers found for " + className);
+            System.out.println("  - Student demand: " + studentDemand + " students");
+            System.out.println("  - Sections needed: " + sectionsNeeded);
+            System.out.println("  - Staff type required: " + neededType);
+            System.out.println("  - This is a " + (isCoreSubject(className) ? "CORE" : "ELECTIVE") + " subject");
+            
+            // Track this shortage for later reporting
+            trackShortage(className, studentDemand, sectionsNeeded, neededType);
             return;
         }
         
-        // Enhanced debugging for World Geography
-        if (className.equals("World Geography")) {
-            System.out.println("=== ENHANCED DEBUGGING: World Geography Section Creation ===");
-            System.out.println("Demand: " + demand.totalDemand() + " students");
+        // Enhanced debugging for high-demand classes
+        boolean isHighDemand = studentDemand > 500 || className.equals("World Geography");
+        if (isHighDemand) {
+            System.out.println("=== SECTION CREATION: " + className + " ===");
+            System.out.println("Demand: " + studentDemand + " students, Sections needed: " + sectionsNeeded);
             System.out.println("Available teachers: " + availableTeachers.size());
             
             for (Staff teacher : availableTeachers) {
@@ -1076,10 +1975,10 @@ public class EnhancedStudentScheduleAssigner {
                                      " (capacity: " + block.getRoom().getStudentCapacity() + ")");
                 }
             }
-            System.out.println("=== END ENHANCED DEBUGGING ===");
         }
         
         List<ClassSection> sections = new ArrayList<>();
+        int totalBlocksCreated = 0;
         
         // Create one section for each teacher block (correct capacity calculation)
         for (Staff teacher : availableTeachers) {
@@ -1090,12 +1989,15 @@ public class EnhancedStudentScheduleAssigner {
                 int sectionCapacity = block.getRoom().getStudentCapacity();
                 ClassSection section = new ClassSection(className, teacher, block, sectionCapacity);
                 sections.add(section);
+                totalBlocksCreated++;
                 
-                System.out.println("Created section: " + className + " with " + 
-                                 teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + 
-                                 " in " + block.getRoom().getRoomName() + 
-                                 " (Block " + block.getBlockNumber() + ", " + block.getSemester() + 
-                                 ", Capacity: " + sectionCapacity + ")");
+                if (isHighDemand) {
+                    System.out.println("Created section: " + className + " with " + 
+                                     teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() + 
+                                     " in " + block.getRoom().getRoomName() + 
+                                     " (Block " + block.getBlockNumber() + ", " + block.getSemester() + 
+                                     ", Capacity: " + sectionCapacity + ")");
+                }
             }
         }
         
@@ -1104,20 +2006,40 @@ public class EnhancedStudentScheduleAssigner {
         int totalCapacity = sections.stream()
             .mapToInt(s -> s.capacity)
             .sum();
-        System.out.println("Created " + sections.size() + " sections for " + className + 
-                          " (demand: " + demand.totalDemand() + ", total capacity: " + totalCapacity + ")");
         
-        if (totalCapacity < demand.totalDemand()) {
-            System.out.println("WARNING: Total capacity (" + totalCapacity + 
-                             ") is less than demand (" + demand.totalDemand() + ") for " + className);
+        // Log section creation summary
+        System.out.println("Created " + sections.size() + " sections for " + className + 
+                          " (demand: " + studentDemand + ", needed: " + sectionsNeeded + 
+                          ", capacity: " + totalCapacity + ")");
+        
+        // Check for capacity shortfall and log detailed warning
+        if (totalCapacity < studentDemand) {
+            int shortfall = studentDemand - totalCapacity;
+            int additionalSectionsNeeded = (int) Math.ceil((double) shortfall / currentOptimalClassSize);
+            
+            System.out.println("CAPACITY SHORTFALL for " + className + ":");
+            System.out.println("  - Student demand: " + studentDemand);
+            System.out.println("  - Total capacity: " + totalCapacity);
+            System.out.println("  - Shortfall: " + shortfall + " students");
+            System.out.println("  - Additional sections needed: " + additionalSectionsNeeded);
+            System.out.println("  - Sections created: " + sections.size() + "/" + sectionsNeeded + " needed");
+            
+            if (isCoreSubject(className)) {
+                System.out.println("  - CRITICAL: This is a CORE subject - students may not graduate!");
+            }
+        } else if (totalBlocksCreated < sectionsNeeded) {
+            // We have capacity but fewer sections than optimal - classes will be larger
+            System.out.println("NOTE: " + className + " has fewer sections than optimal (" + 
+                             totalBlocksCreated + "/" + sectionsNeeded + 
+                             ") - class sizes will exceed optimal of " + currentOptimalClassSize);
         }
         
-        // Additional debugging for World Geography to show block distribution
-        if (className.equals("World Geography")) {
-            System.out.println("=== World Geography Section Distribution ===");
+        // Additional debugging for high-demand classes to show block distribution
+        if (isHighDemand) {
+            System.out.println("=== " + className + " Section Distribution ===");
             Map<String, Integer> blockDistribution = new HashMap<>();
             for (ClassSection section : sections) {
-                String key = section.getTeacherBlock().getSemester() + " " + section.getTeacherBlock().getBlockNumber();
+                String key = section.getTeacherBlock().getSemester() + " Block " + section.getTeacherBlock().getBlockNumber();
                 blockDistribution.put(key, blockDistribution.getOrDefault(key, 0) + 1);
             }
             
@@ -1125,6 +2047,50 @@ public class EnhancedStudentScheduleAssigner {
                 System.out.println("  " + entry.getKey() + ": " + entry.getValue() + " section(s)");
             }
             System.out.println("=== End Distribution ===");
+        }
+    }
+    
+    // Track critical shortages for reporting
+    private static final Map<String, ShortageInfo> criticalShortages = new HashMap<>();
+    
+    private static void trackShortage(String className, int demand, int sectionsNeeded, StaffType staffType) {
+        criticalShortages.put(className, new ShortageInfo(className, demand, sectionsNeeded, staffType));
+    }
+    
+    /**
+     * Gets a summary of critical shortages for reporting.
+     */
+    public static Map<String, ShortageInfo> getCriticalShortages() {
+        return new HashMap<>(criticalShortages);
+    }
+    
+    /**
+     * Clears tracked shortages (call before new scheduling run).
+     */
+    public static void clearShortages() {
+        criticalShortages.clear();
+    }
+    
+    /**
+     * Information about a scheduling shortage.
+     */
+    public static class ShortageInfo {
+        public final String className;
+        public final int studentDemand;
+        public final int sectionsNeeded;
+        public final StaffType staffTypeRequired;
+        
+        public ShortageInfo(String className, int demand, int sections, StaffType type) {
+            this.className = className;
+            this.studentDemand = demand;
+            this.sectionsNeeded = sections;
+            this.staffTypeRequired = type;
+        }
+        
+        @Override
+        public String toString() {
+            return className + ": " + studentDemand + " students need " + sectionsNeeded + 
+                   " sections (requires " + staffTypeRequired + ")";
         }
     }
     

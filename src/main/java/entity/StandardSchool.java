@@ -9,6 +9,7 @@ package entity;
 //  @version    04242022
 //*******************************************************************
 
+import config.SchoolFundingModel;
 import entity.Rooms.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -58,6 +59,12 @@ public class StandardSchool implements SchoolPlan {
     HashMap<Integer, Student> sophomoreClass = new HashMap<>();
     HashMap<Integer, Student> juniorClass = new HashMap<>();
     HashMap<Integer, Student> seniorClass = new HashMap<>();
+    
+    // Funding model for capacity calculations
+    private SchoolFundingModel fundingModel = new SchoolFundingModel();
+    
+    // Current enrollment tracking
+    private int currentEnrollment = 0;
 
     @Override
     public void setUtilityRooms(int number, GameView view) {
@@ -94,19 +101,194 @@ public class StandardSchool implements SchoolPlan {
         return this.schoolMascot;
     }
 
-    public int getTotalStudentCapacity() {
+    // ==================== Funding Model ====================
 
-        int class_total = 0;
-
-        for (Classroom classroom : classrooms) {
-            class_total = class_total + classroom.getStudentCapacity();
-        }
-
-        // We don't want school to be at total capacity to begin with
-        return (int) ((class_total) * TOTAL_STUDENT_CAP_MODIFIER);
+    /**
+     * Gets the school's funding model.
+     *
+     * @return the funding model
+     */
+    public SchoolFundingModel getFundingModel() {
+        return fundingModel;
     }
 
+    /**
+     * Sets the school's funding model.
+     *
+     * @param fundingModel the funding model to use
+     */
+    public void setFundingModel(SchoolFundingModel fundingModel) {
+        this.fundingModel = fundingModel != null ? fundingModel : new SchoolFundingModel();
+    }
+
+    /**
+     * Sets the funding level using the enum directly.
+     *
+     * @param level the funding level
+     */
+    public void setFundingLevel(SchoolFundingModel.FundingLevel level) {
+        this.fundingModel = new SchoolFundingModel(level);
+    }
+
+    // ==================== Capacity Methods ====================
+
+    /**
+     * Gets the physical capacity of the school - the absolute maximum
+     * number of students that could physically fit in classrooms.
+     * This does not account for comfort or quality of education.
+     *
+     * @return the physical capacity
+     */
+    public int getPhysicalCapacity() {
+        if (classrooms == null || classrooms.length == 0) {
+            return 0;
+        }
+        
+        // Each student takes ~7 classes, each classroom can be used 8 periods
+        // Physical capacity = (classrooms * periods * maxClassSize) / classesPerStudent
+        int classesPerStudent = 7;
+        return (classrooms.length * TOTAL_SCHOOL_PERIODS * fundingModel.getMaxClassSize()) / classesPerStudent;
+    }
+
+    /**
+     * Gets the optimal capacity of the school - the comfortable number
+     * of students for quality education based on funding level.
+     *
+     * @return the optimal capacity
+     */
+    public int getOptimalCapacity() {
+        if (classrooms == null || classrooms.length == 0) {
+            return 0;
+        }
+        
+        // Optimal capacity uses optimal class size from funding model
+        int classesPerStudent = 7;
+        return (classrooms.length * TOTAL_SCHOOL_PERIODS * fundingModel.getOptimalClassSize()) / classesPerStudent;
+    }
+
+    /**
+     * Gets the total student capacity.
+     * For backward compatibility, this returns the optimal capacity.
+     * Use getOptimalCapacity() or getPhysicalCapacity() for specific needs.
+     *
+     * @return the student capacity
+     * @deprecated Use getOptimalCapacity() or getPhysicalCapacity() instead
+     */
+    @Deprecated
+    public int getTotalStudentCapacity() {
+        // For backward compatibility, return optimal capacity
+        // This removes the arbitrary 55% modifier
+        return getOptimalCapacity();
+    }
+
+    /**
+     * Gets the raw classroom capacity sum (useful for calculations).
+     *
+     * @return sum of all classroom capacities
+     */
+    public int getRawClassroomCapacity() {
+        if (classrooms == null) {
+            return 0;
+        }
+        int total = 0;
+        for (Classroom classroom : classrooms) {
+            total += classroom.getStudentCapacity();
+        }
+        return total;
+    }
+
+    /**
+     * Gets the current enrollment count.
+     *
+     * @return number of students currently enrolled
+     */
+    public int getCurrentEnrollment() {
+        return currentEnrollment;
+    }
+
+    /**
+     * Sets the current enrollment count.
+     *
+     * @param count the new enrollment count
+     */
+    public void setCurrentEnrollment(int count) {
+        this.currentEnrollment = count;
+    }
+
+    /**
+     * Updates enrollment count based on grade class sizes.
+     */
+    public void updateEnrollmentFromGrades() {
+        this.currentEnrollment = freshmanClass.size() + sophomoreClass.size() + 
+                                 juniorClass.size() + seniorClass.size();
+    }
+
+    /**
+     * Gets the overcrowding level as a ratio.
+     * A value of 1.0 means at optimal capacity.
+     * Values > 1.0 indicate overcrowding.
+     *
+     * @return the overcrowding ratio
+     */
+    public double getOvercrowdingLevel() {
+        int optimal = getOptimalCapacity();
+        if (optimal <= 0) {
+            return 0;
+        }
+        return (double) currentEnrollment / optimal;
+    }
+
+    /**
+     * Checks if the school is overcrowded.
+     *
+     * @return true if enrollment exceeds optimal capacity by more than 10%
+     */
+    public boolean isOvercrowded() {
+        return getOvercrowdingLevel() > 1.1;
+    }
+
+    /**
+     * Checks if the school can accept more students.
+     *
+     * @return true if enrollment is below physical capacity
+     */
+    public boolean canAcceptMoreStudents() {
+        if (!fundingModel.isAllowOvercrowding()) {
+            return currentEnrollment < getOptimalCapacity();
+        }
+        return currentEnrollment < fundingModel.getMaxAllowedEnrollment(getPhysicalCapacity());
+    }
+
+    /**
+     * Gets the number of available spots for new students.
+     *
+     * @return the number of available spots
+     */
+    public int getAvailableSpots() {
+        int max = fundingModel.isAllowOvercrowding() 
+            ? fundingModel.getMaxAllowedEnrollment(getPhysicalCapacity())
+            : getOptimalCapacity();
+        return Math.max(0, max - currentEnrollment);
+    }
+
+    /**
+     * Gets the minimum staff requirements based on curriculum needs.
+     * This is now based on the funding model rather than a fixed modifier.
+     *
+     * @return minimum number of staff required
+     */
     public int getMinimumStaffRequirements() {
+        // Use funding model to calculate staff needs based on optimal student capacity
+        return fundingModel.calculateMinimumStaff(getOptimalCapacity());
+    }
+
+    /**
+     * Gets detailed staff requirements based on room types.
+     * This provides a more granular breakdown for staffing decisions.
+     *
+     * @return total staff requirements based on rooms
+     */
+    public int getDetailedStaffRequirements() {
         int total;
         int class_count;
         int office_count;
@@ -121,40 +303,56 @@ public class StandardSchool implements SchoolPlan {
         int music_count;
         int vocation_count = 0;
 
-        class_count = classrooms.length;
-        office_count = offices.length / OFFICE_NUMBER_MODIFIER;
-        maint_count = utilityrooms.length + UTILITY_ROOM_NUMBER_MODIFIER;
-        library_count = libraries.length * LIBRARY_ROOM_NUMBER_MODIFIER;
-        drama_count = dramaRooms.length;
-        music_count = musicRooms.length;
+        class_count = classrooms != null ? classrooms.length : 0;
+        office_count = offices != null ? offices.length / OFFICE_NUMBER_MODIFIER : 0;
+        maint_count = utilityrooms != null ? utilityrooms.length + UTILITY_ROOM_NUMBER_MODIFIER : 0;
+        library_count = libraries != null ? libraries.length * LIBRARY_ROOM_NUMBER_MODIFIER : 0;
+        drama_count = dramaRooms != null ? dramaRooms.length : 0;
+        music_count = musicRooms != null ? musicRooms.length : 0;
 
-        for (Lunchroom lunchroom : lunchrooms) {
-            lunch_count = lunch_count + lunchroom.getStaffCapacity();
+        if (lunchrooms != null) {
+            for (Lunchroom lunchroom : lunchrooms) {
+                lunch_count = lunch_count + lunchroom.getStaffCapacity();
+            }
         }
 
-        for (Gym gym : gyms) {
-            gym_count = gym_count + gym.getStaffCapacity();
+        if (gyms != null) {
+            for (Gym gym : gyms) {
+                gym_count = gym_count + gym.getStaffCapacity();
+            }
         }
 
-        for (ComputerLab computerLab : computerLabs) {
-            computer_count = computer_count + computerLab.getStaffCapacity();
+        if (computerLabs != null) {
+            for (ComputerLab computerLab : computerLabs) {
+                computer_count = computer_count + computerLab.getStaffCapacity();
+            }
         }
 
-        for (ArtStudio artStudio : artStudios) {
-            art_count = art_count + artStudio.getStaffCapacity();
+        if (artStudios != null) {
+            for (ArtStudio artStudio : artStudios) {
+                art_count = art_count + artStudio.getStaffCapacity();
+            }
         }
 
-        for (AthleticField field : athleticFields) {
-            field_count = field_count + field.getStaffCapacity();
+        if (athleticFields != null) {
+            for (AthleticField field : athleticFields) {
+                field_count = field_count + field.getStaffCapacity();
+            }
         }
 
-        for (VocationalRoom room : vocationalRooms) {
-            vocation_count = vocation_count + room.getStaffCapacity();
+        if (vocationalRooms != null) {
+            for (VocationalRoom room : vocationalRooms) {
+                vocation_count = vocation_count + room.getStaffCapacity();
+            }
         }
-        // Going to over-assign staff for now
+
+        // Base staff from room requirements
         total = class_count + office_count + maint_count +
                 lunch_count + library_count + gym_count +
-                art_count + field_count + drama_count + music_count + vocation_count + ((int) Math.round(getTotalStudentCapacity() * TOTAL_STAFF_CAP_MODIFIER));
+                art_count + field_count + drama_count + music_count + vocation_count;
+
+        // Add percentage based on student capacity using funding model ratio
+        total += (int) Math.round(getOptimalCapacity() * fundingModel.getStaffStudentRatio());
 
         return total;
     }
@@ -400,6 +598,60 @@ public class StandardSchool implements SchoolPlan {
             classrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(CLASSROOM_NUMBER_LOWER_LIMIT, CLASSROOM_NUMBER_UPPER_LIMIT));
         }
+    }
+
+    /**
+     * Adds additional classrooms to the school dynamically.
+     * Used for expansion when scheduling fails due to insufficient capacity.
+     *
+     * @param additionalCount the number of classrooms to add
+     * @param view the game view for output (can be null for silent operation)
+     * @return the number of classrooms added
+     */
+    public int addClassrooms(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+        
+        int currentCount = classrooms != null ? classrooms.length : 0;
+        int newTotal = currentCount + additionalCount;
+        
+        // Create new array and copy existing classrooms
+        Classroom[] newClassrooms = new Classroom[newTotal];
+        if (classrooms != null) {
+            System.arraycopy(classrooms, 0, newClassrooms, 0, currentCount);
+        }
+        
+        if (view != null) {
+            view.appendOutput("   Expanding school: Adding " + additionalCount + " classrooms...");
+        }
+        System.out.println("EXPANSION: Adding " + additionalCount + " classrooms (total: " + newTotal + ")");
+        
+        // Create new classrooms
+        for (int i = currentCount; i < newTotal; i++) {
+            int connectN = setRandom(CLASSROOM_CONNECTION_LOWER_LIMIT, CLASSROOM_CONNECTION_UPPER_LIMIT);
+            int decision = i % CLASSROOM_WEIGHT;
+            newClassrooms[i] = new Classroom();
+            newClassrooms[i].setRoomName("Classroom" + i);
+            if (view != null) {
+                view.appendOutput("      Generating " + newClassrooms[i].getRoomName());
+            }
+            newClassrooms[i].setConnections(connectN);
+            newClassrooms[i].setDoors(connectN);
+            newClassrooms[i].setClassroomType(decision);
+            newClassrooms[i].setInitialStaff(CLASSROOM_INITIAL_STAFF);
+            newClassrooms[i].setStudentCap(setRandom(CLASSROOM_STUDENT_CAPACITY_LOWER_LIMIT, CLASSROOM_STUDENT_CAPACITY_UPPER_LIMIT));
+            newClassrooms[i].setSeatArrangement();
+            newClassrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newClassrooms[i].setRoomNumber(newClassrooms[i].getClassRoomType() + i + setRandom(CLASSROOM_NUMBER_LOWER_LIMIT, CLASSROOM_NUMBER_UPPER_LIMIT));
+        }
+        
+        classrooms = newClassrooms;
+        
+        // Note: Capacities are calculated on-the-fly via getOptimalCapacity() and getPhysicalCapacity()
+        // so they will automatically reflect the new classroom count
+        
+        return additionalCount;
     }
 
     public ComputerLab[] getComputerLabs() {

@@ -27,7 +27,7 @@ public class StudentAssignmentService {
      */
     public static int assignStudentsToSchool(Town town, StandardSchool school, GameView view) {
         StudentPool pool = town.getStudentPool();
-        int capacity = school.getTotalStudentCapacity();
+        int capacity = school.getOptimalCapacity(); // Use optimal capacity instead of deprecated method
         
         return assignStudentsToSchool(pool, school, capacity, view);
     }
