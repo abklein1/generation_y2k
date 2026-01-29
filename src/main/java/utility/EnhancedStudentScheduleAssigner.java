@@ -1078,7 +1078,7 @@ public class EnhancedStudentScheduleAssigner {
         System.out.println("=== RESOURCE ANALYSIS AND SUBSTITUTE REALLOCATION ===");
         
         // Step 1: Analyze available resources
-        List<Staff> availableSubstitutes = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.SUB);
+        List<Staff> availableSubstitutes = StaffAssignmentService.getTeachersOfType(staffHashMap, StaffType.SUB);
         int totalSubstitutes = availableSubstitutes.size();
         
         System.out.println("Available substitutes: " + totalSubstitutes);

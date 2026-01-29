@@ -59,12 +59,28 @@ public final class SchoolConstants {
     // CLASSROOMS
     public static final int CLASSROOM_WEIGHT = 7;
     public static final int CLASSROOM_STUDENT_CAPACITY_LOWER_LIMIT = 20;
-    public static final int CLASSROOM_STUDENT_CAPACITY_UPPER_LIMIT = 30;
+    public static final int CLASSROOM_STUDENT_CAPACITY_UPPER_LIMIT = 40;  // Increased from 30 for larger rooms
     public static final int CLASSROOM_CONNECTION_LOWER_LIMIT = 3;
     public static final int CLASSROOM_CONNECTION_UPPER_LIMIT = 5;
     public static final int CLASSROOM_INITIAL_STAFF = 1;
     public static final int CLASSROOM_NUMBER_LOWER_LIMIT = 0;
     public static final int CLASSROOM_NUMBER_UPPER_LIMIT = 99;
+    // Classroom capacity distribution thresholds for weighted generation
+    // ~40% small (20-25), ~40% medium (26-34), ~20% large (35-40)
+    public static final int CLASSROOM_SMALL_CAP_LOWER = 20;
+    public static final int CLASSROOM_SMALL_CAP_UPPER = 25;
+    public static final int CLASSROOM_MEDIUM_CAP_LOWER = 26;
+    public static final int CLASSROOM_MEDIUM_CAP_UPPER = 34;
+    public static final int CLASSROOM_LARGE_CAP_LOWER = 35;
+    public static final int CLASSROOM_LARGE_CAP_UPPER = 40;
+    public static final int CLASSROOM_SIZE_SMALL_WEIGHT = 40;   // 40% chance
+    public static final int CLASSROOM_SIZE_MEDIUM_WEIGHT = 80;  // 40% chance (40-80)
+    // Remaining 20% is large (80-100)
+    // ROOM DIVIDERS
+    // Dividers allow a room to be split into two teaching spaces with two teachers
+    // Only rooms with capacity >= minimum can have dividers
+    public static final int DIVIDER_ELIGIBLE_MIN_CAPACITY = 30;  // Only rooms >= 30 can have dividers
+    public static final int DIVIDER_PROBABILITY = 15;  // 15% of eligible classrooms get dividers
     // COMPUTER LABS
     public static final int COMPUTER_STUDENT_CAPACITY_LOWER_LIMIT = 15;
     public static final int COMPUTER_STUDENT_CAPACITY_UPPER_LIMIT = 45;
@@ -244,6 +260,24 @@ public final class SchoolConstants {
     public static final int PARKING_STUDENT_CAPACITY_UPPER_LIMIT = 150;
     public static final int PARKING_NUMBER_LOWER_LIMIT = 100;
     public static final int PARKING_NUMBER_UPPER_LIMIT = 999;
+    // PORTABLE CLASSROOMS
+    // Portables are temporary modular buildings used as additional classroom space.
+    // They are more common at underfunded schools (present in ~1/3 of American schools)
+    // and can only connect to outdoor spaces (fields, courtyards, parking lots).
+    public static final int PORTABLE_CONNECTION_COUNT = 2;
+    public static final int PORTABLE_WINDOW_LOWER_LIMIT = 0;
+    public static final int PORTABLE_WINDOW_UPPER_LIMIT = 2;
+    public static final int PORTABLE_INITIAL_STAFF = 1;
+    public static final int PORTABLE_STUDENT_CAPACITY_LOWER_LIMIT = 20;
+    public static final int PORTABLE_STUDENT_CAPACITY_UPPER_LIMIT = 35;
+    public static final int PORTABLE_NUMBER_LOWER_LIMIT = 0;
+    public static final int PORTABLE_NUMBER_UPPER_LIMIT = 99;
+    // Portable generation probabilities by funding level (percentage chance school has portables)
+    public static final int PORTABLE_CHANCE_SEVERELY_UNDERFUNDED = 30;
+    public static final int PORTABLE_CHANCE_UNDERFUNDED = 25;
+    public static final int PORTABLE_CHANCE_ADEQUATE = 15;
+    public static final int PORTABLE_CHANCE_WELL_FUNDED = 5;
+    public static final int PORTABLE_CHANCE_EXCELLENTLY_FUNDED = 5;
     // AMOUNT OF EACH ROOM
     public static final int ART_AMOUNT_LOWER_LIMIT = 1;
     public static final int ART_AMOUNT_UPPER_LIMIT = 4;
@@ -283,6 +317,17 @@ public final class SchoolConstants {
     public static final int PARKING_AMOUNT_LOWER_LIMIT = 2;
     public static final int PARKING_AMOUNT_UPPER_LIMIT = 6;
     public static final int BATHROOM_AMOUNT = 15;
+    // Portable amounts vary inversely with funding - more portables at underfunded schools
+    public static final int PORTABLE_AMOUNT_SEVERELY_UNDERFUNDED_LOWER = 3;
+    public static final int PORTABLE_AMOUNT_SEVERELY_UNDERFUNDED_UPPER = 8;
+    public static final int PORTABLE_AMOUNT_UNDERFUNDED_LOWER = 2;
+    public static final int PORTABLE_AMOUNT_UNDERFUNDED_UPPER = 5;
+    public static final int PORTABLE_AMOUNT_ADEQUATE_LOWER = 1;
+    public static final int PORTABLE_AMOUNT_ADEQUATE_UPPER = 3;
+    public static final int PORTABLE_AMOUNT_WELL_FUNDED_LOWER = 0;
+    public static final int PORTABLE_AMOUNT_WELL_FUNDED_UPPER = 1;
+    public static final int PORTABLE_AMOUNT_EXCELLENTLY_FUNDED_LOWER = 0;
+    public static final int PORTABLE_AMOUNT_EXCELLENTLY_FUNDED_UPPER = 1;
 
     public static final int LOCKER_ROOM_MODIFIER = 2;
 

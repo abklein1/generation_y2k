@@ -450,7 +450,7 @@ public class StudentScheduleAssigner {
     }
 
     private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap, StaffType staffType) {
-        List<Staff> staffTypeTeachers = StaffAssignment.getTeachersOfType(staffHashMap, staffType);
+        List<Staff> staffTypeTeachers = StaffAssignmentService.getTeachersOfType(staffHashMap, staffType);
         List<Staff> availableTeachers = new ArrayList<>();
 
         for (Staff teacher : staffTypeTeachers) {
@@ -465,11 +465,11 @@ public class StudentScheduleAssigner {
     }
 
     private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap) {
-        List<Staff> staffTypeTeachersV = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.VOCATIONAL);
-        List<Staff> staffTypeTeachersP = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.PERFORMING_ARTS);
-        List<Staff> staffTypeTeachersA = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.VISUAL_ARTS);
-        List<Staff> staffTypeTeachersB = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.BUSINESS);
-        List<Staff> staffTypeTeachersE = StaffAssignment.getTeachersOfType(staffHashMap, StaffType.PHYSICAL_ED);
+        List<Staff> staffTypeTeachersV = StaffAssignmentService.getTeachersOfType(staffHashMap, StaffType.VOCATIONAL);
+        List<Staff> staffTypeTeachersP = StaffAssignmentService.getTeachersOfType(staffHashMap, StaffType.PERFORMING_ARTS);
+        List<Staff> staffTypeTeachersA = StaffAssignmentService.getTeachersOfType(staffHashMap, StaffType.VISUAL_ARTS);
+        List<Staff> staffTypeTeachersB = StaffAssignmentService.getTeachersOfType(staffHashMap, StaffType.BUSINESS);
+        List<Staff> staffTypeTeachersE = StaffAssignmentService.getTeachersOfType(staffHashMap, StaffType.PHYSICAL_ED);
         List<Staff> availableTeachers = new ArrayList<>();
 
         for (Staff teacher : staffTypeTeachersV) {
@@ -516,7 +516,7 @@ public class StudentScheduleAssigner {
     }
 
     private static List<Staff> getAvailableTeachersForClass(String className, HashMap<Integer, Staff> staffHashMap, int semester, StaffType staffType) {
-        List<Staff> staffTypeTeachers = StaffAssignment.getTeachersOfType(staffHashMap, staffType);
+        List<Staff> staffTypeTeachers = StaffAssignmentService.getTeachersOfType(staffHashMap, staffType);
         List<Staff> availableTeachers = new ArrayList<>();
 
         for (Staff teacher : staffTypeTeachers) {

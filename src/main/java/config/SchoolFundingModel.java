@@ -23,8 +23,8 @@ public class SchoolFundingModel implements Serializable {
         SEVERELY_UNDERFUNDED(
             "Severely Underfunded",
             1.4,    // classroomCapacityModifier - more students per room
-            40,     // maxClassSize
-            32,     // optimalClassSize
+            45,     // maxClassSize - increased for larger rooms
+            35,     // optimalClassSize - adjusted for overcrowding
             0.5,    // specializedRoomModifier - fewer specialized rooms
             0.04,   // staffStudentRatio - fewer staff per student
             0.7     // roomCountModifier - fewer total rooms
@@ -313,6 +313,84 @@ public class SchoolFundingModel implements Serializable {
             return physicalCapacity;
         }
         return (int) (physicalCapacity * maxOvercrowdingPercent);
+    }
+
+    // ==================== School Expansion Methods ====================
+
+    /**
+     * Checks if the school can expand to meet student demand.
+     * Only ADEQUATE and better funded schools can afford expansion.
+     *
+     * @return true if the school can expand
+     */
+    public boolean canExpandToMeetDemand() {
+        return fundingLevel.ordinal() >= FundingLevel.ADEQUATE.ordinal();
+    }
+
+    /**
+     * Gets the maximum number of additional classrooms that can be added through expansion.
+     * Better funded schools can add more classrooms.
+     *
+     * @return the maximum number of classrooms that can be added
+     */
+    public int getMaxExpansionClassrooms() {
+        switch (fundingLevel) {
+            case EXCELLENTLY_FUNDED:
+                return 15;
+            case WELL_FUNDED:
+                return 10;
+            case ADEQUATE:
+                return 5;
+            default:
+                return 0;  // Underfunded schools cannot expand
+        }
+    }
+
+    /**
+     * Gets the maximum number of additional portables that can be added through expansion.
+     * Portables are a cheaper alternative for schools that can't afford full expansion.
+     * Ironically, underfunded schools often rely more on portables.
+     *
+     * @return the maximum number of portables that can be added
+     */
+    public int getMaxExpansionPortables() {
+        switch (fundingLevel) {
+            case SEVERELY_UNDERFUNDED:
+                return 8;  // Rely heavily on cheap portable solutions
+            case UNDERFUNDED:
+                return 6;
+            case ADEQUATE:
+                return 4;
+            case WELL_FUNDED:
+                return 2;
+            case EXCELLENTLY_FUNDED:
+                return 1;  // Prefer permanent classrooms
+            default:
+                return 4;
+        }
+    }
+
+    /**
+     * Gets the maximum number of additional teachers that can be hired through expansion.
+     * Tied to funding level and ability to pay salaries.
+     *
+     * @return the maximum number of teachers that can be hired
+     */
+    public int getMaxExpansionTeachers() {
+        switch (fundingLevel) {
+            case EXCELLENTLY_FUNDED:
+                return 20;
+            case WELL_FUNDED:
+                return 15;
+            case ADEQUATE:
+                return 8;
+            case UNDERFUNDED:
+                return 3;
+            case SEVERELY_UNDERFUNDED:
+                return 1;
+            default:
+                return 5;
+        }
     }
 
     // ==================== Getters and Setters ====================

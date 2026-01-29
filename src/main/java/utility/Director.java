@@ -173,6 +173,15 @@ public class Director {
         view.appendOutput("Building parking lots...");
         standardSchool.setParkingLots(setRandom(PARKING_AMOUNT_LOWER_LIMIT, PARKING_AMOUNT_UPPER_LIMIT), view);
 
+        // Portable classrooms - more common at underfunded schools
+        int portableCount = calculatePortableCount();
+        if (portableCount > 0) {
+            view.appendOutput("Building portable classrooms...");
+            standardSchool.setPortables(portableCount, view);
+        } else {
+            standardSchool.setPortables(0, view);  // Initialize empty array
+        }
+
         view.appendOutput("Building bathrooms...");
         standardSchool.setBathrooms(BATHROOM_AMOUNT, view);
 
@@ -301,6 +310,15 @@ public class Director {
         view.appendOutput("Building parking lots...");
         standardSchool.setParkingLots(Math.max(1, classroomsNeeded / 15), view);
 
+        // Portable classrooms - more common at underfunded schools
+        int portableCount = calculatePortableCount();
+        if (portableCount > 0) {
+            view.appendOutput("Building portable classrooms...");
+            standardSchool.setPortables(portableCount, view);
+        } else {
+            standardSchool.setPortables(0, view);  // Initialize empty array
+        }
+
         view.appendOutput("Building bathrooms...");
         // Scale bathrooms to population
         int bathroomCount = Math.max(BATHROOM_AMOUNT, targetPopulation / 100);
@@ -326,6 +344,60 @@ public class Director {
      */
     private int applyModifier(int base, double modifier) {
         return Math.max(1, (int) Math.round(base * modifier));
+    }
+
+    /**
+     * Calculates the number of portable classrooms based on funding level.
+     * Portables are more common at underfunded schools (present in ~1/3 of American schools).
+     * The chance of having portables and the count are inversely related to funding.
+     *
+     * @return the number of portables to create (0 if none)
+     */
+    private int calculatePortableCount() {
+        int chanceOfPortables;
+        int lowerLimit;
+        int upperLimit;
+
+        switch (fundingModel.getFundingLevel()) {
+            case SEVERELY_UNDERFUNDED -> {
+                chanceOfPortables = PORTABLE_CHANCE_SEVERELY_UNDERFUNDED;
+                lowerLimit = PORTABLE_AMOUNT_SEVERELY_UNDERFUNDED_LOWER;
+                upperLimit = PORTABLE_AMOUNT_SEVERELY_UNDERFUNDED_UPPER;
+            }
+            case UNDERFUNDED -> {
+                chanceOfPortables = PORTABLE_CHANCE_UNDERFUNDED;
+                lowerLimit = PORTABLE_AMOUNT_UNDERFUNDED_LOWER;
+                upperLimit = PORTABLE_AMOUNT_UNDERFUNDED_UPPER;
+            }
+            case ADEQUATE -> {
+                chanceOfPortables = PORTABLE_CHANCE_ADEQUATE;
+                lowerLimit = PORTABLE_AMOUNT_ADEQUATE_LOWER;
+                upperLimit = PORTABLE_AMOUNT_ADEQUATE_UPPER;
+            }
+            case WELL_FUNDED -> {
+                chanceOfPortables = PORTABLE_CHANCE_WELL_FUNDED;
+                lowerLimit = PORTABLE_AMOUNT_WELL_FUNDED_LOWER;
+                upperLimit = PORTABLE_AMOUNT_WELL_FUNDED_UPPER;
+            }
+            case EXCELLENTLY_FUNDED -> {
+                chanceOfPortables = PORTABLE_CHANCE_EXCELLENTLY_FUNDED;
+                lowerLimit = PORTABLE_AMOUNT_EXCELLENTLY_FUNDED_LOWER;
+                upperLimit = PORTABLE_AMOUNT_EXCELLENTLY_FUNDED_UPPER;
+            }
+            default -> {
+                chanceOfPortables = PORTABLE_CHANCE_ADEQUATE;
+                lowerLimit = PORTABLE_AMOUNT_ADEQUATE_LOWER;
+                upperLimit = PORTABLE_AMOUNT_ADEQUATE_UPPER;
+            }
+        }
+
+        // Roll to see if this school has portables
+        int roll = setRandom(0, 100);
+        if (roll < chanceOfPortables) {
+            return setRandom(lowerLimit, upperLimit);
+        }
+        
+        return 0;
     }
 
     /**

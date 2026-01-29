@@ -1240,7 +1240,7 @@ public class SchoolController {
             // Set for staff population generation
             TeacherPopGenerator.generateTeachers(staff_cap, staffHashMap, view);
             publish("Assigning initial staff...");
-            StaffAssignment.initialAssignments(staffHashMap, student_cap, view, standardSchool);
+            StaffAssignmentService.assignInitialStaffRoles(staffHashMap, student_cap, view, standardSchool);
             RoomAssignment.initialClassroomAssignments(standardSchool, staffHashMap);
             publish("Done creating school and students");
             colors = standardSchool.getSchoolColors();
@@ -1258,7 +1258,7 @@ public class SchoolController {
             for (Classroom classroom : classrooms) {
                 classroom.reassignClassroomByTeacher(staffHashMap, view);
             }
-            StaffAssignment.assignClassesToStaff(staffHashMap, standardSchool, view);
+            // Note: Class scheduling is handled by EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced() below
             try {
                 EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view);
                 StudentSeatingAssigner.seatInitialStudents(standardSchool);

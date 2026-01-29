@@ -55,6 +55,7 @@ public class StandardSchool implements SchoolPlan {
     ConferenceRoom[] conferenceRooms;
     ParkingLot[] parkingLots;
     VocationalRoom[] vocationalRooms;
+    Portable[] portables;
     HashMap<Integer, Student> freshmanClass = new HashMap<>();
     HashMap<Integer, Student> sophomoreClass = new HashMap<>();
     HashMap<Integer, Student> juniorClass = new HashMap<>();
@@ -581,6 +582,7 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setClassrooms(int number, GameView view) {
         int decision;
+        int dividersAssigned = 0;
         classrooms = new Classroom[number];
         view.appendOutput("   Generating " + number + " classrooms...");
         for (int i = 0; i < number; i++) {
@@ -593,10 +595,22 @@ public class StandardSchool implements SchoolPlan {
             classrooms[i].setDoors(connectN);
             classrooms[i].setClassroomType(decision);
             classrooms[i].setInitialStaff(CLASSROOM_INITIAL_STAFF);
-            classrooms[i].setStudentCap(setRandom(CLASSROOM_STUDENT_CAPACITY_LOWER_LIMIT, CLASSROOM_STUDENT_CAPACITY_UPPER_LIMIT));
+            int capacity = getWeightedClassroomCapacity();
+            classrooms[i].setStudentCap(capacity);
+            
+            // Assign dividers to eligible classrooms (capacity >= minimum and random chance)
+            if (capacity >= DIVIDER_ELIGIBLE_MIN_CAPACITY && setRandom(0, 100) < DIVIDER_PROBABILITY) {
+                classrooms[i].setHasDivider(true);
+                dividersAssigned++;
+            }
+            
             classrooms[i].setSeatArrangement();
             classrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             classrooms[i].setRoomNumber(classrooms[i].getClassRoomType() + i + setRandom(CLASSROOM_NUMBER_LOWER_LIMIT, CLASSROOM_NUMBER_UPPER_LIMIT));
+        }
+        
+        if (dividersAssigned > 0) {
+            view.appendOutput("   " + dividersAssigned + " classrooms equipped with dividers");
         }
     }
 
@@ -628,6 +642,7 @@ public class StandardSchool implements SchoolPlan {
         System.out.println("EXPANSION: Adding " + additionalCount + " classrooms (total: " + newTotal + ")");
         
         // Create new classrooms
+        int dividersAssigned = 0;
         for (int i = currentCount; i < newTotal; i++) {
             int connectN = setRandom(CLASSROOM_CONNECTION_LOWER_LIMIT, CLASSROOM_CONNECTION_UPPER_LIMIT);
             int decision = i % CLASSROOM_WEIGHT;
@@ -640,7 +655,15 @@ public class StandardSchool implements SchoolPlan {
             newClassrooms[i].setDoors(connectN);
             newClassrooms[i].setClassroomType(decision);
             newClassrooms[i].setInitialStaff(CLASSROOM_INITIAL_STAFF);
-            newClassrooms[i].setStudentCap(setRandom(CLASSROOM_STUDENT_CAPACITY_LOWER_LIMIT, CLASSROOM_STUDENT_CAPACITY_UPPER_LIMIT));
+            int capacity = getWeightedClassroomCapacity();
+            newClassrooms[i].setStudentCap(capacity);
+            
+            // Assign dividers to eligible classrooms
+            if (capacity >= DIVIDER_ELIGIBLE_MIN_CAPACITY && setRandom(0, 100) < DIVIDER_PROBABILITY) {
+                newClassrooms[i].setHasDivider(true);
+                dividersAssigned++;
+            }
+            
             newClassrooms[i].setSeatArrangement();
             newClassrooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             newClassrooms[i].setRoomNumber(newClassrooms[i].getClassRoomType() + i + setRandom(CLASSROOM_NUMBER_LOWER_LIMIT, CLASSROOM_NUMBER_UPPER_LIMIT));
@@ -648,10 +671,35 @@ public class StandardSchool implements SchoolPlan {
         
         classrooms = newClassrooms;
         
+        if (view != null && dividersAssigned > 0) {
+            view.appendOutput("   " + dividersAssigned + " new classrooms equipped with dividers");
+        }
+        
         // Note: Capacities are calculated on-the-fly via getOptimalCapacity() and getPhysicalCapacity()
         // so they will automatically reflect the new classroom count
         
         return additionalCount;
+    }
+
+    /**
+     * Returns a weighted classroom capacity.
+     * Distribution: ~40% small (20-25), ~40% medium (26-34), ~20% large (35-40)
+     *
+     * @return the classroom capacity
+     */
+    private int getWeightedClassroomCapacity() {
+        int roll = setRandom(0, 100);
+        
+        if (roll < CLASSROOM_SIZE_SMALL_WEIGHT) {
+            // Small classroom (40% chance)
+            return setRandom(CLASSROOM_SMALL_CAP_LOWER, CLASSROOM_SMALL_CAP_UPPER);
+        } else if (roll < CLASSROOM_SIZE_MEDIUM_WEIGHT) {
+            // Medium classroom (40% chance)
+            return setRandom(CLASSROOM_MEDIUM_CAP_LOWER, CLASSROOM_MEDIUM_CAP_UPPER);
+        } else {
+            // Large classroom (20% chance)
+            return setRandom(CLASSROOM_LARGE_CAP_LOWER, CLASSROOM_LARGE_CAP_UPPER);
+        }
     }
 
     public ComputerLab[] getComputerLabs() {
@@ -1189,6 +1237,125 @@ public class StandardSchool implements SchoolPlan {
             parkingLots[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             parkingLots[i].setRoomNumber("ParkingLot" + i + setRandom(PARKING_NUMBER_LOWER_LIMIT, PARKING_NUMBER_UPPER_LIMIT));
         }
+    }
+
+    // ==================== Portable Classrooms ====================
+
+    /**
+     * Gets the portable classrooms array.
+     *
+     * @return array of portable classrooms, or empty array if none
+     */
+    public Portable[] getPortables() {
+        return portables != null ? portables : new Portable[0];
+    }
+
+    /**
+     * Sets up portable classrooms for the school.
+     * Portables are temporary modular buildings used as additional classroom space.
+     * They are more common at underfunded schools and can only connect to outdoor spaces.
+     *
+     * @param number the number of portables to create
+     * @param view the game view for output
+     */
+    public void setPortables(int number, GameView view) {
+        if (number <= 0) {
+            portables = new Portable[0];
+            return;
+        }
+        
+        portables = new Portable[number];
+        view.appendOutput("   Generating " + number + " Portable Classroom(s)...");
+        for (int i = 0; i < number; i++) {
+            int decision = i % CLASSROOM_WEIGHT;
+            portables[i] = new Portable();
+            portables[i].setRoomName("Portable" + i);
+            view.appendOutput("      Generating " + portables[i].getRoomName());
+            portables[i].setWindowCount(setRandom(PORTABLE_WINDOW_LOWER_LIMIT, PORTABLE_WINDOW_UPPER_LIMIT));
+            portables[i].setConnections(PORTABLE_CONNECTION_COUNT);
+            portables[i].setDoors(PORTABLE_CONNECTION_COUNT);
+            portables[i].setClassroomType(decision);
+            portables[i].setInitialStaff(PORTABLE_INITIAL_STAFF);
+            portables[i].setStudentCap(setRandom(PORTABLE_STUDENT_CAPACITY_LOWER_LIMIT, PORTABLE_STUDENT_CAPACITY_UPPER_LIMIT));
+            portables[i].setSeatArrangement();
+            portables[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            portables[i].setRoomNumber("P" + i + setRandom(PORTABLE_NUMBER_LOWER_LIMIT, PORTABLE_NUMBER_UPPER_LIMIT));
+        }
+    }
+
+    /**
+     * Adds additional portable classrooms to the school dynamically.
+     * Used for expansion when scheduling fails due to insufficient capacity.
+     *
+     * @param additionalCount the number of portables to add
+     * @param view the game view for output (can be null for silent operation)
+     * @return the number of portables added
+     */
+    public int addPortables(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+        
+        int currentCount = portables != null ? portables.length : 0;
+        int newTotal = currentCount + additionalCount;
+        
+        // Create new array and copy existing portables
+        Portable[] newPortables = new Portable[newTotal];
+        if (portables != null) {
+            System.arraycopy(portables, 0, newPortables, 0, currentCount);
+        }
+        
+        if (view != null) {
+            view.appendOutput("   Expanding school: Adding " + additionalCount + " portable(s)...");
+        }
+        System.out.println("EXPANSION: Adding " + additionalCount + " portables (total: " + newTotal + ")");
+        
+        // Create new portables
+        for (int i = currentCount; i < newTotal; i++) {
+            int decision = i % CLASSROOM_WEIGHT;
+            newPortables[i] = new Portable();
+            newPortables[i].setRoomName("Portable" + i);
+            if (view != null) {
+                view.appendOutput("      Generating " + newPortables[i].getRoomName());
+            }
+            newPortables[i].setWindowCount(setRandom(PORTABLE_WINDOW_LOWER_LIMIT, PORTABLE_WINDOW_UPPER_LIMIT));
+            newPortables[i].setConnections(PORTABLE_CONNECTION_COUNT);
+            newPortables[i].setDoors(PORTABLE_CONNECTION_COUNT);
+            newPortables[i].setClassroomType(decision);
+            newPortables[i].setInitialStaff(PORTABLE_INITIAL_STAFF);
+            newPortables[i].setStudentCap(setRandom(PORTABLE_STUDENT_CAPACITY_LOWER_LIMIT, PORTABLE_STUDENT_CAPACITY_UPPER_LIMIT));
+            newPortables[i].setSeatArrangement();
+            newPortables[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newPortables[i].setRoomNumber("P" + i + setRandom(PORTABLE_NUMBER_LOWER_LIMIT, PORTABLE_NUMBER_UPPER_LIMIT));
+        }
+        
+        portables = newPortables;
+        return additionalCount;
+    }
+
+    /**
+     * Checks if the school has any portable classrooms.
+     *
+     * @return true if the school has portables
+     */
+    public boolean hasPortables() {
+        return portables != null && portables.length > 0;
+    }
+
+    /**
+     * Gets the total capacity of all portable classrooms.
+     *
+     * @return total student capacity of portables
+     */
+    public int getPortableCapacity() {
+        if (portables == null) {
+            return 0;
+        }
+        int total = 0;
+        for (Portable portable : portables) {
+            total += portable.getStudentCapacity();
+        }
+        return total;
     }
 
     public void schoolColorsLoader() {

@@ -52,10 +52,7 @@ public class SchoolAssignmentService {
         int staffAssigned = StaffAssignmentService.assignStaffToSchool(
                 town, school, studentsAssigned, view);
         
-        // Assign classes to staff schedules
-        StaffAssignmentService.assignClassesToStaff(town.getStaffPool(), school, view);
-        
-        // Schedule students
+        // Schedule students (includes class scheduling via createDemandDrivenTeacherBlocks)
         HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
         HashMap<Integer, Staff> staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
         
@@ -144,11 +141,7 @@ public class SchoolAssignmentService {
                 String.format("%.1f%%", school.getOvercrowdingLevel() * 100) + " of optimal capacity");
         }
         
-        // Step 4: Assign classes to staff schedules based on actual demand
-        view.appendOutput("Assigning classes to staff schedules...");
-        StaffAssignmentService.assignClassesToStaff(town.getStaffPool(), school, view);
-        
-        // Step 5: Schedule students with demand awareness
+        // Step 4: Schedule students with demand awareness (includes class scheduling)
         HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
         HashMap<Integer, Staff> staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
         
@@ -231,10 +224,7 @@ public class SchoolAssignmentService {
      * @param view the game view for output
      */
     public static void completeScheduling(Town town, StandardSchool school, GameView view) {
-        // Assign classes to staff schedules
-        StaffAssignmentService.assignClassesToStaff(town.getStaffPool(), school, view);
-        
-        // Get maps for scheduling
+        // Get maps for scheduling (class scheduling is handled by EnhancedStudentScheduleAssigner)
         HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
         HashMap<Integer, Staff> staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
         
@@ -475,6 +465,206 @@ public class SchoolAssignmentService {
             case "Senior" -> 6;
             default -> 6;
         };
+    }
+
+    // ==================== Post-Generation Expansion ====================
+
+    /**
+     * Expands a school to meet student demand by adding classrooms, portables, and teachers.
+     * This method is used after initial generation to address capacity shortages.
+     * Only adequately funded (or better) schools can expand with classrooms;
+     * underfunded schools may add portables as a cheaper alternative.
+     *
+     * @param town the town containing population pools
+     * @param school the school to expand
+     * @param view the game view for output
+     * @return an expansion report with details of what was added
+     */
+    public static ExpansionReport expandSchoolToMeetDemand(Town town, StandardSchool school, GameView view) {
+        view.appendOutput("=== ANALYZING SCHOOL EXPANSION NEEDS ===");
+        
+        SchoolFundingModel fundingModel = school.getFundingModel();
+        SchedulingReport scheduleReport = analyzeSchedulingSuccess(town, school);
+        
+        int classroomsAdded = 0;
+        int portablesAdded = 0;
+        int teachersAdded = 0;
+        
+        // Check if expansion is needed
+        if (scheduleReport.incompleteRate <= INCOMPLETE_SCHEDULE_THRESHOLD) {
+            view.appendOutput("  School is meeting demand - no expansion needed");
+            view.appendOutput("  Completion rate: " + String.format("%.1f%%", scheduleReport.completionRate * 100));
+            return new ExpansionReport(0, 0, 0, false);
+        }
+        
+        view.appendOutput("  Current incomplete schedule rate: " + 
+                         String.format("%.1f%%", scheduleReport.incompleteRate * 100));
+        view.appendOutput("  Funding level: " + fundingModel.getFundingLevel().getDisplayName());
+        
+        // Calculate how many additional resources we need
+        int studentsWithGaps = scheduleReport.incompleteSchedules;
+        int additionalCapacityNeeded = Math.max(1, studentsWithGaps / 20);  // Rough estimate
+        
+        // Determine what type of expansion is possible based on funding
+        if (fundingModel.canExpandToMeetDemand()) {
+            // Adequately funded schools can add permanent classrooms
+            int maxClassrooms = fundingModel.getMaxExpansionClassrooms();
+            int classroomsToAdd = Math.min(additionalCapacityNeeded, maxClassrooms);
+            
+            if (classroomsToAdd > 0) {
+                view.appendOutput("  Adding " + classroomsToAdd + " permanent classrooms...");
+                classroomsAdded = school.addClassrooms(classroomsToAdd, view);
+                view.appendOutput("  New classroom total: " + school.getClassrooms().length);
+            }
+            
+            // Try to hire additional teachers
+            int maxTeachers = fundingModel.getMaxExpansionTeachers();
+            int teachersToHire = Math.min(classroomsAdded, maxTeachers);
+            
+            if (teachersToHire > 0) {
+                view.appendOutput("  Attempting to hire " + teachersToHire + " additional teachers...");
+                Map<StaffType, Integer> staffNeeds = estimateStaffNeeds(town, school, teachersToHire);
+                teachersAdded = StaffAssignmentService.assignAdditionalTeachers(
+                        town, school, staffNeeds, view);
+                view.appendOutput("  Hired " + teachersAdded + " additional teachers");
+            }
+        } else {
+            // Underfunded schools can only add portables
+            view.appendOutput("  School funding insufficient for permanent expansion");
+        }
+        
+        // All schools can add portables (cheaper option)
+        int maxPortables = fundingModel.getMaxExpansionPortables();
+        int portablesToAdd = Math.min(
+                Math.max(1, additionalCapacityNeeded - classroomsAdded), 
+                maxPortables
+        );
+        
+        if (portablesToAdd > 0 && !fundingModel.canExpandToMeetDemand()) {
+            // Only add portables if we couldn't add permanent classrooms
+            view.appendOutput("  Adding " + portablesToAdd + " portable classrooms...");
+            portablesAdded = school.addPortables(portablesToAdd, view);
+            view.appendOutput("  New portable total: " + school.getPortables().length);
+        }
+        
+        boolean expansionOccurred = classroomsAdded > 0 || portablesAdded > 0 || teachersAdded > 0;
+        
+        // Re-run scheduling if expansion occurred
+        int studentsRescheduled = 0;
+        double newCompletionRate = scheduleReport.completionRate;
+        
+        if (expansionOccurred) {
+            view.appendOutput("=== RE-SCHEDULING STUDENTS ===");
+            
+            // Get student and staff maps for re-scheduling
+            HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
+            HashMap<Integer, Staff> staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
+            
+            // Note: Class scheduling for new teachers is handled by
+            // EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced() below
+            
+            // Re-run student scheduling
+            try {
+                view.appendOutput("  Re-scheduling students with new resources...");
+                EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
+                        studentMap, staffMap, school, view);
+                
+                view.appendOutput("  Re-assigning seating...");
+                StudentSeatingAssigner.seatInitialStudents(school);
+                
+                // Analyze new scheduling success rate
+                SchedulingReport newReport = analyzeSchedulingSuccess(town, school);
+                studentsRescheduled = newReport.completeSchedules - scheduleReport.completeSchedules;
+                newCompletionRate = newReport.completionRate;
+                
+                view.appendOutput("=== SCHEDULING IMPROVEMENT ===");
+                view.appendOutput("  Before: " + String.format("%.1f%%", scheduleReport.completionRate * 100) + 
+                                 " complete (" + scheduleReport.completeSchedules + "/" + scheduleReport.totalStudents + ")");
+                view.appendOutput("  After: " + String.format("%.1f%%", newCompletionRate * 100) + 
+                                 " complete (" + newReport.completeSchedules + "/" + newReport.totalStudents + ")");
+                view.appendOutput("  Improvement: " + studentsRescheduled + " additional students scheduled");
+                
+            } catch (Exception e) {
+                view.appendOutput("  Error during re-scheduling: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        
+        // Report results
+        view.appendOutput("=== EXPANSION COMPLETE ===");
+        view.appendOutput("  Classrooms added: " + classroomsAdded);
+        view.appendOutput("  Portables added: " + portablesAdded);
+        view.appendOutput("  Teachers hired: " + teachersAdded);
+        view.appendOutput("  Students rescheduled: " + studentsRescheduled);
+        view.appendOutput("  New optimal capacity: " + school.getOptimalCapacity());
+        view.appendOutput("  New physical capacity: " + school.getPhysicalCapacity());
+        view.appendOutput("  New completion rate: " + String.format("%.1f%%", newCompletionRate * 100));
+        
+        return new ExpansionReport(classroomsAdded, portablesAdded, teachersAdded, expansionOccurred,
+                                   scheduleReport.completionRate, newCompletionRate, studentsRescheduled);
+    }
+
+    /**
+     * Estimates staff needs based on current gaps and available slots.
+     * Analyzes which subject areas have the most scheduling failures.
+     *
+     * @param town the town
+     * @param school the school
+     * @param targetTeachers the number of teachers to distribute
+     * @return a map of staff types to needed counts
+     */
+    private static Map<StaffType, Integer> estimateStaffNeeds(Town town, StandardSchool school, int targetTeachers) {
+        Map<StaffType, Integer> needs = new HashMap<>();
+        
+        // Distribute teachers across core subjects proportionally
+        // This is a simplified estimation - a more sophisticated version would
+        // analyze actual scheduling failures by subject
+        int perSubject = Math.max(1, targetTeachers / 4);
+        int remainder = targetTeachers - (perSubject * 4);
+        
+        needs.put(StaffType.MATH, perSubject);
+        needs.put(StaffType.ENGLISH, perSubject);
+        needs.put(StaffType.SCIENCE, perSubject);
+        needs.put(StaffType.HISTORY, perSubject + remainder);
+        
+        return needs;
+    }
+
+    /**
+     * Report class for expansion results.
+     */
+    public static class ExpansionReport {
+        public final int classroomsAdded;
+        public final int portablesAdded;
+        public final int teachersHired;
+        public final boolean expansionOccurred;
+        public final double previousCompletionRate;
+        public final double newCompletionRate;
+        public final int studentsRescheduled;
+
+        public ExpansionReport(int classrooms, int portables, int teachers, boolean occurred) {
+            this(classrooms, portables, teachers, occurred, 0.0, 0.0, 0);
+        }
+
+        public ExpansionReport(int classrooms, int portables, int teachers, boolean occurred,
+                               double previousRate, double newRate, int rescheduled) {
+            this.classroomsAdded = classrooms;
+            this.portablesAdded = portables;
+            this.teachersHired = teachers;
+            this.expansionOccurred = occurred;
+            this.previousCompletionRate = previousRate;
+            this.newCompletionRate = newRate;
+            this.studentsRescheduled = rescheduled;
+        }
+
+        /**
+         * Gets the improvement in completion rate as a percentage.
+         *
+         * @return the improvement (e.g., 0.15 for 15% improvement)
+         */
+        public double getCompletionRateImprovement() {
+            return newCompletionRate - previousCompletionRate;
+        }
     }
 
     /**

@@ -2,7 +2,7 @@ package entity.Rooms;
 
 import entity.Staff;
 import entity.Student;
-import utility.StaffAssignment;
+import utility.StaffAssignmentService;
 import view.GameView;
 
 import java.io.Serializable;
@@ -30,6 +30,18 @@ public abstract class Room implements Serializable {
     protected boolean restrictM;
     protected boolean restrictF;
     protected String classRoomType;
+    
+    // Room divider fields - allows a room to be split into two teaching spaces
+    /** Whether this room has a divider that can split it into two spaces */
+    protected boolean hasDivider = false;
+    /** Whether the divider is currently deployed (room is split) */
+    protected boolean isDivided = false;
+    /** Reference to the other "half" of the room when divided */
+    protected Room dividedPartner = null;
+    /** Original capacity before division (for restoration) */
+    protected int originalCapacity = 0;
+    /** Reference to the second teacher when room is divided */
+    protected Staff secondTeacher = null;
 
     public Room() {
         this.numOfConnections = 0;
@@ -41,6 +53,9 @@ public abstract class Room implements Serializable {
         this.roomNumber = null;
         this.studentRestriction = false;
         this.stallNumber = 0;
+        this.hasDivider = false;
+        this.isDivided = false;
+        this.originalCapacity = 0;
         this.staffAssign = new ArrayList<>();
         this.students = new ArrayList<>();
         this.seatingArrangements = new HashMap<>();
@@ -210,7 +225,7 @@ public abstract class Room implements Serializable {
             }
         } else {
             view.appendOutput("Classroom " + getRoomName() + " has no staff!");
-            StaffAssignment.reassignSubToRoom(staffHashMap, view, this);
+            StaffAssignmentService.reassignSubToRoom(staffHashMap, view, this);
             // Only recurse if a substitute was actually assigned - prevents infinite recursion
             if (!getAssignedStaff().isEmpty()) {
                 reassignClassroomByTeacher(staffHashMap, view);
@@ -275,6 +290,152 @@ public abstract class Room implements Serializable {
     @Override
     public String toString() {
         return this.roomName;
+    }
+
+    // ==================== Room Divider Methods ====================
+
+    /**
+     * Checks if this room has a divider that can split it into two spaces.
+     *
+     * @return true if the room has a divider
+     */
+    public boolean hasDivider() {
+        return hasDivider;
+    }
+
+    /**
+     * Sets whether this room has a divider.
+     *
+     * @param hasDivider true if the room should have a divider
+     */
+    public void setHasDivider(boolean hasDivider) {
+        this.hasDivider = hasDivider;
+    }
+
+    /**
+     * Checks if the room is currently divided into two teaching spaces.
+     *
+     * @return true if the room is currently divided
+     */
+    public boolean isDivided() {
+        return isDivided;
+    }
+
+    /**
+     * Gets the effective capacity of this room, accounting for division.
+     * When divided, capacity is halved.
+     *
+     * @return the effective student capacity
+     */
+    public int getEffectiveCapacity() {
+        if (isDivided) {
+            return studentCap / 2;
+        }
+        return studentCap;
+    }
+
+    /**
+     * Divides the room into two teaching spaces using the divider.
+     * Each half gets approximately 50% of the original capacity.
+     * Requires the room to have a divider and not already be divided.
+     *
+     * @return true if division was successful
+     */
+    public boolean divide() {
+        if (!hasDivider) {
+            System.out.println("Cannot divide " + roomName + " - no divider installed");
+            return false;
+        }
+        if (isDivided) {
+            System.out.println("Cannot divide " + roomName + " - already divided");
+            return false;
+        }
+        
+        isDivided = true;
+        originalCapacity = studentCap;
+        // Note: studentCap remains the same, but getEffectiveCapacity() returns half
+        System.out.println(roomName + " divided - effective capacity now " + getEffectiveCapacity() + 
+                          " per side (was " + originalCapacity + " total)");
+        return true;
+    }
+
+    /**
+     * Removes the division, restoring the room to a single teaching space.
+     *
+     * @return true if undivision was successful
+     */
+    public boolean undivide() {
+        if (!isDivided) {
+            System.out.println("Cannot undivide " + roomName + " - not currently divided");
+            return false;
+        }
+        
+        isDivided = false;
+        secondTeacher = null;
+        dividedPartner = null;
+        System.out.println(roomName + " undivided - capacity restored to " + studentCap);
+        return true;
+    }
+
+    /**
+     * Gets the original capacity before division.
+     *
+     * @return the original capacity, or current capacity if never divided
+     */
+    public int getOriginalCapacity() {
+        return originalCapacity > 0 ? originalCapacity : studentCap;
+    }
+
+    /**
+     * Gets the second teacher assigned to the divided room.
+     *
+     * @return the second teacher, or null if not divided or no second teacher
+     */
+    public Staff getSecondTeacher() {
+        return secondTeacher;
+    }
+
+    /**
+     * Sets the second teacher for the divided room.
+     *
+     * @param teacher the second teacher to assign
+     * @return true if successful
+     */
+    public boolean setSecondTeacher(Staff teacher) {
+        if (!isDivided) {
+            System.out.println("Cannot assign second teacher to " + roomName + " - room not divided");
+            return false;
+        }
+        this.secondTeacher = teacher;
+        return true;
+    }
+
+    /**
+     * Gets the divided partner room (the other "half" when divided).
+     *
+     * @return the partner room, or null if not divided
+     */
+    public Room getDividedPartner() {
+        return dividedPartner;
+    }
+
+    /**
+     * Sets the divided partner room.
+     *
+     * @param partner the partner room
+     */
+    public void setDividedPartner(Room partner) {
+        this.dividedPartner = partner;
+    }
+
+    /**
+     * Checks if this room can be divided (has divider and large enough capacity).
+     *
+     * @param minCapacity the minimum capacity required for division
+     * @return true if the room can be divided
+     */
+    public boolean canDivide(int minCapacity) {
+        return hasDivider && !isDivided && studentCap >= minCapacity;
     }
 
 }

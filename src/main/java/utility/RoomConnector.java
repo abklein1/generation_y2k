@@ -34,7 +34,7 @@ import entity.Rooms.Room;
 // vertex is door
 // edge is room
 public class RoomConnector {
-    private final Room[][] roomPool = new Room[21][];
+    private final Room[][] roomPool = new Room[22][];
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
     private int locker_count = 0;
     private int labs_count = 0;
@@ -61,6 +61,7 @@ public class RoomConnector {
         roomPool[18] = standardSchool.getConferenceRooms();
         roomPool[19] = standardSchool.getParkingLots();
         roomPool[20] = standardSchool.getVocationalRooms();
+        roomPool[21] = standardSchool.getPortables();
 
         connectRooms(view);
     }
@@ -71,6 +72,7 @@ public class RoomConnector {
         connectivityInspectionBackbone();
         populateAthleticFields(view);
         populateParkingLots(view);
+        populatePortables(view);  // Portables connect to outdoor spaces only
         populateAuditoriums(view);
         populateGyms(view);
         populateLunchrooms(view);
@@ -225,6 +227,116 @@ public class RoomConnector {
                 parkingLot.setConnections(parkingLot.getConnections() - 1);
             }
         }
+    }
+
+    /**
+     * Connects portable classrooms to outdoor spaces only.
+     * Portables are temporary modular buildings that can ONLY connect to:
+     * - Athletic fields
+     * - Courtyards
+     * - Parking lots
+     * They CANNOT connect to hallways (as per real-world placement).
+     *
+     * @param view the game view for output
+     */
+    private void populatePortables(GameView view) {
+        Room[] portables = roomPool[21];
+        
+        // Skip if no portables
+        if (portables == null || portables.length == 0) {
+            return;
+        }
+        
+        // Outdoor spaces that portables can connect to
+        Room[] athleticFields = roomPool[1];
+        Room[] courtyards = roomPool[7];
+        Room[] parkingLots = roomPool[19];
+        
+        view.appendOutput("Connecting portable classrooms to outdoor spaces...");
+        
+        for (Room portable : portables) {
+            Room outdoorSpace = findOutdoorSpace(athleticFields, courtyards, parkingLots);
+            
+            if (outdoorSpace != null) {
+                schoolConnect.addEdge(portable, outdoorSpace);
+                portable.setConnections(portable.getConnections() - 1);
+                outdoorSpace.setConnections(outdoorSpace.getConnections() - 1);
+                view.appendOutput("   Connected " + portable.getRoomName() + " to " + outdoorSpace.getRoomName());
+            } else {
+                // Fallback: connect to courtyard (most common real-world scenario)
+                // Add a connection if needed
+                if (courtyards.length > 0) {
+                    int idx = setRandom(0, courtyards.length - 1);
+                    courtyards[idx].setConnections(courtyards[idx].getConnections() + 1);
+                    schoolConnect.addEdge(portable, courtyards[idx]);
+                    portable.setConnections(portable.getConnections() - 1);
+                    courtyards[idx].setConnections(courtyards[idx].getConnections() - 1);
+                    view.appendOutput("   Connected " + portable.getRoomName() + " to " + courtyards[idx].getRoomName() + " (fallback)");
+                }
+            }
+        }
+    }
+
+    /**
+     * Finds an outdoor space (athletic field, courtyard, or parking lot) with available connections.
+     * Weighted distribution: 40% parking lots, 35% courtyards, 25% athletic fields
+     *
+     * @param athleticFields the athletic fields array
+     * @param courtyards the courtyards array
+     * @param parkingLots the parking lots array
+     * @return an outdoor space with available connections, or null if none available
+     */
+    private Room findOutdoorSpace(Room[] athleticFields, Room[] courtyards, Room[] parkingLots) {
+        int choice = setRandom(0, 100);
+        Room selected = null;
+        
+        // Weighted selection: 40% parking, 35% courtyard, 25% field
+        if (choice < 40 && parkingLots.length > 0) {
+            // Try parking lots first
+            selected = findRoomWithConnections(parkingLots);
+        } else if (choice < 75 && courtyards.length > 0) {
+            // Try courtyards
+            selected = findRoomWithConnections(courtyards);
+        } else if (athleticFields.length > 0) {
+            // Try athletic fields
+            selected = findRoomWithConnections(athleticFields);
+        }
+        
+        // Fallback: try other options if primary choice failed
+        if (selected == null && parkingLots.length > 0) {
+            selected = findRoomWithConnections(parkingLots);
+        }
+        if (selected == null && courtyards.length > 0) {
+            selected = findRoomWithConnections(courtyards);
+        }
+        if (selected == null && athleticFields.length > 0) {
+            selected = findRoomWithConnections(athleticFields);
+        }
+        
+        return selected;
+    }
+
+    /**
+     * Finds a room in the given array that has available connections.
+     *
+     * @param rooms the array of rooms to search
+     * @return a room with available connections, or null if none found
+     */
+    private Room findRoomWithConnections(Room[] rooms) {
+        if (rooms == null || rooms.length == 0) {
+            return null;
+        }
+        
+        // Try random selection first
+        int startIdx = setRandom(0, rooms.length - 1);
+        for (int i = 0; i < rooms.length; i++) {
+            int idx = (startIdx + i) % rooms.length;
+            if (rooms[idx].getConnections() > 0) {
+                return rooms[idx];
+            }
+        }
+        
+        return null;
     }
 
     private void populateConferenceRooms(GameView view) {
