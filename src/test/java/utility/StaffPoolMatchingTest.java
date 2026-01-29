@@ -1,99 +1,83 @@
 package utility;
 
 import entity.*;
-import org.junit.Test;
-import org.junit.Before;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
- * Test cases for the StaffPool staff type matching fix.
- * Verifies that staff with null types can now be matched for assignment.
+ * Test cases for the StaffPool staff type matching.
+ * Verifies that staff with null types can be matched for assignment,
+ * typed staff match correctly, and substitutes can fill any role.
  */
-public class StaffPoolMatchingTest {
+@DisplayName("Staff Pool Matching Tests")
+class StaffPoolMatchingTest {
     
     private StaffPool pool;
     
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         pool = new StaffPool();
     }
     
     @Test
-    public void testNullTypeStaffCanBeMatched() {
-        System.out.println("=== Testing Null Type Staff Matching ===");
-        
+    @DisplayName("Staff with null type should be available for any subject")
+    void testNullTypeStaffCanBeMatched() {
         // Create staff with null type (simulating newly generated staff)
         Staff newStaff = new Staff();
-        // Don't set a staff type - this simulates newly generated staff
-        assertNull("New staff should have null type", newStaff.teacherStatistics.getStaffType());
+        assertNull(newStaff.teacherStatistics.getStaffType(), "New staff should have null type");
         
         pool.addStaff(newStaff);
         
         // Should be able to get this staff for any subject
-        List<Staff> mathStaff = pool.getAvailableStaffForSubject(StaffType.MATH);
-        assertTrue("Null-type staff should be available for MATH", mathStaff.contains(newStaff));
-        
-        List<Staff> englishStaff = pool.getAvailableStaffForSubject(StaffType.ENGLISH);
-        assertTrue("Null-type staff should be available for ENGLISH", englishStaff.contains(newStaff));
-        
-        List<Staff> scienceStaff = pool.getAvailableStaffForSubject(StaffType.SCIENCE);
-        assertTrue("Null-type staff should be available for SCIENCE", scienceStaff.contains(newStaff));
-        
-        System.out.println("✓ Null-type staff can be matched for assignment");
+        assertAll("Null-type staff should be available for all subjects",
+            () -> assertTrue(pool.getAvailableStaffForSubject(StaffType.MATH).contains(newStaff)),
+            () -> assertTrue(pool.getAvailableStaffForSubject(StaffType.ENGLISH).contains(newStaff)),
+            () -> assertTrue(pool.getAvailableStaffForSubject(StaffType.SCIENCE).contains(newStaff))
+        );
     }
     
     @Test
-    public void testTypedStaffStillMatchCorrectly() {
-        System.out.println("=== Testing Typed Staff Still Match Correctly ===");
-        
-        // Create staff with specific type
+    @DisplayName("Typed staff should only match their subject")
+    void testTypedStaffStillMatchCorrectly() {
         Staff mathTeacher = new Staff();
         mathTeacher.teacherStatistics.setStaffType(StaffType.MATH);
         pool.addStaff(mathTeacher);
         
-        // Should be available for MATH
         List<Staff> mathStaff = pool.getAvailableStaffForSubject(StaffType.MATH);
-        assertTrue("Math teacher should be available for MATH", mathStaff.contains(mathTeacher));
-        
-        // Should NOT be available for ENGLISH (unless we want to change that behavior)
-        // Currently the fix only adds null-type matching, typed staff still match exactly
         List<Staff> englishStaff = pool.getAvailableStaffForSubject(StaffType.ENGLISH);
-        assertFalse("Math teacher should NOT be available for ENGLISH", englishStaff.contains(mathTeacher));
         
-        System.out.println("✓ Typed staff still match correctly");
+        assertAll("Typed staff matching",
+            () -> assertTrue(mathStaff.contains(mathTeacher), "Math teacher should be available for MATH"),
+            () -> assertFalse(englishStaff.contains(mathTeacher), "Math teacher should NOT be available for ENGLISH")
+        );
     }
     
     @Test
-    public void testSubstituteStaffMatchesAllSubjects() {
-        System.out.println("=== Testing Substitute Staff Matches All Subjects ===");
-        
-        // Create substitute teacher
+    @DisplayName("Substitute staff should match all subjects")
+    void testSubstituteStaffMatchesAllSubjects() {
         Staff substitute = new Staff();
         substitute.teacherStatistics.setStaffType(StaffType.SUB);
         pool.addStaff(substitute);
         
-        // Substitutes should be available for any subject
-        assertTrue("SUB should be available for MATH", 
-                  pool.getAvailableStaffForSubject(StaffType.MATH).contains(substitute));
-        assertTrue("SUB should be available for ENGLISH", 
-                  pool.getAvailableStaffForSubject(StaffType.ENGLISH).contains(substitute));
-        assertTrue("SUB should be available for SCIENCE", 
-                  pool.getAvailableStaffForSubject(StaffType.SCIENCE).contains(substitute));
-        assertTrue("SUB should be available for HISTORY", 
-                  pool.getAvailableStaffForSubject(StaffType.HISTORY).contains(substitute));
-        
-        System.out.println("✓ Substitute staff matches all subjects");
+        assertAll("Substitute should be available for all subjects",
+            () -> assertTrue(pool.getAvailableStaffForSubject(StaffType.MATH).contains(substitute)),
+            () -> assertTrue(pool.getAvailableStaffForSubject(StaffType.ENGLISH).contains(substitute)),
+            () -> assertTrue(pool.getAvailableStaffForSubject(StaffType.SCIENCE).contains(substitute)),
+            () -> assertTrue(pool.getAvailableStaffForSubject(StaffType.HISTORY).contains(substitute))
+        );
     }
     
     @Test
-    public void testMixedPoolStaffMatching() {
-        System.out.println("=== Testing Mixed Pool Staff Matching ===");
-        
+    @DisplayName("Mixed pool should return correct staff for each subject")
+    void testMixedPoolStaffMatching() {
         // Create a realistic mix of staff
-        Staff nullTypeStaff1 = new Staff(); // null type
-        Staff nullTypeStaff2 = new Staff(); // null type
+        Staff nullTypeStaff1 = new Staff();
+        Staff nullTypeStaff2 = new Staff();
         Staff mathTeacher = new Staff();
         mathTeacher.teacherStatistics.setStaffType(StaffType.MATH);
         Staff englishTeacher = new Staff();
@@ -107,49 +91,37 @@ public class StaffPoolMatchingTest {
         pool.addStaff(englishTeacher);
         pool.addStaff(substitute);
         
-        // Query for MATH - should get: null-types, math teacher, substitute
         List<Staff> mathAvailable = pool.getAvailableStaffForSubject(StaffType.MATH);
-        assertEquals("Should have 4 staff available for MATH", 4, mathAvailable.size());
-        assertTrue("Should include null-type staff", mathAvailable.contains(nullTypeStaff1));
-        assertTrue("Should include null-type staff", mathAvailable.contains(nullTypeStaff2));
-        assertTrue("Should include math teacher", mathAvailable.contains(mathTeacher));
-        assertTrue("Should include substitute", mathAvailable.contains(substitute));
-        assertFalse("Should NOT include english teacher", mathAvailable.contains(englishTeacher));
-        
-        // Query for ENGLISH - should get: null-types, english teacher, substitute
         List<Staff> englishAvailable = pool.getAvailableStaffForSubject(StaffType.ENGLISH);
-        assertEquals("Should have 4 staff available for ENGLISH", 4, englishAvailable.size());
-        assertTrue("Should include null-type staff", englishAvailable.contains(nullTypeStaff1));
-        assertTrue("Should include english teacher", englishAvailable.contains(englishTeacher));
-        assertTrue("Should include substitute", englishAvailable.contains(substitute));
-        assertFalse("Should NOT include math teacher", englishAvailable.contains(mathTeacher));
         
-        System.out.println("✓ Mixed pool staff matching works correctly");
-        System.out.println("  MATH available: " + mathAvailable.size() + " staff");
-        System.out.println("  ENGLISH available: " + englishAvailable.size() + " staff");
+        assertAll("Mixed pool matching",
+            () -> assertEquals(4, mathAvailable.size(), "Should have 4 staff available for MATH"),
+            () -> assertTrue(mathAvailable.contains(nullTypeStaff1)),
+            () -> assertTrue(mathAvailable.contains(mathTeacher)),
+            () -> assertTrue(mathAvailable.contains(substitute)),
+            () -> assertFalse(mathAvailable.contains(englishTeacher)),
+            () -> assertEquals(4, englishAvailable.size(), "Should have 4 staff available for ENGLISH"),
+            () -> assertTrue(englishAvailable.contains(englishTeacher)),
+            () -> assertFalse(englishAvailable.contains(mathTeacher))
+        );
     }
     
     @Test
-    public void testAssignedStaffNotAvailable() {
-        System.out.println("=== Testing Assigned Staff Not Available ===");
-        
-        // Create staff and a school
+    @DisplayName("Assigned staff should not be available in pool")
+    void testAssignedStaffNotAvailable() {
         Staff teacher = new Staff();
         pool.addStaff(teacher);
-        
         StandardSchool school = new StandardSchool();
         
         // Initially should be available
         List<Staff> beforeAssignment = pool.getAvailableStaffForSubject(StaffType.MATH);
-        assertTrue("Staff should be available before assignment", beforeAssignment.contains(teacher));
+        assertTrue(beforeAssignment.contains(teacher), "Staff should be available before assignment");
         
         // Assign to school
         pool.assignToSchool(teacher, school);
         
-        // Now should NOT be available (only unassigned staff are returned)
+        // Now should NOT be available
         List<Staff> afterAssignment = pool.getAvailableStaffForSubject(StaffType.MATH);
-        assertFalse("Staff should NOT be available after assignment", afterAssignment.contains(teacher));
-        
-        System.out.println("✓ Assigned staff are correctly excluded from available pool");
+        assertFalse(afterAssignment.contains(teacher), "Staff should NOT be available after assignment");
     }
 }

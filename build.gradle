@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.spotbugs" version "4.5.1"
+    id "com.github.spotbugs" version "6.0.7"
     id "checkstyle"
     id "application"
     id "jacoco"
@@ -14,7 +14,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation fileTree(dir: 'lib', include: ['*.jar'])
 }
 
@@ -34,7 +35,9 @@ java {
     }
 }
 
-test {}
+test {
+    useJUnitPlatform()
+}
 
 ///////////////////////////////////////////////////////////////////////
 // Configure Checkstyle
@@ -43,7 +46,7 @@ checkstyle {
     // Keep Checkstyle a little quieter
     ignoreFailures = true
     showViolations = false
-    toolVersion = "8.29"
+    toolVersion = "10.12.5"  // Updated for Java 17 compatibility
 }
 
 tasks.withType(Checkstyle).configureEach {
@@ -65,8 +68,9 @@ tasks.named("spotbugsMain") {
 }
 
 spotbugs {
-    toolVersion = '4.0.0-beta4'
+    toolVersion = '4.8.3'
     ignoreFailures = true
     showProgress = true
-    effort = 'max'
+    effort = com.github.spotbugs.snom.Effort.valueOf('MAX')
+    reportLevel = com.github.spotbugs.snom.Confidence.valueOf('LOW')
 }

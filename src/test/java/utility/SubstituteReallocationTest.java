@@ -1,164 +1,133 @@
 package utility;
 
 import entity.*;
-import org.junit.Test;
-import org.junit.Before;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
- * Test cases for the substitute reallocation system
- * Verifies that we can properly identify shortages and reallocate resources
+ * Test cases for the substitute reallocation system.
+ * Verifies staff type mapping, subject classification, and resource calculations.
  */
-public class SubstituteReallocationTest {
+@DisplayName("Substitute Reallocation Tests")
+class SubstituteReallocationTest {
     
     @Test
-    public void testStaffTypeMapping() {
-        System.out.println("=== Testing Staff Type Mapping for Classes ===");
-        
-        // Test core subject mapping
-        assertTrue("World Geography should map to HISTORY", 
-                  determineStaffTypeForClass("World Geography") == StaffType.HISTORY);
-        
-        assertTrue("English I should map to ENGLISH", 
-                  determineStaffTypeForClass("English I") == StaffType.ENGLISH);
-        
-        assertTrue("Algebra I should map to MATH", 
-                  determineStaffTypeForClass("Algebra I") == StaffType.MATH);
-        
-        assertTrue("Biology should map to SCIENCE", 
-                  determineStaffTypeForClass("Biology") == StaffType.SCIENCE);
-        
-        assertTrue("Health should map to PHYSICAL_ED", 
-                  determineStaffTypeForClass("Health") == StaffType.PHYSICAL_ED);
-        
-        assertTrue("French I should map to LANGUAGES", 
-                  determineStaffTypeForClass("French I") == StaffType.LANGUAGES);
-        
-        System.out.println("✓ All staff type mappings work correctly");
+    @DisplayName("Core classes should map to correct staff types")
+    void testStaffTypeMapping() {
+        assertAll("Staff type mappings",
+            () -> assertEquals(StaffType.HISTORY, determineStaffTypeForClass("World Geography")),
+            () -> assertEquals(StaffType.ENGLISH, determineStaffTypeForClass("English I")),
+            () -> assertEquals(StaffType.MATH, determineStaffTypeForClass("Algebra I")),
+            () -> assertEquals(StaffType.SCIENCE, determineStaffTypeForClass("Biology")),
+            () -> assertEquals(StaffType.PHYSICAL_ED, determineStaffTypeForClass("Health")),
+            () -> assertEquals(StaffType.LANGUAGES, determineStaffTypeForClass("French I"))
+        );
     }
     
     @Test
-    public void testSubjectAreaBelonging() {
-        System.out.println("=== Testing Subject Area Classification ===");
+    @DisplayName("Classes should belong to correct subject areas")
+    void testSubjectAreaBelonging() {
+        assertAll("History subject area",
+            () -> assertTrue(belongsToSubjectArea("World Geography", "history")),
+            () -> assertTrue(belongsToSubjectArea("AP Human Geography", "history")),
+            () -> assertTrue(belongsToSubjectArea("US Government", "history"))
+        );
         
-        assertTrue("World Geography belongs to history", belongsToSubjectArea("World Geography", "history"));
-        assertTrue("AP Human Geography belongs to history", belongsToSubjectArea("AP Human Geography", "history"));
-        assertTrue("US Government belongs to history", belongsToSubjectArea("US Government", "history"));
+        assertAll("English subject area",
+            () -> assertTrue(belongsToSubjectArea("English I", "english")),
+            () -> assertTrue(belongsToSubjectArea("AP English Literature & Composition", "english"))
+        );
         
-        assertTrue("English I belongs to english", belongsToSubjectArea("English I", "english"));
-        assertTrue("AP English Literature belongs to english", belongsToSubjectArea("AP English Literature & Composition", "english"));
+        assertAll("Math subject area",
+            () -> assertTrue(belongsToSubjectArea("Algebra I", "math")),
+            () -> assertTrue(belongsToSubjectArea("Geometry", "math")),
+            () -> assertTrue(belongsToSubjectArea("AP Calculus AB", "math"))
+        );
         
-        assertTrue("Algebra I belongs to math", belongsToSubjectArea("Algebra I", "math"));
-        assertTrue("Geometry belongs to math", belongsToSubjectArea("Geometry", "math"));
-        assertTrue("AP Calculus AB belongs to math", belongsToSubjectArea("AP Calculus AB", "math"));
+        assertAll("Science subject area",
+            () -> assertTrue(belongsToSubjectArea("Biology", "science")),
+            () -> assertTrue(belongsToSubjectArea("Chemistry", "science")),
+            () -> assertTrue(belongsToSubjectArea("AP Physics B", "science"))
+        );
         
-        assertTrue("Biology belongs to science", belongsToSubjectArea("Biology", "science"));
-        assertTrue("Chemistry belongs to science", belongsToSubjectArea("Chemistry", "science"));
-        assertTrue("AP Physics B belongs to science", belongsToSubjectArea("AP Physics B", "science"));
+        assertAll("Physical education subject area",
+            () -> assertTrue(belongsToSubjectArea("Health", "physical education")),
+            () -> assertTrue(belongsToSubjectArea("Team Sports", "physical education"))
+        );
         
-        assertTrue("Health belongs to physical education", belongsToSubjectArea("Health", "physical education"));
-        assertTrue("Team Sports belongs to physical education", belongsToSubjectArea("Team Sports", "physical education"));
-        
-        assertTrue("French I belongs to language", belongsToSubjectArea("French I", "language"));
-        assertTrue("Spanish II belongs to language", belongsToSubjectArea("Spanish II", "language"));
-        assertTrue("American Sign Language I belongs to language", belongsToSubjectArea("American Sign Language I", "language"));
-        
-        System.out.println("✓ All subject area classifications work correctly");
+        assertAll("Language subject area",
+            () -> assertTrue(belongsToSubjectArea("French I", "language")),
+            () -> assertTrue(belongsToSubjectArea("Spanish II", "language")),
+            () -> assertTrue(belongsToSubjectArea("American Sign Language I", "language"))
+        );
     }
     
     @Test
-    public void testTeacherNeedCalculation() {
-        System.out.println("=== Testing Teacher Need Calculation ===");
+    @DisplayName("Teacher need calculation should be reasonable")
+    void testTeacherNeedCalculation() {
+        int teachersFor50Students = calculateTeachersNeeded(50);
+        int teachersFor100Students = calculateTeachersNeeded(100);
+        int teachersFor0Students = calculateTeachersNeeded(0);
         
-        // Test that we calculate reasonable teacher needs
-        int teachersFor50Students = calculateTeachersNeeded(50); // 50 student shortage
-        assertTrue("Should need at least 1 teacher for 50 students", teachersFor50Students >= 1);
-        assertTrue("Should not need more than 3 teachers for 50 students", teachersFor50Students <= 3);
-        
-        int teachersFor100Students = calculateTeachersNeeded(100); // 100 student shortage  
-        assertTrue("Should need at least 2 teachers for 100 students", teachersFor100Students >= 2);
-        assertTrue("Should not need more than 5 teachers for 100 students", teachersFor100Students <= 5);
-        
-        int teachersFor0Students = calculateTeachersNeeded(0); // No shortage
-        assertEquals("Should need 0 teachers for no shortage", 0, teachersFor0Students);
-        
-        System.out.println("✓ Teacher need calculations are reasonable");
-        System.out.println("  50 students → " + teachersFor50Students + " teachers");
-        System.out.println("  100 students → " + teachersFor100Students + " teachers");
-        System.out.println("  0 students → " + teachersFor0Students + " teachers");
+        assertAll("Teacher calculations",
+            () -> assertTrue(teachersFor50Students >= 1 && teachersFor50Students <= 3,
+                "Should need 1-3 teachers for 50 students"),
+            () -> assertTrue(teachersFor100Students >= 2 && teachersFor100Students <= 5,
+                "Should need 2-5 teachers for 100 students"),
+            () -> assertEquals(0, teachersFor0Students, "Should need 0 teachers for no shortage")
+        );
     }
     
     @Test
-    public void testCoreSubjectIdentification() {
-        System.out.println("=== Testing Core Subject Identification ===");
+    @DisplayName("Core subjects should be identified correctly")
+    void testCoreSubjectIdentification() {
+        assertAll("Core subjects",
+            () -> assertTrue(isCoreSubject("World Geography")),
+            () -> assertTrue(isCoreSubject("English I")),
+            () -> assertTrue(isCoreSubject("Algebra I")),
+            () -> assertTrue(isCoreSubject("Biology")),
+            () -> assertTrue(isCoreSubject("AP Human Geography"))
+        );
         
-        // Core subjects that should be prioritized
-        assertTrue("World Geography is core", isCoreSubject("World Geography"));
-        assertTrue("English I is core", isCoreSubject("English I"));
-        assertTrue("Algebra I is core", isCoreSubject("Algebra I"));
-        assertTrue("Biology is core", isCoreSubject("Biology"));
-        assertTrue("AP Human Geography is core", isCoreSubject("AP Human Geography"));
-        
-        // Non-core subjects (electives)
-        assertFalse("Theater I is not core", isCoreSubject("Theater I"));
-        assertFalse("Digital Production Technology is not core", isCoreSubject("Digital Production Technology"));
-        assertFalse("Culinary Arts is not core", isCoreSubject("Culinary Arts"));
-        assertFalse("Photography I is not core", isCoreSubject("Photography I"));
-        
-        System.out.println("✓ Core subject identification works correctly");
+        assertAll("Non-core subjects (electives)",
+            () -> assertFalse(isCoreSubject("Theater I")),
+            () -> assertFalse(isCoreSubject("Digital Production Technology")),
+            () -> assertFalse(isCoreSubject("Culinary Arts")),
+            () -> assertFalse(isCoreSubject("Photography I"))
+        );
     }
     
     @Test
-    public void testBlockOptimizationLogic() {
-        System.out.println("=== Testing Block Optimization Logic ===");
+    @DisplayName("Classes in same subject area should be grouped together")
+    void testBlockOptimizationLogic() {
+        assertAll("Same subject area groupings",
+            () -> assertTrue(inSameSubjectArea("English I", "English II")),
+            () -> assertTrue(inSameSubjectArea("Algebra I", "Geometry")),
+            () -> assertTrue(inSameSubjectArea("Biology", "Chemistry")),
+            () -> assertTrue(inSameSubjectArea("World Geography", "US History")),
+            () -> assertTrue(inSameSubjectArea("French I", "Spanish II"))
+        );
         
-        // Test subject area grouping
-        assertTrue("English I and English II are in same subject area", 
-                  inSameSubjectArea("English I", "English II"));
-        assertTrue("Algebra I and Geometry are in same subject area", 
-                  inSameSubjectArea("Algebra I", "Geometry"));
-        assertTrue("Biology and Chemistry are in same subject area", 
-                  inSameSubjectArea("Biology", "Chemistry"));
-        assertTrue("World Geography and US History are in same subject area", 
-                  inSameSubjectArea("World Geography", "US History"));
-        assertTrue("French I and Spanish II are in same subject area", 
-                  inSameSubjectArea("French I", "Spanish II"));
-        
-        // Test that different subject areas are not grouped together
-        assertFalse("English I and Algebra I are not in same subject area", 
-                   inSameSubjectArea("English I", "Algebra I"));
-        assertFalse("Biology and World Geography are not in same subject area", 
-                   inSameSubjectArea("Biology", "World Geography"));
-        assertFalse("French I and Health are not in same subject area", 
-                   inSameSubjectArea("French I", "Health"));
-        
-        System.out.println("✓ Block optimization subject grouping works correctly");
+        assertAll("Different subject areas should not be grouped",
+            () -> assertFalse(inSameSubjectArea("English I", "Algebra I")),
+            () -> assertFalse(inSameSubjectArea("Biology", "World Geography")),
+            () -> assertFalse(inSameSubjectArea("French I", "Health"))
+        );
     }
     
     @Test
-    public void testUtilizationCalculation() {
-        System.out.println("=== Testing Utilization Calculation Logic ===");
-        
-        // Test utilization percentage calculation
-        double util1 = calculateUtilization(15, 25); // 60% utilization
-        assertTrue("60% utilization should be considered acceptable", util1 == 0.6);
-        
-        double util2 = calculateUtilization(5, 25); // 20% utilization - keep this section for those 5 students
-        assertTrue("20% utilization should be under 50% but we keep it for enrolled students", util2 < 0.5);
-        
-        double util3 = calculateUtilization(23, 25); // 92% utilization - well utilized
-        assertTrue("92% utilization should be over 50% threshold", util3 > 0.5);
-        
-        double util4 = calculateUtilization(0, 25); // 0% utilization - ONLY these blocks get reassigned
-        assertTrue("0% utilization should be exactly 0 - these are the ONLY blocks we reassign", util4 == 0.0);
-        
-        System.out.println("✓ Utilization calculations work correctly");
-        System.out.println("  15/25 students → " + String.format("%.1f%%", util1 * 100) + " utilization (keep - students enrolled)");
-        System.out.println("  5/25 students → " + String.format("%.1f%%", util2 * 100) + " utilization (keep - respect academic track)");
-        System.out.println("  23/25 students → " + String.format("%.1f%%", util3 * 100) + " utilization (keep - well utilized)");
-        System.out.println("  0/25 students → " + String.format("%.1f%%", util4 * 100) + " utilization (REASSIGN - completely empty)");
+    @DisplayName("Utilization calculation should be correct")
+    void testUtilizationCalculation() {
+        assertAll("Utilization percentages",
+            () -> assertEquals(0.6, calculateUtilization(15, 25), 0.01),
+            () -> assertTrue(calculateUtilization(5, 25) < 0.5),
+            () -> assertTrue(calculateUtilization(23, 25) > 0.5),
+            () -> assertEquals(0.0, calculateUtilization(0, 25), 0.01)
+        );
     }
     
     // Helper methods (copied from main class for testing)
@@ -170,13 +139,13 @@ public class SubstituteReallocationTest {
         if (belongsToSubjectArea(className, "language")) return StaffType.LANGUAGES;
         if (belongsToSubjectArea(className, "physical education")) return StaffType.PHYSICAL_ED;
         
-        // Default for electives
         if (className.toLowerCase().contains("art")) return StaffType.VISUAL_ARTS;
         if (className.toLowerCase().contains("music") || className.toLowerCase().contains("band") || 
-            className.toLowerCase().contains("theater") || className.toLowerCase().contains("choir")) return StaffType.PERFORMING_ARTS;
+            className.toLowerCase().contains("theater") || className.toLowerCase().contains("choir")) 
+            return StaffType.PERFORMING_ARTS;
         if (className.toLowerCase().contains("business")) return StaffType.BUSINESS;
         
-        return StaffType.VOCATIONAL; // Default for other electives
+        return StaffType.VOCATIONAL;
     }
     
     private static boolean belongsToSubjectArea(String className, String subjectArea) {
@@ -201,8 +170,9 @@ public class SubstituteReallocationTest {
                             className.toLowerCase().contains("german") || className.toLowerCase().contains("latin") ||
                             className.toLowerCase().contains("sign language");
             case "vocational" ->
-                    className.toLowerCase().contains("theater") || className.toLowerCase().contains("debate") || className.toLowerCase().contains("choir") ||
-                            className.toLowerCase().contains("band") || className.toLowerCase().contains("rotc");
+                    className.toLowerCase().contains("theater") || className.toLowerCase().contains("debate") || 
+                            className.toLowerCase().contains("choir") || className.toLowerCase().contains("band") || 
+                            className.toLowerCase().contains("rotc");
             default -> false;
         };
     }
@@ -216,17 +186,12 @@ public class SubstituteReallocationTest {
     
     private static int calculateTeachersNeeded(int shortageAmount) {
         if (shortageAmount <= 0) return 0;
-        
-        // Assume each teacher can handle ~50 students per class per semester
-        int studentsPerTeacherPerClass = 50; // Conservative estimate
-        
+        int studentsPerTeacherPerClass = 50;
         return (int) Math.ceil((double) shortageAmount / studentsPerTeacherPerClass);
     }
     
-    // Helper methods for new tests
     private static boolean inSameSubjectArea(String class1, String class2) {
         String[] subjectAreas = {"english", "math", "science", "history", "language"};
-        
         for (String area : subjectAreas) {
             if (belongsToSubjectArea(class1, area) && belongsToSubjectArea(class2, area)) {
                 return true;
@@ -239,4 +204,4 @@ public class SubstituteReallocationTest {
         if (capacity == 0) return 0.0;
         return (double) enrolled / capacity;
     }
-} 
+}

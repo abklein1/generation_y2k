@@ -385,7 +385,7 @@
         <module name="JavadocMethod">
             <property name="allowedAnnotations"
                       value="Override, Test, BeforeAll, BeforeEach, AfterAll, AfterEach, Subscribe"/>
-            <property name="scope" value="public"/>
+            <property name="accessModifiers" value="public"/>
             <property name="validateThrows" value="false"/>
             <property name="allowMissingParamTags" value="true"/>
             <property name="allowMissingReturnTag" value="true"/>
@@ -394,7 +394,7 @@
 
         <module name="InvalidJavadocPosition"/>
 
-        <module name="MissingJavadocMethodCheck">
+        <module name="MissingJavadocMethod">
             <property name="minLineCount" value="1"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
             <property name="ignoreMethodNamesRegex" value="(set.*|get.*)"/>
