@@ -7,6 +7,9 @@ import entity.Body.StudentUpperT;
 
 //TODO: Figure out why student factory is null when students are generated
 public class StudentFactory implements PersonFactory {
+    
+    private static final long serialVersionUID = 1L;
+    
     @Override
     public StudentName createName() {
         return new StudentName();

@@ -10,7 +10,9 @@ package entity;//***************************************************************
 
 import view.GameView;
 
-public interface SchoolPlan {
+import java.io.Serializable;
+
+public interface SchoolPlan extends Serializable {
     void setArtStudios(int number, GameView view);
 
     void setAthleticFields(int number, GameView view);

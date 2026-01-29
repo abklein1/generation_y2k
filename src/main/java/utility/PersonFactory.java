@@ -5,7 +5,9 @@ import entity.Body.Carry;
 import entity.Body.Legs;
 import entity.Body.UpperTorso;
 
-public interface PersonFactory {
+import java.io.Serializable;
+
+public interface PersonFactory extends Serializable {
     PName createName();
 
     UpperTorso createUpperTorso();

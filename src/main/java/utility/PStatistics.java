@@ -1,6 +1,8 @@
 package utility;
 
-public interface PStatistics {
+import java.io.Serializable;
+
+public interface PStatistics extends Serializable {
     int getBoredom();
 
     void setBoredom(int boredom);

@@ -5,6 +5,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public class TraitLoader {
             }
             
             JSONParser parser = new JSONParser();
-            JSONObject jsonObject = (JSONObject) parser.parse(new FileReader(actualPath));
+            JSONObject jsonObject = (JSONObject) parser.parse(new FileReader(actualPath, StandardCharsets.UTF_8));
             return extractKeys(jsonObject);
         } catch (IOException | ParseException e) {
             System.err.println("Error loading trait options from: " + filePath);

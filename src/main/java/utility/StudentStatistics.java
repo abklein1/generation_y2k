@@ -11,6 +11,8 @@ import java.util.List;
 
 public class StudentStatistics implements PStatistics {
 
+    private static final long serialVersionUID = 1L;
+    
     private final List<Integer> grades;
     private double height;
     private String eyeColor;

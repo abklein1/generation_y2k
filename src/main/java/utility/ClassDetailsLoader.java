@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ public class ClassDetailsLoader {
         HashMap<String, ClassDetail> classDetailsMap = new HashMap<>();
 
         try {
-            Object object = new JSONParser().parse(new FileReader(filePath));
+            Object object = new JSONParser().parse(new FileReader(filePath, StandardCharsets.UTF_8));
             JSONObject jsonObject = (JSONObject) object;
 
             for (Object key : jsonObject.keySet()) {

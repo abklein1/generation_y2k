@@ -7,6 +7,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -178,7 +179,7 @@ public class BellScheduleManager {
         
         try {
             JSONParser parser = new JSONParser();
-            JSONObject schedule = (JSONObject) parser.parse(new FileReader(SCHEDULE_PATH));
+            JSONObject schedule = (JSONObject) parser.parse(new FileReader(SCHEDULE_PATH, StandardCharsets.UTF_8));
             
             // Parse regular blocks
             for (int i = 1; i <= 4; i++) {

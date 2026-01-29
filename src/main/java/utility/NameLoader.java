@@ -3,6 +3,7 @@ package utility;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,7 @@ public class NameLoader {
 
         try {
             File firstFile = new File(csvFirst);
-            fr = new BufferedReader(new FileReader(firstFile));
+            fr = new BufferedReader(new FileReader(firstFile, StandardCharsets.UTF_8));
             String f_line;
 
             while ((f_line = fr.readLine()) != null) {
@@ -230,7 +231,7 @@ public class NameLoader {
 
         try {
             File lastFile = new File(csvLast);
-            lr = new BufferedReader(new FileReader(lastFile));
+            lr = new BufferedReader(new FileReader(lastFile, StandardCharsets.UTF_8));
             String l_line = null;
             Integer iterator = 0;
 
@@ -261,7 +262,7 @@ public class NameLoader {
         BufferedReader lr = null;
 
         try {
-            lr = new BufferedReader(new FileReader(new File(csvLast)));
+            lr = new BufferedReader(new FileReader(new File(csvLast), StandardCharsets.UTF_8));
             String l_line;
             lr.readLine();
 

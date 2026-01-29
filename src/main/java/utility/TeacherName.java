@@ -2,6 +2,8 @@ package utility;
 
 public class TeacherName implements PName {
 
+    private static final long serialVersionUID = 1L;
+    
     private String firstName;
     private String lastName;
     private String suffix;

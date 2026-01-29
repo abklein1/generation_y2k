@@ -6,6 +6,9 @@ import entity.Body.TeacherLegs;
 import entity.Body.TeacherUpperT;
 
 public class TeacherFactory implements PersonFactory {
+    
+    private static final long serialVersionUID = 1L;
+    
     @Override
     public TeacherName createName() {
         return new TeacherName();

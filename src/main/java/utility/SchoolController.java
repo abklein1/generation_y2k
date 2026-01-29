@@ -1129,7 +1129,7 @@ public class SchoolController {
             publish("Generating the school...");
             standardSchool = new StandardSchool();
             int targetPopulation = demographics.getTotalStudentPopulation();
-            Director director = new Director(standardSchool, fundingModel, targetPopulation, view);
+            new Director(standardSchool, fundingModel, targetPopulation, view);
             
             publish("Connecting rooms...");
             roomConnector = new RoomConnector(standardSchool, view);
@@ -1224,7 +1224,7 @@ public class SchoolController {
             //Generate a new standard school with rooms
             publish("Generating the school...");
             standardSchool = new StandardSchool();
-            Director director = new Director(standardSchool, view);
+            new Director(standardSchool, view);
             student_cap = standardSchool.getOptimalCapacity(); // Use optimal instead of deprecated method
             staff_cap = standardSchool.getMinimumStaffRequirements();
             publish("Connecting rooms...");

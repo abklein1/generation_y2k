@@ -122,7 +122,12 @@ public class EnhancedStudentScheduleAssigner {
         System.out.println("Creating teacher blocks based on student demand...");
         
         // Step 0: Ensure all teaching staff have room assignments
-        ensureTeachersHaveRooms(staffHashMap, standardSchool, view);
+        // Skip room assignment if standardSchool is null (backward compatibility mode)
+        if (standardSchool != null) {
+            ensureTeachersHaveRooms(staffHashMap, standardSchool, view);
+        } else {
+            System.out.println("  WARNING: StandardSchool is null - skipping room assignments");
+        }
         
         // Step 1: Calculate sections needed per class
         Map<String, Integer> sectionsNeeded = new HashMap<>();
@@ -145,20 +150,25 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
         
-        // Step 3: Group teachers by type (only those WITH room assignments)
+        // Step 3: Group teachers by type (only those WITH room assignments when school is available)
         Map<StaffType, List<Staff>> teachersByType = new HashMap<>();
         int teachersWithoutRooms = 0;
         for (Staff staff : staffHashMap.values()) {
             StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
             if (type != null && isTeachingStaffType(type)) {
-                // Only include teachers who have a room assignment
-                Room room = getTeacherRoom(staff, standardSchool);
-                if (room != null) {
+                // When standardSchool is null (backward compatibility), include all teachers
+                // Otherwise, only include teachers who have a room assignment
+                if (standardSchool == null) {
                     teachersByType.computeIfAbsent(type, k -> new ArrayList<>()).add(staff);
                 } else {
-                    teachersWithoutRooms++;
-                    System.out.println("  WARNING: " + type + " teacher " + staff.teacherName.getFirstName() + 
-                                     " " + staff.teacherName.getLastName() + " has no room - skipping");
+                    Room room = getTeacherRoom(staff, standardSchool);
+                    if (room != null) {
+                        teachersByType.computeIfAbsent(type, k -> new ArrayList<>()).add(staff);
+                    } else {
+                        teachersWithoutRooms++;
+                        System.out.println("  WARNING: " + type + " teacher " + staff.teacherName.getFirstName() + 
+                                         " " + staff.teacherName.getLastName() + " has no room - skipping");
+                    }
                 }
             }
         }
@@ -543,6 +553,11 @@ public class EnhancedStudentScheduleAssigner {
      * This is a more comprehensive version of StandardSchool.getClassroomByStaff
      */
     private static Room getTeacherRoom(Staff staff, StandardSchool standardSchool) {
+        // Return null if school is not available (backward compatibility mode)
+        if (standardSchool == null) {
+            return null;
+        }
+        
         String staffName = staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName();
         
         // Check classrooms - use name matching as fallback for object identity issues

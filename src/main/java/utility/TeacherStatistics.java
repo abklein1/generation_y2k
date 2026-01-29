@@ -7,6 +7,9 @@ import entity.TeacherSchedule;
 import java.time.LocalDate;
 
 public class TeacherStatistics implements PStatistics {
+    
+    private static final long serialVersionUID = 1L;
+    
     private double height;
     private String eyeColor;
     private String hairColor;

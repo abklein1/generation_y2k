@@ -3,6 +3,7 @@ package entity;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,7 +46,7 @@ public class Weather {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         String targetDateStr = dateFormat.format(date);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csv_path))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(csv_path, StandardCharsets.UTF_8))) {
             String line = br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");

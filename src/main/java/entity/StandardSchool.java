@@ -20,6 +20,7 @@ import view.GameView;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -29,6 +30,8 @@ import static utility.Randomizer.setRandom;
 
 public class StandardSchool implements SchoolPlan {
 
+    private static final long serialVersionUID = 1L;
+    
     String schoolName;
     String schoolMascot;
     Date schoolFoundedDate;
@@ -363,7 +366,7 @@ public class StandardSchool implements SchoolPlan {
         int selection = setRandom(SCHOOL_NAME_SELECTION_LOWER_LIMIT, SCHOOL_NAME_SELECTION_UPPER_LIMIT);
         Object object;
         try {
-            object = new JSONParser().parse(new FileReader("src/main/java/Resources/highschool_gen.json"));
+            object = new JSONParser().parse(new FileReader("src/main/java/Resources/highschool_gen.json", StandardCharsets.UTF_8));
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
@@ -416,7 +419,7 @@ public class StandardSchool implements SchoolPlan {
         int randomIdx;
         int insertPoint;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(pathCSVMascots))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(pathCSVMascots, StandardCharsets.UTF_8))) {
             String line;
             br.readLine();
 
@@ -1362,7 +1365,7 @@ public class StandardSchool implements SchoolPlan {
         String pathColors = "src/main/java/Resources/colors.txt";
         Map<String, String> colorMap = new HashMap<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(pathColors))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(pathColors, StandardCharsets.UTF_8))) {
             String line;
             br.readLine();
 
