@@ -25,7 +25,7 @@ public class GameView {
     private final JLabel dayLabel;
     private final JPanel amPanel;
     private final JPanel pmPanel;
-    
+
     // Menu items
     private final JMenu inspectionMenu;
     private final JMenu optionsMenu;
@@ -33,7 +33,7 @@ public class GameView {
     private final JMenuItem visualizeItem;
     private final JMenuItem socialGraphItem;
     private final JMenuItem seedOptionsItem;
-    
+
     // Simulation controls
     private final JPanel simulationControlPanel;
     private JButton playPauseButton;
@@ -41,7 +41,7 @@ public class GameView {
     private JComboBox<String> speedComboBox;
     private final JLabel periodLabel;
     private final JLabel simulationStatusLabel;
-    
+
     // Menu items for simulation
     private JMenuItem playPauseMenuItem;
     private JMenuItem stepMenuItem;
@@ -49,36 +49,36 @@ public class GameView {
     private JMenuItem normalSpeedItem;
     private JMenuItem fastSpeedItem;
     private JMenuItem veryFastSpeedItem;
-    
+
     // School info labels
     private final JLabel schoolNameLabel;
     private final JLabel schoolFoundedLabel;
     private final JLabel schoolMascotLabel;
     private final JLabel schoolColorsLabel;
-    
+
     // Seed options (moved to dialog)
     private JTextField seedInputField;
     private JCheckBox useCustomSeedCheckbox;
     private long currentSeed;
-    
+
     // Demographics options
     private int demographicsStudentPopulation = 1200;
     private int demographicsStaffPopulation = 100;
     private int demographicsExtraStudentPercent = 15;
     private int demographicsExtraStaffPercent = 20;
     private boolean useCustomDemographics = false;
-    
+
     // Gender distribution (Male %, Female is 100 - Male)
-    private int demographicsMalePercent = 51;  // Default from SimConstants
-    
+    private int demographicsMalePercent = 51; // Default from SimConstants
+
     // Income distribution (Low %, High %, Middle is 100 - Low - High)
-    private int demographicsIncomeLowPercent = 25;   // Default from SimConstants
-    private int demographicsIncomeHighPercent = 15;  // Default from SimConstants
-    
+    private int demographicsIncomeLowPercent = 25; // Default from SimConstants
+    private int demographicsIncomeHighPercent = 15; // Default from SimConstants
+
     // Game mode tracking
     private boolean isGameMode = false;
     private boolean isSimulationRunning = false;
-    
+
     // Legacy compatibility fields
     private final JButton visualizeButton;
     private final JButton socialGraphButton;
@@ -93,7 +93,7 @@ public class GameView {
 
         // ===== MENU BAR =====
         JMenuBar menuBar = new JMenuBar();
-        
+
         // Game Menu
         JMenu gameMenu = new JMenu("Game");
         JMenuItem newSimMenuItem = new JMenuItem("New Simulation...");
@@ -128,7 +128,7 @@ public class GameView {
         inspectionMenu.add(socialGraphItem);
         menuBar.add(inspectionMenu);
         inspectionMenu.setEnabled(false);
-        
+
         // Simulation Menu
         simulationMenu = new JMenu("Simulation");
         playPauseMenuItem = new JMenuItem("Play/Pause");
@@ -147,7 +147,7 @@ public class GameView {
         simulationMenu.add(speedMenu);
         menuBar.add(simulationMenu);
         simulationMenu.setEnabled(false);
-        
+
         // Options Menu
         optionsMenu = new JMenu("Options");
         seedOptionsItem = new JMenuItem("Seed Settings...");
@@ -158,10 +158,10 @@ public class GameView {
         frame.setJMenuBar(menuBar);
 
         // ===== MAIN CONTENT AREA =====
-        
+
         // Start Panel (shown initially)
         JPanel startPanel = createStartPanel();
-        
+
         // Status Output
         statusOutput = new JTextArea(20, 50);
         statusOutput.setEditable(false);
@@ -181,8 +181,7 @@ public class GameView {
         timeLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
         timeLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.GRAY),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
 
         // Weather components
         weatherAMIconLabel = new JLabel();
@@ -236,7 +235,7 @@ public class GameView {
         periodLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
         simulationStatusLabel = new JLabel("Status: Ready");
         simulationStatusLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        
+
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
         statusPanel.setBorder(BorderFactory.createTitledBorder("Status"));
@@ -253,7 +252,7 @@ public class GameView {
         schoolMascotLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
         schoolColorsLabel = new JLabel("Colors: --");
         schoolColorsLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        
+
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBorder(BorderFactory.createTitledBorder("School Info"));
@@ -268,12 +267,12 @@ public class GameView {
         // Bottom info panel
         JPanel bottomPanel = new JPanel(new BorderLayout(10, 0));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        
+
         JPanel bottomLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         bottomLeftPanel.add(weatherPanel);
         bottomLeftPanel.add(statusPanel);
         bottomLeftPanel.add(infoPanel);
-        
+
         bottomPanel.add(bottomLeftPanel, BorderLayout.WEST);
         bottomPanel.add(timeLabel, BorderLayout.EAST);
 
@@ -292,7 +291,7 @@ public class GameView {
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         frame.add(mainPanel);
-        
+
         // Legacy buttons (hidden, for backward compatibility)
         generateButton = new JButton("Generate new school");
         visualizeButton = new JButton();
@@ -305,9 +304,9 @@ public class GameView {
 
         frame.setVisible(true);
     }
-    
+
     // ===== SIMULATION CONTROL LISTENER METHODS =====
-    
+
     /**
      * Adds a listener for play/pause button clicks.
      *
@@ -321,7 +320,7 @@ public class GameView {
             playPauseMenuItem.addActionListener(listener);
         }
     }
-    
+
     /**
      * Adds a listener for step button clicks.
      *
@@ -335,7 +334,7 @@ public class GameView {
             stepMenuItem.addActionListener(listener);
         }
     }
-    
+
     /**
      * Adds a listener for speed changes.
      *
@@ -370,7 +369,7 @@ public class GameView {
             });
         }
     }
-    
+
     /**
      * Gets the currently selected speed index.
      * 0=Slow (1x), 1=Normal (2x), 2=Fast (4x), 3=Very Fast (8x)
@@ -383,7 +382,7 @@ public class GameView {
         }
         return 1; // Default to normal
     }
-    
+
     /**
      * Updates the play/pause button to show play or pause state.
      *
@@ -395,7 +394,7 @@ public class GameView {
             playPauseButton.setToolTipText(isPlaying ? "Pause simulation" : "Play simulation");
         }
     }
-    
+
     /**
      * Creates the initial start panel with game mode options.
      */
@@ -403,23 +402,23 @@ public class GameView {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createTitledBorder("Start"));
-        
+
         JButton simButton = new JButton("New Simulation");
         simButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         simButton.setMaximumSize(new Dimension(180, 35));
         simButton.setToolTipText("Start a simulation without a player character");
         simButton.addActionListener(e -> showStartDialog(false));
-        
+
         JButton gameButton = new JButton("New Game");
         gameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         gameButton.setMaximumSize(new Dimension(180, 35));
         gameButton.setToolTipText("Create a character and play in the simulation");
         gameButton.addActionListener(e -> showStartDialog(true));
-        
+
         JLabel orLabel = new JLabel("Select mode to begin:");
         orLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         orLabel.setFont(new Font("SansSerif", Font.ITALIC, 11));
-        
+
         panel.add(Box.createVerticalStrut(10));
         panel.add(orLabel);
         panel.add(Box.createVerticalStrut(15));
@@ -427,10 +426,10 @@ public class GameView {
         panel.add(Box.createVerticalStrut(10));
         panel.add(gameButton);
         panel.add(Box.createVerticalStrut(10));
-        
+
         return panel;
     }
-    
+
     /**
      * Creates the simulation control panel.
      */
@@ -438,39 +437,39 @@ public class GameView {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createTitledBorder("Simulation Controls"));
-        
+
         // Play/Pause and Step buttons
         JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         playPauseButton = new JButton("\u25B6"); // Play symbol
         playPauseButton.setToolTipText("Play/Pause simulation");
         playPauseButton.setFont(new Font("SansSerif", Font.BOLD, 14));
         playPauseButton.setPreferredSize(new Dimension(50, 30));
-        
+
         stepButton = new JButton("\u23E9"); // Step symbol
         stepButton.setToolTipText("Step forward one tick");
         stepButton.setFont(new Font("SansSerif", Font.BOLD, 14));
         stepButton.setPreferredSize(new Dimension(50, 30));
-        
+
         buttonRow.add(playPauseButton);
         buttonRow.add(stepButton);
-        
+
         // Speed control
         JPanel speedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         speedPanel.add(new JLabel("Speed:"));
-        String[] speeds = {"Slow (1x)", "Normal (2x)", "Fast (4x)", "Very Fast (8x)"};
+        String[] speeds = { "Slow (1x)", "Normal (2x)", "Fast (4x)", "Very Fast (8x)" };
         speedComboBox = new JComboBox<>(speeds);
         speedComboBox.setSelectedIndex(1); // Normal
         speedPanel.add(speedComboBox);
-        
+
         panel.add(Box.createVerticalStrut(10));
         panel.add(buttonRow);
         panel.add(Box.createVerticalStrut(10));
         panel.add(speedPanel);
         panel.add(Box.createVerticalStrut(10));
-        
+
         return panel;
     }
-    
+
     /**
      * Shows the start dialog for new simulation or game.
      *
@@ -481,48 +480,48 @@ public class GameView {
         dialog.setLayout(new BorderLayout(10, 10));
         dialog.setSize(500, 580);
         dialog.setLocationRelativeTo(frame);
-        
+
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        
+
         // Mode description
-        JLabel modeLabel = new JLabel(gameMode ? 
-                "<html><b>Game Mode</b><br>Create a character and experience high school life.</html>" :
-                "<html><b>Simulation Mode</b><br>Watch the simulation run without direct participation.</html>");
+        JLabel modeLabel = new JLabel(gameMode
+                ? "<html><b>Game Mode</b><br>Create a character and experience high school life.</html>"
+                : "<html><b>Simulation Mode</b><br>Watch the simulation run without direct participation.</html>");
         modeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         // Seed options
         JPanel seedPanel = new JPanel();
         seedPanel.setLayout(new BoxLayout(seedPanel, BoxLayout.Y_AXIS));
         seedPanel.setBorder(BorderFactory.createTitledBorder("World Seed"));
         seedPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         seedPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
-        
+
         useCustomSeedCheckbox = new JCheckBox("Use custom seed");
         seedInputField = new JTextField(20);
         seedInputField.setEnabled(false);
         seedInputField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
         useCustomSeedCheckbox.addActionListener(e -> seedInputField.setEnabled(useCustomSeedCheckbox.isSelected()));
-        
+
         JPanel seedInputRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         seedInputRow.add(new JLabel("Seed: "));
         seedInputRow.add(seedInputField);
         seedInputRow.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         seedPanel.add(useCustomSeedCheckbox);
         seedPanel.add(Box.createVerticalStrut(5));
         seedPanel.add(seedInputRow);
-        
+
         // Demographics options panel
         JPanel demographicsPanel = new JPanel();
         demographicsPanel.setLayout(new BoxLayout(demographicsPanel, BoxLayout.Y_AXIS));
         demographicsPanel.setBorder(BorderFactory.createTitledBorder("Town Demographics"));
         demographicsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         JCheckBox customDemographicsCheckbox = new JCheckBox("Customize demographics");
         customDemographicsCheckbox.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         // Student population slider (200 - 2000)
         JLabel studentPopLabel = new JLabel("Student Population: " + demographicsStudentPopulation);
         studentPopLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -537,7 +536,7 @@ public class GameView {
             demographicsStudentPopulation = studentPopSlider.getValue();
             studentPopLabel.setText("Student Population: " + demographicsStudentPopulation);
         });
-        
+
         // Staff population slider (30 - 200)
         JLabel staffPopLabel = new JLabel("Staff Population: " + demographicsStaffPopulation);
         staffPopLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -552,7 +551,7 @@ public class GameView {
             demographicsStaffPopulation = staffPopSlider.getValue();
             staffPopLabel.setText("Staff Population: " + demographicsStaffPopulation);
         });
-        
+
         // Extra student pool slider (0% - 50%)
         JLabel extraStudentLabel = new JLabel("Extra Student Pool: " + demographicsExtraStudentPercent + "%");
         extraStudentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -567,7 +566,7 @@ public class GameView {
             demographicsExtraStudentPercent = extraStudentSlider.getValue();
             extraStudentLabel.setText("Extra Student Pool: " + demographicsExtraStudentPercent + "%");
         });
-        
+
         // Extra staff pool slider (0% - 50%)
         JLabel extraStaffLabel = new JLabel("Extra Staff Pool (Substitutes): " + demographicsExtraStaffPercent + "%");
         extraStaffLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -582,19 +581,20 @@ public class GameView {
             demographicsExtraStaffPercent = extraStaffSlider.getValue();
             extraStaffLabel.setText("Extra Staff Pool (Substitutes): " + demographicsExtraStaffPercent + "%");
         });
-        
+
         // Separator for distribution settings
         JSeparator distributionSeparator = new JSeparator();
         distributionSeparator.setAlignmentX(Component.LEFT_ALIGNMENT);
         distributionSeparator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
-        
+
         JLabel distributionHeaderLabel = new JLabel("Population Distributions");
         distributionHeaderLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
         distributionHeaderLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         // Gender distribution slider (0% Male to 100% Male, Female is complement)
         int femalePercent = 100 - demographicsMalePercent;
-        JLabel genderLabel = new JLabel("Gender: " + demographicsMalePercent + "% Male / " + femalePercent + "% Female");
+        JLabel genderLabel = new JLabel(
+                "Gender: " + demographicsMalePercent + "% Male / " + femalePercent + "% Female");
         genderLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         JSlider genderSlider = new JSlider(0, 100, demographicsMalePercent);
         genderSlider.setMajorTickSpacing(25);
@@ -608,7 +608,7 @@ public class GameView {
             int female = 100 - demographicsMalePercent;
             genderLabel.setText("Gender: " + demographicsMalePercent + "% Male / " + female + "% Female");
         });
-        
+
         // Income distribution - Low % slider
         JLabel incomeLowLabel = new JLabel("Income - Low: " + demographicsIncomeLowPercent + "%");
         incomeLowLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -619,7 +619,7 @@ public class GameView {
         incomeLowSlider.setPaintLabels(true);
         incomeLowSlider.setEnabled(false);
         incomeLowSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         // Income distribution - High % slider
         JLabel incomeHighLabel = new JLabel("Income - High: " + demographicsIncomeHighPercent + "%");
         incomeHighLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -630,18 +630,18 @@ public class GameView {
         incomeHighSlider.setPaintLabels(true);
         incomeHighSlider.setEnabled(false);
         incomeHighSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         // Income Middle label (calculated from Low + High)
         int middlePercent = 100 - demographicsIncomeLowPercent - demographicsIncomeHighPercent;
         JLabel incomeMiddleLabel = new JLabel("Income - Middle: " + middlePercent + "% (calculated)");
         incomeMiddleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         incomeMiddleLabel.setFont(new Font("SansSerif", Font.ITALIC, 11));
-        
+
         // Update income labels and enforce constraints
         Runnable updateIncomeLabels = () -> {
             int low = incomeLowSlider.getValue();
             int high = incomeHighSlider.getValue();
-            
+
             // Ensure Low + High doesn't exceed 100
             if (low + high > 100) {
                 // Adjust the slider that was NOT just changed
@@ -653,19 +653,19 @@ public class GameView {
                     incomeLowSlider.setValue(low);
                 }
             }
-            
+
             demographicsIncomeLowPercent = low;
             demographicsIncomeHighPercent = high;
             int middle = 100 - low - high;
-            
+
             incomeLowLabel.setText("Income - Low: " + low + "%");
             incomeHighLabel.setText("Income - High: " + high + "%");
             incomeMiddleLabel.setText("Income - Middle: " + middle + "% (calculated)");
         };
-        
+
         incomeLowSlider.addChangeListener(e -> updateIncomeLabels.run());
         incomeHighSlider.addChangeListener(e -> updateIncomeLabels.run());
-        
+
         // Enable/disable sliders based on checkbox
         customDemographicsCheckbox.addActionListener(e -> {
             boolean enabled = customDemographicsCheckbox.isSelected();
@@ -678,12 +678,13 @@ public class GameView {
             incomeLowSlider.setEnabled(enabled);
             incomeHighSlider.setEnabled(enabled);
         });
-        
+
         // Tooltip explaining the extra pools
-        JLabel poolInfoLabel = new JLabel("<html><i>Extra pools provide unassigned people for mid-year transfers, substitutes, etc.</i></html>");
+        JLabel poolInfoLabel = new JLabel(
+                "<html><i>Extra pools provide unassigned people for mid-year transfers, substitutes, etc.</i></html>");
         poolInfoLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
         poolInfoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         demographicsPanel.add(customDemographicsCheckbox);
         demographicsPanel.add(Box.createVerticalStrut(10));
         demographicsPanel.add(studentPopLabel);
@@ -714,22 +715,22 @@ public class GameView {
         demographicsPanel.add(incomeHighSlider);
         demographicsPanel.add(Box.createVerticalStrut(3));
         demographicsPanel.add(incomeMiddleLabel);
-        
+
         contentPanel.add(modeLabel);
         contentPanel.add(Box.createVerticalStrut(15));
         contentPanel.add(seedPanel);
         contentPanel.add(Box.createVerticalStrut(10));
         contentPanel.add(demographicsPanel);
-        
+
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton startButton = new JButton(gameMode ? "Create Character..." : "Generate World");
         JButton cancelButton = new JButton("Cancel");
-        
+
         startButton.addActionListener(e -> {
             isGameMode = gameMode;
             dialog.dispose();
-            
+
             // Trigger generation
             if (gameMode) {
                 // First generate, then show character creation
@@ -738,22 +739,22 @@ public class GameView {
                 generateButton.doClick();
             }
         });
-        
+
         cancelButton.addActionListener(e -> dialog.dispose());
-        
+
         buttonPanel.add(startButton);
         buttonPanel.add(cancelButton);
-        
+
         // Use scroll pane for content in case dialog is resized smaller
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        
+
         dialog.add(scrollPane, BorderLayout.CENTER);
         dialog.add(buttonPanel, BorderLayout.SOUTH);
         dialog.setVisible(true);
     }
-    
+
     /**
      * Shows the seed options dialog.
      */
@@ -762,40 +763,41 @@ public class GameView {
         dialog.setLayout(new BorderLayout(10, 10));
         dialog.setSize(350, 200);
         dialog.setLocationRelativeTo(frame);
-        
+
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        
+
         JLabel currentLabel = new JLabel("Current Seed: " + (currentSeed != 0 ? currentSeed : "(none)"));
         currentLabel.setFont(new Font("Monospaced", Font.PLAIN, 12));
         currentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         JButton copyButton = new JButton("Copy to Clipboard");
         copyButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         copyButton.addActionListener(e -> {
             if (currentSeed != 0) {
-                java.awt.datatransfer.StringSelection selection = 
-                        new java.awt.datatransfer.StringSelection(String.valueOf(currentSeed));
+                java.awt.datatransfer.StringSelection selection = new java.awt.datatransfer.StringSelection(
+                        String.valueOf(currentSeed));
                 java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
-                JOptionPane.showMessageDialog(dialog, "Seed copied to clipboard!", "Copied", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, "Seed copied to clipboard!", "Copied",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        
+
         contentPanel.add(currentLabel);
         contentPanel.add(Box.createVerticalStrut(15));
         contentPanel.add(copyButton);
-        
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton closeButton = new JButton("Close");
         closeButton.addActionListener(e -> dialog.dispose());
         buttonPanel.add(closeButton);
-        
+
         dialog.add(contentPanel, BorderLayout.CENTER);
         dialog.add(buttonPanel, BorderLayout.SOUTH);
         dialog.setVisible(true);
     }
-    
+
     /**
      * Shows simulation controls after world is generated.
      */
@@ -803,12 +805,13 @@ public class GameView {
         simulationControlPanel.setVisible(true);
         simulationMenu.setEnabled(true);
     }
-    
+
     /**
      * Updates the period display.
      *
-     * @param period the current period (1-4) or 0 for non-class time
-     * @param periodStatus descriptive status ("Before School", "Transition", "After School", or null for default)
+     * @param period       the current period (1-4) or 0 for non-class time
+     * @param periodStatus descriptive status ("Before School", "Transition", "After
+     *                     School", or null for default)
      */
     public void updatePeriod(int period, String periodStatus) {
         if (period > 0) {
@@ -819,7 +822,7 @@ public class GameView {
             periodLabel.setText("Period: --");
         }
     }
-    
+
     /**
      * Updates the period display (legacy method for backward compatibility).
      *
@@ -828,7 +831,7 @@ public class GameView {
     public void updatePeriod(int period) {
         updatePeriod(period, period == 0 ? "Transition" : null);
     }
-    
+
     /**
      * Updates the simulation status.
      *
@@ -837,15 +840,15 @@ public class GameView {
     public void updateSimulationStatus(String status) {
         simulationStatusLabel.setText("Status: " + status);
     }
-    
+
     /**
      * Updates the school info panel with school details.
      *
-     * @param name the school name
+     * @param name        the school name
      * @param foundedYear the year the school was founded
-     * @param mascot the school mascot
-     * @param color1 the first school color
-     * @param color2 the second school color
+     * @param mascot      the school mascot
+     * @param color1      the first school color
+     * @param color2      the second school color
      */
     public void updateSchoolInfo(String name, String foundedYear, String mascot, String color1, String color2) {
         schoolNameLabel.setText(name);
@@ -853,7 +856,7 @@ public class GameView {
         schoolMascotLabel.setText("Mascot: " + mascot);
         schoolColorsLabel.setText("Colors: " + color1 + " & " + color2);
     }
-    
+
     /**
      * Clears the school info panel (resets to default values).
      */
@@ -907,11 +910,12 @@ public class GameView {
 
     public void updateWeatherIcons(String amIconPath, String pmIconPath, String amName, String pmName) {
         try {
-            // Convert resource path to file path (remove leading slash and prepend src/main/java)
+            // Convert resource path to file path (remove leading slash and prepend
+            // src/main/java)
             String basePath = "src/main/java";
             String amFilePath = basePath + amIconPath;
             String pmFilePath = basePath + pmIconPath;
-            
+
             // Load and set AM icon using file-based loading
             java.io.File amFile = new java.io.File(amFilePath);
             BufferedImage amImage = ImageIO.read(amFile);
@@ -941,7 +945,7 @@ public class GameView {
             weatherPMTempLabel.setVisible(true);
 
             dayLabel.setVisible(true);
-            
+
             // Force layout update
             amPanel.revalidate();
             amPanel.repaint();
@@ -1002,7 +1006,7 @@ public class GameView {
     }
 
     // ==================== Demographics Settings ====================
-    
+
     /**
      * Checks if custom demographics are enabled.
      *
@@ -1107,12 +1111,12 @@ public class GameView {
     }
 
     public void showSeedError() {
-        JOptionPane.showMessageDialog(frame, 
-            "Invalid seed format. Please enter a valid number.\nExample: 1737570000000", 
-            "Invalid Seed", 
-            JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(frame,
+                "Invalid seed format. Please enter a valid number.\nExample: 1737570000000",
+                "Invalid Seed",
+                JOptionPane.ERROR_MESSAGE);
     }
-    
+
     /**
      * Checks if we're in game mode (with player character).
      *
@@ -1121,7 +1125,7 @@ public class GameView {
     public boolean isGameMode() {
         return isGameMode;
     }
-    
+
     /**
      * Gets the main frame.
      *

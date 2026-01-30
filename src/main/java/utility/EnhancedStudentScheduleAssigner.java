@@ -85,11 +85,15 @@ public class EnhancedStudentScheduleAssigner {
         // NEW Phase 2.5: Analyze resource shortages and reallocate substitutes
         analyzeAndReallocateResources(studentHashMap, staffHashMap);
 
-        // NEW Phase 2.6: Optimize block assignments within subject areas
-        optimizeBlockAssignmentsWithinSubjects(studentHashMap, staffHashMap);
-
         // Phase 3: Assign students using enhanced algorithm
         assignStudentsWithOptimization(studentHashMap, staffHashMap);
+
+        // Phase 3.5: Optimize block assignments within subject areas (AFTER student
+        // assignment)
+        // This phase identifies empty/under-enrolled sections and reassigns teachers
+        // to high-demand classes within their discipline
+        System.out.println("=== PHASE 3.5: POST-ASSIGNMENT BLOCK OPTIMIZATION ===");
+        optimizeBlockAssignmentsWithinSubjects(studentHashMap, staffHashMap);
 
         // Phase 4: Balance and optimize
         balanceClassSizes();
@@ -2285,28 +2289,65 @@ public class EnhancedStudentScheduleAssigner {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Determines if a class belongs to a specific subject area.
+     * Keywords are aligned with
+     * CurriculumRequirementsCalculator.mapClassToStaffType()
+     * to ensure consistent classification across the scheduling system.
+     */
     private static boolean belongsToSubjectArea(String className, String subjectArea) {
+        String lowerName = className.toLowerCase();
         return switch (subjectArea.toLowerCase()) {
             case "english" ->
-                className.toLowerCase().contains("english") || className.toLowerCase().contains("ap english");
-            case "math" -> className.toLowerCase().contains("math") || className.toLowerCase().contains("algebra") ||
-                    className.toLowerCase().contains("geometry") || className.toLowerCase().contains("calculus") ||
-                    className.toLowerCase().contains("trigonometry") || className.toLowerCase().contains("precalculus");
+                lowerName.contains("english") || lowerName.contains("literature") ||
+                        lowerName.contains("composition") || lowerName.contains("journalism");
+            case "math" ->
+                lowerName.contains("math") || lowerName.contains("algebra") ||
+                        lowerName.contains("geometry") || lowerName.contains("calculus") ||
+                        lowerName.contains("trigonometry") || lowerName.contains("precalculus") ||
+                        lowerName.contains("statistics") || lowerName.contains("financial");
             case "science" ->
-                className.toLowerCase().contains("biology") || className.toLowerCase().contains("chemistry") ||
-                        className.toLowerCase().contains("physics") || className.toLowerCase().contains("science");
+                lowerName.contains("biology") || lowerName.contains("chemistry") ||
+                        lowerName.contains("physics") || lowerName.contains("science") ||
+                        lowerName.contains("anatomy") || lowerName.contains("environmental") ||
+                        lowerName.contains("genetics");
             case "history" ->
-                className.toLowerCase().contains("history") || className.toLowerCase().contains("government") ||
-                        className.toLowerCase().contains("geography") || className.toLowerCase().contains("economics");
+                lowerName.contains("history") || lowerName.contains("government") ||
+                        lowerName.contains("geography") || lowerName.contains("economics") ||
+                        lowerName.contains("civics");
             case "physical education" ->
-                className.toLowerCase().contains("health") || className.toLowerCase().contains("sports") ||
-                        className.toLowerCase().contains("weightlifting") || className.toLowerCase().contains("dance")
-                        ||
-                        className.toLowerCase().contains("recreation");
+                lowerName.contains("health") || lowerName.contains("sports") ||
+                        lowerName.contains("weightlifting") || lowerName.contains("dance") ||
+                        lowerName.contains("recreation") || lowerName.contains("physical education") ||
+                        lowerName.contains("pe");
             case "language" ->
-                className.toLowerCase().contains("spanish") || className.toLowerCase().contains("french") ||
-                        className.toLowerCase().contains("german") || className.toLowerCase().contains("latin") ||
-                        className.toLowerCase().contains("sign language");
+                lowerName.contains("spanish") || lowerName.contains("french") ||
+                        lowerName.contains("german") || lowerName.contains("latin") ||
+                        lowerName.contains("sign language") || lowerName.contains("asl");
+            case "visual arts" ->
+                lowerName.contains("art") || lowerName.contains("drawing") ||
+                        lowerName.contains("painting") || lowerName.contains("sculpture") ||
+                        lowerName.contains("ceramics") || lowerName.contains("photography");
+            case "performing arts" ->
+                lowerName.contains("band") || lowerName.contains("choir") ||
+                        lowerName.contains("orchestra") || lowerName.contains("music") ||
+                        lowerName.contains("drama") || lowerName.contains("theater") ||
+                        lowerName.contains("theatre");
+            case "computer science" ->
+                lowerName.contains("computer") || lowerName.contains("programming") ||
+                        lowerName.contains("coding") || lowerName.contains("technology") ||
+                        lowerName.contains("keyboarding");
+            case "vocational" ->
+                lowerName.contains("woodworking") || lowerName.contains("auto") ||
+                        lowerName.contains("shop") || lowerName.contains("culinary") ||
+                        lowerName.contains("welding") || lowerName.contains("construction") ||
+                        lowerName.contains("hvac") || lowerName.contains("electrical");
+            case "business" ->
+                lowerName.contains("business") || lowerName.contains("accounting") ||
+                        lowerName.contains("marketing") || lowerName.contains("entrepreneurship");
+            case "consumer science" ->
+                lowerName.contains("home economics") || lowerName.contains("consumer") ||
+                        lowerName.contains("family") || lowerName.contains("child development");
             default -> false;
         };
     }
@@ -3275,14 +3316,19 @@ public class EnhancedStudentScheduleAssigner {
 
     /**
      * Optimizes block assignments within subject areas by reassigning underutilized
-     * blocks to high-demand classes where the same teacher can teach both
+     * blocks to high-demand classes where the same teacher can teach both.
+     * This method runs AFTER student assignment to identify truly empty sections.
      */
     private static void optimizeBlockAssignmentsWithinSubjects(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
         System.out.println("=== BLOCK ASSIGNMENT OPTIMIZATION WITHIN SUBJECT AREAS ===");
 
-        // Define subject areas to optimize
-        String[] subjectAreas = { "English", "Math", "Science", "History", "Language", "Vocational" };
+        // Define all subject areas to optimize (aligned with belongsToSubjectArea)
+        String[] subjectAreas = {
+                "English", "Math", "Science", "History", "Language",
+                "Physical Education", "Visual Arts", "Performing Arts",
+                "Computer Science", "Vocational", "Business", "Consumer Science"
+        };
 
         for (String subjectArea : subjectAreas) {
             System.out.println("Optimizing " + subjectArea + " block assignments...");
@@ -3363,6 +3409,162 @@ public class EnhancedStudentScheduleAssigner {
         for (BlockReassignmentOpportunity opportunity : opportunities) {
             executeBlockReassignment(opportunity, staffHashMap);
         }
+
+        // Step 6: Additional rebalancing using StaffType-based flexibility
+        rebalanceEmptySectionsWithStaffType(subjectArea, utilizations, staffHashMap);
+    }
+
+    /**
+     * Rebalances empty sections by finding ANY teacher in the discipline who can
+     * teach the high-demand class, not just those who already have blocks in both.
+     * This provides greater flexibility for teacher assignments.
+     */
+    private static void rebalanceEmptySectionsWithStaffType(String subjectArea,
+            List<ClassUtilization> utilizations,
+            HashMap<Integer, Staff> staffHashMap) {
+
+        // Find sections that are still empty after initial optimization
+        List<ClassUtilization> stillEmpty = utilizations.stream()
+                .filter(u -> u.emptyBlocks > 0)
+                .sorted((u1, u2) -> Integer.compare(u2.emptyBlocks, u1.emptyBlocks))
+                .collect(Collectors.toList());
+
+        // Find classes that still have unmet demand
+        List<ClassUtilization> stillOverdemanded = utilizations.stream()
+                .filter(u -> u.demand > u.currentEnrollment)
+                .sorted((u1, u2) -> Integer.compare(
+                        (u2.demand - u2.currentEnrollment),
+                        (u1.demand - u1.currentEnrollment)))
+                .collect(Collectors.toList());
+
+        if (stillEmpty.isEmpty() || stillOverdemanded.isEmpty()) {
+            return;
+        }
+
+        System.out.println("=== STAFFTYPE-BASED REBALANCING FOR " + subjectArea.toUpperCase() + " ===");
+        System.out.println("Still empty sections: " + stillEmpty.stream()
+                .mapToInt(u -> u.emptyBlocks).sum());
+        System.out.println("Classes with unmet demand: " + stillOverdemanded.size());
+
+        int totalReassigned = 0;
+
+        for (ClassUtilization overdemand : stillOverdemanded) {
+            if (overdemand.demand <= overdemand.currentEnrollment) {
+                continue; // Demand is now met
+            }
+
+            // Find the StaffType that can teach this class
+            StaffType targetType = CurriculumRequirementsCalculator.mapClassToStaffType(overdemand.className);
+
+            for (ClassUtilization underutil : stillEmpty) {
+                if (underutil.emptyBlocks <= 0) {
+                    continue;
+                }
+
+                // Find teachers in this discipline who have empty blocks in underutil class
+                List<Staff> teachersWithEmptyBlocks = findTeachersWithEmptyBlocksInDiscipline(
+                        underutil.className, targetType, staffHashMap);
+
+                for (Staff teacher : teachersWithEmptyBlocks) {
+                    if (underutil.emptyBlocks <= 0 ||
+                            overdemand.demand <= overdemand.currentEnrollment) {
+                        break;
+                    }
+
+                    // Find an empty block from this teacher
+                    TeacherBlock emptyBlock = findEmptyBlockForClass(teacher, underutil.className);
+
+                    if (emptyBlock != null) {
+                        // Reassign this block to the high-demand class
+                        String oldClassName = emptyBlock.getClassName();
+                        emptyBlock.setClassName(overdemand.className);
+
+                        System.out.println("StaffType-Reassigned: " + teacher.teacherName.getFirstName() + " " +
+                                teacher.teacherName.getLastName() + "'s " + emptyBlock.getSemester() +
+                                " Block " + emptyBlock.getBlockNumber() + " from " + oldClassName +
+                                " to " + overdemand.className);
+
+                        underutil.emptyBlocks--;
+                        totalReassigned++;
+
+                        // Create a new section for the reassigned block
+                        ClassSection newSection = new ClassSection(
+                                overdemand.className,
+                                teacher,
+                                emptyBlock,
+                                emptyBlock.getBlockPopulation());
+
+                        classSections.computeIfAbsent(overdemand.className, k -> new ArrayList<>())
+                                .add(newSection);
+                    }
+                }
+            }
+        }
+
+        if (totalReassigned > 0) {
+            System.out.println("Total blocks reassigned via StaffType flexibility: " + totalReassigned);
+        }
+    }
+
+    /**
+     * Finds teachers in a specific discipline who have empty blocks for a given
+     * class.
+     */
+    private static List<Staff> findTeachersWithEmptyBlocksInDiscipline(String className, StaffType targetType,
+            HashMap<Integer, Staff> staffHashMap) {
+        List<Staff> result = new ArrayList<>();
+
+        for (Staff staff : staffHashMap.values()) {
+            StaffType staffType = (StaffType) staff.teacherStatistics.getStaffType();
+
+            // Teacher must be in the target discipline
+            if (staffType != targetType) {
+                continue;
+            }
+
+            // Check if teacher has empty blocks for this class
+            List<TeacherBlock> blocks = staff.teacherStatistics.getTeacherSchedule()
+                    .getBlocksByClassName(className);
+
+            for (TeacherBlock block : blocks) {
+                List<ClassSection> sections = classSections.get(className);
+                if (sections != null) {
+                    for (ClassSection section : sections) {
+                        if (section.getTeacherBlock().equals(block) &&
+                                section.getEnrolledStudents().size() == 0) {
+                            result.add(staff);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Finds an empty block for a specific class taught by the given teacher.
+     */
+    private static TeacherBlock findEmptyBlockForClass(Staff teacher, String className) {
+        List<TeacherBlock> blocks = teacher.teacherStatistics.getTeacherSchedule()
+                .getBlocksByClassName(className);
+
+        for (TeacherBlock block : blocks) {
+            List<ClassSection> sections = classSections.get(className);
+            if (sections != null) {
+                for (ClassSection section : sections) {
+                    if (section.getTeacherBlock().equals(block) &&
+                            section.getEnrolledStudents().size() == 0) {
+                        // Remove this section from the old class
+                        sections.remove(section);
+                        return block;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -3435,35 +3637,92 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     /**
-     * Finds teachers who can teach both classes (are qualified for both)
+     * Finds teachers who can teach both classes based on discipline flexibility.
+     * A teacher is considered qualified if:
+     * 1. They have empty blocks for the fromClass, AND
+     * 2. They are in the same discipline (StaffType) as required by the toClass
+     *
+     * This allows ANY teacher in the discipline to be reassigned, not just those
+     * who were originally assigned to both classes.
      */
     private static List<Staff> findTeachersWhoCanTeachBoth(String fromClass, String toClass,
             HashMap<Integer, Staff> staffHashMap) {
-        List<Staff> sharedTeachers = new ArrayList<>();
+        List<Staff> qualifiedTeachers = new ArrayList<>();
+
+        // Determine the StaffType required for the target class
+        StaffType toClassType = CurriculumRequirementsCalculator.mapClassToStaffType(toClass);
+        StaffType fromClassType = CurriculumRequirementsCalculator.mapClassToStaffType(fromClass);
 
         for (Staff teacher : staffHashMap.values()) {
-            // Check if teacher has blocks for both classes
-            boolean canTeachFrom = teacher.teacherStatistics.getTeacherSchedule().getBlocksByClassName(fromClass)
-                    .size() > 0;
-            boolean canTeachTo = canTeachSimilarClass(teacher, fromClass, toClass);
+            StaffType teacherType = (StaffType) teacher.teacherStatistics.getStaffType();
 
-            if (canTeachFrom && canTeachTo) {
-                sharedTeachers.add(teacher);
+            // Skip if teacher is not in a compatible discipline
+            // Teacher must be able to teach both classes (same discipline or substitute)
+            boolean canTeachFromClass = (teacherType == fromClassType || teacherType == StaffType.SUB);
+            boolean canTeachToClass = (teacherType == toClassType || teacherType == StaffType.SUB);
+
+            if (!canTeachFromClass || !canTeachToClass) {
+                continue;
+            }
+
+            // Check if teacher has empty blocks for the fromClass
+            List<TeacherBlock> fromBlocks = teacher.teacherStatistics.getTeacherSchedule()
+                    .getBlocksByClassName(fromClass);
+
+            boolean hasEmptyBlocks = false;
+            for (TeacherBlock block : fromBlocks) {
+                List<ClassSection> sections = classSections.get(fromClass);
+                if (sections != null) {
+                    for (ClassSection section : sections) {
+                        if (section.getTeacherBlock().equals(block) &&
+                                section.getEnrolledStudents().size() == 0) {
+                            hasEmptyBlocks = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasEmptyBlocks)
+                    break;
+            }
+
+            if (hasEmptyBlocks) {
+                qualifiedTeachers.add(teacher);
             }
         }
 
-        return sharedTeachers;
+        return qualifiedTeachers;
     }
 
     /**
-     * Determines if a teacher can teach a similar class in the same subject area
+     * Finds ALL teachers in a specific discipline who could potentially teach
+     * a class, regardless of their current block assignments.
+     * This provides maximum flexibility for teacher reassignment.
+     */
+    private static List<Staff> findAllTeachersInDiscipline(String className,
+            HashMap<Integer, Staff> staffHashMap) {
+        StaffType requiredType = CurriculumRequirementsCalculator.mapClassToStaffType(className);
+
+        return staffHashMap.values().stream()
+                .filter(teacher -> {
+                    StaffType teacherType = (StaffType) teacher.teacherStatistics.getStaffType();
+                    return teacherType == requiredType || teacherType == StaffType.SUB;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Determines if a teacher can teach a similar class in the same subject area.
+     * Teachers are considered qualified to teach any class within their discipline.
      */
     private static boolean canTeachSimilarClass(Staff teacher, String currentClass, String targetClass) {
-        // For now, assume teachers can teach within their subject area
-        // This could be enhanced with more sophisticated qualification checking
-
-        // Same subject area check
-        String[] subjectAreas = { "English", "Math", "Science", "History", "Language" };
+        // Teachers can teach any class within their subject area
+        // All subject areas aligned with
+        // CurriculumRequirementsCalculator.mapClassToStaffType()
+        String[] subjectAreas = {
+                "English", "Math", "Science", "History", "Language",
+                "Physical Education", "Visual Arts", "Performing Arts",
+                "Computer Science", "Vocational", "Business", "Consumer Science"
+        };
 
         for (String area : subjectAreas) {
             if (belongsToSubjectArea(currentClass, area) && belongsToSubjectArea(targetClass, area)) {

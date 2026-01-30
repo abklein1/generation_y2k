@@ -34,16 +34,16 @@ public class SiblingGenerator {
     public static void siblingGeneratorForPool(StudentPool pool, GameView view) {
         HashMap<Integer, Student> studentMap = pool.getAllStudents();
         int originalCount = studentMap.size();
-        
+
         // Generate siblings using the existing method
         siblingGenerator(studentMap, originalCount, view);
-        
+
         // The siblingGenerator method adds new students to the map
         // Clear and re-add all students to the pool to include siblings
         pool.clear();
         pool.addStudentsFromMap(studentMap);
-        
-        view.appendOutput("Sibling generation complete. Pool now has " + pool.getTotalCount() + 
+
+        view.appendOutput("Sibling generation complete. Pool now has " + pool.getTotalCount() +
                 " students (added " + (pool.getTotalCount() - originalCount) + " siblings)");
     }
 
@@ -63,19 +63,20 @@ public class SiblingGenerator {
     /**
      * Generates a fully simulated sibling who is not of high school age.
      * This sibling will have inHighSchool=false and won't be assigned a schedule.
-     * Like full siblings, they have a high probability (85%) of sharing physical traits.
+     * Like full siblings, they have a high probability (85%) of sharing physical
+     * traits.
      *
      * @param student the original student to base sibling traits on
-     * @param view the game view for output
+     * @param view    the game view for output
      * @return a fully simulated Student object with inHighSchool=false
      */
     private static Student generateNotInSchoolSibling(Student student, GameView view) {
         Student sibling = new Student();
         String f_name;
-        
+
         // 85% probability of inheriting each physical trait from sibling
         final int TRAIT_INHERITANCE_PROBABILITY = 85;
-        
+
         // Determine if older or younger sibling
         boolean older = setRandom(0, 1) == 0;
         int year;
@@ -86,22 +87,23 @@ public class SiblingGenerator {
             // Younger sibling: 1992-2000 (not yet in high school or elementary)
             year = setRandom(1992, 2000);
         }
-        
+
         // Load name data for the year
         NameLoader.readCSVFirst(String.valueOf(year));
-        
+
         // Set identity attributes
         sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
-        // Grade level is N/A for non-high-school students, but we set it for consistency
+        // Grade level is N/A for non-high-school students, but we set it for
+        // consistency
         sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
-        
+
         // Generate birthday based on the year
         int month = setRandom(1, 12);
         int day = setRandom(1, java.time.Month.of(month).length(false));
         sibling.studentStatistics.setBirthday(java.time.LocalDate.of(year, month, day));
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
-        
+
         // Generate unique first name
         f_name = NameLoader.nameGenerator(String.valueOf(year), sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
@@ -109,15 +111,16 @@ public class SiblingGenerator {
         }
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
-        
+
         // Share race and income level with original student (full sibling assumption)
         sibling.studentStatistics.setRace(student.studentStatistics.getRace());
         sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        
+
         // Apply all base attributes (stats, physical traits, braces, vision)
         StudentPopGenerator.applyBaseAttributes(sibling);
-        
-        // Full siblings have a high probability of sharing physical traits, but not guaranteed
+
+        // Full siblings have a high probability of sharing physical traits, but not
+        // guaranteed
         if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
             sibling.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
         }
@@ -130,10 +133,10 @@ public class SiblingGenerator {
         if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
             sibling.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
         }
-        
+
         // Mark as NOT in high school (won't be assigned a schedule)
         sibling.setInHighSchool(false);
-        
+
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
@@ -142,8 +145,10 @@ public class SiblingGenerator {
         return sibling;
     }
 
-    // Helper for player family generation: create sibling infos without touching global maps
-    public static java.util.List<entity.SiblingInfo> generateSiblingInfosForPlayer(entity.Student player, int count, view.GameView view) {
+    // Helper for player family generation: create sibling infos without touching
+    // global maps
+    public static java.util.List<entity.SiblingInfo> generateSiblingInfosForPlayer(entity.Student player, int count,
+            view.GameView view) {
         java.util.List<entity.SiblingInfo> infos = new java.util.ArrayList<>();
 
         for (int i = 0; i < count; i++) {
@@ -161,7 +166,8 @@ public class SiblingGenerator {
                 } else {
                     sib = generateSibling(player, view);
                 }
-                infos.add(new entity.SiblingInfo(sib.studentName.getFirstName(), sib.studentStatistics.getBirthday(), true));
+                infos.add(new entity.SiblingInfo(sib.studentName.getFirstName(), sib.studentStatistics.getBirthday(),
+                        true));
             } else {
                 // Not in school: pick older or younger and synthesize birthday
                 boolean older = setRandom(0, 1) == 0;
@@ -203,7 +209,6 @@ public class SiblingGenerator {
             boolean hasStepSibling = setRandom(0, SIBLING_SAMPLE_SIZE) < STEP_SIBLING_RATE;
             boolean hasAdoptedSibling = setRandom(0, SIBLING_SAMPLE_SIZE) < ADOPTED_SIBLING_RATE;
             boolean hasHalfSibling = setRandom(0, SIBLING_SAMPLE_SIZE) < HALF_SIBLING_RATE;
-
 
             if (siblings == 1) {
                 if (hasTwins) {
@@ -300,7 +305,7 @@ public class SiblingGenerator {
                                 // add second twin
                                 studentCap++;
                                 sibling = generateTwinOrTriplet(twinSibling, view);
-                                //TODO: think about this one for reverse add
+                                // TODO: think about this one for reverse add
                                 addedStudents.put(studentCap, sibling);
                                 student.getValue().studentStatistics.addSiblingsInSchool(sibling);
                                 generatedSiblings.add(sibling);
@@ -489,7 +494,8 @@ public class SiblingGenerator {
 
     /**
      * Generates a step-sibling for the given student.
-     * Step-siblings may have different last names (33% chance) and different race (20% chance).
+     * Step-siblings may have different last names (33% chance) and different race
+     * (20% chance).
      */
     private static Student generateStepSibling(Student student, GameView view) {
         Student sibling = new Student();
@@ -502,15 +508,18 @@ public class SiblingGenerator {
         sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
         sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
-        sibling.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
+        sibling.studentStatistics
+                .setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
-        
+
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                    sibling.studentStatistics.getGender());
         }
-        
+
         // Chance of having different last name than sibling (33%)
         if (setRandom(0, 3) == 2) {
             l_name = NameLoader.selectWeightedRandom();
@@ -521,7 +530,7 @@ public class SiblingGenerator {
         }
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(lastName);
-        
+
         // Chance of step-sibling having different race (20%)
         if (setRandom(0, 10) < 2) {
             if (l_name[1] != null) {
@@ -533,13 +542,13 @@ public class SiblingGenerator {
             race = student.studentStatistics.getRace();
         }
         sibling.studentStatistics.setRace(race);
-        
+
         // Set income level (same as original student)
         sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        
+
         // Apply all base attributes (stats, physical traits, braces, vision)
         StudentPopGenerator.applyBaseAttributes(sibling);
-        
+
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
@@ -563,8 +572,9 @@ public class SiblingGenerator {
         // Set identity attributes
         sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
-        
-        // Half sibling can either come from mother or father. If father the age gap can be closer
+
+        // Half sibling can either come from mother or father. If father the age gap can
+        // be closer
         if (setRandom(0, 10) <= 5) {
             sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
         } else {
@@ -574,17 +584,20 @@ public class SiblingGenerator {
                 siblingGrade = sibling.studentStatistics.getGradeLevel();
             } while (studentGrade.equals(siblingGrade));
         }
-        sibling.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
+        sibling.studentStatistics
+                .setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
-        
+
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                    sibling.studentStatistics.getGender());
         }
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
-        
+
         // Chance of half-sibling having different race (10%)
         if (setRandom(0, 10) < 1) {
             race = NameLoader.selectWeightedRandom()[1];
@@ -592,13 +605,13 @@ public class SiblingGenerator {
             race = student.studentStatistics.getRace();
         }
         sibling.studentStatistics.setRace(race);
-        
+
         // Set income level (same as original student)
         sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        
+
         // Apply all base attributes (stats, physical traits, braces, vision)
         StudentPopGenerator.applyBaseAttributes(sibling);
-        
+
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
@@ -619,26 +632,29 @@ public class SiblingGenerator {
         sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
         sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
-        sibling.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
+        sibling.studentStatistics
+                .setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
-        
+
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                    sibling.studentStatistics.getGender());
         }
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
-        
+
         // Adopted siblings always have a different race
         sibling.studentStatistics.setRace(NameLoader.selectWeightedRandom()[1]);
-        
+
         // Set income level (same as original student)
         sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        
+
         // Apply all base attributes (stats, physical traits, braces, vision)
         StudentPopGenerator.applyBaseAttributes(sibling);
-        
+
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
@@ -649,7 +665,8 @@ public class SiblingGenerator {
 
     /**
      * Generates a twin or triplet for the given student.
-     * Twins/triplets share birthday, grade level, race, eye color, hair color, height, hair type, skin color.
+     * Twins/triplets share birthday, grade level, race, eye color, hair color,
+     * height, hair type, skin color.
      */
     private static Student generateTwinOrTriplet(Student student, GameView view) {
         Student sibling = new Student();
@@ -661,29 +678,32 @@ public class SiblingGenerator {
         sibling.studentStatistics.setGradeLevel(student.studentStatistics.getGradeLevel());
         sibling.studentStatistics.setBirthday(student.studentStatistics.getBirthday());
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
-        
+
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                    sibling.studentStatistics.getGender());
         }
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
-        
+
         // Twins share race and income level
         sibling.studentStatistics.setRace(student.studentStatistics.getRace());
         sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        
+
         // Apply all base attributes (stats, physical traits, braces, vision)
         StudentPopGenerator.applyBaseAttributes(sibling);
-        
-        // Override physical traits to match twin (these should be inherited, not random)
+
+        // Override physical traits to match twin (these should be inherited, not
+        // random)
         sibling.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
         sibling.studentStatistics.setHairColor(student.studentStatistics.getHairColor());
         sibling.studentStatistics.setHeight(student.studentStatistics.getHeight());
         sibling.studentStatistics.setHairType(student.studentStatistics.getHairType());
         sibling.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
-        
+
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
@@ -694,8 +714,10 @@ public class SiblingGenerator {
 
     /**
      * Generates a full sibling for the given student.
-     * Full siblings share race and have a high probability (85%) of sharing physical traits
-     * (eye color, hair color, height, hair type, skin color) but it's not guaranteed.
+     * Full siblings share race and have a high probability (85%) of sharing
+     * physical traits
+     * (eye color, hair color, height, hair type, skin color) but it's not
+     * guaranteed.
      * They have an enforced age gap (can't be same grade level).
      */
     private static Student generateSibling(Student student, GameView view) {
@@ -703,38 +725,42 @@ public class SiblingGenerator {
         String f_name;
         String studentGrade = student.studentStatistics.getGradeLevel();
         String siblingGrade;
-        
+
         // 85% probability of inheriting each physical trait from sibling
         final int TRAIT_INHERITANCE_PROBABILITY = 85;
 
         // Set identity attributes with enforced age gap
         sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
-        
+
         // Ensure min age gap between true siblings
         do {
             sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
             siblingGrade = sibling.studentStatistics.getGradeLevel();
         } while (studentGrade.equals(siblingGrade));
-        sibling.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
+        sibling.studentStatistics
+                .setBirthday(BirthdayGenerator.generateDateFromClass(sibling.studentStatistics.getGradeLevel()));
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
-        
+
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                sibling.studentStatistics.getGender());
         while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()), sibling.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                    sibling.studentStatistics.getGender());
         }
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
-        
+
         // Full siblings share race and income level
         sibling.studentStatistics.setRace(student.studentStatistics.getRace());
         sibling.studentStatistics.setIncomeLevel(student.studentStatistics.getIncomeLevel());
-        
+
         // Apply all base attributes (stats, physical traits, braces, vision)
         StudentPopGenerator.applyBaseAttributes(sibling);
-        
-        // Full siblings have a high probability of sharing physical traits, but not guaranteed
+
+        // Full siblings have a high probability of sharing physical traits, but not
+        // guaranteed
         // Each trait is independently determined (genetics isn't all-or-nothing)
         if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
             sibling.studentStatistics.setEyeColor(student.studentStatistics.getEyeColor());
@@ -751,7 +777,7 @@ public class SiblingGenerator {
         if (setRandom(0, 100) < TRAIT_INHERITANCE_PROBABILITY) {
             sibling.studentStatistics.setSkinColor(student.studentStatistics.getSkinColor());
         }
-        
+
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
@@ -788,7 +814,8 @@ public class SiblingGenerator {
 
     /**
      * Applies braces-related attributes to a student.
-     * This includes determining if they have/had braces, timing, cosmetics, and charisma effects.
+     * This includes determining if they have/had braces, timing, cosmetics, and
+     * charisma effects.
      *
      * @param student the student to apply braces attributes to
      */

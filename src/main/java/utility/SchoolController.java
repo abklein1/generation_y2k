@@ -42,17 +42,16 @@ public class SchoolController {
     private RoomConnector roomConnector;
     private SocialLinkConnector socialLinkConnector;
     private StandardSchool standardSchool;
-    
+
     // Town-based population management (new architecture)
     private Town town;
     private boolean useTownBasedGeneration = true; // Toggle for new vs legacy generation
-    
+
     // Simulation components
     private SimulationEngine simulationEngine;
     private EntityStateManager entityStateManager;
     private Timer simulationTimer;
     private boolean simulationRunning = false;
-
 
     public SchoolController(GameView view) {
         this.view = view;
@@ -61,17 +60,17 @@ public class SchoolController {
         this.view.addSocialGraphButtonListener(new SocialGraphButtonListener());
         this.view.addInspectionMenuListener(new InspectionMenuListener());
         this.view.addCreateCharacterButtonListener(new CreateCharacterButtonListener());
-        
+
         // Wire up simulation controls
         this.view.addPlayPauseListener(e -> toggleSimulation());
         this.view.addStepListener(e -> stepSimulation());
         this.view.addSpeedChangeListener(e -> updateSimulationSpeed());
-        
+
         this.time = new Time();
     }
-    
+
     // ==================== Town-based Population Management ====================
-    
+
     /**
      * Gets the Town entity containing population pools.
      * Only available when using Town-based generation.
@@ -81,7 +80,7 @@ public class SchoolController {
     public Town getTown() {
         return town;
     }
-    
+
     /**
      * Checks if Town-based generation is enabled.
      *
@@ -90,7 +89,7 @@ public class SchoolController {
     public boolean isUsingTownBasedGeneration() {
         return useTownBasedGeneration;
     }
-    
+
     /**
      * Enables or disables Town-based generation.
      * Must be called before generating a world.
@@ -100,7 +99,7 @@ public class SchoolController {
     public void setUseTownBasedGeneration(boolean enabled) {
         this.useTownBasedGeneration = enabled;
     }
-    
+
     /**
      * Determines the funding level for school generation.
      * This can be set by UI, derived from demographics, or randomized.
@@ -108,11 +107,12 @@ public class SchoolController {
      * @return the funding model to use for school generation
      */
     private SchoolFundingModel determineFundingLevel() {
-        // Check if custom demographics are set and derive funding from income distribution
+        // Check if custom demographics are set and derive funding from income
+        // distribution
         if (view.isCustomDemographicsEnabled()) {
             double lowIncome = view.getDemographicsIncomeLowPercent() / 100.0;
             double highIncome = view.getDemographicsIncomeHighPercent() / 100.0;
-            
+
             // Higher low-income percentage tends toward underfunded schools
             // Higher high-income percentage tends toward well-funded schools
             if (lowIncome > 0.4) {
@@ -125,7 +125,7 @@ public class SchoolController {
                 return new SchoolFundingModel(SchoolFundingModel.FundingLevel.EXCELLENTLY_FUNDED);
             }
         }
-        
+
         // Default: randomize funding level with realistic distribution
         // Most schools are adequately funded
         int random = Randomizer.setRandom(1, 100);
@@ -141,7 +141,7 @@ public class SchoolController {
             return new SchoolFundingModel(SchoolFundingModel.FundingLevel.EXCELLENTLY_FUNDED);
         }
     }
-    
+
     /**
      * Gets the current school's funding model.
      *
@@ -150,16 +150,17 @@ public class SchoolController {
     public SchoolFundingModel getSchoolFundingModel() {
         return standardSchool != null ? standardSchool.getFundingModel() : null;
     }
-    
+
     /**
      * Gets the number of available (unassigned) students in the town.
      *
-     * @return the count of available students, or 0 if not using Town-based generation
+     * @return the count of available students, or 0 if not using Town-based
+     *         generation
      */
     public int getAvailableStudentCount() {
         return town != null ? town.getAvailableStudentCount() : 0;
     }
-    
+
     /**
      * Gets the number of available (unassigned) staff in the town.
      *
@@ -168,7 +169,7 @@ public class SchoolController {
     public int getAvailableStaffCount() {
         return town != null ? town.getAvailableStaffCount() : 0;
     }
-    
+
     /**
      * Toggles the simulation between playing and paused states.
      */
@@ -180,7 +181,7 @@ public class SchoolController {
         }
         view.updatePlayPauseButton(simulationRunning);
     }
-    
+
     /**
      * Updates the simulation speed based on UI selection.
      */
@@ -188,24 +189,24 @@ public class SchoolController {
         if (simulationEngine != null) {
             int speedIndex = view.getSelectedSpeedIndex();
             simulationEngine.setSpeedByIndex(speedIndex);
-            String[] speedNames = {"Slow (1x)", "Normal (2x)", "Fast (4x)", "Very Fast (8x)"};
+            String[] speedNames = { "Slow (1x)", "Normal (2x)", "Fast (4x)", "Very Fast (8x)" };
             view.appendOutput("Simulation speed set to: " + speedNames[speedIndex]);
         }
     }
-    
+
     /**
      * Initializes the simulation engine after world generation.
      */
     private void initializeSimulation() {
         // Create simulation engine
         simulationEngine = new SimulationEngine(time, standardSchool, studentHashMap, staffHashMap);
-        
+
         // Create entity state manager and initialize all entities
         entityStateManager = new EntityStateManager(studentHashMap, staffHashMap, standardSchool, time);
         entityStateManager.initializeAll();
         entityStateManager.placeStudentsAtStartOfDay();
         entityStateManager.placeStaffAtStartOfDay();
-        
+
         // Add simulation listener to update UI
         simulationEngine.addListener(new SimulationEngine.SimulationListener() {
             @Override
@@ -216,7 +217,7 @@ public class SchoolController {
                     view.updateSimulationStatus(simulationRunning ? "Running" : "Paused");
                 });
             }
-            
+
             @Override
             public void onPeriodChange(int oldPeriod, int newPeriod) {
                 SwingUtilities.invokeLater(() -> {
@@ -224,7 +225,7 @@ public class SchoolController {
                     updatePeriodDisplay();
                 });
             }
-            
+
             @Override
             public void onTransitionStart() {
                 SwingUtilities.invokeLater(() -> {
@@ -232,28 +233,28 @@ public class SchoolController {
                     updatePeriodDisplay();
                 });
             }
-            
+
             @Override
             public void onTransitionEnd() {
                 SwingUtilities.invokeLater(() -> {
                     view.appendOutput("Transition ended - classes resuming");
                 });
             }
-            
+
             @Override
             public void onLunchStart(String lunchPeriod) {
                 SwingUtilities.invokeLater(() -> {
                     view.appendOutput("Lunch " + lunchPeriod + " has started");
                 });
             }
-            
+
             @Override
             public void onLunchEnd(String lunchPeriod) {
                 SwingUtilities.invokeLater(() -> {
                     view.appendOutput("Lunch " + lunchPeriod + " has ended");
                 });
             }
-            
+
             @Override
             public void onDayEnd() {
                 SwingUtilities.invokeLater(() -> {
@@ -262,7 +263,7 @@ public class SchoolController {
                 });
             }
         });
-        
+
         // Create timer for automatic simulation updates
         // Timer fires once per second, engine processes multiple ticks based on speed
         simulationTimer = new Timer(1000, e -> {
@@ -270,10 +271,10 @@ public class SchoolController {
                 simulationEngine.update();
             }
         });
-        
+
         // Set initial speed based on UI
         updateSimulationSpeed();
-        
+
         view.appendOutput("Simulation engine initialized!");
         if (studentHashMap != null) {
             view.appendOutput("Behavior trees assigned to " + studentHashMap.size() + " students");
@@ -282,7 +283,7 @@ public class SchoolController {
         }
         view.appendOutput("Use Play/Pause button or Simulation menu to control the simulation.");
     }
-    
+
     /**
      * Starts the simulation.
      */
@@ -295,7 +296,7 @@ public class SchoolController {
             view.updatePlayPauseButton(true);
         }
     }
-    
+
     /**
      * Pauses the simulation.
      */
@@ -310,7 +311,7 @@ public class SchoolController {
         view.updateSimulationStatus("Paused");
         view.updatePlayPauseButton(false);
     }
-    
+
     /**
      * Stops the simulation.
      */
@@ -322,7 +323,7 @@ public class SchoolController {
         view.updateSimulationStatus("Stopped");
         view.updatePlayPauseButton(false);
     }
-    
+
     /**
      * Steps the simulation forward by one tick (regardless of speed).
      */
@@ -335,7 +336,7 @@ public class SchoolController {
             simulationEngine.tick();
         }
     }
-    
+
     /**
      * Sets the simulation speed.
      *
@@ -351,22 +352,23 @@ public class SchoolController {
         String formattedDate = time.getFormattedDate();
         view.updateTime("Today is " + formattedDate);
     }
-    
+
     /**
      * Gets the appropriate period status string based on current time.
      *
-     * @return "Before School", "Transition", "After School", or null if in a regular period
+     * @return "Before School", "Transition", "After School", or null if in a
+     *         regular period
      */
     private String getPeriodStatus() {
         if (simulationEngine == null) {
             return null;
         }
-        
+
         var bellSchedule = simulationEngine.getBellSchedule();
         if (bellSchedule == null) {
             return null;
         }
-        
+
         if (bellSchedule.isBeforeSchool(time)) {
             return "Before School";
         } else if (bellSchedule.isAfterSchool(time)) {
@@ -374,10 +376,10 @@ public class SchoolController {
         } else if (bellSchedule.isTransitionTime(time)) {
             return "Transition";
         }
-        
+
         return null; // In a regular period
     }
-    
+
     /**
      * Updates the period display with the current period and status.
      */
@@ -391,7 +393,8 @@ public class SchoolController {
         String rootPath = "/Resources/Weather/Icons/";
         Weather weather = new Weather(standardSchool.getSchoolName());
         WeatherPatterns[] weatherArray = weather.determineWeatherAMPM(time.getCurrentDate());
-        view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName(), weatherArray[0].toString(), weatherArray[1].toString());
+        view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName(),
+                weatherArray[0].toString(), weatherArray[1].toString());
         view.updateWeatherTemps(weather.getTemp("TMAX"), weather.getTemp("TMIN"));
         view.updateDayLabel(time.getDayName());
     }
@@ -444,17 +447,17 @@ public class SchoolController {
 
                 JList<Student> studentListComponent = new JList<>(listModel);
                 studentListComponent.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                
+
                 // Create button panel with Show Social Links button
                 JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
                 JButton showSocialLinksButton = new JButton("Show Social Links");
                 showSocialLinksButton.setEnabled(false);
                 showSocialLinksButton.setToolTipText("Select a student to view their social links");
                 buttonPanel.add(showSocialLinksButton);
-                
+
                 // Track the currently selected student for the button action
-                final Student[] currentlySelectedStudent = {null};
-                
+                final Student[] currentlySelectedStudent = { null };
+
                 studentListComponent.addListSelectionListener(e -> {
                     if (!e.getValueIsAdjusting()) {
                         Student selectedStudent = studentListComponent.getSelectedValue();
@@ -462,13 +465,13 @@ public class SchoolController {
                             currentlySelectedStudent[0] = selectedStudent;
                             studentInspection(selectedStudent, inspectionArea);
                             showSocialLinksButton.setEnabled(true);
-                            showSocialLinksButton.setToolTipText("View social links for " + 
-                                selectedStudent.studentName.getFirstName() + " " + 
-                                selectedStudent.studentName.getLastName());
+                            showSocialLinksButton.setToolTipText("View social links for " +
+                                    selectedStudent.studentName.getFirstName() + " " +
+                                    selectedStudent.studentName.getLastName());
                         }
                     }
                 });
-                
+
                 // Add action listener for the Show Social Links button
                 showSocialLinksButton.addActionListener(e -> {
                     if (currentlySelectedStudent[0] != null) {
@@ -483,7 +486,6 @@ public class SchoolController {
             }
         }
 
-
         inspectionFrame.setVisible(true);
     }
 
@@ -493,7 +495,7 @@ public class SchoolController {
      * @return true if character was created, false if cancelled
      */
     private boolean showCharacterCreationMenu() {
-        final boolean[] characterCreated = {false};
+        final boolean[] characterCreated = { false };
         JDialog dialog = new JDialog((Frame) null, "Create Player Character", true);
         dialog.getContentPane().setLayout(new BorderLayout(10, 10));
         JPanel formPanel = new JPanel(new GridBagLayout());
@@ -505,41 +507,56 @@ public class SchoolController {
         int row = 0;
 
         // First Name
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("First Name:"), gbc);
         JTextField firstNameField = new JTextField();
         firstNameField.setColumns(12);
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(firstNameField, gbc);
         row++;
 
         // Last Name
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Last Name:"), gbc);
         JTextField lastNameField = new JTextField();
         lastNameField.setColumns(12);
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(lastNameField, gbc);
         row++;
 
         // Suffix
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Suffix:"), gbc);
-        JComboBox<String> suffixDropdown = new JComboBox<>(new String[]{"Jr.", "Sr.", "III", "II", "IV", "V", "None"});
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        JComboBox<String> suffixDropdown = new JComboBox<>(
+                new String[] { "Jr.", "Sr.", "III", "II", "IV", "V", "None" });
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(suffixDropdown, gbc);
         row++;
 
         // Gender
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Gender:"), gbc);
-        JComboBox<String> genderDropdown = new JComboBox<>(new String[]{"Male", "Female", "Other"});
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        JComboBox<String> genderDropdown = new JComboBox<>(new String[] { "Male", "Female", "Other" });
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(genderDropdown, gbc);
         row++;
 
         // Race (checkboxes - multiple selections map to multiracial)
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Race:"), gbc);
         JPanel racePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         JCheckBox whiteCheckbox = new JCheckBox("White");
@@ -550,25 +567,41 @@ public class SchoolController {
         racePanel.add(blackCheckbox);
         racePanel.add(asianCheckbox);
         racePanel.add(latinoCheckbox);
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(racePanel, gbc);
         row++;
-        
+
         // Helper to get race code from checkboxes
         java.util.function.Supplier<String> getRaceCode = () -> {
             int count = 0;
             String singleRace = null;
-            if (whiteCheckbox.isSelected()) { count++; singleRace = "white"; }
-            if (blackCheckbox.isSelected()) { count++; singleRace = "black"; }
-            if (asianCheckbox.isSelected()) { count++; singleRace = "api"; }
-            if (latinoCheckbox.isSelected()) { count++; singleRace = "hispanic"; }
-            
-            if (count == 0) return null; // No race selected
-            if (count > 1) return "2prace"; // Multiracial
+            if (whiteCheckbox.isSelected()) {
+                count++;
+                singleRace = "white";
+            }
+            if (blackCheckbox.isSelected()) {
+                count++;
+                singleRace = "black";
+            }
+            if (asianCheckbox.isSelected()) {
+                count++;
+                singleRace = "api";
+            }
+            if (latinoCheckbox.isSelected()) {
+                count++;
+                singleRace = "hispanic";
+            }
+
+            if (count == 0)
+                return null; // No race selected
+            if (count > 1)
+                return "2prace"; // Multiracial
             return singleRace; // Single race
         };
 
-        // Add an action listener to enable/disable the suffix dropdown based on gender selection
+        // Add an action listener to enable/disable the suffix dropdown based on gender
+        // selection
         genderDropdown.addActionListener(e -> {
             String selectedGender = (String) genderDropdown.getSelectedItem();
             if ("Male".equals(selectedGender) || "Other".equals(selectedGender)) {
@@ -582,39 +615,56 @@ public class SchoolController {
         suffixDropdown.setEnabled(false);
 
         // Eye Color
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Eye Color:"), gbc);
-        JComboBox<String> eyeColorDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/eye_color.json"));
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        JComboBox<String> eyeColorDropdown = new JComboBox<>(
+                TraitLoader.getOptionsFromJson("/Resources.People/eye_color.json"));
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(eyeColorDropdown, gbc);
         row++;
 
         // Hair Color
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Hair Color:"), gbc);
-        JComboBox<String> hairColorDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/hair_color.json"));
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        JComboBox<String> hairColorDropdown = new JComboBox<>(
+                TraitLoader.getOptionsFromJson("/Resources.People/hair_color.json"));
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(hairColorDropdown, gbc);
         row++;
 
         // Hair Length
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Hair Length:"), gbc);
-        JComboBox<String> hairLengthDropdown = new JComboBox<>(new String[]{"Short", "Medium", "Long"});
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        JComboBox<String> hairLengthDropdown = new JComboBox<>(new String[] { "Short", "Medium", "Long" });
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(hairLengthDropdown, gbc);
         row++;
 
         // Hair Type
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Hair Type:"), gbc);
-        JComboBox<String> hairTypeDropdown = new JComboBox<>(TraitLoader.getOptionsFromJson("/Resources.People/hair_type.json"));
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        JComboBox<String> hairTypeDropdown = new JComboBox<>(
+                TraitLoader.getOptionsFromJson("/Resources.People/hair_type.json"));
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(hairTypeDropdown, gbc);
         row++;
 
         // Birthdate
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Birthdate:"), gbc);
         UtilDateModel model = new UtilDateModel();
         model.setDate(1989, 8, 1);
@@ -627,7 +677,7 @@ public class SchoolController {
 
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-        
+
         datePicker.addActionListener(e -> {
             java.util.Date selectedDate = (java.util.Date) datePicker.getModel().getValue();
             if (selectedDate != null) {
@@ -636,10 +686,10 @@ public class SchoolController {
 
                 java.util.Calendar minDate = java.util.Calendar.getInstance();
                 minDate.set(1989, java.util.Calendar.AUGUST, 1);
-        
+
                 java.util.Calendar maxDate = java.util.Calendar.getInstance();
                 maxDate.set(1990, java.util.Calendar.SEPTEMBER, 31);
-        
+
                 if (cal.before(minDate) || cal.after(maxDate)) {
                     // Reset to initial date if out of range
                     model.setDate(1989, 8, 1);
@@ -648,23 +698,30 @@ public class SchoolController {
             }
         });
 
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(datePicker, gbc);
         row++;
 
         // Family Income
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Family Income:"), gbc);
-        JComboBox<String> incomeDropdown = new JComboBox<>(new String[]{"Low", "Middle", "High"});
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        JComboBox<String> incomeDropdown = new JComboBox<>(new String[] { "Low", "Middle", "High" });
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(incomeDropdown, gbc);
         row++;
 
         // Number of Siblings
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Number of Siblings:"), gbc);
-        JComboBox<Integer> siblingsDropdown = new JComboBox<>(new Integer[]{0, 1, 2, 3, 4, 5});
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        JComboBox<Integer> siblingsDropdown = new JComboBox<>(new Integer[] { 0, 1, 2, 3, 4, 5 });
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         formPanel.add(siblingsDropdown, gbc);
         row++;
 
@@ -685,22 +742,22 @@ public class SchoolController {
         JButton startGameButton = new JButton("Start Game");
         JButton randomizeButton = new JButton("Randomize");
         JButton cancelButton = new JButton("Cancel");
-        
+
         // Start Game is disabled until character is previewed
         startGameButton.setEnabled(false);
         startGameButton.setToolTipText("Preview your character first");
-        
+
         // Start Game closes the dialog and proceeds with game
         startGameButton.addActionListener(e -> {
             characterCreated[0] = true;
             dialog.dispose();
         });
-        
+
         previewButton.addActionListener(e -> {
             PlayerCharacter playerCharacter = new PlayerCharacter();
             playerCharacter.studentName.setFirstName(firstNameField.getText());
             playerCharacter.studentName.setLastName(lastNameField.getText());
-            
+
             // Get race code from checkboxes
             String raceCode = getRaceCode.get();
             if (raceCode == null) {
@@ -708,24 +765,28 @@ public class SchoolController {
                 return;
             }
             playerCharacter.studentStatistics.setRace(raceCode);
-            if (suffixDropdown.getSelectedItem().toString() != "None" || suffixDropdown.getSelectedItem().toString() != null) {
+            if (suffixDropdown.getSelectedItem().toString() != "None"
+                    || suffixDropdown.getSelectedItem().toString() != null) {
                 playerCharacter.studentName.setSuffix(suffixDropdown.getSelectedItem().toString());
             } else {
                 playerCharacter.studentName.setSuffix("");
             }
             playerCharacter.studentStatistics.setGender(genderDropdown.getSelectedItem().toString());
             playerCharacter.studentStatistics.setEyeColor(eyeColorDropdown.getSelectedItem().toString());
-            if (hairColorDropdown.getSelectedItem().toString() != "None" || hairColorDropdown.getSelectedItem().toString() != null) {
+            if (hairColorDropdown.getSelectedItem().toString() != "None"
+                    || hairColorDropdown.getSelectedItem().toString() != null) {
                 playerCharacter.studentStatistics.setHairColor(hairColorDropdown.getSelectedItem().toString());
             } else {
                 playerCharacter.studentStatistics.setHairColor("");
             }
-            if (hairLengthDropdown.getSelectedItem().toString() != "None" || hairLengthDropdown.getSelectedItem().toString() != null) {
+            if (hairLengthDropdown.getSelectedItem().toString() != "None"
+                    || hairLengthDropdown.getSelectedItem().toString() != null) {
                 playerCharacter.studentStatistics.setHairLength(hairLengthDropdown.getSelectedItem().toString());
             } else {
                 playerCharacter.studentStatistics.setHairLength("");
             }
-            if (hairTypeDropdown.getSelectedItem().toString() != "None" || hairTypeDropdown.getSelectedItem().toString() != null) {
+            if (hairTypeDropdown.getSelectedItem().toString() != "None"
+                    || hairTypeDropdown.getSelectedItem().toString() != null) {
                 playerCharacter.studentStatistics.setHairType(hairTypeDropdown.getSelectedItem().toString());
             } else {
                 playerCharacter.studentStatistics.setHairType("");
@@ -734,7 +795,8 @@ public class SchoolController {
             playerCharacter.studentStatistics.setInitHeight();
             java.util.Date selectedDate = (java.util.Date) datePicker.getModel().getValue();
             if (selectedDate != null) {
-                java.time.LocalDate localDate = selectedDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+                java.time.LocalDate localDate = selectedDate.toInstant().atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDate();
                 playerCharacter.studentStatistics.setBirthday(localDate);
             }
             // Align income casing with NPC generation (low|middle|high)
@@ -748,18 +810,25 @@ public class SchoolController {
             // Compute skin color from race + eye color
             String eyesForSkin = playerCharacter.studentStatistics.getEyeColor();
             if (eyesForSkin != null) {
-                playerCharacter.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(raceCode, eyesForSkin));
+                playerCharacter.studentStatistics
+                        .setSkinColor(TraitSelection.studentSkinColorSelection(raceCode, eyesForSkin));
             }
 
             // Append simple story points to the output window
             storyOutput.append("Generating base stats...\n");
             playerCharacter.studentStatistics.setInitStrength();
-            playerCharacter.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(STUDENT_POP_INTELLIGENCE_MEAN, STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION));
-            playerCharacter.studentStatistics.setCharisma((int) GameRandom.nextGaussian(STUDENT_POP_CHARISMA_MEAN, STUDENT_POP_CHARISMA_STANDARD_DEVIATION));
-            playerCharacter.studentStatistics.setAgility((int) GameRandom.nextGaussian(STUDENT_POP_AGILITY_MEAN, STUDENT_POP_AGILITY_STANDARD_DEVIATION));
-            playerCharacter.studentStatistics.setDetermination((int) GameRandom.nextGaussian(STUDENT_POP_DETERMINATION_MEAN, STUDENT_POP_DETERMINATION_STANDARD_DEVIATION));
-            playerCharacter.studentStatistics.setPerception((int) GameRandom.nextGaussian(STUDENT_POP_PERCEPTION_MEAN, STUDENT_POP_PERCEPTION_STANDARD_DEVIATION));
-            playerCharacter.studentStatistics.setLuck((int) GameRandom.nextGaussian(STUDENT_POP_LUCK_MEAN, STUDENT_POP_LUCK_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setIntelligence((int) GameRandom
+                    .nextGaussian(STUDENT_POP_INTELLIGENCE_MEAN, STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setCharisma(
+                    (int) GameRandom.nextGaussian(STUDENT_POP_CHARISMA_MEAN, STUDENT_POP_CHARISMA_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setAgility(
+                    (int) GameRandom.nextGaussian(STUDENT_POP_AGILITY_MEAN, STUDENT_POP_AGILITY_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setDetermination((int) GameRandom
+                    .nextGaussian(STUDENT_POP_DETERMINATION_MEAN, STUDENT_POP_DETERMINATION_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics.setPerception((int) GameRandom.nextGaussian(STUDENT_POP_PERCEPTION_MEAN,
+                    STUDENT_POP_PERCEPTION_STANDARD_DEVIATION));
+            playerCharacter.studentStatistics
+                    .setLuck((int) GameRandom.nextGaussian(STUDENT_POP_LUCK_MEAN, STUDENT_POP_LUCK_STANDARD_DEVIATION));
             // Derived attributes mirroring NPC generation
             playerCharacter.studentStatistics.setInitCreativity();
             playerCharacter.studentStatistics.setInitEmpathy();
@@ -775,19 +844,18 @@ public class SchoolController {
 
             PlayerStoryGenerator.reportBaseStats(playerCharacter, storyOutput);
 
-            // Generate and attach family info (parents and siblings) BEFORE story generation
+            // Generate and attach family info (parents and siblings) BEFORE story
+            // generation
             FamilyInfo family = new FamilyInfo();
             // Parents: use staff name generation approach (adult birth years)
             java.time.LocalDate fatherBirth = BirthdayGenerator.generateRandomBirthdayStaff();
             String fatherFirst;
             String playerSuffixVal = playerCharacter.studentName.getSuffix();
-            if (playerSuffixVal != null && (
-                    playerSuffixVal.equals("Jr.") ||
+            if (playerSuffixVal != null && (playerSuffixVal.equals("Jr.") ||
                     playerSuffixVal.equals("II") ||
                     playerSuffixVal.equals("III") ||
                     playerSuffixVal.equals("IV") ||
-                    playerSuffixVal.equals("V")
-            )) {
+                    playerSuffixVal.equals("V"))) {
                 fatherFirst = playerCharacter.studentName.getFirstName();
             } else {
                 fatherFirst = NameLoader.nameGenerator(String.valueOf(fatherBirth.getYear()), "Male");
@@ -799,7 +867,8 @@ public class SchoolController {
 
             // Siblings: produce names and birthdays using sibling generator logic
             int sibCount = playerCharacter.getSiblings();
-            java.util.List<SiblingInfo> sibInfos = SiblingGenerator.generateSiblingInfosForPlayer(playerCharacter, sibCount, view);
+            java.util.List<SiblingInfo> sibInfos = SiblingGenerator.generateSiblingInfosForPlayer(playerCharacter,
+                    sibCount, view);
             for (SiblingInfo info : sibInfos) {
                 family.addSibling(info);
             }
@@ -807,10 +876,10 @@ public class SchoolController {
 
             storyOutput.append("Generating your story...\n");
             PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
-            
+
             // Display flavor text after story generation
             FlavorTextLoader.appendToTextArea(storyOutput);
-            
+
             // Enable Start Game button after preview is complete
             startGameButton.setEnabled(true);
             startGameButton.setToolTipText("Begin your adventure!");
@@ -852,7 +921,8 @@ public class SchoolController {
 
             // Suffix (male-biased)
             String suffixValue = "None";
-            if (gender != null && gender.equalsIgnoreCase("Male") && setRandom(0, SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
+            if (gender != null && gender.equalsIgnoreCase("Male")
+                    && setRandom(0, SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
                 suffixValue = NameLoader.suffixNameGenerator(gender);
             }
 
@@ -870,8 +940,10 @@ public class SchoolController {
                     // For multiracial, randomly select 2 races
                     int first = setRandom(0, 3);
                     int second;
-                    do { second = setRandom(0, 3); } while (second == first);
-                    JCheckBox[] boxes = {whiteCheckbox, blackCheckbox, asianCheckbox, latinoCheckbox};
+                    do {
+                        second = setRandom(0, 3);
+                    } while (second == first);
+                    JCheckBox[] boxes = { whiteCheckbox, blackCheckbox, asianCheckbox, latinoCheckbox };
                     boxes[first].setSelected(true);
                     boxes[second].setSelected(true);
                 }
@@ -888,7 +960,7 @@ public class SchoolController {
 
             // Income distribution: Low (25%), Middle (60%), High (15%) - from SimConstants
             int incomeRoll = setRandom(0, STUDENT_INCOME_LEVEL_SAMPLE_SIZE);
-            String incomeUi = (incomeRoll <= INCOME_THRESHOLD_LOW) ? "Low" 
+            String incomeUi = (incomeRoll <= INCOME_THRESHOLD_LOW) ? "Low"
                     : (incomeRoll <= INCOME_THRESHOLD_MIDDLE) ? "Middle" : "High";
 
             // Siblings: 0-5
@@ -897,7 +969,8 @@ public class SchoolController {
             // Populate UI controls
             firstNameField.setText(firstName);
             lastNameField.setText(lastName);
-            String genderUi = gender == null || gender.isBlank() ? "Other" : (Character.toUpperCase(gender.charAt(0)) + gender.substring(1).toLowerCase());
+            String genderUi = gender == null || gender.isBlank() ? "Other"
+                    : (Character.toUpperCase(gender.charAt(0)) + gender.substring(1).toLowerCase());
             genderDropdown.setSelectedItem(genderUi);
             suffixDropdown.setSelectedItem(suffixValue);
             // Race checkboxes are already set above
@@ -924,13 +997,19 @@ public class SchoolController {
             }
 
             @Override
-            public void insertUpdate(DocumentEvent e) { validateForm(); }
+            public void insertUpdate(DocumentEvent e) {
+                validateForm();
+            }
 
             @Override
-            public void removeUpdate(DocumentEvent e) { validateForm(); }
+            public void removeUpdate(DocumentEvent e) {
+                validateForm();
+            }
 
             @Override
-            public void changedUpdate(DocumentEvent e) { validateForm(); }
+            public void changedUpdate(DocumentEvent e) {
+                validateForm();
+            }
         };
         firstNameField.getDocument().addDocumentListener(docListener);
         lastNameField.getDocument().addDocumentListener(docListener);
@@ -948,7 +1027,7 @@ public class SchoolController {
 
         dialog.pack();
         dialog.setVisible(true);
-        
+
         return characterCreated[0];
     }
 
@@ -1029,7 +1108,7 @@ public class SchoolController {
                 if (simulationRunning) {
                     stopSimulation();
                 }
-                
+
                 // Reset time to starting values
                 time.reset();
 
@@ -1069,7 +1148,7 @@ public class SchoolController {
             }
             return null;
         }
-        
+
         /**
          * New Town-based generation flow.
          * Generates population independently from school, then assigns to school.
@@ -1081,16 +1160,16 @@ public class SchoolController {
             AthleticField[] athleticFields;
             LibraryR[] libraries;
             Auditorium[] auditoriums;
-            
+
             // Step 1: Determine funding level for school
             config.SchoolFundingModel fundingModel = determineFundingLevel();
             publish("School funding level: " + fundingModel.getFundingLevel().getDisplayName());
-            
+
             // Step 2: Create Town with demographics configuration FIRST
             // This is now independent of school - the town population exists regardless
             publish("Creating town population...");
             TownDemographics demographics = DemographicsLoader.loadOrDefault();
-            
+
             // Check for custom demographics from UI
             if (view.isCustomDemographicsEnabled()) {
                 publish("Using custom demographics settings...");
@@ -1098,85 +1177,86 @@ public class SchoolController {
                 demographics.setTotalStaffPopulation(view.getDemographicsStaffPopulation());
                 demographics.setExtraStudentPoolPercent(view.getDemographicsExtraStudentPercent() / 100.0);
                 demographics.setExtraStaffPoolPercent(view.getDemographicsExtraStaffPercent() / 100.0);
-                
+
                 // Set custom gender distribution
                 java.util.Map<String, Double> genderDist = new java.util.HashMap<>();
                 genderDist.put("Male", view.getDemographicsMalePercent() / 100.0);
                 genderDist.put("Female", view.getDemographicsFemalePercent() / 100.0);
                 demographics.setGenderDistribution(genderDist);
-                
+
                 // Set custom income distribution
                 java.util.Map<String, Double> incomeDist = new java.util.HashMap<>();
                 incomeDist.put("Low", view.getDemographicsIncomeLowPercent() / 100.0);
                 incomeDist.put("Middle", view.getDemographicsIncomeMiddlePercent() / 100.0);
                 incomeDist.put("High", view.getDemographicsIncomeHighPercent() / 100.0);
                 demographics.setIncomeDistribution(incomeDist);
-                
-                publish("  Students: " + demographics.getTotalStudentPopulation() + 
-                        " (+" + (int)(demographics.getExtraStudentPoolPercent() * 100) + "% pool)");
-                publish("  Staff: " + demographics.getTotalStaffPopulation() + 
-                        " (+" + (int)(demographics.getExtraStaffPoolPercent() * 100) + "% pool)");
-                publish("  Gender: " + view.getDemographicsMalePercent() + "% Male / " + 
+
+                publish("  Students: " + demographics.getTotalStudentPopulation() +
+                        " (+" + (int) (demographics.getExtraStudentPoolPercent() * 100) + "% pool)");
+                publish("  Staff: " + demographics.getTotalStaffPopulation() +
+                        " (+" + (int) (demographics.getExtraStaffPoolPercent() * 100) + "% pool)");
+                publish("  Gender: " + view.getDemographicsMalePercent() + "% Male / " +
                         view.getDemographicsFemalePercent() + "% Female");
-                publish("  Income: " + view.getDemographicsIncomeLowPercent() + "% Low / " + 
-                        view.getDemographicsIncomeMiddlePercent() + "% Middle / " + 
+                publish("  Income: " + view.getDemographicsIncomeLowPercent() + "% Low / " +
+                        view.getDemographicsIncomeMiddlePercent() + "% Middle / " +
                         view.getDemographicsIncomeHighPercent() + "% High");
             }
-            // Note: If not using custom demographics, we use defaults from DemographicsLoader
+            // Note: If not using custom demographics, we use defaults from
+            // DemographicsLoader
             // The population is no longer dependent on school capacity
-            
-            // Step 3: Generate the school structure based on funding level and target population
+
+            // Step 3: Generate the school structure based on funding level and target
+            // population
             publish("Generating the school...");
             standardSchool = new StandardSchool();
             int targetPopulation = demographics.getTotalStudentPopulation();
             new Director(standardSchool, fundingModel, targetPopulation, view);
-            
+
             publish("Connecting rooms...");
             roomConnector = new RoomConnector(standardSchool, view);
-            
-            publish("School capacity - Optimal: " + standardSchool.getOptimalCapacity() + 
-                   ", Physical: " + standardSchool.getPhysicalCapacity());
-            
+
+            publish("School capacity - Optimal: " + standardSchool.getOptimalCapacity() +
+                    ", Physical: " + standardSchool.getPhysicalCapacity());
+
             // Step 4: Generate the town population (completely independent of school)
             colors = standardSchool.getSchoolColors();
             StudentPopGenerator.setSchoolColors(colors);
             SiblingGenerator.setSchoolColors(colors);
-            
+
             town = TownPopulationGenerator.generateTown("Town", demographics, view);
             town.setTownColors(colors);
-            
-            publish("Town population generated: " + town.getStudentPool().getTotalCount() + 
-                   " students, " + town.getStaffPool().getTotalCount() + " staff");
-            
+
+            publish("Town population generated: " + town.getStudentPool().getTotalCount() +
+                    " students, " + town.getStaffPool().getTotalCount() + " staff");
+
             // Step 5: Assign population to school using DEMAND-DRIVEN services
             // This analyzes curriculum requirements first, then assigns staff by type
             publish("Assigning population to school using demand-driven staffing...");
             SchoolAssignmentService.populateSchoolDemandDriven(town, standardSchool, view);
-            
+
             // Get HashMaps for compatibility with existing code
             studentHashMap = SchoolAssignmentService.getStudentHashMap(town, standardSchool);
             staffHashMap = SchoolAssignmentService.getStaffHashMap(town, standardSchool);
-            
+
             // Report on school status
             if (standardSchool.isOvercrowded()) {
-                publish("NOTE: School is overcrowded at " + 
-                       String.format("%.1f%%", standardSchool.getOvercrowdingLevel() * 100) + 
-                       " of optimal capacity");
+                publish("NOTE: School is overcrowded at " +
+                        String.format("%.1f%%", standardSchool.getOvercrowdingLevel() * 100) +
+                        " of optimal capacity");
             }
-            
+
             publish("Done creating school and population");
-            
+
             // Update the school info panel
             view.updateSchoolInfo(
-                standardSchool.getSchoolName(),
-                standardSchool.getSchoolFoundedYear(),
-                standardSchool.getSchoolMascot(),
-                colors[0],
-                colors[1]
-            );
+                    standardSchool.getSchoolName(),
+                    standardSchool.getSchoolFoundedYear(),
+                    standardSchool.getSchoolMascot(),
+                    colors[0],
+                    colors[1]);
             updateTimeLabel();
             updateWeatherLabels();
-            
+
             // Add names to rooms
             gyms = standardSchool.getGyms();
             for (Gym gym : gyms) {
@@ -1194,22 +1274,22 @@ public class SchoolController {
             for (Auditorium auditorium : auditoriums) {
                 RoomNameGenerator.generateRoomName(auditorium, standardSchool);
             }
-            
+
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
-            
+
             TraversalStorage traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
-            
+
             // Log population summary
             publish(SchoolAssignmentService.getPopulationSummary(town, standardSchool));
         }
-        
+
         /**
          * Legacy generation flow (pre-Town architecture).
          * Kept for backward compatibility.
          */
         private void generateLegacy() {
-            //Create hash maps for storage
+            // Create hash maps for storage
             studentHashMap = new HashMap<Integer, Student>();
             staffHashMap = new HashMap<Integer, Staff>();
             int student_cap;
@@ -1221,7 +1301,7 @@ public class SchoolController {
             LibraryR[] libraries;
             Auditorium[] auditoriums;
 
-            //Generate a new standard school with rooms
+            // Generate a new standard school with rooms
             publish("Generating the school...");
             standardSchool = new StandardSchool();
             new Director(standardSchool, view);
@@ -1246,21 +1326,22 @@ public class SchoolController {
             colors = standardSchool.getSchoolColors();
             // Update the school info panel
             view.updateSchoolInfo(
-                standardSchool.getSchoolName(),
-                standardSchool.getSchoolFoundedYear(),
-                standardSchool.getSchoolMascot(),
-                colors[0],
-                colors[1]
-            );
+                    standardSchool.getSchoolName(),
+                    standardSchool.getSchoolFoundedYear(),
+                    standardSchool.getSchoolMascot(),
+                    colors[0],
+                    colors[1]);
             updateTimeLabel();
             updateWeatherLabels();
             classrooms = standardSchool.getClassrooms();
             for (Classroom classroom : classrooms) {
                 classroom.reassignClassroomByTeacher(staffHashMap, view);
             }
-            // Note: Class scheduling is handled by EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced() below
+            // Note: Class scheduling is handled by
+            // EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced() below
             try {
-                EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view);
+                EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(studentHashMap, staffHashMap,
+                        standardSchool, view);
                 StudentSeatingAssigner.seatInitialStudents(standardSchool);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1302,14 +1383,14 @@ public class SchoolController {
             view.setVisualizeButtonEnabled(true);
             view.setInspectionMenuEnabled(true);
             view.setSocialGraphButtonEnabled(true);
-            
+
             // Initialize simulation engine
             initializeSimulation();
-            
+
             // Show simulation controls
             view.showSimulationControls();
             updatePeriodDisplay();
-            
+
             // Character creation is now shown BEFORE generation in GenerateButtonListener
         }
 
