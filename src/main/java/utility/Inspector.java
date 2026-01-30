@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Inspector {
-    
+
     /**
      * Builds the inspection text for a student containing their personal info,
      * stats, status effects, family info, and schedule.
@@ -59,7 +59,7 @@ public class Inspector {
 
         // Header with name (using getFullName for consistency)
         sb.append(student.studentName.getFullName()).append("\n=====================================\n");
-        
+
         // Physical description
         sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
         sb.append(skinColor).append(" colored skin and ");
@@ -86,11 +86,11 @@ public class Inspector {
             sb.append(" They wear glasses.");
         }
         sb.append("\n");
-        
+
         // Grade and birthday
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
-        
+
         // Base stats
         sb.append("They have the following base stats:\n   INTELLIGENCE: ")
                 .append(student.studentStatistics.getIntelligence());
@@ -115,7 +115,7 @@ public class Inspector {
         sb.append(student.studentStatistics.getStrength()).append("\n   LUCK: ")
                 .append(student.studentStatistics.getLuck()).append("\n");
         sb.append("   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
-        
+
         // Secondary stats
         sb.append("They have the following secondary stats:\n   Creativity: ")
                 .append(student.studentStatistics.getCreativity());
@@ -126,7 +126,7 @@ public class Inspector {
         sb.append(student.studentStatistics.getCuriosity()).append("\n   Responsibility: ")
                 .append(student.studentStatistics.getResponsibility());
         sb.append("\n   Open-Mindedness: ").append(student.studentStatistics.getOpenMindedness()).append("\n");
-        
+
         // Status effects
         sb.append(firstName).append(" has the following status effects:\n");
         if (student.studentStatistics.getBoredom() == 0) {
@@ -156,7 +156,7 @@ public class Inspector {
         } else {
             sb.append(firstName).append(" has normal vision.\n");
         }
-        
+
         // Family info
         sb.append("Their family has the following income: ").append(income).append("\n");
         if (!siblingsInSchool.isEmpty()) {
@@ -171,7 +171,7 @@ public class Inspector {
                 sb.append(sibling.studentName.getFullName()).append("\n");
             }
         }
-        
+
         // Braces history
         if (hasBraces) {
             if (bracesStartDate != null && bracesEndDate != null) {
@@ -186,7 +186,7 @@ public class Inspector {
             sb.append(".");
             sb.append("\n");
         }
-        
+
         // Schedule
         for (StudentBlock block : schedule) {
             int blockNum = block.getBlockNumber();
@@ -206,7 +206,7 @@ public class Inspector {
     /**
      * Displays student inspection information in a text area.
      *
-     * @param student the student to inspect
+     * @param student        the student to inspect
      * @param inspectionArea the text area to display the information in
      */
     public static void studentInspection(Student student, JTextArea inspectionArea) {

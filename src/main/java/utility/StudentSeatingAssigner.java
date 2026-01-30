@@ -56,7 +56,8 @@ public class StudentSeatingAssigner {
                 return;
             }
         }
-        // If unable to seat the student in a random empty seat, try to seat them in the first empty seat
+        // If unable to seat the student in a random empty seat, try to seat them in the
+        // first empty seat
         for (int x = 0; x < seats.length; x++) {
             for (int y = 0; y < seats[0].length; y++) {
                 if (seats[x][y] == null) {
@@ -65,7 +66,8 @@ public class StudentSeatingAssigner {
                 }
             }
         }
-        System.out.println("Warning: Unable to seat student " + student.studentName.getFirstName() + " " + student.studentName.getLastName());
+        System.out.println("Warning: Unable to seat student " + student.studentName.getFirstName() + " "
+                + student.studentName.getLastName());
     }
 
     private static List<Room> getAllRooms(StandardSchool school) {
@@ -106,7 +108,8 @@ public class StudentSeatingAssigner {
             factors.add(2);
             factors.add(2);
         } else {
-            // Iterate from studentCap (the lowest range) to next perfect square (the highest range)
+            // Iterate from studentCap (the lowest range) to next perfect square (the
+            // highest range)
             for (int j = studentCap; j <= upperLimit; j++) {
                 int step = j % 2 == 0 ? 1 : 2;
                 for (int i = 1; i <= Math.sqrt(j); i += step) {
@@ -123,7 +126,7 @@ public class StudentSeatingAssigner {
     }
 
     public static int[] selectFactors(ArrayList<Integer> factors) {
-        int [] factorStore = new int[2];
+        int[] factorStore = new int[2];
         // TODO: better error handling
         if (factors.size() <= 1) {
             System.out.println("Factors missing for room");
@@ -133,9 +136,10 @@ public class StudentSeatingAssigner {
         } else {
             int random = Randomizer.setRandom(1, factors.size() - 2);
             factorStore[0] = factors.get(random);
-            // Get next selection since factors are stored in pairs. If they are even move forward
+            // Get next selection since factors are stored in pairs. If they are even move
+            // forward
             // since random + 1 will be the factor pair, otherwise move back
-            if(random % 2 == 0) {
+            if (random % 2 == 0) {
                 random++;
             } else {
                 random--;
@@ -145,6 +149,5 @@ public class StudentSeatingAssigner {
 
         return factorStore;
     }
-
 
 }

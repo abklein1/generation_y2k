@@ -14,7 +14,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import entity.Rooms.Room;
 
 public class TraversalStorage {
-    
+
     HashMap<Student, ArrayList<Room>> studentPathsFall;
     HashMap<Student, ArrayList<Room>> studentPathsSpring;
 
@@ -54,14 +54,17 @@ public class TraversalStorage {
                 if (i + 2 < blocks.size()) {
                     Room nextRoom = blocks.get(i + 2).getRoom();
                     if (room != null && nextRoom != null) {
-                        GraphPath<Room, DefaultEdge> path = DijkstraShortestPath.findPathBetween(schoolConnect, room, nextRoom);
+                        GraphPath<Room, DefaultEdge> path = DijkstraShortestPath.findPathBetween(schoolConnect, room,
+                                nextRoom);
                         if (path != null) {
                             ArrayList<Room> roomList = new ArrayList<>(path.getVertexList());
                             if (block.getSemester().equals("Fall")) {
-                                view.appendOutput("Fall path: " + roomList + " for student " + student.studentName.getFirstName());
+                                view.appendOutput("Fall path: " + roomList + " for student "
+                                        + student.studentName.getFirstName());
                                 studentPathsFall.put(student, roomList);
                             } else {
-                                view.appendOutput("Spring path: " + roomList + " for student " + student.studentName.getFirstName());
+                                view.appendOutput("Spring path: " + roomList + " for student "
+                                        + student.studentName.getFirstName());
                                 studentPathsSpring.put(student, roomList);
                             }
                         }

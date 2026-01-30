@@ -23,35 +23,46 @@ public class TraitSelection {
         if (age <= TEACHER_YOUNGER_AGE_HAIR_COLOR_THRESHOLD) {
             if (selection >= TEACHER_BLACK_HAIR_LOWER_BOUND && selection <= TEACHER_BLACK_HAIR_UPPER_BOUND) {
                 return "black";
-            } else if (selection >= TEACHER_DARK_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_DARK_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_DARK_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_DARK_BROWN_HAIR_UPPER_BOUND) {
                 return "dark brown";
-            } else if (selection >= TEACHER_MEDIUM_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MEDIUM_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
                 return "medium brown";
-            } else if (selection >= TEACHER_LIGHT_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_LIGHT_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_LIGHT_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_LIGHT_BROWN_HAIR_UPPER_BOUND) {
                 return "light brown";
             } else if (selection >= TEACHER_BLONDE_HAIR_LOWER_BOUND && selection <= TEACHER_BLONDE_HAIR_UPPER_BOUND) {
                 return "blond";
-            } else if (selection >= TEACHER_CHESTNUT_HAIR_LOWER_BOUND && selection <= TEACHER_CHESTNUT_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_CHESTNUT_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_CHESTNUT_HAIR_UPPER_BOUND) {
                 return "chestnut";
-            } else if (selection >= TEACHER_MAHOGANY_HAIR_LOWER_BOUND && selection <= TEACHER_MAHOGANY_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MAHOGANY_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MAHOGANY_HAIR_UPPER_BOUND) {
                 return "mahogany";
-            } else if (selection >= TEACHER_DIRTY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_DIRTY_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_DIRTY_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_DIRTY_BLOND_HAIR_UPPER_BOUND) {
                 return "dirty blond";
-            } else if (selection >= TEACHER_GOLDEN_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_GOLDEN_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
                 return "golden blond";
-            } else if (selection >= TEACHER_LIGHT_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_LIGHT_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_LIGHT_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_LIGHT_BLOND_HAIR_UPPER_BOUND) {
                 return "light blond";
-            } else if (selection >= TEACHER_GOLDEN_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_GOLDEN_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
                 return "golden brown";
             } else if (selection >= TEACHER_CARAMEL_HAIR_LOWER_BOUND && selection <= TEACHER_CARAMEL_HAIR_UPPER_BOUND) {
                 return "caramel";
-            } else if (selection >= TEACHER_STRAWBERRY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_STRAWBERRY_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
                 return "strawberry blond";
             } else if (selection >= TEACHER_COPPER_HAIR_LOWER_BOUND && selection <= TEACHER_COPPER_HAIR_UPPER_BOUND) {
                 return "copper";
             } else if (selection >= TEACHER_RED_HAIR_LOWER_BOUND && selection <= TEACHER_RED_HAIR_UPPER_BOUND) {
                 return "red";
-            } else if (selection >= TEACHER_PLATINUM_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_PLATINUM_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
                 return "platinum blond";
             } else {
                 int random = Randomizer.setRandom(0, TEACHER_OTHER_HAIR_SAMPLE_SIZE);
@@ -74,97 +85,113 @@ public class TraitSelection {
             if (selection > TEACHER_MIDDLE_AGE_GRAY_HAIR_THRESHOLD) {
                 hairColor = "graying";
             }
-            if (selection >= TEACHER_MIDDLE_AGE_BLACK_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_BLACK_HAIR_UPPER_BOUND) {
+            if (selection >= TEACHER_MIDDLE_AGE_BLACK_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_BLACK_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", black";
                 } else {
                     hairColor = "black";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_DARK_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_DARK_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_DARK_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_DARK_BROWN_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", dark brown";
                 } else {
                     hairColor = "dark brown";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_MEDIUM_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_MEDIUM_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", medium brown";
                 } else {
                     hairColor = "medium brown";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_LIGHT_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_LIGHT_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_LIGHT_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_LIGHT_BROWN_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", light brown";
                 } else {
                     hairColor = "light brown";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_BLONDE_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_BLONDE_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_BLONDE_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_BLONDE_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", blond";
                 } else {
                     hairColor = "blond";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_CHESTNUT_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_CHESTNUT_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_CHESTNUT_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_CHESTNUT_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", chestnut";
                 } else {
                     hairColor = "chestnut";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_MAHOGANY_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_MAHOGANY_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_MAHOGANY_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_MAHOGANY_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", mahogany";
                 } else {
                     hairColor = "mahogany";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_DIRTY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_DIRTY_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_DIRTY_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_DIRTY_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", dirty blond";
                 } else {
                     hairColor = "dirty blond";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_GOLDEN_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_GOLDEN_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", golden blond";
                 } else {
                     hairColor = "golden blond";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_LIGHT_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_LIGHT_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_LIGHT_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_LIGHT_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", light blond";
                 } else {
                     hairColor = "light blond";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_GOLDEN_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_GOLDEN_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", golden brown";
                 } else {
                     hairColor = "golden brown";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_CARAMEL_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_CARAMEL_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_CARAMEL_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_CARAMEL_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", caramel";
                 } else {
                     hairColor = "caramel";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_STRAWBERRY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_STRAWBERRY_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", strawberry blond";
                 } else {
                     hairColor = "strawberry blond";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_COPPER_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_COPPER_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_COPPER_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_COPPER_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", copper";
                 } else {
                     hairColor = "copper";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_RED_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_RED_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_RED_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_RED_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", red";
                 } else {
                     hairColor = "red";
                 }
-            } else if (selection >= TEACHER_MIDDLE_AGE_PLATINUM_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_MIDDLE_AGE_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_MIDDLE_AGE_PLATINUM_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_MIDDLE_AGE_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", platinum blond";
                 } else {
@@ -179,97 +206,113 @@ public class TraitSelection {
             if (selection > TEACHER_OLD_AGE_GRAY_HAIR_THRESHOLD) {
                 hairColor = "graying";
             }
-            if (selection >= TEACHER_OLD_AGE_BLACK_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_BLACK_HAIR_UPPER_BOUND) {
+            if (selection >= TEACHER_OLD_AGE_BLACK_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_BLACK_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", black";
                 } else {
                     hairColor = "black";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_DARK_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_DARK_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_DARK_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_DARK_BROWN_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", dark brown";
                 } else {
                     hairColor = "dark brown";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_MEDIUM_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_MEDIUM_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_MEDIUM_BROWN_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", medium brown";
                 } else {
                     hairColor = "medium brown";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_LIGHT_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_LIGHT_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_LIGHT_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_LIGHT_BROWN_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", light brown";
                 } else {
                     hairColor = "light brown";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_BLONDE_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_BLONDE_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_BLONDE_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_BLONDE_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", blond";
                 } else {
                     hairColor = "blond";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_CHESTNUT_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_CHESTNUT_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_CHESTNUT_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_CHESTNUT_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", chestnut";
                 } else {
                     hairColor = "chestnut";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_MAHOGANY_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_MAHOGANY_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_MAHOGANY_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_MAHOGANY_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", mahogany";
                 } else {
                     hairColor = "mahogany";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_DIRTY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_DIRTY_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_DIRTY_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_DIRTY_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", dirty blond";
                 } else {
                     hairColor = "dirty blond";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_GOLDEN_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_GOLDEN_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_GOLDEN_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", golden blond";
                 } else {
                     hairColor = "golden blond";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_LIGHT_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_LIGHT_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_LIGHT_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_LIGHT_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", light blond";
                 } else {
                     hairColor = "light blond";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_GOLDEN_BROWN_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_GOLDEN_BROWN_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_GOLDEN_BROWN_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", golden brown";
                 } else {
                     hairColor = "golden brown";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_CARAMEL_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_CARAMEL_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_CARAMEL_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_CARAMEL_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", caramel";
                 } else {
                     hairColor = "caramel";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_STRAWBERRY_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_STRAWBERRY_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_STRAWBERRY_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", strawberry blond";
                 } else {
                     hairColor = "strawberry blond";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_COPPER_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_COPPER_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_COPPER_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_COPPER_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", copper";
                 } else {
                     hairColor = "copper";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_RED_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_RED_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_RED_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_RED_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", red";
                 } else {
                     hairColor = "red";
                 }
-            } else if (selection >= TEACHER_OLD_AGE_PLATINUM_BLOND_HAIR_LOWER_BOUND && selection <= TEACHER_OLD_AGE_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
+            } else if (selection >= TEACHER_OLD_AGE_PLATINUM_BLOND_HAIR_LOWER_BOUND
+                    && selection <= TEACHER_OLD_AGE_PLATINUM_BLOND_HAIR_UPPER_BOUND) {
                 if (!hairColor.isBlank()) {
                     hairColor = hairColor + ", platinum blond";
                 } else {
@@ -285,7 +328,8 @@ public class TraitSelection {
     public static String eyeSelection(int selection) {
         if (selection >= TEACHER_DARK_BROWN_EYE_LOWER_BOUND && selection <= TEACHER_DARK_BROWN_EYE_UPPER_BOUND) {
             return "dark brown";
-        } else if (selection >= TEACHER_LIGHT_BROWN_EYE_LOWER_BOUND && selection <= TEACHER_LIGHT_BROWN_EYE_UPPER_BOUND) {
+        } else if (selection >= TEACHER_LIGHT_BROWN_EYE_LOWER_BOUND
+                && selection <= TEACHER_LIGHT_BROWN_EYE_UPPER_BOUND) {
             return "light brown";
         } else if (selection >= TEACHER_BLUE_EYE_LOWER_BOUND && selection <= TEACHER_BLUE_EYE_UPPER_BOUND) {
             return "blue";
@@ -309,25 +353,32 @@ public class TraitSelection {
     }
 
     public static String hairType(int selection) {
-        if (selection >= TEACHER_FINE_STRAIGHT_HAIR_LOWER_BOUND && selection <= TEACHER_FINE_STRAIGHT_HAIR_UPPER_BOUND) {
+        if (selection >= TEACHER_FINE_STRAIGHT_HAIR_LOWER_BOUND
+                && selection <= TEACHER_FINE_STRAIGHT_HAIR_UPPER_BOUND) {
             return "fine, straight";
         } else if (selection >= TEACHER_STRAIGHT_HAIR_LOWER_BOUND && selection <= TEACHER_STRAIGHT_HAIR_UPPER_BOUND) {
             return "straight";
-        } else if (selection >= TEACHER_COARSE_STRAIGHT_HAIR_LOWER_BOUND && selection <= TEACHER_COARSE_STRAIGHT_HAIR_UPPER_BOUND) {
+        } else if (selection >= TEACHER_COARSE_STRAIGHT_HAIR_LOWER_BOUND
+                && selection <= TEACHER_COARSE_STRAIGHT_HAIR_UPPER_BOUND) {
             return "coarse, straight";
-        } else if (selection >= TEACHER_THIN_WAVEY_HAIR_LOWER_BOUND && selection <= TEACHER_THIN_WAVEY_HAIR_UPPER_BOUND) {
+        } else if (selection >= TEACHER_THIN_WAVEY_HAIR_LOWER_BOUND
+                && selection <= TEACHER_THIN_WAVEY_HAIR_UPPER_BOUND) {
             return "thin, wavy";
         } else if (selection >= TEACHER_WAVEY_HAIR_LOWER_BOUND && selection <= TEACHER_WAVEY_HAIR_UPPER_BOUND) {
             return "wavy";
-        } else if (selection >= TEACHER_THICK_WAVEY_HAIR_LOWER_BOUND && selection <= TEACHER_THICK_WAVEY_HAIR_UPPER_BOUND) {
+        } else if (selection >= TEACHER_THICK_WAVEY_HAIR_LOWER_BOUND
+                && selection <= TEACHER_THICK_WAVEY_HAIR_UPPER_BOUND) {
             return "thick, wavy";
-        } else if (selection >= TEACHER_LOOSE_CURLY_HAIR_LOWER_BOUND && selection <= TEACHER_LOOSE_CURLY_HAIR_UPPER_BOUND) {
+        } else if (selection >= TEACHER_LOOSE_CURLY_HAIR_LOWER_BOUND
+                && selection <= TEACHER_LOOSE_CURLY_HAIR_UPPER_BOUND) {
             return "loose, curly";
         } else if (selection >= TEACHER_CURLY_HAIR_LOWER_BOUND && selection <= TEACHER_CURLY_HAIR_UPPER_BOUND) {
             return "curly";
-        } else if (selection >= TEACHER_DENSE_CURLY_HAIR_LOWER_BOUND && selection <= TEACHER_DENSE_CURLY_HAIR_UPPER_BOUND) {
+        } else if (selection >= TEACHER_DENSE_CURLY_HAIR_LOWER_BOUND
+                && selection <= TEACHER_DENSE_CURLY_HAIR_UPPER_BOUND) {
             return "dense, curly";
-        } else if (selection >= TEACHER_TIGHT_COILY_HAIR_LOWER_BOUND && selection <= TEACHER_TIGHT_COILY_HAIR_UPPER_BOUND) {
+        } else if (selection >= TEACHER_TIGHT_COILY_HAIR_LOWER_BOUND
+                && selection <= TEACHER_TIGHT_COILY_HAIR_UPPER_BOUND) {
             return "tight, coily";
         } else if (selection >= TEACHER_COILY_HAIR_LOWER_BOUND && selection <= TEACHER_COILY_HAIR_UPPER_BOUND) {
             return "coily";
@@ -370,9 +421,10 @@ public class TraitSelection {
         }
     }
 
-    //TODO: some repeated code that needs cleaning eventually
+    // TODO: some repeated code that needs cleaning eventually
     public static String studentHairSelection(String race, String eyes) {
-        // TODO: possibly separate logic from hair and have separate gen for genetic disorders
+        // TODO: possibly separate logic from hair and have separate gen for genetic
+        // disorders
         // albinism
         if (eyes.equals("red") || eyes.equals("violet")) {
             return "white";
@@ -400,7 +452,8 @@ public class TraitSelection {
     private static JSONObject loadHairColorData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources.People/hair_color.json", StandardCharsets.UTF_8);
+            FileReader reader = new FileReader("src/main/java/Resources.People/hair_color.json",
+                    StandardCharsets.UTF_8);
             return (JSONObject) parser.parse(reader);
         } catch (IOException | ParseException e) {
             throw new RuntimeException("Failed to load hair color data", e);
@@ -521,7 +574,8 @@ public class TraitSelection {
     private static JSONObject loadSkinColorData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources.People/skin_distribution.json", StandardCharsets.UTF_8);
+            FileReader reader = new FileReader("src/main/java/Resources.People/skin_distribution.json",
+                    StandardCharsets.UTF_8);
             return (JSONObject) parser.parse(reader);
         } catch (IOException | ParseException e) {
             throw new RuntimeException("Failed to load skin color data", e);
@@ -569,16 +623,17 @@ public class TraitSelection {
 
     /**
      * Selects band colors for braces, with option to use school colors.
-     * When alternating bands are chosen, there's a higher chance of using school colors.
+     * When alternating bands are chosen, there's a higher chance of using school
+     * colors.
      *
      * @param useSchoolColors whether to use school colors
-     * @param schoolColors the school's colors array (may be null)
-     * @param firstColor the first color already selected (to avoid duplicates)
+     * @param schoolColors    the school's colors array (may be null)
+     * @param firstColor      the first color already selected (to avoid duplicates)
      * @return a randomly selected band color
      */
-    public static String selectBracesBandColorWithSchoolOption(boolean useSchoolColors, 
-                                                                String[] schoolColors, 
-                                                                String firstColor) {
+    public static String selectBracesBandColorWithSchoolOption(boolean useSchoolColors,
+            String[] schoolColors,
+            String firstColor) {
         if (useSchoolColors && schoolColors != null && schoolColors.length >= 2) {
             // Determine if we should use school colors (60% chance when alternating)
             if (Randomizer.setRandom(0, BRACES_SCHOOL_COLOR_SAMPLE_SIZE) < BRACES_SCHOOL_COLOR_PROBABILITY) {
@@ -607,7 +662,7 @@ public class TraitSelection {
      * Selects the first band color, potentially using school colors if alternating.
      *
      * @param hasAlternating whether the student has alternating band colors
-     * @param schoolColors the school's colors array (may be null)
+     * @param schoolColors   the school's colors array (may be null)
      * @return the first band color
      */
     public static String selectFirstBandColor(boolean hasAlternating, String[] schoolColors) {
@@ -631,7 +686,8 @@ public class TraitSelection {
     }
 
     /**
-     * Determines if a student has braces based on race, income level, and grade level.
+     * Determines if a student has braces based on race, income level, and grade
+     * level.
      * 
      * Base rates from research data:
      * - White: 31% receive orthodontic treatment
@@ -649,29 +705,30 @@ public class TraitSelection {
      * - Junior: lower (many getting removed)
      * - Senior: lowest (most have completed treatment)
      *
-     * @param race the student's race category
+     * @param race        the student's race category
      * @param incomeLevel the family income level (low, middle, high)
-     * @param gradeLevel the student's grade level (Freshman, Sophomore, Junior, Senior)
+     * @param gradeLevel  the student's grade level (Freshman, Sophomore, Junior,
+     *                    Senior)
      * @return true if the student has braces, false otherwise
      */
     public static boolean determineBraces(String race, String incomeLevel, String gradeLevel) {
         // Base rates by race (from orthodontic research data)
         double baseRate = switch (race) {
-            case "white" -> 0.31;       // 31% of White teenagers
-            case "hispanic" -> 0.11;    // 11% of Mexican American teenagers
-            case "black" -> 0.08;       // 8% of Black teenagers
-            case "api" -> 0.25;         // Estimated based on income demographics
-            case "aian" -> 0.10;        // Estimated similar to other minorities
-            case "2prace" -> 0.18;      // Weighted average of groups
-            default -> 0.15;            // Default fallback
+            case "white" -> 0.31; // 31% of White teenagers
+            case "hispanic" -> 0.11; // 11% of Mexican American teenagers
+            case "black" -> 0.08; // 8% of Black teenagers
+            case "api" -> 0.25; // Estimated based on income demographics
+            case "aian" -> 0.10; // Estimated similar to other minorities
+            case "2prace" -> 0.18; // Weighted average of groups
+            default -> 0.15; // Default fallback
         };
 
         // Income multiplier (reflects suburban affluent vs inner city disparity)
         // High income areas have 50%+ utilization, low income less than 10%
         double incomeMultiplier = switch (incomeLevel) {
-            case "high" -> 1.6;     // Affluent areas have ~50%+ for white students
-            case "middle" -> 1.0;   // Base rates apply
-            case "low" -> 0.3;      // Low income areas have <10% utilization
+            case "high" -> 1.6; // Affluent areas have ~50%+ for white students
+            case "middle" -> 1.0; // Base rates apply
+            case "low" -> 0.3; // Low income areas have <10% utilization
             default -> 1.0;
         };
 
@@ -679,10 +736,10 @@ public class TraitSelection {
         // Many students get braces in middle school/early high school and
         // have them removed by junior/senior year
         double gradeMultiplier = switch (gradeLevel) {
-            case "Freshman" -> 1.2;     // Just got braces or in active treatment
-            case "Sophomore" -> 1.1;    // Still commonly in treatment
-            case "Junior" -> 0.85;      // Many getting braces removed
-            case "Senior" -> 0.65;      // Most have completed treatment
+            case "Freshman" -> 1.2; // Just got braces or in active treatment
+            case "Sophomore" -> 1.1; // Still commonly in treatment
+            case "Junior" -> 0.85; // Many getting braces removed
+            case "Senior" -> 0.65; // Most have completed treatment
             default -> 1.0;
         };
 
@@ -735,32 +792,34 @@ public class TraitSelection {
      * since they are older and presumably had braces put on further in the past.
      *
      * Certain orthodontic modifiers (like ligature ties or power chains) indicate
-     * more complex treatment, which tends to extend duration towards the upper range.
+     * more complex treatment, which tends to extend duration towards the upper
+     * range.
      *
-     * @param gradeLevel the student's grade level
+     * @param gradeLevel    the student's grade level
      * @param gameStartDate the date the game starts (typically August 2004)
-     * @param hasElastics whether the student has orthodontic elastics
-     * @param elasticType the type of elastics (may be null if no elastics)
+     * @param hasElastics   whether the student has orthodontic elastics
+     * @param elasticType   the type of elastics (may be null if no elastics)
      * @return an array of two LocalDates: [startDate, endDate]
      */
     public static LocalDate[] generateBracesTiming(String gradeLevel, LocalDate gameStartDate,
-                                                    boolean hasElastics, String elasticType) {
+            boolean hasElastics, String elasticType) {
         // Base duration parameters
         int baseMean = BRACES_MEAN_DURATION_MONTHS;
         int baseMin = BRACES_MIN_DURATION_MONTHS;
         int baseMax = BRACES_MAX_DURATION_MONTHS;
 
-        // Adjust duration based on elastic type - certain modifiers indicate longer treatment
+        // Adjust duration based on elastic type - certain modifiers indicate longer
+        // treatment
         if (hasElastics && elasticType != null) {
             switch (elasticType) {
                 case "ligature ties" -> {
                     // Ligature ties often used for complex alignment, longer treatment
-                    baseMean += 4;  // Shift mean towards upper range
-                    baseMin += 3;   // Higher minimum duration
+                    baseMean += 4; // Shift mean towards upper range
+                    baseMin += 3; // Higher minimum duration
                 }
                 case "power chains" -> {
                     // Power chains used to close gaps, indicates moderate complexity
-                    baseMean += 2;  // Slight increase in mean duration
+                    baseMean += 2; // Slight increase in mean duration
                     baseMin += 2;
                 }
                 case "rubber bands" -> {
@@ -779,11 +838,11 @@ public class TraitSelection {
         // Older students have been wearing braces longer on average
         double progressRatio;
         switch (gradeLevel) {
-            case "Senior" -> progressRatio = 0.5 + (GameRandom.nextDouble() * 0.45);   // 50-95% done
-            case "Junior" -> progressRatio = 0.35 + (GameRandom.nextDouble() * 0.50);  // 35-85% done
+            case "Senior" -> progressRatio = 0.5 + (GameRandom.nextDouble() * 0.45); // 50-95% done
+            case "Junior" -> progressRatio = 0.35 + (GameRandom.nextDouble() * 0.50); // 35-85% done
             case "Sophomore" -> progressRatio = 0.20 + (GameRandom.nextDouble() * 0.55); // 20-75% done
             case "Freshman" -> progressRatio = 0.05 + (GameRandom.nextDouble() * 0.60); // 5-65% done
-            default -> progressRatio = 0.25 + (GameRandom.nextDouble() * 0.50);        // 25-75% done
+            default -> progressRatio = 0.25 + (GameRandom.nextDouble() * 0.50); // 25-75% done
         }
 
         int monthsElapsed = (int) (totalDurationMonths * progressRatio);
@@ -793,25 +852,28 @@ public class TraitSelection {
         LocalDate startDate = gameStartDate.minusMonths(monthsElapsed);
         LocalDate endDate = gameStartDate.plusMonths(monthsRemaining);
 
-        return new LocalDate[]{startDate, endDate};
+        return new LocalDate[] { startDate, endDate };
     }
 
     /**
-     * Determines if a student has had braces removed in the past (before game start).
-     * This accounts for students who completed orthodontic treatment before high school
+     * Determines if a student has had braces removed in the past (before game
+     * start).
+     * This accounts for students who completed orthodontic treatment before high
+     * school
      * or earlier in their high school career.
      *
      * The calculation ensures the total number of people who have ever had braces
      * (current + past) matches the 2004 demographic research data.
      *
-     * @param race the student's race category
-     * @param incomeLevel the family income level (low, middle, high)
-     * @param gradeLevel the student's grade level (Freshman, Sophomore, Junior, Senior)
+     * @param race               the student's race category
+     * @param incomeLevel        the family income level (low, middle, high)
+     * @param gradeLevel         the student's grade level (Freshman, Sophomore,
+     *                           Junior, Senior)
      * @param currentlyHasBraces whether the student currently has braces
      * @return true if the student had braces removed in the past, false otherwise
      */
     public static boolean determinePastBraces(String race, String incomeLevel,
-                                               String gradeLevel, boolean currentlyHasBraces) {
+            String gradeLevel, boolean currentlyHasBraces) {
         // If they currently have braces, they can't have had them removed already
         if (currentlyHasBraces) {
             return false;
@@ -841,7 +903,8 @@ public class TraitSelection {
         // Cap at reasonable bounds
         totalRate = Math.max(0.05, Math.min(0.60, totalRate));
 
-        // Determine what fraction of total eligible students have already completed treatment
+        // Determine what fraction of total eligible students have already completed
+        // treatment
         // Older grades are more likely to have already had braces removed
         double pastRateMultiplier = switch (gradeLevel) {
             case "Freshman" -> BRACES_PAST_RATE_FRESHMAN;
@@ -859,16 +922,18 @@ public class TraitSelection {
     }
 
     /**
-     * Generates past braces timing for a student who had braces removed before the game starts.
+     * Generates past braces timing for a student who had braces removed before the
+     * game starts.
      * This creates realistic start and end dates for when braces were worn.
      *
-     * @param birthday the student's birthday
-     * @param gradeLevel the student's grade level
+     * @param birthday      the student's birthday
+     * @param gradeLevel    the student's grade level
      * @param gameStartDate the date the game starts
-     * @return an array of two LocalDates: [startDate, endDate] when braces were worn
+     * @return an array of two LocalDates: [startDate, endDate] when braces were
+     *         worn
      */
     public static LocalDate[] generatePastBracesTiming(LocalDate birthday, String gradeLevel,
-                                                        LocalDate gameStartDate) {
+            LocalDate gameStartDate) {
         // Most orthodontic treatment happens between ages 10-16
         // Calculate how old the student was when they got braces
         int ageWhenStarted = 10 + Randomizer.setRandom(0, 4); // Ages 10-14 typically
@@ -898,11 +963,12 @@ public class TraitSelection {
             bracesEndDate = bracesEndDate.minusMonths(monthsToShift);
         }
 
-        return new LocalDate[]{bracesStartDate, bracesEndDate};
+        return new LocalDate[] { bracesStartDate, bracesEndDate };
     }
 
     /**
-     * Determines if a student has myopia (nearsightedness) based on race and gender.
+     * Determines if a student has myopia (nearsightedness) based on race and
+     * gender.
      * 
      * Based on 1999-2004 NHANES vision examination data:
      * - Overall age-standardized prevalence: 33.1%
@@ -912,9 +978,10 @@ public class TraitSelection {
      * - Non-Hispanic blacks: 28.6%
      * - Mexican Americans: 25.1%
      * 
-     * A youth multiplier is applied since myopia often develops/worsens during teen years.
+     * A youth multiplier is applied since myopia often develops/worsens during teen
+     * years.
      *
-     * @param race the student's race category
+     * @param race   the student's race category
      * @param gender the student's gender
      * @return true if the student has myopia, false otherwise
      */
@@ -964,7 +1031,7 @@ public class TraitSelection {
     public static boolean determineHyperopia() {
         // Hyperopia is less common in young people
         // Base rate from NHANES is 3.6% for adults, but lower for teens
-        double baseRate = VISION_HYPEROPIA_BASE_RATE * 0.7;  // Reduce for youth
+        double baseRate = VISION_HYPEROPIA_BASE_RATE * 0.7; // Reduce for youth
 
         return GameRandom.nextDouble() < baseRate;
     }
@@ -982,7 +1049,7 @@ public class TraitSelection {
      */
     public static boolean determineAstigmatism() {
         // Astigmatism is slightly less common in younger people
-        double baseRate = VISION_ASTIGMATISM_BASE_RATE * 0.85;  // Reduce for youth
+        double baseRate = VISION_ASTIGMATISM_BASE_RATE * 0.85; // Reduce for youth
 
         return GameRandom.nextDouble() < baseRate;
     }
@@ -994,7 +1061,7 @@ public class TraitSelection {
      * Note: Myopia and hyperopia are mutually exclusive (can't have both).
      * Astigmatism can occur with either myopia or hyperopia.
      *
-     * @param race the student's race category
+     * @param race   the student's race category
      * @param gender the student's gender
      * @return boolean array with [hasMyopia, hasHyperopia, hasAstigmatism]
      */
@@ -1009,11 +1076,12 @@ public class TraitSelection {
             hasHyperopia = determineHyperopia();
         }
 
-        return new boolean[]{hasMyopia, hasHyperopia, hasAstigmatism};
+        return new boolean[] { hasMyopia, hasHyperopia, hasAstigmatism };
     }
 
     /**
-     * Determines if a student with vision issues has corrective lenses (glasses or contacts).
+     * Determines if a student with vision issues has corrective lenses (glasses or
+     * contacts).
      * 
      * Based on 1988 Medical Expenditure Panel Survey:
      * - 25.4% of children 6-18 had corrective lenses
@@ -1023,14 +1091,14 @@ public class TraitSelection {
      * 
      * This method assumes the student already has a vision issue.
      *
-     * @param race the student's race category
-     * @param gender the student's gender
+     * @param race        the student's race category
+     * @param gender      the student's gender
      * @param incomeLevel the family income level (low, middle, high)
-     * @param gradeLevel the student's grade level
+     * @param gradeLevel  the student's grade level
      * @return true if the student has corrective lenses, false otherwise
      */
-    public static boolean determineCorrectionLenses(String race, String gender, 
-                                                     String incomeLevel, String gradeLevel) {
+    public static boolean determineCorrectionLenses(String race, String gender,
+            String incomeLevel, String gradeLevel) {
         // Base rate - majority of people with vision issues have glasses
         double baseRate = CORRECTIVE_LENS_BASE_RATE;
 
@@ -1106,14 +1174,14 @@ public class TraitSelection {
      * 
      * Note: Students with contacts are assumed to also have glasses as backup.
      *
-     * @param race the student's race category
-     * @param gender the student's gender
+     * @param race        the student's race category
+     * @param gender      the student's gender
      * @param incomeLevel the family income level (low, middle, high)
-     * @param gradeLevel the student's grade level
+     * @param gradeLevel  the student's grade level
      * @return boolean array with [hasGlasses, hasContacts]
      */
     public static boolean[] determineCorrectiveLenses(String race, String gender,
-                                                       String incomeLevel, String gradeLevel) {
+            String incomeLevel, String gradeLevel) {
         boolean hasGlasses = determineCorrectionLenses(race, gender, incomeLevel, gradeLevel);
         boolean hasContacts = false;
 
@@ -1123,17 +1191,18 @@ public class TraitSelection {
             hasContacts = determineContactLenses(incomeLevel);
         }
 
-        return new boolean[]{hasGlasses, hasContacts};
+        return new boolean[] { hasGlasses, hasContacts };
     }
 
     // ==================== ADULT/TEACHER VISION METHODS ====================
 
     /**
      * Determines if an adult has myopia (nearsightedness) based on age and gender.
-     * Myopia rates are relatively stable in adults but can decrease slightly with age
+     * Myopia rates are relatively stable in adults but can decrease slightly with
+     * age
      * as presbyopia (age-related farsightedness) becomes more dominant.
      *
-     * @param age the adult's age
+     * @param age    the adult's age
      * @param gender the adult's gender
      * @return true if they have myopia, false otherwise
      */
@@ -1148,11 +1217,12 @@ public class TraitSelection {
             baseRate *= (VISION_MYOPIA_MALE_RATE / VISION_MYOPIA_BASE_RATE);
         }
 
-        // Myopia prevalence decreases slightly with age as hyperopia becomes more common
+        // Myopia prevalence decreases slightly with age as hyperopia becomes more
+        // common
         if (age >= 60) {
-            baseRate *= 0.7;  // Reduced in older adults
+            baseRate *= 0.7; // Reduced in older adults
         } else if (age >= 40) {
-            baseRate *= 0.9;  // Slightly reduced in middle age
+            baseRate *= 0.9; // Slightly reduced in middle age
         }
 
         return GameRandom.nextDouble() < baseRate;
@@ -1162,7 +1232,7 @@ public class TraitSelection {
      * Determines if an adult has hyperopia (farsightedness) based on age.
      * Hyperopia/presbyopia increases significantly with age, especially after 40.
      *
-     * @param age the adult's age
+     * @param age       the adult's age
      * @param hasMyopia whether they already have myopia (mutually exclusive)
      * @return true if they have hyperopia, false otherwise
      */
@@ -1214,7 +1284,7 @@ public class TraitSelection {
      * Determines all vision issues for an adult/teacher.
      * Returns a boolean array: [hasMyopia, hasHyperopia, hasAstigmatism]
      *
-     * @param age the adult's age
+     * @param age    the adult's age
      * @param gender the adult's gender
      * @return boolean array with vision issues
      */
@@ -1223,7 +1293,7 @@ public class TraitSelection {
         boolean hasHyperopia = determineAdultHyperopia(age, hasMyopia);
         boolean hasAstigmatism = determineAdultAstigmatism(age);
 
-        return new boolean[]{hasMyopia, hasHyperopia, hasAstigmatism};
+        return new boolean[] { hasMyopia, hasHyperopia, hasAstigmatism };
     }
 
     /**
@@ -1273,6 +1343,6 @@ public class TraitSelection {
             hasContacts = determineAdultContactLenses(age);
         }
 
-        return new boolean[]{hasGlasses, hasContacts};
+        return new boolean[] { hasGlasses, hasContacts };
     }
 }

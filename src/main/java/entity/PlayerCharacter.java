@@ -3,7 +3,7 @@ package entity;
 public class PlayerCharacter extends Student {
 
     private int siblingsNumber;
-	private FamilyInfo familyInfo = new FamilyInfo();
+    private FamilyInfo familyInfo = new FamilyInfo();
 
     public PlayerCharacter() {
         super();
@@ -23,11 +23,11 @@ public class PlayerCharacter extends Student {
         return this.siblingsNumber;
     }
 
-	public FamilyInfo getFamilyInfo() {
-		return familyInfo;
-	}
+    public FamilyInfo getFamilyInfo() {
+        return familyInfo;
+    }
 
-	public void setFamilyInfo(FamilyInfo familyInfo) {
-		this.familyInfo = familyInfo;
-	}
+    public void setFamilyInfo(FamilyInfo familyInfo) {
+        this.familyInfo = familyInfo;
+    }
 }

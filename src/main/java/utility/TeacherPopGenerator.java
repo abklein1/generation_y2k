@@ -20,7 +20,7 @@ public class TeacherPopGenerator {
      * This is the preferred method for the new Town-based architecture.
      *
      * @param count the number of staff to generate
-     * @param view the game view for output
+     * @param view  the game view for output
      * @return list of generated staff
      */
     public static List<Staff> generateStaffList(int count, GameView view) {
@@ -33,7 +33,7 @@ public class TeacherPopGenerator {
      * Generates staff using demographics configuration.
      *
      * @param demographics the demographics configuration
-     * @param view the game view for output
+     * @param view         the game view for output
      * @return list of generated staff
      */
     public static List<Staff> generateStaffFromDemographics(TownDemographics demographics, GameView view) {
@@ -45,9 +45,9 @@ public class TeacherPopGenerator {
      * Generates staff/teachers and populates a HashMap.
      * This method maintains backward compatibility with existing code.
      *
-     * @param staffCap the number of staff to generate
+     * @param staffCap     the number of staff to generate
      * @param staffHashMap the HashMap to populate
-     * @param view the game view for output
+     * @param view         the game view for output
      */
     public static void generateTeachers(int staffCap, HashMap<Integer, Staff> staffHashMap, GameView view) {
 
@@ -55,7 +55,7 @@ public class TeacherPopGenerator {
         String f_name;
         String l_name;
 
-        //Store staff objects in another hashmap
+        // Store staff objects in another hashmap
         for (int j = 0; j < staffCap; j++) {
             staffHashMap.put(j, new Staff());
         }
@@ -69,15 +69,22 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setEyeColor(TraitSelection.eyeSelection(setRandom(0, 109)));
             staff.teacherStatistics.setBirthday(BirthdayGenerator.generateRandomBirthdayStaff());
             staff.teacherStatistics.setGender(GenderLoader.genderSelection());
-            f_name = NameLoader.nameGenerator(String.valueOf(staff.teacherStatistics.getBirthday().getYear()), staff.teacherStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(staff.teacherStatistics.getBirthday().getYear()),
+                    staff.teacherStatistics.getGender());
             l_name = lNameReference.get(setRandom(0, lNameReference.size()));
             staff.teacherStatistics.setInitHeight();
-            staff.teacherStatistics.setIntelligence((int) GameRandom.nextGaussian(TEACHER_POP_INTELLIGENCE_MEAN, TEACHER_POP_INTELLIGENCE_STANDARD_DEVIATION));
-            staff.teacherStatistics.setCharisma((int) GameRandom.nextGaussian(TEACHER_POP_CHARISMA_MEAN, TEACHER_POP_CHARISMA_STANDARD_DEVIATION));
-            staff.teacherStatistics.setAgility((int) GameRandom.nextGaussian(TEACHER_POP_AGILITY_MEAN, TEACHER_POP_AGILITY_STANDARD_DEVIATION));
-            staff.teacherStatistics.setDetermination((int) GameRandom.nextGaussian(TEACHER_POP_DETERMINATION_MEAN, TEACHER_POP_DETERMINATION_STANDARD_DEVIATION));
-            staff.teacherStatistics.setPerception((int) GameRandom.nextGaussian(TEACHER_POP_PERCEPTION_MEAN, TEACHER_POP_PERCEPTION_STANDARD_DEVIATION));
-            staff.teacherStatistics.setLuck((int) GameRandom.nextGaussian(TEACHER_POP_LUCK_MEAN, TEACHER_POP_LUCK_STANDARD_DEVIATION));
+            staff.teacherStatistics.setIntelligence((int) GameRandom.nextGaussian(TEACHER_POP_INTELLIGENCE_MEAN,
+                    TEACHER_POP_INTELLIGENCE_STANDARD_DEVIATION));
+            staff.teacherStatistics.setCharisma(
+                    (int) GameRandom.nextGaussian(TEACHER_POP_CHARISMA_MEAN, TEACHER_POP_CHARISMA_STANDARD_DEVIATION));
+            staff.teacherStatistics.setAgility(
+                    (int) GameRandom.nextGaussian(TEACHER_POP_AGILITY_MEAN, TEACHER_POP_AGILITY_STANDARD_DEVIATION));
+            staff.teacherStatistics.setDetermination((int) GameRandom.nextGaussian(TEACHER_POP_DETERMINATION_MEAN,
+                    TEACHER_POP_DETERMINATION_STANDARD_DEVIATION));
+            staff.teacherStatistics.setPerception((int) GameRandom.nextGaussian(TEACHER_POP_PERCEPTION_MEAN,
+                    TEACHER_POP_PERCEPTION_STANDARD_DEVIATION));
+            staff.teacherStatistics
+                    .setLuck((int) GameRandom.nextGaussian(TEACHER_POP_LUCK_MEAN, TEACHER_POP_LUCK_STANDARD_DEVIATION));
             staff.teacherStatistics.setInitStrength();
             staff.teacherStatistics.setInitCreativity();
             staff.teacherStatistics.setInitEmpathy();
@@ -101,8 +108,11 @@ public class TeacherPopGenerator {
             String suffix = staff.teacherName.getSuffix();
             staff.teacherStatistics.setInitHairLength(setRandom(0, TEACHER_HAIR_LENGTH_SAMPLE_SIZE));
             staff.teacherStatistics.setHairType(TraitSelection.hairType(setRandom(0, TEACHER_HAIR_TYPE_SAMPLE_SIZE)));
-            staff.teacherStatistics.setHairColor(TraitSelection.hairSelection(setRandom(0, TEACHER_HAIR_SELECTION_SAMPLE_SIZE), staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
-            staff.teacherStatistics.setYearsOfExperience(setRandom(0, (staff.teacherStatistics.getAge() - TEACHER_YEARS_OF_EXPERIENCE_MODIFIER)));
+            staff.teacherStatistics
+                    .setHairColor(TraitSelection.hairSelection(setRandom(0, TEACHER_HAIR_SELECTION_SAMPLE_SIZE),
+                            staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
+            staff.teacherStatistics.setYearsOfExperience(
+                    setRandom(0, (staff.teacherStatistics.getAge() - TEACHER_YEARS_OF_EXPERIENCE_MODIFIER)));
 
             // Determine vision issues based on age and gender
             int age = staff.teacherStatistics.getAge();
@@ -121,13 +131,14 @@ public class TeacherPopGenerator {
             }
 
             if (suffix != null) {
-                view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName() + " " + suffix);
+                view.appendOutput(
+                        "   Generated staff " + f_name + " " + staff.teacherName.getLastName() + " " + suffix);
             } else {
                 view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName());
             }
         }
 
-        //Clear map for new values
+        // Clear map for new values
         lNameReference.clear();
     }
 }

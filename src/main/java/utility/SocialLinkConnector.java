@@ -30,18 +30,16 @@ public class SocialLinkConnector {
     private Random random = new Random(); // Single Random instance
     private HashMap<Student, Object> vertexToCellMap = new HashMap<>();
 
-
     /**
      * Constructor to initialize social links.
      *
-     * @param studentHashMap  HashMap of students.
-     * @param standardSchool  The standard school entity.
+     * @param studentHashMap HashMap of students.
+     * @param standardSchool The standard school entity.
      */
     public SocialLinkConnector(HashMap<Integer, Student> studentHashMap, StandardSchool standardSchool) {
         this(); // Call the default constructor to initialize graphComponent
         initializeSocialLinks(studentHashMap, standardSchool);
     }
-
 
     /**
      * Default constructor initializing graph components.
@@ -58,22 +56,21 @@ public class SocialLinkConnector {
         // Removed applyEnhancedLayout() and scaleGraph() as per request
     }
 
-
     /**
      * Initializes social links between students.
      *
-     * @param studentHashMap  HashMap of students.
-     * @param standardSchool  The standard school entity.
+     * @param studentHashMap HashMap of students.
+     * @param standardSchool The standard school entity.
      */
     public void initializeSocialLinks(HashMap<Integer, Student> studentHashMap, StandardSchool standardSchool) {
-        
+
         if (studentHashMap == null || standardSchool == null) {
             throw new IllegalArgumentException("Student hash map and standard school cannot be null.");
         }
 
         for (Student student : studentHashMap.values()) {
             ArrayList<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
-            
+
             // Add sibling relationships
             for (Student sibling : siblingsInSchool) {
                 if (sibling == null) {
@@ -83,7 +80,7 @@ public class SocialLinkConnector {
                 // Add vertices if they don't already exist
                 socialGraph.addVertex(student);
                 socialGraph.addVertex(sibling);
-                
+
                 // Add edge from Student to Sibling if it doesn't already exist
                 addEdgeWithCheck(student, sibling);
 
@@ -93,33 +90,33 @@ public class SocialLinkConnector {
 
             // Set maximum number of best friends for the student
             setMaxBestFriends(student);
-            
+
             // Initialize the simulation with some best friends for each student
             for (int i = 0; i < student.studentStatistics.getMaxBestFriends(); i++) {
                 // Students are most likely to befriend other students from the same grade
                 if (random.nextInt(SOCIAL_LINK_FRIEND_INITIAL_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_INITIAL_THRESHOLD) {
                     Student potentialFriend = findPotentialFriend(student, standardSchool);
-                    
+
                     if (potentialFriend == null) {
                         continue; // Skip to the next iteration
                     }
 
                     // Ensure valid potential friend and no existing edge in either direction
-                    if (!student.studentStatistics.getFriendsInSchool().contains(potentialFriend) && 
-                        !socialGraph.containsEdge(student, potentialFriend) && 
-                        !socialGraph.containsEdge(potentialFriend, student) && 
-                        !student.equals(potentialFriend)) {
-                        
+                    if (!student.studentStatistics.getFriendsInSchool().contains(potentialFriend) &&
+                            !socialGraph.containsEdge(student, potentialFriend) &&
+                            !socialGraph.containsEdge(potentialFriend, student) &&
+                            !student.equals(potentialFriend)) {
+
                         // Add best friend relationship
                         student.studentStatistics.addFriendInSchool(potentialFriend);
-                        
+
                         // Add vertices if they don't already exist
                         socialGraph.addVertex(student);
                         socialGraph.addVertex(potentialFriend);
-                        
+
                         // Add edge from Student to Potential Friend
                         addEdgeWithCheck(student, potentialFriend);
-                        
+
                         // Optionally, add edge from Potential Friend to Student
                         // Uncomment the following line if mutual perception is needed
                         // addEdgeWithCheck(potentialFriend, student);
@@ -163,11 +160,12 @@ public class SocialLinkConnector {
 
         // Calculate a composite score based on attributes and their modifiers
         double compositeScore = (charisma * SOCIAL_LINK_FRIEND_CHARISMA_MODIFIER) +
-                                (empathy * SOCIAL_LINK_FRIEND_EMPATHY_MODIFIER) +
-                                (luck * SOCIAL_LINK_FRIEND_LUCK_MODIFIER);
+                (empathy * SOCIAL_LINK_FRIEND_EMPATHY_MODIFIER) +
+                (luck * SOCIAL_LINK_FRIEND_LUCK_MODIFIER);
 
         // Introduce variability to avoid deterministic outcomes
-        double variabilityFactor = 1 + (random.nextDouble() * SOCIAL_LINK_FRIEND_VARIABILITY_RANGE) - (SOCIAL_LINK_FRIEND_VARIABILITY_RANGE / 2);
+        double variabilityFactor = 1 + (random.nextDouble() * SOCIAL_LINK_FRIEND_VARIABILITY_RANGE)
+                - (SOCIAL_LINK_FRIEND_VARIABILITY_RANGE / 2);
 
         // Apply variability to the composite score
         double variedScore = compositeScore * variabilityFactor;
@@ -186,28 +184,30 @@ public class SocialLinkConnector {
     /**
      * Finds a potential friend for a student based on grade level.
      *
-     * @param student         The student seeking friends.
-     * @param standardSchool  The standard school entity.
-     * @return                A potential friend or null if none found.
+     * @param student        The student seeking friends.
+     * @param standardSchool The standard school entity.
+     * @return A potential friend or null if none found.
      */
     private Student findPotentialFriend(Student student, StandardSchool standardSchool) {
         String gradeLevel = student.studentStatistics.getGradeLevel();
         ArrayList<Student> potentialFriends = new ArrayList<>();
 
-        if (random.nextInt(SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD) {
+        if (random.nextInt(
+                SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD) {
             // Prefer same grade friends
             HashMap<Integer, Student> gradeClassmates = standardSchool.getStudentGradeClass(gradeLevel);
             if (gradeClassmates != null) {
                 for (Student otherStudent : gradeClassmates.values()) {
-                    if (otherStudent.studentStatistics.getGradeLevel().equals(gradeLevel) && 
-                        !otherStudent.equals(student)) {    
+                    if (otherStudent.studentStatistics.getGradeLevel().equals(gradeLevel) &&
+                            !otherStudent.equals(student)) {
                         potentialFriends.add(otherStudent);
                     }
                 }
             }
         } else {
             // Consider adjacent or other grades
-            if (random.nextInt(SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD) {
+            if (random.nextInt(
+                    SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD) {
                 String[] adjacentGrades = getAdjacentGrades(gradeLevel);
                 for (String grade : adjacentGrades) {
                     HashMap<Integer, Student> adjacentGradeClassmates = standardSchool.getStudentGradeClass(grade);
@@ -236,19 +236,19 @@ public class SocialLinkConnector {
     // Helper methods to determine adjacent and other grades
     private String[] getAdjacentGrades(String gradeLevel) {
         return switch (gradeLevel) {
-            case "Freshman" -> new String[]{"Sophomore"};
-            case "Senior" -> new String[]{"Junior"};
-            default -> new String[]{};
+            case "Freshman" -> new String[] { "Sophomore" };
+            case "Senior" -> new String[] { "Junior" };
+            default -> new String[] {};
         };
     }
 
     private String[] getOtherGrades(String gradeLevel) {
         return switch (gradeLevel) {
-            case "Freshman" -> new String[]{"Junior", "Senior"};
-            case "Sophomore" -> new String[]{"Freshman", "Junior", "Senior"};
-            case "Junior" -> new String[]{"Freshman", "Sophomore", "Senior"};
-            case "Senior" -> new String[]{"Freshman", "Sophomore"};
-            default -> new String[]{};
+            case "Freshman" -> new String[] { "Junior", "Senior" };
+            case "Sophomore" -> new String[] { "Freshman", "Junior", "Senior" };
+            case "Junior" -> new String[] { "Freshman", "Sophomore", "Senior" };
+            case "Senior" -> new String[] { "Freshman", "Sophomore" };
+            default -> new String[] {};
         };
     }
 
@@ -261,7 +261,6 @@ public class SocialLinkConnector {
         // Example: Assign a random weight between 1.0 and 5.0
         return 1.0 + (4.0 * random.nextDouble());
     }
-
 
     /**
      * Visualizes the social graph using mxGraph.
@@ -312,7 +311,6 @@ public class SocialLinkConnector {
 
         // Additional visualization settings can be applied here
     }
-
 
     public void studentVisualizer(Student student) {
         String studentName = student.studentName.getFirstName() + " " + student.studentName.getLastName();

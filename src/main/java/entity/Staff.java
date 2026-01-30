@@ -21,7 +21,7 @@ public class Staff implements Serializable {
     public TeacherStatistics teacherStatistics;
 
     TeacherFactory teacherFactory = new TeacherFactory();
-    
+
     // Simulation components
     private EntityState entityState;
     private transient BehaviorTree behaviorTree;
@@ -36,7 +36,7 @@ public class Staff implements Serializable {
         teacherStatistics = teacherFactory.setStats();
         entityState = new EntityState();
     }
-    
+
     /**
      * Gets the entity state for simulation tracking.
      *
@@ -45,7 +45,7 @@ public class Staff implements Serializable {
     public EntityState getEntityState() {
         return entityState;
     }
-    
+
     /**
      * Sets the entity state.
      *
@@ -54,7 +54,7 @@ public class Staff implements Serializable {
     public void setEntityState(EntityState entityState) {
         this.entityState = entityState;
     }
-    
+
     /**
      * Gets the behavior tree for AI decision making.
      *
@@ -63,7 +63,7 @@ public class Staff implements Serializable {
     public BehaviorTree getBehaviorTree() {
         return behaviorTree;
     }
-    
+
     /**
      * Sets the behavior tree.
      *
@@ -72,7 +72,7 @@ public class Staff implements Serializable {
     public void setBehaviorTree(BehaviorTree behaviorTree) {
         this.behaviorTree = behaviorTree;
     }
-    
+
     /**
      * Gets the behavior context for tree execution.
      *
@@ -81,7 +81,7 @@ public class Staff implements Serializable {
     public BehaviorContext getBehaviorContext() {
         return behaviorContext;
     }
-    
+
     /**
      * Sets the behavior context.
      *
