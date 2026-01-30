@@ -3,7 +3,7 @@ package utility;
 public class TeacherName implements PName {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String firstName;
     private String lastName;
     private String suffix;
@@ -124,7 +124,8 @@ public class TeacherName implements PName {
 
     private boolean shouldApplyOConnorRule(String name) {
         char secondChar = name.charAt(1);
-        // Apply rule if the second character is a consonant and not one of these common non-Irish name prefixes
+        // Apply rule if the second character is a consonant and not one of these common
+        // non-Irish name prefixes
         return Character.isUpperCase(secondChar) &&
                 (secondChar != 's' && secondChar != 't' && secondChar != 'w' &&
                         secondChar != 'c' && secondChar != 'd' && secondChar != 'l');

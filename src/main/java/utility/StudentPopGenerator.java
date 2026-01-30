@@ -29,7 +29,8 @@ public class StudentPopGenerator {
     }
 
     /**
-     * Gets the current school colors for use by other generators (e.g., SiblingGenerator).
+     * Gets the current school colors for use by other generators (e.g.,
+     * SiblingGenerator).
      *
      * @return the school colors array, or null if not set
      */
@@ -38,10 +39,13 @@ public class StudentPopGenerator {
     }
 
     /**
-     * Applies base attributes to a student including stats, physical traits, braces, and vision.
-     * This method is used by both StudentPopGenerator and SiblingGenerator to ensure consistency.
+     * Applies base attributes to a student including stats, physical traits,
+     * braces, and vision.
+     * This method is used by both StudentPopGenerator and SiblingGenerator to
+     * ensure consistency.
      * 
-     * Note: This method does NOT set level, experience, grade level, birthday, gender, name, or race.
+     * Note: This method does NOT set level, experience, grade level, birthday,
+     * gender, name, or race.
      * Those should be set by the caller before calling this method.
      *
      * @param student the student to apply attributes to
@@ -50,22 +54,28 @@ public class StudentPopGenerator {
         String race = student.studentStatistics.getRace();
         String gradeLevel = student.studentStatistics.getGradeLevel();
         String gender = student.studentStatistics.getGender();
-        
+
         // Physical traits based on race
         student.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
         String eyes = student.studentStatistics.getEyeColor();
         student.studentStatistics.setHairColor(TraitSelection.studentHairSelection(race, eyes));
         String hairColor = student.studentStatistics.getHairColor();
         student.studentStatistics.setInitHeight();
-        
+
         // Base stats using Gaussian distributions
-        student.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(STUDENT_POP_INTELLIGENCE_MEAN, STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION));
-        student.studentStatistics.setCharisma((int) GameRandom.nextGaussian(STUDENT_POP_CHARISMA_MEAN, STUDENT_POP_CHARISMA_STANDARD_DEVIATION));
-        student.studentStatistics.setAgility((int) GameRandom.nextGaussian(STUDENT_POP_AGILITY_MEAN, STUDENT_POP_AGILITY_STANDARD_DEVIATION));
-        student.studentStatistics.setDetermination((int) GameRandom.nextGaussian(STUDENT_POP_DETERMINATION_MEAN, STUDENT_POP_DETERMINATION_STANDARD_DEVIATION));
-        student.studentStatistics.setPerception((int) GameRandom.nextGaussian(STUDENT_POP_PERCEPTION_MEAN, STUDENT_POP_PERCEPTION_STANDARD_DEVIATION));
-        student.studentStatistics.setLuck((int) GameRandom.nextGaussian(STUDENT_POP_LUCK_MEAN, STUDENT_POP_LUCK_STANDARD_DEVIATION));
-        
+        student.studentStatistics.setIntelligence((int) GameRandom.nextGaussian(STUDENT_POP_INTELLIGENCE_MEAN,
+                STUDENT_POP_INTELLIGENCE_STANDARD_DEVIATION));
+        student.studentStatistics.setCharisma(
+                (int) GameRandom.nextGaussian(STUDENT_POP_CHARISMA_MEAN, STUDENT_POP_CHARISMA_STANDARD_DEVIATION));
+        student.studentStatistics.setAgility(
+                (int) GameRandom.nextGaussian(STUDENT_POP_AGILITY_MEAN, STUDENT_POP_AGILITY_STANDARD_DEVIATION));
+        student.studentStatistics.setDetermination((int) GameRandom.nextGaussian(STUDENT_POP_DETERMINATION_MEAN,
+                STUDENT_POP_DETERMINATION_STANDARD_DEVIATION));
+        student.studentStatistics.setPerception(
+                (int) GameRandom.nextGaussian(STUDENT_POP_PERCEPTION_MEAN, STUDENT_POP_PERCEPTION_STANDARD_DEVIATION));
+        student.studentStatistics
+                .setLuck((int) GameRandom.nextGaussian(STUDENT_POP_LUCK_MEAN, STUDENT_POP_LUCK_STANDARD_DEVIATION));
+
         // Derived stats
         student.studentStatistics.setInitStrength();
         student.studentStatistics.setInitCreativity();
@@ -76,22 +86,23 @@ public class StudentPopGenerator {
         student.studentStatistics.setInitCuriosity();
         student.studentStatistics.setInitResponsibility();
         student.studentStatistics.setInitOpenMind();
-        
+
         // Hair and skin
         student.studentStatistics.setInitHairLength(setRandom(0, STUDENT_HAIR_LENGTH_SAMPLE_SIZE));
         student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));
         student.studentStatistics.setSkinColor(TraitSelection.studentSkinColorSelection(race, eyes));
-        
+
         // Apply braces attributes
         applyBracesAttributes(student);
-        
+
         // Apply vision attributes
         applyVisionAttributes(student);
     }
 
     /**
      * Applies braces-related attributes to a student.
-     * This includes determining if they have/had braces, timing, cosmetics, and charisma effects.
+     * This includes determining if they have/had braces, timing, cosmetics, and
+     * charisma effects.
      *
      * @param student the student to apply braces attributes to
      */
@@ -198,7 +209,7 @@ public class StudentPopGenerator {
      * This is the preferred method for the new Town-based architecture.
      *
      * @param count the number of students to generate
-     * @param view the game view for output
+     * @param view  the game view for output
      * @return list of generated students
      */
     public static List<Student> generateStudentList(int count, GameView view) {
@@ -212,7 +223,7 @@ public class StudentPopGenerator {
      * Uses the gender and income distributions from the demographics.
      *
      * @param demographics the demographics configuration
-     * @param view the game view for output
+     * @param view         the game view for output
      * @return list of generated students
      */
     public static List<Student> generateStudentsFromDemographics(TownDemographics demographics, GameView view) {
@@ -226,9 +237,9 @@ public class StudentPopGenerator {
      * Generates students and populates a HashMap.
      * This method maintains backward compatibility with existing code.
      *
-     * @param studentCap the number of students to generate
+     * @param studentCap     the number of students to generate
      * @param studentHashMap the HashMap to populate
-     * @param view the game view for output
+     * @param view           the game view for output
      */
     public static void generateStudents(int studentCap, HashMap<Integer, Student> studentHashMap, GameView view) {
 
@@ -244,16 +255,18 @@ public class StudentPopGenerator {
 
         for (int k = 0; k < studentCap; k++) {
             Student student = studentHashMap.get(k);
-            
+
             // Set identity attributes (level, grade, birthday, gender)
             student.studentStatistics.setLevel(1);
             student.studentStatistics.setExperience(0);
             student.studentStatistics.setGradeLevel(setRandom(0, 3));
-            student.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(student.studentStatistics.getGradeLevel()));
+            student.studentStatistics
+                    .setBirthday(BirthdayGenerator.generateDateFromClass(student.studentStatistics.getGradeLevel()));
             student.studentStatistics.setGender(GenderLoader.genderSelection());
-            
+
             // Set name attributes
-            f_name = NameLoader.nameGenerator(String.valueOf(student.studentStatistics.getBirthday().getYear()), student.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(student.studentStatistics.getBirthday().getYear()),
+                    student.studentStatistics.getGender());
             l_name = NameLoader.selectWeightedRandom();
             String lastName = l_name[0];
             String race = l_name[1];
@@ -269,16 +282,17 @@ public class StudentPopGenerator {
                 student.studentName.setLastName(lastName + "-" + hyphenName);
             }
             String suffix = student.studentName.getSuffix();
-            
+
             // Set race and income (required before applyBaseAttributes)
             student.studentStatistics.setRace(race);
             student.studentStatistics.setInitIncomeLevel(setRandom(0, STUDENT_INCOME_LEVEL_SAMPLE_SIZE));
-            
+
             // Apply all base attributes (stats, physical traits, braces, vision)
             applyBaseAttributes(student);
 
             if (suffix != null) {
-                view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
+                view.appendOutput(
+                        "   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {
                 view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName());
             }
@@ -289,17 +303,17 @@ public class StudentPopGenerator {
      * Generates students using demographics configuration for distributions.
      * Uses custom gender and income distributions from the demographics object.
      *
-     * @param studentCap the number of students to generate
+     * @param studentCap     the number of students to generate
      * @param studentHashMap the HashMap to populate
-     * @param view the game view for output
-     * @param demographics the demographics configuration with distributions
+     * @param view           the game view for output
+     * @param demographics   the demographics configuration with distributions
      */
-    public static void generateStudentsWithDemographics(int studentCap, HashMap<Integer, Student> studentHashMap, 
+    public static void generateStudentsWithDemographics(int studentCap, HashMap<Integer, Student> studentHashMap,
             GameView view, TownDemographics demographics) {
 
         String f_name;
         String[] l_name;
-        
+
         // Get distribution values from demographics
         java.util.Map<String, Double> genderDist = demographics.getGenderDistribution();
         java.util.Map<String, Double> incomeDist = demographics.getIncomeDistribution();
@@ -316,18 +330,20 @@ public class StudentPopGenerator {
 
         for (int k = 0; k < studentCap; k++) {
             Student student = studentHashMap.get(k);
-            
+
             // Set identity attributes (level, grade, birthday, gender)
             student.studentStatistics.setLevel(1);
             student.studentStatistics.setExperience(0);
             student.studentStatistics.setGradeLevel(setRandom(0, 3));
-            student.studentStatistics.setBirthday(BirthdayGenerator.generateDateFromClass(student.studentStatistics.getGradeLevel()));
-            
+            student.studentStatistics
+                    .setBirthday(BirthdayGenerator.generateDateFromClass(student.studentStatistics.getGradeLevel()));
+
             // Use demographics gender distribution
             student.studentStatistics.setGender(GenderLoader.genderSelection(malePercent));
-            
+
             // Set name attributes
-            f_name = NameLoader.nameGenerator(String.valueOf(student.studentStatistics.getBirthday().getYear()), student.studentStatistics.getGender());
+            f_name = NameLoader.nameGenerator(String.valueOf(student.studentStatistics.getBirthday().getYear()),
+                    student.studentStatistics.getGender());
             l_name = NameLoader.selectWeightedRandom();
             String lastName = l_name[0];
             String race = l_name[1];
@@ -343,16 +359,17 @@ public class StudentPopGenerator {
                 student.studentName.setLastName(lastName + "-" + hyphenName);
             }
             String suffix = student.studentName.getSuffix();
-            
+
             // Set race and income (required before applyBaseAttributes)
             student.studentStatistics.setRace(race);
             student.studentStatistics.setIncomeFromDistribution(lowIncomePercent, middleIncomePercent);
-            
+
             // Apply all base attributes (stats, physical traits, braces, vision)
             applyBaseAttributes(student);
 
             if (suffix != null) {
-                view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
+                view.appendOutput(
+                        "   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {
                 view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName());
             }

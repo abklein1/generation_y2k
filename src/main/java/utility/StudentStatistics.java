@@ -12,7 +12,7 @@ import java.util.List;
 public class StudentStatistics implements PStatistics {
 
     private static final long serialVersionUID = 1L;
-    
+
     private final List<Integer> grades;
     private double height;
     private String eyeColor;
@@ -54,7 +54,7 @@ public class StudentStatistics implements PStatistics {
     private int maxBestFriends;
     private boolean hasBraces;
     private String bracesBandColor;
-    private String bracesSecondBandColor;  // For alternating band colors
+    private String bracesSecondBandColor; // For alternating band colors
     private String bracesBracketType;
     // Braces timing - when they were put on and when they'll be removed
     private LocalDate bracesStartDate;
@@ -68,14 +68,12 @@ public class StudentStatistics implements PStatistics {
     // Store the charisma boost that was applied when braces were removed
     private int bracesCharismaBoost;
     // Vision issues - refractive errors (can have multiple)
-    private boolean hasMyopia;          // Nearsightedness
-    private boolean hasHyperopia;       // Farsightedness
-    private boolean hasAstigmatism;     // Astigmatism (can combine with myopia or hyperopia)
+    private boolean hasMyopia; // Nearsightedness
+    private boolean hasHyperopia; // Farsightedness
+    private boolean hasAstigmatism; // Astigmatism (can combine with myopia or hyperopia)
     // Corrective lenses - glasses or contacts
-    private boolean hasGlasses;         // Wears glasses
-    private boolean hasContacts;        // Wears contact lenses (may also have glasses as backup)
-
-
+    private boolean hasGlasses; // Wears glasses
+    private boolean hasContacts; // Wears contact lenses (may also have glasses as backup)
 
     public StudentStatistics() {
         this.height = 0;
@@ -390,7 +388,7 @@ public class StudentStatistics implements PStatistics {
         this.openmindedness = openMindedness;
     }
 
-    //TODO: remove calculation from Student stats
+    // TODO: remove calculation from Student stats
     public void setInitHeight() {
 
         double mean = 0;
@@ -475,7 +473,7 @@ public class StudentStatistics implements PStatistics {
         }
     }
 
-    //TODO: basic calculations for now
+    // TODO: basic calculations for now
     public void setInitCreativity() {
         // Primarily driven by intelligence and secondary by perception
         this.creativity = (int) ((this.intelligence * 1.5) + this.perception) / 2;
@@ -513,7 +511,8 @@ public class StudentStatistics implements PStatistics {
         this.openmindedness = (int) ((this.intelligence * 1.25) + (this.charisma * 1.25)) / 2;
     }
 
-    //TODO: Experiment with more narrative descriptions. ex. 'Rachel has wavy, brown hair that falls past her shoulders'
+    // TODO: Experiment with more narrative descriptions. ex. 'Rachel has wavy,
+    // brown hair that falls past her shoulders'
     @Override
     public void setInitHairLength(int choice) {
         if (this.gender.equals("male")) {
@@ -610,7 +609,7 @@ public class StudentStatistics implements PStatistics {
     /**
      * Sets income level using custom distribution percentages.
      *
-     * @param lowPercent the percentage of low income (0.0 to 1.0)
+     * @param lowPercent    the percentage of low income (0.0 to 1.0)
      * @param middlePercent the percentage of middle income (0.0 to 1.0)
      */
     public void setIncomeFromDistribution(double lowPercent, double middlePercent) {
@@ -796,7 +795,8 @@ public class StudentStatistics implements PStatistics {
     /**
      * Gets the effective charisma value, accounting for braces effects.
      * Students currently wearing braces have reduced charisma.
-     * Students who previously had braces and had them removed get a permanent boost.
+     * Students who previously had braces and had them removed get a permanent
+     * boost.
      *
      * @return the effective charisma value
      */
@@ -808,7 +808,8 @@ public class StudentStatistics implements PStatistics {
             effectiveCharisma -= constants.SimConstants.BRACES_CHARISMA_PENALTY;
         }
 
-        // Apply boost if had braces removed (already included in charisma via bracesCharismaBoost)
+        // Apply boost if had braces removed (already included in charisma via
+        // bracesCharismaBoost)
         // The boost is applied when setHadBracesRemoved is called during generation
 
         return effectiveCharisma;
@@ -854,7 +855,8 @@ public class StudentStatistics implements PStatistics {
     }
 
     /**
-     * Checks if the student has any vision issue (myopia, hyperopia, or astigmatism).
+     * Checks if the student has any vision issue (myopia, hyperopia, or
+     * astigmatism).
      *
      * @return true if the student has any refractive error
      */
@@ -941,7 +943,8 @@ public class StudentStatistics implements PStatistics {
     }
 
     /**
-     * Gets the effective perception value, accounting for uncorrected vision issues.
+     * Gets the effective perception value, accounting for uncorrected vision
+     * issues.
      * Students with uncorrected vision issues suffer perception penalties.
      *
      * @return the effective perception value
