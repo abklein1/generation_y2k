@@ -644,8 +644,14 @@ public class StudentStatistics implements PStatistics {
         this.studentSchedule.remove(block);
     }
 
+    /**
+     * Adds a sibling who is currently in school.
+     * Prevents duplicates - sibling will only be added if not already present.
+     */
     public void addSiblingsInSchool(Student sibling) {
-        this.siblingsInSchool.add(sibling);
+        if (!this.siblingsInSchool.contains(sibling)) {
+            this.siblingsInSchool.add(sibling);
+        }
     }
 
     public void removeSiblingsInSchool(Student sibling) {
@@ -656,8 +662,14 @@ public class StudentStatistics implements PStatistics {
         return siblingsInSchool;
     }
 
+    /**
+     * Adds a sibling who is not currently in school.
+     * Prevents duplicates - sibling will only be added if not already present.
+     */
     public void addSiblingsNotInSchool(Student sibling) {
-        this.siblingsNotInSchool.add(sibling);
+        if (!this.siblingsNotInSchool.contains(sibling)) {
+            this.siblingsNotInSchool.add(sibling);
+        }
     }
 
     public void removeSiblingsNotInSchool(Student sibling) {

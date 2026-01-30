@@ -698,6 +698,8 @@ public class EnhancedStudentScheduleAssigner {
     /**
      * Verifies that students have all required classes for graduation.
      * Reports students with missing requirements and attempts to fix schedules.
+     * Students who still have missing requirements after all attempts are
+     * returned to the pool and marked as not in high school.
      */
     private static void verifyGraduationRequirements(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
@@ -708,6 +710,10 @@ public class EnhancedStudentScheduleAssigner {
         missingByGrade.put("Sophomore", new ArrayList<>());
         missingByGrade.put("Junior", new ArrayList<>());
         missingByGrade.put("Senior", new ArrayList<>());
+
+        // Track students who still have missing requirements after all attempts
+        List<Student> studentsToRemove = new ArrayList<>();
+        Map<Student, List<String>> studentMissingClasses = new HashMap<>();
 
         int studentsWithMissingReqs = 0;
         int totalMissingClasses = 0;
@@ -729,13 +735,21 @@ public class EnhancedStudentScheduleAssigner {
                 totalMissingClasses += missing.size();
 
                 // Try to schedule missing classes
+                List<String> stillMissing = new ArrayList<>();
                 for (String missingClass : missing) {
                     boolean scheduled2 = attemptToScheduleMissingClass(student, missingClass, staffHashMap);
                     if (!scheduled2) {
+                        stillMissing.add(missingClass);
                         missingByGrade.get(grade).add(
                                 student.studentName.getFirstName() + " " +
                                         student.studentName.getLastName() + " missing " + missingClass);
                     }
+                }
+
+                // If still missing classes after all attempts, mark for removal
+                if (!stillMissing.isEmpty()) {
+                    studentsToRemove.add(student);
+                    studentMissingClasses.put(student, stillMissing);
                 }
             }
         }
@@ -756,6 +770,132 @@ public class EnhancedStudentScheduleAssigner {
                 }
                 if (count > 5) {
                     System.out.println("  ... and " + (count - 5) + " more");
+                }
+            }
+        }
+
+        // Return students with unfulfilled requirements to the pool
+        if (!studentsToRemove.isEmpty()) {
+            returnStudentsToPool(studentsToRemove, studentMissingClasses, studentHashMap);
+        }
+    }
+
+    /**
+     * Returns students with missing requirements to the pool.
+     * Updates sibling relationships so removed students are marked as "not in school".
+     * These students can potentially be used later when more class sections become available.
+     *
+     * @param studentsToRemove     List of students to remove from enrollment
+     * @param studentMissingClasses Map of students to their missing class requirements
+     * @param studentHashMap       The student enrollment map
+     */
+    private static void returnStudentsToPool(List<Student> studentsToRemove,
+            Map<Student, List<String>> studentMissingClasses,
+            HashMap<Integer, Student> studentHashMap) {
+
+        System.out.println("\n=== Returning Students with Unfulfilled Requirements to Pool ===");
+        System.out.println("Students being returned to pool: " + studentsToRemove.size());
+
+        Map<String, Integer> removedByGrade = new HashMap<>();
+        removedByGrade.put("Freshman", 0);
+        removedByGrade.put("Sophomore", 0);
+        removedByGrade.put("Junior", 0);
+        removedByGrade.put("Senior", 0);
+
+        for (Student student : studentsToRemove) {
+            String grade = student.studentStatistics.getGradeLevel();
+            List<String> missing = studentMissingClasses.get(student);
+
+            // Update sibling relationships
+            updateSiblingRelationshipsForRemovedStudent(student);
+
+            // Mark student as not in high school
+            student.setInHighSchool(false);
+
+            // Clear the student's schedule since they're being removed
+            student.studentStatistics.getStudentSchedule().getClassSchedule().clear();
+
+            // Remove from sections they were enrolled in
+            removeStudentFromAllSections(student);
+
+            // Remove from the studentHashMap
+            Integer keyToRemove = null;
+            for (Map.Entry<Integer, Student> entry : studentHashMap.entrySet()) {
+                if (entry.getValue().equals(student)) {
+                    keyToRemove = entry.getKey();
+                    break;
+                }
+            }
+            if (keyToRemove != null) {
+                studentHashMap.remove(keyToRemove);
+            }
+
+            // Track counts by grade
+            removedByGrade.merge(grade, 1, Integer::sum);
+
+            // Log first few removals with details
+            if (removedByGrade.values().stream().mapToInt(Integer::intValue).sum() <= 10) {
+                System.out.println("  Returned to pool: " + student.studentName.getFirstName() + " " +
+                        student.studentName.getLastName() + " (" + grade + ") - missing: " +
+                        String.join(", ", missing));
+            }
+        }
+
+        // Summary by grade
+        System.out.println("\nStudents returned to pool by grade:");
+        for (Map.Entry<String, Integer> entry : removedByGrade.entrySet()) {
+            if (entry.getValue() > 0) {
+                System.out.println("  " + entry.getKey() + ": " + entry.getValue());
+            }
+        }
+        System.out.println("Total students returned to pool: " + studentsToRemove.size());
+        System.out.println("These students are marked as 'not in high school' and can be re-enrolled later");
+        System.out.println("Remaining enrolled students: " + studentHashMap.size());
+    }
+
+    /**
+     * Updates sibling relationships when a student is removed from school.
+     * Moves the student from siblingsInSchool to siblingsNotInSchool for all their siblings.
+     * Note: StudentStatistics.addSiblingsNotInSchool() automatically prevents duplicates.
+     */
+    private static void updateSiblingRelationshipsForRemovedStudent(Student removedStudent) {
+        // Get all siblings who are currently in school
+        ArrayList<Student> siblingsInSchool = removedStudent.studentStatistics.getSiblingsInSchool();
+
+        // For each sibling in school, update their sibling lists
+        for (Student sibling : siblingsInSchool) {
+            // Remove the student from their siblingsInSchool list
+            sibling.studentStatistics.removeSiblingsInSchool(removedStudent);
+
+            // Add the student to their siblingsNotInSchool list (duplicates prevented at source)
+            sibling.studentStatistics.addSiblingsNotInSchool(removedStudent);
+        }
+
+        // Also update siblings not in school (they should know this student is now also not in school)
+        ArrayList<Student> siblingsNotInSchool = removedStudent.studentStatistics.getSiblingsNotInSchool();
+        for (Student sibling : siblingsNotInSchool) {
+            // If the removed student was in their siblingsInSchool list, move them
+            if (sibling.studentStatistics.getSiblingsInSchool().contains(removedStudent)) {
+                sibling.studentStatistics.removeSiblingsInSchool(removedStudent);
+                sibling.studentStatistics.addSiblingsNotInSchool(removedStudent);
+            }
+        }
+    }
+
+    /**
+     * Removes a student from all class sections they were enrolled in.
+     */
+    private static void removeStudentFromAllSections(Student student) {
+        for (Map.Entry<String, List<ClassSection>> entry : classSections.entrySet()) {
+            for (ClassSection section : entry.getValue()) {
+                if (section.getEnrolledStudents().contains(student)) {
+                    section.getEnrolledStudents().remove(student);
+
+                    // Also remove from the TeacherBlock's class population
+                    TeacherBlock block = section.getTeacherBlock();
+                    if (block.getClassPopulation() != null) {
+                        block.getClassPopulation().remove(student);
+                    }
                 }
             }
         }
