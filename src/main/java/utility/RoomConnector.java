@@ -813,7 +813,7 @@ public class RoomConnector {
                 Room targetRoom = schoolConnect.getEdgeTarget(edge);
 
                 if (sourceRoom.equals(room)) {
-                    System.out.println("Room " + sourceRoom.getRoomName() + " is connected to " + targetRoom.getRoomName());
+                    GameLogger.logDebug("Room " + sourceRoom.getRoomName() + " is connected to " + targetRoom.getRoomName());
                 }
             }
         }

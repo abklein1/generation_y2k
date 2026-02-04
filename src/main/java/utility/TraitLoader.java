@@ -25,7 +25,7 @@ public class TraitLoader {
             JSONObject jsonObject = (JSONObject) parser.parse(new FileReader(actualPath, StandardCharsets.UTF_8));
             return extractKeys(jsonObject);
         } catch (IOException | ParseException e) {
-            System.err.println("Error loading trait options from: " + filePath);
+            GameLogger.logDebug("Error loading trait options from: " + filePath);
             e.printStackTrace();
             return new String[] {};
         }

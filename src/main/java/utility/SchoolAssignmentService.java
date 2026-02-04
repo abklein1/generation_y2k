@@ -59,7 +59,7 @@ public class SchoolAssignmentService {
         try {
             view.appendOutput("Scheduling students...");
             EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
-                    studentMap, staffMap, school, view);
+                    studentMap, staffMap, school, view, town.getStudentPool());
             
             view.appendOutput("Assigning seating...");
             StudentSeatingAssigner.seatInitialStudents(school);
@@ -148,7 +148,7 @@ public class SchoolAssignmentService {
         try {
             view.appendOutput("Scheduling students with graduation requirements...");
             EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
-                    studentMap, staffMap, school, view);
+                    studentMap, staffMap, school, view, town.getStudentPool());
             
             view.appendOutput("Assigning seating...");
             StudentSeatingAssigner.seatInitialStudents(school);
@@ -231,7 +231,7 @@ public class SchoolAssignmentService {
         try {
             view.appendOutput("Scheduling students...");
             EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
-                    studentMap, staffMap, school, view);
+                    studentMap, staffMap, school, view, town.getStudentPool());
             
             view.appendOutput("Assigning seating...");
             StudentSeatingAssigner.seatInitialStudents(school);
@@ -426,7 +426,7 @@ public class SchoolAssignmentService {
         for (Student student : students.values()) {
             student.studentStatistics.getStudentSchedule().getClassSchedule().clear();
         }
-        System.out.println("Cleared schedules for " + students.size() + " students for retry");
+        GameLogger.logScheduling("Cleared schedules for " + students.size() + " students for retry");
     }
 
     /**
@@ -567,7 +567,7 @@ public class SchoolAssignmentService {
             try {
                 view.appendOutput("  Re-scheduling students with new resources...");
                 EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
-                        studentMap, staffMap, school, view);
+                        studentMap, staffMap, school, view, town.getStudentPool());
                 
                 view.appendOutput("  Re-assigning seating...");
                 StudentSeatingAssigner.seatInitialStudents(school);

@@ -16,7 +16,7 @@ public class StudentSeatingAssigner {
     private static void seatHelper(Room room) {
         List<Staff> assignedStaff = room.getAssignedStaff();
         if (assignedStaff == null || assignedStaff.isEmpty() || assignedStaff.get(0) == null) {
-            System.out.println("Warning: Room " + room.getRoomName() + " has no assigned teacher.");
+            GameLogger.logScheduling("Warning: Room " + room.getRoomName() + " has no assigned teacher.");
             return;
         }
 
@@ -31,7 +31,7 @@ public class StudentSeatingAssigner {
             seats = room.getSeatArrangement();
 
             if (seats == null) {
-                System.out.println("Warning: Room " + room.getRoomName() + " has a null seat arrangement.");
+                GameLogger.logScheduling("Warning: Room " + room.getRoomName() + " has a null seat arrangement.");
                 continue;
             }
 
@@ -66,7 +66,7 @@ public class StudentSeatingAssigner {
                 }
             }
         }
-        System.out.println("Warning: Unable to seat student " + student.studentName.getFirstName() + " "
+        GameLogger.logScheduling("Warning: Unable to seat student " + student.studentName.getFirstName() + " "
                 + student.studentName.getLastName());
     }
 
@@ -129,7 +129,7 @@ public class StudentSeatingAssigner {
         int[] factorStore = new int[2];
         // TODO: better error handling
         if (factors.size() <= 1) {
-            System.out.println("Factors missing for room");
+            GameLogger.logScheduling("Factors missing for room");
         } else if (factors.size() == 2) {
             factorStore[0] = factors.get(0);
             factorStore[1] = factors.get(1);

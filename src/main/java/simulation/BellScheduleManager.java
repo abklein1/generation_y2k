@@ -1,6 +1,7 @@
 package simulation;
 
 import entity.Time;
+import utility.GameLogger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -246,7 +247,7 @@ public class BellScheduleManager {
             scheduleLoaded = true;
             
         } catch (IOException | ParseException e) {
-            System.err.println("Failed to load bell schedule: " + e.getMessage());
+            GameLogger.logDebug("Failed to load bell schedule: " + e.getMessage());
             // Create default schedule
             createDefaultSchedule();
             tempLunchA = new ScheduleBlock("Lunch A", "11:40 AM", "12:20 PM", 40, true, false, 0);

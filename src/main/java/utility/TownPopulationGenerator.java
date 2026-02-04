@@ -33,18 +33,18 @@ public class TownPopulationGenerator {
     public static Town generateTown(String townName, TownDemographics demographics, GameView view) {
         Town town = new Town(townName, demographics);
 
-        view.appendOutput("Generating town: " + townName);
-        view.appendOutput("Demographics: " + demographics);
+        GameLogger.logGeneration("Generating town: " + townName);
+        GameLogger.logGeneration("Demographics: " + demographics);
 
         // Generate students
-        view.appendOutput("Generating student population...");
+        GameLogger.logGeneration("Generating student population...");
         generateStudentPopulation(town, demographics, view);
 
         // Generate staff
-        view.appendOutput("Generating staff population...");
+        GameLogger.logGeneration("Generating staff population...");
         generateStaffPopulation(town, demographics, view);
 
-        view.appendOutput("Town generation complete. Total students: " + town.getTotalStudentPopulation() +
+        GameLogger.logGeneration("Town generation complete. Total students: " + town.getTotalStudentPopulation() +
                 ", Total staff: " + town.getTotalStaffPopulation());
 
         return town;
@@ -87,7 +87,7 @@ public class TownPopulationGenerator {
         // Add all students to the pool
         pool.addStudentsFromMap(tempMap);
 
-        view.appendOutput("Generated " + pool.getTotalCount() + " students (including siblings)");
+        GameLogger.logGeneration("Generated " + pool.getTotalCount() + " students (including siblings)");
     }
 
     /**
@@ -121,7 +121,7 @@ public class TownPopulationGenerator {
         // Add all students to the pool
         pool.addStudentsFromMap(tempMap);
 
-        view.appendOutput("Generated " + pool.getTotalCount() + " students (including siblings)");
+        GameLogger.logGeneration("Generated " + pool.getTotalCount() + " students (including siblings)");
     }
 
     /**
@@ -144,7 +144,7 @@ public class TownPopulationGenerator {
         // Add all staff to the pool
         pool.addStaffFromMap(tempMap);
 
-        view.appendOutput("Generated " + pool.getTotalCount() + " staff members");
+        GameLogger.logGeneration("Generated " + pool.getTotalCount() + " staff members");
     }
 
     /**
@@ -170,7 +170,7 @@ public class TownPopulationGenerator {
 
         // Return the new students
         List<Student> newStudents = new ArrayList<>(tempMap.values());
-        view.appendOutput("Added " + newStudents.size() + " new students to town");
+        GameLogger.logGeneration("Added " + newStudents.size() + " new students to town");
 
         return newStudents;
     }
@@ -195,7 +195,7 @@ public class TownPopulationGenerator {
 
         // Return the new staff
         List<Staff> newStaff = new ArrayList<>(tempMap.values());
-        view.appendOutput("Added " + newStaff.size() + " new staff members to town");
+        GameLogger.logGeneration("Added " + newStaff.size() + " new staff members to town");
 
         return newStaff;
     }

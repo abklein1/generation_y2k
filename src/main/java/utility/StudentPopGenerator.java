@@ -250,7 +250,7 @@ public class StudentPopGenerator {
             studentHashMap.put(i, new Student());
         }
 
-        view.appendOutput("Randomizing " + studentCap + " students...");
+        GameLogger.logGeneration("Randomizing " + studentCap + " students...");
         loadCSVData();
 
         for (int k = 0; k < studentCap; k++) {
@@ -291,10 +291,10 @@ public class StudentPopGenerator {
             applyBaseAttributes(student);
 
             if (suffix != null) {
-                view.appendOutput(
+                GameLogger.logGeneration(
                         "   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {
-                view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName());
+                GameLogger.logGeneration("   Generated student " + f_name + " " + student.studentName.getLastName());
             }
         }
     }
@@ -325,7 +325,7 @@ public class StudentPopGenerator {
             studentHashMap.put(i, new Student());
         }
 
-        view.appendOutput("Randomizing " + studentCap + " students...");
+        GameLogger.logGeneration("Randomizing " + studentCap + " students...");
         loadCSVData();
 
         for (int k = 0; k < studentCap; k++) {
@@ -368,10 +368,10 @@ public class StudentPopGenerator {
             applyBaseAttributes(student);
 
             if (suffix != null) {
-                view.appendOutput(
+                GameLogger.logGeneration(
                         "   Generated student " + f_name + " " + student.studentName.getLastName() + " " + suffix);
             } else {
-                view.appendOutput("   Generated student " + f_name + " " + student.studentName.getLastName());
+                GameLogger.logGeneration("   Generated student " + f_name + " " + student.studentName.getLastName());
             }
         }
     }

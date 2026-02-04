@@ -43,7 +43,7 @@ public class SiblingGenerator {
         pool.clear();
         pool.addStudentsFromMap(studentMap);
 
-        view.appendOutput("Sibling generation complete. Pool now has " + pool.getTotalCount() +
+        GameLogger.logSocialLinks("Sibling generation complete. Pool now has " + pool.getTotalCount() +
                 " students (added " + (pool.getTotalCount() - originalCount) + " siblings)");
     }
 
@@ -140,7 +140,7 @@ public class SiblingGenerator {
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
-        view.appendOutput("Generated sibling (not in school) " + f_name + " " + sibling.studentName.getLastName());
+        GameLogger.logSocialLinks("Generated sibling (not in school) " + f_name + " " + sibling.studentName.getLastName());
 
         return sibling;
     }
@@ -465,7 +465,7 @@ public class SiblingGenerator {
                     }
                 }
             } else {
-                System.out.println("No siblings to generate");
+                GameLogger.logSocialLinks("No siblings to generate");
             }
 
             // Update sibling lists for all generated siblings
@@ -552,7 +552,7 @@ public class SiblingGenerator {
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
-        view.appendOutput("Generated step-sibling " + f_name + " " + sibling.studentName.getLastName());
+        GameLogger.logSocialLinks("Generated step-sibling " + f_name + " " + sibling.studentName.getLastName());
 
         return sibling;
     }
@@ -658,7 +658,7 @@ public class SiblingGenerator {
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
-        view.appendOutput("Generated adopted sibling " + f_name + " " + sibling.studentName.getLastName());
+        GameLogger.logSocialLinks("Generated adopted sibling " + f_name + " " + sibling.studentName.getLastName());
 
         return sibling;
     }
@@ -781,7 +781,7 @@ public class SiblingGenerator {
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
-        view.appendOutput("Generated sibling " + f_name + " " + sibling.studentName.getLastName());
+        GameLogger.logSocialLinks("Generated sibling " + f_name + " " + sibling.studentName.getLastName());
 
         return sibling;
     }

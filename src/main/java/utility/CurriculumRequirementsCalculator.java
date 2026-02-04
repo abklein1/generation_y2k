@@ -663,19 +663,19 @@ public class CurriculumRequirementsCalculator {
      * Prints curriculum analysis to console.
      */
     public static void printAnalysis(CurriculumAnalysis analysis) {
-        System.out.println(getSummary(analysis));
+        GameLogger.logScheduling(getSummary(analysis));
         
-        System.out.println("Core Class Requirements:");
+        GameLogger.logScheduling("Core Class Requirements:");
         analysis.getClassRequirements().values().stream()
             .filter(ClassRequirement::isCoreSubject)
             .sorted((a, b) -> Integer.compare(b.getStudentDemand(), a.getStudentDemand()))
-            .forEach(req -> System.out.println("  " + req));
+            .forEach(req -> GameLogger.logScheduling("  " + req));
         
-        System.out.println("\nElective Class Requirements:");
+        GameLogger.logScheduling("\nElective Class Requirements:");
         analysis.getClassRequirements().values().stream()
             .filter(req -> !req.isCoreSubject())
             .sorted((a, b) -> Integer.compare(b.getStudentDemand(), a.getStudentDemand()))
             .limit(20)
-            .forEach(req -> System.out.println("  " + req));
+            .forEach(req -> GameLogger.logScheduling("  " + req));
     }
 }

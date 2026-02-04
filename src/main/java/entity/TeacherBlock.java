@@ -3,6 +3,7 @@ package entity;
 import java.util.ArrayList;
 import java.util.List;
 import entity.Rooms.Room;
+import utility.GameLogger;
 
 public class TeacherBlock {
     int blockNumber;
@@ -63,12 +64,12 @@ public class TeacherBlock {
 
     public void addStudentToBlock(Student student) {
         if (classPopulation == null) {
-            System.out.println("Block does not exist!");
+            GameLogger.logScheduling("Block does not exist!");
             return;
         }
 
         if (classPopulation.size() >= capacity) {
-            System.out.println("Block is full!");
+            GameLogger.logScheduling("Block is full!");
             return;
         }
 

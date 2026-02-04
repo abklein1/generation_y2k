@@ -33,7 +33,7 @@ public class FlavorTextLoader {
             JSONParser parser = new JSONParser();
             flavorData = (JSONObject) parser.parse(new FileReader(FLAVOR_TEXT_PATH, StandardCharsets.UTF_8));
         } catch (IOException | ParseException e) {
-            System.err.println("Error loading flavor text: " + e.getMessage());
+            GameLogger.logDebug("Error loading flavor text: " + e.getMessage());
             flavorData = new JSONObject();
         }
     }

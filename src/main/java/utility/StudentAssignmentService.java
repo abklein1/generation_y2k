@@ -96,7 +96,7 @@ public class StudentAssignmentService {
 
         try {
             EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
-                    studentMap, staffMap, school, view);
+                    studentMap, staffMap, school, view, pool);
         } catch (Exception e) {
             view.appendOutput("Error during scheduling: " + e.getMessage());
             e.printStackTrace();

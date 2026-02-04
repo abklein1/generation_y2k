@@ -11,16 +11,16 @@ public class BossUtility {
     public static int bossDecision(Time time) {
         if (time.getDayName().equals("Monday") || time.getDayName().equals("Tuesday")
                 || time.getDayName().equals("Thursday")) {
-            System.out.println("Today all students will have to face homework!");
+            GameLogger.logStory("Today all students will have to face homework!");
             return 1;
         } else if (time.getDayName().equals("Wednesday")) {
-            System.out.println("Today all students will have to be ready for a quiz!");
+            GameLogger.logStory("Today all students will have to be ready for a quiz!");
             return 2;
         } else if (time.getDayName().equals("Friday")) {
-            System.out.println("Today the students better be ready for the dreaded exam!");
+            GameLogger.logStory("Today the students better be ready for the dreaded exam!");
             return 3;
         } else {
-            System.out.println("Today is the weekend. No school!");
+            GameLogger.logStory("Today is the weekend. No school!");
             return 4;
         }
     }

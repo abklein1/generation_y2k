@@ -1,5 +1,7 @@
 package view;
 
+import utility.GameLogger;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
@@ -33,6 +35,14 @@ public class GameView {
     private final JMenuItem visualizeItem;
     private final JMenuItem socialGraphItem;
     private final JMenuItem seedOptionsItem;
+
+    // Debug menu items
+    private final JMenu debugMenu;
+    private JCheckBoxMenuItem debugGenerationItem;
+    private JCheckBoxMenuItem debugSocialLinksItem;
+    private JCheckBoxMenuItem debugSchedulingItem;
+    private JCheckBoxMenuItem debugStoryItem;
+    private JCheckBoxMenuItem debugMessagesItem;
 
     // Simulation controls
     private final JPanel simulationControlPanel;
@@ -154,6 +164,42 @@ public class GameView {
         seedOptionsItem.addActionListener(e -> showSeedOptionsDialog());
         optionsMenu.add(seedOptionsItem);
         menuBar.add(optionsMenu);
+
+        // Debug Menu
+        debugMenu = new JMenu("Debug");
+        debugGenerationItem = new JCheckBoxMenuItem("Generation Messages", true);
+        debugSocialLinksItem = new JCheckBoxMenuItem("Social Links Messages", true);
+        debugSchedulingItem = new JCheckBoxMenuItem("Scheduling Messages", true);
+        debugStoryItem = new JCheckBoxMenuItem("Story Messages", true);
+        debugMessagesItem = new JCheckBoxMenuItem("Debug Messages", true);
+
+        // Add action listeners to update GameLogger
+        debugGenerationItem.addActionListener(e ->
+                GameLogger.setEnabled(GameLogger.Category.GENERATION, debugGenerationItem.isSelected()));
+        debugSocialLinksItem.addActionListener(e ->
+                GameLogger.setEnabled(GameLogger.Category.SOCIAL_LINKS, debugSocialLinksItem.isSelected()));
+        debugSchedulingItem.addActionListener(e ->
+                GameLogger.setEnabled(GameLogger.Category.SCHEDULING, debugSchedulingItem.isSelected()));
+        debugStoryItem.addActionListener(e ->
+                GameLogger.setEnabled(GameLogger.Category.STORY, debugStoryItem.isSelected()));
+        debugMessagesItem.addActionListener(e ->
+                GameLogger.setEnabled(GameLogger.Category.DEBUG, debugMessagesItem.isSelected()));
+
+        debugMenu.add(debugGenerationItem);
+        debugMenu.add(debugSocialLinksItem);
+        debugMenu.add(debugSchedulingItem);
+        debugMenu.add(debugStoryItem);
+        debugMenu.add(debugMessagesItem);
+        debugMenu.addSeparator();
+
+        JMenuItem enableAllItem = new JMenuItem("Enable All");
+        JMenuItem disableAllItem = new JMenuItem("Disable All (except Story)");
+        enableAllItem.addActionListener(e -> setAllDebugCategories(true));
+        disableAllItem.addActionListener(e -> setAllDebugCategories(false));
+        debugMenu.add(enableAllItem);
+        debugMenu.add(disableAllItem);
+
+        menuBar.add(debugMenu);
 
         frame.setJMenuBar(menuBar);
 
@@ -900,6 +946,50 @@ public class GameView {
         statusOutput.append(message + "\n");
     }
 
+    /**
+     * Sets all debug categories to enabled or disabled.
+     * Story messages are always kept enabled.
+     *
+     * @param enabled true to enable all categories, false to disable (except Story)
+     */
+    private void setAllDebugCategories(boolean enabled) {
+        debugGenerationItem.setSelected(enabled);
+        debugSocialLinksItem.setSelected(enabled);
+        debugSchedulingItem.setSelected(enabled);
+        debugStoryItem.setSelected(true); // Story always on
+        debugMessagesItem.setSelected(enabled);
+
+        GameLogger.setEnabled(GameLogger.Category.GENERATION, enabled);
+        GameLogger.setEnabled(GameLogger.Category.SOCIAL_LINKS, enabled);
+        GameLogger.setEnabled(GameLogger.Category.SCHEDULING, enabled);
+        GameLogger.setEnabled(GameLogger.Category.STORY, true); // Always enabled
+        GameLogger.setEnabled(GameLogger.Category.DEBUG, enabled);
+    }
+
+    /**
+     * Synchronizes the debug menu checkboxes with the current GameLogger state.
+     * Call this after GameLogger.initialize() to reflect the correct state.
+     */
+    public void syncDebugMenuWithLogger() {
+        debugGenerationItem.setSelected(GameLogger.isEnabled(GameLogger.Category.GENERATION));
+        debugSocialLinksItem.setSelected(GameLogger.isEnabled(GameLogger.Category.SOCIAL_LINKS));
+        debugSchedulingItem.setSelected(GameLogger.isEnabled(GameLogger.Category.SCHEDULING));
+        debugStoryItem.setSelected(GameLogger.isEnabled(GameLogger.Category.STORY));
+        debugMessagesItem.setSelected(GameLogger.isEnabled(GameLogger.Category.DEBUG));
+    }
+
+    /**
+     * Applies the current debug menu checkbox states to GameLogger.
+     * Use this to preserve user's menu selections when starting a simulation.
+     */
+    public void applyDebugMenuToLogger() {
+        GameLogger.setEnabled(GameLogger.Category.GENERATION, debugGenerationItem.isSelected());
+        GameLogger.setEnabled(GameLogger.Category.SOCIAL_LINKS, debugSocialLinksItem.isSelected());
+        GameLogger.setEnabled(GameLogger.Category.SCHEDULING, debugSchedulingItem.isSelected());
+        GameLogger.setEnabled(GameLogger.Category.STORY, debugStoryItem.isSelected());
+        GameLogger.setEnabled(GameLogger.Category.DEBUG, debugMessagesItem.isSelected());
+    }
+
     public void displayMessage(String message) {
         JOptionPane.showMessageDialog(frame, message);
     }
@@ -920,7 +1010,7 @@ public class GameView {
             java.io.File amFile = new java.io.File(amFilePath);
             BufferedImage amImage = ImageIO.read(amFile);
             if (amImage == null) {
-                System.err.println("Failed to load AM weather icon: " + amFilePath);
+                GameLogger.logDebug("Failed to load AM weather icon: " + amFilePath);
                 return;
             }
             Image scaledAmImage = amImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
@@ -934,7 +1024,7 @@ public class GameView {
             java.io.File pmFile = new java.io.File(pmFilePath);
             BufferedImage pmImage = ImageIO.read(pmFile);
             if (pmImage == null) {
-                System.err.println("Failed to load PM weather icon: " + pmFilePath);
+                GameLogger.logDebug("Failed to load PM weather icon: " + pmFilePath);
                 return;
             }
             Image scaledPmImage = pmImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
@@ -954,7 +1044,7 @@ public class GameView {
             frame.revalidate();
             frame.repaint();
         } catch (Exception e) {
-            System.err.println("Error loading weather icons: " + e.getMessage());
+            GameLogger.logDebug("Error loading weather icons: " + e.getMessage());
             e.printStackTrace();
         }
     }

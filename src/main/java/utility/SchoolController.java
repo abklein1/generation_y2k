@@ -1109,6 +1109,12 @@ public class SchoolController {
                     stopSimulation();
                 }
 
+                // Initialize or update the centralized logger
+                // Always apply the user's current debug menu settings (preserves any changes
+                // made before clicking New Simulation/New Game)
+                GameLogger.setView(view);
+                javax.swing.SwingUtilities.invokeLater(() -> view.applyDebugMenuToLogger());
+
                 // Reset time to starting values
                 time.reset();
 
@@ -1345,7 +1351,7 @@ public class SchoolController {
                 StudentSeatingAssigner.seatInitialStudents(standardSchool);
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("some exception");
+                GameLogger.logDebug("some exception");
             }
             // Add names to rooms
             gyms = standardSchool.getGyms();

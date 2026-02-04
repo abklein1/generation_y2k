@@ -141,10 +141,10 @@ public class SocialLinkConnector {
             if (edge != null) {
                 socialGraph.setEdgeWeight(edge, assignInitialWeight());
             } else {
-                System.out.println("Failed to add edge from " + source + " to " + target);
+                GameLogger.logSocialLinks("Failed to add edge from " + source + " to " + target);
             }
         } else {
-            System.out.println("Edge from " + source + " to " + target + " already exists.");
+            GameLogger.logSocialLinks("Edge from " + source + " to " + target + " already exists.");
         }
     }
 
@@ -292,7 +292,7 @@ public class SocialLinkConnector {
                 if (sourceCell != null && targetCell != null) {
                     graph.insertEdge(parent, null, "", sourceCell, targetCell);
                 } else {
-                    System.err.println("Source or Target cell is null for edge: " + edge);
+                    GameLogger.logDebug("Source or Target cell is null for edge: " + edge);
                 }
             }
 

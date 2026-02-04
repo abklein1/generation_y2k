@@ -25,7 +25,7 @@ public class RoomNameGenerator {
         } else if (room instanceof Auditorium) {
             room.setRoomName(generateAuditoriumName(lNameReference));
         } else {
-            System.out.println("Room name not generated");
+            GameLogger.logGeneration("Room name not generated");
         }
     }
 

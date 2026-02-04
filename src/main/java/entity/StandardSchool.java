@@ -12,6 +12,7 @@ package entity;
 
 import config.SchoolFundingModel;
 import entity.Rooms.*;
+import utility.GameLogger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -74,11 +75,11 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setUtilityRooms(int number, GameView view) {
         utilityrooms = new UtilityRoom[number];
-        view.appendOutput("   Generating " + number + " utility rooms...");
+        GameLogger.logGeneration("   Generating " + number + " utility rooms...");
         for (int i = 0; i < number; i++) {
             utilityrooms[i] = new UtilityRoom();
             utilityrooms[i].setRoomName("UtilityRoom" + i);
-            view.appendOutput("       Generating " + utilityrooms[i].getRoomName());
+            GameLogger.logGeneration("       Generating " + utilityrooms[i].getRoomName());
             utilityrooms[i].setStudentRestriction(true);
             utilityrooms[i].setDoors(UTILITY_CONNECTION_COUNT);
             utilityrooms[i].setConnections(UTILITY_CONNECTION_COUNT);
@@ -524,13 +525,13 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setBathrooms(int number, GameView view) {
         bathrooms = new Bathroom[number];
-        view.appendOutput("   Generating " + number + " bathrooms...");
+        GameLogger.logGeneration("   Generating " + number + " bathrooms...");
         for (int i = 0; i < number; i++) {
             bathrooms[i] = new Bathroom();
             int cap = setRandom(BATHROOM_CAPACITY_LOWER_LIMIT, BATHROOM_CAPACITY_UPPER_LIMIT);
             if (i % 2 == 0) {
                 bathrooms[i].setRoomName("Female_Bathroom" + i);
-                view.appendOutput("      Generating " + bathrooms[i].getRoomName());
+                GameLogger.logGeneration("      Generating " + bathrooms[i].getRoomName());
                 bathrooms[i].setRoomRestrictions(true, false);
                 bathrooms[i].setConnections(BATHROOM_CONNECTION_COUNT);
                 bathrooms[i].setDoors(BATHROOM_CONNECTION_COUNT);
@@ -543,7 +544,7 @@ public class StandardSchool implements SchoolPlan {
                         .setRoomNumber("WC" + i + setRandom(BATHROOM_NUMBER_LOWER_LIMIT, BATHROOM_NUMBER_UPPER_LIMIT));
             } else {
                 bathrooms[i].setRoomName("Male_Bathroom" + i);
-                view.appendOutput("      Generating " + bathrooms[i].getRoomName());
+                GameLogger.logGeneration("      Generating " + bathrooms[i].getRoomName());
                 bathrooms[i].setRoomRestrictions(false, true);
                 bathrooms[i].setConnections(BATHROOM_CONNECTION_COUNT);
                 bathrooms[i].setDoors(BATHROOM_CONNECTION_COUNT);
@@ -566,12 +567,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setBreakrooms(int number, GameView view) {
         breakrooms = new Breakroom[number];
-        view.appendOutput("   Generating " + number + " breakroom(s)...");
+        GameLogger.logGeneration("   Generating " + number + " breakroom(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(BREAKROOM_CONNECTION_LOWER_LIMIT, BREAKROOM_CONNECTION_UPPER_LIMIT);
             breakrooms[i] = new Breakroom();
             breakrooms[i].setRoomName("Breakroom" + i);
-            view.appendOutput("      Generating " + breakrooms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + breakrooms[i].getRoomName());
             breakrooms[i].setStudentRestriction(true);
             breakrooms[i].setConnections(connectN);
             breakrooms[i].setDoors(connectN);
@@ -594,13 +595,13 @@ public class StandardSchool implements SchoolPlan {
         int decision;
         int dividersAssigned = 0;
         classrooms = new Classroom[number];
-        view.appendOutput("   Generating " + number + " classrooms...");
+        GameLogger.logGeneration("   Generating " + number + " classrooms...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(CLASSROOM_CONNECTION_LOWER_LIMIT, CLASSROOM_CONNECTION_UPPER_LIMIT);
             decision = i % CLASSROOM_WEIGHT;
             classrooms[i] = new Classroom();
             classrooms[i].setRoomName("Classroom" + i);
-            view.appendOutput("      Generating " + classrooms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + classrooms[i].getRoomName());
             classrooms[i].setConnections(connectN);
             classrooms[i].setDoors(connectN);
             classrooms[i].setClassroomType(decision);
@@ -622,7 +623,7 @@ public class StandardSchool implements SchoolPlan {
         }
 
         if (dividersAssigned > 0) {
-            view.appendOutput("   " + dividersAssigned + " classrooms equipped with dividers");
+            GameLogger.logGeneration("   " + dividersAssigned + " classrooms equipped with dividers");
         }
     }
 
@@ -650,9 +651,9 @@ public class StandardSchool implements SchoolPlan {
         }
 
         if (view != null) {
-            view.appendOutput("   Expanding school: Adding " + additionalCount + " classrooms...");
+            GameLogger.logGeneration("   Expanding school: Adding " + additionalCount + " classrooms...");
         }
-        System.out.println("EXPANSION: Adding " + additionalCount + " classrooms (total: " + newTotal + ")");
+        GameLogger.logGeneration("EXPANSION: Adding " + additionalCount + " classrooms (total: " + newTotal + ")");
 
         // Create new classrooms
         int dividersAssigned = 0;
@@ -662,7 +663,7 @@ public class StandardSchool implements SchoolPlan {
             newClassrooms[i] = new Classroom();
             newClassrooms[i].setRoomName("Classroom" + i);
             if (view != null) {
-                view.appendOutput("      Generating " + newClassrooms[i].getRoomName());
+                GameLogger.logGeneration("      Generating " + newClassrooms[i].getRoomName());
             }
             newClassrooms[i].setConnections(connectN);
             newClassrooms[i].setDoors(connectN);
@@ -686,7 +687,7 @@ public class StandardSchool implements SchoolPlan {
         classrooms = newClassrooms;
 
         if (view != null && dividersAssigned > 0) {
-            view.appendOutput("   " + dividersAssigned + " new classrooms equipped with dividers");
+            GameLogger.logGeneration("   " + dividersAssigned + " new classrooms equipped with dividers");
         }
 
         // Note: Capacities are calculated on-the-fly via getOptimalCapacity() and
@@ -724,12 +725,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setComputerLabs(int number, GameView view) {
         computerLabs = new ComputerLab[number];
-        view.appendOutput("   Generating " + number + " Computer lab(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Computer lab(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(COMPUTER_CONNECTION_LOWER_LIMIT, COMPUTER_CONNECTION_UPPER_LIMIT);
             computerLabs[i] = new ComputerLab();
             computerLabs[i].setRoomName("ComputerLab" + i);
-            view.appendOutput("      Generating " + computerLabs[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + computerLabs[i].getRoomName());
             computerLabs[i].setWindowCount(COMPUTER_WINDOW_COUNT);
             computerLabs[i].setConnections(connectN);
             computerLabs[i].setDoors(connectN);
@@ -750,11 +751,11 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setCourtyards(int number, GameView view) {
         courtyards = new Courtyard[number];
-        view.appendOutput("   Generating " + number + " courtyard(s)...");
+        GameLogger.logGeneration("   Generating " + number + " courtyard(s)...");
         for (int i = 0; i < number; i++) {
             courtyards[i] = new Courtyard();
             courtyards[i].setRoomName("Courtyard" + i);
-            view.appendOutput("      Generating " + courtyards[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + courtyards[i].getRoomName());
             courtyards[i].setWindowCount(COURTYARD_WINDOW_COUNT);
             courtyards[i].setConnections(COURTYARD_CONNECTION_COUNT);
             courtyards[i].setDoors(COURTYARD_CONNECTION_COUNT);
@@ -774,12 +775,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setGyms(int number, GameView view) {
         gyms = new Gym[number];
-        view.appendOutput("   Generating " + number + " gym(s)...");
+        GameLogger.logGeneration("   Generating " + number + " gym(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(GYM_CONNECTION_LOWER_LIMIT, GYM_CONNECTION_UPPER_LIMIT);
             gyms[i] = new Gym();
             gyms[i].setRoomName("Gym" + i);
-            view.appendOutput("      Generating " + gyms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + gyms[i].getRoomName());
             gyms[i].setConnections(connectN);
             gyms[i].setDoors(connectN);
             gyms[i].setWindowCount(setRandom(GYM_WINDOW_LOWER_LIMIT, GYM_WINDOW_UPPER_LIMIT));
@@ -802,12 +803,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setHallways(int number, GameView view) {
         hallways = new Hallway[number];
-        view.appendOutput("   Generating " + number + " hallways...");
+        GameLogger.logGeneration("   Generating " + number + " hallways...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(HALLWAY_CONNECTION_LOWER_LIMIT, HALLWAY_CONNECTION_UPPER_LIMIT);
             hallways[i] = new Hallway();
             hallways[i].setRoomName("Hallway" + i);
-            view.appendOutput("      Generating " + hallways[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + hallways[i].getRoomName());
             hallways[i].setConnections(connectN);
             hallways[i].setDoors(connectN);
             hallways[i].setWindowCount(setRandom(HALLWAY_WINDOW_LOWER_LIMIT, HALLWAY_WINDOW_UPPER_LIMIT));
@@ -827,12 +828,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setLibraries(int number, GameView view) {
         libraries = new LibraryR[number];
-        view.appendOutput("   Generating " + number + " libraries...");
+        GameLogger.logGeneration("   Generating " + number + " libraries...");
         for (int i = 0; i < number; i++) {
             int connectorN = setRandom(LIBRARY_CONNECTION_LOWER_LIMIT, LIBRARY_CONNECTION_UPPER_LIMIT);
             libraries[i] = new LibraryR();
             libraries[i].setRoomName("Library" + i);
-            view.appendOutput("      Generating " + libraries[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + libraries[i].getRoomName());
             libraries[i].setWindowCount(setRandom(LIBRARY_WINDOW_LOWER_LIMIT, LIBRARY_WINDOW_UPPER_LIMIT));
             libraries[i].setConnections(connectorN);
             libraries[i].setDoors(connectorN);
@@ -856,12 +857,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setLunchrooms(int number, GameView view) {
         lunchrooms = new Lunchroom[number];
-        view.appendOutput("   Generating " + number + " lunchroom(s)...");
+        GameLogger.logGeneration("   Generating " + number + " lunchroom(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(LUNCH_CONNECTION_LOWER_LIMIT, LUNCH_CONNECTION_UPPER_LIMIT);
             lunchrooms[i] = new Lunchroom();
             lunchrooms[i].setRoomName("Lunchroom" + i);
-            view.appendOutput("      Generating " + lunchrooms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + lunchrooms[i].getRoomName());
             lunchrooms[i].setWindowCount(setRandom(LUNCH_WINDOW_LOWER_LIMIT, LUNCH_WINDOW_UPPER_LIMIT));
             lunchrooms[i].setConnections(connectN);
             lunchrooms[i].setDoors(connectN);
@@ -881,13 +882,13 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setOffices(int number, GameView view) {
         offices = new Office[number];
-        view.appendOutput("   Generating " + number + " offices...");
+        GameLogger.logGeneration("   Generating " + number + " offices...");
         for (int i = 0; i < number; i++) {
             offices[i] = new Office();
             switch (i) {
                 case 0 -> {
                     offices[i].setRoomName("Principal's Office");
-                    view.appendOutput("      Generating Principal's office");
+                    GameLogger.logGeneration("      Generating Principal's office");
                     offices[i].setDoors(PRINCIPAL_CONNECTION_COUNT);
                     offices[i].setWindowCount(PRINCIPAL_WINDOW_COUNT);
                     offices[i].setInitialStaff(PRINCIPAL_INITIAL_STAFF);
@@ -899,7 +900,7 @@ public class StandardSchool implements SchoolPlan {
                 }
                 case 1 -> {
                     offices[i].setRoomName("Vice Principal's Office");
-                    view.appendOutput("      Generating Vice Principal's office");
+                    GameLogger.logGeneration("      Generating Vice Principal's office");
                     offices[i].setDoors(VICE_PRINCIPAL_CONNECTION_COUNT);
                     offices[i].setWindowCount(VICE_PRINCIPAL_WINDOW_COUNT);
                     offices[i].setInitialStaff(VICE_PRINCIPAL_INITIAL_STAFF);
@@ -911,7 +912,7 @@ public class StandardSchool implements SchoolPlan {
                 }
                 case 2 -> {
                     offices[i].setRoomName("Guidance Councilor's Office");
-                    view.appendOutput("      Generating Councilor's Office");
+                    GameLogger.logGeneration("      Generating Councilor's Office");
                     offices[i].setDoors(GUIDANCE_CONNECTION_COUNT);
                     offices[i].setWindowCount(GUIDANCE_WINDOW_COUNT);
                     offices[i].setInitialStaff(GUIDANCE_INITIAL_STAFF);
@@ -923,7 +924,7 @@ public class StandardSchool implements SchoolPlan {
                 }
                 case 3 -> {
                     offices[i].setRoomName("Front Office");
-                    view.appendOutput("      Generating Front Office");
+                    GameLogger.logGeneration("      Generating Front Office");
                     offices[i].setDoors(FRONT_OFFICE_CONNECTION_COUNT);
                     offices[i].setWindowCount(FRONT_OFFICE_WINDOW_COUNT);
                     offices[i].setInitialStaff(FRONT_OFFICE_INITIAL_STAFF);
@@ -935,7 +936,7 @@ public class StandardSchool implements SchoolPlan {
                 }
                 case 4 -> {
                     offices[i].setRoomName("Nurse's Office");
-                    view.appendOutput("      Generating Nurse's Office");
+                    GameLogger.logGeneration("      Generating Nurse's Office");
                     offices[i].setDoors(NURSE_CONNECTION_COUNT);
                     offices[i].setWindowCount(NURSE_WINDOW_COUNT);
                     offices[i].setInitialStaff(NURSE_INITIAL_STAFF);
@@ -947,7 +948,7 @@ public class StandardSchool implements SchoolPlan {
                 }
                 case 5 -> {
                     offices[i].setRoomName("Guidance Councilor's Office");
-                    view.appendOutput("      Generating Councilor's Office");
+                    GameLogger.logGeneration("      Generating Councilor's Office");
                     offices[i].setDoors(GUIDANCE_CONNECTION_COUNT);
                     offices[i].setWindowCount(GUIDANCE_WINDOW_COUNT);
                     offices[i].setInitialStaff(GUIDANCE_INITIAL_STAFF);
@@ -959,7 +960,7 @@ public class StandardSchool implements SchoolPlan {
                 }
                 default -> {
                     offices[i].setRoomName("Office" + i);
-                    view.appendOutput("      Generating " + offices[i].getRoomName());
+                    GameLogger.logGeneration("      Generating " + offices[i].getRoomName());
                     offices[i].setConnections(DEFAULT_OFFICE_CONNECTION_COUNT);
                     offices[i].setDoors(DEFAULT_OFFICE_CONNECTION_COUNT);
                     offices[i].setWindowCount(DEFAULT_OFFICE_WINDOW_COUNT);
@@ -988,12 +989,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setArtStudios(int number, GameView view) {
         artStudios = new ArtStudio[number];
-        view.appendOutput("   Generating " + number + " art studio(s)...");
+        GameLogger.logGeneration("   Generating " + number + " art studio(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(ART_CONNECTION_LOWER_LIMIT, ART_CONNECTION_UPPER_LIMIT);
             artStudios[i] = new ArtStudio();
             artStudios[i].setRoomName("Art Room" + i);
-            view.appendOutput("      Generating " + artStudios[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + artStudios[i].getRoomName());
             artStudios[i].setWindowCount(setRandom(ART_WINDOW_LOWER_LIMIT, ART_WINDOW_UPPER_LIMIT));
             artStudios[i].setConnections(connectN);
             artStudios[i].setDoors(connectN);
@@ -1012,11 +1013,11 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setAthleticFields(int number, GameView view) {
         athleticFields = new AthleticField[number];
-        view.appendOutput("   Generating " + number + " athletic fields(s)...");
+        GameLogger.logGeneration("   Generating " + number + " athletic fields(s)...");
         for (int i = 0; i < number; i++) {
             athleticFields[i] = new AthleticField();
             athleticFields[i].setRoomName("Field" + i);
-            view.appendOutput("      Generating " + athleticFields[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + athleticFields[i].getRoomName());
             athleticFields[i].setWindowCount(ATHLETIC_WINDOW_COUNT);
             athleticFields[i].setConnections(ATHLETIC_CONNECTION_COUNT);
             athleticFields[i].setDoors(ATHLETIC_CONNECTION_COUNT);
@@ -1038,11 +1039,11 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setAuditoriums(int number, GameView view) {
         auditoriums = new Auditorium[number];
-        view.appendOutput("   Generating " + number + " auditorium(s)...");
+        GameLogger.logGeneration("   Generating " + number + " auditorium(s)...");
         for (int i = 0; i < number; i++) {
             auditoriums[i] = new Auditorium();
             auditoriums[i].setRoomName("Auditorium" + i);
-            view.appendOutput("      Generating " + auditoriums[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + auditoriums[i].getRoomName());
             auditoriums[i].setWindowCount(AUDITORIUM_WINDOW_COUNT);
             auditoriums[i].setConnections(AUDITORIUM_CONNECTION_COUNT);
             auditoriums[i].setDoors(AUDITORIUM_CONNECTION_COUNT);
@@ -1063,12 +1064,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setDramaRooms(int number, GameView view) {
         dramaRooms = new DramaRoom[number];
-        view.appendOutput("   Generating " + number + " Drama Room(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Drama Room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(DRAMA_CONNECTION_LOWER_LIMIT, DRAMA_CONNECTION_UPPER_LIMIT);
             dramaRooms[i] = new DramaRoom();
             dramaRooms[i].setRoomName("Drama" + i);
-            view.appendOutput("      Generating " + dramaRooms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + dramaRooms[i].getRoomName());
             dramaRooms[i].setWindowCount(setRandom(DRAMA_WINDOW_LOWER_LIMIT, DRAMA_WINDOW_UPPER_LIMIT));
             dramaRooms[i].setConnections(connectN);
             dramaRooms[i].setDoors(connectN);
@@ -1088,12 +1089,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setLockerRooms(int number, GameView view) {
         lockerRooms = new LockerRoom[number];
-        view.appendOutput("   Generating " + number + " Locker Room(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Locker Room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(LOCKER_CONNECTION_LOWER_LIMIT, LOCKER_CONNECTION_UPPER_LIMIT);
             lockerRooms[i] = new LockerRoom();
             lockerRooms[i].setRoomName("Locker Room" + i);
-            view.appendOutput("      Generating " + lockerRooms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + lockerRooms[i].getRoomName());
             lockerRooms[i].setWindowCount(LOCKER_WINDOW_COUNT);
             lockerRooms[i].setConnections(connectN);
             lockerRooms[i].setDoors(connectN);
@@ -1113,12 +1114,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setMusicRooms(int number, GameView view) {
         musicRooms = new MusicRoom[number];
-        view.appendOutput("   Generating " + number + " Music Room(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Music Room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(MUSIC_CONNECTION_LOWER_LIMIT, MUSIC_CONNECTION_UPPER_LIMIT);
             musicRooms[i] = new MusicRoom();
             musicRooms[i].setRoomName("Music Room" + i);
-            view.appendOutput("      Generating " + musicRooms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + musicRooms[i].getRoomName());
             musicRooms[i].setWindowCount(setRandom(MUSIC_WINDOW_LOWER_LIMIT, MUSIC_WINDOW_UPPER_LIMIT));
             musicRooms[i].setConnections(connectN);
             musicRooms[i].setDoors(connectN);
@@ -1138,12 +1139,12 @@ public class StandardSchool implements SchoolPlan {
     @Override
     public void setScienceLabs(int number, GameView view) {
         scienceLabs = new ScienceLab[number];
-        view.appendOutput("   Generating " + number + " Science Lab(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Science Lab(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(SCIENCE_LAB_CONNECTION_LOWER_LIMIT, SCIENCE_LAB_CONNECTION_UPPER_LIMIT);
             scienceLabs[i] = new ScienceLab();
             scienceLabs[i].setRoomName("Science Lab" + i);
-            view.appendOutput("      Generating " + scienceLabs[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + scienceLabs[i].getRoomName());
             scienceLabs[i].setWindowCount(SCIENCE_LAB_WINDOW_COUNT);
             scienceLabs[i].setConnections(connectN);
             scienceLabs[i].setDoors(connectN);
@@ -1182,7 +1183,7 @@ public class StandardSchool implements SchoolPlan {
                     seniorClass.put(sr_count, entry.getValue());
                     sr_count++;
                 }
-                default -> view.appendOutput("Can't find student class");
+                default -> GameLogger.logGeneration("Can't find student class");
             }
         }
     }
@@ -1209,12 +1210,12 @@ public class StandardSchool implements SchoolPlan {
 
     public void setConferenceRooms(int number, GameView view) {
         conferenceRooms = new ConferenceRoom[number];
-        view.appendOutput("   Generating " + number + " Conference Room(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Conference Room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(CONFERENCE_CONNECTION_LOWER_LIMIT, CONFERENCE_CONNECTION_UPPER_LIMIT);
             conferenceRooms[i] = new ConferenceRoom();
             conferenceRooms[i].setRoomName("Conference Room" + i);
-            view.appendOutput("      Generating " + conferenceRooms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + conferenceRooms[i].getRoomName());
             conferenceRooms[i].setWindowCount(setRandom(CONFERENCE_WINDOW_LOWER_LIMIT, CONFERENCE_WINDOW_UPPER_LIMIT));
             conferenceRooms[i].setConnections(connectN);
             conferenceRooms[i].setDoors(connectN);
@@ -1233,12 +1234,12 @@ public class StandardSchool implements SchoolPlan {
 
     public void setVocationalRooms(int number, GameView view) {
         vocationalRooms = new VocationalRoom[number];
-        view.appendOutput("   Generating " + number + " Vocational room(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Vocational room(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = setRandom(VOCATIONAL_CONNECTION_LOWER_LIMIT, VOCATIONAL_CONNECTION_UPPER_LIMIT);
             vocationalRooms[i] = new VocationalRoom();
             vocationalRooms[i].setRoomName("Vocational Room" + i);
-            view.appendOutput("      Generating " + vocationalRooms[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + vocationalRooms[i].getRoomName());
             vocationalRooms[i].setWindowCount(setRandom(VOCATIONAL_WINDOW_LOWER_LIMIT, VOCATIONAL_WINDOW_UPPER_LIMIT));
             vocationalRooms[i].setConnections(connectN);
             vocationalRooms[i].setDoors(connectN);
@@ -1258,12 +1259,12 @@ public class StandardSchool implements SchoolPlan {
 
     public void setParkingLots(int number, GameView view) {
         parkingLots = new ParkingLot[number];
-        view.appendOutput("   Generating " + number + " Parking Lot(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Parking Lot(s)...");
         for (int i = 0; i < number; i++) {
             int connectN = PARKING_CONNECTION_COUNT;
             parkingLots[i] = new ParkingLot();
             parkingLots[i].setRoomName("Parking Lot" + i);
-            view.appendOutput("      Generating " + parkingLots[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + parkingLots[i].getRoomName());
             parkingLots[i].setWindowCount(PARKING_WINDOW_COUNT);
             parkingLots[i].setConnections(connectN);
             parkingLots[i].setDoors(connectN);
@@ -1304,12 +1305,12 @@ public class StandardSchool implements SchoolPlan {
         }
 
         portables = new Portable[number];
-        view.appendOutput("   Generating " + number + " Portable Classroom(s)...");
+        GameLogger.logGeneration("   Generating " + number + " Portable Classroom(s)...");
         for (int i = 0; i < number; i++) {
             int decision = i % CLASSROOM_WEIGHT;
             portables[i] = new Portable();
             portables[i].setRoomName("Portable" + i);
-            view.appendOutput("      Generating " + portables[i].getRoomName());
+            GameLogger.logGeneration("      Generating " + portables[i].getRoomName());
             portables[i].setWindowCount(setRandom(PORTABLE_WINDOW_LOWER_LIMIT, PORTABLE_WINDOW_UPPER_LIMIT));
             portables[i].setConnections(PORTABLE_CONNECTION_COUNT);
             portables[i].setDoors(PORTABLE_CONNECTION_COUNT);
@@ -1347,9 +1348,9 @@ public class StandardSchool implements SchoolPlan {
         }
 
         if (view != null) {
-            view.appendOutput("   Expanding school: Adding " + additionalCount + " portable(s)...");
+            GameLogger.logGeneration("   Expanding school: Adding " + additionalCount + " portable(s)...");
         }
-        System.out.println("EXPANSION: Adding " + additionalCount + " portables (total: " + newTotal + ")");
+        GameLogger.logGeneration("EXPANSION: Adding " + additionalCount + " portables (total: " + newTotal + ")");
 
         // Create new portables
         for (int i = currentCount; i < newTotal; i++) {
@@ -1357,7 +1358,7 @@ public class StandardSchool implements SchoolPlan {
             newPortables[i] = new Portable();
             newPortables[i].setRoomName("Portable" + i);
             if (view != null) {
-                view.appendOutput("      Generating " + newPortables[i].getRoomName());
+                GameLogger.logGeneration("      Generating " + newPortables[i].getRoomName());
             }
             newPortables[i].setWindowCount(setRandom(PORTABLE_WINDOW_LOWER_LIMIT, PORTABLE_WINDOW_UPPER_LIMIT));
             newPortables[i].setConnections(PORTABLE_CONNECTION_COUNT);
@@ -1457,7 +1458,7 @@ public class StandardSchool implements SchoolPlan {
                 }
             }
         }
-        System.out.println(
+        GameLogger.logScheduling(
                 "Cant find classroom of " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
         return null;
     }

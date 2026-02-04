@@ -59,7 +59,7 @@ public class TeacherPopGenerator {
         for (int j = 0; j < staffCap; j++) {
             staffHashMap.put(j, new Staff());
         }
-        view.appendOutput("Randomizing " + staffCap + " staff");
+        GameLogger.logGeneration("Randomizing " + staffCap + " staff");
         lNameReference.putAll(NameLoader.readCSVLast());
 
         for (int l = 0; l < staffCap; l++) {
@@ -131,10 +131,10 @@ public class TeacherPopGenerator {
             }
 
             if (suffix != null) {
-                view.appendOutput(
+                GameLogger.logGeneration(
                         "   Generated staff " + f_name + " " + staff.teacherName.getLastName() + " " + suffix);
             } else {
-                view.appendOutput("   Generated staff " + f_name + " " + staff.teacherName.getLastName());
+                GameLogger.logGeneration("   Generated staff " + f_name + " " + staff.teacherName.getLastName());
             }
         }
 

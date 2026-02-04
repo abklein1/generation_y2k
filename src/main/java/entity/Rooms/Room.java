@@ -2,6 +2,7 @@ package entity.Rooms;
 
 import entity.Staff;
 import entity.Student;
+import utility.GameLogger;
 import utility.StaffAssignmentService;
 import view.GameView;
 
@@ -147,13 +148,13 @@ public abstract class Room implements Serializable {
                 }
             }
         }
-        System.out.println("Can't find student " + student.studentName);
+        GameLogger.logScheduling("Can't find student " + student.studentName);
         return coords;
     }
 
     public void addStudentToSeat(Student student, int x, int y) {
         if (seats[x][y] != null) {
-            System.out.println(student.studentName + " can't be assigned to seat because there is already someone there!");
+            GameLogger.logScheduling(student.studentName + " can't be assigned to seat because there is already someone there!");
         } else {
             seats[x][y] = student;
         }
@@ -265,7 +266,7 @@ public abstract class Room implements Serializable {
             case "Vocational" -> abbr = "VOC";
             case "Consumer Science", "Business", "Computer Science" -> abbr = "ELC";
             case "Study Hall" -> abbr = "STY";
-            default -> System.out.println("No known class type!");
+            default -> GameLogger.logScheduling("No known class type!");
         }
 
         return abbr;
@@ -343,18 +344,18 @@ public abstract class Room implements Serializable {
      */
     public boolean divide() {
         if (!hasDivider) {
-            System.out.println("Cannot divide " + roomName + " - no divider installed");
+            GameLogger.logScheduling("Cannot divide " + roomName + " - no divider installed");
             return false;
         }
         if (isDivided) {
-            System.out.println("Cannot divide " + roomName + " - already divided");
+            GameLogger.logScheduling("Cannot divide " + roomName + " - already divided");
             return false;
         }
         
         isDivided = true;
         originalCapacity = studentCap;
         // Note: studentCap remains the same, but getEffectiveCapacity() returns half
-        System.out.println(roomName + " divided - effective capacity now " + getEffectiveCapacity() + 
+        GameLogger.logScheduling(roomName + " divided - effective capacity now " + getEffectiveCapacity() + 
                           " per side (was " + originalCapacity + " total)");
         return true;
     }
@@ -366,14 +367,14 @@ public abstract class Room implements Serializable {
      */
     public boolean undivide() {
         if (!isDivided) {
-            System.out.println("Cannot undivide " + roomName + " - not currently divided");
+            GameLogger.logScheduling("Cannot undivide " + roomName + " - not currently divided");
             return false;
         }
         
         isDivided = false;
         secondTeacher = null;
         dividedPartner = null;
-        System.out.println(roomName + " undivided - capacity restored to " + studentCap);
+        GameLogger.logScheduling(roomName + " undivided - capacity restored to " + studentCap);
         return true;
     }
 
@@ -403,7 +404,7 @@ public abstract class Room implements Serializable {
      */
     public boolean setSecondTeacher(Staff teacher) {
         if (!isDivided) {
-            System.out.println("Cannot assign second teacher to " + roomName + " - room not divided");
+            GameLogger.logScheduling("Cannot assign second teacher to " + roomName + " - room not divided");
             return false;
         }
         this.secondTeacher = teacher;

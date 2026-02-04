@@ -33,17 +33,41 @@ public class EnhancedStudentScheduleAssigner {
     private static int currentOptimalClassSize = OPTIMAL_CLASS_SIZE_RATIO;
     private static boolean allowOvercrowding = false; // Disabled - sibling generation causes unpredictable enrollment
 
+    // Reference to StudentPool for proper unassignment when students are returned to pool
+    private static entity.StudentPool currentStudentPool = null;
+
     /**
-     * Enhanced entry point that performs demand analysis before assignment
+     * Enhanced entry point that performs demand analysis before assignment.
+     * This overload maintains backward compatibility with existing code.
      */
     public static void scheduleAllStudentsEnhanced(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap,
             StandardSchool standardSchool,
             GameView view) {
-        System.out.println("Starting enhanced scheduling for " + studentHashMap.size() + " students");
+        scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view, null);
+    }
+
+    /**
+     * Enhanced entry point that performs demand analysis before assignment.
+     * This overload accepts a StudentPool to properly unassign students who are
+     * returned to the pool due to missing requirements.
+     * 
+     * @param studentHashMap the students to schedule
+     * @param staffHashMap the staff
+     * @param standardSchool the school
+     * @param view the game view
+     * @param studentPool the student pool for proper unassignment (can be null for legacy mode)
+     */
+    public static void scheduleAllStudentsEnhanced(HashMap<Integer, Student> studentHashMap,
+            HashMap<Integer, Staff> staffHashMap,
+            StandardSchool standardSchool,
+            GameView view,
+            entity.StudentPool studentPool) {
+        currentStudentPool = studentPool;
+        GameLogger.logScheduling("Starting enhanced scheduling for " + studentHashMap.size() + " students");
 
         // Debug: Show all staff by type
-        System.out.println("=== STAFF BY TYPE ===");
+        GameLogger.logScheduling("=== STAFF BY TYPE ===");
         Map<String, Integer> staffByType = new HashMap<>();
         for (Staff staff : staffHashMap.values()) {
             Enum<?> type = staff.teacherStatistics.getStaffType();
@@ -51,7 +75,7 @@ public class EnhancedStudentScheduleAssigner {
             staffByType.merge(typeName, 1, Integer::sum);
         }
         for (Map.Entry<String, Integer> entry : staffByType.entrySet()) {
-            System.out.println("  " + entry.getKey() + ": " + entry.getValue() + " staff");
+            GameLogger.logScheduling("  " + entry.getKey() + ": " + entry.getValue() + " staff");
         }
 
         // Configure class sizes based on school funding model
@@ -61,23 +85,23 @@ public class EnhancedStudentScheduleAssigner {
 
         // *** CRITICAL FIX: Clear all existing student schedules to prevent duplicates
         // ***
-        System.out.println("Clearing all existing student schedules...");
+        GameLogger.logScheduling("Clearing all existing student schedules...");
         for (Student student : studentHashMap.values()) {
             student.studentStatistics.getStudentSchedule().getClassSchedule().clear();
         }
-        System.out.println("All schedules cleared - starting fresh assignment");
+        GameLogger.logScheduling("All schedules cleared - starting fresh assignment");
 
         // *** NEW DEMAND-FIRST APPROACH ***
         // Phase 0: Analyze student demand FIRST (before creating teacher blocks)
-        System.out.println("=== PHASE 0: DEMAND-FIRST ANALYSIS ===");
+        GameLogger.logScheduling("=== PHASE 0: DEMAND-FIRST ANALYSIS ===");
         analyzeDemandWithTraits(studentHashMap, staffHashMap);
 
         // Phase 0.5: Create teacher blocks based on actual demand
-        System.out.println("=== PHASE 0.5: DEMAND-DRIVEN TEACHER BLOCK CREATION ===");
+        GameLogger.logScheduling("=== PHASE 0.5: DEMAND-DRIVEN TEACHER BLOCK CREATION ===");
         createDemandDrivenTeacherBlocks(studentHashMap, staffHashMap, standardSchool, view);
 
         // Phase 1: Re-analyze demands (demand already analyzed, just refresh sections)
-        System.out.println("=== PHASE 1: REFRESHING DEMAND ANALYSIS ===");
+        GameLogger.logScheduling("=== PHASE 1: REFRESHING DEMAND ANALYSIS ===");
 
         // Phase 2: Create optimal sections based on the new demand-driven blocks
         createOptimalSections(staffHashMap);
@@ -92,7 +116,7 @@ public class EnhancedStudentScheduleAssigner {
         // assignment)
         // This phase identifies empty/under-enrolled sections and reassigns teachers
         // to high-demand classes within their discipline
-        System.out.println("=== PHASE 3.5: POST-ASSIGNMENT BLOCK OPTIMIZATION ===");
+        GameLogger.logScheduling("=== PHASE 3.5: POST-ASSIGNMENT BLOCK OPTIMIZATION ===");
         optimizeBlockAssignmentsWithinSubjects(studentHashMap, staffHashMap);
 
         // Phase 4: Balance and optimize
@@ -125,14 +149,14 @@ public class EnhancedStudentScheduleAssigner {
             HashMap<Integer, Staff> staffHashMap,
             StandardSchool standardSchool,
             GameView view) {
-        System.out.println("Creating teacher blocks based on student demand...");
+        GameLogger.logScheduling("Creating teacher blocks based on student demand...");
 
         // Step 0: Ensure all teaching staff have room assignments
         // Skip room assignment if standardSchool is null (backward compatibility mode)
         if (standardSchool != null) {
             ensureTeachersHaveRooms(staffHashMap, standardSchool, view);
         } else {
-            System.out.println("  WARNING: StandardSchool is null - skipping room assignments");
+            GameLogger.logScheduling("  WARNING: StandardSchool is null - skipping room assignments");
         }
 
         // Step 1: Calculate sections needed per class
@@ -144,7 +168,7 @@ public class EnhancedStudentScheduleAssigner {
             sectionsNeeded.put(className, sections);
 
             if (sections > 0) {
-                System.out.println("  " + className + ": " + demand + " students need " + sections + " sections");
+                GameLogger.logScheduling("  " + className + ": " + demand + " students need " + sections + " sections");
             }
         }
 
@@ -173,18 +197,18 @@ public class EnhancedStudentScheduleAssigner {
                         teachersByType.computeIfAbsent(type, k -> new ArrayList<>()).add(staff);
                     } else {
                         teachersWithoutRooms++;
-                        System.out.println("  WARNING: " + type + " teacher " + staff.teacherName.getFirstName() +
+                        GameLogger.logScheduling("  WARNING: " + type + " teacher " + staff.teacherName.getFirstName() +
                                 " " + staff.teacherName.getLastName() + " has no room - skipping");
                     }
                 }
             }
         }
-        System.out.println("  Teachers without rooms (skipped): " + teachersWithoutRooms);
+        GameLogger.logScheduling("  Teachers without rooms (skipped): " + teachersWithoutRooms);
 
         // Report teacher counts by type
-        System.out.println("=== TEACHERS WITH ROOM ASSIGNMENTS ===");
+        GameLogger.logScheduling("=== TEACHERS WITH ROOM ASSIGNMENTS ===");
         for (Map.Entry<StaffType, List<Staff>> entry : teachersByType.entrySet()) {
-            System.out.println("  " + entry.getKey() + ": " + entry.getValue().size() + " teachers");
+            GameLogger.logScheduling("  " + entry.getKey() + ": " + entry.getValue().size() + " teachers");
         }
 
         // Step 4: For each class, create teacher blocks distributed across ALL time
@@ -212,7 +236,7 @@ public class EnhancedStudentScheduleAssigner {
             List<Staff> qualifiedTeachers = teachersByType.getOrDefault(staffType, new ArrayList<>());
 
             if (qualifiedTeachers.isEmpty()) {
-                System.out.println("  WARNING: No " + staffType + " teachers for " + className +
+                GameLogger.logScheduling("  WARNING: No " + staffType + " teachers for " + className +
                         " (total " + staffType + " teachers in school: " +
                         teachersByType.getOrDefault(staffType, Collections.emptyList()).size() + ")");
                 continue;
@@ -220,11 +244,11 @@ public class EnhancedStudentScheduleAssigner {
 
             // Debug: For language classes, show detailed info
             if (staffType == StaffType.LANGUAGES) {
-                System.out.println("  DEBUG LANGUAGES: " + className + " needs " + sectionsRequired +
+                GameLogger.logScheduling("  DEBUG LANGUAGES: " + className + " needs " + sectionsRequired +
                         " sections, " + qualifiedTeachers.size() + " teachers available");
                 for (Staff teacher : qualifiedTeachers) {
                     Room room = getTeacherRoom(teacher, standardSchool);
-                    System.out.println("    - " + teacher.teacherName.getFirstName() + " " +
+                    GameLogger.logScheduling("    - " + teacher.teacherName.getFirstName() + " " +
                             teacher.teacherName.getLastName() +
                             " room: " + (room != null ? room.getRoomName() : "NONE"));
                 }
@@ -274,7 +298,7 @@ public class EnhancedStudentScheduleAssigner {
             }
 
             if (sectionsCreated < sectionsRequired) {
-                System.out.println("  WARNING: Only created " + sectionsCreated + "/" + sectionsRequired +
+                GameLogger.logScheduling("  WARNING: Only created " + sectionsCreated + "/" + sectionsRequired +
                         " sections for " + className + " (not enough teachers/slots)");
             } else {
                 // Show distribution across periods
@@ -284,13 +308,13 @@ public class EnhancedStudentScheduleAssigner {
                         dist.append("P").append(i + 1).append(":").append(classSlots[i]).append(" ");
                     }
                 }
-                System.out.println("  ✓ Created " + sectionsCreated + " sections for " + className + " ["
+                GameLogger.logScheduling("  ✓ Created " + sectionsCreated + " sections for " + className + " ["
                         + dist.toString().trim() + "]");
             }
         }
 
         // Step 5: Print teacher utilization summary
-        System.out.println("=== DEMAND-DRIVEN TEACHER UTILIZATION ===");
+        GameLogger.logScheduling("=== DEMAND-DRIVEN TEACHER UTILIZATION ===");
         for (Map.Entry<StaffType, List<Staff>> entry : teachersByType.entrySet()) {
             StaffType type = entry.getKey();
             List<Staff> teachers = entry.getValue();
@@ -301,7 +325,7 @@ public class EnhancedStudentScheduleAssigner {
             }
 
             double avgBlocks = teachers.isEmpty() ? 0 : (double) totalBlocks / teachers.size();
-            System.out.println("  " + type + ": " + teachers.size() + " teachers, " +
+            GameLogger.logScheduling("  " + type + ": " + teachers.size() + " teachers, " +
                     totalBlocks + " blocks total, avg " + String.format("%.1f", avgBlocks) + " blocks/teacher");
         }
     }
@@ -397,7 +421,7 @@ public class EnhancedStudentScheduleAssigner {
     private static void ensureTeachersHaveRooms(HashMap<Integer, Staff> staffHashMap,
             StandardSchool standardSchool,
             GameView view) {
-        System.out.println("=== ENSURING TEACHERS HAVE ROOM ASSIGNMENTS ===");
+        GameLogger.logScheduling("=== ENSURING TEACHERS HAVE ROOM ASSIGNMENTS ===");
 
         int teachersWithoutRooms = 0;
         int roomsAssigned = 0;
@@ -530,17 +554,17 @@ public class EnhancedStudentScheduleAssigner {
             if (assignedRoom != null) {
                 RoomAssignment.assignTeacherToRoom(staff, assignedRoom);
                 roomsAssigned++;
-                System.out.println("  Assigned " + staff.teacherName.getFirstName() + " " +
+                GameLogger.logScheduling("  Assigned " + staff.teacherName.getFirstName() + " " +
                         staff.teacherName.getLastName() + " (" + type + ") to " + assignedRoom.getRoomName());
             } else {
-                System.out.println("  WARNING: No room available for " + staff.teacherName.getFirstName() + " " +
+                GameLogger.logScheduling("  WARNING: No room available for " + staff.teacherName.getFirstName() + " " +
                         staff.teacherName.getLastName() + " (" + type + ")");
             }
         }
 
-        System.out.println("  Teachers needing rooms: " + teachersWithoutRooms);
-        System.out.println("  Rooms assigned: " + roomsAssigned);
-        System.out.println("  Remaining available classrooms: " + availableClassrooms.size());
+        GameLogger.logScheduling("  Teachers needing rooms: " + teachersWithoutRooms);
+        GameLogger.logScheduling("  Rooms assigned: " + roomsAssigned);
+        GameLogger.logScheduling("  Remaining available classrooms: " + availableClassrooms.size());
 
         // Debug: Count teachers by type and room status
         Map<StaffType, Integer> teachersByTypeTotal = new HashMap<>();
@@ -556,11 +580,11 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
 
-        System.out.println("=== TEACHER ROOM ASSIGNMENT SUMMARY ===");
+        GameLogger.logScheduling("=== TEACHER ROOM ASSIGNMENT SUMMARY ===");
         for (StaffType type : teachersByTypeTotal.keySet()) {
             int total = teachersByTypeTotal.getOrDefault(type, 0);
             int withRooms = teachersByTypeWithRooms.getOrDefault(type, 0);
-            System.out.println("  " + type + ": " + withRooms + "/" + total + " have rooms");
+            GameLogger.logScheduling("  " + type + ": " + withRooms + "/" + total + " have rooms");
         }
     }
 
@@ -690,7 +714,7 @@ public class EnhancedStudentScheduleAssigner {
         currentOptimalClassSize = fundingModel.getOptimalClassSize();
         allowOvercrowding = fundingModel.isAllowOvercrowding();
 
-        System.out.println("Class size limits configured: optimal=" + currentOptimalClassSize +
+        GameLogger.logScheduling("Class size limits configured: optimal=" + currentOptimalClassSize +
                 ", max=" + currentMaxClassSize +
                 ", overcrowding=" + (allowOvercrowding ? "allowed" : "not allowed"));
     }
@@ -703,7 +727,7 @@ public class EnhancedStudentScheduleAssigner {
      */
     private static void verifyGraduationRequirements(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("\n=== Verifying Graduation Requirements ===");
+        GameLogger.logScheduling("\n=== Verifying Graduation Requirements ===");
 
         Map<String, List<String>> missingByGrade = new HashMap<>();
         missingByGrade.put("Freshman", new ArrayList<>());
@@ -754,22 +778,22 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
 
-        System.out.println("Students with missing requirements: " + studentsWithMissingReqs);
-        System.out.println("Total missing class assignments: " + totalMissingClasses);
+        GameLogger.logScheduling("Students with missing requirements: " + studentsWithMissingReqs);
+        GameLogger.logScheduling("Total missing class assignments: " + totalMissingClasses);
 
         for (Map.Entry<String, List<String>> entry : missingByGrade.entrySet()) {
             if (!entry.getValue().isEmpty()) {
-                System.out.println(entry.getKey() + " issues (" + entry.getValue().size() + "):");
+                GameLogger.logScheduling(entry.getKey() + " issues (" + entry.getValue().size() + "):");
                 // Only print first 5 to avoid flooding output
                 int count = 0;
                 for (String issue : entry.getValue()) {
                     if (count < 5) {
-                        System.out.println("  - " + issue);
+                        GameLogger.logScheduling("  - " + issue);
                     }
                     count++;
                 }
                 if (count > 5) {
-                    System.out.println("  ... and " + (count - 5) + " more");
+                    GameLogger.logScheduling("  ... and " + (count - 5) + " more");
                 }
             }
         }
@@ -793,8 +817,8 @@ public class EnhancedStudentScheduleAssigner {
             Map<Student, List<String>> studentMissingClasses,
             HashMap<Integer, Student> studentHashMap) {
 
-        System.out.println("\n=== Returning Students with Unfulfilled Requirements to Pool ===");
-        System.out.println("Students being returned to pool: " + studentsToRemove.size());
+        GameLogger.logScheduling("\n=== Returning Students with Unfulfilled Requirements to Pool ===");
+        GameLogger.logScheduling("Students being returned to pool: " + studentsToRemove.size());
 
         Map<String, Integer> removedByGrade = new HashMap<>();
         removedByGrade.put("Freshman", 0);
@@ -830,27 +854,32 @@ public class EnhancedStudentScheduleAssigner {
                 studentHashMap.remove(keyToRemove);
             }
 
+            // Unassign from StudentPool if available (critical for accurate population counts)
+            if (currentStudentPool != null) {
+                currentStudentPool.unassignFromSchool(student);
+            }
+
             // Track counts by grade
             removedByGrade.merge(grade, 1, Integer::sum);
 
             // Log first few removals with details
             if (removedByGrade.values().stream().mapToInt(Integer::intValue).sum() <= 10) {
-                System.out.println("  Returned to pool: " + student.studentName.getFirstName() + " " +
+                GameLogger.logScheduling("  Returned to pool: " + student.studentName.getFirstName() + " " +
                         student.studentName.getLastName() + " (" + grade + ") - missing: " +
                         String.join(", ", missing));
             }
         }
 
         // Summary by grade
-        System.out.println("\nStudents returned to pool by grade:");
+        GameLogger.logScheduling("\nStudents returned to pool by grade:");
         for (Map.Entry<String, Integer> entry : removedByGrade.entrySet()) {
             if (entry.getValue() > 0) {
-                System.out.println("  " + entry.getKey() + ": " + entry.getValue());
+                GameLogger.logScheduling("  " + entry.getKey() + ": " + entry.getValue());
             }
         }
-        System.out.println("Total students returned to pool: " + studentsToRemove.size());
-        System.out.println("These students are marked as 'not in high school' and can be re-enrolled later");
-        System.out.println("Remaining enrolled students: " + studentHashMap.size());
+        GameLogger.logScheduling("Total students returned to pool: " + studentsToRemove.size());
+        GameLogger.logScheduling("These students are marked as 'not in high school' and can be re-enrolled later");
+        GameLogger.logScheduling("Remaining enrolled students: " + studentHashMap.size());
     }
 
     /**
@@ -1099,7 +1128,7 @@ public class EnhancedStudentScheduleAssigner {
      */
     private static void analyzeDemandWithTraits(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("Analyzing student demand based on traits and requirements...");
+        GameLogger.logScheduling("Analyzing student demand based on traits and requirements...");
 
         classSections.clear();
         demandTracker.clear();
@@ -1124,26 +1153,26 @@ public class EnhancedStudentScheduleAssigner {
             StudentDemand demand = new StudentDemand(className, interestedStudents.size(), interestedStudents);
             demandTracker.put(className, demand);
 
-            System.out.println("Demand for " + className + ": " + interestedStudents.size() + " students");
+            GameLogger.logScheduling("Demand for " + className + ": " + interestedStudents.size() + " students");
         }
 
         // Debug: Show language class demand specifically
-        System.out.println("=== LANGUAGE CLASS DEMAND ===");
+        GameLogger.logScheduling("=== LANGUAGE CLASS DEMAND ===");
         String[] languageClasses = { "Spanish I", "Spanish II", "French I", "French II",
                 "German I", "German II", "Latin I", "Latin II",
                 "American Sign Language I", "American Sign Language II" };
         for (String langClass : languageClasses) {
             int demand = demandTracker.containsKey(langClass) ? demandTracker.get(langClass).totalDemand() : 0;
-            System.out.println("  " + langClass + ": " + demand + " students");
+            GameLogger.logScheduling("  " + langClass + ": " + demand + " students");
         }
 
         // Debug: Show science class demand specifically
-        System.out.println("=== SCIENCE CLASS DEMAND ===");
+        GameLogger.logScheduling("=== SCIENCE CLASS DEMAND ===");
         String[] scienceClasses = { "Biology", "Chemistry", "Physics", "AP Biology", "AP Chemistry",
                 "AP Physics B", "Environmental Science", "Anatomy and Physiology" };
         for (String sciClass : scienceClasses) {
             int demand = demandTracker.containsKey(sciClass) ? demandTracker.get(sciClass).totalDemand() : 0;
-            System.out.println("  " + sciClass + ": " + demand + " students");
+            GameLogger.logScheduling("  " + sciClass + ": " + demand + " students");
         }
     }
 
@@ -1180,10 +1209,10 @@ public class EnhancedStudentScheduleAssigner {
      * Creates optimal sections with minimum enrollment constraints
      */
     private static void createOptimalSections(HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("Creating optimal sections with minimum enrollment constraints...");
+        GameLogger.logScheduling("Creating optimal sections with minimum enrollment constraints...");
 
         // Debug: Show what classes are actually in teacher blocks
-        System.out.println("=== TEACHER BLOCK CLASS NAMES ===");
+        GameLogger.logScheduling("=== TEACHER BLOCK CLASS NAMES ===");
         Map<String, Integer> blocksByClass = new HashMap<>();
         for (Staff staff : staffHashMap.values()) {
             for (TeacherBlock block : staff.teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
@@ -1192,7 +1221,7 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
         for (Map.Entry<String, Integer> entry : blocksByClass.entrySet()) {
-            System.out.println("  " + entry.getKey() + ": " + entry.getValue() + " blocks");
+            GameLogger.logScheduling("  " + entry.getKey() + ": " + entry.getValue() + " blocks");
         }
 
         for (Map.Entry<String, StudentDemand> entry : demandTracker.entrySet()) {
@@ -1202,11 +1231,11 @@ public class EnhancedStudentScheduleAssigner {
             // Debug output for specific classes
             if (className.equals("World Geography") || className.equals("Health")
                     || className.equals("AP Human Geography")) {
-                System.out.println("DEBUG: Processing " + className + " with demand: " + demand.totalDemand());
+                GameLogger.logScheduling("DEBUG: Processing " + className + " with demand: " + demand.totalDemand());
                 List<Staff> qualifiedTeachers = getQualifiedTeachers(className, staffHashMap);
-                System.out.println("DEBUG: Found " + qualifiedTeachers.size() + " qualified teachers for " + className);
+                GameLogger.logScheduling("DEBUG: Found " + qualifiedTeachers.size() + " qualified teachers for " + className);
                 for (Staff teacher : qualifiedTeachers) {
-                    System.out.println("DEBUG: Teacher " + teacher.teacherName.getFirstName() + " " +
+                    GameLogger.logScheduling("DEBUG: Teacher " + teacher.teacherName.getFirstName() + " " +
                             teacher.teacherName.getLastName() + " can teach " + className);
                 }
             }
@@ -1216,7 +1245,7 @@ public class EnhancedStudentScheduleAssigner {
                 if (demand.totalDemand() >= MIN_CLASS_SIZE) {
                     createSectionsForClass(className, demand, staffHashMap);
                 } else {
-                    System.out.println("WARNING: Core class " + className +
+                    GameLogger.logScheduling("WARNING: Core class " + className +
                             " has insufficient demand: " + demand.totalDemand());
                     // Still create section but flag for monitoring
                     createSectionsForClass(className, demand, staffHashMap);
@@ -1227,7 +1256,7 @@ public class EnhancedStudentScheduleAssigner {
                 if (demand.totalDemand() >= minRequired) {
                     createSectionsForClass(className, demand, staffHashMap);
                 } else {
-                    System.out.println("Canceling elective " + className +
+                    GameLogger.logScheduling("Canceling elective " + className +
                             " due to insufficient enrollment: " + demand.totalDemand());
                     // Add students to waitlist for alternative assignment
                     classWaitlists.put(className, demand.interestedStudents());
@@ -1236,7 +1265,7 @@ public class EnhancedStudentScheduleAssigner {
         }
 
         // Debug: Compare demand vs sections created
-        System.out.println("=== DEMAND VS SECTIONS COMPARISON ===");
+        GameLogger.logScheduling("=== DEMAND VS SECTIONS COMPARISON ===");
         for (Map.Entry<String, StudentDemand> entry : demandTracker.entrySet()) {
             String className = entry.getKey();
             int demand = entry.getValue().totalDemand();
@@ -1246,7 +1275,7 @@ public class EnhancedStudentScheduleAssigner {
 
             // Only show classes with demand but no sections, or significant gaps
             if (demand > 0 && (sectionCount == 0 || capacity < demand * 0.5)) {
-                System.out.println("  GAP: " + className + " - demand: " + demand +
+                GameLogger.logScheduling("  GAP: " + className + " - demand: " + demand +
                         ", sections: " + sectionCount + ", capacity: " + capacity);
             }
         }
@@ -1257,13 +1286,13 @@ public class EnhancedStudentScheduleAssigner {
      */
     private static void analyzeAndReallocateResources(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("=== RESOURCE ANALYSIS AND SUBSTITUTE REALLOCATION ===");
+        GameLogger.logScheduling("=== RESOURCE ANALYSIS AND SUBSTITUTE REALLOCATION ===");
 
         // Step 1: Analyze available resources
         List<Staff> availableSubstitutes = StaffAssignmentService.getTeachersOfType(staffHashMap, StaffType.SUB);
         int totalSubstitutes = availableSubstitutes.size();
 
-        System.out.println("Available substitutes: " + totalSubstitutes);
+        GameLogger.logScheduling("Available substitutes: " + totalSubstitutes);
 
         // Step 2: Analyze current capacity vs demand for each class
         List<ResourceShortage> shortages = identifyResourceShortages();
@@ -1284,9 +1313,9 @@ public class EnhancedStudentScheduleAssigner {
         });
 
         // Step 4: Display analysis
-        System.out.println("=== DEMAND vs CAPACITY ANALYSIS ===");
+        GameLogger.logScheduling("=== DEMAND vs CAPACITY ANALYSIS ===");
         for (ResourceShortage shortage : shortages) {
-            System.out.println(shortage.className + ": Need " + shortage.demandAmount +
+            GameLogger.logScheduling(shortage.className + ": Need " + shortage.demandAmount +
                     ", Have capacity for " + shortage.currentCapacity +
                     ", Shortage: " + shortage.shortageAmount);
         }
@@ -1295,7 +1324,7 @@ public class EnhancedStudentScheduleAssigner {
         int substitutesUsed = 0;
         for (ResourceShortage shortage : shortages) {
             if (substitutesUsed >= totalSubstitutes) {
-                System.out.println("No more substitutes available for reallocation");
+                GameLogger.logScheduling("No more substitutes available for reallocation");
                 break;
             }
 
@@ -1308,7 +1337,7 @@ public class EnhancedStudentScheduleAssigner {
                             availableSubstitutes, substitutesUsed, staffHashMap);
                     if (success) {
                         substitutesUsed += teachersToAllocate;
-                        System.out.println(
+                        GameLogger.logScheduling(
                                 "✓ Reallocated " + teachersToAllocate + " substitutes to " + shortage.className);
 
                         // Recreate sections for this class with new teachers
@@ -1319,17 +1348,17 @@ public class EnhancedStudentScheduleAssigner {
                             createSectionsForClass(shortage.className, demand, staffHashMap);
                         }
                     } else {
-                        System.out.println("✗ Failed to reallocate substitutes to " + shortage.className
+                        GameLogger.logScheduling("✗ Failed to reallocate substitutes to " + shortage.className
                                 + " (no available rooms)");
                     }
                 }
             }
         }
 
-        System.out.println("=== REALLOCATION SUMMARY ===");
-        System.out.println("Total substitutes used: " + substitutesUsed + "/" + totalSubstitutes);
-        System.out.println("Remaining substitutes: " + (totalSubstitutes - substitutesUsed));
-        System.out.println("=== END RESOURCE ANALYSIS ===");
+        GameLogger.logScheduling("=== REALLOCATION SUMMARY ===");
+        GameLogger.logScheduling("Total substitutes used: " + substitutesUsed + "/" + totalSubstitutes);
+        GameLogger.logScheduling("Remaining substitutes: " + (totalSubstitutes - substitutesUsed));
+        GameLogger.logScheduling("=== END RESOURCE ANALYSIS ===");
     }
 
     /**
@@ -1392,7 +1421,7 @@ public class EnhancedStudentScheduleAssigner {
         StaffType targetType = determineStaffTypeForClass(className);
 
         if (targetType == null) {
-            System.out.println("Cannot determine staff type for " + className);
+            GameLogger.logScheduling("Cannot determine staff type for " + className);
             return false;
         }
 
@@ -1403,7 +1432,7 @@ public class EnhancedStudentScheduleAssigner {
             // Change their staff type
             substitute.teacherStatistics.setStaffType(targetType);
 
-            System.out.println("Reallocated substitute " + substitute.teacherName.getFirstName() + " " +
+            GameLogger.logScheduling("Reallocated substitute " + substitute.teacherName.getFirstName() + " " +
                     substitute.teacherName.getLastName() + " to " + targetType + " for " + className);
         }
 
@@ -1462,7 +1491,7 @@ public class EnhancedStudentScheduleAssigner {
      */
     private static void assignStudentsWithOptimization(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("Assigning students with priority-based optimization (WITH DUPLICATE PREVENTION)...");
+        GameLogger.logScheduling("Assigning students with priority-based optimization (WITH DUPLICATE PREVENTION)...");
 
         // Sort students by priority (seniors first, then by intelligence for
         // tie-breaking)
@@ -1486,7 +1515,7 @@ public class EnhancedStudentScheduleAssigner {
 
         // PRIORITY PHASE 0: Language Assignment FIRST (most constrained - requires both
         // semesters)
-        System.out.println("=== PRIORITY PHASE 0: Language Sequences (HIGHEST PRIORITY) ===");
+        GameLogger.logScheduling("=== PRIORITY PHASE 0: Language Sequences (HIGHEST PRIORITY) ===");
         List<Student> freshmen = sortedStudents.stream()
                 .filter(s -> s.studentStatistics.getGradeLevel().equals("Freshman"))
                 .collect(Collectors.toList());
@@ -1495,16 +1524,16 @@ public class EnhancedStudentScheduleAssigner {
         }
 
         // PRIORITY PHASE 1: Core Academic Classes (absolutely required)
-        System.out.println("=== PRIORITY PHASE 1: Core Academic Classes ===");
+        GameLogger.logScheduling("=== PRIORITY PHASE 1: Core Academic Classes ===");
         String[] coreAcademics = { "English", "Math", "Science", "History" };
         for (String subjectArea : coreAcademics) {
-            System.out.println("Assigning " + subjectArea + " classes (CORE PRIORITY)...");
+            GameLogger.logScheduling("Assigning " + subjectArea + " classes (CORE PRIORITY)...");
             assignSubjectWithPriorityAndRearrangement(subjectArea, sortedStudents, staffHashMap, true);
         }
 
         // PRIORITY PHASE 2: Required PE
-        System.out.println("=== PRIORITY PHASE 2: Required Physical Education ===");
-        System.out.println("Assigning Physical Education classes (HIGH PRIORITY)...");
+        GameLogger.logScheduling("=== PRIORITY PHASE 2: Required Physical Education ===");
+        GameLogger.logScheduling("Assigning Physical Education classes (HIGH PRIORITY)...");
         assignSubjectWithPriorityAndRearrangement("Physical Education", sortedStudents, staffHashMap, true);
 
         // Standard language assignment for non-freshmen (if any)
@@ -1512,16 +1541,16 @@ public class EnhancedStudentScheduleAssigner {
                 .filter(s -> !s.studentStatistics.getGradeLevel().equals("Freshman"))
                 .collect(Collectors.toList());
         if (!nonFreshmen.isEmpty()) {
-            System.out.println("Assigning Language classes for non-freshmen (HIGH PRIORITY)...");
+            GameLogger.logScheduling("Assigning Language classes for non-freshmen (HIGH PRIORITY)...");
             assignSubjectWithPriorityAndRearrangement("Language", nonFreshmen, staffHashMap, true);
         }
 
         // PRIORITY PHASE 3: Electives and Vocational (fill remaining slots)
-        System.out.println("=== PRIORITY PHASE 3: Electives and Vocational ===");
-        System.out.println("Assigning Electives/Vocational classes (NORMAL PRIORITY)...");
+        GameLogger.logScheduling("=== PRIORITY PHASE 3: Electives and Vocational ===");
+        GameLogger.logScheduling("Assigning Electives/Vocational classes (NORMAL PRIORITY)...");
         assignElectivesWithBalancing(sortedStudents, staffHashMap);
 
-        System.out.println("=== Assignment Complete - Checking for Incomplete Schedules ===");
+        GameLogger.logScheduling("=== Assignment Complete - Checking for Incomplete Schedules ===");
         checkForIncompleteSchedules(sortedStudents);
     }
 
@@ -1530,7 +1559,7 @@ public class EnhancedStudentScheduleAssigner {
      * in Spring
      */
     private static void assignSimpleLanguageSequences(List<Student> freshmen, HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("=== SIMPLIFIED LANGUAGE ASSIGNMENT: Ensuring Fall I -> Spring II ===");
+        GameLogger.logScheduling("=== SIMPLIFIED LANGUAGE ASSIGNMENT: Ensuring Fall I -> Spring II ===");
 
         // Group students by language choice
         Map<String, List<Student>> languageGroups = new HashMap<>();
@@ -1548,7 +1577,7 @@ public class EnhancedStudentScheduleAssigner {
             String languageBase = entry.getKey();
             List<Student> students = entry.getValue();
 
-            System.out.println("Processing " + languageBase + " for " + students.size() + " students");
+            GameLogger.logScheduling("Processing " + languageBase + " for " + students.size() + " students");
 
             String level1Class = languageBase + " I"; // Must be Fall
             String level2Class = languageBase + " II"; // Must be Spring
@@ -1571,7 +1600,7 @@ public class EnhancedStudentScheduleAssigner {
         List<Staff> level2Teachers = getQualifiedTeachers(level2Class, staffHashMap);
 
         if (level1Teachers.isEmpty() || level2Teachers.isEmpty()) {
-            System.out.println("WARNING: No qualified teachers found for " + level1Class + " or " + level2Class);
+            GameLogger.logScheduling("WARNING: No qualified teachers found for " + level1Class + " or " + level2Class);
             return;
         }
 
@@ -1579,7 +1608,7 @@ public class EnhancedStudentScheduleAssigner {
         int averageCapacity = calculateAverageRoomCapacity(level1Teachers);
         int neededSections = Math.max(1, (totalStudents + averageCapacity - 1) / averageCapacity);
 
-        System.out.println("Creating " + neededSections + " sections each for " + level1Class +
+        GameLogger.logScheduling("Creating " + neededSections + " sections each for " + level1Class +
                 " (Fall) and " + level2Class + " (Spring)");
 
         List<ClassSection> level1Sections = new ArrayList<>();
@@ -1594,7 +1623,7 @@ public class EnhancedStudentScheduleAssigner {
                 ClassSection section = new ClassSection(level1Class, teacher, fallBlock,
                         fallBlock.getRoom().getStudentCapacity());
                 level1Sections.add(section);
-                System.out.println("Created " + level1Class + " section: Fall Block " +
+                GameLogger.logScheduling("Created " + level1Class + " section: Fall Block " +
                         fallBlock.getBlockNumber() + " with " +
                         teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
             }
@@ -1609,7 +1638,7 @@ public class EnhancedStudentScheduleAssigner {
                 ClassSection section = new ClassSection(level2Class, teacher, springBlock,
                         springBlock.getRoom().getStudentCapacity());
                 level2Sections.add(section);
-                System.out.println("Created " + level2Class + " section: Spring Block " +
+                GameLogger.logScheduling("Created " + level2Class + " section: Spring Block " +
                         springBlock.getBlockNumber() + " with " +
                         teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
             }
@@ -1619,7 +1648,7 @@ public class EnhancedStudentScheduleAssigner {
         classSections.put(level1Class, level1Sections);
         classSections.put(level2Class, level2Sections);
 
-        System.out.println("Language sections created: " + level1Sections.size() + " Fall sections, " +
+        GameLogger.logScheduling("Language sections created: " + level1Sections.size() + " Fall sections, " +
                 level2Sections.size() + " Spring sections");
     }
 
@@ -1649,9 +1678,9 @@ public class EnhancedStudentScheduleAssigner {
 
         if (level1Sections == null || level2Sections == null ||
                 level1Sections.isEmpty() || level2Sections.isEmpty()) {
-            System.out.println("ERROR: Insufficient sections for " + languageBase + " sequence");
-            System.out.println("  Level I sections: " + (level1Sections != null ? level1Sections.size() : 0));
-            System.out.println("  Level II sections: " + (level2Sections != null ? level2Sections.size() : 0));
+            GameLogger.logScheduling("ERROR: Insufficient sections for " + languageBase + " sequence");
+            GameLogger.logScheduling("  Level I sections: " + (level1Sections != null ? level1Sections.size() : 0));
+            GameLogger.logScheduling("  Level II sections: " + (level2Sections != null ? level2Sections.size() : 0));
             return;
         }
 
@@ -1681,7 +1710,7 @@ public class EnhancedStudentScheduleAssigner {
                     assignStudentToSection(student, level1Section, true);
                     assignStudentToSection(student, level2Section, true);
 
-                    System.out.println("✓ SUCCESS: " + studentName + " assigned " + languageBase +
+                    GameLogger.logScheduling("✓ SUCCESS: " + studentName + " assigned " + languageBase +
                             " sequence [Fall " + level1Section.getTeacherBlock().getBlockNumber() +
                             " -> Spring " + level2Section.getTeacherBlock().getBlockNumber() + "]");
 
@@ -1699,13 +1728,13 @@ public class EnhancedStudentScheduleAssigner {
             }
 
             if (!assigned) {
-                System.out.println("✗ FAILED: Could not assign " + languageBase + " sequence to " + studentName);
+                GameLogger.logScheduling("✗ FAILED: Could not assign " + languageBase + " sequence to " + studentName);
                 // Try alternative language as fallback
                 trySimpleAlternativeLanguage(student, languageBase, staffHashMap);
             }
         }
 
-        System.out.println("Language assignment results: " + successCount + "/" + students.size() +
+        GameLogger.logScheduling("Language assignment results: " + successCount + "/" + students.size() +
                 " students successfully assigned " + languageBase);
     }
 
@@ -1739,7 +1768,7 @@ public class EnhancedStudentScheduleAssigner {
                             assignStudentToSection(student, s1, true);
                             assignStudentToSection(student, s2, true);
 
-                            System.out.println("✓ ALTERNATIVE: " + studentName + " assigned " + alt +
+                            GameLogger.logScheduling("✓ ALTERNATIVE: " + studentName + " assigned " + alt +
                                     " sequence (fallback from " + failedLanguage + ")");
                             return;
                         }
@@ -1748,7 +1777,7 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
 
-        System.out.println("✗ CRITICAL: No language sequence available for " + studentName);
+        GameLogger.logScheduling("✗ CRITICAL: No language sequence available for " + studentName);
     }
 
     /**
@@ -1757,14 +1786,14 @@ public class EnhancedStudentScheduleAssigner {
      */
     private static void assignSubjectWithPriorityAndRearrangement(String subjectArea, List<Student> students,
             HashMap<Integer, Staff> staffHashMap, boolean allowRearrangement) {
-        System.out.println("Processing " + subjectArea + " for " + students.size() + " students (rearrangement: "
+        GameLogger.logScheduling("Processing " + subjectArea + " for " + students.size() + " students (rearrangement: "
                 + allowRearrangement + ")");
 
         for (Student student : students) {
             List<String> subjectClasses = getStudentClassesForSubject(student, subjectArea);
 
             if (!subjectClasses.isEmpty() && student.studentStatistics.getGradeLevel().equals("Freshman")) {
-                System.out.println("Student " + student.studentName.getFirstName() + " " +
+                GameLogger.logScheduling("Student " + student.studentName.getFirstName() + " " +
                         student.studentName.getLastName() + " (" +
                         student.studentStatistics.getGradeLevel() + ") needs " +
                         subjectArea + " classes: " + subjectClasses);
@@ -1774,7 +1803,7 @@ public class EnhancedStudentScheduleAssigner {
                 // *** CRITICAL FIX: Check for duplicates before assignment ***
                 if (studentAlreadyHasClass(student, className)) {
                     if (student.studentStatistics.getGradeLevel().equals("Senior")) {
-                        System.out.println("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " +
+                        GameLogger.logScheduling("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " +
                                 student.studentName.getLastName() + " already has " + className +
                                 " - skipping duplicate assignment");
                     }
@@ -1802,12 +1831,12 @@ public class EnhancedStudentScheduleAssigner {
                     }
 
                     if (!assigned && student.studentStatistics.getGradeLevel().equals("Freshman")) {
-                        System.out.println("WARNING: Could not assign " + className + " to " +
+                        GameLogger.logScheduling("WARNING: Could not assign " + className + " to " +
                                 student.studentName.getFirstName() + " " +
                                 student.studentName.getLastName() + " even with rearrangement");
                     }
                 } else if (student.studentStatistics.getGradeLevel().equals("Freshman")) {
-                    System.out.println("WARNING: No sections created for class " + className +
+                    GameLogger.logScheduling("WARNING: No sections created for class " + className +
                             " needed by " + student.studentName.getFirstName() + " " +
                             student.studentName.getLastName());
                 }
@@ -1819,24 +1848,24 @@ public class EnhancedStudentScheduleAssigner {
      * Debug method to analyze why History assignment fails
      */
     private static void debugHistoryAssignment(Student student, String className) {
-        System.out.println("=== DEBUGGING HISTORY ASSIGNMENT FOR " + student.studentName.getFirstName() + " " +
+        GameLogger.logScheduling("=== DEBUGGING HISTORY ASSIGNMENT FOR " + student.studentName.getFirstName() + " " +
                 student.studentName.getLastName() + " (" + className + ") ===");
 
         // Show student's current schedule
-        System.out.println("Student's current schedule:");
+        GameLogger.logScheduling("Student's current schedule:");
         for (StudentBlock block : student.studentStatistics.getStudentSchedule().getClassSchedule()) {
-            System.out.println("  " + block.getSemester() + " " + block.getBlockNumber() +
+            GameLogger.logScheduling("  " + block.getSemester() + " " + block.getBlockNumber() +
                     ": " + block.getClassName());
         }
 
         // Show available History sections
         List<ClassSection> historySections = classSections.get(className);
         if (historySections == null) {
-            System.out.println("ERROR: No sections found for " + className);
+            GameLogger.logScheduling("ERROR: No sections found for " + className);
             return;
         }
 
-        System.out.println("Available " + className + " sections (" + historySections.size() + " total):");
+        GameLogger.logScheduling("Available " + className + " sections (" + historySections.size() + " total):");
         int availableCount = 0;
 
         for (ClassSection section : historySections) {
@@ -1855,7 +1884,7 @@ public class EnhancedStudentScheduleAssigner {
                 availableCount++;
             }
 
-            System.out.println("  " + status + teacherBlock.getSemester() + " Block " +
+            GameLogger.logScheduling("  " + status + teacherBlock.getSemester() + " Block " +
                     teacherBlock.getBlockNumber() + " with " +
                     section.getTeacher().teacherName.getFirstName() + " " +
                     section.getTeacher().teacherName.getLastName() +
@@ -1863,12 +1892,12 @@ public class EnhancedStudentScheduleAssigner {
                     ", room: " + teacherBlock.getRoom().getRoomName() + ")");
         }
 
-        System.out.println("Summary: " + availableCount + " sections available without conflicts");
+        GameLogger.logScheduling("Summary: " + availableCount + " sections available without conflicts");
 
         if (availableCount == 0) {
-            System.out.println("DIAGNOSIS: All World Geography sections conflict with student's schedule or are full");
+            GameLogger.logScheduling("DIAGNOSIS: All World Geography sections conflict with student's schedule or are full");
             // Show specifically which blocks would work
-            System.out.println("Student needs World Geography in one of these blocks:");
+            GameLogger.logScheduling("Student needs World Geography in one of these blocks:");
             boolean[] fallBlocks = new boolean[9]; // blocks 1-8
             boolean[] springBlocks = new boolean[9]; // blocks 1-8
 
@@ -1882,16 +1911,16 @@ public class EnhancedStudentScheduleAssigner {
                 }
             }
 
-            System.out.println("Available blocks for student:");
+            GameLogger.logScheduling("Available blocks for student:");
             for (int i = 1; i <= 8; i++) {
                 if (!fallBlocks[i])
-                    System.out.println("  Fall " + i + " - AVAILABLE");
+                    GameLogger.logScheduling("  Fall " + i + " - AVAILABLE");
                 if (!springBlocks[i])
-                    System.out.println("  Spring " + i + " - AVAILABLE");
+                    GameLogger.logScheduling("  Spring " + i + " - AVAILABLE");
             }
         }
 
-        System.out.println("=== END DEBUGGING ===");
+        GameLogger.logScheduling("=== END DEBUGGING ===");
     }
 
     /**
@@ -1899,7 +1928,7 @@ public class EnhancedStudentScheduleAssigner {
      */
     private static boolean tryAssignWithRearrangement(Student student, String className, String subjectArea) {
         String studentName = student.studentName.getFirstName() + " " + student.studentName.getLastName();
-        System.out.println("Attempting schedule rearrangement for " + studentName + " to fit " + className);
+        GameLogger.logScheduling("Attempting schedule rearrangement for " + studentName + " to fit " + className);
 
         List<ClassSection> availableSections = classSections.get(className);
         if (availableSections == null || availableSections.isEmpty())
@@ -1926,21 +1955,21 @@ public class EnhancedStudentScheduleAssigner {
             if (scheduleSize < expectedSize) {
                 incompleteCount++;
                 if (grade.equals("Freshman")) {
-                    System.out.println("INCOMPLETE SCHEDULE: " + student.studentName.getFirstName() + " " +
+                    GameLogger.logScheduling("INCOMPLETE SCHEDULE: " + student.studentName.getFirstName() + " " +
                             student.studentName.getLastName() + " (" + grade + ") has " +
                             scheduleSize + "/" + expectedSize + " classes");
 
                     // Show what they have
-                    System.out.println("  Current classes:");
+                    GameLogger.logScheduling("  Current classes:");
                     for (StudentBlock block : student.studentStatistics.getStudentSchedule().getClassSchedule()) {
-                        System.out.println("    " + block.getSemester() + " " + block.getBlockNumber() +
+                        GameLogger.logScheduling("    " + block.getSemester() + " " + block.getBlockNumber() +
                                 " " + block.getClassName());
                     }
                 }
             }
         }
 
-        System.out.println("Students with incomplete schedules: " + incompleteCount + "/" + students.size());
+        GameLogger.logScheduling("Students with incomplete schedules: " + incompleteCount + "/" + students.size());
     }
 
     /**
@@ -2193,11 +2222,11 @@ public class EnhancedStudentScheduleAssigner {
         if (availableTeachers.isEmpty()) {
             // Log detailed warning about the shortage
             StaffType neededType = CurriculumRequirementsCalculator.mapClassToStaffType(className);
-            System.out.println("CRITICAL SHORTAGE: No qualified teachers found for " + className);
-            System.out.println("  - Student demand: " + studentDemand + " students");
-            System.out.println("  - Sections needed: " + sectionsNeeded);
-            System.out.println("  - Staff type required: " + neededType);
-            System.out.println("  - This is a " + (isCoreSubject(className) ? "CORE" : "ELECTIVE") + " subject");
+            GameLogger.logScheduling("CRITICAL SHORTAGE: No qualified teachers found for " + className);
+            GameLogger.logScheduling("  - Student demand: " + studentDemand + " students");
+            GameLogger.logScheduling("  - Sections needed: " + sectionsNeeded);
+            GameLogger.logScheduling("  - Staff type required: " + neededType);
+            GameLogger.logScheduling("  - This is a " + (isCoreSubject(className) ? "CORE" : "ELECTIVE") + " subject");
 
             // Track this shortage for later reporting
             trackShortage(className, studentDemand, sectionsNeeded, neededType);
@@ -2207,18 +2236,18 @@ public class EnhancedStudentScheduleAssigner {
         // Enhanced debugging for high-demand classes
         boolean isHighDemand = studentDemand > 500 || className.equals("World Geography");
         if (isHighDemand) {
-            System.out.println("=== SECTION CREATION: " + className + " ===");
-            System.out.println("Demand: " + studentDemand + " students, Sections needed: " + sectionsNeeded);
-            System.out.println("Available teachers: " + availableTeachers.size());
+            GameLogger.logScheduling("=== SECTION CREATION: " + className + " ===");
+            GameLogger.logScheduling("Demand: " + studentDemand + " students, Sections needed: " + sectionsNeeded);
+            GameLogger.logScheduling("Available teachers: " + availableTeachers.size());
 
             for (Staff teacher : availableTeachers) {
-                System.out.println("Teacher: " + teacher.teacherName.getFirstName() + " " +
+                GameLogger.logScheduling("Teacher: " + teacher.teacherName.getFirstName() + " " +
                         teacher.teacherName.getLastName());
                 List<TeacherBlock> blocks = teacher.teacherStatistics.getTeacherSchedule()
                         .getBlocksByClassName(className);
-                System.out.println("  Available blocks for " + className + ": " + blocks.size());
+                GameLogger.logScheduling("  Available blocks for " + className + ": " + blocks.size());
                 for (TeacherBlock block : blocks) {
-                    System.out.println("    " + block.getSemester() + " Block " + block.getBlockNumber() +
+                    GameLogger.logScheduling("    " + block.getSemester() + " Block " + block.getBlockNumber() +
                             " in " + block.getRoom().getRoomName() +
                             " (capacity: " + block.getRoom().getStudentCapacity() + ")");
                 }
@@ -2241,7 +2270,7 @@ public class EnhancedStudentScheduleAssigner {
                 totalBlocksCreated++;
 
                 if (isHighDemand) {
-                    System.out.println("Created section: " + className + " with " +
+                    GameLogger.logScheduling("Created section: " + className + " with " +
                             teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName() +
                             " in " + block.getRoom().getRoomName() +
                             " (Block " + block.getBlockNumber() + ", " + block.getSemester() +
@@ -2257,7 +2286,7 @@ public class EnhancedStudentScheduleAssigner {
                 .sum();
 
         // Log section creation summary
-        System.out.println("Created " + sections.size() + " sections for " + className +
+        GameLogger.logScheduling("Created " + sections.size() + " sections for " + className +
                 " (demand: " + studentDemand + ", needed: " + sectionsNeeded +
                 ", capacity: " + totalCapacity + ")");
 
@@ -2266,26 +2295,26 @@ public class EnhancedStudentScheduleAssigner {
             int shortfall = studentDemand - totalCapacity;
             int additionalSectionsNeeded = (int) Math.ceil((double) shortfall / currentOptimalClassSize);
 
-            System.out.println("CAPACITY SHORTFALL for " + className + ":");
-            System.out.println("  - Student demand: " + studentDemand);
-            System.out.println("  - Total capacity: " + totalCapacity);
-            System.out.println("  - Shortfall: " + shortfall + " students");
-            System.out.println("  - Additional sections needed: " + additionalSectionsNeeded);
-            System.out.println("  - Sections created: " + sections.size() + "/" + sectionsNeeded + " needed");
+            GameLogger.logScheduling("CAPACITY SHORTFALL for " + className + ":");
+            GameLogger.logScheduling("  - Student demand: " + studentDemand);
+            GameLogger.logScheduling("  - Total capacity: " + totalCapacity);
+            GameLogger.logScheduling("  - Shortfall: " + shortfall + " students");
+            GameLogger.logScheduling("  - Additional sections needed: " + additionalSectionsNeeded);
+            GameLogger.logScheduling("  - Sections created: " + sections.size() + "/" + sectionsNeeded + " needed");
 
             if (isCoreSubject(className)) {
-                System.out.println("  - CRITICAL: This is a CORE subject - students may not graduate!");
+                GameLogger.logScheduling("  - CRITICAL: This is a CORE subject - students may not graduate!");
             }
         } else if (totalBlocksCreated < sectionsNeeded) {
             // We have capacity but fewer sections than optimal - classes will be larger
-            System.out.println("NOTE: " + className + " has fewer sections than optimal (" +
+            GameLogger.logScheduling("NOTE: " + className + " has fewer sections than optimal (" +
                     totalBlocksCreated + "/" + sectionsNeeded +
                     ") - class sizes will exceed optimal of " + currentOptimalClassSize);
         }
 
         // Additional debugging for high-demand classes to show block distribution
         if (isHighDemand) {
-            System.out.println("=== " + className + " Section Distribution ===");
+            GameLogger.logScheduling("=== " + className + " Section Distribution ===");
             Map<String, Integer> blockDistribution = new HashMap<>();
             for (ClassSection section : sections) {
                 String key = section.getTeacherBlock().getSemester() + " Block "
@@ -2294,9 +2323,9 @@ public class EnhancedStudentScheduleAssigner {
             }
 
             for (Map.Entry<String, Integer> entry : blockDistribution.entrySet()) {
-                System.out.println("  " + entry.getKey() + ": " + entry.getValue() + " section(s)");
+                GameLogger.logScheduling("  " + entry.getKey() + ": " + entry.getValue() + " section(s)");
             }
-            System.out.println("=== End Distribution ===");
+            GameLogger.logScheduling("=== End Distribution ===");
         }
     }
 
@@ -2397,7 +2426,7 @@ public class EnhancedStudentScheduleAssigner {
                 .sum();
 
         if (currentCount > 1) {
-            System.out.println("DUPLICATE PREVENTION: Blocking move of " + student.studentName.getFirstName() + " " +
+            GameLogger.logScheduling("DUPLICATE PREVENTION: Blocking move of " + student.studentName.getFirstName() + " " +
                     student.studentName.getLastName() + " for " + className +
                     " - already has " + currentCount + " instances");
             return; // Don't move - would create/worsen duplicates
@@ -2415,7 +2444,7 @@ public class EnhancedStudentScheduleAssigner {
         // Add to new section
         assignStudentToSection(student, toSection, false);
 
-        System.out.println("Moved " + student.studentName.getFirstName() + " " +
+        GameLogger.logScheduling("Moved " + student.studentName.getFirstName() + " " +
                 student.studentName.getLastName() + " from section " +
                 fromSection.getTeacherBlock().getBlockNumber() + " to " +
                 toSection.getTeacherBlock().getBlockNumber() + " for " +
@@ -2525,7 +2554,7 @@ public class EnhancedStudentScheduleAssigner {
             for (String className : vocationalClasses) {
                 // *** DUPLICATE PREVENTION for electives ***
                 if (studentAlreadyHasClass(student, className)) {
-                    System.out.println("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " +
+                    GameLogger.logScheduling("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " +
                             student.studentName.getLastName() + " already has elective " + className +
                             " - skipping duplicate assignment");
                     continue;
@@ -2543,13 +2572,13 @@ public class EnhancedStudentScheduleAssigner {
 
     private static void processWaitlists(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("Processing waitlists for cancelled classes...");
+        GameLogger.logScheduling("Processing waitlists for cancelled classes...");
 
         for (Map.Entry<String, Set<Student>> entry : classWaitlists.entrySet()) {
             String cancelledClass = entry.getKey();
             Set<Student> waitlistedStudents = entry.getValue();
 
-            System.out.println("Finding alternatives for " + waitlistedStudents.size() +
+            GameLogger.logScheduling("Finding alternatives for " + waitlistedStudents.size() +
                     " students waitlisted for " + cancelledClass);
 
             // Try to find similar classes
@@ -2569,7 +2598,7 @@ public class EnhancedStudentScheduleAssigner {
                 }
 
                 if (!assigned) {
-                    System.out.println("Could not find alternative for " +
+                    GameLogger.logScheduling("Could not find alternative for " +
                             student.studentName.getFirstName() + " " +
                             student.studentName.getLastName() +
                             " (waitlisted for " + cancelledClass + ")");
@@ -2596,7 +2625,7 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     private static void printEnhancedStatistics() {
-        System.out.println("\n=== Enhanced Scheduling Statistics ===");
+        GameLogger.logScheduling("\n=== Enhanced Scheduling Statistics ===");
 
         int totalSections = 0;
         int totalStudents = 0;
@@ -2623,17 +2652,17 @@ public class EnhancedStudentScheduleAssigner {
 
             underEnrolledSections += underEnrolled;
 
-            System.out.println(className + ": " + sections.size() + " sections, " +
+            GameLogger.logScheduling(className + ": " + sections.size() + " sections, " +
                     classTotal + " students, avg " + String.format("%.1f", avgEnrollment) + "/section" +
                     (underEnrolled > 0 ? " [" + underEnrolled + " under-enrolled]" : ""));
         }
 
-        System.out.println("\nSummary:");
-        System.out.println("Total sections created: " + totalSections);
-        System.out.println("Total student assignments: " + totalStudents);
-        System.out.println("Under-enrolled sections: " + underEnrolledSections);
-        System.out.println("Cancelled classes: " + cancelledClasses);
-        System.out.println("Success rate: " + String.format("%.1f",
+        GameLogger.logScheduling("\nSummary:");
+        GameLogger.logScheduling("Total sections created: " + totalSections);
+        GameLogger.logScheduling("Total student assignments: " + totalStudents);
+        GameLogger.logScheduling("Under-enrolled sections: " + underEnrolledSections);
+        GameLogger.logScheduling("Cancelled classes: " + cancelledClasses);
+        GameLogger.logScheduling("Success rate: " + String.format("%.1f",
                 100.0 * (totalSections - underEnrolledSections) / totalSections)
                 + "% sections meet minimum enrollment");
     }
@@ -2795,7 +2824,7 @@ public class EnhancedStudentScheduleAssigner {
         // *** CRITICAL FIX: Prevent duplicate assignments at the source ***
         if (studentAlreadyHasClass(student, className)) {
             if (logAssignment) {
-                System.out.println("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " +
+                GameLogger.logScheduling("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " +
                         student.studentName.getLastName() + " already has " + className +
                         " - blocking assignment");
             }
@@ -2818,7 +2847,7 @@ public class EnhancedStudentScheduleAssigner {
         section.getTeacherBlock().addStudentToBlock(student);
 
         if (logAssignment) {
-            System.out.println("Assigned " + section.getClassName() + " to " +
+            GameLogger.logScheduling("Assigned " + section.getClassName() + " to " +
                     student.studentName.getFirstName() + " " +
                     student.studentName.getLastName() + " with " +
                     section.getTeacher().teacherName.getFirstName() + " " +
@@ -2832,7 +2861,7 @@ public class EnhancedStudentScheduleAssigner {
      * Load balancing after initial assignment
      */
     private static void balanceClassSizes() {
-        System.out.println("Balancing class sizes...");
+        GameLogger.logScheduling("Balancing class sizes...");
 
         for (Map.Entry<String, List<ClassSection>> entry : classSections.entrySet()) {
             String className = entry.getKey();
@@ -3461,7 +3490,7 @@ public class EnhancedStudentScheduleAssigner {
      */
     private static void optimizeBlockAssignmentsWithinSubjects(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("=== BLOCK ASSIGNMENT OPTIMIZATION WITHIN SUBJECT AREAS ===");
+        GameLogger.logScheduling("=== BLOCK ASSIGNMENT OPTIMIZATION WITHIN SUBJECT AREAS ===");
 
         // Define all subject areas to optimize (aligned with belongsToSubjectArea)
         String[] subjectAreas = {
@@ -3471,11 +3500,11 @@ public class EnhancedStudentScheduleAssigner {
         };
 
         for (String subjectArea : subjectAreas) {
-            System.out.println("Optimizing " + subjectArea + " block assignments...");
+            GameLogger.logScheduling("Optimizing " + subjectArea + " block assignments...");
             optimizeSubjectArea(subjectArea, studentHashMap, staffHashMap);
         }
 
-        System.out.println("=== END BLOCK OPTIMIZATION ===");
+        GameLogger.logScheduling("=== END BLOCK OPTIMIZATION ===");
     }
 
     /**
@@ -3488,7 +3517,7 @@ public class EnhancedStudentScheduleAssigner {
         List<String> subjectClasses = getClassesInSubjectArea(subjectArea);
 
         if (subjectClasses.isEmpty()) {
-            System.out.println("No classes found for " + subjectArea);
+            GameLogger.logScheduling("No classes found for " + subjectArea);
             return;
         }
 
@@ -3530,7 +3559,7 @@ public class EnhancedStudentScheduleAssigner {
         }
 
         // Step 3: Display analysis
-        System.out.println("=== " + subjectArea.toUpperCase() + " UTILIZATION ANALYSIS ===");
+        GameLogger.logScheduling("=== " + subjectArea.toUpperCase() + " UTILIZATION ANALYSIS ===");
         for (ClassUtilization util : utilizations) {
             double utilizationPercent = util.totalCapacity > 0
                     ? (double) util.currentEnrollment / util.totalCapacity * 100
@@ -3581,10 +3610,10 @@ public class EnhancedStudentScheduleAssigner {
             return;
         }
 
-        System.out.println("=== STAFFTYPE-BASED REBALANCING FOR " + subjectArea.toUpperCase() + " ===");
-        System.out.println("Still empty sections: " + stillEmpty.stream()
+        GameLogger.logScheduling("=== STAFFTYPE-BASED REBALANCING FOR " + subjectArea.toUpperCase() + " ===");
+        GameLogger.logScheduling("Still empty sections: " + stillEmpty.stream()
                 .mapToInt(u -> u.emptyBlocks).sum());
-        System.out.println("Classes with unmet demand: " + stillOverdemanded.size());
+        GameLogger.logScheduling("Classes with unmet demand: " + stillOverdemanded.size());
 
         int totalReassigned = 0;
 
@@ -3619,7 +3648,7 @@ public class EnhancedStudentScheduleAssigner {
                         String oldClassName = emptyBlock.getClassName();
                         emptyBlock.setClassName(overdemand.className);
 
-                        System.out.println("StaffType-Reassigned: " + teacher.teacherName.getFirstName() + " " +
+                        GameLogger.logScheduling("StaffType-Reassigned: " + teacher.teacherName.getFirstName() + " " +
                                 teacher.teacherName.getLastName() + "'s " + emptyBlock.getSemester() +
                                 " Block " + emptyBlock.getBlockNumber() + " from " + oldClassName +
                                 " to " + overdemand.className);
@@ -3642,7 +3671,7 @@ public class EnhancedStudentScheduleAssigner {
         }
 
         if (totalReassigned > 0) {
-            System.out.println("Total blocks reassigned via StaffType flexibility: " + totalReassigned);
+            GameLogger.logScheduling("Total blocks reassigned via StaffType flexibility: " + totalReassigned);
         }
     }
 
@@ -3736,8 +3765,8 @@ public class EnhancedStudentScheduleAssigner {
                 .sorted((u1, u2) -> Integer.compare((u2.demand - u2.totalCapacity), (u1.demand - u1.totalCapacity)))
                 .toList();
 
-        System.out.println("Classes with empty blocks: " + underutilized.size());
-        System.out.println("Classes with unmet demand: " + overdemanded.size());
+        GameLogger.logScheduling("Classes with empty blocks: " + underutilized.size());
+        GameLogger.logScheduling("Classes with unmet demand: " + overdemanded.size());
 
         // Try to match underutilized blocks with overdemanded classes
         for (ClassUtilization overdemand : overdemanded) {
@@ -3765,7 +3794,7 @@ public class EnhancedStudentScheduleAssigner {
                             opportunities.add(opportunity);
                             underutil.emptyBlocks -= blocksToReassign; // Update for next iteration
 
-                            System.out.println("Found opportunity: Reassign " + blocksToReassign +
+                            GameLogger.logScheduling("Found opportunity: Reassign " + blocksToReassign +
                                     " blocks from " + underutil.className + " to " + overdemand.className);
                         }
                     }
@@ -3878,7 +3907,7 @@ public class EnhancedStudentScheduleAssigner {
      */
     private static void executeBlockReassignment(BlockReassignmentOpportunity opportunity,
             HashMap<Integer, Staff> staffHashMap) {
-        System.out.println("Executing reassignment: " + opportunity.blocksToReassign +
+        GameLogger.logScheduling("Executing reassignment: " + opportunity.blocksToReassign +
                 " blocks from " + opportunity.fromClass + " to " + opportunity.toClass);
 
         int blocksReassigned = 0;
@@ -3912,7 +3941,7 @@ public class EnhancedStudentScheduleAssigner {
                         reassignTeacherBlock(teacher, block, opportunity.fromClass, opportunity.toClass);
                         blocksReassigned++;
 
-                        System.out.println("Reassigned " + teacher.teacherName.getFirstName() + " " +
+                        GameLogger.logScheduling("Reassigned " + teacher.teacherName.getFirstName() + " " +
                                 teacher.teacherName.getLastName() + "'s " + block.getSemester() +
                                 " Block " + block.getBlockNumber() + " from " + opportunity.fromClass +
                                 " to " + opportunity.toClass + " (was completely empty)");
@@ -3923,7 +3952,7 @@ public class EnhancedStudentScheduleAssigner {
 
         // Recreate sections for both classes
         if (blocksReassigned > 0) {
-            System.out.println("Successfully reassigned " + blocksReassigned + " blocks");
+            GameLogger.logScheduling("Successfully reassigned " + blocksReassigned + " blocks");
 
             // Update sections for both classes
             StudentDemand fromDemand = demandTracker.get(opportunity.fromClass);
@@ -3988,7 +4017,7 @@ public class EnhancedStudentScheduleAssigner {
      * Comprehensive duplicate detection and reporting
      */
     private static void detectAndReportDuplicates(HashMap<Integer, Student> studentHashMap) {
-        System.out.println("=== FINAL DUPLICATE DETECTION CHECK ===");
+        GameLogger.logScheduling("=== FINAL DUPLICATE DETECTION CHECK ===");
 
         int studentsWithDuplicates = 0;
         int totalDuplicates = 0;
@@ -4010,26 +4039,26 @@ public class EnhancedStudentScheduleAssigner {
                     if (!hasDuplicates) {
                         studentsWithDuplicates++;
                         hasDuplicates = true;
-                        System.out.println("DUPLICATE DETECTED: " + student.studentName.getFirstName() + " " +
+                        GameLogger.logScheduling("DUPLICATE DETECTED: " + student.studentName.getFirstName() + " " +
                                 student.studentName.getLastName() + " (" +
                                 student.studentStatistics.getGradeLevel() + ")");
                     }
-                    System.out.println("  - " + entry.getKey() + ": " + entry.getValue() + " instances");
+                    GameLogger.logScheduling("  - " + entry.getKey() + ": " + entry.getValue() + " instances");
                     totalDuplicates += (entry.getValue() - 1); // Count extra instances
                 }
             }
         }
 
-        System.out.println("DUPLICATE SUMMARY:");
-        System.out.println("Students with duplicates: " + studentsWithDuplicates + "/" + studentHashMap.size());
-        System.out.println("Total duplicate assignments: " + totalDuplicates);
+        GameLogger.logScheduling("DUPLICATE SUMMARY:");
+        GameLogger.logScheduling("Students with duplicates: " + studentsWithDuplicates + "/" + studentHashMap.size());
+        GameLogger.logScheduling("Total duplicate assignments: " + totalDuplicates);
 
         if (studentsWithDuplicates == 0) {
-            System.out.println("✓ NO DUPLICATES FOUND - All students have unique class assignments!");
+            GameLogger.logScheduling("✓ NO DUPLICATES FOUND - All students have unique class assignments!");
         } else {
-            System.out.println("✗ DUPLICATES DETECTED - Investigation needed");
+            GameLogger.logScheduling("✗ DUPLICATES DETECTED - Investigation needed");
         }
 
-        System.out.println("=== END DUPLICATE DETECTION ===");
+        GameLogger.logScheduling("=== END DUPLICATE DETECTION ===");
     }
 }
