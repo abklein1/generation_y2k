@@ -92,7 +92,6 @@ public class SiblingGenerator {
         NameLoader.readCSVFirst(String.valueOf(year));
 
         // Set identity attributes
-        sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
         // Grade level is N/A for non-high-school students, but we set it for
         // consistency
@@ -140,7 +139,8 @@ public class SiblingGenerator {
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
-        GameLogger.logSocialLinks("Generated sibling (not in school) " + f_name + " " + sibling.studentName.getLastName());
+        GameLogger.logSocialLinks(
+                "Generated sibling (not in school) " + f_name + " " + sibling.studentName.getLastName());
 
         return sibling;
     }
@@ -505,7 +505,6 @@ public class SiblingGenerator {
         String lastName;
 
         // Set identity attributes
-        sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
         sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
         sibling.studentStatistics
@@ -524,7 +523,7 @@ public class SiblingGenerator {
         if (setRandom(0, 3) == 2) {
             l_name = NameLoader.selectWeightedRandom();
             lastName = l_name[0];
-            lastName = sibling.studentName.capitalizeName(lastName);
+            lastName = StudentName.capitalizeName(lastName);
         } else {
             lastName = student.studentName.getLastName();
         }
@@ -570,7 +569,6 @@ public class SiblingGenerator {
         String siblingGrade;
 
         // Set identity attributes
-        sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
 
         // Half sibling can either come from mother or father. If father the age gap can
@@ -615,7 +613,7 @@ public class SiblingGenerator {
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
-        view.appendOutput("Generated half-sibling " + f_name + " " + sibling.studentName.getLastName());
+        GameLogger.logSocialLinks("Generated half-sibling " + f_name + " " + sibling.studentName.getLastName());
 
         return sibling;
     }
@@ -629,7 +627,6 @@ public class SiblingGenerator {
         String f_name;
 
         // Set identity attributes
-        sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
         sibling.studentStatistics.setGradeLevel(setRandom(0, 3));
         sibling.studentStatistics
@@ -673,7 +670,6 @@ public class SiblingGenerator {
         String f_name;
 
         // Set identity attributes - twins/triplets share grade level and birthday
-        sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
         sibling.studentStatistics.setGradeLevel(student.studentStatistics.getGradeLevel());
         sibling.studentStatistics.setBirthday(student.studentStatistics.getBirthday());
@@ -707,7 +703,7 @@ public class SiblingGenerator {
         // Link sibling relationships
         sibling.studentStatistics.addSiblingsInSchool(student);
 
-        view.appendOutput("Generated twin or triplet " + f_name + " " + sibling.studentName.getLastName());
+        GameLogger.logSocialLinks("Generated twin or triplet " + f_name + " " + sibling.studentName.getLastName());
 
         return sibling;
     }
@@ -730,7 +726,6 @@ public class SiblingGenerator {
         final int TRAIT_INHERITANCE_PROBABILITY = 85;
 
         // Set identity attributes with enforced age gap
-        sibling.studentStatistics.setLevel(1);
         sibling.studentStatistics.setExperience(0);
 
         // Ensure min age gap between true siblings

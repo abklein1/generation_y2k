@@ -530,8 +530,15 @@ public class StaffAssignmentService {
     }
 
     /**
-     * Calculates initial staff demand based on student capacity and school
-     * facilities.
+     * Calculates initial staff demand dynamically based on student capacity and
+     * school
+     * facilities. Uses proportional ratios rather than fixed formulas so that
+     * staffing
+     * scales smoothly with enrollment and is not locked into arbitrary thresholds.
+     *
+     * Core teacher counts are derived from an assumed student-to-teacher ratio
+     * (students / periods / optimal class size) plus a small buffer. Elective and
+     * support staff scale with both room availability and student enrollment.
      *
      * @param studentCap the student capacity
      * @param school     the school with room counts
@@ -540,43 +547,71 @@ public class StaffAssignmentService {
     public static Map<StaffType, Integer> calculateInitialStaffDemand(int studentCap, StandardSchool school) {
         Map<StaffType, Integer> demand = new HashMap<>();
 
-        // Administration
+        // Scheduling parameters - each teacher teaches ~6 of 8 periods
+        int teachingPeriodsPerTeacher = 6;
+        // Optimal class size scales with school size (smaller schools can have smaller
+        // classes)
+        int optimalClassSize = Math.max(20, Math.min(30, studentCap / 40));
+
+        // Administration - scales with student population
         demand.put(StaffType.PRINCIPAL, 1);
-        demand.put(StaffType.VICE_PRINCIPAL, 1);
-        demand.put(StaffType.GUIDANCE, Math.max(2, studentCap / 300));
+        demand.put(StaffType.VICE_PRINCIPAL, Math.max(1, studentCap / 500));
+        demand.put(StaffType.GUIDANCE, Math.max(2, studentCap / 250));
 
-        // Core teachers - formula based on student capacity
-        int englishTeachers = (int) Math.round(((studentCap / 30.0) / 4.00) + 2);
-        int coreTeachers = (int) Math.round((((studentCap / 2.0) / 30.0) / 4.00) + 4);
+        // Core teachers - proportional to enrollment
+        // Every student takes 1 core class per subject area per semester.
+        // Sections needed = studentCap / optimalClassSize (per period slot)
+        // Teachers needed = total sections / teachingPeriodsPerTeacher
+        int coreSectionsPerSubject = (int) Math.ceil((double) studentCap / optimalClassSize);
+        int coreTeachersPerSubject = Math.max(2, (int) Math.ceil(
+                (double) coreSectionsPerSubject / teachingPeriodsPerTeacher));
+
+        // English is taken by ALL students every year, so slightly higher demand
+        int englishTeachers = Math.max(3, (int) Math.ceil(coreTeachersPerSubject * 1.15));
         demand.put(StaffType.ENGLISH, englishTeachers);
-        demand.put(StaffType.MATH, coreTeachers);
-        demand.put(StaffType.SCIENCE, coreTeachers);
-        demand.put(StaffType.HISTORY, coreTeachers);
+        demand.put(StaffType.MATH, coreTeachersPerSubject);
+        demand.put(StaffType.SCIENCE, coreTeachersPerSubject);
+        demand.put(StaffType.HISTORY, coreTeachersPerSubject);
 
-        // Language teachers
-        demand.put(StaffType.LANGUAGES, studentCap < 800 ? 4 : 6);
+        // Language teachers - proportional to freshman enrollment (~25% of students)
+        // Each language needs at least 1 teacher; scale with population
+        int estimatedFreshmen = studentCap / 4;
+        int languageSections = (int) Math.ceil((double) estimatedFreshmen / optimalClassSize);
+        int languageTeachers = Math.max(2, (int) Math.ceil(
+                (double) languageSections / teachingPeriodsPerTeacher));
+        demand.put(StaffType.LANGUAGES, languageTeachers);
 
-        // Elective teachers by room count
-        demand.put(StaffType.VISUAL_ARTS, school.getArtStudios().length);
-        demand.put(StaffType.PHYSICAL_ED, school.getAthleticFields().length + school.getGyms().length);
-        demand.put(StaffType.PERFORMING_ARTS,
-                school.getMusicRooms().length + school.getDramaRooms().length + school.getAuditoriums().length);
-        demand.put(StaffType.VOCATIONAL, school.getVocationalRooms().length);
-        demand.put(StaffType.COMP_SCI, school.getComputerLabs().length);
+        // Elective teachers - driven by available rooms AND student interest
+        // Use the larger of room count or estimated demand
+        int estimatedElectiveStudents = studentCap / 4; // ~25% take each elective type
+        int electiveSectionsFromDemand = Math.max(1,
+                (int) Math.ceil((double) estimatedElectiveStudents / optimalClassSize / teachingPeriodsPerTeacher));
 
-        // Support staff
-        demand.put(StaffType.MAINTENANCE, school.getUtilityrooms().length + 2);
-        demand.put(StaffType.LIBRARY, school.getLibraries().length * 2);
-        demand.put(StaffType.OFFICE, Math.max(2, studentCap / 400));
-        demand.put(StaffType.NURSE, Math.max(1, studentCap / 600));
-        demand.put(StaffType.BUSINESS, 1);
+        demand.put(StaffType.VISUAL_ARTS, Math.max(electiveSectionsFromDemand, school.getArtStudios().length));
+        demand.put(StaffType.PHYSICAL_ED, Math.max(electiveSectionsFromDemand,
+                school.getAthleticFields().length + school.getGyms().length));
+        demand.put(StaffType.PERFORMING_ARTS, Math.max(electiveSectionsFromDemand,
+                school.getMusicRooms().length + school.getDramaRooms().length));
+        demand.put(StaffType.VOCATIONAL, Math.max(1, school.getVocationalRooms().length));
+        demand.put(StaffType.COMP_SCI, Math.max(1, school.getComputerLabs().length));
+        demand.put(StaffType.BUSINESS, Math.max(1, studentCap / 600));
+        demand.put(StaffType.CONSUMER_SCI, Math.max(1, studentCap / 800));
+
+        // Support staff - proportional to student population
+        demand.put(StaffType.MAINTENANCE, Math.max(2, school.getUtilityrooms().length + studentCap / 500));
+        demand.put(StaffType.LIBRARY, Math.max(1, school.getLibraries().length));
+        demand.put(StaffType.OFFICE, Math.max(2, studentCap / 350));
+        demand.put(StaffType.NURSE, Math.max(1, studentCap / 500));
 
         // Lunch staff based on lunchroom capacity
         int lunchStaff = 0;
         for (Lunchroom lunchroom : school.getLunchrooms()) {
             lunchStaff += lunchroom.getStaffCapacity();
         }
-        demand.put(StaffType.LUNCH, lunchStaff);
+        demand.put(StaffType.LUNCH, Math.max(2, lunchStaff));
+
+        // Substitutes - proportional pool for coverage
+        demand.put(StaffType.SUB, Math.max(5, studentCap / 200));
 
         return demand;
     }

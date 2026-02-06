@@ -59,11 +59,11 @@ public class TraversalStorage {
                         if (path != null) {
                             ArrayList<Room> roomList = new ArrayList<>(path.getVertexList());
                             if (block.getSemester().equals("Fall")) {
-                                view.appendOutput("Fall path: " + roomList + " for student "
+                                GameLogger.logDebug("Fall path: " + roomList + " for student "
                                         + student.studentName.getFirstName());
                                 studentPathsFall.put(student, roomList);
                             } else {
-                                view.appendOutput("Spring path: " + roomList + " for student "
+                                GameLogger.logDebug("Spring path: " + roomList + " for student "
                                         + student.studentName.getFirstName());
                                 studentPathsSpring.put(student, roomList);
                             }

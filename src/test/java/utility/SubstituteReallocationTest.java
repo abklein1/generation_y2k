@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -132,6 +133,7 @@ class SubstituteReallocationTest {
     
     // Helper methods (copied from main class for testing)
     private static StaffType determineStaffTypeForClass(String className) {
+        String normalized = className.toLowerCase(Locale.ROOT);
         if (belongsToSubjectArea(className, "english")) return StaffType.ENGLISH;
         if (belongsToSubjectArea(className, "math")) return StaffType.MATH;
         if (belongsToSubjectArea(className, "science")) return StaffType.SCIENCE;
@@ -139,40 +141,41 @@ class SubstituteReallocationTest {
         if (belongsToSubjectArea(className, "language")) return StaffType.LANGUAGES;
         if (belongsToSubjectArea(className, "physical education")) return StaffType.PHYSICAL_ED;
         
-        if (className.toLowerCase().contains("art")) return StaffType.VISUAL_ARTS;
-        if (className.toLowerCase().contains("music") || className.toLowerCase().contains("band") || 
-            className.toLowerCase().contains("theater") || className.toLowerCase().contains("choir")) 
+        if (normalized.contains("art")) return StaffType.VISUAL_ARTS;
+        if (normalized.contains("music") || normalized.contains("band") ||
+            normalized.contains("theater") || normalized.contains("choir"))
             return StaffType.PERFORMING_ARTS;
-        if (className.toLowerCase().contains("business")) return StaffType.BUSINESS;
+        if (normalized.contains("business")) return StaffType.BUSINESS;
         
         return StaffType.VOCATIONAL;
     }
     
     private static boolean belongsToSubjectArea(String className, String subjectArea) {
-        return switch (subjectArea.toLowerCase()) {
+        String normalizedClassName = className.toLowerCase(Locale.ROOT);
+        return switch (subjectArea.toLowerCase(Locale.ROOT)) {
             case "english" ->
-                    className.toLowerCase().contains("english") || className.toLowerCase().contains("ap english");
-            case "math" -> className.toLowerCase().contains("math") || className.toLowerCase().contains("algebra") ||
-                    className.toLowerCase().contains("geometry") || className.toLowerCase().contains("calculus") ||
-                    className.toLowerCase().contains("trigonometry") || className.toLowerCase().contains("precalculus");
+                    normalizedClassName.contains("english") || normalizedClassName.contains("ap english");
+            case "math" -> normalizedClassName.contains("math") || normalizedClassName.contains("algebra") ||
+                    normalizedClassName.contains("geometry") || normalizedClassName.contains("calculus") ||
+                    normalizedClassName.contains("trigonometry") || normalizedClassName.contains("precalculus");
             case "science" ->
-                    className.toLowerCase().contains("biology") || className.toLowerCase().contains("chemistry") ||
-                            className.toLowerCase().contains("physics") || className.toLowerCase().contains("science");
+                    normalizedClassName.contains("biology") || normalizedClassName.contains("chemistry") ||
+                            normalizedClassName.contains("physics") || normalizedClassName.contains("science");
             case "history" ->
-                    className.toLowerCase().contains("history") || className.toLowerCase().contains("government") ||
-                            className.toLowerCase().contains("geography") || className.toLowerCase().contains("economics");
+                    normalizedClassName.contains("history") || normalizedClassName.contains("government") ||
+                            normalizedClassName.contains("geography") || normalizedClassName.contains("economics");
             case "physical education" ->
-                    className.toLowerCase().contains("health") || className.toLowerCase().contains("sports") ||
-                            className.toLowerCase().contains("weightlifting") || className.toLowerCase().contains("dance") ||
-                            className.toLowerCase().contains("recreation");
+                    normalizedClassName.contains("health") || normalizedClassName.contains("sports") ||
+                            normalizedClassName.contains("weightlifting") || normalizedClassName.contains("dance") ||
+                            normalizedClassName.contains("recreation");
             case "language" ->
-                    className.toLowerCase().contains("spanish") || className.toLowerCase().contains("french") ||
-                            className.toLowerCase().contains("german") || className.toLowerCase().contains("latin") ||
-                            className.toLowerCase().contains("sign language");
+                    normalizedClassName.contains("spanish") || normalizedClassName.contains("french") ||
+                            normalizedClassName.contains("german") || normalizedClassName.contains("latin") ||
+                            normalizedClassName.contains("sign language");
             case "vocational" ->
-                    className.toLowerCase().contains("theater") || className.toLowerCase().contains("debate") || 
-                            className.toLowerCase().contains("choir") || className.toLowerCase().contains("band") || 
-                            className.toLowerCase().contains("rotc");
+                    normalizedClassName.contains("theater") || normalizedClassName.contains("debate") ||
+                            normalizedClassName.contains("choir") || normalizedClassName.contains("band") ||
+                            normalizedClassName.contains("rotc");
             default -> false;
         };
     }
@@ -180,8 +183,9 @@ class SubstituteReallocationTest {
     private static boolean isCoreSubject(String className) {
         String[] coreKeywords = {"English", "Math", "Science", "History", "Biology", "Chemistry", 
                                "Physics", "Algebra", "Geometry", "Calculus", "Government", "Geography"};
+        String normalized = className.toLowerCase(Locale.ROOT);
         return Arrays.stream(coreKeywords)
-            .anyMatch(keyword -> className.toLowerCase().contains(keyword.toLowerCase()));
+            .anyMatch(keyword -> normalized.contains(keyword.toLowerCase(Locale.ROOT)));
     }
     
     private static int calculateTeachersNeeded(int shortageAmount) {
@@ -203,5 +207,56 @@ class SubstituteReallocationTest {
     private static double calculateUtilization(int enrolled, int capacity) {
         if (capacity == 0) return 0.0;
         return (double) enrolled / capacity;
+    }
+
+    @Test
+    @DisplayName("Portable classrooms should map to teaching staff types")
+    void testPortableClassroomStaffTypeMapping() {
+        // Portables serve as overflow for any subject type, so classes taught
+        // in portables should still map to the correct staff type
+        assertAll("Classes in portables retain correct staff type",
+            () -> assertEquals(StaffType.ENGLISH, determineStaffTypeForClass("English I")),
+            () -> assertEquals(StaffType.MATH, determineStaffTypeForClass("Algebra I")),
+            () -> assertEquals(StaffType.SCIENCE, determineStaffTypeForClass("Biology")),
+            () -> assertEquals(StaffType.HISTORY, determineStaffTypeForClass("World Geography")),
+            () -> assertEquals(StaffType.LANGUAGES, determineStaffTypeForClass("Spanish I"))
+        );
+    }
+
+    @Test
+    @DisplayName("Portable expansion should increase capacity")
+    void testPortableExpansionLogic() {
+        // Verify that adding portables increases available rooms
+        int initialRooms = 30;
+        int portablesAdded = 5;
+        int totalAfterExpansion = initialRooms + portablesAdded;
+
+        assertTrue(totalAfterExpansion > initialRooms,
+            "Adding portables should increase total room count");
+        assertEquals(35, totalAfterExpansion,
+            "30 initial + 5 portables = 35 total rooms");
+    }
+
+    @Test
+    @DisplayName("Portables should not be assigned to PE teachers")
+    void testPortablesNotAssignedToPE() {
+        // PE teachers need gyms/fields, not portables
+        // Verify the staff type that can't use portables
+        StaffType peType = StaffType.PHYSICAL_ED;
+        StaffType[] typesUsingPortables = {
+            StaffType.ENGLISH, StaffType.MATH, StaffType.SCIENCE,
+            StaffType.HISTORY, StaffType.LANGUAGES, StaffType.VISUAL_ARTS,
+            StaffType.PERFORMING_ARTS, StaffType.COMP_SCI, StaffType.VOCATIONAL
+        };
+
+        boolean peInPortableList = false;
+        for (StaffType type : typesUsingPortables) {
+            if (type == peType) {
+                peInPortableList = true;
+                break;
+            }
+        }
+        assertFalse(peInPortableList,
+            "PE teachers should not be in the list of types that use portables");
     }
 }

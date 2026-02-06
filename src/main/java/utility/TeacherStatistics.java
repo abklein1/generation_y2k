@@ -7,9 +7,9 @@ import entity.TeacherSchedule;
 import java.time.LocalDate;
 
 public class TeacherStatistics implements PStatistics {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private double height;
     private String eyeColor;
     private String hairColor;
@@ -302,7 +302,7 @@ public class TeacherStatistics implements PStatistics {
         this.height = GameRandom.nextGaussian(mean, stdDev);
     }
 
-    //TODO: change current year/remove hardcode values
+    // TODO: change current year/remove hardcode values
     public void setInitStrength() {
         double meanBaseStr = 50;
         double stdDevStr = 10;
@@ -327,7 +327,7 @@ public class TeacherStatistics implements PStatistics {
         }
     }
 
-    //TODO: basic calculations for now
+    // TODO: basic calculations for now
     public void setInitCreativity() {
         // Primarily driven by intelligence and secondary by perception
         this.creativity = (int) ((this.intelligence * 1.5) + this.perception) / 2;

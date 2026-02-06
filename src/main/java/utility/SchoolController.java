@@ -1,6 +1,5 @@
 package utility;
 
-import behavior.StudentBehaviorTreeBuilder;
 import config.DemographicsLoader;
 import config.SchoolFundingModel;
 import config.TownDemographics;
@@ -804,7 +803,6 @@ public class SchoolController {
             playerCharacter.setSiblings((Integer) siblingsDropdown.getSelectedItem());
 
             // Initialize fields similar to NPC generation
-            playerCharacter.studentStatistics.setLevel(1);
             playerCharacter.studentStatistics.setExperience(0);
 
             // Compute skin color from race + eye color
@@ -911,11 +909,10 @@ public class SchoolController {
             String firstName = NameLoader.nameGenerator(String.valueOf(birthday.getYear()), gender);
 
             // Capitalize last name and optionally hyphenate
-            PlayerCharacter temp = new PlayerCharacter();
-            lastName = temp.studentName.capitalizeName(lastName);
+            lastName = StudentName.capitalizeName(lastName);
             if (setRandom(0, STUDENT_HYPHEN_GENERATION_SAMPLE_SIZE) < STUDENT_HYPHEN_GENERATION_RATE) {
                 String hyphenName = NameLoader.selectWeightedRandom()[0];
-                hyphenName = temp.studentName.capitalizeName(hyphenName);
+                hyphenName = StudentName.capitalizeName(hyphenName);
                 lastName = lastName + "-" + hyphenName;
             }
 
@@ -1244,6 +1241,21 @@ public class SchoolController {
             studentHashMap = SchoolAssignmentService.getStudentHashMap(town, standardSchool);
             staffHashMap = SchoolAssignmentService.getStaffHashMap(town, standardSchool);
 
+            // Step 6: Attempt expansion if scheduling has gaps
+            // This adds portables/classrooms/teachers and integrates them into the school
+            // map
+            publish("Checking if school expansion is needed...");
+            SchoolAssignmentService.ExpansionReport expansionReport = SchoolAssignmentService
+                    .expandSchoolToMeetDemand(town, standardSchool, roomConnector, view);
+            if (expansionReport.expansionOccurred) {
+                publish("Expansion complete: +" + expansionReport.classroomsAdded + " classrooms, +"
+                        + expansionReport.portablesAdded + " portables, +"
+                        + expansionReport.teachersHired + " teachers");
+                // Refresh HashMaps after expansion may have changed enrollment
+                studentHashMap = SchoolAssignmentService.getStudentHashMap(town, standardSchool);
+                staffHashMap = SchoolAssignmentService.getStaffHashMap(town, standardSchool);
+            }
+
             // Report on school status
             if (standardSchool.isOvercrowded()) {
                 publish("NOTE: School is overcrowded at " +
@@ -1284,7 +1296,7 @@ public class SchoolController {
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
-            TraversalStorage traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
+            new TraversalStorage(studentHashMap, view, roomConnector);
 
             // Log population summary
             publish(SchoolAssignmentService.getPopulationSummary(town, standardSchool));
@@ -1373,13 +1385,13 @@ public class SchoolController {
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
-            TraversalStorage traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
+            new TraversalStorage(studentHashMap, view, roomConnector);
         }
 
         @Override
         protected void process(java.util.List<String> chunks) {
             for (String message : chunks) {
-                view.appendOutput(message);
+                GameLogger.logGeneration(message);
             }
         }
 

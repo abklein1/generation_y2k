@@ -3,7 +3,6 @@ package utility;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
-import entity.Rooms.Bathroom;
 import entity.Rooms.Classroom;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
@@ -26,7 +25,6 @@ import java.util.stream.Stream;
 import static utility.Randomizer.setRandom;
 
 import entity.Rooms.Room;
-
 
 // Procedural generation that builds the school by connecting rooms. Room connection starts
 // by connecting hallways and courtyards at random, and then allows other connections to build
@@ -72,7 +70,7 @@ public class RoomConnector {
         connectivityInspectionBackbone();
         populateAthleticFields(view);
         populateParkingLots(view);
-        populatePortables(view);  // Portables connect to outdoor spaces only
+        populatePortables(view); // Portables connect to outdoor spaces only
         populateAuditoriums(view);
         populateGyms(view);
         populateLunchrooms(view);
@@ -127,7 +125,8 @@ public class RoomConnector {
     }
 
     // TODO: Allow for injected weight distribution on hallways and courtyards
-    // Adjust random weight of hallway or courtyard selection as needed. Might need to re-balance (i.e. 60/40)
+    // Adjust random weight of hallway or courtyard selection as needed. Might need
+    // to re-balance (i.e. 60/40)
     private Room findCentralRoom(GameView view) {
         Room[] hallways = roomPool[10];
         Room[] courtyards = roomPool[7];
@@ -137,7 +136,7 @@ public class RoomConnector {
         if (choice < 3) {
             do {
                 choice = setRandom(0, hallways.length - 1);
-                view.appendOutput("Connecting halls...");
+                GameLogger.logGeneration("Connecting halls...");
                 count++;
             } while (hallways[choice].getConnections() == 0 && count < calculateExpectedCycles(hallways.length));
             // Add a connection to a random hallway if no connections are left
@@ -146,7 +145,7 @@ public class RoomConnector {
         } else {
             do {
                 choice = setRandom(0, courtyards.length - 1);
-                view.appendOutput("Connecting courtyards...");
+                GameLogger.logGeneration("Connecting courtyards...");
                 count++;
             } while (courtyards[choice].getConnections() == 0 && count < calculateExpectedCycles(courtyards.length));
             // Add a connection to a random courtyard if no connections are left
@@ -164,27 +163,6 @@ public class RoomConnector {
         }
 
         return N * harmonic_N;
-    }
-
-    private void populateEdges() {
-        for (int i = 0; i < roomPool.length; i++) {
-            for (int j = 0; j < roomPool[i].length; j++) {
-                if (roomPool[i][j].getConnections() > 0) {
-                    Room targetRoom = getRandomRoom(i, j);
-                    while (targetRoom != null && targetRoom.getConnections() == 0) {
-                        targetRoom = getRandomRoom(i, j);
-                    }
-                    if (targetRoom != null) {
-                        if (roomPool[i][j] instanceof Bathroom) {
-                            targetRoom = getRandomRoom(targetRoom);
-                        }
-                        schoolConnect.addEdge(roomPool[i][j], targetRoom);
-                        roomPool[i][j].setConnections(roomPool[i][j].getConnections() - 1);
-                        targetRoom.setConnections(targetRoom.getConnections() - 1);
-                    }
-                }
-            }
-        }
     }
 
     private void populateAthleticFields(GameView view) {
@@ -241,27 +219,28 @@ public class RoomConnector {
      */
     private void populatePortables(GameView view) {
         Room[] portables = roomPool[21];
-        
+
         // Skip if no portables
         if (portables == null || portables.length == 0) {
             return;
         }
-        
+
         // Outdoor spaces that portables can connect to
         Room[] athleticFields = roomPool[1];
         Room[] courtyards = roomPool[7];
         Room[] parkingLots = roomPool[19];
-        
-        view.appendOutput("Connecting portable classrooms to outdoor spaces...");
-        
+
+        GameLogger.logGeneration("Connecting portable classrooms to outdoor spaces...");
+
         for (Room portable : portables) {
             Room outdoorSpace = findOutdoorSpace(athleticFields, courtyards, parkingLots);
-            
+
             if (outdoorSpace != null) {
                 schoolConnect.addEdge(portable, outdoorSpace);
                 portable.setConnections(portable.getConnections() - 1);
                 outdoorSpace.setConnections(outdoorSpace.getConnections() - 1);
-                view.appendOutput("   Connected " + portable.getRoomName() + " to " + outdoorSpace.getRoomName());
+                GameLogger
+                        .logGeneration("   Connected " + portable.getRoomName() + " to " + outdoorSpace.getRoomName());
             } else {
                 // Fallback: connect to courtyard (most common real-world scenario)
                 // Add a connection if needed
@@ -271,25 +250,28 @@ public class RoomConnector {
                     schoolConnect.addEdge(portable, courtyards[idx]);
                     portable.setConnections(portable.getConnections() - 1);
                     courtyards[idx].setConnections(courtyards[idx].getConnections() - 1);
-                    view.appendOutput("   Connected " + portable.getRoomName() + " to " + courtyards[idx].getRoomName() + " (fallback)");
+                    GameLogger.logGeneration("   Connected " + portable.getRoomName() + " to "
+                            + courtyards[idx].getRoomName() + " (fallback)");
                 }
             }
         }
     }
 
     /**
-     * Finds an outdoor space (athletic field, courtyard, or parking lot) with available connections.
+     * Finds an outdoor space (athletic field, courtyard, or parking lot) with
+     * available connections.
      * Weighted distribution: 40% parking lots, 35% courtyards, 25% athletic fields
      *
      * @param athleticFields the athletic fields array
-     * @param courtyards the courtyards array
-     * @param parkingLots the parking lots array
-     * @return an outdoor space with available connections, or null if none available
+     * @param courtyards     the courtyards array
+     * @param parkingLots    the parking lots array
+     * @return an outdoor space with available connections, or null if none
+     *         available
      */
     private Room findOutdoorSpace(Room[] athleticFields, Room[] courtyards, Room[] parkingLots) {
         int choice = setRandom(0, 100);
         Room selected = null;
-        
+
         // Weighted selection: 40% parking, 35% courtyard, 25% field
         if (choice < 40 && parkingLots.length > 0) {
             // Try parking lots first
@@ -301,7 +283,7 @@ public class RoomConnector {
             // Try athletic fields
             selected = findRoomWithConnections(athleticFields);
         }
-        
+
         // Fallback: try other options if primary choice failed
         if (selected == null && parkingLots.length > 0) {
             selected = findRoomWithConnections(parkingLots);
@@ -312,7 +294,7 @@ public class RoomConnector {
         if (selected == null && athleticFields.length > 0) {
             selected = findRoomWithConnections(athleticFields);
         }
-        
+
         return selected;
     }
 
@@ -326,7 +308,7 @@ public class RoomConnector {
         if (rooms == null || rooms.length == 0) {
             return null;
         }
-        
+
         // Try random selection first
         int startIdx = setRandom(0, rooms.length - 1);
         for (int i = 0; i < rooms.length; i++) {
@@ -335,7 +317,7 @@ public class RoomConnector {
                 return rooms[idx];
             }
         }
-        
+
         return null;
     }
 
@@ -473,9 +455,10 @@ public class RoomConnector {
         }
     }
 
-    //TODO: Tweak office gen so that multiple don't end up on classrooms. Possibly add more offices to front office
-    //TODO: Add meeting room to front office
-    //TODO: Change to improved switch statement for performance
+    // TODO: Tweak office gen so that multiple don't end up on classrooms. Possibly
+    // add more offices to front office
+    // TODO: Add meeting room to front office
+    // TODO: Change to improved switch statement for performance
     private void populateOffices(GameView view) {
         Room[] offices = roomPool[15];
         Room[] coreOffices = new Room[4];
@@ -780,26 +763,6 @@ public class RoomConnector {
         return roomSet.stream().filter(this::isHallwayOrCourtyard).findAny().orElse(null);
     }
 
-    private Room getRandomRoom(int i, int j) {
-        int x = setRandom(0, roomPool.length - 1);
-        int y = setRandom(0, roomPool[x].length - 1);
-        while (x == i && y == j) {
-            x = setRandom(0, roomPool.length - 1);
-            y = setRandom(0, roomPool[x].length - 1);
-        }
-        return roomPool[x][y];
-    }
-
-    private Room getRandomRoom(Room roomToAvoid) {
-        int x = setRandom(1, roomPool.length - 1);
-        int y = setRandom(0, roomPool[x].length - 1);
-        while (roomPool[x][y].equals(roomToAvoid)) {
-            x = setRandom(1, roomPool.length - 1);
-            y = setRandom(0, roomPool[x].length - 1);
-        }
-        return roomPool[x][y];
-    }
-
     // Perform simple print for now
     public void getConnections() {
         Iterator<Room> iterator = new DepthFirstIterator<>(schoolConnect);
@@ -813,7 +776,8 @@ public class RoomConnector {
                 Room targetRoom = schoolConnect.getEdgeTarget(edge);
 
                 if (sourceRoom.equals(room)) {
-                    GameLogger.logDebug("Room " + sourceRoom.getRoomName() + " is connected to " + targetRoom.getRoomName());
+                    GameLogger.logDebug(
+                            "Room " + sourceRoom.getRoomName() + " is connected to " + targetRoom.getRoomName());
                 }
             }
         }
@@ -823,7 +787,125 @@ public class RoomConnector {
         return this.schoolConnect;
     }
 
-    //TODO: fix visibility on graphs
+    /**
+     * Integrates dynamically added rooms (portables and classrooms) into the
+     * existing
+     * school graph. Called after expansion adds new rooms to the school.
+     * 
+     * New portables are connected to outdoor spaces using the same logic as initial
+     * generation.
+     * New classrooms are connected to hallways/courtyards via the backbone.
+     *
+     * @param school the school with potentially new rooms
+     * @param view   the game view for output
+     */
+    public void integrateNewRooms(StandardSchool school, GameView view) {
+        GameLogger.logGeneration("Integrating newly added rooms into school graph...");
+
+        // Update roomPool references to pick up new arrays from the school
+        roomPool[5] = school.getClassrooms();
+        roomPool[21] = school.getPortables();
+
+        // Find new portables (not yet in the graph)
+        Room[] currentPortables = school.getPortables();
+        int newPortableCount = 0;
+        if (currentPortables != null) {
+            for (Room portable : currentPortables) {
+                if (!schoolConnect.containsVertex(portable)) {
+                    schoolConnect.addVertex(portable);
+                    newPortableCount++;
+                }
+            }
+        }
+
+        // Find new classrooms (not yet in the graph)
+        Room[] currentClassrooms = school.getClassrooms();
+        int newClassroomCount = 0;
+        if (currentClassrooms != null) {
+            for (Room classroom : currentClassrooms) {
+                if (!schoolConnect.containsVertex(classroom)) {
+                    schoolConnect.addVertex(classroom);
+                    newClassroomCount++;
+                }
+            }
+        }
+
+        GameLogger.logGeneration("  New portables to connect: " + newPortableCount);
+        GameLogger.logGeneration("  New classrooms to connect: " + newClassroomCount);
+
+        // Connect new portables to outdoor spaces
+        if (newPortableCount > 0) {
+            connectNewPortables(currentPortables, view);
+        }
+
+        // Connect new classrooms to hallways/courtyards
+        if (newClassroomCount > 0) {
+            connectNewClassrooms(currentClassrooms, view);
+        }
+
+        // Run connectivity inspection to ensure no dangling vertices
+        if (newPortableCount > 0 || newClassroomCount > 0) {
+            connectivityInspection(view);
+            GameLogger.logGeneration("  Graph updated: " + schoolConnect.vertexSet().size() +
+                    " rooms, " + schoolConnect.edgeSet().size() + " connections");
+        }
+    }
+
+    /**
+     * Connects newly added portable classrooms to outdoor spaces.
+     * Only connects portables that aren't already in the graph's edge set.
+     */
+    private void connectNewPortables(Room[] portables, GameView view) {
+        Room[] athleticFields = roomPool[1];
+        Room[] courtyards = roomPool[7];
+        Room[] parkingLots = roomPool[19];
+
+        for (Room portable : portables) {
+            // Skip portables that already have connections in the graph
+            if (schoolConnect.edgesOf(portable).size() > 0) {
+                continue;
+            }
+
+            Room outdoorSpace = findOutdoorSpace(athleticFields, courtyards, parkingLots);
+            if (outdoorSpace != null) {
+                schoolConnect.addEdge(portable, outdoorSpace);
+                portable.setConnections(portable.getConnections() - 1);
+                outdoorSpace.setConnections(outdoorSpace.getConnections() - 1);
+                GameLogger.logGeneration("   Connected new " + portable.getRoomName() +
+                        " to " + outdoorSpace.getRoomName());
+            } else if (courtyards.length > 0) {
+                int idx = setRandom(0, courtyards.length - 1);
+                courtyards[idx].setConnections(courtyards[idx].getConnections() + 1);
+                schoolConnect.addEdge(portable, courtyards[idx]);
+                portable.setConnections(portable.getConnections() - 1);
+                courtyards[idx].setConnections(courtyards[idx].getConnections() - 1);
+                GameLogger.logGeneration("   Connected new " + portable.getRoomName() +
+                        " to " + courtyards[idx].getRoomName() + " (fallback)");
+            }
+        }
+    }
+
+    /**
+     * Connects newly added classrooms to hallways/courtyards via the backbone.
+     * Only connects classrooms that aren't already in the graph's edge set.
+     */
+    private void connectNewClassrooms(Room[] classrooms, GameView view) {
+        for (Room classroom : classrooms) {
+            // Skip classrooms that already have connections
+            if (schoolConnect.edgesOf(classroom).size() > 0) {
+                continue;
+            }
+
+            Room connectRoom = findCentralRoom(view);
+            schoolConnect.addEdge(classroom, connectRoom);
+            connectRoom.setConnections(connectRoom.getConnections() - 1);
+            classroom.setConnections(classroom.getConnections() - 1);
+            GameLogger.logGeneration("   Connected new " + classroom.getRoomName() +
+                    " to " + connectRoom.getRoomName());
+        }
+    }
+
+    // TODO: fix visibility on graphs
     public void visualizer(StandardSchool school) {
         String schoolName = school.getSchoolName();
         JGraphXAdapter<Room, DefaultEdge> graphAdapter = new JGraphXAdapter<>(schoolConnect);

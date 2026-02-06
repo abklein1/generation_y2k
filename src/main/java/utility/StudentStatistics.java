@@ -32,7 +32,6 @@ public class StudentStatistics implements PStatistics {
     private int luck;
     private boolean sleep;
     private int boredom;
-    private int level;
     private int experience;
     private int grade_average;
     private String gender;
@@ -93,7 +92,6 @@ public class StudentStatistics implements PStatistics {
         this.luck = 0;
         this.sleep = false;
         this.boredom = 0;
-        this.level = 0;
         this.experience = 0;
         this.grade_average = 0;
         this.grades = new ArrayList<>();
@@ -243,10 +241,6 @@ public class StudentStatistics implements PStatistics {
         this.height = height;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
     public int getExperience() {
         return this.experience;
     }
@@ -260,7 +254,7 @@ public class StudentStatistics implements PStatistics {
     }
 
     public void getAllGrades() {
-        System.out.println(this.grades);
+        GameLogger.logDebug("Grades: " + this.grades);
     }
 
     public void setGradeAverage() {

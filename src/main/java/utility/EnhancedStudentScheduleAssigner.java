@@ -383,24 +383,6 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     /**
-     * Finds the time slot with the least number of sections scheduled.
-     * This helps distribute classes evenly to minimize conflicts.
-     */
-    private static int findLeastUsedSlot(int[] blocksPerSlot) {
-        int minSlot = 0;
-        int minCount = blocksPerSlot[0];
-
-        for (int i = 1; i < blocksPerSlot.length; i++) {
-            if (blocksPerSlot[i] < minCount) {
-                minCount = blocksPerSlot[i];
-                minSlot = i;
-            }
-        }
-
-        return minSlot;
-    }
-
-    /**
      * Checks if a staff type is a teaching position (not support staff).
      */
     private static boolean isTeachingStaffType(StaffType type) {
@@ -483,6 +465,15 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
 
+        // Portables serve as overflow classrooms for any subject type
+        List<Room> availablePortables = new ArrayList<>();
+        for (Portable portable : standardSchool.getPortables()) {
+            if (portable.getAssignedStaff().isEmpty()) {
+                availablePortables.add(portable);
+            }
+        }
+        GameLogger.logScheduling("  Available portables for teacher assignment: " + availablePortables.size());
+
         // Check each teaching staff member
         for (Staff staff : staffHashMap.values()) {
             StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
@@ -499,6 +490,7 @@ public class EnhancedStudentScheduleAssigner {
             teachersWithoutRooms++;
 
             // Try to assign a room based on staff type
+            // Portables serve as universal overflow for any type when primary rooms are exhausted
             Room assignedRoom = null;
             switch (type) {
                 case SCIENCE:
@@ -506,6 +498,8 @@ public class EnhancedStudentScheduleAssigner {
                         assignedRoom = availableScienceLabs.remove(0);
                     } else if (!availableClassrooms.isEmpty()) {
                         assignedRoom = availableClassrooms.remove(0);
+                    } else if (!availablePortables.isEmpty()) {
+                        assignedRoom = availablePortables.remove(0);
                     }
                     break;
                 case VISUAL_ARTS:
@@ -513,6 +507,8 @@ public class EnhancedStudentScheduleAssigner {
                         assignedRoom = availableArtStudios.remove(0);
                     } else if (!availableClassrooms.isEmpty()) {
                         assignedRoom = availableClassrooms.remove(0);
+                    } else if (!availablePortables.isEmpty()) {
+                        assignedRoom = availablePortables.remove(0);
                     }
                     break;
                 case PERFORMING_ARTS:
@@ -522,18 +518,23 @@ public class EnhancedStudentScheduleAssigner {
                         assignedRoom = availableDramaRooms.remove(0);
                     } else if (!availableClassrooms.isEmpty()) {
                         assignedRoom = availableClassrooms.remove(0);
+                    } else if (!availablePortables.isEmpty()) {
+                        assignedRoom = availablePortables.remove(0);
                     }
                     break;
                 case PHYSICAL_ED:
                     if (!availableGyms.isEmpty()) {
                         assignedRoom = availableGyms.remove(0);
                     }
+                    // PE teachers can't teach in portables (no gym equipment)
                     break;
                 case VOCATIONAL:
                     if (!availableVocationalRooms.isEmpty()) {
                         assignedRoom = availableVocationalRooms.remove(0);
                     } else if (!availableClassrooms.isEmpty()) {
                         assignedRoom = availableClassrooms.remove(0);
+                    } else if (!availablePortables.isEmpty()) {
+                        assignedRoom = availablePortables.remove(0);
                     }
                     break;
                 case COMP_SCI:
@@ -541,12 +542,16 @@ public class EnhancedStudentScheduleAssigner {
                         assignedRoom = availableComputerLabs.remove(0);
                     } else if (!availableClassrooms.isEmpty()) {
                         assignedRoom = availableClassrooms.remove(0);
+                    } else if (!availablePortables.isEmpty()) {
+                        assignedRoom = availablePortables.remove(0);
                     }
                     break;
                 default:
                     // ENGLISH, MATH, HISTORY, LANGUAGES, BUSINESS, etc.
                     if (!availableClassrooms.isEmpty()) {
                         assignedRoom = availableClassrooms.remove(0);
+                    } else if (!availablePortables.isEmpty()) {
+                        assignedRoom = availablePortables.remove(0);
                     }
                     break;
             }
@@ -699,6 +704,17 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
 
+        // Check portable classrooms
+        for (Portable portable : standardSchool.getPortables()) {
+            for (Staff assignedStaff : portable.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " "
+                        + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName)) {
+                    return portable;
+                }
+            }
+        }
+
         return null; // No room found
     }
 
@@ -722,8 +738,11 @@ public class EnhancedStudentScheduleAssigner {
     /**
      * Verifies that students have all required classes for graduation.
      * Reports students with missing requirements and attempts to fix schedules.
-     * Students who still have missing requirements after all attempts are
-     * returned to the pool and marked as not in high school.
+     * 
+     * Students are retained in school even with partial schedules when possible.
+     * Only students missing a critical proportion of their required classes
+     * (more than half) are returned to the pool. Students with minor gaps
+     * (1-2 missing classes) are kept enrolled and flagged for future resolution.
      */
     private static void verifyGraduationRequirements(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
@@ -738,6 +757,7 @@ public class EnhancedStudentScheduleAssigner {
         // Track students who still have missing requirements after all attempts
         List<Student> studentsToRemove = new ArrayList<>();
         Map<Student, List<String>> studentMissingClasses = new HashMap<>();
+        int studentsRetainedWithGaps = 0;
 
         int studentsWithMissingReqs = 0;
         int totalMissingClasses = 0;
@@ -770,16 +790,27 @@ public class EnhancedStudentScheduleAssigner {
                     }
                 }
 
-                // If still missing classes after all attempts, mark for removal
+                // Only remove students missing MORE than half their required classes.
+                // Students with minor schedule gaps (1-2 missing) are retained.
                 if (!stillMissing.isEmpty()) {
-                    studentsToRemove.add(student);
-                    studentMissingClasses.put(student, stillMissing);
+                    double missingRatio = (double) stillMissing.size() / required.size();
+                    if (missingRatio > 0.5) {
+                        studentsToRemove.add(student);
+                        studentMissingClasses.put(student, stillMissing);
+                    } else {
+                        studentsRetainedWithGaps++;
+                        GameLogger.logScheduling("  Retaining " + student.studentName.getFirstName() + " " +
+                                student.studentName.getLastName() + " (" + grade + ") with " +
+                                stillMissing.size() + "/" + required.size() + " missing: " +
+                                String.join(", ", stillMissing));
+                    }
                 }
             }
         }
 
         GameLogger.logScheduling("Students with missing requirements: " + studentsWithMissingReqs);
         GameLogger.logScheduling("Total missing class assignments: " + totalMissingClasses);
+        GameLogger.logScheduling("Students retained with partial schedules: " + studentsRetainedWithGaps);
 
         for (Map.Entry<String, List<String>> entry : missingByGrade.entrySet()) {
             if (!entry.getValue().isEmpty()) {
@@ -798,9 +829,13 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
 
-        // Return students with unfulfilled requirements to the pool
+        // Only return students with critically incomplete schedules to the pool
         if (!studentsToRemove.isEmpty()) {
+            GameLogger.logScheduling("Returning " + studentsToRemove.size() +
+                    " students with critically incomplete schedules (>50% missing)");
             returnStudentsToPool(studentsToRemove, studentMissingClasses, studentHashMap);
+        } else {
+            GameLogger.logScheduling("No students need to be removed - all retained with current schedules");
         }
     }
 
@@ -3551,8 +3586,7 @@ public class EnhancedStudentScheduleAssigner {
                         demand.totalDemand(),
                         totalCapacity,
                         currentEnrollment,
-                        emptyBlocks,
-                        sections != null ? sections.size() : 0);
+                        emptyBlocks);
 
                 utilizations.add(util);
             }
@@ -3565,9 +3599,10 @@ public class EnhancedStudentScheduleAssigner {
                     ? (double) util.currentEnrollment / util.totalCapacity * 100
                     : 0;
 
-            System.out.printf("%s: Demand=%d, Capacity=%d, Enrolled=%d (%.1f%%), Empty blocks=%d%n",
+            GameLogger.logScheduling(String.format(
+                    "%s: Demand=%d, Capacity=%d, Enrolled=%d (%.1f%%), Empty blocks=%d",
                     util.className, util.demand, util.totalCapacity, util.currentEnrollment,
-                    utilizationPercent, util.emptyBlocks);
+                    utilizationPercent, util.emptyBlocks));
         }
 
         // Step 4: Find optimization opportunities
@@ -3863,46 +3898,6 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     /**
-     * Finds ALL teachers in a specific discipline who could potentially teach
-     * a class, regardless of their current block assignments.
-     * This provides maximum flexibility for teacher reassignment.
-     */
-    private static List<Staff> findAllTeachersInDiscipline(String className,
-            HashMap<Integer, Staff> staffHashMap) {
-        StaffType requiredType = CurriculumRequirementsCalculator.mapClassToStaffType(className);
-
-        return staffHashMap.values().stream()
-                .filter(teacher -> {
-                    StaffType teacherType = (StaffType) teacher.teacherStatistics.getStaffType();
-                    return teacherType == requiredType || teacherType == StaffType.SUB;
-                })
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Determines if a teacher can teach a similar class in the same subject area.
-     * Teachers are considered qualified to teach any class within their discipline.
-     */
-    private static boolean canTeachSimilarClass(Staff teacher, String currentClass, String targetClass) {
-        // Teachers can teach any class within their subject area
-        // All subject areas aligned with
-        // CurriculumRequirementsCalculator.mapClassToStaffType()
-        String[] subjectAreas = {
-                "English", "Math", "Science", "History", "Language",
-                "Physical Education", "Visual Arts", "Performing Arts",
-                "Computer Science", "Vocational", "Business", "Consumer Science"
-        };
-
-        for (String area : subjectAreas) {
-            if (belongsToSubjectArea(currentClass, area) && belongsToSubjectArea(targetClass, area)) {
-                return true; // Same subject area, assume qualified
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Executes a block reassignment by modifying teacher schedules
      */
     private static void executeBlockReassignment(BlockReassignmentOpportunity opportunity,
@@ -3988,16 +3983,13 @@ public class EnhancedStudentScheduleAssigner {
         final int totalCapacity;
         final int currentEnrollment;
         int emptyBlocks; // Mutable for optimization calculations
-        final int totalSections;
-
         ClassUtilization(String className, int demand, int totalCapacity,
-                int currentEnrollment, int emptyBlocks, int totalSections) {
+                int currentEnrollment, int emptyBlocks) {
             this.className = className;
             this.demand = demand;
             this.totalCapacity = totalCapacity;
             this.currentEnrollment = currentEnrollment;
             this.emptyBlocks = emptyBlocks;
-            this.totalSections = totalSections;
         }
     }
 

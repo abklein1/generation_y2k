@@ -52,8 +52,6 @@ public class StudentPopGenerator {
      */
     public static void applyBaseAttributes(Student student) {
         String race = student.studentStatistics.getRace();
-        String gradeLevel = student.studentStatistics.getGradeLevel();
-        String gender = student.studentStatistics.getGender();
 
         // Physical traits based on race
         student.studentStatistics.setEyeColor(TraitSelection.studentEyeColorSelection(race));
@@ -256,8 +254,7 @@ public class StudentPopGenerator {
         for (int k = 0; k < studentCap; k++) {
             Student student = studentHashMap.get(k);
 
-            // Set identity attributes (level, grade, birthday, gender)
-            student.studentStatistics.setLevel(1);
+            // Set identity attributes (grade, birthday, gender)
             student.studentStatistics.setExperience(0);
             student.studentStatistics.setGradeLevel(setRandom(0, 3));
             student.studentStatistics
@@ -271,14 +268,14 @@ public class StudentPopGenerator {
             String lastName = l_name[0];
             String race = l_name[1];
             student.studentName.setFirstName(f_name);
-            lastName = student.studentName.capitalizeName(lastName);
+            lastName = StudentName.capitalizeName(lastName);
             student.studentName.setLastName(lastName);
             if (setRandom(0, SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
                 student.studentName.setSuffix(NameLoader.suffixNameGenerator(student.studentStatistics.getGender()));
             }
             if (setRandom(0, STUDENT_HYPHEN_GENERATION_SAMPLE_SIZE) < STUDENT_HYPHEN_GENERATION_RATE) {
                 String hyphenName = NameLoader.selectWeightedRandom()[0];
-                hyphenName = student.studentName.capitalizeName(hyphenName);
+                hyphenName = StudentName.capitalizeName(hyphenName);
                 student.studentName.setLastName(lastName + "-" + hyphenName);
             }
             String suffix = student.studentName.getSuffix();
@@ -331,8 +328,7 @@ public class StudentPopGenerator {
         for (int k = 0; k < studentCap; k++) {
             Student student = studentHashMap.get(k);
 
-            // Set identity attributes (level, grade, birthday, gender)
-            student.studentStatistics.setLevel(1);
+            // Set identity attributes (grade, birthday, gender)
             student.studentStatistics.setExperience(0);
             student.studentStatistics.setGradeLevel(setRandom(0, 3));
             student.studentStatistics
@@ -348,14 +344,14 @@ public class StudentPopGenerator {
             String lastName = l_name[0];
             String race = l_name[1];
             student.studentName.setFirstName(f_name);
-            lastName = student.studentName.capitalizeName(lastName);
+            lastName = StudentName.capitalizeName(lastName);
             student.studentName.setLastName(lastName);
             if (setRandom(0, SUFFIX_GENERATION_SAMPLE_SIZE) < SUFFIX_GENERATION_RATE) {
                 student.studentName.setSuffix(NameLoader.suffixNameGenerator(student.studentStatistics.getGender()));
             }
             if (setRandom(0, STUDENT_HYPHEN_GENERATION_SAMPLE_SIZE) < STUDENT_HYPHEN_GENERATION_RATE) {
                 String hyphenName = NameLoader.selectWeightedRandom()[0];
-                hyphenName = student.studentName.capitalizeName(hyphenName);
+                hyphenName = StudentName.capitalizeName(hyphenName);
                 student.studentName.setLastName(lastName + "-" + hyphenName);
             }
             String suffix = student.studentName.getSuffix();
