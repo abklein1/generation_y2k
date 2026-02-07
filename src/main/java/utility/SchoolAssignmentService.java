@@ -24,22 +24,23 @@ import java.util.Map;
  */
 public class SchoolAssignmentService {
 
-    // ==================== New Demand-First Pipeline (Phase 3a) ====================
+    // ==================== New Demand-First Pipeline (Phase 3a)
+    // ====================
 
     /**
      * Populates a school using the demand-first pipeline.
      * <p>
      * Flow:
      * <ol>
-     *   <li>Assign students to school from pool</li>
-     *   <li>Determine class lists for all enrolled students</li>
-     *   <li>Aggregate demand via {@link DemandAnalyzer}</li>
-     *   <li>Generate/assign teachers to meet demand</li>
-     *   <li>Build/adapt school rooms based on demand</li>
-     *   <li>Create teacher blocks and sections</li>
-     *   <li>Assign students to sections (simplified ESSA)</li>
-     *   <li>Optimize and verify</li>
-     *   <li>Seat students</li>
+     * <li>Assign students to school from pool</li>
+     * <li>Determine class lists for all enrolled students</li>
+     * <li>Aggregate demand via {@link DemandAnalyzer}</li>
+     * <li>Generate/assign teachers to meet demand</li>
+     * <li>Build/adapt school rooms based on demand</li>
+     * <li>Create teacher blocks and sections</li>
+     * <li>Assign students to sections (simplified ESSA)</li>
+     * <li>Optimize and verify</li>
+     * <li>Seat students</li>
      * </ol>
      *
      * @param town   the town containing population pools
@@ -113,13 +114,15 @@ public class SchoolAssignmentService {
                 staffAssigned + " staff");
     }
 
-    // ==================== Legacy Methods (deprecated in Phase 3b) ====================
+    // ==================== Legacy Methods (deprecated in Phase 3b)
+    // ====================
 
     /**
      * Fully populates a school from the town's population pools using the legacy
      * capacity-based approach.
      *
-     * @deprecated Use {@link #populateSchoolFromStudentDemand(Town, StandardSchool, GameView)}
+     * @deprecated Use
+     *             {@link #populateSchoolFromStudentDemand(Town, StandardSchool, GameView)}
      *             instead for the demand-first pipeline.
      *
      * @param town   the town containing population pools
@@ -173,7 +176,8 @@ public class SchoolAssignmentService {
     /**
      * Populates a school using demand-driven staffing.
      *
-     * @deprecated Use {@link #populateSchoolFromStudentDemand(Town, StandardSchool, GameView)}
+     * @deprecated Use
+     *             {@link #populateSchoolFromStudentDemand(Town, StandardSchool, GameView)}
      *             instead for the improved demand-first pipeline.
      *
      * @param town   the town containing population pools
@@ -192,9 +196,12 @@ public class SchoolAssignmentService {
         SchoolFundingModel fundingModel = school.getFundingModel();
 
         // Step 1: Assign students FIRST to know actual school enrollment
-        // Use targetEnrollment (from demographics) rather than optimalCapacity to prevent
-        // sibling generation from inflating enrollment beyond the intended population size.
-        // The school may have more classrooms than needed for enrollment (to house language
+        // Use targetEnrollment (from demographics) rather than optimalCapacity to
+        // prevent
+        // sibling generation from inflating enrollment beyond the intended population
+        // size.
+        // The school may have more classrooms than needed for enrollment (to house
+        // language
         // teachers and other non-core staff), so optimalCapacity can exceed the target.
         view.appendOutput("Assigning students to school...");
         int maxStudents = fundingModel.isAllowOvercrowding()
@@ -456,7 +463,7 @@ public class SchoolAssignmentService {
      * <p>
      * With the demand-first approach, capacity shortages are rare because the
      * pipeline guarantees that rooms and teachers exist for the calculated
-     * demand.  The only failures are scheduling conflicts (block collisions),
+     * demand. The only failures are scheduling conflicts (block collisions),
      * so retries are narrowed to re-running just the student assignment step
      * (step 7) with relaxed constraints.
      *

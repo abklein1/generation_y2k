@@ -11,9 +11,10 @@ import static constants.SchoolConstants.TOTAL_SCHOOL_PERIODS;
 
 /**
  * Analyzes student demand to determine class lists, staff needs, sections,
- * and room requirements.  This is the single source of truth for demand
+ * and room requirements. This is the single source of truth for demand
  * aggregation, replacing both {@code ESSA.analyzeDemandWithTraits()} and
- * the similar logic in {@link CurriculumRequirementsCalculator#analyzeRequirements}.
+ * the similar logic in
+ * {@link CurriculumRequirementsCalculator#analyzeRequirements}.
  *
  * Created as part of Phase 2a.
  */
@@ -24,23 +25,23 @@ public class DemandAnalyzer {
      * Immutable result of a demand analysis.
      */
     public static class DemandResult {
-        private final Map<String, Integer> classDemand;          // className -> studentCount
-        private final Map<String, Set<Student>> classStudents;   // className -> interested students
+        private final Map<String, Integer> classDemand; // className -> studentCount
+        private final Map<String, Set<Student>> classStudents; // className -> interested students
         private final Map<StaffType, Integer> staffDemandByType; // staffType -> total student-slots
-        private final Map<StaffType, Integer> teachersNeeded;    // staffType -> teachers required
-        private final Map<String, Integer> sectionsNeeded;       // className -> section count
-        private final Map<String, String> roomTypeByClass;       // className -> room type string
-        private final Map<String, Integer> roomsNeeded;          // roomType -> count
+        private final Map<StaffType, Integer> teachersNeeded; // staffType -> teachers required
+        private final Map<String, Integer> sectionsNeeded; // className -> section count
+        private final Map<String, String> roomTypeByClass; // className -> room type string
+        private final Map<String, Integer> roomsNeeded; // roomType -> count
         private final int totalStudents;
 
         DemandResult(Map<String, Integer> classDemand,
-                     Map<String, Set<Student>> classStudents,
-                     Map<StaffType, Integer> staffDemandByType,
-                     Map<StaffType, Integer> teachersNeeded,
-                     Map<String, Integer> sectionsNeeded,
-                     Map<String, String> roomTypeByClass,
-                     Map<String, Integer> roomsNeeded,
-                     int totalStudents) {
+                Map<String, Set<Student>> classStudents,
+                Map<StaffType, Integer> staffDemandByType,
+                Map<StaffType, Integer> teachersNeeded,
+                Map<String, Integer> sectionsNeeded,
+                Map<String, String> roomTypeByClass,
+                Map<String, Integer> roomsNeeded,
+                int totalStudents) {
             this.classDemand = Collections.unmodifiableMap(new LinkedHashMap<>(classDemand));
             this.classStudents = Collections.unmodifiableMap(classStudents);
             this.staffDemandByType = Collections.unmodifiableMap(new EnumMap<>(staffDemandByType));
@@ -52,30 +53,48 @@ public class DemandAnalyzer {
         }
 
         /** Class name -> number of students requesting it. */
-        public Map<String, Integer> getClassDemand() { return classDemand; }
+        public Map<String, Integer> getClassDemand() {
+            return classDemand;
+        }
 
         /** Class name -> set of interested students. */
-        public Map<String, Set<Student>> getClassStudents() { return classStudents; }
+        public Map<String, Set<Student>> getClassStudents() {
+            return classStudents;
+        }
 
         /** StaffType -> aggregate student-slots across all classes of that type. */
-        public Map<StaffType, Integer> getStaffDemandByType() { return staffDemandByType; }
+        public Map<StaffType, Integer> getStaffDemandByType() {
+            return staffDemandByType;
+        }
 
         /** StaffType -> number of teachers required. */
-        public Map<StaffType, Integer> getTeachersNeeded() { return teachersNeeded; }
+        public Map<StaffType, Integer> getTeachersNeeded() {
+            return teachersNeeded;
+        }
 
         /** Alias so callers can use {@code demand.staffNeeds()} as in the plan. */
-        public Map<StaffType, Integer> staffNeeds() { return teachersNeeded; }
+        public Map<StaffType, Integer> staffNeeds() {
+            return teachersNeeded;
+        }
 
         /** Class name -> number of sections required. */
-        public Map<String, Integer> getSectionsNeeded() { return sectionsNeeded; }
+        public Map<String, Integer> getSectionsNeeded() {
+            return sectionsNeeded;
+        }
 
         /** Room type string (e.g. "Classroom", "ScienceLab") -> count needed. */
-        public Map<String, Integer> getRoomsNeeded() { return roomsNeeded; }
+        public Map<String, Integer> getRoomsNeeded() {
+            return roomsNeeded;
+        }
 
         /** Alias so callers can use {@code demand.roomNeeds()} as in the plan. */
-        public Map<String, Integer> roomNeeds() { return roomsNeeded; }
+        public Map<String, Integer> roomNeeds() {
+            return roomsNeeded;
+        }
 
-        public int getTotalStudents() { return totalStudents; }
+        public int getTotalStudents() {
+            return totalStudents;
+        }
     }
 
     // ------------------------------------------------------------- analysis
@@ -89,7 +108,7 @@ public class DemandAnalyzer {
      * @return aggregated demand
      */
     public static DemandResult analyze(Map<Student, List<String>> classLists,
-                                       SchoolFundingModel fundingModel) {
+            SchoolFundingModel fundingModel) {
         // 1. Aggregate demand by class name
         Map<String, Integer> classDemand = new LinkedHashMap<>();
         Map<String, Set<Student>> classStudents = new LinkedHashMap<>();
@@ -155,7 +174,7 @@ public class DemandAnalyzer {
      * @return aggregated demand
      */
     public static DemandResult analyze(HashMap<Integer, Student> studentHashMap,
-                                       SchoolFundingModel fundingModel) {
+            SchoolFundingModel fundingModel) {
         Map<Student, List<String>> classLists = StudentClassDeterminer.determineAllClasses(studentHashMap);
         return analyze(classLists, fundingModel);
     }
@@ -197,10 +216,10 @@ public class DemandAnalyzer {
      * are needed.
      */
     private static void calculateRoomNeeds(Map<String, Integer> classDemand,
-                                           Map<String, Integer> sectionsNeeded,
-                                           Map<String, String> roomTypeByClass,
-                                           Map<String, Integer> roomsNeeded,
-                                           int totalStudents) {
+            Map<String, Integer> sectionsNeeded,
+            Map<String, String> roomTypeByClass,
+            Map<String, Integer> roomsNeeded,
+            int totalStudents) {
         // Map each class to its room type
         for (String className : classDemand.keySet()) {
             roomTypeByClass.put(className, mapClassToRoomType(className));
@@ -239,7 +258,8 @@ public class DemandAnalyzer {
             case PERFORMING_ARTS -> {
                 String lower = className.toLowerCase();
                 yield (lower.contains("drama") || lower.contains("theater") || lower.contains("theatre"))
-                        ? "DramaRoom" : "MusicRoom";
+                        ? "DramaRoom"
+                        : "MusicRoom";
             }
             case PHYSICAL_ED -> "Gym";
             case VOCATIONAL -> "VocationalRoom";
@@ -262,14 +282,13 @@ public class DemandAnalyzer {
                 .forEach(e -> GameLogger.logScheduling("  " + e.getKey() + ": " + e.getValue() + " teachers"));
 
         GameLogger.logScheduling("--- Room needs ---");
-        result.roomsNeeded.forEach((type, count) ->
-                GameLogger.logScheduling("  " + type + ": " + count));
+        result.roomsNeeded.forEach((type, count) -> GameLogger.logScheduling("  " + type + ": " + count));
 
         // Language detail (for debugging)
         GameLogger.logScheduling("--- Language class demand ---");
-        String[] languages = {"Spanish I", "Spanish II", "French I", "French II",
+        String[] languages = { "Spanish I", "Spanish II", "French I", "French II",
                 "German I", "German II", "Latin I", "Latin II",
-                "American Sign Language I", "American Sign Language II"};
+                "American Sign Language I", "American Sign Language II" };
         for (String lang : languages) {
             int d = result.classDemand.getOrDefault(lang, 0);
             if (d > 0) {

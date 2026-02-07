@@ -858,7 +858,8 @@ public class SchoolController {
             playerCharacter.studentStatistics.setInitResponsibility();
             playerCharacter.studentStatistics.setInitOpenMind();
 
-            // Initialize allostatic load tolerance (depends on resilience and determination)
+            // Initialize allostatic load tolerance (depends on resilience and
+            // determination)
             playerCharacter.studentStatistics.initAllostaticLoad();
 
             // Apply braces attributes (timing, cosmetics, charisma effects)
