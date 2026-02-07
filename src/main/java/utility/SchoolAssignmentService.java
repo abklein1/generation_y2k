@@ -10,6 +10,7 @@ import entity.Town;
 import view.GameView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,14 +24,109 @@ import java.util.Map;
  */
 public class SchoolAssignmentService {
 
+    // ==================== New Demand-First Pipeline (Phase 3a) ====================
+
     /**
-     * Fully populates a school from the town's population pools using the legacy
-     * capacity-based approach. Use populateSchoolDemandDriven for the new approach.
+     * Populates a school using the demand-first pipeline.
+     * <p>
+     * Flow:
+     * <ol>
+     *   <li>Assign students to school from pool</li>
+     *   <li>Determine class lists for all enrolled students</li>
+     *   <li>Aggregate demand via {@link DemandAnalyzer}</li>
+     *   <li>Generate/assign teachers to meet demand</li>
+     *   <li>Build/adapt school rooms based on demand</li>
+     *   <li>Create teacher blocks and sections</li>
+     *   <li>Assign students to sections (simplified ESSA)</li>
+     *   <li>Optimize and verify</li>
+     *   <li>Seat students</li>
+     * </ol>
      *
      * @param town   the town containing population pools
      * @param school the school to populate
      * @param view   the game view for output
      */
+    public static void populateSchoolFromStudentDemand(Town town, StandardSchool school, GameView view) {
+        view.appendOutput("Populating " + school.getSchoolName() + " using demand-first pipeline...");
+
+        // Add school to town if not already present
+        if (!town.getSchools().contains(school)) {
+            town.addSchool(school);
+        }
+
+        SchoolFundingModel fundingModel = school.getFundingModel();
+
+        // 1. Assign students to school from pool
+        view.appendOutput("Step 1: Assigning students to school...");
+        int maxStudents = fundingModel.isAllowOvercrowding()
+                ? fundingModel.getMaxAllowedEnrollment(school.getPhysicalCapacity())
+                : school.getTargetEnrollment();
+        int enrolled = StudentAssignmentService.assignStudentsToSchool(
+                town.getStudentPool(), school, maxStudents, view);
+        school.setCurrentEnrollment(enrolled);
+        view.appendOutput("  Assigned " + enrolled + " students");
+
+        // 2. Determine class lists for all enrolled students
+        view.appendOutput("Step 2: Determining class lists...");
+        HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
+        Map<Student, List<String>> classLists = StudentClassDeterminer.determineAllClasses(studentMap);
+
+        // 3. Aggregate demand
+        view.appendOutput("Step 3: Aggregating demand...");
+        DemandAnalyzer.DemandResult demand = DemandAnalyzer.analyze(classLists, fundingModel);
+        DemandAnalyzer.logDemandSummary(demand);
+
+        // 4. Generate/assign teachers to meet demand
+        view.appendOutput("Step 4: Assigning staff by demand...");
+        int staffAssigned = StaffAssignmentService.assignStaffByDemand(
+                town.getStaffPool(), school, demand.staffNeeds(), view);
+
+        // 5. Build/adapt school rooms based on demand
+        view.appendOutput("Step 5: Adapting school rooms to demand...");
+        Director.adaptSchoolToDemand(school, demand.roomNeeds(), view);
+
+        // 6. Create teacher blocks and sections
+        view.appendOutput("Step 6: Creating teacher blocks and sections...");
+        HashMap<Integer, Staff> staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
+
+        // Populate the SectionManager demand tracker from the DemandResult
+        DemandAnalyzer.populateSectionManagerDemand(demand);
+
+        // Configure class sizes from funding
+        TeacherBlockBuilder.configureClassSizesFromFunding(fundingModel);
+        TeacherBlockBuilder.createDemandDrivenTeacherBlocks(studentMap, staffMap, school, view);
+        SectionManager.createOptimalSections(staffMap, TeacherBlockBuilder.getCurrentOptimalClassSize());
+
+        // 7. Assign students to sections (simplified ESSA)
+        view.appendOutput("Step 7: Assigning students to sections...");
+        EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
+                studentMap, staffMap, school, view, town.getStudentPool());
+
+        // 8. Optimize and verify (already done inside ESSA, but log completion)
+        view.appendOutput("Step 8: Optimization and verification complete.");
+
+        // 9. Seat students
+        view.appendOutput("Step 9: Assigning seating...");
+        StudentSeatingAssigner.seatInitialStudents(school);
+
+        view.appendOutput("Demand-first pipeline complete: " + enrolled + " students, " +
+                staffAssigned + " staff");
+    }
+
+    // ==================== Legacy Methods (deprecated in Phase 3b) ====================
+
+    /**
+     * Fully populates a school from the town's population pools using the legacy
+     * capacity-based approach.
+     *
+     * @deprecated Use {@link #populateSchoolFromStudentDemand(Town, StandardSchool, GameView)}
+     *             instead for the demand-first pipeline.
+     *
+     * @param town   the town containing population pools
+     * @param school the school to populate
+     * @param view   the game view for output
+     */
+    @Deprecated
     public static void populateSchool(Town town, StandardSchool school, GameView view) {
         view.appendOutput("Populating " + school.getSchoolName() + " from town pool...");
 
@@ -76,18 +172,15 @@ public class SchoolAssignmentService {
 
     /**
      * Populates a school using demand-driven staffing.
-     * This approach:
-     * 1. First analyzes what classes students need based on curriculum requirements
-     * 2. Calculates how many teachers of each type are needed
-     * 3. Assigns staff by type to meet those needs
-     * 4. Then assigns students (can exceed optimal capacity for overcrowding
-     * scenarios)
-     * 5. Finally schedules students with guaranteed graduation requirements
+     *
+     * @deprecated Use {@link #populateSchoolFromStudentDemand(Town, StandardSchool, GameView)}
+     *             instead for the improved demand-first pipeline.
      *
      * @param town   the town containing population pools
      * @param school the school to populate
      * @param view   the game view for output
      */
+    @Deprecated
     public static void populateSchoolDemandDriven(Town town, StandardSchool school, GameView view) {
         view.appendOutput("Populating " + school.getSchoolName() + " using demand-driven staffing...");
 
@@ -359,12 +452,13 @@ public class SchoolAssignmentService {
     private static final int CLASSROOMS_PER_RETRY = 5;
 
     /**
-     * Populates a school using demand-driven staffing with automatic retry and
-     * expansion.
-     * If too many students have incomplete schedules, this will:
-     * 1. Add more classrooms to the school
-     * 2. Re-run the scheduling process
-     * 3. Repeat up to MAX_RETRY_ATTEMPTS times
+     * Populates a school using the demand-first pipeline with automatic retry.
+     * <p>
+     * With the demand-first approach, capacity shortages are rare because the
+     * pipeline guarantees that rooms and teachers exist for the calculated
+     * demand.  The only failures are scheduling conflicts (block collisions),
+     * so retries are narrowed to re-running just the student assignment step
+     * (step 7) with relaxed constraints.
      *
      * @param town   the town containing population pools
      * @param school the school to populate
@@ -373,51 +467,52 @@ public class SchoolAssignmentService {
     public static void populateSchoolWithRetry(Town town, StandardSchool school, GameView view) {
         view.appendOutput("Populating " + school.getSchoolName() + " with retry-enabled scheduling...");
 
-        int attempt = 0;
-        boolean schedulingSuccessful = false;
+        // First pass: use the new demand-first pipeline
+        populateSchoolFromStudentDemand(town, school, view);
 
-        while (attempt < MAX_RETRY_ATTEMPTS && !schedulingSuccessful) {
+        // Check if retry is needed
+        SchedulingReport report = analyzeSchedulingSuccess(town, school);
+
+        view.appendOutput("=== SCHEDULING REPORT (Initial) ===");
+        view.appendOutput("  Total students: " + report.totalStudents);
+        view.appendOutput("  Students with complete schedules: " + report.completeSchedules);
+        view.appendOutput("  Students with incomplete schedules: " + report.incompleteSchedules);
+        view.appendOutput("  Completion rate: " + String.format("%.1f%%", report.completionRate * 100));
+
+        // Retry loop: only re-run assignment (step 7) with expanded capacity
+        int attempt = 1;
+        while (report.incompleteRate > INCOMPLETE_SCHEDULE_THRESHOLD && attempt < MAX_RETRY_ATTEMPTS) {
             attempt++;
+            view.appendOutput("=== SCHEDULING RETRY ATTEMPT " + attempt + " ===");
 
-            if (attempt > 1) {
-                view.appendOutput("=== SCHEDULING RETRY ATTEMPT " + attempt + " ===");
+            // Minor expansion: add a few classrooms for block-collision overflow
+            int addedClassrooms = school.addClassrooms(CLASSROOMS_PER_RETRY, view);
+            view.appendOutput("  Added " + addedClassrooms + " classrooms. New total: " +
+                    school.getClassrooms().length);
 
-                // Expand school capacity
-                int addedClassrooms = school.addClassrooms(CLASSROOMS_PER_RETRY, view);
-                view.appendOutput("  Added " + addedClassrooms + " classrooms. New total: " +
-                        school.getClassrooms().length);
-                view.appendOutput("  New optimal capacity: " + school.getOptimalCapacity());
-                view.appendOutput("  New physical capacity: " + school.getPhysicalCapacity());
+            // Clear schedules and re-run just the assignment step
+            clearStudentSchedules(town, school);
 
-                // Clear and reset student schedules for retry
-                clearStudentSchedules(town, school);
+            HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
+            HashMap<Integer, Staff> staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
+
+            try {
+                EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
+                        studentMap, staffMap, school, view, town.getStudentPool());
+                StudentSeatingAssigner.seatInitialStudents(school);
+            } catch (Exception e) {
+                view.appendOutput("  Error during retry scheduling: " + e.getMessage());
+                e.printStackTrace();
             }
 
-            // Run the demand-driven population
-            populateSchoolDemandDriven(town, school, view);
+            report = analyzeSchedulingSuccess(town, school);
 
-            // Check scheduling success rate
-            SchedulingReport report = analyzeSchedulingSuccess(town, school);
-
-            view.appendOutput("=== SCHEDULING REPORT (Attempt " + attempt + ") ===");
-            view.appendOutput("  Total students: " + report.totalStudents);
-            view.appendOutput("  Students with complete schedules: " + report.completeSchedules);
-            view.appendOutput("  Students with incomplete schedules: " + report.incompleteSchedules);
             view.appendOutput("  Completion rate: " + String.format("%.1f%%", report.completionRate * 100));
 
             if (report.incompleteRate <= INCOMPLETE_SCHEDULE_THRESHOLD) {
-                schedulingSuccessful = true;
                 view.appendOutput("  Scheduling successful - within threshold");
-            } else {
-                view.appendOutput("  WARNING: " + String.format("%.1f%%", report.incompleteRate * 100) +
-                        " of students have incomplete schedules (threshold: " +
-                        String.format("%.0f%%", INCOMPLETE_SCHEDULE_THRESHOLD * 100) + ")");
-
-                if (attempt < MAX_RETRY_ATTEMPTS) {
-                    view.appendOutput("  Will retry with expanded capacity...");
-                } else {
-                    view.appendOutput("  Max retry attempts reached. Proceeding with current results.");
-                }
+            } else if (attempt >= MAX_RETRY_ATTEMPTS) {
+                view.appendOutput("  Max retry attempts reached. Proceeding with current results.");
             }
         }
 

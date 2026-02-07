@@ -223,6 +223,21 @@ public class StaffAssignmentService {
     }
 
     /**
+     * Convenience overload that accepts a {@link DemandAnalyzer.DemandResult}
+     * directly.
+     *
+     * @param pool   the staff pool
+     * @param school the school to assign staff to
+     * @param demand the pre-computed demand result
+     * @param view   the game view for output
+     * @return the total number of staff assigned
+     */
+    public static int assignStaffByDemand(StaffPool pool, StandardSchool school,
+            DemandAnalyzer.DemandResult demand, GameView view) {
+        return assignStaffByDemand(pool, school, demand.staffNeeds(), view);
+    }
+
+    /**
      * Assigns staff to a school based on curriculum demand analysis.
      * This method assigns staff by type to meet specific curriculum requirements.
      *
