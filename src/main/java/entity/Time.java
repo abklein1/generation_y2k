@@ -29,7 +29,7 @@ public class Time {
         this.calendar.set(Calendar.YEAR, STARTING_YEAR);
         this.calendar.set(Calendar.MONTH, STARTING_MONTH);
         this.calendar.set(Calendar.DATE, STARTING_DATE);
-        this.calendar.set(Calendar.HOUR, STARTING_HOUR);
+        this.calendar.set(Calendar.HOUR_OF_DAY, STARTING_HOUR);
         this.calendar.set(Calendar.MINUTE, STARTING_MINUTE);
         this.simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy 'at' HH:mm aaa");
         this.f = new SimpleDateFormat("EEEE");
@@ -230,7 +230,7 @@ public class Time {
         this.calendar.set(Calendar.YEAR, STARTING_YEAR);
         this.calendar.set(Calendar.MONTH, STARTING_MONTH);
         this.calendar.set(Calendar.DATE, STARTING_DATE);
-        this.calendar.set(Calendar.HOUR, STARTING_HOUR);
+        this.calendar.set(Calendar.HOUR_OF_DAY, STARTING_HOUR);
         this.calendar.set(Calendar.MINUTE, STARTING_MINUTE);
         this.calendar.set(Calendar.SECOND, 0);
         this.calendar.set(Calendar.MILLISECOND, 0);

@@ -20,7 +20,23 @@ public class StudentSchedule {
     }
 
     public List<StudentBlock> getClassSchedule() {
+        return classSchedule;
+    }
+
+    /**
+     * Returns a snapshot copy of the schedule.  Use this when you need to
+     * iterate without risking ConcurrentModificationException, or when you
+     * need a frozen view that won't change as assignments proceed.
+     */
+    public List<StudentBlock> getClassScheduleCopy() {
         return new ArrayList<>(classSchedule);
+    }
+
+    /**
+     * Removes all blocks from this schedule.
+     */
+    public void clear() {
+        classSchedule.clear();
     }
     
     /**

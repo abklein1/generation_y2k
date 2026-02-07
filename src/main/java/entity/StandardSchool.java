@@ -72,6 +72,12 @@ public class StandardSchool implements SchoolPlan {
     // Current enrollment tracking
     private int currentEnrollment = 0;
 
+    // Target enrollment from demographics (the intended population size).
+    // This is separate from optimalCapacity because the school may have extra
+    // classrooms for non-core teaching staff (language teachers, etc.) that
+    // increase physical capacity beyond what enrollment should be.
+    private int targetEnrollment = 0;
+
     @Override
     public void setUtilityRooms(int number, GameView view) {
         utilityrooms = new UtilityRoom[number];
@@ -220,6 +226,26 @@ public class StandardSchool implements SchoolPlan {
      */
     public void setCurrentEnrollment(int count) {
         this.currentEnrollment = count;
+    }
+
+    /**
+     * Gets the target enrollment for this school.
+     * This is the intended population size from demographics, which may be
+     * lower than optimalCapacity when extra classrooms exist for non-core staff.
+     *
+     * @return the target enrollment, or optimalCapacity if not explicitly set
+     */
+    public int getTargetEnrollment() {
+        return targetEnrollment > 0 ? targetEnrollment : getOptimalCapacity();
+    }
+
+    /**
+     * Sets the target enrollment for this school.
+     *
+     * @param target the intended enrollment from demographics
+     */
+    public void setTargetEnrollment(int target) {
+        this.targetEnrollment = target;
     }
 
     /**

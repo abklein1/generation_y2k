@@ -280,17 +280,12 @@ public class Inspector {
     }
 
     /**
-     * Maps internal block numbers (1-8) to display periods (1-4).
-     * Blocks 1,2 -> Period 1; Blocks 3,4 -> Period 2; etc.
+     * Maps block numbers to display periods.
+     * In a 4x4 block schedule, block numbers 1-4 correspond directly to periods 1-4.
+     * Each period exists in both Fall and Spring semesters.
      */
     private static int mapBlockToPeriod(int blockNumber) {
-        return switch (blockNumber) {
-            case 1, 2 -> 1;
-            case 3, 4 -> 2;
-            case 5, 6 -> 3;
-            case 7, 8 -> 4;
-            default -> blockNumber;
-        };
+        return blockNumber;
     }
 
     /**

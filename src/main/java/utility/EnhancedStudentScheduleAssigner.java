@@ -94,7 +94,7 @@ public class EnhancedStudentScheduleAssigner {
         // Clear all existing student schedules to prevent duplicates
         GameLogger.logScheduling("Clearing all existing student schedules...");
         for (Student student : studentHashMap.values()) {
-            student.studentStatistics.getStudentSchedule().getClassSchedule().clear();
+            student.studentStatistics.getStudentSchedule().clear();
         }
         GameLogger.logScheduling("All schedules cleared - starting fresh assignment");
 
@@ -218,10 +218,9 @@ public class EnhancedStudentScheduleAssigner {
             GameLogger.logScheduling("  " + entry.getKey() + ": " + entry.getValue().size() + " teachers");
         }
 
-        // Step 4: For each class, create teacher blocks distributed across ALL time
-        // slots
+        // Step 4: For each class, create teacher blocks distributed across all 4 periods
         // Track per-class section distribution to ensure coverage
-        Map<String, int[]> classSlotsUsed = new HashMap<>(); // className -> slots used per period (0-7)
+        Map<String, int[]> classSlotsUsed = new HashMap<>(); // className -> slots used per period (0-3)
 
         // Sort classes by demand (highest first) to prioritize high-demand classes
         List<Map.Entry<String, Integer>> sortedClasses = new ArrayList<>(sectionsNeeded.entrySet());
@@ -234,8 +233,8 @@ public class EnhancedStudentScheduleAssigner {
             if (sectionsRequired == 0)
                 continue;
 
-            // Initialize per-class slot tracking
-            int[] classSlots = new int[8]; // Track how many sections of THIS class in each period
+            // Initialize per-class slot tracking (4 periods per semester in a 4x4 block schedule)
+            int[] classSlots = new int[4]; // Track how many sections of THIS class in each period
             classSlotsUsed.put(className, classSlots);
 
             // Determine which staff type teaches this class
@@ -310,7 +309,7 @@ public class EnhancedStudentScheduleAssigner {
             } else {
                 // Show distribution across periods
                 StringBuilder dist = new StringBuilder();
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < classSlots.length; i++) {
                     if (classSlots[i] > 0) {
                         dist.append("P").append(i + 1).append(":").append(classSlots[i]).append(" ");
                     }
@@ -357,7 +356,7 @@ public class EnhancedStudentScheduleAssigner {
                 }
             }
 
-            // Also check if teacher is at capacity (max 8 blocks per semester)
+            // Also check if teacher is at capacity (max 4 blocks per semester in a 4x4 schedule)
             int semesterBlocks = 0;
             for (TeacherBlock existing : teacher.teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
                 if (existing.getSemester().equals(semester)) {
@@ -365,7 +364,7 @@ public class EnhancedStudentScheduleAssigner {
                 }
             }
 
-            if (!hasConflict && semesterBlocks < 8) {
+            if (!hasConflict && semesterBlocks < 4) {
                 return teacher;
             }
         }
@@ -879,7 +878,7 @@ public class EnhancedStudentScheduleAssigner {
             student.setInHighSchool(false);
 
             // Clear the student's schedule since they're being removed
-            student.studentStatistics.getStudentSchedule().getClassSchedule().clear();
+            student.studentStatistics.getStudentSchedule().clear();
 
             // Remove from sections they were enrolled in
             removeStudentFromAllSections(student);
@@ -1449,8 +1448,8 @@ public class EnhancedStudentScheduleAssigner {
             return 0;
 
         // Assume each teacher can handle ~25 students across all their blocks
-        // Each teacher teaches 8 blocks, so roughly 200 students total capacity per
-        // teacher
+        // Each teacher teaches up to 4 blocks per semester (8 total across both semesters),
+        // so roughly 200 students total capacity per teacher.
         // But for a specific class, they might teach it 2-4 times, so ~50-100 students
         // per class per teacher
         int studentsPerTeacherPerClass = 50; // Conservative estimate

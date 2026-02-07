@@ -99,10 +99,14 @@ public class SchoolAssignmentService {
         SchoolFundingModel fundingModel = school.getFundingModel();
 
         // Step 1: Assign students FIRST to know actual school enrollment
+        // Use targetEnrollment (from demographics) rather than optimalCapacity to prevent
+        // sibling generation from inflating enrollment beyond the intended population size.
+        // The school may have more classrooms than needed for enrollment (to house language
+        // teachers and other non-core staff), so optimalCapacity can exceed the target.
         view.appendOutput("Assigning students to school...");
         int maxStudents = fundingModel.isAllowOvercrowding()
                 ? fundingModel.getMaxAllowedEnrollment(school.getPhysicalCapacity())
-                : school.getOptimalCapacity();
+                : school.getTargetEnrollment();
 
         int studentsAssigned = StudentAssignmentService.assignStudentsToSchool(
                 town.getStudentPool(), school, maxStudents, view);
@@ -430,7 +434,7 @@ public class SchoolAssignmentService {
     private static void clearStudentSchedules(Town town, StandardSchool school) {
         HashMap<Integer, Student> students = town.getStudentPool().getStudentsBySchoolAsMap(school);
         for (Student student : students.values()) {
-            student.studentStatistics.getStudentSchedule().getClassSchedule().clear();
+            student.studentStatistics.getStudentSchedule().clear();
         }
         GameLogger.logScheduling("Cleared schedules for " + students.size() + " students for retry");
     }

@@ -192,6 +192,8 @@ public class SchoolFundingModel implements Serializable {
 
     /**
      * Calculates the number of classrooms needed for a given student population.
+     * This accounts for both core subject teachers and non-core teaching staff
+     * (language teachers, etc.) who also need dedicated classroom space.
      *
      * @param studentPopulation the total number of students
      * @param periodsPerDay the number of class periods per day
@@ -203,9 +205,21 @@ public class SchoolFundingModel implements Serializable {
         int classesPerStudent = 7; // Average
         int totalClassSlots = studentPopulation * classesPerStudent;
         int slotsPerClassroom = periodsPerDay * getOptimalClassSize();
-        
+
         int baseClassrooms = (int) Math.ceil((double) totalClassSlots / slotsPerClassroom);
-        return (int) Math.ceil(baseClassrooms * fundingLevel.getRoomCountModifier());
+
+        // Additional classrooms for non-core teaching staff who need dedicated rooms.
+        // Language teachers are the primary gap: the school offers ~5 languages, each
+        // requiring 1+ teachers. They need their own classrooms just like core teachers.
+        // Estimate: ~1 language teacher per 120 students (scales with school size).
+        int languageTeacherRooms = Math.max(2, studentPopulation / 120);
+
+        // Small buffer for substitute teachers who teach elective sections (Keyboarding,
+        // Philosophy, etc.) and any other teaching staff overflow.
+        int additionalBuffer = Math.max(2, studentPopulation / 600);
+
+        int totalClassrooms = baseClassrooms + languageTeacherRooms + additionalBuffer;
+        return (int) Math.ceil(totalClassrooms * fundingLevel.getRoomCountModifier());
     }
 
     /**

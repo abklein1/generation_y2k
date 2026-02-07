@@ -486,15 +486,16 @@ class SchedulingLogicTest {
         }
 
         // Mirrors the updated calculateInitialStaffDemand logic
+        // Uses teachingPeriodsPerTeacher = 4 to match the corrected 4x4 block schedule model
         private int calculateCoreTeachers(int studentCap) {
-            int teachingPeriodsPerTeacher = 6;
+            int teachingPeriodsPerTeacher = 4;
             int optimalClassSize = Math.max(20, Math.min(30, studentCap / 40));
             int coreSections = (int) Math.ceil((double) studentCap / optimalClassSize);
             return Math.max(2, (int) Math.ceil((double) coreSections / teachingPeriodsPerTeacher));
         }
 
         private int calculateLanguageTeachers(int studentCap) {
-            int teachingPeriodsPerTeacher = 6;
+            int teachingPeriodsPerTeacher = 4;
             int optimalClassSize = Math.max(20, Math.min(30, studentCap / 40));
             int estimatedFreshmen = studentCap / 4;
             int languageSections = (int) Math.ceil((double) estimatedFreshmen / optimalClassSize);

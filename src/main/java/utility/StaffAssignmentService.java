@@ -547,8 +547,11 @@ public class StaffAssignmentService {
     public static Map<StaffType, Integer> calculateInitialStaffDemand(int studentCap, StandardSchool school) {
         Map<StaffType, Integer> demand = new HashMap<>();
 
-        // Scheduling parameters - each teacher teaches ~6 of 8 periods
-        int teachingPeriodsPerTeacher = 6;
+        // Scheduling parameters - in a 4x4 block schedule, each teacher teaches
+        // up to 4 periods per semester (8 per year). We use 4 as the divisor to
+        // account for semester distribution and ensure adequate coverage for all
+        // grade levels' required classes.
+        int teachingPeriodsPerTeacher = 4;
         // Optimal class size scales with school size (smaller schools can have smaller
         // classes)
         int optimalClassSize = Math.max(20, Math.min(30, studentCap / 40));

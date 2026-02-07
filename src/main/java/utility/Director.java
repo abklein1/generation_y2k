@@ -61,6 +61,7 @@ public class Director {
                     int targetPopulation, GameView view) {
         this.fundingModel = fundingModel != null ? fundingModel : new SchoolFundingModel();
         standardSchool.setFundingModel(this.fundingModel);
+        standardSchool.setTargetEnrollment(targetPopulation);
         setStandardSchoolForPopulation(standardSchool, targetPopulation, view);
     }
 

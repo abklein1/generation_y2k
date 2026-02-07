@@ -5,7 +5,7 @@ public final class SimConstants {
     public static final int STARTING_YEAR = 2004;
     public static final int STARTING_MONTH = 7;
     public static final int STARTING_DATE = 23;
-    public static final int STARTING_HOUR = -4;
+    public static final int STARTING_HOUR = 8;
     public static final int STARTING_MINUTE = 0;
 
     // GENDER RATES

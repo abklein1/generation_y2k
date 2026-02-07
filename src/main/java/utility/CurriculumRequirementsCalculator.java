@@ -154,7 +154,7 @@ public class CurriculumRequirementsCalculator {
         Map<StaffType, Integer> totalSectionsByType = new EnumMap<>(StaffType.class);
         Map<StaffType, List<ClassRequirement>> classesByType = new EnumMap<>(StaffType.class);
         
-        int classesPerTeacher = 6; // Teachers typically teach 6 of 8 periods
+        int classesPerTeacher = 4; // In a 4x4 block schedule, use 4 to ensure adequate staffing
         
         for (Map.Entry<String, ClassDemand> entry : classDemand.entrySet()) {
             String className = entry.getKey();
