@@ -28,6 +28,11 @@ public class EnhancedStudentScheduleAssigner {
     private static final Map<String, StudentDemand> demandTracker = new HashMap<>();
     private static final Map<String, Set<Student>> classWaitlists = new HashMap<>();
 
+    // Cache for student class determination to ensure consistent results across phases.
+    // Without this cache, classProbabilityLoader re-rolls random paths each call,
+    // causing demand analysis and actual assignment to produce different class lists.
+    private static final Map<Student, List<String>> studentClassCache = new HashMap<>();
+
     // Funding-aware class size limits (can be adjusted per school)
     private static int currentMaxClassSize = MAX_CLASS_SIZE_RATIO;
     private static int currentOptimalClassSize = OPTIMAL_CLASS_SIZE_RATIO;
@@ -83,8 +88,10 @@ public class EnhancedStudentScheduleAssigner {
             configureClassSizesFromFunding(standardSchool.getFundingModel());
         }
 
-        // *** CRITICAL FIX: Clear all existing student schedules to prevent duplicates
-        // ***
+        // Clear cached class determinations so each scheduling run starts fresh
+        studentClassCache.clear();
+
+        // Clear all existing student schedules to prevent duplicates
         GameLogger.logScheduling("Clearing all existing student schedules...");
         for (Student student : studentHashMap.values()) {
             student.studentStatistics.getStudentSchedule().getClassSchedule().clear();
@@ -1074,51 +1081,43 @@ public class EnhancedStudentScheduleAssigner {
 
     /**
      * Attempts to schedule a missing required class for a student.
+     * Routes through {@link #findOptimalSection} and {@link #assignStudentToSection}
+     * so that all validation (block conflict, subject area conflict, duplicate
+     * detection, teacher/room tracking) is applied uniformly.
      */
     private static boolean attemptToScheduleMissingClass(Student student, String className,
             HashMap<Integer, Staff> staffHashMap) {
-        // Find an available section for this class
-        List<ClassSection> sections = classSections.get(className);
-        if (sections == null || sections.isEmpty()) {
-            // Try to find an equivalent class
+
+        // First try exact class name
+        String targetClass = className;
+        ClassSection bestSection = findOptimalSection(student, targetClass);
+
+        // If no section found, try equivalent class names
+        if (bestSection == null) {
             String equivalent = findEquivalentClass(className, student.studentStatistics.getGradeLevel());
-            if (equivalent != null) {
-                sections = classSections.get(equivalent);
-            }
-        }
-
-        if (sections == null || sections.isEmpty()) {
-            return false;
-        }
-
-        // Try to add student to a section that doesn't conflict
-        for (ClassSection section : sections) {
-            TeacherBlock block = section.getTeacherBlock();
-            if (block == null)
-                continue;
-
-            // Check for conflicts
-            if (!hasBlockConflict(student, block)) {
-                // Check capacity (allow overcrowding if enabled)
-                int maxCapacity = allowOvercrowding ? currentMaxClassSize : currentOptimalClassSize;
-                if (section.getEnrolledStudents().size() < maxCapacity) {
-                    // Add student to section
-                    section.addStudent(student);
-
-                    // Create student block
-                    StudentBlock studentBlock = new StudentBlock();
-                    studentBlock.setBlockNumber(block.getBlockNumber());
-                    studentBlock.setClassName(block.getClassName());
-                    studentBlock.setSemester(block.getSemester());
-                    studentBlock.setRoom(block.getRoom());
-                    student.studentStatistics.addStudentSchedule(studentBlock);
-
-                    return true;
+            if (equivalent != null && !studentAlreadyHasClass(student, equivalent)) {
+                bestSection = findOptimalSection(student, equivalent);
+                if (bestSection != null) {
+                    targetClass = equivalent;
                 }
             }
         }
 
-        return false;
+        if (bestSection == null) {
+            return false;
+        }
+
+        // Check student doesn't already have this exact class
+        if (studentAlreadyHasClass(student, targetClass)) {
+            return false;
+        }
+
+        int scheduleSizeBefore = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
+        assignStudentToSection(student, bestSection, true);
+        int scheduleSizeAfter = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
+
+        // assignStudentToSection may silently reject; check if schedule actually grew
+        return scheduleSizeAfter > scheduleSizeBefore;
     }
 
     /**
@@ -1212,9 +1211,20 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     /**
-     * Uses existing trait logic to determine what classes a student should take
+     * Uses existing trait logic to determine what classes a student should take.
+     * Results are cached per student so that demand analysis and assignment phases
+     * always see the same class list. Without caching, classProbabilityLoader
+     * re-rolls random academic paths on every call, causing inconsistencies
+     * (e.g., a student demanding AP English during demand analysis but being
+     * assigned on-level English III during assignment).
      */
     private static List<String> determineStudentClasses(Student student) {
+        // Return cached result if available
+        List<String> cached = studentClassCache.get(student);
+        if (cached != null) {
+            return cached;
+        }
+
         List<String> allClasses = new ArrayList<>();
 
         String year = student.studentStatistics.getGradeLevel();
@@ -1237,6 +1247,8 @@ public class EnhancedStudentScheduleAssigner {
         allClasses.addAll(determinePhysEdClasses(year, student));
         allClasses.addAll(determineVocationalClasses(year, student));
 
+        // Cache and return
+        studentClassCache.put(student, allClasses);
         return allClasses;
     }
 
@@ -1975,36 +1987,68 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     /**
-     * Checks for incomplete schedules and reports them
+     * Checks for incomplete schedules and reports them.
+     * Validates both total class count AND per-period coverage for each semester.
+     * A student should have a class for every period (1-4) in both Fall and Spring.
      */
     private static void checkForIncompleteSchedules(List<Student> students) {
-        int incompleteCount = 0;
+        int incompleteByCount = 0;
+        int incompleteByPeriod = 0;
+        int periodConflictCount = 0;
 
         for (Student student : students) {
-            int scheduleSize = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
+            List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
+            int scheduleSize = schedule.size();
             String grade = student.studentStatistics.getGradeLevel();
-
-            // Determine expected schedule size based on grade
             int expectedSize = getExpectedScheduleSize(grade);
+            String studentLabel = student.studentName.getFirstName() + " " +
+                    student.studentName.getLastName() + " (" + grade + ")";
 
+            // Check 1: Total class count
             if (scheduleSize < expectedSize) {
-                incompleteCount++;
-                if (grade.equals("Freshman")) {
-                    GameLogger.logScheduling("INCOMPLETE SCHEDULE: " + student.studentName.getFirstName() + " " +
-                            student.studentName.getLastName() + " (" + grade + ") has " +
-                            scheduleSize + "/" + expectedSize + " classes");
+                incompleteByCount++;
+                GameLogger.logScheduling("INCOMPLETE SCHEDULE (count): " + studentLabel +
+                        " has " + scheduleSize + "/" + expectedSize + " classes");
+            }
 
-                    // Show what they have
-                    GameLogger.logScheduling("  Current classes:");
-                    for (StudentBlock block : student.studentStatistics.getStudentSchedule().getClassSchedule()) {
-                        GameLogger.logScheduling("    " + block.getSemester() + " " + block.getBlockNumber() +
-                                " " + block.getClassName());
+            // Check 2: Per-period coverage -- each period in each semester should have exactly one class
+            for (String semester : new String[] { "Fall", "Spring" }) {
+                Set<Integer> coveredPeriods = new HashSet<>();
+                Map<Integer, List<String>> periodClasses = new HashMap<>();
+
+                for (StudentBlock block : schedule) {
+                    if (block.getSemester().equals(semester)) {
+                        coveredPeriods.add(block.getBlockNumber());
+                        periodClasses.computeIfAbsent(block.getBlockNumber(), k -> new ArrayList<>())
+                                .add(block.getClassName());
+                    }
+                }
+
+                // Check for missing periods
+                for (int period = 1; period <= 4; period++) {
+                    if (!coveredPeriods.contains(period)) {
+                        incompleteByPeriod++;
+                        GameLogger.logScheduling("PERIOD GAP: " + studentLabel +
+                                " has no class for " + semester + " Period " + period);
+                    }
+                }
+
+                // Check for period conflicts (multiple classes in same period)
+                for (Map.Entry<Integer, List<String>> entry : periodClasses.entrySet()) {
+                    if (entry.getValue().size() > 1) {
+                        periodConflictCount++;
+                        GameLogger.logScheduling("PERIOD CONFLICT: " + studentLabel +
+                                " has " + entry.getValue().size() + " classes in " + semester +
+                                " Period " + entry.getKey() + ": " + String.join(", ", entry.getValue()));
                     }
                 }
             }
         }
 
-        GameLogger.logScheduling("Students with incomplete schedules: " + incompleteCount + "/" + students.size());
+        GameLogger.logScheduling("=== SCHEDULE COMPLETENESS SUMMARY ===");
+        GameLogger.logScheduling("Students with insufficient class count: " + incompleteByCount + "/" + students.size());
+        GameLogger.logScheduling("Total period gaps (missing periods): " + incompleteByPeriod);
+        GameLogger.logScheduling("Total period conflicts (double-booked): " + periodConflictCount);
     }
 
     /**
@@ -2432,6 +2476,70 @@ public class EnhancedStudentScheduleAssigner {
                         studentBlock.getSemester().equals(block.getSemester()));
     }
 
+    /**
+     * Checks if assigning the given class to the student in the given semester
+     * would create a subject area conflict. For example, a student should not
+     * have both "AP English Language & Composition" and "English III" in the
+     * same semester -- they are different class names but the same subject area.
+     *
+     * Language classes are exempt because students legitimately take Level I
+     * (Fall) and Level II (Spring) in different semesters, and multiple
+     * language classes can coexist within one semester for different languages.
+     *
+     * @return true if the student already has a class in the same subject area
+     *         for the given semester
+     */
+    private static boolean hasSubjectAreaConflict(Student student, String className, String semester) {
+        // Language classes are exempt -- students can have Spanish I (Fall) and
+        // Spanish II (Spring) or even two different languages.
+        if (belongsToSubjectArea(className, "language")) {
+            return false;
+        }
+
+        // Determine what subject area this class belongs to
+        String[] subjectAreas = {
+                "english", "math", "science", "history",
+                "physical education"
+        };
+
+        String targetArea = null;
+        for (String area : subjectAreas) {
+            if (belongsToSubjectArea(className, area)) {
+                targetArea = area;
+                break;
+            }
+        }
+
+        // If we can't determine the subject area (elective, vocational, etc.),
+        // there's no conflict to check.
+        if (targetArea == null) {
+            return false;
+        }
+
+        // Check the student's cached class list to see how many classes in this
+        // subject area they should actually have.  If their curriculum calls for
+        // multiple classes in the same area (e.g. Freshmen take two Math classes),
+        // count how many they already have scheduled for this semester and compare
+        // to how many the curriculum expects in total.
+        List<String> allNeeded = determineStudentClasses(student);
+        final String area = targetArea;
+        long neededInArea = allNeeded.stream()
+                .filter(c -> belongsToSubjectArea(c, area))
+                .count();
+
+        long alreadyScheduledInSemester = student.studentStatistics.getStudentSchedule()
+                .getClassSchedule().stream()
+                .filter(sb -> sb.getSemester().equals(semester) &&
+                        belongsToSubjectArea(sb.getClassName(), area))
+                .count();
+
+        // A student with N classes in a subject area can have at most
+        // ceil(N/2) in a single semester (spread across Fall/Spring).
+        long maxPerSemester = (neededInArea + 1) / 2;
+
+        return alreadyScheduledInSemester >= maxPerSemester;
+    }
+
     private static Student findMovableStudent(ClassSection fromSection, ClassSection toSection) {
         for (Student student : fromSection.getEnrolledStudents()) {
             // Check for schedule conflicts
@@ -2817,7 +2925,8 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     /**
-     * Finds the optimal section for a student (least filled, no conflicts)
+     * Finds the optimal section for a student (least filled, no conflicts).
+     * Checks for block conflicts, subject area conflicts, and capacity.
      */
     private static ClassSection findOptimalSection(Student student, String className) {
         List<ClassSection> sections = classSections.get(className);
@@ -2828,8 +2937,13 @@ public class EnhancedStudentScheduleAssigner {
         int minEnrollment = Integer.MAX_VALUE;
 
         for (ClassSection section : sections) {
-            // Check for schedule conflicts
+            // Check for period/block conflicts
             if (hasBlockConflict(student, section.getTeacherBlock())) {
+                continue;
+            }
+
+            // Check for subject area conflicts (e.g., two English classes in same semester)
+            if (hasSubjectAreaConflict(student, className, section.getTeacherBlock().getSemester())) {
                 continue;
             }
 
@@ -2850,20 +2964,43 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     /**
-     * Enhanced assignment that preserves existing logic structure
-     * NOW WITH DUPLICATE PREVENTION AT THE CORE
+     * Central assignment method -- ALL schedule additions should go through here.
+     * Validates block conflicts, duplicate classes, and subject area conflicts
+     * before creating the StudentBlock and updating all tracking structures.
      */
     private static void assignStudentToSection(Student student, ClassSection section, boolean logAssignment) {
         String className = section.getClassName();
 
-        // *** CRITICAL FIX: Prevent duplicate assignments at the source ***
+        // Prevent duplicate class name assignments
         if (studentAlreadyHasClass(student, className)) {
             if (logAssignment) {
                 GameLogger.logScheduling("DUPLICATE PREVENTION: " + student.studentName.getFirstName() + " " +
                         student.studentName.getLastName() + " already has " + className +
                         " - blocking assignment");
             }
-            return; // Don't assign - student already has this class
+            return;
+        }
+
+        // Prevent period/block conflicts
+        if (hasBlockConflict(student, section.getTeacherBlock())) {
+            if (logAssignment) {
+                GameLogger.logScheduling("BLOCK CONFLICT PREVENTION: " + student.studentName.getFirstName() + " " +
+                        student.studentName.getLastName() + " already has a class in " +
+                        section.getTeacherBlock().getSemester() + " Block " +
+                        section.getTeacherBlock().getBlockNumber() + " - blocking " + className);
+            }
+            return;
+        }
+
+        // Prevent subject area over-assignment within a semester
+        if (hasSubjectAreaConflict(student, className, section.getTeacherBlock().getSemester())) {
+            if (logAssignment) {
+                GameLogger.logScheduling("SUBJECT AREA CONFLICT: " + student.studentName.getFirstName() + " " +
+                        student.studentName.getLastName() + " already has enough classes in this " +
+                        "subject area for " + section.getTeacherBlock().getSemester() +
+                        " - blocking " + className);
+            }
+            return;
         }
 
         // Create student block (same as existing logic)
@@ -3945,22 +4082,39 @@ public class EnhancedStudentScheduleAssigner {
             }
         }
 
-        // Recreate sections for both classes
+        // Update sections incrementally instead of wiping and recreating all sections.
+        // The old approach (classSections.remove + createSectionsForClass) destroyed
+        // enrollment data for sections that still had students, causing cascading
+        // issues in later phases (incorrect capacity checks, over-assignment, etc.).
         if (blocksReassigned > 0) {
             GameLogger.logScheduling("Successfully reassigned " + blocksReassigned + " blocks");
 
-            // Update sections for both classes
-            StudentDemand fromDemand = demandTracker.get(opportunity.fromClass);
-            StudentDemand toDemand = demandTracker.get(opportunity.toClass);
-
-            if (fromDemand != null) {
-                classSections.remove(opportunity.fromClass);
-                createSectionsForClass(opportunity.fromClass, fromDemand, staffHashMap);
+            // Remove only the empty sections that were reassigned (they've already
+            // been identified as empty above).  Sections with enrolled students are preserved.
+            List<ClassSection> fromSections = classSections.get(opportunity.fromClass);
+            if (fromSections != null) {
+                fromSections.removeIf(s -> s.getEnrolledStudents().isEmpty() &&
+                        s.getTeacherBlock().getClassName().equals(opportunity.toClass));
             }
 
-            if (toDemand != null) {
-                classSections.remove(opportunity.toClass);
-                createSectionsForClass(opportunity.toClass, toDemand, staffHashMap);
+            // Add new sections for the toClass based on the reassigned blocks
+            for (Staff teacher : opportunity.availableTeachers) {
+                for (TeacherBlock block : teacher.teacherStatistics.getTeacherSchedule()
+                        .getBlocksByClassName(opportunity.toClass)) {
+                    // Only create a section if one doesn't already exist for this block
+                    List<ClassSection> toSections = classSections.computeIfAbsent(
+                            opportunity.toClass, k -> new ArrayList<>());
+                    boolean alreadyExists = toSections.stream()
+                            .anyMatch(s -> s.getTeacherBlock().equals(block));
+                    if (!alreadyExists) {
+                        ClassSection newSection = new ClassSection(
+                                opportunity.toClass, teacher, block,
+                                block.getRoom() != null ? block.getRoom().getStudentCapacity() : 25);
+                        toSections.add(newSection);
+                        GameLogger.logScheduling("Created new section for " + opportunity.toClass +
+                                " (" + block.getSemester() + " Block " + block.getBlockNumber() + ")");
+                    }
+                }
             }
         }
     }
@@ -4006,51 +4160,117 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     /**
-     * Comprehensive duplicate detection and reporting
+     * Comprehensive schedule integrity check.
+     * Detects three categories of problems:
+     * 1. Duplicate class names (same class assigned twice)
+     * 2. Period conflicts (two different classes in the same period/semester)
+     * 3. Subject area conflicts (e.g., AP English + English III in same semester)
      */
     private static void detectAndReportDuplicates(HashMap<Integer, Student> studentHashMap) {
-        GameLogger.logScheduling("=== FINAL DUPLICATE DETECTION CHECK ===");
+        GameLogger.logScheduling("=== FINAL SCHEDULE INTEGRITY CHECK ===");
 
         int studentsWithDuplicates = 0;
         int totalDuplicates = 0;
+        int studentsWithPeriodConflicts = 0;
+        int totalPeriodConflicts = 0;
+        int studentsWithSubjectConflicts = 0;
+        int totalSubjectConflicts = 0;
+
+        String[] coreSubjects = { "english", "math", "science", "history", "physical education" };
 
         for (Student student : studentHashMap.values()) {
-            Map<String, Integer> classCount = new HashMap<>();
             List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
+            String studentLabel = student.studentName.getFirstName() + " " +
+                    student.studentName.getLastName() + " (" +
+                    student.studentStatistics.getGradeLevel() + ")";
 
-            // Count occurrences of each class
-            for (StudentBlock block : schedule) {
-                String className = block.getClassName();
-                classCount.put(className, classCount.getOrDefault(className, 0) + 1);
-            }
-
-            // Check for duplicates
             boolean hasDuplicates = false;
+            boolean hasPeriodConflicts = false;
+            boolean hasSubjectConflicts = false;
+
+            // --- Check 1: Duplicate class names ---
+            Map<String, Integer> classCount = new HashMap<>();
+            for (StudentBlock block : schedule) {
+                classCount.merge(block.getClassName(), 1, Integer::sum);
+            }
             for (Map.Entry<String, Integer> entry : classCount.entrySet()) {
                 if (entry.getValue() > 1) {
                     if (!hasDuplicates) {
                         studentsWithDuplicates++;
                         hasDuplicates = true;
-                        GameLogger.logScheduling("DUPLICATE DETECTED: " + student.studentName.getFirstName() + " " +
-                                student.studentName.getLastName() + " (" +
-                                student.studentStatistics.getGradeLevel() + ")");
                     }
-                    GameLogger.logScheduling("  - " + entry.getKey() + ": " + entry.getValue() + " instances");
-                    totalDuplicates += (entry.getValue() - 1); // Count extra instances
+                    GameLogger.logScheduling("DUPLICATE CLASS: " + studentLabel +
+                            " - " + entry.getKey() + ": " + entry.getValue() + " instances");
+                    totalDuplicates += (entry.getValue() - 1);
+                }
+            }
+
+            // --- Check 2: Period conflicts (two classes in same period+semester) ---
+            Map<String, List<String>> periodMap = new HashMap<>(); // "Fall-1" -> [class names]
+            for (StudentBlock block : schedule) {
+                String key = block.getSemester() + "-" + block.getBlockNumber();
+                periodMap.computeIfAbsent(key, k -> new ArrayList<>()).add(block.getClassName());
+            }
+            for (Map.Entry<String, List<String>> entry : periodMap.entrySet()) {
+                if (entry.getValue().size() > 1) {
+                    if (!hasPeriodConflicts) {
+                        studentsWithPeriodConflicts++;
+                        hasPeriodConflicts = true;
+                    }
+                    totalPeriodConflicts++;
+                    GameLogger.logScheduling("PERIOD CONFLICT: " + studentLabel +
+                            " - " + entry.getKey() + ": " + String.join(", ", entry.getValue()));
+                }
+            }
+
+            // --- Check 3: Subject area conflicts (multiple same-subject classes in one semester) ---
+            for (String semester : new String[] { "Fall", "Spring" }) {
+                for (String subject : coreSubjects) {
+                    List<String> subjectClassesInSemester = schedule.stream()
+                            .filter(b -> b.getSemester().equals(semester) &&
+                                    belongsToSubjectArea(b.getClassName(), subject))
+                            .map(StudentBlock::getClassName)
+                            .distinct()
+                            .collect(Collectors.toList());
+
+                    // Determine how many are allowed using the same logic as hasSubjectAreaConflict
+                    List<String> allNeeded = determineStudentClasses(student);
+                    long neededInArea = allNeeded.stream()
+                            .filter(c -> belongsToSubjectArea(c, subject))
+                            .count();
+                    long maxPerSemester = (neededInArea + 1) / 2;
+
+                    if (subjectClassesInSemester.size() > maxPerSemester) {
+                        if (!hasSubjectConflicts) {
+                            studentsWithSubjectConflicts++;
+                            hasSubjectConflicts = true;
+                        }
+                        totalSubjectConflicts++;
+                        GameLogger.logScheduling("SUBJECT AREA CONFLICT: " + studentLabel +
+                                " - " + semester + " " + subject + ": " +
+                                String.join(", ", subjectClassesInSemester) +
+                                " (max " + maxPerSemester + " allowed)");
+                    }
                 }
             }
         }
 
-        GameLogger.logScheduling("DUPLICATE SUMMARY:");
-        GameLogger.logScheduling("Students with duplicates: " + studentsWithDuplicates + "/" + studentHashMap.size());
-        GameLogger.logScheduling("Total duplicate assignments: " + totalDuplicates);
+        GameLogger.logScheduling("=== SCHEDULE INTEGRITY SUMMARY ===");
+        GameLogger.logScheduling("Duplicate class names: " + studentsWithDuplicates + " students, " +
+                totalDuplicates + " total duplicates");
+        GameLogger.logScheduling("Period conflicts: " + studentsWithPeriodConflicts + " students, " +
+                totalPeriodConflicts + " total conflicts");
+        GameLogger.logScheduling("Subject area conflicts: " + studentsWithSubjectConflicts + " students, " +
+                totalSubjectConflicts + " total conflicts");
 
-        if (studentsWithDuplicates == 0) {
-            GameLogger.logScheduling("✓ NO DUPLICATES FOUND - All students have unique class assignments!");
+        int totalIssues = totalDuplicates + totalPeriodConflicts + totalSubjectConflicts;
+        if (totalIssues == 0) {
+            GameLogger.logScheduling("✓ ALL SCHEDULES CLEAN - No integrity issues found!");
         } else {
-            GameLogger.logScheduling("✗ DUPLICATES DETECTED - Investigation needed");
+            GameLogger.logScheduling("✗ " + totalIssues + " ISSUES DETECTED across " +
+                    studentHashMap.size() + " students");
         }
 
-        GameLogger.logScheduling("=== END DUPLICATE DETECTION ===");
+        GameLogger.logScheduling("=== END SCHEDULE INTEGRITY CHECK ===");
     }
 }

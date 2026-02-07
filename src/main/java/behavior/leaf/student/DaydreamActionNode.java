@@ -50,14 +50,24 @@ public class DaydreamActionNode extends ActionNode {
         int currentBoredom = student.studentStatistics.getBoredom();
         student.studentStatistics.setBoredom(Math.max(0, currentBoredom - BOREDOM_DECREASE));
         
+        // Daydreaming is a non-stressful activity - slight allostatic load recovery
+        student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING);
+        
         // Check if caught (perception helps avoid detection)
         int perception = student.studentStatistics.getPerception();
         int catchChance = BASE_CATCH_CHANCE - (perception / 10);
         
         if (GameRandom.nextDouble(100) < catchChance) {
-            // Got caught - could trigger a consequence
+            // Got caught - drains resilience and adaptability from the stress
             context.setVariable("was_caught", true);
             context.setVariable("catch_type", "daydreaming");
+            student.studentStatistics.drainSecondaryStat("resilience",
+                    constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
+            student.studentStatistics.drainSecondaryStat("adaptability",
+                    constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
         }
         
         return BehaviorStatus.SUCCESS;

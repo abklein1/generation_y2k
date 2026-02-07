@@ -62,6 +62,12 @@ public enum ActivityType {
     WHISPERING("Whispering", true, false),
     
     /**
+     * Entity is talking to another student.
+     * Can happen in class (risky) or in hallways/lunchrooms (normal).
+     */
+    TALKING("Talking", false, false),
+    
+    /**
      * Entity is studying in the library or study hall.
      */
     STUDYING("Studying", true, false),

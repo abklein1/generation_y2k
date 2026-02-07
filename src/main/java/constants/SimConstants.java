@@ -282,25 +282,78 @@ public final class SimConstants {
     public static final int TEACHER_DENSE_COILY_HAIR_UPPER_BOUND = 950;
 
     // SOCIAL LINK ADJUSTMENT
-    public static final int SOCIAL_LINK_MEAN = 0;
-    public static final int SOCIAL_LINK_STANDARD_DEVIATION = 25;
-    public static final int SOCIAL_LINK_FRIEND_INITIAL_SAMPLE_SIZE = 100;
-    public static final int SOCIAL_LINK_FRIEND_INITIAL_THRESHOLD = 50;
-    public static final int SOCIAL_LINK_FRIEND_MAXIMUM = 5;
+    // Score range per README: social link scores fall within -100 to 100
+    public static final int SOCIAL_LINK_SCORE_MIN = -100;
+    public static final int SOCIAL_LINK_SCORE_MAX = 100;
+
+    // Friend capacity (maxBestFriends derived from personality stats)
+    public static final int SOCIAL_LINK_FRIEND_MAXIMUM = 10;
+    public static final int SOCIAL_LINK_FRIEND_MINIMUM = 1;
     public static final double SOCIAL_LINK_FRIEND_CHARISMA_MODIFIER = 0.8;
     public static final double SOCIAL_LINK_FRIEND_EMPATHY_MODIFIER = 0.5;
     public static final double SOCIAL_LINK_FRIEND_LUCK_MODIFIER = 0.2;
-    public static final double SOCIAL_LINK_FRIEND_VARIABILITY = 0.1;
-    public static final int SOCIAL_LINK_GRADE_CLASSMATE_SAMPLE_SIZE = 100;
-    public static final int SOCIAL_LINK_GRADE_CLASSMATE_THRESHOLD = 90;
-    public static final int SOCIAL_LINK_ADJACENT_GRADE_SAMPLE_SIZE = 100;
-    public static final int SOCIAL_LINK_ADJACENT_GRADE_THRESHOLD = 75;
     public static final double SOCIAL_LINK_FRIEND_VARIABILITY_RANGE = 0.2;
-    public static final double SOCIAL_LINK_FRIEND_SCALING_FACTOR = 10.0;
+    public static final double SOCIAL_LINK_FRIEND_SCALING_FACTOR = 80.0;
+
+    // Friend count bell curve distribution
+    // Actual friend count = Gaussian(mean = maxFriends * MEAN_RATIO, std = STD_DEV), clamped [0, max]
+    public static final double SOCIAL_LINK_FRIEND_COUNT_MEAN_RATIO = 0.6;
+    public static final double SOCIAL_LINK_FRIEND_COUNT_STD_DEV = 1.5;
+    public static final int SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER = 3;
+
+    // Grade preference for friendship formation
     public static final int SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE = 100;
     public static final int SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD = 90;
     public static final int SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE = 100;
     public static final int SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD = 75;
+
+    // Same-gender preference (high school students are more likely to befriend same gender)
+    public static final int SOCIAL_LINK_SAME_GENDER_SAMPLE_SIZE = 100;
+    public static final int SOCIAL_LINK_SAME_GENDER_THRESHOLD = 70;
+
+    // Friend weight distribution (positive relationships, score on -100 to 100 scale)
+    public static final double SOCIAL_LINK_FRIEND_WEIGHT_MEAN = 50.0;
+    public static final double SOCIAL_LINK_FRIEND_WEIGHT_STD_DEV = 20.0;
+    public static final double SOCIAL_LINK_FRIEND_WEIGHT_FLOOR = 10.0;
+
+    // Reciprocal friend weight (how the befriended person feels about the initiator)
+    // Lower mean because the feeling may not be mutual; can be slightly negative
+    public static final double SOCIAL_LINK_RECIPROCAL_WEIGHT_MEAN = 30.0;
+    public static final double SOCIAL_LINK_RECIPROCAL_WEIGHT_STD_DEV = 25.0;
+    public static final double SOCIAL_LINK_RECIPROCAL_FRIEND_THRESHOLD = 5.0;
+
+    // Sibling relationship weight distribution (can be positive or negative)
+    public static final double SOCIAL_LINK_SIBLING_WEIGHT_MEAN = 25.0;
+    public static final double SOCIAL_LINK_SIBLING_WEIGHT_STD_DEV = 35.0;
+
+    // Rival/negative relationship parameters
+    public static final double SOCIAL_LINK_RIVAL_COUNT_MEAN = 0.5;
+    public static final double SOCIAL_LINK_RIVAL_COUNT_STD_DEV = 0.8;
+    public static final int SOCIAL_LINK_RIVAL_MAXIMUM = 3;
+    public static final double SOCIAL_LINK_RIVAL_WEIGHT_MEAN = -40.0;
+    public static final double SOCIAL_LINK_RIVAL_WEIGHT_STD_DEV = 20.0;
+    public static final double SOCIAL_LINK_RIVAL_WEIGHT_CEILING = -5.0;
+
+    // Best-friend system: scores can increase through social actions, but crossing
+    // the best-friend threshold requires a mutual catalyst event
+    public static final double SOCIAL_LINK_BEST_FRIEND_THRESHOLD = 75.0;
+    public static final double SOCIAL_LINK_BEST_FRIEND_SOFT_CAP = 74.0;
+
+    // Friendship score gains per social activity type (applied to social graph weights)
+    public static final double SOCIAL_LINK_GAIN_TALKING = 3.0;
+    public static final double SOCIAL_LINK_GAIN_WHISPERING = 2.0;
+    public static final double SOCIAL_LINK_GAIN_PASSING_NOTE = 5.0;
+    public static final double SOCIAL_LINK_GAIN_SOCIALIZING = 1.0;
+
+    // Daily relationship decay rates (applied once per simulated day, scores drift toward 0)
+    // Standard acquaintances/rivals: score 50 -> neutral in ~100 school days
+    public static final double SOCIAL_LINK_DECAY_STANDARD = 0.5;
+    // Best friends (with catalyst): slower decay, score 85 -> neutral in ~425 days
+    public static final double SOCIAL_LINK_DECAY_BEST_FRIEND = 0.2;
+    // Family/siblings: slowest decay, score 50 -> neutral in ~500 days
+    public static final double SOCIAL_LINK_DECAY_FAMILY = 0.1;
+    // Scores within this distance from 0 are snapped to 0 to avoid floating-point noise
+    public static final double SOCIAL_LINK_DECAY_NEUTRAL_THRESHOLD = 0.01;
 
     // STUDENT SCHEDULE ASSIGNMENT
     public static final int LANGUAGE_CHOICE_SAMPLE_SIZE = 4;
@@ -482,6 +535,55 @@ public final class SimConstants {
     public static final double CORRECTIVE_LENS_JUNIOR_MULTIPLIER = 1.10;
     public static final double CORRECTIVE_LENS_SOPHOMORE_MULTIPLIER = 1.05;
     public static final double CORRECTIVE_LENS_FRESHMAN_MULTIPLIER = 1.0;
+
+    // ALLOSTATIC LOAD SYSTEM
+    // Base tolerance before modifiers from stats (Resilience + Determination scale it up)
+    public static final double ALLOSTATIC_BASE_TOLERANCE = 40.0;
+    public static final double ALLOSTATIC_RESILIENCE_FACTOR = 0.30;
+    public static final double ALLOSTATIC_DETERMINATION_FACTOR = 0.15;
+    public static final double ALLOSTATIC_MIN_TOLERANCE = 25.0;
+    public static final double ALLOSTATIC_MAX_TOLERANCE = 95.0;
+
+    // Sleep recovery: how much allostatic load is reduced by a full night of sleep
+    public static final double ALLOSTATIC_SLEEP_RECOVERY = 30.0;
+    // Overload recovery penalty: multiplier applied when person is overloaded (recovery is harder)
+    public static final double ALLOSTATIC_OVERLOAD_RECOVERY_PENALTY = 0.6;
+
+    // Relaxation recovery: how much load is reduced by non-stressful activities
+    public static final double ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING = 1.5;
+    public static final double ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING = 0.5;
+
+    // Secondary stat drain stress factors: how much each type of drain contributes to load
+    // Higher values mean draining that stat is more stressful
+    public static final double ALLOSTATIC_STRESS_FACTOR_EMPATHY = 1.2;
+    public static final double ALLOSTATIC_STRESS_FACTOR_RESILIENCE = 1.5;
+    public static final double ALLOSTATIC_STRESS_FACTOR_CREATIVITY = 0.8;
+    public static final double ALLOSTATIC_STRESS_FACTOR_CURIOSITY = 0.7;
+    public static final double ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY = 1.0;
+    public static final double ALLOSTATIC_STRESS_FACTOR_INITIATIVE = 0.9;
+    public static final double ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY = 1.1;
+    public static final double ALLOSTATIC_STRESS_FACTOR_OPENMINDEDNESS = 0.8;
+
+    // Relaxation recovery: talking outside of class (low-stress socializing)
+    public static final double ALLOSTATIC_RELAXATION_RECOVERY_TALKING = 2.0;
+
+    // Secondary stat drain amounts per action type
+    public static final int STAT_DRAIN_PAY_ATTENTION_CURIOSITY = 1;
+    public static final int STAT_DRAIN_TAKE_NOTES_CREATIVITY = 1;
+    public static final int STAT_DRAIN_TAKE_NOTES_INITIATIVE = 1;
+    public static final int STAT_DRAIN_PASS_NOTE_EMPATHY = 2;
+    public static final int STAT_DRAIN_PASS_NOTE_RESPONSIBILITY = 1;
+    public static final int STAT_DRAIN_WHISPER_EMPATHY = 1;
+    public static final int STAT_DRAIN_TALK_EMPATHY = 2;
+    public static final int STAT_DRAIN_TALK_RESPONSIBILITY = 2;
+    public static final int STAT_DRAIN_CAUGHT_RESILIENCE = 3;
+    public static final int STAT_DRAIN_CAUGHT_ADAPTABILITY = 2;
+
+    // Talk in-class catch chance: talking is louder and more obvious than whispering
+    public static final int TALK_IN_CLASS_BASE_CATCH_CHANCE = 40;
+
+    // Secondary stat sleep replenishment: percentage of max to restore
+    public static final double SECONDARY_STAT_SLEEP_REPLENISH_RATE = 1.0; // 100% restored on sleep
 
     // Adult/Teacher Vision Constants
     // Older adults have higher rates of vision issues, especially hyperopia and astigmatism

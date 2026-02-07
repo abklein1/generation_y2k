@@ -85,6 +85,9 @@ public class StudentPopGenerator {
         student.studentStatistics.setInitResponsibility();
         student.studentStatistics.setInitOpenMind();
 
+        // Initialize allostatic load tolerance (depends on resilience and determination)
+        student.studentStatistics.initAllostaticLoad();
+
         // Hair and skin
         student.studentStatistics.setInitHairLength(setRandom(0, STUDENT_HAIR_LENGTH_SAMPLE_SIZE));
         student.studentStatistics.setHairType(TraitSelection.studentHairType(race, hairColor));

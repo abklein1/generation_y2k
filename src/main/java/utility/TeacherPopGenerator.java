@@ -94,6 +94,10 @@ public class TeacherPopGenerator {
             staff.teacherStatistics.setInitCuriosity();
             staff.teacherStatistics.setInitResponsibility();
             staff.teacherStatistics.setInitOpenMind();
+
+            // Initialize allostatic load tolerance (depends on resilience and determination)
+            staff.teacherStatistics.initAllostaticLoad();
+
             staff.teacherName.setFirstName(f_name);
             l_name = staff.teacherName.capitalizeName(l_name);
             staff.teacherName.setLastName(l_name);

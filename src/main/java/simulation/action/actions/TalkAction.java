@@ -15,24 +15,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Action for passing a note to another student.
- * Notes can travel across the room so adjacency is not required.
- * Strongly prefers friends as targets over random classmates.
+ * Action for talking to another student.
+ * Context-aware: risky in class (high catch chance), normal outside class.
+ *
+ * <p><b>In class:</b> Voice carries across the room so adjacency is not required,
+ * but talking is loud and very obvious to the teacher. Higher risk than whispering
+ * or passing notes. Drains empathy and responsibility.</p>
+ *
+ * <p><b>Outside class</b> (hallways, lunchrooms, between periods): Talking is
+ * completely normal and expected. No risk of being caught. Provides strong
+ * allostatic load recovery and significant boredom reduction. Prefers friends
+ * as targets.</p>
  */
-public class PassNoteAction implements Action {
+public class TalkAction implements Action {
     
-    private static final int FRIENDSHIP_GAIN = 5;
-    private static final int BASE_CATCH_CHANCE = 25; // 25% base chance
+    private static final int FRIENDSHIP_GAIN = 3;
     private static final int FRIEND_PREFERENCE_CHANCE = 80;
     
     @Override
     public String getName() {
-        return "pass_note";
+        return "talk";
     }
     
     @Override
     public String getDisplayName() {
-        return "Pass a Note";
+        return "Talk";
     }
     
     @Override
@@ -42,7 +49,7 @@ public class PassNoteAction implements Action {
     
     @Override
     public boolean canExecute(EntityState state, BehaviorContext context) {
-        if (state == null || !state.isInClass()) {
+        if (state == null) {
             return false;
         }
         
@@ -51,7 +58,7 @@ public class PassNoteAction implements Action {
             return false;
         }
         
-        // Need a friend in school or at least a classmate in the room
+        // Need someone to talk to
         if (!student.studentStatistics.getFriendsInSchool().isEmpty()) {
             return true;
         }
@@ -66,34 +73,47 @@ public class PassNoteAction implements Action {
             return ActionResult.failure("No student in context");
         }
         
-        // Select a target: prefer friends, fall back to any classmate
+        boolean inClass = state.isInClass();
+        
+        // Select a target (prefer friends)
         Student target = selectTarget(student, state);
         if (target != null) {
             InteractionManager manager = context.getInteractionManager();
             if (manager != null) {
-                manager.registerInteraction(student, target, ActivityType.PASSING_NOTE);
+                manager.registerInteraction(student, target, ActivityType.TALKING);
             }
             context.setVariable("interaction_target", target);
         }
         
-        state.setCurrentActivity(ActivityType.PASSING_NOTE);
+        state.setCurrentActivity(ActivityType.TALKING);
         
-        // Drain empathy (social effort) and responsibility (breaking rules)
+        if (inClass) {
+            return executeInClass(student, state, context);
+        } else {
+            return executeOutOfClass(student, state, context);
+        }
+    }
+    
+    /**
+     * Executes the talk action when in class. High risk of being caught.
+     */
+    private ActionResult executeInClass(Student student, EntityState state, BehaviorContext context) {
+        // Drain empathy and responsibility (talking in class breaks rules)
         student.studentStatistics.drainSecondaryStat("empathy",
-                constants.SimConstants.STAT_DRAIN_PASS_NOTE_EMPATHY,
+                constants.SimConstants.STAT_DRAIN_TALK_EMPATHY,
                 constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
         student.studentStatistics.drainSecondaryStat("responsibility",
-                constants.SimConstants.STAT_DRAIN_PASS_NOTE_RESPONSIBILITY,
+                constants.SimConstants.STAT_DRAIN_TALK_RESPONSIBILITY,
                 constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
         
-        // Calculate catch chance based on agility and charisma
-        int agility = student.studentStatistics.getAgility();
+        // High catch chance - talking is loud and obvious
         int charisma = student.studentStatistics.getCharisma();
-        int catchChance = BASE_CATCH_CHANCE - (agility / 10) - (charisma / 20);
-        catchChance = Math.max(5, catchChance); // Minimum 5% chance
+        int perception = student.studentStatistics.getPerception();
+        int catchChance = constants.SimConstants.TALK_IN_CLASS_BASE_CATCH_CHANCE
+                - (charisma / 15) - (perception / 20);
+        catchChance = Math.max(10, catchChance);
         
         if (GameRandom.nextDouble(100) < catchChance) {
-            // Getting caught is stressful
             student.studentStatistics.drainSecondaryStat("resilience",
                     constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
                     constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
@@ -101,27 +121,46 @@ public class PassNoteAction implements Action {
                     constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
                     constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
             return ActionResult.caught(
-                    "Tried to pass a note but...",
-                    "The teacher intercepts the note and reads it aloud!"
-            ).withEffect("friendship", -2)
-             .withEffect("reputation", -5);
+                    "Was talking to a classmate when...",
+                    "The teacher calls them out in front of the class!"
+            ).withEffect("friendship", -1)
+             .withEffect("reputation", -3);
         }
         
-        // Decrease boredom from social interaction
+        // Success - boredom decrease and slight recovery
         int currentBoredom = student.studentStatistics.getBoredom();
         student.studentStatistics.setBoredom(Math.max(0, currentBoredom - 5));
-        
-        // Socializing is positive - slight allostatic recovery
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                 constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING);
         
-        return ActionResult.success("Successfully passed a note to a friend")
+        return ActionResult.success("Had a quick chat with a classmate")
                 .withEffect("friendship", FRIENDSHIP_GAIN)
                 .withEffect("boredom_change", -5);
     }
     
     /**
-     * Selects a target for passing the note, preferring friends in the same room.
+     * Executes the talk action outside of class. No risk, restorative.
+     */
+    private ActionResult executeOutOfClass(Student student, EntityState state, BehaviorContext context) {
+        // No risk of being caught - talking is expected behavior
+        int currentBoredom = student.studentStatistics.getBoredom();
+        student.studentStatistics.setBoredom(Math.max(0, currentBoredom - 8));
+        
+        // Strong allostatic recovery - free-time socializing is restorative
+        student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_TALKING);
+        
+        // Light empathy drain (social energy is still spent, just not stressfully)
+        student.studentStatistics.drainSecondaryStat("empathy", 1,
+                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY * 0.3);
+        
+        return ActionResult.success("Had a nice conversation with a friend")
+                .withEffect("friendship", FRIENDSHIP_GAIN)
+                .withEffect("boredom_change", -8);
+    }
+    
+    /**
+     * Selects a talk target, preferring friends in the same room.
      */
     private Student selectTarget(Student student, EntityState state) {
         ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
@@ -136,7 +175,6 @@ public class PassNoteAction implements Action {
             }
         }
         
-        // Find friends who are also in this room
         List<Student> friendsInRoom = new ArrayList<>();
         for (Student friend : friends) {
             if (classmates.contains(friend)) {
@@ -144,7 +182,7 @@ public class PassNoteAction implements Action {
             }
         }
         
-        // Prefer friends
+        // Prefer friends (80% chance)
         if (!friendsInRoom.isEmpty() && GameRandom.nextInt(100) < FRIEND_PREFERENCE_CHANCE) {
             return friendsInRoom.get(GameRandom.nextInt(friendsInRoom.size()));
         }
@@ -171,16 +209,27 @@ public class PassNoteAction implements Action {
     
     @Override
     public double getSuccessProbability(BehaviorContext context) {
-        if (context.getStudent() == null) {
-            return 0.75;
+        Student student = context.getStudent();
+        if (student == null) {
+            return 0.60;
         }
-        int agility = context.getStudent().studentStatistics.getAgility();
-        int charisma = context.getStudent().studentStatistics.getCharisma();
-        return Math.min(0.95, 0.75 + (agility + charisma - 100) * 0.002);
+        
+        EntityState state = student.getEntityState();
+        if (state != null && !state.isInClass()) {
+            // Outside class, talking always succeeds
+            return 1.0;
+        }
+        
+        // In class, success depends on charisma and perception
+        int charisma = student.studentStatistics.getCharisma();
+        int perception = student.studentStatistics.getPerception();
+        return Math.min(0.90, 0.60 + (charisma + perception - 100) * 0.002);
     }
     
     @Override
     public int getRiskLevel() {
-        return 35; // Medium risk
+        // Reported as high-risk (in class context); the action itself
+        // handles the fact that it's zero-risk outside class
+        return 50;
     }
 }

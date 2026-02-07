@@ -55,11 +55,22 @@ public class DaydreamAction implements Action {
         int newBoredom = Math.max(0, currentBoredom - BOREDOM_DECREASE);
         student.studentStatistics.setBoredom(newBoredom);
         
+        // Daydreaming is a non-stressful activity - slight allostatic load recovery
+        student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING);
+        
         // Check if caught
         int perception = student.studentStatistics.getPerception();
         int catchChance = BASE_CATCH_CHANCE - (perception / 10); // Higher perception = less likely caught
         
         if (GameRandom.nextDouble(100) < catchChance) {
+            // Getting caught is stressful
+            student.studentStatistics.drainSecondaryStat("resilience",
+                    constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
+            student.studentStatistics.drainSecondaryStat("adaptability",
+                    constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
             return ActionResult.caught(
                     "Got lost in daydreaming...",
                     "The teacher calls your name to answer a question!"

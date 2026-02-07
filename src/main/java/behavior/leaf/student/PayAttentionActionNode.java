@@ -57,6 +57,11 @@ public class PayAttentionActionNode extends ActionNode {
         int currentBoredom = student.studentStatistics.getBoredom();
         student.studentStatistics.setBoredom(Math.min(100, currentBoredom + BOREDOM_INCREASE));
         
+        // Drain curiosity from sustained attention
+        student.studentStatistics.drainSecondaryStat("curiosity",
+                constants.SimConstants.STAT_DRAIN_PAY_ATTENTION_CURIOSITY,
+                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_CURIOSITY);
+        
         return BehaviorStatus.SUCCESS;
     }
 }

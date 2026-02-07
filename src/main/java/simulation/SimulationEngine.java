@@ -3,8 +3,10 @@ package simulation;
 import behavior.BehaviorContext;
 import behavior.BehaviorStatus;
 import behavior.BehaviorTree;
+import constants.SimConstants;
 import entity.*;
 import entity.Rooms.Room;
+import utility.SocialLinkConnector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +28,8 @@ public class SimulationEngine {
     private int minutesPerTick;          // In-game minutes per tick (fixed at 1)
     private int currentTick;
     private final List<SimulationListener> listeners;
+    private final InteractionManager interactionManager;
+    private SocialLinkConnector socialLinkConnector;
     
     // Simulation speed options (ticks per real-time second)
     public static final int SPEED_SLOW = 1;       // 1 tick per second
@@ -59,6 +63,7 @@ public class SimulationEngine {
         this.currentTick = 0;
         this.listeners = new ArrayList<>();
         this.bellSchedule = new BellScheduleManager();
+        this.interactionManager = new InteractionManager();
     }
     
     /**
@@ -100,6 +105,17 @@ public class SimulationEngine {
         initializeEntityStates();
     }
     
+    /**
+     * Sets the social link connector so that the interaction manager can update
+     * relationship scores when social interactions are confirmed during simulation.
+     *
+     * @param socialLinkConnector the social link connector
+     */
+    public void setSocialLinkConnector(SocialLinkConnector socialLinkConnector) {
+        this.socialLinkConnector = socialLinkConnector;
+        this.interactionManager.setSocialLinkConnector(socialLinkConnector);
+    }
+
     /**
      * Initializes EntityState for all entities that don't have one.
      */
@@ -188,6 +204,7 @@ public class SimulationEngine {
         
         // 5. Check for end of day
         if (bellSchedule.isAfterSchool(time)) {
+            processEndOfDay();
             notifyDayEnd();
         }
         
@@ -303,22 +320,31 @@ public class SimulationEngine {
     
     /**
      * Processes behavior trees for all students.
+     * Social interactions are collected during tree ticking and resolved afterwards
+     * so that when multiple students target the same person, the one with the
+     * highest Determination + Charisma wins.
      */
     private void processStudentBehaviors() {
         if (students == null) {
             return;
         }
         
+        // Clear the interaction manager for this tick
+        interactionManager.clearTick();
+        
+        // Phase 1: Tick all behavior trees (social actions register pending interactions)
         for (Student student : students.values()) {
             BehaviorTree tree = student.getBehaviorTree();
             if (tree != null) {
                 BehaviorContext context = student.getBehaviorContext();
                 if (context == null) {
                     context = new BehaviorContext(student, time, school);
+                    context.setInteractionManager(interactionManager);
                     student.setBehaviorContext(context);
                 } else {
-                    // Update context with current time
+                    // Update context with current time and ensure manager is set
                     context.setTime(time);
+                    context.setInteractionManager(interactionManager);
                 }
                 
                 // Tick the behavior tree
@@ -339,6 +365,10 @@ public class SimulationEngine {
                 }
             }
         }
+        
+        // Phase 2: Resolve social interaction conflicts
+        // The highest DET + CHR student wins when multiple target the same person
+        interactionManager.resolveInteractions();
     }
     
     /**
@@ -369,6 +399,76 @@ public class SimulationEngine {
                 state.incrementTicksInActivity();
             }
         }
+    }
+    
+    /**
+     * Processes end-of-day recovery for all entities.
+     * This simulates the period after school where people go home, relax, and sleep.
+     * Secondary stats are replenished and allostatic load is reduced.
+     */
+    private void processEndOfDay() {
+        // Process students
+        if (students != null) {
+            for (Student student : students.values()) {
+                processEntitySleepRecovery(student.studentStatistics);
+                
+                // Reset entity state for new day
+                EntityState state = student.getEntityState();
+                if (state != null) {
+                    state.resetForNewDay();
+                }
+            }
+        }
+        
+        // Process staff
+        if (staff != null) {
+            for (Staff staffMember : staff.values()) {
+                processEntitySleepRecovery(staffMember.teacherStatistics);
+                
+                // Reset entity state for new day
+                EntityState state = staffMember.getEntityState();
+                if (state != null) {
+                    state.resetForNewDay();
+                }
+            }
+        }
+
+        // Apply daily relationship decay: all social link scores drift toward neutral.
+        // Family and best-friend bonds decay slower, incentivizing active maintenance.
+        if (socialLinkConnector != null) {
+            socialLinkConnector.applyDailyDecay();
+        }
+    }
+    
+    /**
+     * Applies sleep recovery to a single entity's statistics.
+     * Checks for allostatic overload before sleep, then replenishes secondary stats
+     * and reduces allostatic load.
+     *
+     * @param stats the entity's statistics
+     */
+    private void processEntitySleepRecovery(utility.PStatistics stats) {
+        if (stats == null) {
+            return;
+        }
+        
+        AllostaticLoad allostaticLoad = stats.getAllostaticLoad();
+        if (allostaticLoad != null) {
+            // Check overload status before applying recovery (tracks consecutive days)
+            allostaticLoad.endOfDayCheck();
+            
+            // Apply sleep recovery to allostatic load
+            allostaticLoad.applySleepRecovery(SimConstants.ALLOSTATIC_SLEEP_RECOVERY);
+        }
+        
+        // Replenish all secondary stats to their max caps
+        stats.replenishAllSecondaryStats();
+        
+        // Reset boredom
+        stats.setBoredom(0);
+        
+        // Set sleep state
+        stats.setSleepState(true);
     }
     
     // Simulation control methods

@@ -58,6 +58,11 @@ public class PayAttentionAction implements Action {
         int boredomChange = 2; // Boredom increases slowly while paying attention
         student.studentStatistics.setBoredom(Math.min(100, currentBoredom + boredomChange));
         
+        // Drain curiosity from sustained attention
+        student.studentStatistics.drainSecondaryStat("curiosity",
+                constants.SimConstants.STAT_DRAIN_PAY_ATTENTION_CURIOSITY,
+                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_CURIOSITY);
+        
         return ActionResult.success("Paying attention to the lesson")
                 .withEffect("learning", totalLearning)
                 .withEffect("boredom_change", boredomChange);

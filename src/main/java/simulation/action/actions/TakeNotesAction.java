@@ -61,6 +61,14 @@ public class TakeNotesAction implements Action {
         int currentBoredom = student.studentStatistics.getBoredom();
         student.studentStatistics.setBoredom(Math.min(100, currentBoredom + BOREDOM_INCREASE));
         
+        // Drain creativity and initiative from note-taking effort
+        student.studentStatistics.drainSecondaryStat("creativity",
+                constants.SimConstants.STAT_DRAIN_TAKE_NOTES_CREATIVITY,
+                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_CREATIVITY);
+        student.studentStatistics.drainSecondaryStat("initiative",
+                constants.SimConstants.STAT_DRAIN_TAKE_NOTES_INITIATIVE,
+                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_INITIATIVE);
+        
         return ActionResult.success("Diligently taking notes")
                 .withEffect("learning", totalLearning)
                 .withEffect("boredom_change", BOREDOM_INCREASE);

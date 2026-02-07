@@ -3,20 +3,27 @@ package simulation.action.actions;
 import behavior.BehaviorContext;
 import entity.ActivityType;
 import entity.EntityState;
+import entity.Rooms.Room;
 import entity.Student;
+import simulation.InteractionManager;
 import simulation.action.Action;
 import simulation.action.ActionCategory;
 import simulation.action.ActionResult;
 import utility.GameRandom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Action for whispering to another student.
- * Lower risk than passing notes, smaller social gain.
+ * Requires the target to be in an adjacent seat (cardinal directions only).
+ * Prefers adjacent friends, but can whisper to any adjacent student.
  */
 public class WhisperAction implements Action {
     
     private static final int FRIENDSHIP_GAIN = 2;
     private static final int BASE_CATCH_CHANCE = 12; // 12% base chance
+    private static final int FRIEND_PREFERENCE_CHANCE = 80;
     
     @Override
     public String getName() {
@@ -40,7 +47,13 @@ public class WhisperAction implements Action {
         }
         
         Student student = context.getStudent();
-        return student != null && !student.studentStatistics.getFriendsInSchool().isEmpty();
+        if (student == null) {
+            return false;
+        }
+        
+        // Must have at least one adjacent student to whisper to
+        List<Student> adjacent = getAdjacentStudents(student, state, context);
+        return !adjacent.isEmpty();
     }
     
     @Override
@@ -50,7 +63,27 @@ public class WhisperAction implements Action {
             return ActionResult.failure("No student in context");
         }
         
+        // Get adjacent students and select a target (prefer friends)
+        List<Student> adjacent = getAdjacentStudents(student, state, context);
+        if (adjacent.isEmpty()) {
+            return ActionResult.failure("No adjacent students to whisper to");
+        }
+        
+        Student target = selectWhisperTarget(student, adjacent);
+        if (target != null) {
+            InteractionManager manager = context.getInteractionManager();
+            if (manager != null) {
+                manager.registerInteraction(student, target, ActivityType.WHISPERING);
+            }
+            context.setVariable("interaction_target", target);
+        }
+        
         state.setCurrentActivity(ActivityType.WHISPERING);
+        
+        // Drain empathy slightly from social interaction
+        student.studentStatistics.drainSecondaryStat("empathy",
+                constants.SimConstants.STAT_DRAIN_WHISPER_EMPATHY,
+                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
         
         // Calculate catch chance
         int perception = student.studentStatistics.getPerception();
@@ -58,6 +91,10 @@ public class WhisperAction implements Action {
         catchChance = Math.max(3, catchChance);
         
         if (GameRandom.nextDouble(100) < catchChance) {
+            // Getting caught is stressful
+            student.studentStatistics.drainSecondaryStat("resilience",
+                    constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
             return ActionResult.caught(
                     "Was whispering to a friend when...",
                     "The teacher gives a warning look."
@@ -68,9 +105,50 @@ public class WhisperAction implements Action {
         int currentBoredom = student.studentStatistics.getBoredom();
         student.studentStatistics.setBoredom(Math.max(0, currentBoredom - 3));
         
+        // Socializing is positive - slight allostatic recovery
+        student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING);
+        
         return ActionResult.success("Shared a quick whisper with a friend")
                 .withEffect("friendship", FRIENDSHIP_GAIN)
                 .withEffect("boredom_change", -3);
+    }
+    
+    /**
+     * Gets students adjacent to the given student in the current seating arrangement.
+     */
+    private List<Student> getAdjacentStudents(Student student, EntityState state,
+                                               BehaviorContext context) {
+        Room room = state.getCurrentRoom();
+        if (room == null || context.getTime() == null) {
+            return List.of();
+        }
+        
+        int period = context.getTime().getCurrentPeriod();
+        return room.getAdjacentStudentsFor(student, period);
+    }
+    
+    /**
+     * Selects a whisper target from adjacent students, preferring friends.
+     */
+    private Student selectWhisperTarget(Student student, List<Student> adjacent) {
+        ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
+        
+        // Find adjacent friends
+        List<Student> adjacentFriends = new ArrayList<>();
+        for (Student neighbor : adjacent) {
+            if (friends.contains(neighbor)) {
+                adjacentFriends.add(neighbor);
+            }
+        }
+        
+        // Prefer adjacent friends (80% chance)
+        if (!adjacentFriends.isEmpty() && GameRandom.nextInt(100) < FRIEND_PREFERENCE_CHANCE) {
+            return adjacentFriends.get(GameRandom.nextInt(adjacentFriends.size()));
+        }
+        
+        // Fall back to any adjacent student
+        return adjacent.get(GameRandom.nextInt(adjacent.size()));
     }
     
     @Override

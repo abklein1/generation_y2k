@@ -73,6 +73,7 @@ public class StudentSeatingAssigner {
     private static List<Room> getAllRooms(StandardSchool school) {
         List<Room> allRooms = new ArrayList<>();
         allRooms.addAll(Arrays.asList(school.getClassrooms()));
+        allRooms.addAll(Arrays.asList(school.getPortables()));
         allRooms.addAll(Arrays.asList(school.getArtStudios()));
         allRooms.addAll(Arrays.asList(school.getDramaRooms()));
         allRooms.addAll(Arrays.asList(school.getMusicRooms()));

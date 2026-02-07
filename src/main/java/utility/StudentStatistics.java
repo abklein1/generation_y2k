@@ -1,6 +1,7 @@
 package utility;
 
 import constants.SimConstants;
+import entity.AllostaticLoad;
 import entity.Student;
 import entity.StudentBlock;
 import entity.StudentSchedule;
@@ -44,6 +45,19 @@ public class StudentStatistics implements PStatistics {
     private int curiosity;
     private int responsibility;
     private int openmindedness;
+
+    // Secondary stat max caps (set once during initialization, represent ceilings)
+    private int maxCreativity;
+    private int maxEmpathy;
+    private int maxAdaptability;
+    private int maxInitiative;
+    private int maxResilience;
+    private int maxCuriosity;
+    private int maxResponsibility;
+    private int maxOpenmindedness;
+
+    // Allostatic load meter
+    private final AllostaticLoad allostaticLoad;
     private String incomeLevel;
     private final ArrayList<String> completedClasses;
     private final StudentSchedule studentSchedule;
@@ -106,6 +120,15 @@ public class StudentStatistics implements PStatistics {
         this.curiosity = 0;
         this.responsibility = 0;
         this.openmindedness = 0;
+        this.maxCreativity = 0;
+        this.maxEmpathy = 0;
+        this.maxAdaptability = 0;
+        this.maxInitiative = 0;
+        this.maxResilience = 0;
+        this.maxCuriosity = 0;
+        this.maxResponsibility = 0;
+        this.maxOpenmindedness = 0;
+        this.allostaticLoad = new AllostaticLoad();
         this.incomeLevel = null;
         this.completedClasses = new ArrayList<>();
         this.studentSchedule = new StudentSchedule();
@@ -471,38 +494,54 @@ public class StudentStatistics implements PStatistics {
     public void setInitCreativity() {
         // Primarily driven by intelligence and secondary by perception
         this.creativity = (int) ((this.intelligence * 1.5) + this.perception) / 2;
+        this.maxCreativity = this.creativity;
     }
 
     public void setInitEmpathy() {
         // Primarily driven by charisma and secondary by perception
         this.empathy = (int) ((this.charisma * 1.5) + this.perception) / 2;
+        this.maxEmpathy = this.empathy;
     }
 
     public void setInitAdaptability() {
         // Physical and mental adaptability and tertiary determination
         this.adaptability = (this.agility + this.intelligence + (this.determination / 4)) / 2;
+        this.maxAdaptability = this.adaptability;
     }
 
     public void setInitInitiative() {
         // Primarily driven by determination
         this.initiative = (int) ((this.determination * 1.5) + this.perception) / 2;
+        this.maxInitiative = this.initiative;
     }
 
     public void setInitResilience() {
         // Primary strength and secondary determination
         this.resilience = (int) ((this.strength * 1.5) + this.determination) / 2;
+        this.maxResilience = this.resilience;
     }
 
     public void setInitCuriosity() {
         this.curiosity = (int) ((this.perception * 1.5) + this.intelligence) / 2;
+        this.maxCuriosity = this.curiosity;
     }
 
     public void setInitResponsibility() {
         this.responsibility = (int) ((this.charisma * 1.25) + (this.determination * 1.25)) / 2;
+        this.maxResponsibility = this.responsibility;
     }
 
     public void setInitOpenMind() {
         this.openmindedness = (int) ((this.intelligence * 1.25) + (this.charisma * 1.25)) / 2;
+        this.maxOpenmindedness = this.openmindedness;
+    }
+
+    /**
+     * Initializes the allostatic load tolerance based on this student's stats.
+     * Should be called after resilience and determination are set.
+     */
+    public void initAllostaticLoad() {
+        this.allostaticLoad.initTolerance(this.resilience, this.determination);
     }
 
     // TODO: Experiment with more narrative descriptions. ex. 'Rachel has wavy,
@@ -1034,6 +1073,125 @@ public class StudentStatistics implements PStatistics {
             penalty += constants.SimConstants.VISION_ASTIGMATISM_AGILITY_PENALTY;
         }
         return penalty;
+    }
+
+    // --- Allostatic Load implementation ---
+
+    @Override
+    public AllostaticLoad getAllostaticLoad() {
+        return this.allostaticLoad;
+    }
+
+    // --- Secondary Stat Max Cap getters ---
+
+    @Override
+    public int getMaxCreativity() {
+        return maxCreativity;
+    }
+
+    @Override
+    public int getMaxEmpathy() {
+        return maxEmpathy;
+    }
+
+    @Override
+    public int getMaxAdaptability() {
+        return maxAdaptability;
+    }
+
+    @Override
+    public int getMaxInitiative() {
+        return maxInitiative;
+    }
+
+    @Override
+    public int getMaxResilience() {
+        return maxResilience;
+    }
+
+    @Override
+    public int getMaxCuriosity() {
+        return maxCuriosity;
+    }
+
+    @Override
+    public int getMaxResponsibility() {
+        return maxResponsibility;
+    }
+
+    @Override
+    public int getMaxOpenMindedness() {
+        return maxOpenmindedness;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Drains the specified secondary stat and notifies the allostatic load meter.
+     */
+    @Override
+    public void drainSecondaryStat(String statName, int amount, double stressFactor) {
+        if (amount <= 0) {
+            return;
+        }
+        switch (statName.toLowerCase()) {
+            case "creativity" -> {
+                int drained = Math.min(amount, this.creativity);
+                this.creativity = Math.max(0, this.creativity - amount);
+                allostaticLoad.onSecondaryStatDrain(drained, maxCreativity, stressFactor);
+            }
+            case "empathy" -> {
+                int drained = Math.min(amount, this.empathy);
+                this.empathy = Math.max(0, this.empathy - amount);
+                allostaticLoad.onSecondaryStatDrain(drained, maxEmpathy, stressFactor);
+            }
+            case "adaptability" -> {
+                int drained = Math.min(amount, this.adaptability);
+                this.adaptability = Math.max(0, this.adaptability - amount);
+                allostaticLoad.onSecondaryStatDrain(drained, maxAdaptability, stressFactor);
+            }
+            case "initiative" -> {
+                int drained = Math.min(amount, this.initiative);
+                this.initiative = Math.max(0, this.initiative - amount);
+                allostaticLoad.onSecondaryStatDrain(drained, maxInitiative, stressFactor);
+            }
+            case "resilience" -> {
+                int drained = Math.min(amount, this.resilience);
+                this.resilience = Math.max(0, this.resilience - amount);
+                allostaticLoad.onSecondaryStatDrain(drained, maxResilience, stressFactor);
+            }
+            case "curiosity" -> {
+                int drained = Math.min(amount, this.curiosity);
+                this.curiosity = Math.max(0, this.curiosity - amount);
+                allostaticLoad.onSecondaryStatDrain(drained, maxCuriosity, stressFactor);
+            }
+            case "responsibility" -> {
+                int drained = Math.min(amount, this.responsibility);
+                this.responsibility = Math.max(0, this.responsibility - amount);
+                allostaticLoad.onSecondaryStatDrain(drained, maxResponsibility, stressFactor);
+            }
+            case "openmindedness" -> {
+                int drained = Math.min(amount, this.openmindedness);
+                this.openmindedness = Math.max(0, this.openmindedness - amount);
+                allostaticLoad.onSecondaryStatDrain(drained, maxOpenmindedness, stressFactor);
+            }
+            default -> { /* Unknown stat name, do nothing */ }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * Restores all secondary stats to their max caps. Called during sleep.
+     */
+    @Override
+    public void replenishAllSecondaryStats() {
+        this.creativity = this.maxCreativity;
+        this.empathy = this.maxEmpathy;
+        this.adaptability = this.maxAdaptability;
+        this.initiative = this.maxInitiative;
+        this.resilience = this.maxResilience;
+        this.curiosity = this.maxCuriosity;
+        this.responsibility = this.maxResponsibility;
+        this.openmindedness = this.maxOpenmindedness;
     }
 
 }

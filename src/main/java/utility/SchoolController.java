@@ -200,6 +200,11 @@ public class SchoolController {
         // Create simulation engine
         simulationEngine = new SimulationEngine(time, standardSchool, studentHashMap, staffHashMap);
 
+        // Connect social link system so interactions update relationship scores
+        if (socialLinkConnector != null) {
+            simulationEngine.setSocialLinkConnector(socialLinkConnector);
+        }
+
         // Create entity state manager and initialize all entities
         entityStateManager = new EntityStateManager(studentHashMap, staffHashMap, standardSchool, time);
         entityStateManager.initializeAll();
@@ -401,7 +406,6 @@ public class SchoolController {
     private void showInspectionWindow(String type) {
         JFrame inspectionFrame = new JFrame(type + " Inspection");
         inspectionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        inspectionFrame.setSize(550, 500);
 
         JTextArea inspectionArea = new JTextArea();
         inspectionArea.setEditable(false);
@@ -410,6 +414,7 @@ public class SchoolController {
         JScrollPane scrollPane = new JScrollPane(inspectionArea);
 
         if (type.equals("Staff")) {
+            inspectionFrame.setSize(550, 500);
             ArrayList<Staff> staffList = new ArrayList<>(staffHashMap.values());
             staffList.sort(Comparator.comparing(staff -> staff.teacherName.getLastName()));
 
@@ -433,6 +438,8 @@ public class SchoolController {
             inspectionFrame.add(new JScrollPane(staffJList), BorderLayout.WEST);
             inspectionFrame.add(scrollPane, BorderLayout.CENTER);
         } else {
+            // Student inspection uses a tabbed pane (Info + Schedule tabs)
+            inspectionFrame.setSize(850, 550);
             HashMap<Integer, Student> studentGradeClass = standardSchool.getStudentGradeClass(type);
 
             if (studentGradeClass != null) {
@@ -454,6 +461,15 @@ public class SchoolController {
                 showSocialLinksButton.setToolTipText("Select a student to view their social links");
                 buttonPanel.add(showSocialLinksButton);
 
+                // Tabbed pane for Info + Schedule
+                JTabbedPane studentTabs = new JTabbedPane();
+                studentTabs.addTab("Info", scrollPane);
+                // Placeholder schedule panel until a student is selected
+                JPanel emptySchedule = new JPanel(new BorderLayout());
+                emptySchedule.add(new JLabel("Select a student to view their schedule",
+                        SwingConstants.CENTER), BorderLayout.CENTER);
+                studentTabs.addTab("Schedule", emptySchedule);
+
                 // Track the currently selected student for the button action
                 final Student[] currentlySelectedStudent = { null };
 
@@ -463,6 +479,11 @@ public class SchoolController {
                         if (selectedStudent != null) {
                             currentlySelectedStudent[0] = selectedStudent;
                             studentInspection(selectedStudent, inspectionArea);
+
+                            // Replace the Schedule tab content with this student's schedule
+                            JPanel schedulePanel = Inspector.buildStudentSchedulePanel(selectedStudent);
+                            studentTabs.setComponentAt(1, schedulePanel);
+
                             showSocialLinksButton.setEnabled(true);
                             showSocialLinksButton.setToolTipText("View social links for " +
                                     selectedStudent.studentName.getFirstName() + " " +
@@ -480,7 +501,7 @@ public class SchoolController {
 
                 inspectionFrame.setLayout(new BorderLayout());
                 inspectionFrame.add(new JScrollPane(studentListComponent), BorderLayout.WEST);
-                inspectionFrame.add(scrollPane, BorderLayout.CENTER);
+                inspectionFrame.add(studentTabs, BorderLayout.CENTER);
                 inspectionFrame.add(buttonPanel, BorderLayout.SOUTH);
             }
         }
@@ -837,6 +858,9 @@ public class SchoolController {
             playerCharacter.studentStatistics.setInitResponsibility();
             playerCharacter.studentStatistics.setInitOpenMind();
 
+            // Initialize allostatic load tolerance (depends on resilience and determination)
+            playerCharacter.studentStatistics.initAllostaticLoad();
+
             // Apply braces attributes (timing, cosmetics, charisma effects)
             SiblingGenerator.applyBracesAttributes(playerCharacter);
 
@@ -872,11 +896,12 @@ public class SchoolController {
             }
             playerCharacter.setFamilyInfo(family);
 
-            storyOutput.append("Generating your story...\n");
-            PlayerStoryGenerator.generateStory(playerCharacter, storyOutput);
-
-            // Display flavor text after story generation
-            FlavorTextLoader.appendToTextArea(storyOutput);
+            // Build the life history once, display it, and store it
+            storyOutput.append("\n═══════════ Life History ═══════════\n\n");
+            entity.LifeHistory lifeHistory = PlayerStoryGenerator.buildLifeHistory(playerCharacter);
+            lifeHistory.appendToTextArea(storyOutput);
+            playerCharacter.setLifeHistory(lifeHistory);
+            storyOutput.append("═══════════════════════════════════\n");
 
             // Enable Start Game button after preview is complete
             startGameButton.setEnabled(true);

@@ -167,7 +167,7 @@ public class SiblingGenerator {
                     sib = generateSibling(player, view);
                 }
                 infos.add(new entity.SiblingInfo(sib.studentName.getFirstName(), sib.studentStatistics.getBirthday(),
-                        true));
+                        true, sib.studentStatistics.getGender()));
             } else {
                 // Not in school: pick older or younger and synthesize birthday
                 boolean older = setRandom(0, 1) == 0;
@@ -189,7 +189,7 @@ public class SiblingGenerator {
                 // Ensure name data for the selected year is loaded
                 NameLoader.readCSVFirst(String.valueOf(birthday.getYear()));
                 String first = NameLoader.nameGenerator(String.valueOf(birthday.getYear()), gen);
-                infos.add(new entity.SiblingInfo(first, birthday, false));
+                infos.add(new entity.SiblingInfo(first, birthday, false, gen));
             }
         }
 

@@ -6,6 +6,10 @@ import behavior.composite.RandomSelector;
 import behavior.decorator.Inverter;
 import behavior.leaf.student.*;
 import entity.Student;
+import simulation.InteractionManager;
+import utility.GameRandom;
+
+import java.util.ArrayList;
 
 /**
  * Builds behavior trees for students based on their stats.
@@ -74,7 +78,10 @@ public class StudentBehaviorTreeBuilder {
         // Priority 2: Class behavior (when in class)
         root.addChild(buildClassBehaviorSequence(student, type));
         
-        // Priority 3: Default idle action
+        // Priority 3: Non-class social behavior (hallways, lunchroom, etc.)
+        root.addChild(buildNonClassSocialSequence(type));
+        
+        // Priority 4: Default idle action
         root.addChild(new IdleActionNode());
         
         return root;
@@ -176,28 +183,37 @@ public class StudentBehaviorTreeBuilder {
     }
     
     /**
-     * Builds a sequence for distracted/social behavior.
+     * Builds a sequence for distracted/social behavior (in class).
+     * Includes whispering (adjacent), passing notes (room-wide), and talking (room-wide, risky).
      */
     private static BehaviorNode buildDistractedSequence() {
         Sequence distracted = new Sequence("DistractedBehavior");
         distracted.addChild(new HasFriendNearbyCondition());
         
-        // Random choice between passing note and whispering
+        // Random choice between passing note, whispering, and talking
         RandomSelector socialChoice = new RandomSelector("SocialChoice");
         socialChoice.addChild(new PassNoteActionNode());
         socialChoice.addChild(new WhisperActionNode());
+        socialChoice.addChild(new TalkActionNode());
         
         distracted.addChild(socialChoice);
         return distracted;
     }
     
     /**
-     * Builds a sequence for social behavior.
+     * Builds a sequence for social behavior (in class).
+     * Social personality types prefer talking and passing notes over quieter options.
      */
     private static BehaviorNode buildSocialSequence() {
         Sequence social = new Sequence("SocialBehavior");
         social.addChild(new HasFriendNearbyCondition());
-        social.addChild(new PassNoteActionNode());
+        
+        // Social types get a random choice weighted toward louder actions
+        RandomSelector socialChoice = new RandomSelector("SocialTypeChoice");
+        socialChoice.addChild(new TalkActionNode());
+        socialChoice.addChild(new PassNoteActionNode());
+        
+        social.addChild(socialChoice);
         return social;
     }
     
@@ -209,6 +225,25 @@ public class StudentBehaviorTreeBuilder {
         bored.addChild(new IsBoredCondition(50));
         bored.addChild(new DaydreamActionNode());
         return bored;
+    }
+    
+    /**
+     * Builds the non-class social behavior sequence.
+     * When students are in hallways, lunchrooms, or other non-class areas,
+     * talking is a normal expected behavior with no risk of being caught.
+     * Social personality types are more likely to seek conversation.
+     */
+    private static BehaviorNode buildNonClassSocialSequence(PersonalityType type) {
+        Sequence nonClassSocial = new Sequence("NonClassSocial");
+        
+        // Only activates when NOT in class (hallways, lunchroom, etc.)
+        nonClassSocial.addChild(new IsNotInClassCondition());
+        nonClassSocial.addChild(new HasFriendNearbyCondition());
+        
+        // Talk is the primary social action outside of class
+        nonClassSocial.addChild(new TalkActionNode());
+        
+        return nonClassSocial;
     }
     
     /**
@@ -283,6 +318,188 @@ public class StudentBehaviorTreeBuilder {
     }
     
     /**
+     * Condition that checks if the student is NOT currently in class.
+     * Used to gate non-class behaviors like free-time socializing.
+     */
+    private static class IsNotInClassCondition extends behavior.leaf.ConditionNode {
+        public IsNotInClassCondition() {
+            super("IsNotInClass");
+        }
+        
+        @Override
+        public boolean check(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null) {
+                return false;
+            }
+            return !student.getEntityState().isInClass();
+        }
+    }
+    
+    /**
+     * Talk action node: context-aware social action.
+     * <ul>
+     *   <li><b>In class:</b> Can reach anyone in the room (voice carries).
+     *       High risk of being caught (louder than whispering or passing notes).
+     *       Drains empathy and responsibility. Prefers friends.</li>
+     *   <li><b>Outside class</b> (hallways, lunchrooms): Normal expected behavior.
+     *       No risk of being caught. Provides strong allostatic recovery and
+     *       significant boredom reduction. Prefers friends.</li>
+     * </ul>
+     */
+    private static class TalkActionNode extends behavior.leaf.ActionNode {
+        private static final int FRIENDSHIP_GAIN = 3;
+        private static final int BOREDOM_DECREASE_IN_CLASS = 5;
+        private static final int BOREDOM_DECREASE_OUT_OF_CLASS = 8;
+        private static final int FRIEND_PREFERENCE_CHANCE = 80;
+        
+        public TalkActionNode() {
+            super("Talk", 1);
+        }
+        
+        @Override
+        public boolean canExecute(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null) {
+                return false;
+            }
+            
+            // Need someone to talk to: friends or classmates in the room
+            if (!student.studentStatistics.getFriendsInSchool().isEmpty()) {
+                return true;
+            }
+            entity.Rooms.Room room = student.getEntityState().getCurrentRoom();
+            return room != null && room.getStudents() != null && room.getStudents().size() > 1;
+        }
+        
+        @Override
+        public BehaviorStatus execute(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null) {
+                return BehaviorStatus.FAILURE;
+            }
+            
+            entity.EntityState state = student.getEntityState();
+            boolean inClass = state.isInClass();
+            
+            // Select a target (prefer friends)
+            Student target = selectTalkTarget(student, state);
+            if (target == null) {
+                return BehaviorStatus.FAILURE;
+            }
+            
+            // Register the interaction for conflict resolution
+            InteractionManager manager = context.getInteractionManager();
+            if (manager != null) {
+                manager.registerInteraction(student, target, entity.ActivityType.TALKING);
+            }
+            
+            state.setCurrentActivity(entity.ActivityType.TALKING);
+            context.setVariable("interaction_target", target);
+            
+            if (inClass) {
+                // --- IN CLASS: risky behavior ---
+                // Drain empathy (social effort) and responsibility (breaking class rules)
+                student.studentStatistics.drainSecondaryStat("empathy",
+                        constants.SimConstants.STAT_DRAIN_TALK_EMPATHY,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
+                student.studentStatistics.drainSecondaryStat("responsibility",
+                        constants.SimConstants.STAT_DRAIN_TALK_RESPONSIBILITY,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
+                
+                // High catch chance - talking is loud and obvious
+                int charisma = student.studentStatistics.getCharisma();
+                int perception = student.studentStatistics.getPerception();
+                int catchChance = constants.SimConstants.TALK_IN_CLASS_BASE_CATCH_CHANCE
+                        - (charisma / 15) - (perception / 20);
+                catchChance = Math.max(10, catchChance);
+                
+                if (GameRandom.nextDouble(100) < catchChance) {
+                    context.setVariable("was_caught", true);
+                    context.setVariable("catch_type", "talking");
+                    student.studentStatistics.drainSecondaryStat("resilience",
+                            constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                            constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
+                    student.studentStatistics.drainSecondaryStat("adaptability",
+                            constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
+                            constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
+                    return BehaviorStatus.FAILURE;
+                }
+                
+                // Success in class - boredom decrease and slight recovery
+                int boredom = student.studentStatistics.getBoredom();
+                student.studentStatistics.setBoredom(Math.max(0, boredom - BOREDOM_DECREASE_IN_CLASS));
+                student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                        constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING);
+            } else {
+                // --- OUTSIDE CLASS: normal, expected behavior ---
+                // No risk of being caught. Socializing is relaxing and restorative.
+                int boredom = student.studentStatistics.getBoredom();
+                student.studentStatistics.setBoredom(Math.max(0, boredom - BOREDOM_DECREASE_OUT_OF_CLASS));
+                
+                // Stronger allostatic recovery since this is free-time socializing
+                student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                        constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_TALKING);
+                
+                // Light empathy drain (social energy is still spent, just not stressfully)
+                student.studentStatistics.drainSecondaryStat("empathy", 1,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY * 0.3);
+            }
+            
+            context.setVariable("friendship_gained", FRIENDSHIP_GAIN);
+            return BehaviorStatus.SUCCESS;
+        }
+        
+        /**
+         * Selects a talk target. Prefers friends, falls back to any classmate in the room.
+         */
+        private Student selectTalkTarget(Student student, entity.EntityState state) {
+            ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
+            entity.Rooms.Room room = state.getCurrentRoom();
+            
+            // Build list of other students in the same room
+            java.util.List<Student> classmates = new ArrayList<>();
+            if (room != null && room.getStudents() != null) {
+                for (Student s : room.getStudents()) {
+                    if (s != null && s != student) {
+                        classmates.add(s);
+                    }
+                }
+            }
+            
+            // Find friends in this room
+            java.util.List<Student> friendsInRoom = new ArrayList<>();
+            for (Student friend : friends) {
+                if (classmates.contains(friend)) {
+                    friendsInRoom.add(friend);
+                }
+            }
+            
+            // Prefer friends (80% chance)
+            if (!friendsInRoom.isEmpty() && GameRandom.nextInt(100) < FRIEND_PREFERENCE_CHANCE) {
+                return friendsInRoom.get(GameRandom.nextInt(friendsInRoom.size()));
+            }
+            
+            // Fall back to friends not confirmed in room (e.g., hallway encounter)
+            if (!friends.isEmpty() && classmates.isEmpty()) {
+                return friends.get(GameRandom.nextInt(friends.size()));
+            }
+            
+            // Fall back to any classmate
+            if (!classmates.isEmpty()) {
+                return classmates.get(GameRandom.nextInt(classmates.size()));
+            }
+            
+            // Last resort: any friend
+            if (!friends.isEmpty()) {
+                return friends.get(GameRandom.nextInt(friends.size()));
+            }
+            
+            return null;
+        }
+    }
+    
+    /**
      * Simple idle action node.
      */
     private static class IdleActionNode extends behavior.leaf.ActionNode {
@@ -301,7 +518,8 @@ public class StudentBehaviorTreeBuilder {
     }
     
     /**
-     * Simple whisper action node.
+     * Whisper action node that requires the target to be in an adjacent seat.
+     * Prefers adjacent friends, but can whisper to any adjacent student.
      */
     private static class WhisperActionNode extends behavior.leaf.ActionNode {
         public WhisperActionNode() {
@@ -311,10 +529,13 @@ public class StudentBehaviorTreeBuilder {
         @Override
         public boolean canExecute(BehaviorContext context) {
             Student student = context.getStudent();
-            if (student == null) {
+            if (student == null || student.getEntityState() == null) {
                 return false;
             }
-            return !student.studentStatistics.getFriendsInSchool().isEmpty();
+            
+            // Must have at least one adjacent student to whisper to
+            java.util.List<Student> adjacent = getAdjacentStudents(student, context);
+            return !adjacent.isEmpty();
         }
         
         @Override
@@ -324,18 +545,87 @@ public class StudentBehaviorTreeBuilder {
                 return BehaviorStatus.FAILURE;
             }
             
+            // Get adjacent students and select a target (prefer friends)
+            java.util.List<Student> adjacent = getAdjacentStudents(student, context);
+            if (adjacent.isEmpty()) {
+                return BehaviorStatus.FAILURE;
+            }
+            
+            Student target = selectWhisperTarget(student, adjacent);
+            if (target == null) {
+                return BehaviorStatus.FAILURE;
+            }
+            
+            // Register the interaction with the manager for conflict resolution
+            InteractionManager manager = context.getInteractionManager();
+            if (manager != null) {
+                manager.registerInteraction(student, target, entity.ActivityType.WHISPERING);
+            }
+            
+            // Tentatively set activity (may be reverted during resolution)
             student.getEntityState().setCurrentActivity(entity.ActivityType.WHISPERING);
+            
+            // Store target in context
+            context.setVariable("interaction_target", target);
+            
+            // Drain empathy slightly from social interaction
+            student.studentStatistics.drainSecondaryStat("empathy",
+                    constants.SimConstants.STAT_DRAIN_WHISPER_EMPATHY,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
             
             // Decrease boredom
             int boredom = student.studentStatistics.getBoredom();
             student.studentStatistics.setBoredom(Math.max(0, boredom - 3));
             
+            // Socializing is positive - slight allostatic recovery
+            student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                    constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING);
+            
             return BehaviorStatus.SUCCESS;
+        }
+        
+        /**
+         * Gets students adjacent to the given student in the current seating arrangement.
+         */
+        private java.util.List<Student> getAdjacentStudents(Student student, BehaviorContext context) {
+            entity.EntityState state = student.getEntityState();
+            entity.Rooms.Room room = state.getCurrentRoom();
+            
+            if (room == null || context.getTime() == null) {
+                return java.util.Collections.emptyList();
+            }
+            
+            int period = context.getTime().getCurrentPeriod();
+            return room.getAdjacentStudentsFor(student, period);
+        }
+        
+        /**
+         * Selects a whisper target from adjacent students, preferring friends.
+         * 80% chance to pick an adjacent friend if one exists.
+         */
+        private Student selectWhisperTarget(Student student, java.util.List<Student> adjacent) {
+            ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
+            
+            // Find adjacent friends
+            java.util.List<Student> adjacentFriends = new ArrayList<>();
+            for (Student neighbor : adjacent) {
+                if (friends.contains(neighbor)) {
+                    adjacentFriends.add(neighbor);
+                }
+            }
+            
+            // Prefer adjacent friends (80% chance)
+            if (!adjacentFriends.isEmpty() && GameRandom.nextInt(100) < 80) {
+                return adjacentFriends.get(GameRandom.nextInt(adjacentFriends.size()));
+            }
+            
+            // Fall back to any adjacent student
+            return adjacent.get(GameRandom.nextInt(adjacent.size()));
         }
     }
     
     /**
-     * Simple take notes action node.
+     * Take notes action node with secondary stat drain.
      */
     private static class TakeNotesActionNode extends behavior.leaf.ActionNode {
         public TakeNotesActionNode() {
@@ -363,6 +653,14 @@ public class StudentBehaviorTreeBuilder {
             // Small boredom increase
             int boredom = student.studentStatistics.getBoredom();
             student.studentStatistics.setBoredom(Math.min(100, boredom + 1));
+            
+            // Drain creativity and initiative from note-taking effort
+            student.studentStatistics.drainSecondaryStat("creativity",
+                    constants.SimConstants.STAT_DRAIN_TAKE_NOTES_CREATIVITY,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_CREATIVITY);
+            student.studentStatistics.drainSecondaryStat("initiative",
+                    constants.SimConstants.STAT_DRAIN_TAKE_NOTES_INITIATIVE,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_INITIATIVE);
             
             return BehaviorStatus.SUCCESS;
         }

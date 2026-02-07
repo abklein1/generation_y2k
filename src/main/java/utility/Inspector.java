@@ -187,30 +187,260 @@ public class Inspector {
             sb.append("\n");
         }
 
-        // Schedule
-        for (StudentBlock block : schedule) {
-            int blockNum = block.getBlockNumber();
-            switch (blockNum) {
-                case 1, 2 -> blockNum = 1;
-                case 3, 4 -> blockNum = 2;
-                case 5, 6 -> blockNum = 3;
-                case 7, 8 -> blockNum = 4;
-            }
-            sb.append(block.getSemester()).append(" ").append(blockNum).append(" ").append(block.getTeacher())
-                    .append(" ").append(block.getClassName()).append("\n");
+        // Schedule is now displayed in its own tab via buildSchedulePanel()
+        // Include a brief summary here for the text view
+        if (!schedule.isEmpty()) {
+            sb.append("\n(See Schedule tab for full class schedule)\n");
+        } else {
+            sb.append("\nNo classes scheduled.\n");
         }
 
         return sb.toString();
     }
 
     /**
-     * Displays student inspection information in a text area.
+     * Builds the schedule text organized by semester with periods in order.
+     * Fall semester periods 1-4 are listed first, then Spring semester periods 1-4.
+     *
+     * @param student the student whose schedule to format
+     * @return the formatted schedule string
+     */
+    private static String buildScheduleText(Student student) {
+        List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
+        StringBuilder sb = new StringBuilder();
+
+        if (schedule.isEmpty()) {
+            sb.append("No classes scheduled.\n");
+            return sb.toString();
+        }
+
+        // Separate blocks by semester and sort by period
+        List<StudentBlock> fallBlocks = new java.util.ArrayList<>();
+        List<StudentBlock> springBlocks = new java.util.ArrayList<>();
+
+        for (StudentBlock block : schedule) {
+            if ("Fall".equalsIgnoreCase(block.getSemester())) {
+                fallBlocks.add(block);
+            } else if ("Spring".equalsIgnoreCase(block.getSemester())) {
+                springBlocks.add(block);
+            }
+        }
+
+        // Sort each semester by block number
+        fallBlocks.sort(java.util.Comparator.comparingInt(StudentBlock::getBlockNumber));
+        springBlocks.sort(java.util.Comparator.comparingInt(StudentBlock::getBlockNumber));
+
+        // Fall semester
+        sb.append("===============================\n");
+        sb.append("        FALL SEMESTER\n");
+        sb.append("===============================\n");
+        if (fallBlocks.isEmpty()) {
+            sb.append("  (No fall classes)\n");
+        } else {
+            for (StudentBlock block : fallBlocks) {
+                int displayPeriod = mapBlockToPeriod(block.getBlockNumber());
+                sb.append("  Period ").append(displayPeriod).append(": ");
+                sb.append(block.getClassName());
+                if (block.getTeacher() != null) {
+                    sb.append("\n           ").append(block.getTeacher().teacherName.getFirstName())
+                      .append(" ").append(block.getTeacher().teacherName.getLastName());
+                }
+                if (block.getRoom() != null) {
+                    sb.append("  [").append(block.getRoom().getRoomName()).append("]");
+                }
+                sb.append("\n");
+            }
+        }
+
+        sb.append("\n");
+
+        // Spring semester
+        sb.append("===============================\n");
+        sb.append("       SPRING SEMESTER\n");
+        sb.append("===============================\n");
+        if (springBlocks.isEmpty()) {
+            sb.append("  (No spring classes)\n");
+        } else {
+            for (StudentBlock block : springBlocks) {
+                int displayPeriod = mapBlockToPeriod(block.getBlockNumber());
+                sb.append("  Period ").append(displayPeriod).append(": ");
+                sb.append(block.getClassName());
+                if (block.getTeacher() != null) {
+                    sb.append("\n           ").append(block.getTeacher().teacherName.getFirstName())
+                      .append(" ").append(block.getTeacher().teacherName.getLastName());
+                }
+                if (block.getRoom() != null) {
+                    sb.append("  [").append(block.getRoom().getRoomName()).append("]");
+                }
+                sb.append("\n");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Maps internal block numbers (1-8) to display periods (1-4).
+     * Blocks 1,2 -> Period 1; Blocks 3,4 -> Period 2; etc.
+     */
+    private static int mapBlockToPeriod(int blockNumber) {
+        return switch (blockNumber) {
+            case 1, 2 -> 1;
+            case 3, 4 -> 2;
+            case 5, 6 -> 3;
+            case 7, 8 -> 4;
+            default -> blockNumber;
+        };
+    }
+
+    /**
+     * Public accessor for the schedule panel, used by SchoolController's inspection window.
+     *
+     * @param student the student whose schedule to display
+     * @return a JPanel containing the schedule table
+     */
+    public static JPanel buildStudentSchedulePanel(Student student) {
+        return buildSchedulePanel(student);
+    }
+
+    /**
+     * Builds a schedule panel as a JTable organized by semester.
+     * Columns: Period | Fall Class | Fall Teacher | Fall Room | Spring Class | Spring Teacher | Spring Room
+     *
+     * @param student the student whose schedule to display
+     * @return a JPanel containing the schedule table
+     */
+    private static JPanel buildSchedulePanel(Student student) {
+        List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
+        JPanel panel = new JPanel(new BorderLayout(0, 8));
+
+        // Index blocks by semester and period for table layout
+        // Key: "Fall-1" or "Spring-3", Value: StudentBlock
+        Map<String, StudentBlock> blockIndex = new HashMap<>();
+        for (StudentBlock block : schedule) {
+            int period = mapBlockToPeriod(block.getBlockNumber());
+            String key = block.getSemester() + "-" + period;
+            blockIndex.put(key, block);
+        }
+
+        // Build table data: 4 periods x 7 columns
+        String[] columns = {"Period", "Fall Class", "Fall Teacher", "Fall Room",
+                            "Spring Class", "Spring Teacher", "Spring Room"};
+        Object[][] data = new Object[4][7];
+
+        for (int period = 1; period <= 4; period++) {
+            data[period - 1][0] = "Period " + period;
+
+            // Fall semester
+            StudentBlock fallBlock = blockIndex.get("Fall-" + period);
+            if (fallBlock != null) {
+                data[period - 1][1] = fallBlock.getClassName();
+                data[period - 1][2] = fallBlock.getTeacher() != null
+                        ? fallBlock.getTeacher().teacherName.getFirstName() + " "
+                          + fallBlock.getTeacher().teacherName.getLastName()
+                        : "";
+                data[period - 1][3] = fallBlock.getRoom() != null
+                        ? fallBlock.getRoom().getRoomName()
+                        : "";
+            } else {
+                data[period - 1][1] = "--";
+                data[period - 1][2] = "";
+                data[period - 1][3] = "";
+            }
+
+            // Spring semester
+            StudentBlock springBlock = blockIndex.get("Spring-" + period);
+            if (springBlock != null) {
+                data[period - 1][4] = springBlock.getClassName();
+                data[period - 1][5] = springBlock.getTeacher() != null
+                        ? springBlock.getTeacher().teacherName.getFirstName() + " "
+                          + springBlock.getTeacher().teacherName.getLastName()
+                        : "";
+                data[period - 1][6] = springBlock.getRoom() != null
+                        ? springBlock.getRoom().getRoomName()
+                        : "";
+            } else {
+                data[period - 1][4] = "--";
+                data[period - 1][5] = "";
+                data[period - 1][6] = "";
+            }
+        }
+
+        DefaultTableModel model = new DefaultTableModel(data, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        JTable table = new JTable(model);
+        table.setRowHeight(28);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.setFillsViewportHeight(true);
+
+        // Set column widths
+        table.getColumnModel().getColumn(0).setPreferredWidth(60);   // Period
+        table.getColumnModel().getColumn(1).setPreferredWidth(160);  // Fall Class
+        table.getColumnModel().getColumn(2).setPreferredWidth(120);  // Fall Teacher
+        table.getColumnModel().getColumn(3).setPreferredWidth(80);   // Fall Room
+        table.getColumnModel().getColumn(4).setPreferredWidth(160);  // Spring Class
+        table.getColumnModel().getColumn(5).setPreferredWidth(120);  // Spring Teacher
+        table.getColumnModel().getColumn(6).setPreferredWidth(80);   // Spring Room
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // Also include the formatted text view below the table
+        JTextArea scheduleText = new JTextArea(buildScheduleText(student));
+        scheduleText.setEditable(false);
+        scheduleText.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        JScrollPane textScroll = new JScrollPane(scheduleText);
+        textScroll.setPreferredSize(new Dimension(600, 180));
+        panel.add(textScroll, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    /**
+     * Displays student inspection information in a text area (legacy method).
+     * For the full tabbed view with schedule, use {@link #inspectStudent(Student)}.
      *
      * @param student        the student to inspect
      * @param inspectionArea the text area to display the information in
      */
     public static void studentInspection(Student student, JTextArea inspectionArea) {
         inspectionArea.setText(buildStudentInspectionText(student));
+    }
+
+    /**
+     * Opens a full student inspection dialog with tabbed panes.
+     * Tab 1 (Info): Personal details, stats, status effects, and family info.
+     * Tab 2 (Schedule): Class schedule organized by Fall/Spring semesters with periods 1-4.
+     *
+     * @param student the student to inspect
+     */
+    public static void inspectStudent(Student student) {
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        // Info tab
+        JTextArea infoArea = new JTextArea(buildStudentInspectionText(student));
+        infoArea.setEditable(false);
+        infoArea.setCaretPosition(0);
+        JScrollPane infoScroll = new JScrollPane(infoArea);
+        tabbedPane.addTab("Info", infoScroll);
+
+        // Schedule tab
+        JPanel schedulePanel = buildSchedulePanel(student);
+        tabbedPane.addTab("Schedule", schedulePanel);
+
+        // Create the dialog
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Student: " + student.studentName.getFullName());
+        dialog.setContentPane(tabbedPane);
+        dialog.setModal(true);
+        dialog.setSize(800, 600);
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
 
     public static void staffInspection(Staff staff, JTextArea inspectionArea) {
@@ -369,11 +599,12 @@ public class Inspector {
                 int row = studentTable.rowAtPoint(e.getPoint());
                 int col = studentTable.columnAtPoint(e.getPoint());
                 if (!"Empty".equals(tableModel.getValueAt(row, col))) {
-                    Student student = seatingArrangements.get(1)[row][col];
-                    JTextArea studentInfoArea = new JTextArea();
-                    studentInspection(student, studentInfoArea);
-                    JOptionPane.showMessageDialog(null, new JScrollPane(studentInfoArea), "Student Details",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    // Determine which block is currently displayed to find the right student
+                    Student[][] currentSeats = seatingArrangements.get(1);
+                    if (currentSeats != null && row < currentSeats.length
+                            && col < currentSeats[0].length && currentSeats[row][col] != null) {
+                        inspectStudent(currentSeats[row][col]);
+                    }
                 }
             }
         });

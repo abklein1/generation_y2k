@@ -4,6 +4,7 @@ public class PlayerCharacter extends Student {
 
     private int siblingsNumber;
     private FamilyInfo familyInfo = new FamilyInfo();
+    private LifeHistory lifeHistory;
 
     public PlayerCharacter() {
         super();
@@ -29,5 +30,13 @@ public class PlayerCharacter extends Student {
 
     public void setFamilyInfo(FamilyInfo familyInfo) {
         this.familyInfo = familyInfo;
+    }
+
+    public LifeHistory getLifeHistory() {
+        return lifeHistory;
+    }
+
+    public void setLifeHistory(LifeHistory lifeHistory) {
+        this.lifeHistory = lifeHistory;
     }
 }

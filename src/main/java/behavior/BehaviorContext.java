@@ -5,6 +5,7 @@ import entity.Staff;
 import entity.StandardSchool;
 import entity.Student;
 import entity.Time;
+import simulation.InteractionManager;
 
 import java.util.HashMap;
 
@@ -21,6 +22,7 @@ public class BehaviorContext {
     private Room currentRoom;
     private final HashMap<String, Object> variables;
     private boolean isPlayer;
+    private InteractionManager interactionManager;
     
     /**
      * Creates a new behavior context.
@@ -110,6 +112,26 @@ public class BehaviorContext {
     
     public void setPlayer(boolean player) {
         isPlayer = player;
+    }
+    
+    // Interaction manager
+    
+    /**
+     * Gets the interaction manager for resolving social interaction conflicts.
+     *
+     * @return the interaction manager, or null if not set
+     */
+    public InteractionManager getInteractionManager() {
+        return interactionManager;
+    }
+    
+    /**
+     * Sets the interaction manager.
+     *
+     * @param interactionManager the interaction manager
+     */
+    public void setInteractionManager(InteractionManager interactionManager) {
+        this.interactionManager = interactionManager;
     }
     
     // Variable storage methods

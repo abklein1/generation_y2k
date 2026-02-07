@@ -200,6 +200,84 @@ public abstract class Room implements Serializable {
         return seatingArrangements;
     }
 
+    /**
+     * Gets all students sitting in adjacent seats (up, down, left, right) to the
+     * given position in a specific period's seating arrangement.
+     * Diagonal seats are not considered adjacent for whispering.
+     *
+     * @param row    the row of the student's seat
+     * @param col    the column of the student's seat
+     * @param period the current period/block number
+     * @return a list of students in adjacent seats (may be empty)
+     */
+    public List<Student> getAdjacentStudents(int row, int col, int period) {
+        List<Student> adjacent = new ArrayList<>();
+        Student[][] periodSeats = null;
+
+        // Try period-specific seating first, fall back to base seats
+        if (seatingArrangements != null && seatingArrangements.containsKey(period)) {
+            periodSeats = seatingArrangements.get(period);
+        } else if (seats != null) {
+            periodSeats = seats;
+        }
+
+        if (periodSeats == null || periodSeats.length == 0) {
+            return adjacent;
+        }
+
+        int rows = periodSeats.length;
+        // Cardinal directions: up, down, left, right
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+        for (int[] dir : directions) {
+            int adjRow = row + dir[0];
+            int adjCol = col + dir[1];
+
+            if (adjRow >= 0 && adjRow < rows
+                    && adjCol >= 0 && adjCol < periodSeats[adjRow].length) {
+                Student neighbor = periodSeats[adjRow][adjCol];
+                if (neighbor != null) {
+                    adjacent.add(neighbor);
+                }
+            }
+        }
+
+        return adjacent;
+    }
+
+    /**
+     * Gets all students sitting in adjacent seats to a given student
+     * in a specific period's seating arrangement.
+     *
+     * @param student the student whose neighbors to find
+     * @param period  the current period/block number
+     * @return a list of adjacent students, or empty if the student is not seated
+     */
+    public List<Student> getAdjacentStudentsFor(Student student, int period) {
+        Student[][] periodSeats = null;
+
+        if (seatingArrangements != null && seatingArrangements.containsKey(period)) {
+            periodSeats = seatingArrangements.get(period);
+        } else if (seats != null) {
+            periodSeats = seats;
+        }
+
+        if (periodSeats == null) {
+            return new ArrayList<>();
+        }
+
+        // Find the student's position in the seating grid
+        for (int i = 0; i < periodSeats.length; i++) {
+            for (int j = 0; j < periodSeats[i].length; j++) {
+                if (periodSeats[i][j] != null && periodSeats[i][j].equals(student)) {
+                    return getAdjacentStudents(i, j, period);
+                }
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
     public void initializeSeatingArrangements(int totalPeriods) {
         for (int period = 0; period < totalPeriods; period++) {
             setPeriodSeatingArrangement(period, getSeatArrangement());
