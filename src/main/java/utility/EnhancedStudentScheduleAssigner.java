@@ -576,7 +576,7 @@ public class EnhancedStudentScheduleAssigner {
                         studentBlock.getSemester().equals(block.getSemester()));
     }
 
-    private static boolean hasSubjectAreaConflict(Student student, String className, String semester) {
+    static boolean hasSubjectAreaConflict(Student student, String className, String semester) {
         if (SectionManager.belongsToSubjectArea(className, "language"))
             return false;
 

@@ -24,9 +24,17 @@ public class TeacherBlockBuilder {
 
     // -------------------------------------------------- class size accessors
 
-    public static int getCurrentMaxClassSize() { return currentMaxClassSize; }
-    public static int getCurrentOptimalClassSize() { return currentOptimalClassSize; }
-    public static boolean isOvercrowdingAllowed() { return allowOvercrowding; }
+    public static int getCurrentMaxClassSize() {
+        return currentMaxClassSize;
+    }
+
+    public static int getCurrentOptimalClassSize() {
+        return currentOptimalClassSize;
+    }
+
+    public static boolean isOvercrowdingAllowed() {
+        return allowOvercrowding;
+    }
 
     /** Configures class size limits based on the school's funding model. */
     public static void configureClassSizesFromFunding(SchoolFundingModel fundingModel) {
@@ -82,7 +90,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : lab.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return lab;
+                if (staffName.equals(assignedName))
+                    return lab;
             }
         }
 
@@ -90,7 +99,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : gym.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return gym;
+                if (staffName.equals(assignedName))
+                    return gym;
             }
         }
 
@@ -98,7 +108,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : studio.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return studio;
+                if (staffName.equals(assignedName))
+                    return studio;
             }
         }
 
@@ -106,7 +117,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : room.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return room;
+                if (staffName.equals(assignedName))
+                    return room;
             }
         }
 
@@ -114,7 +126,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : room.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return room;
+                if (staffName.equals(assignedName))
+                    return room;
             }
         }
 
@@ -122,7 +135,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : room.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return room;
+                if (staffName.equals(assignedName))
+                    return room;
             }
         }
 
@@ -130,7 +144,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : lab.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return lab;
+                if (staffName.equals(assignedName))
+                    return lab;
             }
         }
 
@@ -138,7 +153,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : field.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return field;
+                if (staffName.equals(assignedName))
+                    return field;
             }
         }
 
@@ -146,7 +162,8 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : portable.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName)) return portable;
+                if (staffName.equals(assignedName))
+                    return portable;
             }
         }
 
@@ -168,85 +185,115 @@ public class TeacherBlockBuilder {
 
         List<Room> availableClassrooms = new ArrayList<>();
         for (Classroom classroom : standardSchool.getClassrooms()) {
-            if (classroom.getAssignedStaff().isEmpty()) availableClassrooms.add(classroom);
+            if (classroom.getAssignedStaff().isEmpty())
+                availableClassrooms.add(classroom);
         }
         List<Room> availableScienceLabs = new ArrayList<>();
         for (ScienceLab lab : standardSchool.getScienceLabs()) {
-            if (lab.getAssignedStaff().isEmpty()) availableScienceLabs.add(lab);
+            if (lab.getAssignedStaff().isEmpty())
+                availableScienceLabs.add(lab);
         }
         List<Room> availableArtStudios = new ArrayList<>();
         for (ArtStudio studio : standardSchool.getArtStudios()) {
-            if (studio.getAssignedStaff().isEmpty()) availableArtStudios.add(studio);
+            if (studio.getAssignedStaff().isEmpty())
+                availableArtStudios.add(studio);
         }
         List<Room> availableMusicRooms = new ArrayList<>();
         for (MusicRoom room : standardSchool.getMusicRooms()) {
-            if (room.getAssignedStaff().isEmpty()) availableMusicRooms.add(room);
+            if (room.getAssignedStaff().isEmpty())
+                availableMusicRooms.add(room);
         }
         List<Room> availableDramaRooms = new ArrayList<>();
         for (DramaRoom room : standardSchool.getDramaRooms()) {
-            if (room.getAssignedStaff().isEmpty()) availableDramaRooms.add(room);
+            if (room.getAssignedStaff().isEmpty())
+                availableDramaRooms.add(room);
         }
         List<Room> availableGyms = new ArrayList<>();
         for (Gym gym : standardSchool.getGyms()) {
-            if (gym.getAssignedStaff().isEmpty()) availableGyms.add(gym);
+            if (gym.getAssignedStaff().isEmpty())
+                availableGyms.add(gym);
         }
         List<Room> availableVocationalRooms = new ArrayList<>();
         for (VocationalRoom room : standardSchool.getVocationalRooms()) {
-            if (room.getAssignedStaff().isEmpty()) availableVocationalRooms.add(room);
+            if (room.getAssignedStaff().isEmpty())
+                availableVocationalRooms.add(room);
         }
         List<Room> availableComputerLabs = new ArrayList<>();
         for (ComputerLab lab : standardSchool.getComputerLabs()) {
-            if (lab.getAssignedStaff().isEmpty()) availableComputerLabs.add(lab);
+            if (lab.getAssignedStaff().isEmpty())
+                availableComputerLabs.add(lab);
         }
         List<Room> availablePortables = new ArrayList<>();
         for (Portable portable : standardSchool.getPortables()) {
-            if (portable.getAssignedStaff().isEmpty()) availablePortables.add(portable);
+            if (portable.getAssignedStaff().isEmpty())
+                availablePortables.add(portable);
         }
         GameLogger.logScheduling("  Available portables for teacher assignment: " + availablePortables.size());
 
         for (Staff staff : staffHashMap.values()) {
             StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
-            if (type == null || !isTeachingStaffType(type)) continue;
+            if (type == null || !isTeachingStaffType(type))
+                continue;
 
             Room existingRoom = getTeacherRoom(staff, standardSchool);
-            if (existingRoom != null) continue;
+            if (existingRoom != null)
+                continue;
 
             teachersWithoutRooms++;
 
             Room assignedRoom = null;
             switch (type) {
                 case SCIENCE:
-                    if (!availableScienceLabs.isEmpty()) assignedRoom = availableScienceLabs.remove(0);
-                    else if (!availableClassrooms.isEmpty()) assignedRoom = availableClassrooms.remove(0);
-                    else if (!availablePortables.isEmpty()) assignedRoom = availablePortables.remove(0);
+                    if (!availableScienceLabs.isEmpty())
+                        assignedRoom = availableScienceLabs.remove(0);
+                    else if (!availableClassrooms.isEmpty())
+                        assignedRoom = availableClassrooms.remove(0);
+                    else if (!availablePortables.isEmpty())
+                        assignedRoom = availablePortables.remove(0);
                     break;
                 case VISUAL_ARTS:
-                    if (!availableArtStudios.isEmpty()) assignedRoom = availableArtStudios.remove(0);
-                    else if (!availableClassrooms.isEmpty()) assignedRoom = availableClassrooms.remove(0);
-                    else if (!availablePortables.isEmpty()) assignedRoom = availablePortables.remove(0);
+                    if (!availableArtStudios.isEmpty())
+                        assignedRoom = availableArtStudios.remove(0);
+                    else if (!availableClassrooms.isEmpty())
+                        assignedRoom = availableClassrooms.remove(0);
+                    else if (!availablePortables.isEmpty())
+                        assignedRoom = availablePortables.remove(0);
                     break;
                 case PERFORMING_ARTS:
-                    if (!availableMusicRooms.isEmpty()) assignedRoom = availableMusicRooms.remove(0);
-                    else if (!availableDramaRooms.isEmpty()) assignedRoom = availableDramaRooms.remove(0);
-                    else if (!availableClassrooms.isEmpty()) assignedRoom = availableClassrooms.remove(0);
-                    else if (!availablePortables.isEmpty()) assignedRoom = availablePortables.remove(0);
+                    if (!availableMusicRooms.isEmpty())
+                        assignedRoom = availableMusicRooms.remove(0);
+                    else if (!availableDramaRooms.isEmpty())
+                        assignedRoom = availableDramaRooms.remove(0);
+                    else if (!availableClassrooms.isEmpty())
+                        assignedRoom = availableClassrooms.remove(0);
+                    else if (!availablePortables.isEmpty())
+                        assignedRoom = availablePortables.remove(0);
                     break;
                 case PHYSICAL_ED:
-                    if (!availableGyms.isEmpty()) assignedRoom = availableGyms.remove(0);
+                    if (!availableGyms.isEmpty())
+                        assignedRoom = availableGyms.remove(0);
                     break;
                 case VOCATIONAL:
-                    if (!availableVocationalRooms.isEmpty()) assignedRoom = availableVocationalRooms.remove(0);
-                    else if (!availableClassrooms.isEmpty()) assignedRoom = availableClassrooms.remove(0);
-                    else if (!availablePortables.isEmpty()) assignedRoom = availablePortables.remove(0);
+                    if (!availableVocationalRooms.isEmpty())
+                        assignedRoom = availableVocationalRooms.remove(0);
+                    else if (!availableClassrooms.isEmpty())
+                        assignedRoom = availableClassrooms.remove(0);
+                    else if (!availablePortables.isEmpty())
+                        assignedRoom = availablePortables.remove(0);
                     break;
                 case COMP_SCI:
-                    if (!availableComputerLabs.isEmpty()) assignedRoom = availableComputerLabs.remove(0);
-                    else if (!availableClassrooms.isEmpty()) assignedRoom = availableClassrooms.remove(0);
-                    else if (!availablePortables.isEmpty()) assignedRoom = availablePortables.remove(0);
+                    if (!availableComputerLabs.isEmpty())
+                        assignedRoom = availableComputerLabs.remove(0);
+                    else if (!availableClassrooms.isEmpty())
+                        assignedRoom = availableClassrooms.remove(0);
+                    else if (!availablePortables.isEmpty())
+                        assignedRoom = availablePortables.remove(0);
                     break;
                 default:
-                    if (!availableClassrooms.isEmpty()) assignedRoom = availableClassrooms.remove(0);
-                    else if (!availablePortables.isEmpty()) assignedRoom = availablePortables.remove(0);
+                    if (!availableClassrooms.isEmpty())
+                        assignedRoom = availableClassrooms.remove(0);
+                    else if (!availablePortables.isEmpty())
+                        assignedRoom = availablePortables.remove(0);
                     break;
             }
 
@@ -326,7 +373,8 @@ public class TeacherBlockBuilder {
             }
         }
 
-        // Step 3: Group teachers by type (only those WITH room assignments when school is available)
+        // Step 3: Group teachers by type (only those WITH room assignments when school
+        // is available)
         Map<StaffType, List<Staff>> teachersByType = new HashMap<>();
         int teachersWithoutRooms = 0;
         for (Staff staff : staffHashMap.values()) {
@@ -353,7 +401,8 @@ public class TeacherBlockBuilder {
             GameLogger.logScheduling("  " + entry.getKey() + ": " + entry.getValue().size() + " teachers");
         }
 
-        // Step 4: For each class, create teacher blocks distributed across all 4 periods
+        // Step 4: For each class, create teacher blocks distributed across all 4
+        // periods
         Map<String, int[]> classSlotsUsed = new HashMap<>();
 
         List<Map.Entry<String, Integer>> sortedClasses = new ArrayList<>(sectionsNeeded.entrySet());
@@ -362,7 +411,8 @@ public class TeacherBlockBuilder {
         for (Map.Entry<String, Integer> entry : sortedClasses) {
             String className = entry.getKey();
             int sectionsRequired = entry.getValue();
-            if (sectionsRequired == 0) continue;
+            if (sectionsRequired == 0)
+                continue;
 
             int[] classSlots = new int[4];
             classSlotsUsed.put(className, classSlots);
@@ -389,33 +439,48 @@ public class TeacherBlockBuilder {
             }
 
             int sectionsCreated = 0;
-            int maxAttempts = qualifiedTeachers.size() * 32;
-            int attempts = 0;
+            int maxRounds = qualifiedTeachers.size() * 8;
+            int round = 0;
 
-            while (sectionsCreated < sectionsRequired && attempts < maxAttempts) {
-                attempts++;
-                int bestSlot = findLeastUsedSlotForClass(classSlots);
-                String[] semesters = { "Fall", "Spring" };
+            while (sectionsCreated < sectionsRequired && round < maxRounds) {
+                round++;
+                boolean madeProgress = false;
 
-                for (String semester : semesters) {
-                    if (sectionsCreated >= sectionsRequired) break;
-                    Staff availableTeacher = findAvailableTeacher(qualifiedTeachers, bestSlot + 1, semester,
-                            standardSchool);
-                    if (availableTeacher != null) {
-                        Room teacherRoom = getTeacherRoom(availableTeacher, standardSchool);
-                        if (teacherRoom != null) {
-                            TeacherBlock block = new TeacherBlock();
-                            block.setClassName(className);
-                            block.setBlockNumber(bestSlot + 1);
-                            block.setSemester(semester);
-                            block.setRoom(teacherRoom);
-                            block.addClassPopulationBlock(teacherRoom.getStudentCapacity());
-                            availableTeacher.teacherStatistics.addTeacherSchedule(block);
-                            classSlots[bestSlot]++;
-                            sectionsCreated++;
+                // Try all 4 slots, starting from the least-used, to avoid getting
+                // stuck when the "best" slot has no available teachers.
+                int[] slotOrder = getSlotsOrderedByUsage(classSlots);
+
+                for (int slotIdx : slotOrder) {
+                    if (sectionsCreated >= sectionsRequired)
+                        break;
+                    String[] semesters = { "Fall", "Spring" };
+
+                    for (String semester : semesters) {
+                        if (sectionsCreated >= sectionsRequired)
+                            break;
+                        Staff availableTeacher = findAvailableTeacher(qualifiedTeachers, slotIdx + 1, semester,
+                                standardSchool);
+                        if (availableTeacher != null) {
+                            Room teacherRoom = getTeacherRoom(availableTeacher, standardSchool);
+                            if (teacherRoom != null) {
+                                TeacherBlock block = new TeacherBlock();
+                                block.setClassName(className);
+                                block.setBlockNumber(slotIdx + 1);
+                                block.setSemester(semester);
+                                block.setRoom(teacherRoom);
+                                block.addClassPopulationBlock(teacherRoom.getStudentCapacity());
+                                availableTeacher.teacherStatistics.addTeacherSchedule(block);
+                                classSlots[slotIdx]++;
+                                sectionsCreated++;
+                                madeProgress = true;
+                            }
                         }
                     }
                 }
+
+                // If a full pass over all slots made no progress, stop early
+                if (!madeProgress)
+                    break;
             }
 
             if (sectionsCreated < sectionsRequired) {
@@ -455,7 +520,8 @@ public class TeacherBlockBuilder {
             StandardSchool school) {
         for (Staff teacher : teachers) {
             Room room = getTeacherRoom(teacher, school);
-            if (room == null) continue;
+            if (room == null)
+                continue;
 
             boolean hasConflict = false;
             for (TeacherBlock existing : teacher.teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
@@ -479,16 +545,17 @@ public class TeacherBlockBuilder {
         return null;
     }
 
-    /** Finds the time slot with the fewest sections for a specific class. */
-    private static int findLeastUsedSlotForClass(int[] classSlots) {
-        int minSlot = 0;
-        int minCount = classSlots[0];
-        for (int i = 1; i < classSlots.length; i++) {
-            if (classSlots[i] < minCount) {
-                minCount = classSlots[i];
-                minSlot = i;
-            }
-        }
-        return minSlot;
+    /**
+     * Returns all slot indices sorted by ascending usage count (least-used first).
+     */
+    private static int[] getSlotsOrderedByUsage(int[] classSlots) {
+        Integer[] indices = new Integer[classSlots.length];
+        for (int i = 0; i < indices.length; i++)
+            indices[i] = i;
+        Arrays.sort(indices, Comparator.comparingInt(i -> classSlots[i]));
+        int[] result = new int[indices.length];
+        for (int i = 0; i < indices.length; i++)
+            result[i] = indices[i];
+        return result;
     }
 }

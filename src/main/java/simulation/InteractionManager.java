@@ -14,30 +14,49 @@ import java.util.Set;
 import static constants.SimConstants.*;
 
 /**
- * Manages social interaction conflicts between students during a single simulation tick.
+ * Manages social interaction conflicts between students during a single
+ * simulation tick.
  *
- * <p>When multiple students attempt to interact with the same student in the same tick,
- * the InteractionManager resolves the conflict: the student with the highest combined
- * Determination + Charisma is granted the interaction, and all others are denied.</p>
+ * <p>
+ * When multiple students attempt to interact with the same student in the same
+ * tick,
+ * the InteractionManager resolves the conflict: the student with the highest
+ * combined
+ * Determination + Charisma is granted the interaction, and all others are
+ * denied.
+ * </p>
  *
- * <p>When an interaction is confirmed, both the initiator and target gain social score
- * toward each other. The gain amount depends on the activity type (talking &gt; passing
- * notes &gt; whispering &gt; generic socializing). Score increases are subject to the
+ * <p>
+ * When an interaction is confirmed, both the initiator and target gain social
+ * score
+ * toward each other. The gain amount depends on the activity type (talking &gt;
+ * passing
+ * notes &gt; whispering &gt; generic socializing). Score increases are subject
+ * to the
  * best-friend soft cap: scores cannot cross the best-friend threshold without a
- * catalyst event.</p>
+ * catalyst event.
+ * </p>
  *
- * <p>Usage per tick:
+ * <p>
+ * Usage per tick:
  * <ol>
- *   <li>{@link #clearTick()} at the start of each tick</li>
- *   <li>Behavior tree action nodes call {@link #registerInteraction} to record intended social actions</li>
- *   <li>{@link #resolveInteractions()} after all behavior trees have been ticked</li>
+ * <li>{@link #clearTick()} at the start of each tick</li>
+ * <li>Behavior tree action nodes call {@link #registerInteraction} to record
+ * intended social actions</li>
+ * <li>{@link #resolveInteractions()} after all behavior trees have been
+ * ticked</li>
  * </ol>
  * </p>
  *
- * <p>Each student may only be involved in one social interaction per tick, whether as
- * initiator or target. The resolution sorts all pending interactions by priority
- * (highest DET + CHR first) and grants them in order, skipping any interaction where
- * either the initiator or target is already occupied.</p>
+ * <p>
+ * Each student may only be involved in one social interaction per tick, whether
+ * as
+ * initiator or target. The resolution sorts all pending interactions by
+ * priority
+ * (highest DET + CHR first) and grants them in order, skipping any interaction
+ * where
+ * either the initiator or target is already occupied.
+ * </p>
  */
 public class InteractionManager {
 
@@ -63,7 +82,8 @@ public class InteractionManager {
 
     /**
      * Clears all pending interactions for a new tick.
-     * Must be called at the start of each simulation tick before behavior trees are processed.
+     * Must be called at the start of each simulation tick before behavior trees are
+     * processed.
      */
     public void clearTick() {
         pendingInteractions.clear();
@@ -76,7 +96,8 @@ public class InteractionManager {
      *
      * @param initiator        the student initiating the interaction
      * @param target           the student being interacted with
-     * @param intendedActivity the type of social activity (e.g. PASSING_NOTE, WHISPERING)
+     * @param intendedActivity the type of social activity (e.g. PASSING_NOTE,
+     *                         WHISPERING)
      */
     public void registerInteraction(Student initiator, Student target, ActivityType intendedActivity) {
         if (initiator == null || target == null || initiator == target) {
@@ -93,13 +114,17 @@ public class InteractionManager {
     /**
      * Resolves all pending interactions for this tick.
      *
-     * <p>Interactions are sorted by priority (DET + CHR) in descending order.
+     * <p>
+     * Interactions are sorted by priority (DET + CHR) in descending order.
      * The highest-priority student gets their interaction confirmed first.
      * Any subsequent interaction involving an already-occupied student (as either
-     * initiator or target) is denied.</p>
+     * initiator or target) is denied.
+     * </p>
      *
-     * <p>Denied students have their activity set to IDLE, since the person they
-     * wanted to interact with is now occupied.</p>
+     * <p>
+     * Denied students have their activity set to IDLE, since the person they
+     * wanted to interact with is now occupied.
+     * </p>
      */
     public void resolveInteractions() {
         if (pendingInteractions.isEmpty()) {
@@ -135,10 +160,13 @@ public class InteractionManager {
      * tentatively by the action node, so we just need to mark the target as
      * engaged in a social interaction.
      *
-     * <p>Additionally, both the initiator and target gain social score toward
+     * <p>
+     * Additionally, both the initiator and target gain social score toward
      * each other based on the activity type. All social actions are treated as
      * positive for NPC interactions. Score increases are subject to the
-     * best-friend soft cap enforced by {@link SocialLinkConnector#modifySocialScore}.</p>
+     * best-friend soft cap enforced by
+     * {@link SocialLinkConnector#modifySocialScore}.
+     * </p>
      *
      * @param interaction the confirmed interaction
      */
@@ -159,7 +187,8 @@ public class InteractionManager {
         }
 
         // Apply social score gains for the confirmed interaction.
-        // Both parties gain score toward each other (all NPC actions are positive for now).
+        // Both parties gain score toward each other (all NPC actions are positive for
+        // now).
         if (socialLinkConnector != null && initiator != null && target != null) {
             double gain = getFriendshipGain(interaction.getIntendedActivity());
             socialLinkConnector.modifySocialScore(initiator, target, gain);
@@ -171,7 +200,8 @@ public class InteractionManager {
      * Returns the friendship score gain for a given social activity type.
      * Different activities carry different social weight:
      * passing notes is a deliberate personal gesture (highest gain),
-     * talking is significant, whispering is quick, and generic socializing is minimal.
+     * talking is significant, whispering is quick, and generic socializing is
+     * minimal.
      *
      * @param activity the type of social activity
      * @return the friendship score gain
@@ -187,7 +217,8 @@ public class InteractionManager {
 
     /**
      * Denies an interaction because the target (or initiator) is already occupied.
-     * The initiator is reverted to IDLE since their intended social action cannot proceed.
+     * The initiator is reverted to IDLE since their intended social action cannot
+     * proceed.
      *
      * @param interaction the denied interaction
      */
@@ -209,7 +240,8 @@ public class InteractionManager {
     }
 
     /**
-     * Checks if a specific student has already registered an interaction as initiator this tick.
+     * Checks if a specific student has already registered an interaction as
+     * initiator this tick.
      * Useful for preventing duplicate registrations.
      *
      * @param student the student to check
@@ -247,7 +279,7 @@ public class InteractionManager {
          * @param priorityScore    the initiator's combined DET + CHR
          */
         public PendingInteraction(Student initiator, Student target,
-                                  ActivityType intendedActivity, int priorityScore) {
+                ActivityType intendedActivity, int priorityScore) {
             this.initiator = initiator;
             this.target = target;
             this.intendedActivity = intendedActivity;

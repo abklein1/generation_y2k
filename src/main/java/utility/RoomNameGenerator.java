@@ -29,7 +29,6 @@ public class RoomNameGenerator {
         }
     }
 
-
     private static String generateGymName(HashMap<Integer, String> lNameReference) {
 
         String year = String.valueOf(generateRandomBirthdayStaff().getYear());
@@ -43,7 +42,8 @@ public class RoomNameGenerator {
         return firstName + " " + middleInitial + ". " + lastName + " " + gymOrGymnasium;
     }
 
-    private static String generateAthleticFieldName(StandardSchool standardSchool, HashMap<Integer, String> lNameReference) {
+    private static String generateAthleticFieldName(StandardSchool standardSchool,
+            HashMap<Integer, String> lNameReference) {
 
         String year = String.valueOf(generateRandomBirthdayStaff().getYear());
         String gender = genderSelection();
@@ -90,8 +90,8 @@ public class RoomNameGenerator {
      * Format: "[Teacher Last Name]'s [Subject] Classroom"
      * If no teacher is assigned, returns the original room name or a default.
      *
-     * @param classroom the classroom to generate a name for
-     * @param staff the teacher assigned to the classroom (can be null)
+     * @param classroom    the classroom to generate a name for
+     * @param staff        the teacher assigned to the classroom (can be null)
      * @param originalName the original name to fall back to if no teacher
      * @return the generated classroom name
      */

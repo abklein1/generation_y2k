@@ -107,13 +107,26 @@ public class ScheduleOptimizer {
 
     private static Student findMovableStudent(SectionManager.ClassSection fromSection,
             SectionManager.ClassSection toSection) {
+        String fromSemester = fromSection.getTeacherBlock().getSemester();
+        String toSemester = toSection.getTeacherBlock().getSemester();
+        boolean crossSemester = !fromSemester.equals(toSemester);
+
         for (Student student : fromSection.getEnrolledStudents()) {
             if (!hasBlockConflict(student, toSection.getTeacherBlock())) {
                 String className = toSection.getClassName();
                 long currentCount = student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
                         .mapToLong(block -> block.getClassName().equals(className) ? 1 : 0).sum();
-                if (currentCount <= 1)
-                    return student;
+                if (currentCount > 1)
+                    continue;
+
+                // When moving across semesters, check that the target semester
+                // won't exceed the subject area limit (e.g. two math classes).
+                if (crossSemester &&
+                        EnhancedStudentScheduleAssigner.hasSubjectAreaConflict(student, className, toSemester)) {
+                    continue;
+                }
+
+                return student;
             }
         }
         return null;

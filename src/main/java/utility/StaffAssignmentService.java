@@ -10,9 +10,7 @@ import entity.StandardSchool;
 import entity.Town;
 import view.GameView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map;
 import java.util.Optional;
 
@@ -300,26 +298,50 @@ public class StaffAssignmentService {
             }
         }
 
-        // If there are shortages, try to fill with substitutes or unassigned staff
+        // If there are shortages, try to fill with unassigned staff, assigning them
+        // to the specific StaffType that needs them (not SUB).
         if (shortages > 0) {
             view.appendOutput("  Total shortages: " + shortages + " - attempting to fill with available staff");
-            List<Staff> remaining = pool.getUnassignedStaff();
+
+            // Build a queue of StaffTypes that still need teachers, ordered by priority
+            Map<StaffType, Integer> shortageByType = new LinkedHashMap<>();
+            for (StaffType type : priorityOrder) {
+                int needed = staffNeeds.getOrDefault(type, 0);
+                if (needed <= 0) continue;
+                long alreadyAssigned = assignedMap.values().stream()
+                        .filter(s -> type.equals(s.teacherStatistics.getStaffType()))
+                        .count();
+                int remainingNeed = needed - (int) alreadyAssigned;
+                if (remainingNeed > 0) {
+                    shortageByType.put(type, remainingNeed);
+                }
+            }
+
+            Set<Staff> alreadyUsed = new HashSet<>();
             int filled = 0;
-            for (Staff staff : remaining) {
-                if (filled >= shortages)
-                    break;
-                if (pool.assignToSchool(staff, school)) {
-                    // Ensure staff has a type - default to SUB if null
-                    if (staff.teacherStatistics.getStaffType() == null) {
-                        staff.teacherStatistics.setStaffType(StaffType.SUB);
+            for (Map.Entry<StaffType, Integer> shortageEntry : shortageByType.entrySet()) {
+                StaffType neededType = shortageEntry.getKey();
+                int neededCount = shortageEntry.getValue();
+                int filledForType = 0;
+                // Re-fetch unassigned each iteration to get a fresh list
+                List<Staff> remaining = pool.getUnassignedStaff();
+                for (Staff staff : remaining) {
+                    if (filledForType >= neededCount) break;
+                    if (alreadyUsed.contains(staff)) continue;
+                    if (pool.assignToSchool(staff, school)) {
+                        staff.teacherStatistics.setStaffType(neededType);
+                        assignedMap.put(totalAssigned, staff);
+                        totalAssigned++;
+                        filled++;
+                        filledForType++;
+                        alreadyUsed.add(staff);
+                        view.appendOutput("  Filled " + neededType + " shortage with " +
+                                staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
                     }
-                    assignedMap.put(totalAssigned, staff);
-                    totalAssigned++;
-                    filled++;
                 }
             }
             if (filled > 0) {
-                view.appendOutput("  Filled " + filled + " positions with available staff");
+                view.appendOutput("  Filled " + filled + " shortage positions with available staff");
             }
         }
 

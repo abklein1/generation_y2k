@@ -15,11 +15,11 @@ import java.time.LocalDate;
  * of the game (summer 2004). Events are displayed chronologically,
  * grouped by year:
  *
- *   1989
- *   September 15 - You are born to parents Sarah and Michael.
+ * 1989
+ * September 15 - You are born to parents Sarah and Michael.
  *
- *   1992
- *   May 15 - Your brother, James, is born.
+ * 1992
+ * May 15 - Your brother, James, is born.
  *
  * Events include fixed milestones (birth, sibling births) and
  * random life events that occur with configurable probability.
@@ -55,9 +55,9 @@ public class PlayerStoryGenerator {
         // events. Events do not need to happen on any regular schedule.
         //
         // Example (future):
-        //   generateDivorceEvent(history, player);
-        //   generateMovingEvent(history, player);
-        //   generateFamilyEvent(history, player);
+        // generateDivorceEvent(history, player);
+        // generateMovingEvent(history, player);
+        // generateFamilyEvent(history, player);
         // ---------------------------------------------------------------
 
         history.sort();
@@ -85,8 +85,8 @@ public class PlayerStoryGenerator {
     /**
      * Adds birth events for each sibling. These use the sibling's
      * actual generated birthday and gender to produce lines like:
-     *   "Your brother, James, is born."
-     *   "Your sister, Emily, is born."
+     * "Your brother, James, is born."
+     * "Your sister, Emily, is born."
      */
     private static void addSiblingBirthEvents(LifeHistory history, PlayerCharacter player) {
         FamilyInfo family = player.getFamilyInfo();

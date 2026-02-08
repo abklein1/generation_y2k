@@ -125,7 +125,8 @@ public interface PStatistics extends Serializable {
      * Drains a secondary stat by the given amount, clamping at 0.
      * Also notifies the allostatic load system of the drain.
      *
-     * @param statName     the name of the stat to drain (e.g. "empathy", "resilience")
+     * @param statName     the name of the stat to drain (e.g. "empathy",
+     *                     "resilience")
      * @param amount       the amount to drain
      * @param stressFactor how stressful this drain is (1.0 = normal)
      */

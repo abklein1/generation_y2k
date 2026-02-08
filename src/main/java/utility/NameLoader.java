@@ -26,7 +26,7 @@ public class NameLoader {
     private static final HashMap<Integer, Long> frequency1989 = new HashMap<>();
     private static final HashMap<Integer, Long> frequency1990 = new HashMap<>();
     private static final HashMap<Integer, Character> gender = new HashMap<>();
-    //cache gender maps for students
+    // cache gender maps for students
     private static final HashMap<Integer, Character> gender1986 = new HashMap<>();
     private static final HashMap<Integer, Character> gender1987 = new HashMap<>();
     private static final HashMap<Integer, Character> gender1988 = new HashMap<>();
@@ -199,7 +199,7 @@ public class NameLoader {
         return f_name;
     }
 
-    //TODO: handle fail states better
+    // TODO: handle fail states better
     private static String chooseByWeight(List<String> names, List<Long> weights) {
         if (names.isEmpty() || weights.isEmpty() || names.size() != weights.size()) {
             return null;
@@ -285,7 +285,8 @@ public class NameLoader {
             e.printStackTrace();
         } finally {
             try {
-                if (lr != null) lr.close();
+                if (lr != null)
+                    lr.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -304,23 +305,23 @@ public class NameLoader {
         }
     }
 
-    // Select a surname based on the weight and then a race based on the distribution
+    // Select a surname based on the weight and then a race based on the
+    // distribution
     public static String[] selectWeightedRandom() {
 
         double totalWeight = lastNamesStudent.values().stream().mapToDouble(nd -> nd.weight).sum();
         double value = GameRandom.nextDouble() * totalWeight;
         double cumulativeWeight = 0.0;
 
-
         for (Map.Entry<String, NameData> entry : lastNamesStudent.entrySet()) {
             cumulativeWeight += entry.getValue().weight;
             if (cumulativeWeight >= value) {
                 // We've selected a name, now select the race
                 String selectedRace = selectRace(entry.getValue().raceDistribution);
-                return new String[]{entry.getKey(), selectedRace};
+                return new String[] { entry.getKey(), selectedRace };
             }
         }
-        return new String[]{"", ""}; // Empty result as a fallback
+        return new String[] { "", "" }; // Empty result as a fallback
     }
 
     // Weighted random selection for race

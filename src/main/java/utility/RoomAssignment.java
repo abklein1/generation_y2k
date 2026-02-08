@@ -11,7 +11,7 @@ import java.util.Map;
 public class RoomAssignment {
     public static void assignTeacherToRoom(Staff staff, Room room) {
         room.setAssignedStaff(staff);
-        
+
         // Rename classroom based on the assigned teacher
         if (room instanceof Classroom classroom) {
             String originalName = classroom.getRoomName();
@@ -27,8 +27,8 @@ public class RoomAssignment {
 
         // Handle null staff type - skip room assignment for now
         if (type == null) {
-            GameLogger.logScheduling("WARNING: Staff " + staff.teacherName.getFirstName() + " " + 
-                             staff.teacherName.getLastName() + " has no assigned type, skipping room assignment");
+            GameLogger.logScheduling("WARNING: Staff " + staff.teacherName.getFirstName() + " " +
+                    staff.teacherName.getLastName() + " has no assigned type, skipping room assignment");
             return;
         }
 
@@ -38,7 +38,8 @@ public class RoomAssignment {
                 for (ComputerLab computerLab : computerLabs) {
                     if (computerLab.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, computerLab);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + computerLab.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + computerLab.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -49,7 +50,8 @@ public class RoomAssignment {
                 for (VocationalRoom vocationalRoom : vocationalRooms) {
                     if (vocationalRoom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, vocationalRoom);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + vocationalRoom.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + vocationalRoom.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -63,7 +65,8 @@ public class RoomAssignment {
                     if (dramaRoom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, dramaRoom);
                         teacherAssigned = true;
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + dramaRoom.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + dramaRoom.getRoomName());
                         break;
                     }
                 }
@@ -72,7 +75,8 @@ public class RoomAssignment {
                         if (musicRoom.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, musicRoom);
                             teacherAssigned = true;
-                            GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + musicRoom.getRoomName());
+                            GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                    + staff.teacherName.getLastName() + " to " + musicRoom.getRoomName());
                             break;
                         }
                     }
@@ -82,7 +86,8 @@ public class RoomAssignment {
                         if (auditorium.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, auditorium);
                             teacherAssigned = true;
-                            GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + auditorium.getRoomName());
+                            GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                    + staff.teacherName.getLastName() + " to " + auditorium.getRoomName());
                             break;
                         }
                     }
@@ -93,7 +98,8 @@ public class RoomAssignment {
                 for (ArtStudio artStudio : artStudios) {
                     if (artStudio.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, artStudio);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + artStudio.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + artStudio.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -104,7 +110,8 @@ public class RoomAssignment {
                 for (LibraryR libraryR : libraryRS) {
                     if (libraryR.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, libraryR);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + libraryR.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + libraryR.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -114,7 +121,8 @@ public class RoomAssignment {
                 for (Office office : offices) {
                     if (office.getRoomName().contains("Nurse") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -124,7 +132,8 @@ public class RoomAssignment {
                 for (Office office : offices) {
                     if (office.getRoomName().contains("Guidance") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -134,7 +143,8 @@ public class RoomAssignment {
                 for (Office office : offices) {
                     if (office.getRoomName().equals("Vice Principal's Office") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -144,7 +154,8 @@ public class RoomAssignment {
                 for (Office office : offices) {
                     if (office.getRoomName().equals("Principal's Office") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -155,7 +166,8 @@ public class RoomAssignment {
                 for (Lunchroom lunchroom : lunchrooms) {
                     if (lunchroom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, lunchroom);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + lunchroom.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + lunchroom.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -165,7 +177,8 @@ public class RoomAssignment {
                 for (Office office : offices) {
                     if (office.getRoomName().equals("Front Office") && office.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + office.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -177,7 +190,8 @@ public class RoomAssignment {
                 for (Gym gym : gyms) {
                     if (gym.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, gym);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + gym.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + gym.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -186,7 +200,8 @@ public class RoomAssignment {
                     for (AthleticField athleticField : athleticFields) {
                         if (athleticField.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, athleticField);
-                            GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + athleticField.getRoomName());
+                            GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                    + staff.teacherName.getLastName() + " to " + athleticField.getRoomName());
                             teacherAssigned = true;
                             break;
                         }
@@ -201,7 +216,8 @@ public class RoomAssignment {
                 for (UtilityRoom utilityRoom : utilityRooms) {
                     if (utilityRoom.getAssignedStaff().size() < utilityRoom.getStaffCapacity()) {
                         assignTeacherToRoom(staff, utilityRoom);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + utilityRoom.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + utilityRoom.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -212,7 +228,8 @@ public class RoomAssignment {
                 for (Classroom classroom : classrooms) {
                     if (classroom.getClassRoomType().equals("Science") && classroom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, classroom);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + classroom.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + classroom.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -221,7 +238,9 @@ public class RoomAssignment {
                     for (Classroom classroom : classrooms) {
                         if (classroom.getAssignedStaff().isEmpty()) {
                             assignTeacherToRoom(staff, classroom);
-                            GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + classroom.getRoomName() + " of other type!");
+                            GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                    + staff.teacherName.getLastName() + " to " + classroom.getRoomName()
+                                    + " of other type!");
                             teacherAssigned = true;
                             break;
                         }
@@ -233,7 +252,8 @@ public class RoomAssignment {
                 for (Classroom classroom : classrooms) {
                     if (classroom.getAssignedStaff().isEmpty()) {
                         assignTeacherToRoom(staff, classroom);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName() + " to " + classroom.getRoomName());
+                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                                + staff.teacherName.getLastName() + " to " + classroom.getRoomName());
                         teacherAssigned = true;
                         break;
                     }
@@ -242,12 +262,13 @@ public class RoomAssignment {
         }
 
         if (!teacherAssigned) {
-            GameLogger.logScheduling("No available room found for " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
+            GameLogger.logScheduling("No available room found for " + staff.teacherName.getFirstName() + " "
+                    + staff.teacherName.getLastName());
         }
     }
 
     public static void initialClassroomAssignments(StandardSchool school, HashMap<Integer, Staff> staffHashMap) {
-        //Assign teacher to each classroom
+        // Assign teacher to each classroom
         for (Map.Entry<Integer, Staff> entry : staffHashMap.entrySet()) {
             initialRoomAssignmentHelper(entry.getValue(), school);
         }

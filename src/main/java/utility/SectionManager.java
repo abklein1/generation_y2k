@@ -19,7 +19,8 @@ import static constants.SchedulingConstants.*;
  */
 public class SectionManager {
 
-    // -------------------------------------------------- shared state (formerly in ESSA)
+    // -------------------------------------------------- shared state (formerly in
+    // ESSA)
     private static final Map<String, List<ClassSection>> classSections = new HashMap<>();
     private static final Map<String, StudentDemand> demandTracker = new HashMap<>();
     private static final Map<String, Set<Student>> classWaitlists = new HashMap<>();
@@ -28,7 +29,8 @@ public class SectionManager {
     // -------------------------------------------------- promoted inner types
 
     /**
-     * Represents a section of a class taught by a specific teacher in a specific block.
+     * Represents a section of a class taught by a specific teacher in a specific
+     * block.
      * Promoted from EnhancedStudentScheduleAssigner.ClassSection.
      */
     public static class ClassSection {
@@ -46,21 +48,45 @@ public class SectionManager {
             this.enrolledStudents = new HashSet<>();
         }
 
-        public void addStudent(Student student) { enrolledStudents.add(student); }
-        public void removeStudent(Student student) { enrolledStudents.remove(student); }
-        public boolean isFull() { return enrolledStudents.size() >= capacity; }
-        public String getClassName() { return className; }
-        public Staff getTeacher() { return teacher; }
-        public TeacherBlock getTeacherBlock() { return teacherBlock; }
-        public int getCapacity() { return capacity; }
-        public Set<Student> getEnrolledStudents() { return enrolledStudents; }
+        public void addStudent(Student student) {
+            enrolledStudents.add(student);
+        }
+
+        public void removeStudent(Student student) {
+            enrolledStudents.remove(student);
+        }
+
+        public boolean isFull() {
+            return enrolledStudents.size() >= capacity;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+
+        public Staff getTeacher() {
+            return teacher;
+        }
+
+        public TeacherBlock getTeacherBlock() {
+            return teacherBlock;
+        }
+
+        public int getCapacity() {
+            return capacity;
+        }
+
+        public Set<Student> getEnrolledStudents() {
+            return enrolledStudents;
+        }
     }
 
     /**
      * Tracks student demand for a class.
      * Promoted from EnhancedStudentScheduleAssigner.StudentDemand.
      */
-    public record StudentDemand(String className, int totalDemand, Set<Student> interestedStudents) {}
+    public record StudentDemand(String className, int totalDemand, Set<Student> interestedStudents) {
+    }
 
     /**
      * Information about a scheduling shortage.
@@ -98,9 +124,17 @@ public class SectionManager {
 
     // -------------------------------------------------- state accessors
 
-    public static Map<String, List<ClassSection>> getClassSections() { return classSections; }
-    public static Map<String, StudentDemand> getDemandTracker() { return demandTracker; }
-    public static Map<String, Set<Student>> getClassWaitlists() { return classWaitlists; }
+    public static Map<String, List<ClassSection>> getClassSections() {
+        return classSections;
+    }
+
+    public static Map<String, StudentDemand> getDemandTracker() {
+        return demandTracker;
+    }
+
+    public static Map<String, Set<Student>> getClassWaitlists() {
+        return classWaitlists;
+    }
 
     /** Gets a summary of critical shortages for reporting. */
     public static Map<String, ShortageInfo> getCriticalShortages() {
@@ -108,7 +142,9 @@ public class SectionManager {
     }
 
     /** Clears tracked shortages (call before new scheduling run). */
-    public static void clearShortages() { criticalShortages.clear(); }
+    public static void clearShortages() {
+        criticalShortages.clear();
+    }
 
     // -------------------------------------------------- section creation
 
@@ -139,7 +175,8 @@ public class SectionManager {
                     || className.equals("AP Human Geography")) {
                 GameLogger.logScheduling("DEBUG: Processing " + className + " with demand: " + demand.totalDemand());
                 List<Staff> qualifiedTeachers = getQualifiedTeachers(className, staffHashMap);
-                GameLogger.logScheduling("DEBUG: Found " + qualifiedTeachers.size() + " qualified teachers for " + className);
+                GameLogger.logScheduling(
+                        "DEBUG: Found " + qualifiedTeachers.size() + " qualified teachers for " + className);
                 for (Staff teacher : qualifiedTeachers) {
                     GameLogger.logScheduling("DEBUG: Teacher " + teacher.teacherName.getFirstName() + " " +
                             teacher.teacherName.getLastName() + " can teach " + className);
@@ -378,7 +415,9 @@ public class SectionManager {
                 .collect(Collectors.toList());
     }
 
-    /** Gets all classes that belong to a subject area from current demand tracker. */
+    /**
+     * Gets all classes that belong to a subject area from current demand tracker.
+     */
     public static List<String> getClassesInSubjectArea(String subjectArea) {
         return demandTracker.keySet().stream()
                 .filter(className -> belongsToSubjectArea(className, subjectArea))
@@ -395,7 +434,8 @@ public class SectionManager {
 
     /**
      * Determines if a class belongs to a specific subject area.
-     * Keywords are aligned with CurriculumRequirementsCalculator.mapClassToStaffType().
+     * Keywords are aligned with
+     * CurriculumRequirementsCalculator.mapClassToStaffType().
      */
     public static boolean belongsToSubjectArea(String className, String subjectArea) {
         String lowerName = className.toLowerCase();

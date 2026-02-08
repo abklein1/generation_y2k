@@ -12,30 +12,30 @@ import java.util.HashMap;
  * Handles initialization and updates of all entity tracking data.
  */
 public class EntityStateManager {
-    
+
     private final HashMap<Integer, Student> students;
     private final HashMap<Integer, Staff> staff;
     private final StandardSchool school;
     private final Time time;
-    
+
     /**
      * Creates an entity state manager.
      *
      * @param students the student population
-     * @param staff the staff population
-     * @param school the school
-     * @param time the game time
+     * @param staff    the staff population
+     * @param school   the school
+     * @param time     the game time
      */
     public EntityStateManager(HashMap<Integer, Student> students,
-                             HashMap<Integer, Staff> staff,
-                             StandardSchool school,
-                             Time time) {
+            HashMap<Integer, Staff> staff,
+            StandardSchool school,
+            Time time) {
         this.students = students;
         this.staff = staff;
         this.school = school;
         this.time = time;
     }
-    
+
     /**
      * Initializes all entity states and behavior trees.
      */
@@ -43,7 +43,7 @@ public class EntityStateManager {
         initializeStudentStates();
         initializeStaffStates();
     }
-    
+
     /**
      * Initializes entity states for all students.
      */
@@ -51,24 +51,24 @@ public class EntityStateManager {
         if (students == null) {
             return;
         }
-        
+
         for (Student student : students.values()) {
             // Ensure entity state exists
             if (student.getEntityState() == null) {
                 student.setEntityState(new EntityState());
             }
-            
+
             // Assign lunch period (alternating A/B based on grade)
             String grade = student.studentStatistics.getGradeLevel();
             String lunchPeriod = assignLunchPeriod(grade);
             student.getEntityState().setLunchPeriod(lunchPeriod);
-            
+
             // Build and assign behavior tree
             BehaviorTree tree = StudentBehaviorTreeBuilder.buildTree(student);
             student.setBehaviorTree(tree);
         }
     }
-    
+
     /**
      * Initializes entity states for all staff.
      */
@@ -76,12 +76,12 @@ public class EntityStateManager {
         if (staff == null) {
             return;
         }
-        
+
         for (Staff staffMember : staff.values()) {
             if (staffMember.getEntityState() == null) {
                 staffMember.setEntityState(new EntityState());
             }
-            
+
             // Set initial location to assigned room
             Room assignedRoom = school.getClassroomByStaff(staffMember);
             if (assignedRoom != null) {
@@ -90,7 +90,7 @@ public class EntityStateManager {
             }
         }
     }
-    
+
     /**
      * Assigns a lunch period based on grade level.
      * Freshman and Sophomores typically get A lunch,
@@ -103,7 +103,7 @@ public class EntityStateManager {
         if (gradeLevel == null) {
             return "A";
         }
-        
+
         switch (gradeLevel) {
             case "Freshman":
             case "Sophomore":
@@ -115,7 +115,7 @@ public class EntityStateManager {
                 return "A";
         }
     }
-    
+
     /**
      * Updates all student expected locations based on the current period.
      *
@@ -125,26 +125,26 @@ public class EntityStateManager {
         if (students == null || currentPeriod <= 0) {
             return;
         }
-        
+
         for (Student student : students.values()) {
             EntityState state = student.getEntityState();
             if (state == null) {
                 continue;
             }
-            
+
             // Get scheduled room for this period
             StudentSchedule schedule = student.studentStatistics.getStudentSchedule();
             if (schedule == null) {
                 continue;
             }
-            
+
             StudentBlock block = schedule.getByBlockNumber(currentPeriod);
             if (block != null && block.getRoom() != null) {
                 state.setExpectedRoom(block.getRoom());
             }
         }
     }
-    
+
     /**
      * Places all students in their first period classrooms.
      * Call this at the start of the school day.
@@ -153,16 +153,16 @@ public class EntityStateManager {
         if (students == null) {
             return;
         }
-        
+
         for (Student student : students.values()) {
             EntityState state = student.getEntityState();
             if (state == null) {
                 continue;
             }
-            
+
             // Reset state for new day
             state.resetForNewDay();
-            
+
             // Get first period room
             StudentSchedule schedule = student.studentStatistics.getStudentSchedule();
             if (schedule != null) {
@@ -176,7 +176,7 @@ public class EntityStateManager {
             }
         }
     }
-    
+
     /**
      * Places all staff in their assigned rooms.
      * Call this at the start of the school day.
@@ -185,15 +185,15 @@ public class EntityStateManager {
         if (staff == null) {
             return;
         }
-        
+
         for (Staff staffMember : staff.values()) {
             EntityState state = staffMember.getEntityState();
             if (state == null) {
                 continue;
             }
-            
+
             state.resetForNewDay();
-            
+
             Room assignedRoom = school.getClassroomByStaff(staffMember);
             if (assignedRoom != null) {
                 state.setCurrentRoom(assignedRoom);
@@ -202,7 +202,7 @@ public class EntityStateManager {
             }
         }
     }
-    
+
     /**
      * Gets statistics about current entity states.
      *
@@ -212,7 +212,7 @@ public class EntityStateManager {
         if (students == null) {
             return "No students loaded";
         }
-        
+
         int attending = 0;
         int daydreaming = 0;
         int socializing = 0;
@@ -220,19 +220,19 @@ public class EntityStateManager {
         int bathroom = 0;
         int skipping = 0;
         int other = 0;
-        
+
         for (Student student : students.values()) {
             EntityState state = student.getEntityState();
             if (state == null) {
                 continue;
             }
-            
+
             ActivityType activity = state.getCurrentActivity();
             if (activity == null) {
                 other++;
                 continue;
             }
-            
+
             switch (activity) {
                 case ATTENDING_CLASS:
                 case TAKING_NOTES:
@@ -261,11 +261,10 @@ public class EntityStateManager {
                     break;
             }
         }
-        
+
         return String.format(
                 "Students - Attending: %d, Daydreaming: %d, Socializing: %d, " +
-                "Transitioning: %d, Bathroom: %d, Skipping: %d, Other: %d",
-                attending, daydreaming, socializing, transitioning, bathroom, skipping, other
-        );
+                        "Transitioning: %d, Bathroom: %d, Skipping: %d, Other: %d",
+                attending, daydreaming, socializing, transitioning, bathroom, skipping, other);
     }
 }

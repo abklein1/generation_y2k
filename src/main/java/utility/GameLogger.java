@@ -6,10 +6,12 @@ import java.util.EnumMap;
 
 /**
  * Centralized logging utility for the game.
- * Provides toggleable message categories that route output to the internal console.
+ * Provides toggleable message categories that route output to the internal
+ * console.
  * 
  * Categories are automatically configured based on game mode:
- * - New Game: Only STORY messages are enabled (to preserve discovery for players)
+ * - New Game: Only STORY messages are enabled (to preserve discovery for
+ * players)
  * - New Simulation: All categories are enabled (for debugging and development)
  */
 public class GameLogger {
@@ -42,11 +44,13 @@ public class GameLogger {
     }
 
     /**
-     * Initialize the logger with a GameView reference and configure categories based on game mode.
+     * Initialize the logger with a GameView reference and configure categories
+     * based on game mode.
      * This should only be called on the FIRST run to set defaults.
      * 
-     * @param gameView The GameView instance for output
-     * @param isGameMode true for New Game mode (minimal logging), false for New Simulation (full logging)
+     * @param gameView   The GameView instance for output
+     * @param isGameMode true for New Game mode (minimal logging), false for New
+     *                   Simulation (full logging)
      */
     public static void initialize(GameView gameView, boolean isGameMode) {
         view = gameView;
@@ -83,7 +87,7 @@ public class GameLogger {
      * The message will only be output if the category is enabled.
      * 
      * @param category The message category
-     * @param message The message to log
+     * @param message  The message to log
      */
     public static void log(Category category, String message) {
         if (!initialized || view == null) {
@@ -100,7 +104,7 @@ public class GameLogger {
      * Enable or disable a specific category.
      * 
      * @param category The category to modify
-     * @param enabled true to enable, false to disable
+     * @param enabled  true to enable, false to disable
      */
     public static void setEnabled(Category category, boolean enabled) {
         categoryEnabled.put(category, enabled);

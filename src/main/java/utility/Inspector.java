@@ -243,7 +243,7 @@ public class Inspector {
                 sb.append(block.getClassName());
                 if (block.getTeacher() != null) {
                     sb.append("\n           ").append(block.getTeacher().teacherName.getFirstName())
-                      .append(" ").append(block.getTeacher().teacherName.getLastName());
+                            .append(" ").append(block.getTeacher().teacherName.getLastName());
                 }
                 if (block.getRoom() != null) {
                     sb.append("  [").append(block.getRoom().getRoomName()).append("]");
@@ -267,7 +267,7 @@ public class Inspector {
                 sb.append(block.getClassName());
                 if (block.getTeacher() != null) {
                     sb.append("\n           ").append(block.getTeacher().teacherName.getFirstName())
-                      .append(" ").append(block.getTeacher().teacherName.getLastName());
+                            .append(" ").append(block.getTeacher().teacherName.getLastName());
                 }
                 if (block.getRoom() != null) {
                     sb.append("  [").append(block.getRoom().getRoomName()).append("]");
@@ -281,7 +281,8 @@ public class Inspector {
 
     /**
      * Maps block numbers to display periods.
-     * In a 4x4 block schedule, block numbers 1-4 correspond directly to periods 1-4.
+     * In a 4x4 block schedule, block numbers 1-4 correspond directly to periods
+     * 1-4.
      * Each period exists in both Fall and Spring semesters.
      */
     private static int mapBlockToPeriod(int blockNumber) {
@@ -289,7 +290,8 @@ public class Inspector {
     }
 
     /**
-     * Public accessor for the schedule panel, used by SchoolController's inspection window.
+     * Public accessor for the schedule panel, used by SchoolController's inspection
+     * window.
      *
      * @param student the student whose schedule to display
      * @return a JPanel containing the schedule table
@@ -300,7 +302,8 @@ public class Inspector {
 
     /**
      * Builds a schedule panel as a JTable organized by semester.
-     * Columns: Period | Fall Class | Fall Teacher | Fall Room | Spring Class | Spring Teacher | Spring Room
+     * Columns: Period | Fall Class | Fall Teacher | Fall Room | Spring Class |
+     * Spring Teacher | Spring Room
      *
      * @param student the student whose schedule to display
      * @return a JPanel containing the schedule table
@@ -319,8 +322,8 @@ public class Inspector {
         }
 
         // Build table data: 4 periods x 7 columns
-        String[] columns = {"Period", "Fall Class", "Fall Teacher", "Fall Room",
-                            "Spring Class", "Spring Teacher", "Spring Room"};
+        String[] columns = { "Period", "Fall Class", "Fall Teacher", "Fall Room",
+                "Spring Class", "Spring Teacher", "Spring Room" };
         Object[][] data = new Object[4][7];
 
         for (int period = 1; period <= 4; period++) {
@@ -332,7 +335,7 @@ public class Inspector {
                 data[period - 1][1] = fallBlock.getClassName();
                 data[period - 1][2] = fallBlock.getTeacher() != null
                         ? fallBlock.getTeacher().teacherName.getFirstName() + " "
-                          + fallBlock.getTeacher().teacherName.getLastName()
+                                + fallBlock.getTeacher().teacherName.getLastName()
                         : "";
                 data[period - 1][3] = fallBlock.getRoom() != null
                         ? fallBlock.getRoom().getRoomName()
@@ -349,7 +352,7 @@ public class Inspector {
                 data[period - 1][4] = springBlock.getClassName();
                 data[period - 1][5] = springBlock.getTeacher() != null
                         ? springBlock.getTeacher().teacherName.getFirstName() + " "
-                          + springBlock.getTeacher().teacherName.getLastName()
+                                + springBlock.getTeacher().teacherName.getLastName()
                         : "";
                 data[period - 1][6] = springBlock.getRoom() != null
                         ? springBlock.getRoom().getRoomName()
@@ -374,13 +377,13 @@ public class Inspector {
         table.setFillsViewportHeight(true);
 
         // Set column widths
-        table.getColumnModel().getColumn(0).setPreferredWidth(60);   // Period
-        table.getColumnModel().getColumn(1).setPreferredWidth(160);  // Fall Class
-        table.getColumnModel().getColumn(2).setPreferredWidth(120);  // Fall Teacher
-        table.getColumnModel().getColumn(3).setPreferredWidth(80);   // Fall Room
-        table.getColumnModel().getColumn(4).setPreferredWidth(160);  // Spring Class
-        table.getColumnModel().getColumn(5).setPreferredWidth(120);  // Spring Teacher
-        table.getColumnModel().getColumn(6).setPreferredWidth(80);   // Spring Room
+        table.getColumnModel().getColumn(0).setPreferredWidth(60); // Period
+        table.getColumnModel().getColumn(1).setPreferredWidth(160); // Fall Class
+        table.getColumnModel().getColumn(2).setPreferredWidth(120); // Fall Teacher
+        table.getColumnModel().getColumn(3).setPreferredWidth(80); // Fall Room
+        table.getColumnModel().getColumn(4).setPreferredWidth(160); // Spring Class
+        table.getColumnModel().getColumn(5).setPreferredWidth(120); // Spring Teacher
+        table.getColumnModel().getColumn(6).setPreferredWidth(80); // Spring Room
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -410,7 +413,8 @@ public class Inspector {
     /**
      * Opens a full student inspection dialog with tabbed panes.
      * Tab 1 (Info): Personal details, stats, status effects, and family info.
-     * Tab 2 (Schedule): Class schedule organized by Fall/Spring semesters with periods 1-4.
+     * Tab 2 (Schedule): Class schedule organized by Fall/Spring semesters with
+     * periods 1-4.
      *
      * @param student the student to inspect
      */

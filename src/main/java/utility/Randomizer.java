@@ -7,6 +7,7 @@ package utility;
 public class Randomizer {
     /**
      * Get a random integer between min and max (inclusive).
+     * 
      * @param min Minimum value (inclusive)
      * @param max Maximum value (inclusive)
      * @return Random integer in range [min, max]

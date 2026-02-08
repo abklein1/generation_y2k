@@ -17,16 +17,15 @@ import java.util.*;
  * This enables demand-driven school staffing rather than arbitrary limits.
  */
 public class CurriculumRequirementsCalculator {
-    
+
     // Grade levels in scheduling priority order
-    private static final String[] GRADE_LEVELS = {"Freshman", "Sophomore", "Junior", "Senior"};
-    
+    private static final String[] GRADE_LEVELS = { "Freshman", "Sophomore", "Junior", "Senior" };
+
     // Core subject keywords for classification
     private static final Set<String> CORE_KEYWORDS = Set.of(
-        "english", "math", "algebra", "geometry", "calculus", "trigonometry", "precalculus",
-        "science", "biology", "chemistry", "physics",
-        "history", "geography", "government", "economics"
-    );
+            "english", "math", "algebra", "geometry", "calculus", "trigonometry", "precalculus",
+            "science", "biology", "chemistry", "physics",
+            "history", "geography", "government", "economics");
 
     // ==================== Data Classes ====================
 
@@ -43,8 +42,8 @@ public class CurriculumRequirementsCalculator {
         private final List<String> gradesTaking;
 
         public ClassRequirement(String className, StaffType staffType, int studentDemand,
-                                int sectionsNeeded, int teachersNeeded, boolean isCoreSubject,
-                                List<String> gradesTaking) {
+                int sectionsNeeded, int teachersNeeded, boolean isCoreSubject,
+                List<String> gradesTaking) {
             this.className = className;
             this.staffType = staffType;
             this.studentDemand = studentDemand;
@@ -54,18 +53,38 @@ public class CurriculumRequirementsCalculator {
             this.gradesTaking = new ArrayList<>(gradesTaking);
         }
 
-        public String getClassName() { return className; }
-        public StaffType getStaffType() { return staffType; }
-        public int getStudentDemand() { return studentDemand; }
-        public int getSectionsNeeded() { return sectionsNeeded; }
-        public int getTeachersNeeded() { return teachersNeeded; }
-        public boolean isCoreSubject() { return isCoreSubject; }
-        public List<String> getGradesTaking() { return new ArrayList<>(gradesTaking); }
+        public String getClassName() {
+            return className;
+        }
+
+        public StaffType getStaffType() {
+            return staffType;
+        }
+
+        public int getStudentDemand() {
+            return studentDemand;
+        }
+
+        public int getSectionsNeeded() {
+            return sectionsNeeded;
+        }
+
+        public int getTeachersNeeded() {
+            return teachersNeeded;
+        }
+
+        public boolean isCoreSubject() {
+            return isCoreSubject;
+        }
+
+        public List<String> getGradesTaking() {
+            return new ArrayList<>(gradesTaking);
+        }
 
         @Override
         public String toString() {
             return String.format("%s: %d students, %d sections, %d teachers (%s)",
-                className, studentDemand, sectionsNeeded, teachersNeeded, staffType);
+                    className, studentDemand, sectionsNeeded, teachersNeeded, staffType);
         }
     }
 
@@ -79,19 +98,33 @@ public class CurriculumRequirementsCalculator {
         private final int totalSupportStaff;
 
         public StaffRequirements(Map<StaffType, Integer> teachersByType,
-                                 Map<StaffType, List<ClassRequirement>> classesByType,
-                                 int totalSupportStaff) {
+                Map<StaffType, List<ClassRequirement>> classesByType,
+                int totalSupportStaff) {
             this.teachersByType = new HashMap<>(teachersByType);
             this.classesByType = new HashMap<>(classesByType);
             this.totalTeachingStaff = teachersByType.values().stream().mapToInt(i -> i).sum();
             this.totalSupportStaff = totalSupportStaff;
         }
 
-        public Map<StaffType, Integer> getTeachersByType() { return new HashMap<>(teachersByType); }
-        public Map<StaffType, List<ClassRequirement>> getClassesByType() { return new HashMap<>(classesByType); }
-        public int getTotalTeachingStaff() { return totalTeachingStaff; }
-        public int getTotalSupportStaff() { return totalSupportStaff; }
-        public int getTotalStaff() { return totalTeachingStaff + totalSupportStaff; }
+        public Map<StaffType, Integer> getTeachersByType() {
+            return new HashMap<>(teachersByType);
+        }
+
+        public Map<StaffType, List<ClassRequirement>> getClassesByType() {
+            return new HashMap<>(classesByType);
+        }
+
+        public int getTotalTeachingStaff() {
+            return totalTeachingStaff;
+        }
+
+        public int getTotalSupportStaff() {
+            return totalSupportStaff;
+        }
+
+        public int getTotalStaff() {
+            return totalTeachingStaff + totalSupportStaff;
+        }
 
         public int getRequiredTeachers(StaffType type) {
             return teachersByType.getOrDefault(type, 0);
@@ -109,9 +142,9 @@ public class CurriculumRequirementsCalculator {
         private final List<String> warnings;
 
         public CurriculumAnalysis(Map<String, ClassRequirement> classRequirements,
-                                  StaffRequirements staffRequirements,
-                                  Map<String, Integer> studentsByGrade,
-                                  List<String> warnings) {
+                StaffRequirements staffRequirements,
+                Map<String, Integer> studentsByGrade,
+                List<String> warnings) {
             this.classRequirements = new HashMap<>(classRequirements);
             this.staffRequirements = staffRequirements;
             this.studentsByGrade = new HashMap<>(studentsByGrade);
@@ -119,11 +152,25 @@ public class CurriculumRequirementsCalculator {
             this.warnings = new ArrayList<>(warnings);
         }
 
-        public Map<String, ClassRequirement> getClassRequirements() { return new HashMap<>(classRequirements); }
-        public StaffRequirements getStaffRequirements() { return staffRequirements; }
-        public Map<String, Integer> getStudentsByGrade() { return new HashMap<>(studentsByGrade); }
-        public int getTotalStudents() { return totalStudents; }
-        public List<String> getWarnings() { return new ArrayList<>(warnings); }
+        public Map<String, ClassRequirement> getClassRequirements() {
+            return new HashMap<>(classRequirements);
+        }
+
+        public StaffRequirements getStaffRequirements() {
+            return staffRequirements;
+        }
+
+        public Map<String, Integer> getStudentsByGrade() {
+            return new HashMap<>(studentsByGrade);
+        }
+
+        public int getTotalStudents() {
+            return totalStudents;
+        }
+
+        public List<String> getWarnings() {
+            return new ArrayList<>(warnings);
+        }
 
         public ClassRequirement getRequirement(String className) {
             return classRequirements.get(className);
@@ -135,85 +182,83 @@ public class CurriculumRequirementsCalculator {
     /**
      * Analyzes student pool and calculates all curriculum requirements.
      *
-     * @param pool the student pool to analyze
+     * @param pool         the student pool to analyze
      * @param fundingModel the school funding model for capacity calculations
      * @return complete curriculum analysis
      */
     public static CurriculumAnalysis analyzeRequirements(StudentPool pool, SchoolFundingModel fundingModel) {
         List<String> warnings = new ArrayList<>();
-        
+
         // Count students by grade level
         Map<String, Integer> studentsByGrade = countStudentsByGrade(pool);
-        
+
         // Analyze demand for each class
         Map<String, ClassDemand> classDemand = analyzeClassDemand(pool);
-        
+
         // Calculate sections and teachers needed
         Map<String, ClassRequirement> classRequirements = new HashMap<>();
         Map<StaffType, Integer> teachersByType = new EnumMap<>(StaffType.class);
         Map<StaffType, Integer> totalSectionsByType = new EnumMap<>(StaffType.class);
         Map<StaffType, List<ClassRequirement>> classesByType = new EnumMap<>(StaffType.class);
-        
+
         int classesPerTeacher = 4; // In a 4x4 block schedule, use 4 to ensure adequate staffing
-        
+
         for (Map.Entry<String, ClassDemand> entry : classDemand.entrySet()) {
             String className = entry.getKey();
             ClassDemand demand = entry.getValue();
-            
+
             StaffType staffType = mapClassToStaffType(className);
             boolean isCoreSubject = isCoreSubject(className);
-            
+
             // Calculate sections needed
             int sectionsNeeded = fundingModel.calculateSectionsNeeded(demand.totalStudents);
-            
+
             // Adjust for full-year vs semester courses
             if (isFullYearCourse(className)) {
                 sectionsNeeded = sectionsNeeded * 2; // Need sections for both semesters
             }
-            
+
             // Calculate teachers needed for this class (for the ClassRequirement object)
             int teachersNeeded = Math.max(1, (int) Math.ceil((double) sectionsNeeded / classesPerTeacher));
-            
+
             ClassRequirement req = new ClassRequirement(
-                className, staffType, demand.totalStudents, sectionsNeeded,
-                teachersNeeded, isCoreSubject, demand.gradesTaking
-            );
-            
+                    className, staffType, demand.totalStudents, sectionsNeeded,
+                    teachersNeeded, isCoreSubject, demand.gradesTaking);
+
             classRequirements.put(className, req);
-            
+
             // Aggregate total sections by staff type (sum, not max)
             totalSectionsByType.merge(staffType, sectionsNeeded, Integer::sum);
             classesByType.computeIfAbsent(staffType, k -> new ArrayList<>()).add(req);
         }
-        
+
         // Calculate teachers needed by type based on total sections
         for (Map.Entry<StaffType, Integer> entry : totalSectionsByType.entrySet()) {
             int totalSections = entry.getValue();
             int teachersNeeded = Math.max(1, (int) Math.ceil((double) totalSections / classesPerTeacher));
             teachersByType.put(entry.getKey(), teachersNeeded);
         }
-        
+
         // Calculate support staff needs based on total student population
         int totalStudents = studentsByGrade.values().stream().mapToInt(i -> i).sum();
         int supportStaff = calculateSupportStaffNeeds(totalStudents, fundingModel);
-        
+
         // Add support staff to requirements
         addSupportStaffRequirements(teachersByType, totalStudents, fundingModel);
-        
+
         StaffRequirements staffRequirements = new StaffRequirements(
-            teachersByType, classesByType, supportStaff
-        );
-        
+                teachersByType, classesByType, supportStaff);
+
         // Generate warnings for potential issues
         generateWarnings(classRequirements, studentsByGrade, warnings);
-        
+
         return new CurriculumAnalysis(classRequirements, staffRequirements, studentsByGrade, warnings);
     }
 
     /**
      * Simplified analysis that returns just staff requirements by type.
      *
-     * @param pool the student pool
+     * @param pool         the student pool
      * @param fundingModel the funding model
      * @return map of staff type to required count
      */
@@ -235,7 +280,7 @@ public class CurriculumRequirementsCalculator {
     private static class ClassDemand {
         int totalStudents;
         List<String> gradesTaking = new ArrayList<>();
-        
+
         void addDemand(int count, String grade) {
             totalStudents += count;
             if (!gradesTaking.contains(grade)) {
@@ -246,21 +291,21 @@ public class CurriculumRequirementsCalculator {
 
     private static Map<String, ClassDemand> analyzeClassDemand(StudentPool pool) {
         Map<String, ClassDemand> demand = new HashMap<>();
-        
+
         // Analyze each student to determine what classes they need
         for (Student student : pool.getAllStudents().values()) {
             if (!student.isInHighSchool()) {
                 continue; // Skip non-high-school students
             }
-            
+
             String grade = student.studentStatistics.getGradeLevel();
             List<String> neededClasses = determineStudentClasses(student);
-            
+
             for (String className : neededClasses) {
                 demand.computeIfAbsent(className, k -> new ClassDemand()).addDemand(1, grade);
             }
         }
-        
+
         return demand;
     }
 
@@ -269,15 +314,15 @@ public class CurriculumRequirementsCalculator {
      */
     private static List<String> determineStudentClasses(Student student) {
         List<String> classes = new ArrayList<>();
-        
+
         String year = student.studentStatistics.getGradeLevel();
         int intelligence = student.studentStatistics.getIntelligence();
         int determination = student.studentStatistics.getDetermination();
         String income = student.studentStatistics.getIncomeLevel();
-        
+
         // Determine academic path (AP, Honors, On-Level)
         String path = determineAcademicPath(intelligence, income, determination);
-        
+
         // Add required classes for each subject area
         classes.addAll(getEnglishClasses(year, path));
         classes.addAll(getMathClasses(year, path));
@@ -286,7 +331,7 @@ public class CurriculumRequirementsCalculator {
         classes.addAll(getLanguageClasses(year));
         classes.addAll(getPhysEdClasses(year));
         classes.addAll(getElectiveClasses(year, student));
-        
+
         return classes;
     }
 
@@ -411,11 +456,26 @@ public class CurriculumRequirementsCalculator {
             // Use a distribution to spread across languages
             int choice = Randomizer.setRandom(0, 4);
             switch (choice) {
-                case 0 -> { classes.add("Spanish I"); classes.add("Spanish II"); }
-                case 1 -> { classes.add("French I"); classes.add("French II"); }
-                case 2 -> { classes.add("German I"); classes.add("German II"); }
-                case 3 -> { classes.add("American Sign Language I"); classes.add("American Sign Language II"); }
-                case 4 -> { classes.add("Latin I"); classes.add("Latin II"); }
+                case 0 -> {
+                    classes.add("Spanish I");
+                    classes.add("Spanish II");
+                }
+                case 1 -> {
+                    classes.add("French I");
+                    classes.add("French II");
+                }
+                case 2 -> {
+                    classes.add("German I");
+                    classes.add("German II");
+                }
+                case 3 -> {
+                    classes.add("American Sign Language I");
+                    classes.add("American Sign Language II");
+                }
+                case 4 -> {
+                    classes.add("Latin I");
+                    classes.add("Latin II");
+                }
             }
         }
         return classes;
@@ -445,19 +505,19 @@ public class CurriculumRequirementsCalculator {
             case "Junior", "Senior" -> 2;
             default -> 0;
         };
-        
+
         // Simplified elective selection
         String[] electives = {
-            "Art I", "Band", "Choir", "Drama",
-            "Computer Science I", "Journalism",
-            "Woodworking", "Auto Shop", "Culinary Arts"
+                "Art I", "Band", "Choir", "Drama",
+                "Computer Science I", "Journalism",
+                "Woodworking", "Auto Shop", "Culinary Arts"
         };
-        
+
         for (int i = 0; i < numElectives; i++) {
             int choice = Randomizer.setRandom(0, electives.length - 1);
             classes.add(electives[choice]);
         }
-        
+
         return classes;
     }
 
@@ -466,91 +526,93 @@ public class CurriculumRequirementsCalculator {
      */
     public static StaffType mapClassToStaffType(String className) {
         String lowerName = className.toLowerCase();
-        
+
         // English classes
         if (lowerName.contains("english") || lowerName.contains("literature") ||
-            lowerName.contains("composition") || lowerName.contains("journalism")) {
+                lowerName.contains("composition") || lowerName.contains("journalism")) {
             return StaffType.ENGLISH;
         }
-        
+
         // Math classes
         if (lowerName.contains("math") || lowerName.contains("algebra") ||
-            lowerName.contains("geometry") || lowerName.contains("calculus") ||
-            lowerName.contains("trigonometry") || lowerName.contains("precalculus") ||
-            lowerName.contains("statistics") || lowerName.contains("financial")) {
+                lowerName.contains("geometry") || lowerName.contains("calculus") ||
+                lowerName.contains("trigonometry") || lowerName.contains("precalculus") ||
+                lowerName.contains("statistics") || lowerName.contains("financial")) {
             return StaffType.MATH;
         }
-        
+
         // Science classes
         if (lowerName.contains("biology") || lowerName.contains("chemistry") ||
-            lowerName.contains("physics") || lowerName.contains("science") ||
-            lowerName.contains("anatomy") || lowerName.contains("environmental") ||
-            lowerName.contains("genetics")) {
+                lowerName.contains("physics") || lowerName.contains("science") ||
+                lowerName.contains("anatomy") || lowerName.contains("environmental") ||
+                lowerName.contains("genetics")) {
             return StaffType.SCIENCE;
         }
-        
+
         // History/Social Studies classes
         if (lowerName.contains("history") || lowerName.contains("geography") ||
-            lowerName.contains("government") || lowerName.contains("economics") ||
-            lowerName.contains("civics")) {
+                lowerName.contains("government") || lowerName.contains("economics") ||
+                lowerName.contains("civics")) {
             return StaffType.HISTORY;
         }
-        
+
         // Language classes
         if (lowerName.contains("spanish") || lowerName.contains("french") ||
-            lowerName.contains("german") || lowerName.contains("latin") ||
-            lowerName.contains("sign language") || lowerName.contains("asl")) {
+                lowerName.contains("german") || lowerName.contains("latin") ||
+                lowerName.contains("sign language") || lowerName.contains("asl")) {
             return StaffType.LANGUAGES;
         }
-        
+
         // Physical Education classes
         if (lowerName.contains("health") || lowerName.contains("sports") ||
-            lowerName.contains("weightlifting") || lowerName.contains("recreation") ||
-            lowerName.contains("physical education") || lowerName.contains("pe")) {
+                lowerName.contains("weightlifting") || lowerName.contains("recreation") ||
+                lowerName.contains("physical education") || lowerName.contains("pe") ||
+                lowerName.contains("dance")) {
             return StaffType.PHYSICAL_ED;
         }
-        
+
         // Visual Arts
         if (lowerName.contains("art") || lowerName.contains("drawing") ||
-            lowerName.contains("painting") || lowerName.contains("sculpture") ||
-            lowerName.contains("ceramics") || lowerName.contains("photography")) {
+                lowerName.contains("painting") || lowerName.contains("sculpture") ||
+                lowerName.contains("ceramics") || lowerName.contains("photography")) {
             return StaffType.VISUAL_ARTS;
         }
-        
+
         // Performing Arts
         if (lowerName.contains("band") || lowerName.contains("choir") ||
-            lowerName.contains("orchestra") || lowerName.contains("music") ||
-            lowerName.contains("drama") || lowerName.contains("theater") ||
-            lowerName.contains("theatre")) {
+                lowerName.contains("orchestra") || lowerName.contains("music") ||
+                lowerName.contains("drama") || lowerName.contains("theater") ||
+                lowerName.contains("theatre")) {
             return StaffType.PERFORMING_ARTS;
         }
-        
+
         // Computer Science
         if (lowerName.contains("computer") || lowerName.contains("programming") ||
-            lowerName.contains("coding") || lowerName.contains("technology")) {
+                lowerName.contains("coding") || lowerName.contains("technology") ||
+                lowerName.contains("keyboarding") || lowerName.contains("digital")) {
             return StaffType.COMP_SCI;
         }
-        
+
         // Vocational
         if (lowerName.contains("woodworking") || lowerName.contains("auto") ||
-            lowerName.contains("shop") || lowerName.contains("culinary") ||
-            lowerName.contains("welding") || lowerName.contains("construction") ||
-            lowerName.contains("hvac") || lowerName.contains("electrical")) {
+                lowerName.contains("shop") || lowerName.contains("culinary") ||
+                lowerName.contains("welding") || lowerName.contains("construction") ||
+                lowerName.contains("hvac") || lowerName.contains("electrical")) {
             return StaffType.VOCATIONAL;
         }
-        
+
         // Business
         if (lowerName.contains("business") || lowerName.contains("accounting") ||
-            lowerName.contains("marketing") || lowerName.contains("entrepreneurship")) {
+                lowerName.contains("marketing") || lowerName.contains("entrepreneurship")) {
             return StaffType.BUSINESS;
         }
-        
+
         // Consumer Science
         if (lowerName.contains("home economics") || lowerName.contains("consumer") ||
-            lowerName.contains("family") || lowerName.contains("child development")) {
+                lowerName.contains("family") || lowerName.contains("child development")) {
             return StaffType.CONSUMER_SCI;
         }
-        
+
         // Default to elective/substitute
         return StaffType.SUB;
     }
@@ -570,8 +632,8 @@ public class CurriculumRequirementsCalculator {
         // Language sequences are typically full year
         String lowerName = className.toLowerCase();
         return lowerName.contains("spanish") || lowerName.contains("french") ||
-               lowerName.contains("german") || lowerName.contains("latin") ||
-               lowerName.contains("sign language");
+                lowerName.contains("german") || lowerName.contains("latin") ||
+                lowerName.contains("sign language");
     }
 
     private static int calculateSupportStaffNeeds(int totalStudents, SchoolFundingModel fundingModel) {
@@ -584,15 +646,15 @@ public class CurriculumRequirementsCalculator {
         int officeStaff = Math.max(2, totalStudents / 400);
         int maintenance = Math.max(2, totalStudents / 300);
         int lunchStaff = Math.max(3, totalStudents / 200);
-        int substitutes = Math.max(10, (int)(totalStudents * 0.01)); // 10 per 1000 students, minimum 10
-        
-        return principal + vicePrincipals + guidanceCounselors + nurses + 
-               librarians + officeStaff + maintenance + lunchStaff + substitutes;
+        int substitutes = Math.max(10, (int) (totalStudents * 0.01)); // 10 per 1000 students, minimum 10
+
+        return principal + vicePrincipals + guidanceCounselors + nurses +
+                librarians + officeStaff + maintenance + lunchStaff + substitutes;
     }
 
-    private static void addSupportStaffRequirements(Map<StaffType, Integer> requirements, 
-                                                    int totalStudents, 
-                                                    SchoolFundingModel fundingModel) {
+    private static void addSupportStaffRequirements(Map<StaffType, Integer> requirements,
+            int totalStudents,
+            SchoolFundingModel fundingModel) {
         requirements.put(StaffType.PRINCIPAL, 1);
         requirements.put(StaffType.VICE_PRINCIPAL, Math.max(1, totalStudents / 400));
         requirements.put(StaffType.GUIDANCE, Math.max(2, totalStudents / 300));
@@ -601,27 +663,27 @@ public class CurriculumRequirementsCalculator {
         requirements.put(StaffType.OFFICE, Math.max(2, totalStudents / 400));
         requirements.put(StaffType.MAINTENANCE, Math.max(2, totalStudents / 300));
         requirements.put(StaffType.LUNCH, Math.max(3, totalStudents / 200));
-        requirements.put(StaffType.SUB, Math.max(10, (int)(totalStudents * 0.01))); // 10 per 1000 students, minimum 10
+        requirements.put(StaffType.SUB, Math.max(10, (int) (totalStudents * 0.01))); // 10 per 1000 students, minimum 10
     }
 
     private static void generateWarnings(Map<String, ClassRequirement> requirements,
-                                         Map<String, Integer> studentsByGrade,
-                                         List<String> warnings) {
+            Map<String, Integer> studentsByGrade,
+            List<String> warnings) {
         // Check for classes with very high demand
         for (ClassRequirement req : requirements.values()) {
             if (req.getStudentDemand() > 500 && req.isCoreSubject()) {
-                warnings.add("High demand for " + req.getClassName() + 
-                           ": " + req.getStudentDemand() + " students need " + req.getSectionsNeeded() + " sections");
+                warnings.add("High demand for " + req.getClassName() +
+                        ": " + req.getStudentDemand() + " students need " + req.getSectionsNeeded() + " sections");
             }
         }
-        
+
         // Check for grade imbalances
         int totalStudents = studentsByGrade.values().stream().mapToInt(i -> i).sum();
         for (Map.Entry<String, Integer> entry : studentsByGrade.entrySet()) {
             double percent = (double) entry.getValue() / totalStudents;
             if (percent > 0.35) {
-                warnings.add("Grade imbalance: " + entry.getKey() + " has " + 
-                           String.format("%.1f%%", percent * 100) + " of students");
+                warnings.add("Grade imbalance: " + entry.getKey() + " has " +
+                        String.format("%.1f%%", percent * 100) + " of students");
             }
         }
     }
@@ -634,28 +696,30 @@ public class CurriculumRequirementsCalculator {
     public static String getSummary(CurriculumAnalysis analysis) {
         StringBuilder sb = new StringBuilder();
         sb.append("=== Curriculum Requirements Analysis ===\n\n");
-        
+
         sb.append("Students by Grade:\n");
         for (Map.Entry<String, Integer> entry : analysis.getStudentsByGrade().entrySet()) {
             sb.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
         sb.append("  Total: ").append(analysis.getTotalStudents()).append("\n\n");
-        
+
         sb.append("Staff Requirements by Type:\n");
         for (Map.Entry<StaffType, Integer> entry : analysis.getStaffRequirements().getTeachersByType().entrySet()) {
             sb.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
-        sb.append("  Total Teaching Staff: ").append(analysis.getStaffRequirements().getTotalTeachingStaff()).append("\n");
-        sb.append("  Total Support Staff: ").append(analysis.getStaffRequirements().getTotalSupportStaff()).append("\n");
+        sb.append("  Total Teaching Staff: ").append(analysis.getStaffRequirements().getTotalTeachingStaff())
+                .append("\n");
+        sb.append("  Total Support Staff: ").append(analysis.getStaffRequirements().getTotalSupportStaff())
+                .append("\n");
         sb.append("  Grand Total: ").append(analysis.getStaffRequirements().getTotalStaff()).append("\n\n");
-        
+
         if (!analysis.getWarnings().isEmpty()) {
             sb.append("Warnings:\n");
             for (String warning : analysis.getWarnings()) {
                 sb.append("  - ").append(warning).append("\n");
             }
         }
-        
+
         return sb.toString();
     }
 
@@ -664,18 +728,18 @@ public class CurriculumRequirementsCalculator {
      */
     public static void printAnalysis(CurriculumAnalysis analysis) {
         GameLogger.logScheduling(getSummary(analysis));
-        
+
         GameLogger.logScheduling("Core Class Requirements:");
         analysis.getClassRequirements().values().stream()
-            .filter(ClassRequirement::isCoreSubject)
-            .sorted((a, b) -> Integer.compare(b.getStudentDemand(), a.getStudentDemand()))
-            .forEach(req -> GameLogger.logScheduling("  " + req));
-        
+                .filter(ClassRequirement::isCoreSubject)
+                .sorted((a, b) -> Integer.compare(b.getStudentDemand(), a.getStudentDemand()))
+                .forEach(req -> GameLogger.logScheduling("  " + req));
+
         GameLogger.logScheduling("\nElective Class Requirements:");
         analysis.getClassRequirements().values().stream()
-            .filter(req -> !req.isCoreSubject())
-            .sorted((a, b) -> Integer.compare(b.getStudentDemand(), a.getStudentDemand()))
-            .limit(20)
-            .forEach(req -> GameLogger.logScheduling("  " + req));
+                .filter(req -> !req.isCoreSubject())
+                .sorted((a, b) -> Integer.compare(b.getStudentDemand(), a.getStudentDemand()))
+                .limit(20)
+                .forEach(req -> GameLogger.logScheduling("  " + req));
     }
 }

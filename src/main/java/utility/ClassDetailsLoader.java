@@ -59,7 +59,8 @@ public class ClassDetailsLoader {
                                 gradeLevel.add(((Long) grade).intValue());
                             }
                         }
-                        ClassDetail detail = new ClassDetail(className, honors, onLevel, required, prerequisite, alternatives, gradeLevel);
+                        ClassDetail detail = new ClassDetail(className, honors, onLevel, required, prerequisite,
+                                alternatives, gradeLevel);
                         classDetailsMap.put(className2, detail);
                     }
                 }
