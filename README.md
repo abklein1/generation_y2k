@@ -309,10 +309,47 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Classroom distribution is not ideal for students. Some students are still missing required classes
 - Student friend distribution not ideal
 
+## Release 0.0.15
+
+### Features
+
+- There are now simulation and game modes. Simulation mode will allow the player to generate a school and passively view how the simulation
+  progresses. The player has the ability to view any classroom, student, or teacher while the sim runs. The game mode is intended to be the
+  main gameplay loop, where the player generates their own student to participate in the sim. Future improvements to the gameplay mode will
+  limit the player's ability to see what the entire school is doing, and focus on providing a rich "first-person" experience.
+- Basic behavior-trees have been implemented for students. Student actions are mainly motivated by lower allostatic load
+- Allostatic load is now a system for all students. Allostatic load is meant to simulate the effects of long-term stressors on ability
+- Braces system for students. Braces not only act as an additional physical descriptor, but also act as a stat modifier. When a student has
+  braces they receive small stat penalties, but will receive a net boost to stats once they are removed. Students with braces all have general
+  treatment plans with a generated expiration. Bands, chains, and other additions to braces can be generated with various colors.
+- Students can now have vision issues, like myopia, that can be corrected with glasses and contact lenses. Uncorrected vision issues also carry
+  stat penalties. Glasses also will appear in physical descriptions. Students of lower economic status are less likely to have their vision corrected.
+- A basic budget system has been built into school generation, which will be used to greater effect in the future. For now, because of student
+  and teacher scheduling complexities it is locked to an adequate budget. School budgeting affects the number of classrooms, teachers, staff and
+  if classrooms can be overcrowded
+- Schools have the ability to have portable classrooms, classroom dividers or add new classrooms post initial generation in order to address
+  classroom overcrowding. These measures are tied to budgeting, with wealthier schools being able to build additional classrooms.
+- School generation has been nearly separated from student and staff generation. A school is generated and then students and staff are generated as
+  pools from which students and staff can be assigned to the school later. This allows for extra staff and students to be used for emergent
+  events later in the simulation, or act as townspeople etc.
+- Sliders introduced for school generation to introduce variability that can be controlled by the user
+- Basic seed system to track school/student/staff generation, although this needs some additional work
+- Minor UI feature additions and reworks to make it more organized
+
+![](src/main/java/Resources.Screencaps/r15_1.png)
+![](src/main/java/Resources.Screencaps/r15_2.png)
+![](src/main/java/Resources.Screencaps/r15_3.png)
+
+### Bugfixes
+
+- Some attempt to refactor and rewrite teacher and student assignment again. It seems slightly better now but still has a long way to go
+- Friend / social connections should be slightly more balanced. Before, students either had more than five friends or none
+- Room name displays now have proper capitalization if named after person (Gyms, auditoriums etc.)
+
 ## Release 0.0.14
 
 - Attempts made to refactor rooms and how staff and students are assigned. Now, more classrooms are used efficiently and students
-  aren't overassigned to certain classrooms. Also, student schedules are more full and freshmen are missing less requirements. There
+  aren't over-assigned to certain classrooms. Also, student schedules are more full and freshmen are missing less requirements. There
   is still quite a bit to fix, but, overall, the process is better.
 - Main character UI and generation is now possible. Main character can have randomized traits or the player can choose. Parents and
   siblings are generated for the main character.
