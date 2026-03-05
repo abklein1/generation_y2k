@@ -42,7 +42,7 @@ public class StudentAssignmentService {
      * @return the number of students actually assigned
      */
     public static int assignStudentsToSchool(StudentPool pool, StandardSchool school, int count, GameView view) {
-        List<Student> unassigned = pool.getUnassignedStudents();
+        List<Student> unassigned = getAssignableStudents(pool);
         int toAssign = Math.min(count, unassigned.size());
 
         view.appendOutput("Assigning " + toAssign + " students to " + school.getSchoolName());
@@ -62,6 +62,7 @@ public class StudentAssignmentService {
 
         // Organize students by grade level in the school
         school.setStudentGradeClass(assignedMap, view);
+        school.setCurrentEnrollment(assigned);
 
         view.appendOutput("Successfully assigned " + assigned + " students to " + school.getSchoolName());
         return assigned;
@@ -76,8 +77,17 @@ public class StudentAssignmentService {
      * @param view   the game view for output
      */
     public static void organizeByGradeLevel(StudentPool pool, StandardSchool school, GameView view) {
+        syncSchoolEnrollmentFromPool(pool, school, view);
+    }
+
+    /**
+     * Rebuilds the school's local roster from the pool assignment state.
+     * This keeps the grade maps aligned after scheduling removes or transfers students.
+     */
+    public static void syncSchoolEnrollmentFromPool(StudentPool pool, StandardSchool school, GameView view) {
         HashMap<Integer, Student> studentMap = pool.getStudentsBySchoolAsMap(school);
         school.setStudentGradeClass(studentMap, view);
+        school.setCurrentEnrollment(studentMap.size());
     }
 
     /**
@@ -97,6 +107,7 @@ public class StudentAssignmentService {
         try {
             EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
                     studentMap, staffMap, school, view, pool);
+            syncSchoolEnrollmentFromPool(pool, school, view);
         } catch (Exception e) {
             view.appendOutput("Error during scheduling: " + e.getMessage());
             e.printStackTrace();
@@ -122,6 +133,11 @@ public class StudentAssignmentService {
      * @return true if enrollment was successful
      */
     public static boolean enrollStudent(StudentPool pool, Student student, StandardSchool school, GameView view) {
+        if (!student.isInHighSchool()) {
+            view.appendOutput("Failed to enroll student: not eligible for high school scheduling");
+            return false;
+        }
+
         if (!pool.assignToSchool(student, school)) {
             view.appendOutput("Failed to enroll student: not in pool");
             return false;
@@ -240,5 +256,11 @@ public class StudentAssignmentService {
         }
 
         return counts;
+    }
+
+    private static List<Student> getAssignableStudents(StudentPool pool) {
+        return pool.getUnassignedStudents().stream()
+                .filter(Student::isInHighSchool)
+                .toList();
     }
 }

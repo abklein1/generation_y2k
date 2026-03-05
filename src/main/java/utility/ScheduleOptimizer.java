@@ -2,9 +2,11 @@ package utility;
 
 import entity.Staff;
 import entity.StaffType;
+import entity.StandardSchool;
 import entity.Student;
 import entity.StudentBlock;
 import entity.TeacherBlock;
+import view.GameView;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -248,7 +250,7 @@ public class ScheduleOptimizer {
      * Analyzes resource shortages and reallocates substitutes to address demand.
      */
     public static void analyzeAndReallocateResources(HashMap<Integer, Student> studentHashMap,
-            HashMap<Integer, Staff> staffHashMap) {
+            HashMap<Integer, Staff> staffHashMap, StandardSchool school, GameView view) {
         GameLogger.logScheduling("=== RESOURCE ANALYSIS AND SUBSTITUTE REALLOCATION ===");
 
         List<Staff> availableSubstitutes = StaffAssignmentService.getTeachersOfType(staffHashMap, StaffType.SUB);
@@ -302,6 +304,16 @@ public class ScheduleOptimizer {
                     }
                 }
             }
+        }
+
+        if (substitutesUsed > 0 && school != null) {
+            GameLogger.logScheduling("Rebuilding teacher blocks and sections after substitute reallocation...");
+            TeacherBlockBuilder.ensureTeachersHaveRooms(staffHashMap, school, view);
+            SectionManager.getClassSections().clear();
+            SectionManager.getClassWaitlists().clear();
+            SectionManager.clearShortages();
+            TeacherBlockBuilder.createDemandDrivenTeacherBlocks(studentHashMap, staffHashMap, school, view);
+            SectionManager.createOptimalSections(staffHashMap, TeacherBlockBuilder.getCurrentOptimalClassSize());
         }
 
         GameLogger.logScheduling("=== REALLOCATION SUMMARY ===");

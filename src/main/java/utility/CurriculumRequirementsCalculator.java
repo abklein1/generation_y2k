@@ -272,7 +272,11 @@ public class CurriculumRequirementsCalculator {
     private static Map<String, Integer> countStudentsByGrade(StudentPool pool) {
         Map<String, Integer> counts = new HashMap<>();
         for (String grade : GRADE_LEVELS) {
-            counts.put(grade, pool.getByGradeLevel(grade).size());
+            int total = (int) pool.getAllStudents().values().stream()
+                    .filter(Student::isInHighSchool)
+                    .filter(student -> grade.equals(student.studentStatistics.getGradeLevel()))
+                    .count();
+            counts.put(grade, total);
         }
         return counts;
     }
@@ -299,7 +303,7 @@ public class CurriculumRequirementsCalculator {
             }
 
             String grade = student.studentStatistics.getGradeLevel();
-            List<String> neededClasses = determineStudentClasses(student);
+            List<String> neededClasses = StudentClassDeterminer.determineStudentClasses(student);
 
             for (String className : neededClasses) {
                 demand.computeIfAbsent(className, k -> new ClassDemand()).addDemand(1, grade);
@@ -312,6 +316,7 @@ public class CurriculumRequirementsCalculator {
     /**
      * Determines what classes a student needs based on their grade and traits.
      */
+    @SuppressWarnings("unused")
     private static List<String> determineStudentClasses(Student student) {
         List<String> classes = new ArrayList<>();
 
@@ -529,7 +534,8 @@ public class CurriculumRequirementsCalculator {
 
         // English classes
         if (lowerName.contains("english") || lowerName.contains("literature") ||
-                lowerName.contains("composition") || lowerName.contains("journalism")) {
+                lowerName.contains("composition") || lowerName.contains("journalism") ||
+                lowerName.contains("debate")) {
             return StaffType.ENGLISH;
         }
 
@@ -552,7 +558,8 @@ public class CurriculumRequirementsCalculator {
         // History/Social Studies classes
         if (lowerName.contains("history") || lowerName.contains("geography") ||
                 lowerName.contains("government") || lowerName.contains("economics") ||
-                lowerName.contains("civics")) {
+                lowerName.contains("civics") || lowerName.contains("philosophy") ||
+                lowerName.contains("rotc")) {
             return StaffType.HISTORY;
         }
 
@@ -582,7 +589,7 @@ public class CurriculumRequirementsCalculator {
         if (lowerName.contains("band") || lowerName.contains("choir") ||
                 lowerName.contains("orchestra") || lowerName.contains("music") ||
                 lowerName.contains("drama") || lowerName.contains("theater") ||
-                lowerName.contains("theatre")) {
+                lowerName.contains("theatre") || lowerName.contains("film")) {
             return StaffType.PERFORMING_ARTS;
         }
 
@@ -603,7 +610,8 @@ public class CurriculumRequirementsCalculator {
 
         // Business
         if (lowerName.contains("business") || lowerName.contains("accounting") ||
-                lowerName.contains("marketing") || lowerName.contains("entrepreneurship")) {
+                lowerName.contains("marketing") || lowerName.contains("entrepreneurship") ||
+                lowerName.contains("entrepreneurial")) {
             return StaffType.BUSINESS;
         }
 

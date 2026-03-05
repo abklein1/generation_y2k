@@ -1,14 +1,11 @@
 package utility;
 
-import config.SchoolFundingModel;
 import entity.*;
-import entity.Rooms.*;
 import view.GameView;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static constants.SimConstants.*;
 import static constants.SchedulingConstants.*;
 
 /**
@@ -29,10 +26,6 @@ import static constants.SchedulingConstants.*;
  * This class retains the core student-to-section assignment pipeline.
  */
 public class EnhancedStudentScheduleAssigner {
-
-    // Reference to StudentPool for proper unassignment when students are returned
-    // to pool
-    private static entity.StudentPool currentStudentPool = null;
 
     // ================================================================
     // Public entry points
@@ -66,7 +59,6 @@ public class EnhancedStudentScheduleAssigner {
             StandardSchool standardSchool,
             GameView view,
             entity.StudentPool studentPool) {
-        currentStudentPool = studentPool;
         GraduationVerifier.setStudentPool(studentPool);
         GameLogger.logScheduling("Starting enhanced scheduling for " + studentHashMap.size() + " students");
 
@@ -87,8 +79,10 @@ public class EnhancedStudentScheduleAssigner {
             TeacherBlockBuilder.configureClassSizesFromFunding(standardSchool.getFundingModel());
         }
 
-        // Clear caches
-        StudentClassDeterminer.clearCache();
+        // Preserve precomputed demand when the caller already analyzed this exact roster.
+        if (!hasAlignedCachedDemand(studentHashMap)) {
+            StudentClassDeterminer.clearCache();
+        }
 
         // Clear all existing student schedules to prevent duplicates
         GameLogger.logScheduling("Clearing all existing student schedules...");
@@ -112,7 +106,7 @@ public class EnhancedStudentScheduleAssigner {
         SectionManager.createOptimalSections(staffHashMap, TeacherBlockBuilder.getCurrentOptimalClassSize());
 
         // Phase 2.5: Analyze resource shortages and reallocate substitutes
-        ScheduleOptimizer.analyzeAndReallocateResources(studentHashMap, staffHashMap);
+        ScheduleOptimizer.analyzeAndReallocateResources(studentHashMap, staffHashMap, standardSchool, view);
 
         // Phase 3: Assign students using enhanced algorithm
         assignStudentsWithOptimization(studentHashMap, staffHashMap);
@@ -253,7 +247,7 @@ public class EnhancedStudentScheduleAssigner {
         Map<String, List<Student>> languageGroups = new HashMap<>();
 
         for (Student student : freshmen) {
-            List<String> languageClasses = StudentClassDeterminer.determineLanguageClasses("Freshman", student);
+            List<String> languageClasses = getRequestedLanguageClasses(student);
             if (languageClasses.size() >= 2) {
                 String languageBase = StudentClassDeterminer.getLanguageBase(languageClasses.get(0));
                 languageGroups.computeIfAbsent(languageBase, k -> new ArrayList<>()).add(student);
@@ -416,7 +410,10 @@ public class EnhancedStudentScheduleAssigner {
     }
 
     private static boolean tryAssignWithRearrangement(Student student, String className, String subjectArea) {
-        return false; // Placeholder for future rearrangement logic
+        if (tryMoveConflictingClass(student, className)) {
+            return true;
+        }
+        return trySwapStudentIntoFullSection(student, className);
     }
 
     // ================================================================
@@ -427,8 +424,7 @@ public class EnhancedStudentScheduleAssigner {
         Map<String, List<SectionManager.ClassSection>> classSections = SectionManager.getClassSections();
 
         for (Student student : students) {
-            List<String> vocationalClasses = StudentClassDeterminer.determineVocationalClasses(
-                    student.studentStatistics.getGradeLevel(), student);
+            List<String> vocationalClasses = getRequestedElectiveClasses(student);
 
             for (String className : vocationalClasses) {
                 if (studentAlreadyHasClass(student, className)) {
@@ -615,6 +611,260 @@ public class EnhancedStudentScheduleAssigner {
     // ================================================================
     // Helpers
     // ================================================================
+
+    private static boolean hasAlignedCachedDemand(HashMap<Integer, Student> studentHashMap) {
+        Map<Student, List<String>> cachedDemand = StudentClassDeterminer.getStudentClassCache();
+        return cachedDemand.size() == studentHashMap.size()
+                && cachedDemand.keySet().containsAll(studentHashMap.values());
+    }
+
+    private static List<String> getRequestedLanguageClasses(Student student) {
+        return StudentClassDeterminer.determineStudentClasses(student).stream()
+                .filter(className -> SectionManager.belongsToSubjectArea(className, "language"))
+                .collect(Collectors.toList());
+    }
+
+    private static List<String> getRequestedElectiveClasses(Student student) {
+        return StudentClassDeterminer.determineStudentClasses(student).stream()
+                .filter(className -> !SectionManager.belongsToSubjectArea(className, "english"))
+                .filter(className -> !SectionManager.belongsToSubjectArea(className, "math"))
+                .filter(className -> !SectionManager.belongsToSubjectArea(className, "science"))
+                .filter(className -> !SectionManager.belongsToSubjectArea(className, "history"))
+                .filter(className -> !SectionManager.belongsToSubjectArea(className, "language"))
+                .filter(className -> !SectionManager.belongsToSubjectArea(className, "physical education"))
+                .collect(Collectors.toList());
+    }
+
+    private static boolean tryMoveConflictingClass(Student student, String className) {
+        List<SectionManager.ClassSection> sections = SectionManager.getClassSections().get(className);
+        if (sections == null) {
+            return false;
+        }
+
+        for (SectionManager.ClassSection targetSection : sections) {
+            if (targetSection.isFull()) {
+                continue;
+            }
+            if (hasSubjectAreaConflict(student, className, targetSection.getTeacherBlock().getSemester())) {
+                continue;
+            }
+            if (!hasBlockConflict(student, targetSection.getTeacherBlock())) {
+                continue;
+            }
+
+            StudentBlock conflictingBlock = findConflictingScheduledBlock(student, targetSection.getTeacherBlock());
+            if (conflictingBlock == null) {
+                continue;
+            }
+
+            SectionManager.ClassSection currentSection = findSectionForScheduledBlock(conflictingBlock);
+            if (currentSection == null) {
+                continue;
+            }
+
+            SectionManager.ClassSection alternativeSection = findAlternativeSectionForStudent(
+                    student, conflictingBlock.getClassName(), currentSection);
+            if (alternativeSection == null) {
+                continue;
+            }
+
+            moveStudentBetweenSections(student, currentSection, alternativeSection);
+            if (!hasBlockConflict(student, targetSection.getTeacherBlock())) {
+                assignStudentToSection(student, targetSection, true);
+                GameLogger.logScheduling("REARRANGEMENT: Freed " + targetSection.getTeacherBlock().getSemester() +
+                        " Block " + targetSection.getTeacherBlock().getBlockNumber() + " for " +
+                        student.studentName.getFirstName() + " " + student.studentName.getLastName() +
+                        " to take " + className);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean trySwapStudentIntoFullSection(Student student, String className) {
+        List<SectionManager.ClassSection> sections = SectionManager.getClassSections().get(className);
+        if (sections == null) {
+            return false;
+        }
+
+        for (SectionManager.ClassSection fullSection : sections) {
+            if (!fullSection.isFull()) {
+                continue;
+            }
+            if (hasBlockConflict(student, fullSection.getTeacherBlock())) {
+                continue;
+            }
+            if (hasSubjectAreaConflict(student, className, fullSection.getTeacherBlock().getSemester())) {
+                continue;
+            }
+
+            for (Student enrolledStudent : new ArrayList<>(fullSection.getEnrolledStudents())) {
+                SectionManager.ClassSection alternativeSection = findAlternativeSectionForStudent(
+                        enrolledStudent, className, fullSection);
+                if (alternativeSection == null) {
+                    continue;
+                }
+
+                moveStudentBetweenSections(enrolledStudent, fullSection, alternativeSection);
+                if (!fullSection.isFull()) {
+                    assignStudentToSection(student, fullSection, true);
+                    GameLogger.logScheduling("REARRANGEMENT: Swapped " + enrolledStudent.studentName.getFirstName() +
+                            " " + enrolledStudent.studentName.getLastName() + " into another " + className +
+                            " section to make room for " + student.studentName.getFirstName() + " " +
+                            student.studentName.getLastName());
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static StudentBlock findConflictingScheduledBlock(Student student, TeacherBlock targetBlock) {
+        return student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
+                .filter(studentBlock -> studentBlock.getBlockNumber() == targetBlock.getBlockNumber()
+                        && studentBlock.getSemester().equals(targetBlock.getSemester()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static SectionManager.ClassSection findAlternativeSectionForStudent(Student student, String className,
+            SectionManager.ClassSection currentSection) {
+        List<SectionManager.ClassSection> sections = SectionManager.getClassSections().get(className);
+        if (sections == null) {
+            return null;
+        }
+
+        StudentBlock currentBlock = findScheduledBlock(student, currentSection.getClassName(),
+                currentSection.getTeacherBlock().getBlockNumber(), currentSection.getTeacherBlock().getSemester(),
+                currentSection.getTeacher());
+        if (currentBlock == null) {
+            return null;
+        }
+
+        SectionManager.ClassSection bestSection = null;
+        int minEnrollment = Integer.MAX_VALUE;
+        for (SectionManager.ClassSection candidate : sections) {
+            if (candidate == currentSection || candidate.isFull()) {
+                continue;
+            }
+            if (hasBlockConflictExcluding(student, candidate.getTeacherBlock(), currentBlock)) {
+                continue;
+            }
+            if (hasSubjectAreaConflictExcluding(student, className, candidate.getTeacherBlock().getSemester(),
+                    currentBlock)) {
+                continue;
+            }
+
+            int enrollment = candidate.getEnrolledStudents().size();
+            if (enrollment < minEnrollment) {
+                minEnrollment = enrollment;
+                bestSection = candidate;
+            }
+        }
+
+        return bestSection;
+    }
+
+    private static StudentBlock findScheduledBlock(Student student, String className, int blockNumber, String semester,
+            Staff teacher) {
+        return student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
+                .filter(block -> block.getClassName().equals(className)
+                        && block.getBlockNumber() == blockNumber
+                        && block.getSemester().equals(semester)
+                        && Objects.equals(block.getTeacher(), teacher))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static SectionManager.ClassSection findSectionForScheduledBlock(StudentBlock scheduledBlock) {
+        List<SectionManager.ClassSection> sections = SectionManager.getClassSections().get(scheduledBlock.getClassName());
+        if (sections == null) {
+            return null;
+        }
+
+        for (SectionManager.ClassSection section : sections) {
+            TeacherBlock teacherBlock = section.getTeacherBlock();
+            if (teacherBlock.getBlockNumber() == scheduledBlock.getBlockNumber()
+                    && teacherBlock.getSemester().equals(scheduledBlock.getSemester())
+                    && Objects.equals(section.getTeacher(), scheduledBlock.getTeacher())) {
+                return section;
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasBlockConflictExcluding(Student student, TeacherBlock block, StudentBlock excludedBlock) {
+        return student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
+                .filter(studentBlock -> !sameScheduledBlock(studentBlock, excludedBlock))
+                .anyMatch(studentBlock -> studentBlock.getBlockNumber() == block.getBlockNumber()
+                        && studentBlock.getSemester().equals(block.getSemester()));
+    }
+
+    private static boolean hasSubjectAreaConflictExcluding(Student student, String className, String semester,
+            StudentBlock excludedBlock) {
+        if (SectionManager.belongsToSubjectArea(className, "language")) {
+            return false;
+        }
+
+        String[] subjectAreas = { "english", "math", "science", "history", "physical education" };
+        String targetArea = null;
+        for (String area : subjectAreas) {
+            if (SectionManager.belongsToSubjectArea(className, area)) {
+                targetArea = area;
+                break;
+            }
+        }
+        if (targetArea == null) {
+            return false;
+        }
+
+        List<String> allNeeded = StudentClassDeterminer.determineStudentClasses(student);
+        final String area = targetArea;
+        long neededInArea = allNeeded.stream()
+                .filter(c -> SectionManager.belongsToSubjectArea(c, area))
+                .count();
+
+        long alreadyScheduledInSemester = student.studentStatistics.getStudentSchedule()
+                .getClassSchedule().stream()
+                .filter(studentBlock -> !sameScheduledBlock(studentBlock, excludedBlock))
+                .filter(studentBlock -> studentBlock.getSemester().equals(semester)
+                        && SectionManager.belongsToSubjectArea(studentBlock.getClassName(), area))
+                .count();
+
+        long maxPerSemester = (neededInArea + 1) / 2;
+        return alreadyScheduledInSemester >= maxPerSemester;
+    }
+
+    private static boolean sameScheduledBlock(StudentBlock left, StudentBlock right) {
+        if (left == null || right == null) {
+            return false;
+        }
+        return left.getClassName().equals(right.getClassName())
+                && left.getBlockNumber() == right.getBlockNumber()
+                && left.getSemester().equals(right.getSemester())
+                && Objects.equals(left.getTeacher(), right.getTeacher());
+    }
+
+    private static void moveStudentBetweenSections(Student student, SectionManager.ClassSection fromSection,
+            SectionManager.ClassSection toSection) {
+        removeStudentFromSection(student, fromSection);
+        assignStudentToSection(student, toSection, true);
+    }
+
+    private static void removeStudentFromSection(Student student, SectionManager.ClassSection section) {
+        section.removeStudent(student);
+        if (section.getTeacherBlock().getClassPopulation() != null) {
+            section.getTeacherBlock().getClassPopulation().remove(student);
+        }
+
+        student.studentStatistics.getStudentSchedule().getClassSchedule().removeIf(block ->
+                block.getClassName().equals(section.getClassName())
+                        && block.getBlockNumber() == section.getTeacherBlock().getBlockNumber()
+                        && block.getSemester().equals(section.getTeacherBlock().getSemester())
+                        && Objects.equals(block.getTeacher(), section.getTeacher()));
+    }
 
     private static int getGradePriority(String gradeLevel) {
         return switch (gradeLevel) {

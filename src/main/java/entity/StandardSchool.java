@@ -770,6 +770,41 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
+    public int addComputerLabs(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+
+        int currentCount = computerLabs != null ? computerLabs.length : 0;
+        int newTotal = currentCount + additionalCount;
+        ComputerLab[] newLabs = new ComputerLab[newTotal];
+        if (computerLabs != null) {
+            System.arraycopy(computerLabs, 0, newLabs, 0, currentCount);
+        }
+
+        for (int i = currentCount; i < newTotal; i++) {
+            int connectN = setRandom(COMPUTER_CONNECTION_LOWER_LIMIT, COMPUTER_CONNECTION_UPPER_LIMIT);
+            newLabs[i] = new ComputerLab();
+            newLabs[i].setRoomName("ComputerLab" + i);
+            GameLogger.logGeneration("      Generating " + newLabs[i].getRoomName());
+            newLabs[i].setWindowCount(COMPUTER_WINDOW_COUNT);
+            newLabs[i].setConnections(connectN);
+            newLabs[i].setDoors(connectN);
+            newLabs[i].setInitialStaff(setRandom(COMPUTER_INITIAL_STAFF_LOWER_LIMIT, COMPUTER_INITIAL_STAFF_UPPER_LIMIT));
+            newLabs[i].setStudentCap(
+                    setRandom(COMPUTER_STUDENT_CAPACITY_LOWER_LIMIT, COMPUTER_STUDENT_CAPACITY_UPPER_LIMIT));
+            newLabs[i].setSeatArrangement();
+            newLabs[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newLabs[i].setRoomNumber("COM" + i);
+        }
+
+        computerLabs = newLabs;
+        if (view != null) {
+            GameLogger.logGeneration("EXPANSION: Added " + additionalCount + " computer lab(s)");
+        }
+        return additionalCount;
+    }
+
     public Courtyard[] getCourtyards() {
         return courtyards;
     }
@@ -816,6 +851,40 @@ public class StandardSchool implements SchoolPlan {
             gyms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
             gyms[i].setRoomNumber("G" + i + setRandom(GYM_ROOM_NUMBER_LOWER_LIMIT, GYM_ROOM_NUMBER_UPPER_LIMIT));
         }
+    }
+
+    public int addGyms(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+
+        int currentCount = gyms != null ? gyms.length : 0;
+        int newTotal = currentCount + additionalCount;
+        Gym[] newGyms = new Gym[newTotal];
+        if (gyms != null) {
+            System.arraycopy(gyms, 0, newGyms, 0, currentCount);
+        }
+
+        for (int i = currentCount; i < newTotal; i++) {
+            int connectN = setRandom(GYM_CONNECTION_LOWER_LIMIT, GYM_CONNECTION_UPPER_LIMIT);
+            newGyms[i] = new Gym();
+            newGyms[i].setRoomName("Gym" + i);
+            GameLogger.logGeneration("      Generating " + newGyms[i].getRoomName());
+            newGyms[i].setConnections(connectN);
+            newGyms[i].setDoors(connectN);
+            newGyms[i].setWindowCount(setRandom(GYM_WINDOW_LOWER_LIMIT, GYM_WINDOW_UPPER_LIMIT));
+            newGyms[i].setInitialStaff(GYM_INITIAL_STAFF);
+            newGyms[i].setStudentCap(setRandom(GYM_STUDENT_CAPACITY_LOWER_LIMIT, GYM_STUDENT_CAPACITY_UPPER_LIMIT));
+            newGyms[i].setSeatArrangement();
+            newGyms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newGyms[i].setRoomNumber("G" + i + setRandom(GYM_ROOM_NUMBER_LOWER_LIMIT, GYM_ROOM_NUMBER_UPPER_LIMIT));
+        }
+
+        gyms = newGyms;
+        if (view != null) {
+            GameLogger.logGeneration("EXPANSION: Added " + additionalCount + " gym(s)");
+        }
+        return additionalCount;
     }
 
     public void renameGym(Gym gym, String name) {
@@ -1032,6 +1101,40 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
+    public int addArtStudios(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+
+        int currentCount = artStudios != null ? artStudios.length : 0;
+        int newTotal = currentCount + additionalCount;
+        ArtStudio[] newStudios = new ArtStudio[newTotal];
+        if (artStudios != null) {
+            System.arraycopy(artStudios, 0, newStudios, 0, currentCount);
+        }
+
+        for (int i = currentCount; i < newTotal; i++) {
+            int connectN = setRandom(ART_CONNECTION_LOWER_LIMIT, ART_CONNECTION_UPPER_LIMIT);
+            newStudios[i] = new ArtStudio();
+            newStudios[i].setRoomName("Art Room" + i);
+            GameLogger.logGeneration("      Generating " + newStudios[i].getRoomName());
+            newStudios[i].setWindowCount(setRandom(ART_WINDOW_LOWER_LIMIT, ART_WINDOW_UPPER_LIMIT));
+            newStudios[i].setConnections(connectN);
+            newStudios[i].setDoors(connectN);
+            newStudios[i].setInitialStaff(setRandom(ART_INITIAL_STAFF_LOWER_LIMIT, ART_INITIAL_STAFF_UPPER_LIMIT));
+            newStudios[i].setStudentCap(setRandom(ART_STUDENT_CAPACITY_LOWER_LIMIT, ART_STUDENT_CAPACITY_UPPER_LIMIT));
+            newStudios[i].setSeatArrangement();
+            newStudios[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newStudios[i].setRoomNumber("AT" + i + setRandom(ART_NUMBER_LOWER_LIMIT, ART_NUMBER_UPPER_LIMIT));
+        }
+
+        artStudios = newStudios;
+        if (view != null) {
+            GameLogger.logGeneration("EXPANSION: Added " + additionalCount + " art studio(s)");
+        }
+        return additionalCount;
+    }
+
     public AthleticField[] getAthleticFields() {
         return athleticFields;
     }
@@ -1108,6 +1211,40 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
+    public int addDramaRooms(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+
+        int currentCount = dramaRooms != null ? dramaRooms.length : 0;
+        int newTotal = currentCount + additionalCount;
+        DramaRoom[] newRooms = new DramaRoom[newTotal];
+        if (dramaRooms != null) {
+            System.arraycopy(dramaRooms, 0, newRooms, 0, currentCount);
+        }
+
+        for (int i = currentCount; i < newTotal; i++) {
+            int connectN = setRandom(DRAMA_CONNECTION_LOWER_LIMIT, DRAMA_CONNECTION_UPPER_LIMIT);
+            newRooms[i] = new DramaRoom();
+            newRooms[i].setRoomName("Drama" + i);
+            GameLogger.logGeneration("      Generating " + newRooms[i].getRoomName());
+            newRooms[i].setWindowCount(setRandom(DRAMA_WINDOW_LOWER_LIMIT, DRAMA_WINDOW_UPPER_LIMIT));
+            newRooms[i].setConnections(connectN);
+            newRooms[i].setDoors(connectN);
+            newRooms[i].setInitialStaff(DRAMA_INITIAL_STAFF);
+            newRooms[i].setStudentCap(setRandom(DRAMA_STUDENT_CAPACITY_LOWER_LIMIT, DRAMA_STUDENT_CAPACITY_UPPER_LIMIT));
+            newRooms[i].setSeatArrangement();
+            newRooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newRooms[i].setRoomNumber("D" + i + setRandom(DRAMA_NUMBER_LOWER_LIMIT, DRAMA_NUMBER_UPPER_LIMIT));
+        }
+
+        dramaRooms = newRooms;
+        if (view != null) {
+            GameLogger.logGeneration("EXPANSION: Added " + additionalCount + " drama room(s)");
+        }
+        return additionalCount;
+    }
+
     public LockerRoom[] getLockerRooms() {
         return lockerRooms;
     }
@@ -1158,6 +1295,40 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
+    public int addMusicRooms(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+
+        int currentCount = musicRooms != null ? musicRooms.length : 0;
+        int newTotal = currentCount + additionalCount;
+        MusicRoom[] newRooms = new MusicRoom[newTotal];
+        if (musicRooms != null) {
+            System.arraycopy(musicRooms, 0, newRooms, 0, currentCount);
+        }
+
+        for (int i = currentCount; i < newTotal; i++) {
+            int connectN = setRandom(MUSIC_CONNECTION_LOWER_LIMIT, MUSIC_CONNECTION_UPPER_LIMIT);
+            newRooms[i] = new MusicRoom();
+            newRooms[i].setRoomName("Music Room" + i);
+            GameLogger.logGeneration("      Generating " + newRooms[i].getRoomName());
+            newRooms[i].setWindowCount(setRandom(MUSIC_WINDOW_LOWER_LIMIT, MUSIC_WINDOW_UPPER_LIMIT));
+            newRooms[i].setConnections(connectN);
+            newRooms[i].setDoors(connectN);
+            newRooms[i].setInitialStaff(MUSIC_INITIAL_STAFF);
+            newRooms[i].setStudentCap(setRandom(MUSIC_STUDENT_CAPACITY_LOWER_LIMIT, MUSIC_STUDENT_CAPACITY_UPPER_LIMIT));
+            newRooms[i].setSeatArrangement();
+            newRooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newRooms[i].setRoomNumber("MR" + i + setRandom(MUSIC_NUMBER_LOWER_LIMIT, MUSIC_NUMBER_UPPER_LIMIT));
+        }
+
+        musicRooms = newRooms;
+        if (view != null) {
+            GameLogger.logGeneration("EXPANSION: Added " + additionalCount + " music room(s)");
+        }
+        return additionalCount;
+    }
+
     public ScienceLab[] getScienceLabs() {
         return scienceLabs;
     }
@@ -1184,7 +1355,44 @@ public class StandardSchool implements SchoolPlan {
         }
     }
 
+    public int addScienceLabs(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+
+        int currentCount = scienceLabs != null ? scienceLabs.length : 0;
+        int newTotal = currentCount + additionalCount;
+        ScienceLab[] newLabs = new ScienceLab[newTotal];
+        if (scienceLabs != null) {
+            System.arraycopy(scienceLabs, 0, newLabs, 0, currentCount);
+        }
+
+        for (int i = currentCount; i < newTotal; i++) {
+            int connectN = setRandom(SCIENCE_LAB_CONNECTION_LOWER_LIMIT, SCIENCE_LAB_CONNECTION_UPPER_LIMIT);
+            newLabs[i] = new ScienceLab();
+            newLabs[i].setRoomName("Science Lab" + i);
+            GameLogger.logGeneration("      Generating " + newLabs[i].getRoomName());
+            newLabs[i].setWindowCount(SCIENCE_LAB_WINDOW_COUNT);
+            newLabs[i].setConnections(connectN);
+            newLabs[i].setDoors(connectN);
+            newLabs[i].setInitialStaff(SCIENCE_LAB_INITIAL_STAFF);
+            newLabs[i].setStudentCap(
+                    setRandom(SCIENCE_LAB_STUDENT_CAPACITY_LOWER_LIMIT, SCIENCE_LAB_STUDENT_CAPACITY_UPPER_LIMIT));
+            newLabs[i].setSeatArrangement();
+            newLabs[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newLabs[i].setRoomNumber(
+                    "Lab" + i + setRandom(SCIENCE_LAB_NUMBER_LOWER_LIMIT, SCIENCE_LAB_NUMBER_UPPER_LIMIT));
+        }
+
+        scienceLabs = newLabs;
+        if (view != null) {
+            GameLogger.logGeneration("EXPANSION: Added " + additionalCount + " science lab(s)");
+        }
+        return additionalCount;
+    }
+
     public void setStudentGradeClass(HashMap<Integer, Student> studentHashMap, GameView view) {
+        clearEnrolledStudents();
         Integer f_count = 0;
         Integer s_count = 0;
         Integer j_count = 0;
@@ -1212,6 +1420,7 @@ public class StandardSchool implements SchoolPlan {
                 default -> GameLogger.logGeneration("Can't find student class");
             }
         }
+        updateEnrollmentFromGrades();
     }
 
     public HashMap<Integer, Student> getStudentGradeClass(String gradClass) {
@@ -1277,6 +1486,42 @@ public class StandardSchool implements SchoolPlan {
             vocationalRooms[i].setRoomNumber(
                     "Vocational" + i + setRandom(VOCATIONAL_NUMBER_LOWER_LIMIT, VOCATIONAL_NUMBER_UPPER_LIMIT));
         }
+    }
+
+    public int addVocationalRooms(int additionalCount, GameView view) {
+        if (additionalCount <= 0) {
+            return 0;
+        }
+
+        int currentCount = vocationalRooms != null ? vocationalRooms.length : 0;
+        int newTotal = currentCount + additionalCount;
+        VocationalRoom[] newRooms = new VocationalRoom[newTotal];
+        if (vocationalRooms != null) {
+            System.arraycopy(vocationalRooms, 0, newRooms, 0, currentCount);
+        }
+
+        for (int i = currentCount; i < newTotal; i++) {
+            int connectN = setRandom(VOCATIONAL_CONNECTION_LOWER_LIMIT, VOCATIONAL_CONNECTION_UPPER_LIMIT);
+            newRooms[i] = new VocationalRoom();
+            newRooms[i].setRoomName("Vocational Room" + i);
+            GameLogger.logGeneration("      Generating " + newRooms[i].getRoomName());
+            newRooms[i].setWindowCount(setRandom(VOCATIONAL_WINDOW_LOWER_LIMIT, VOCATIONAL_WINDOW_UPPER_LIMIT));
+            newRooms[i].setConnections(connectN);
+            newRooms[i].setDoors(connectN);
+            newRooms[i].setInitialStaff(VOCATIONAL_INITIAL_STAFF);
+            newRooms[i].setStudentCap(
+                    setRandom(VOCATIONAL_STUDENT_CAPACITY_LOWER_LIMIT, VOCATIONAL_STUDENT_CAPACITY_UPPER_LIMIT));
+            newRooms[i].setSeatArrangement();
+            newRooms[i].initializeSeatingArrangements(TOTAL_SCHOOL_PERIODS);
+            newRooms[i].setRoomNumber(
+                    "Vocational" + i + setRandom(VOCATIONAL_NUMBER_LOWER_LIMIT, VOCATIONAL_NUMBER_UPPER_LIMIT));
+        }
+
+        vocationalRooms = newRooms;
+        if (view != null) {
+            GameLogger.logGeneration("EXPANSION: Added " + additionalCount + " vocational room(s)");
+        }
+        return additionalCount;
     }
 
     public ParkingLot[] getParkingLots() {
@@ -1476,16 +1721,71 @@ public class StandardSchool implements SchoolPlan {
     }
 
     public Room getClassroomByStaff(Staff staff) {
-        for (Classroom classroom : classrooms) {
-            List<Staff> staffList = classroom.getAssignedStaff();
-            for (Staff staff1 : staffList) {
-                if (staff1.equals(staff)) {
-                    return classroom;
+        Room assignedRoom = findAssignedRoom(staff, classrooms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, scienceLabs);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, gyms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, athleticFields);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, artStudios);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, musicRooms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, dramaRooms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, auditoriums);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, vocationalRooms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, computerLabs);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, libraries);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, lunchrooms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, offices);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, utilityrooms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, breakrooms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, conferenceRooms);
+        if (assignedRoom == null)
+            assignedRoom = findAssignedRoom(staff, portables);
+
+        if (assignedRoom != null) {
+            return assignedRoom;
+        }
+
+        GameLogger.logScheduling(
+                "Cant find room of " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
+        return null;
+    }
+
+    private Room findAssignedRoom(Staff staff, Room[] rooms) {
+        if (staff == null || rooms == null) {
+            return null;
+        }
+
+        for (Room room : rooms) {
+            if (room == null) {
+                continue;
+            }
+
+            List<Staff> staffList = room.getAssignedStaff();
+            for (Staff assignedStaff : staffList) {
+                if (assignedStaff.equals(staff)) {
+                    return room;
                 }
             }
+
+            if (room.getSecondTeacher() != null && room.getSecondTeacher().equals(staff)) {
+                return room;
+            }
         }
-        GameLogger.logScheduling(
-                "Cant find classroom of " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
+
         return null;
     }
 

@@ -5,13 +5,14 @@ import entity.Staff;
 import entity.StaffType;
 import entity.StandardSchool;
 import entity.Student;
-import entity.StudentPool;
 import entity.Town;
 import view.GameView;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static constants.SchoolConstants.TOTAL_SCHOOL_PERIODS;
 
 /**
  * Main orchestration service for assigning populations to schools.
@@ -70,6 +71,7 @@ public class SchoolAssignmentService {
         // 2. Determine class lists for all enrolled students
         view.appendOutput("Step 2: Determining class lists...");
         HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
+        StudentClassDeterminer.clearCache();
         Map<Student, List<String>> classLists = StudentClassDeterminer.determineAllClasses(studentMap);
 
         // 3. Aggregate demand
@@ -102,6 +104,7 @@ public class SchoolAssignmentService {
         view.appendOutput("Step 7: Assigning students to sections...");
         EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
                 studentMap, staffMap, school, view, town.getStudentPool());
+        StudentAssignmentService.syncSchoolEnrollmentFromPool(town.getStudentPool(), school, view);
 
         // 8. Optimize and verify (already done inside ESSA, but log completion)
         view.appendOutput("Step 8: Optimization and verification complete.");
@@ -161,6 +164,7 @@ public class SchoolAssignmentService {
             view.appendOutput("Scheduling students...");
             EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
                     studentMap, staffMap, school, view, town.getStudentPool());
+            StudentAssignmentService.syncSchoolEnrollmentFromPool(town.getStudentPool(), school, view);
 
             view.appendOutput("Assigning seating...");
             StudentSeatingAssigner.seatInitialStudents(school);
@@ -186,90 +190,8 @@ public class SchoolAssignmentService {
      */
     @Deprecated
     public static void populateSchoolDemandDriven(Town town, StandardSchool school, GameView view) {
-        view.appendOutput("Populating " + school.getSchoolName() + " using demand-driven staffing...");
-
-        // Add school to town if not already present
-        if (!town.getSchools().contains(school)) {
-            town.addSchool(school);
-        }
-
-        SchoolFundingModel fundingModel = school.getFundingModel();
-
-        // Step 1: Assign students FIRST to know actual school enrollment
-        // Use targetEnrollment (from demographics) rather than optimalCapacity to
-        // prevent
-        // sibling generation from inflating enrollment beyond the intended population
-        // size.
-        // The school may have more classrooms than needed for enrollment (to house
-        // language
-        // teachers and other non-core staff), so optimalCapacity can exceed the target.
-        view.appendOutput("Assigning students to school...");
-        int maxStudents = fundingModel.isAllowOvercrowding()
-                ? fundingModel.getMaxAllowedEnrollment(school.getPhysicalCapacity())
-                : school.getTargetEnrollment();
-
-        int studentsAssigned = StudentAssignmentService.assignStudentsToSchool(
-                town.getStudentPool(), school, maxStudents, view);
-
-        view.appendOutput("  Assigned " + studentsAssigned + " students (max capacity: " + maxStudents + ")");
-
-        // Step 2: Analyze curriculum requirements based on ACTUAL school enrollment
-        // (not town pool)
-        view.appendOutput("Analyzing curriculum requirements for enrolled students...");
-        // Get only the students assigned to this school
-        StudentPool schoolStudents = new StudentPool();
-        for (Student student : town.getStudentPool().getStudentsBySchool(school)) {
-            schoolStudents.addStudent(student);
-        }
-
-        CurriculumRequirementsCalculator.CurriculumAnalysis analysis = CurriculumRequirementsCalculator
-                .analyzeRequirements(schoolStudents, fundingModel);
-
-        // Log the analysis
-        view.appendOutput("  Enrolled students by grade: " + analysis.getStudentsByGrade());
-        view.appendOutput("  Staff needed for enrolled students: " + analysis.getStaffRequirements().getTotalStaff());
-
-        // Log any warnings
-        for (String warning : analysis.getWarnings()) {
-            view.appendOutput("  WARNING: " + warning);
-        }
-
-        // Step 3: Assign staff by type based on curriculum requirements
-        view.appendOutput("Assigning staff by curriculum demand...");
-        Map<StaffType, Integer> staffNeeds = analysis.getStaffRequirements().getTeachersByType();
-        int staffAssigned = StaffAssignmentService.assignStaffByDemand(
-                town.getStaffPool(), school, staffNeeds, view);
-
-        // Update school enrollment
-        school.setCurrentEnrollment(studentsAssigned);
-
-        // Report overcrowding status
-        if (school.isOvercrowded()) {
-            view.appendOutput("  NOTE: School is overcrowded at " +
-                    String.format("%.1f%%", school.getOvercrowdingLevel() * 100) + " of optimal capacity");
-        }
-
-        // Step 4: Schedule students with demand awareness (includes class scheduling)
-        HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
-        HashMap<Integer, Staff> staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
-
-        try {
-            view.appendOutput("Scheduling students with graduation requirements...");
-            EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
-                    studentMap, staffMap, school, view, town.getStudentPool());
-
-            view.appendOutput("Assigning seating...");
-            StudentSeatingAssigner.seatInitialStudents(school);
-        } catch (Exception e) {
-            view.appendOutput("Error during scheduling: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        view.appendOutput("School population complete: " + studentsAssigned + " students, " +
-                staffAssigned + " staff");
-        view.appendOutput("  Optimal capacity: " + school.getOptimalCapacity());
-        view.appendOutput("  Physical capacity: " + school.getPhysicalCapacity());
-        view.appendOutput("  Current enrollment: " + school.getCurrentEnrollment());
+        view.appendOutput("Demand-driven staffing now delegates to the unified demand-first pipeline...");
+        populateSchoolFromStudentDemand(town, school, view);
     }
 
     /**
@@ -492,20 +414,39 @@ public class SchoolAssignmentService {
             attempt++;
             view.appendOutput("=== SCHEDULING RETRY ATTEMPT " + attempt + " ===");
 
-            // Minor expansion: add a few classrooms for block-collision overflow
-            int addedClassrooms = school.addClassrooms(CLASSROOMS_PER_RETRY, view);
-            view.appendOutput("  Added " + addedClassrooms + " classrooms. New total: " +
-                    school.getClassrooms().length);
-
-            // Clear schedules and re-run just the assignment step
-            clearStudentSchedules(town, school);
-
             HashMap<Integer, Student> studentMap = town.getStudentPool().getStudentsBySchoolAsMap(school);
             HashMap<Integer, Staff> staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
+            int targetAdditionalTeachers = Math.max(1, Math.min(
+                    school.getFundingModel().getMaxExpansionTeachers(),
+                    (int) Math.ceil((double) report.totalMissingRequests /
+                            Math.max(1, TeacherBlockBuilder.getCurrentOptimalClassSize() * 2))));
+
+            Map<String, Integer> roomNeeds = estimateAdditionalRoomNeeds(report, school);
+            if (!roomNeeds.isEmpty()) {
+                view.appendOutput("  Reacting to room bottlenecks before retry...");
+                Director.adaptSchoolToDemand(school, roomNeeds, view);
+            }
+
+            if (targetAdditionalTeachers > 0) {
+                view.appendOutput("  Hiring against current shortage profile before retry...");
+                Map<StaffType, Integer> staffNeeds = estimateStaffNeeds(report, targetAdditionalTeachers);
+                StaffAssignmentService.assignAdditionalTeachers(town, school, staffNeeds, view);
+                staffMap = town.getStaffPool().getStaffBySchoolAsMap(school);
+            }
+
+            if (roomNeeds.isEmpty() && targetAdditionalTeachers == 0) {
+                int addedClassrooms = school.addClassrooms(CLASSROOMS_PER_RETRY, view);
+                view.appendOutput("  Added " + addedClassrooms + " classrooms. New total: " +
+                        school.getClassrooms().length);
+            }
+
+            // Clear schedules and re-run the scheduling step with new resources
+            clearStudentSchedules(town, school);
 
             try {
                 EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
                         studentMap, staffMap, school, view, town.getStudentPool());
+                StudentAssignmentService.syncSchoolEnrollmentFromPool(town.getStudentPool(), school, view);
                 StudentSeatingAssigner.seatInitialStudents(school);
             } catch (Exception e) {
                 view.appendOutput("  Error during retry scheduling: " + e.getMessage());
@@ -550,33 +491,38 @@ public class SchoolAssignmentService {
         int totalStudents = students.size();
         int completeSchedules = 0;
         int incompleteSchedules = 0;
+        int totalMissingRequests = 0;
+        Map<String, Integer> missingRequestsByClass = new HashMap<>();
+        Map<String, Integer> missingRequestsByGrade = new HashMap<>();
+        Map<StaffType, Integer> missingRequestsByStaffType = new HashMap<>();
+        Map<String, Integer> missingRequestsByRoomType = new HashMap<>();
 
         for (Student student : students.values()) {
-            int expectedClasses = getExpectedClassCount(student);
-            int actualClasses = student.studentStatistics.getStudentSchedule().getClassSchedule().size();
+            List<String> requestedClasses = StudentClassDeterminer.determineStudentClasses(student);
+            List<String> scheduledClasses = student.studentStatistics.getStudentSchedule().getClassSchedule().stream()
+                    .map(studentBlock -> studentBlock.getClassName())
+                    .toList();
+            List<String> missingClasses = requestedClasses.stream()
+                    .filter(className -> !scheduledClasses.contains(className))
+                    .toList();
 
-            if (actualClasses >= expectedClasses - 1) { // Allow 1 class short as "complete"
+            if (missingClasses.isEmpty()) {
                 completeSchedules++;
             } else {
                 incompleteSchedules++;
+                missingRequestsByGrade.merge(student.studentStatistics.getGradeLevel(), missingClasses.size(), Integer::sum);
+                for (String className : missingClasses) {
+                    totalMissingRequests++;
+                    missingRequestsByClass.merge(className, 1, Integer::sum);
+                    StaffType type = CurriculumRequirementsCalculator.mapClassToStaffType(className);
+                    missingRequestsByStaffType.merge(type, 1, Integer::sum);
+                    missingRequestsByRoomType.merge(DemandAnalyzer.getRoomTypeForClass(className), 1, Integer::sum);
+                }
             }
         }
 
-        return new SchedulingReport(totalStudents, completeSchedules, incompleteSchedules);
-    }
-
-    /**
-     * Gets the expected number of classes for a student based on grade level.
-     */
-    private static int getExpectedClassCount(Student student) {
-        String grade = student.studentStatistics.getGradeLevel();
-        return switch (grade) {
-            case "Freshman" -> 8; // Core + Language + PE + Elective
-            case "Sophomore" -> 6;
-            case "Junior" -> 6;
-            case "Senior" -> 6;
-            default -> 6;
-        };
+        return new SchedulingReport(totalStudents, completeSchedules, incompleteSchedules, totalMissingRequests,
+                missingRequestsByClass, missingRequestsByGrade, missingRequestsByStaffType, missingRequestsByRoomType);
     }
 
     // ==================== Post-Generation Expansion ====================
@@ -595,6 +541,23 @@ public class SchoolAssignmentService {
      */
     public static ExpansionReport expandSchoolToMeetDemand(Town town, StandardSchool school, GameView view) {
         return expandSchoolToMeetDemand(town, school, null, view);
+    }
+
+    /**
+     * Builds a reusable summary of current scheduling gaps for a school.
+     */
+    public static SchedulingGapSummary getSchedulingGapSummary(Town town, StandardSchool school) {
+        return SchedulingGapSummary.fromReport(analyzeSchedulingSuccess(town, school));
+    }
+
+    /**
+     * Appends a concise scheduling-gap report to the given view.
+     */
+    public static void appendSchedulingGapReport(Town town, StandardSchool school, GameView view, int limit) {
+        SchedulingGapSummary summary = getSchedulingGapSummary(town, school);
+        for (String line : summary.toDebugLines(limit)) {
+            view.appendOutput(line);
+        }
     }
 
     /**
@@ -625,19 +588,28 @@ public class SchoolAssignmentService {
         if (scheduleReport.incompleteRate <= INCOMPLETE_SCHEDULE_THRESHOLD) {
             view.appendOutput("  School is meeting demand - no expansion needed");
             view.appendOutput("  Completion rate: " + String.format("%.1f%%", scheduleReport.completionRate * 100));
+            view.appendOutput("  Unmet class requests: " + scheduleReport.totalMissingRequests);
             return new ExpansionReport(0, 0, 0, false);
         }
 
         view.appendOutput("  Current incomplete schedule rate: " +
                 String.format("%.1f%%", scheduleReport.incompleteRate * 100));
+        view.appendOutput("  Unmet class requests: " + scheduleReport.totalMissingRequests);
         view.appendOutput("  Funding level: " + fundingModel.getFundingLevel().getDisplayName());
+        logSchedulingGaps(view, scheduleReport);
 
         // Calculate how many additional resources we need
-        int studentsWithGaps = scheduleReport.incompleteSchedules;
-        int additionalCapacityNeeded = Math.max(1, studentsWithGaps / 20); // Rough estimate
+        int additionalCapacityNeeded = Math.max(1,
+                (int) Math.ceil((double) scheduleReport.totalMissingRequests / TeacherBlockBuilder.getCurrentOptimalClassSize()));
 
         // Determine what type of expansion is possible based on funding
         if (fundingModel.canExpandToMeetDemand()) {
+            Map<String, Integer> roomNeeds = estimateAdditionalRoomNeeds(scheduleReport, school);
+            if (!roomNeeds.isEmpty()) {
+                view.appendOutput("  Expanding rooms for highest-demand shortages...");
+                Director.adaptSchoolToDemand(school, roomNeeds, view);
+            }
+
             // Adequately funded schools can add permanent classrooms
             int maxClassrooms = fundingModel.getMaxExpansionClassrooms();
             int classroomsToAdd = Math.min(additionalCapacityNeeded, maxClassrooms);
@@ -654,7 +626,7 @@ public class SchoolAssignmentService {
 
             if (teachersToHire > 0) {
                 view.appendOutput("  Attempting to hire " + teachersToHire + " additional teachers...");
-                Map<StaffType, Integer> staffNeeds = estimateStaffNeeds(town, school, teachersToHire);
+                Map<StaffType, Integer> staffNeeds = estimateStaffNeeds(scheduleReport, teachersToHire);
                 teachersAdded = StaffAssignmentService.assignAdditionalTeachers(
                         town, school, staffNeeds, view);
                 view.appendOutput("  Hired " + teachersAdded + " additional teachers");
@@ -704,6 +676,7 @@ public class SchoolAssignmentService {
                 view.appendOutput("  Re-scheduling students with new resources...");
                 EnhancedStudentScheduleAssigner.scheduleAllStudentsEnhanced(
                         studentMap, staffMap, school, view, town.getStudentPool());
+                StudentAssignmentService.syncSchoolEnrollmentFromPool(town.getStudentPool(), school, view);
 
                 view.appendOutput("  Re-assigning seating...");
                 StudentSeatingAssigner.seatInitialStudents(school);
@@ -749,21 +722,77 @@ public class SchoolAssignmentService {
      * @param targetTeachers the number of teachers to distribute
      * @return a map of staff types to needed counts
      */
-    private static Map<StaffType, Integer> estimateStaffNeeds(Town town, StandardSchool school, int targetTeachers) {
+    private static Map<StaffType, Integer> estimateStaffNeeds(SchedulingReport report, int targetTeachers) {
         Map<StaffType, Integer> needs = new HashMap<>();
+        if (targetTeachers <= 0) {
+            return needs;
+        }
 
-        // Distribute teachers across core subjects proportionally
-        // This is a simplified estimation - a more sophisticated version would
-        // analyze actual scheduling failures by subject
-        int perSubject = Math.max(1, targetTeachers / 4);
-        int remainder = targetTeachers - (perSubject * 4);
+        if (report.missingRequestsByStaffType.isEmpty()) {
+            needs.put(StaffType.MATH, 1);
+            return needs;
+        }
 
-        needs.put(StaffType.MATH, perSubject);
-        needs.put(StaffType.ENGLISH, perSubject);
-        needs.put(StaffType.SCIENCE, perSubject);
-        needs.put(StaffType.HISTORY, perSubject + remainder);
+        List<Map.Entry<StaffType, Integer>> sortedNeeds = report.missingRequestsByStaffType.entrySet().stream()
+                .sorted((left, right) -> Integer.compare(right.getValue(), left.getValue()))
+                .toList();
+        int totalMissing = sortedNeeds.stream().mapToInt(Map.Entry::getValue).sum();
+        int assigned = 0;
+
+        for (Map.Entry<StaffType, Integer> entry : sortedNeeds) {
+            int share = (int) Math.floor((double) entry.getValue() * targetTeachers / Math.max(1, totalMissing));
+            if (share > 0) {
+                needs.put(entry.getKey(), share);
+                assigned += share;
+            }
+        }
+
+        int index = 0;
+        while (assigned < targetTeachers && !sortedNeeds.isEmpty()) {
+            StaffType type = sortedNeeds.get(index % sortedNeeds.size()).getKey();
+            needs.merge(type, 1, Integer::sum);
+            assigned++;
+            index++;
+        }
 
         return needs;
+    }
+
+    private static Map<String, Integer> estimateAdditionalRoomNeeds(SchedulingReport report, StandardSchool school) {
+        Map<String, Integer> roomNeeds = new HashMap<>();
+        int classSize = Math.max(1, school.getFundingModel().getOptimalClassSize());
+
+        for (Map.Entry<String, Integer> entry : report.missingRequestsByRoomType.entrySet()) {
+            int additionalSections = (int) Math.ceil((double) entry.getValue() / classSize);
+            int additionalRooms = (int) Math.ceil((double) additionalSections / TOTAL_SCHOOL_PERIODS);
+            if (additionalRooms <= 0) {
+                continue;
+            }
+
+            int currentRooms = getCurrentRoomCount(school, entry.getKey());
+            roomNeeds.put(entry.getKey(), currentRooms + additionalRooms);
+        }
+
+        return roomNeeds;
+    }
+
+    private static int getCurrentRoomCount(StandardSchool school, String roomType) {
+        return switch (roomType) {
+            case "ScienceLab" -> school.getScienceLabs().length;
+            case "ArtStudio" -> school.getArtStudios().length;
+            case "DramaRoom" -> school.getDramaRooms().length;
+            case "MusicRoom" -> school.getMusicRooms().length;
+            case "Gym" -> school.getGyms().length;
+            case "VocationalRoom" -> school.getVocationalRooms().length;
+            case "ComputerLab" -> school.getComputerLabs().length;
+            default -> school.getClassrooms().length;
+        };
+    }
+
+    private static void logSchedulingGaps(GameView view, SchedulingReport report) {
+        for (String line : SchedulingGapSummary.fromReport(report).toDebugLines(5)) {
+            view.appendOutput(line);
+        }
     }
 
     /**
@@ -804,21 +833,116 @@ public class SchoolAssignmentService {
     }
 
     /**
+     * Public-facing snapshot of scheduling bottlenecks for reporting and tests.
+     */
+    public static class SchedulingGapSummary {
+        public final int totalStudents;
+        public final int completeSchedules;
+        public final int incompleteSchedules;
+        public final int totalMissingRequests;
+        public final double completionRate;
+        public final Map<String, Integer> missingRequestsByClass;
+        public final Map<String, Integer> missingRequestsByGrade;
+        public final Map<StaffType, Integer> missingRequestsByStaffType;
+        public final Map<String, Integer> missingRequestsByRoomType;
+
+        private SchedulingGapSummary(int totalStudents, int completeSchedules, int incompleteSchedules,
+                int totalMissingRequests, double completionRate, Map<String, Integer> missingRequestsByClass,
+                Map<String, Integer> missingRequestsByGrade, Map<StaffType, Integer> missingRequestsByStaffType,
+                Map<String, Integer> missingRequestsByRoomType) {
+            this.totalStudents = totalStudents;
+            this.completeSchedules = completeSchedules;
+            this.incompleteSchedules = incompleteSchedules;
+            this.totalMissingRequests = totalMissingRequests;
+            this.completionRate = completionRate;
+            this.missingRequestsByClass = new HashMap<>(missingRequestsByClass);
+            this.missingRequestsByGrade = new HashMap<>(missingRequestsByGrade);
+            this.missingRequestsByStaffType = new HashMap<>(missingRequestsByStaffType);
+            this.missingRequestsByRoomType = new HashMap<>(missingRequestsByRoomType);
+        }
+
+        private static SchedulingGapSummary fromReport(SchedulingReport report) {
+            return new SchedulingGapSummary(report.totalStudents, report.completeSchedules, report.incompleteSchedules,
+                    report.totalMissingRequests, report.completionRate, report.missingRequestsByClass,
+                    report.missingRequestsByGrade, report.missingRequestsByStaffType, report.missingRequestsByRoomType);
+        }
+
+        public List<String> toDebugLines(int limit) {
+            List<String> lines = new java.util.ArrayList<>();
+            lines.add("Scheduling gap summary:");
+            lines.add("  Total students: " + totalStudents);
+            lines.add("  Complete schedules: " + completeSchedules);
+            lines.add("  Incomplete schedules: " + incompleteSchedules);
+            lines.add("  Completion rate: " + String.format("%.1f%%", completionRate * 100));
+            lines.add("  Unmet class requests: " + totalMissingRequests);
+
+            if (!missingRequestsByClass.isEmpty()) {
+                lines.add("  Highest unmet classes:");
+                missingRequestsByClass.entrySet().stream()
+                        .sorted((left, right) -> Integer.compare(right.getValue(), left.getValue()))
+                        .limit(limit)
+                        .forEach(entry -> lines.add("    " + entry.getKey() + ": " + entry.getValue()));
+            }
+
+            if (!missingRequestsByGrade.isEmpty()) {
+                lines.add("  Unmet requests by grade:");
+                missingRequestsByGrade.entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .forEach(entry -> lines.add("    " + entry.getKey() + ": " + entry.getValue()));
+            }
+
+            if (!missingRequestsByStaffType.isEmpty()) {
+                lines.add("  Subject bottlenecks:");
+                missingRequestsByStaffType.entrySet().stream()
+                        .sorted((left, right) -> Integer.compare(right.getValue(), left.getValue()))
+                        .limit(limit)
+                        .forEach(entry -> lines.add("    " + entry.getKey() + ": " + entry.getValue()));
+            }
+
+            if (!missingRequestsByRoomType.isEmpty()) {
+                lines.add("  Room bottlenecks:");
+                missingRequestsByRoomType.entrySet().stream()
+                        .sorted((left, right) -> Integer.compare(right.getValue(), left.getValue()))
+                        .limit(limit)
+                        .forEach(entry -> lines.add("    " + entry.getKey() + ": " + entry.getValue()));
+            }
+
+            return lines;
+        }
+
+        public String toDebugString(int limit) {
+            return String.join(System.lineSeparator(), toDebugLines(limit));
+        }
+    }
+
+    /**
      * Report class for scheduling analysis.
      */
     private static class SchedulingReport {
         final int totalStudents;
         final int completeSchedules;
         final int incompleteSchedules;
+        final int totalMissingRequests;
         final double completionRate;
         final double incompleteRate;
+        final Map<String, Integer> missingRequestsByClass;
+        final Map<String, Integer> missingRequestsByGrade;
+        final Map<StaffType, Integer> missingRequestsByStaffType;
+        final Map<String, Integer> missingRequestsByRoomType;
 
-        SchedulingReport(int total, int complete, int incomplete) {
+        SchedulingReport(int total, int complete, int incomplete, int totalMissingRequests,
+                Map<String, Integer> missingRequestsByClass, Map<String, Integer> missingRequestsByGrade,
+                Map<StaffType, Integer> missingRequestsByStaffType, Map<String, Integer> missingRequestsByRoomType) {
             this.totalStudents = total;
             this.completeSchedules = complete;
             this.incompleteSchedules = incomplete;
+            this.totalMissingRequests = totalMissingRequests;
             this.completionRate = total > 0 ? (double) complete / total : 0;
             this.incompleteRate = total > 0 ? (double) incomplete / total : 0;
+            this.missingRequestsByClass = new HashMap<>(missingRequestsByClass);
+            this.missingRequestsByGrade = new HashMap<>(missingRequestsByGrade);
+            this.missingRequestsByStaffType = new HashMap<>(missingRequestsByStaffType);
+            this.missingRequestsByRoomType = new HashMap<>(missingRequestsByRoomType);
         }
     }
 }

@@ -5,7 +5,6 @@ import entity.Student;
 import java.util.*;
 
 import static constants.SimConstants.*;
-import static constants.SchedulingConstants.*;
 
 /**
  * Determines what classes each student should take based on their traits
@@ -261,18 +260,68 @@ public class StudentClassDeterminer {
                     .getDetermination() >= SENIOR_VOCATIONAL_CLASS_DETERMINATION_THRESHOLD) {
                 String[] fallChoices = vocationalDecision(student, "Fall");
                 String[] springChoices = vocationalDecision(student, "Spring");
-                classes.add(fallChoices[0]);
-                classes.add(springChoices[0]);
+                Set<String> selectedClasses = new LinkedHashSet<>();
+
+                addBalancedVocationalChoice(classes, selectedClasses, fallChoices, 4);
+                addBalancedVocationalChoice(classes, selectedClasses, springChoices, 4);
 
                 if (year.equals("Senior")) {
-                    if (fallChoices.length > 1)
-                        classes.add(fallChoices[1]);
-                    if (springChoices.length > 1)
-                        classes.add(springChoices[1]);
+                    addBalancedVocationalChoice(classes, selectedClasses, fallChoices, 6);
+                    addBalancedVocationalChoice(classes, selectedClasses, springChoices, 6);
                 }
             }
         }
         return classes;
+    }
+
+    private static void addBalancedVocationalChoice(List<String> classes, Set<String> selectedClasses,
+            String[] rankedChoices, int candidateLimit) {
+        String choice = pickBalancedVocationalChoice(rankedChoices, selectedClasses, candidateLimit);
+        if (choice != null) {
+            classes.add(choice);
+            selectedClasses.add(choice);
+        }
+    }
+
+    private static String pickBalancedVocationalChoice(String[] rankedChoices, Set<String> selectedClasses,
+            int candidateLimit) {
+        List<String> normalizedChoices = normalizeVocationalChoices(rankedChoices);
+        List<String> availableChoices = normalizedChoices.stream()
+                .filter(choice -> !selectedClasses.contains(choice))
+                .toList();
+        if (availableChoices.isEmpty()) {
+            return null;
+        }
+
+        int limit = Math.min(candidateLimit, availableChoices.size());
+        int totalWeight = 0;
+        for (int i = 0; i < limit; i++) {
+            totalWeight += limit - i;
+        }
+
+        int roll = Randomizer.setRandom(1, totalWeight);
+        int cumulative = 0;
+        for (int i = 0; i < limit; i++) {
+            cumulative += limit - i;
+            if (roll <= cumulative) {
+                return availableChoices.get(i);
+            }
+        }
+
+        return availableChoices.get(0);
+    }
+
+    private static List<String> normalizeVocationalChoices(String[] rankedChoices) {
+        List<String> normalizedChoices = new ArrayList<>();
+        Set<String> seen = new LinkedHashSet<>();
+        for (String choice : rankedChoices) {
+            if (choice == null || choice.isBlank() || seen.contains(choice)) {
+                continue;
+            }
+            normalizedChoices.add(choice);
+            seen.add(choice);
+        }
+        return normalizedChoices;
     }
 
     // --------------------------------------------------------- physical ed

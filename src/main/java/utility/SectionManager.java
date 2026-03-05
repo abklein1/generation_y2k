@@ -333,7 +333,19 @@ public class SectionManager {
             return;
         }
 
-        int averageCapacity = calculateAverageRoomCapacity(level1Teachers);
+        List<Map.Entry<Staff, TeacherBlock>> level1Blocks = getTeacherBlocksForSemester(level1Teachers, level1Class, "Fall");
+        List<Map.Entry<Staff, TeacherBlock>> level2Blocks = getTeacherBlocksForSemester(level2Teachers, level2Class,
+                "Spring");
+        if (level1Blocks.isEmpty() || level2Blocks.isEmpty()) {
+            GameLogger.logScheduling("WARNING: No usable semester blocks found for " + level1Class +
+                    " or " + level2Class);
+            return;
+        }
+
+        int averageCapacity = (int) level1Blocks.stream()
+                .mapToInt(entry -> entry.getValue().getRoom().getStudentCapacity())
+                .average()
+                .orElse(25);
         int neededSections = Math.max(1, (totalStudents + averageCapacity - 1) / averageCapacity);
 
         GameLogger.logScheduling("Creating " + neededSections + " sections each for " + level1Class +
@@ -342,30 +354,28 @@ public class SectionManager {
         List<ClassSection> level1Sections = new ArrayList<>();
         List<ClassSection> level2Sections = new ArrayList<>();
 
-        for (int i = 0; i < neededSections && i < level1Teachers.size(); i++) {
-            Staff teacher = level1Teachers.get(i);
-            TeacherBlock fallBlock = findBlockBySemester(teacher, level1Class, "Fall");
-            if (fallBlock != null) {
-                ClassSection section = new ClassSection(level1Class, teacher, fallBlock,
-                        fallBlock.getRoom().getStudentCapacity());
-                level1Sections.add(section);
-                GameLogger.logScheduling("Created " + level1Class + " section: Fall Block " +
-                        fallBlock.getBlockNumber() + " with " +
-                        teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
-            }
+        for (int i = 0; i < neededSections && i < level1Blocks.size(); i++) {
+            Map.Entry<Staff, TeacherBlock> teacherBlock = level1Blocks.get(i);
+            Staff teacher = teacherBlock.getKey();
+            TeacherBlock fallBlock = teacherBlock.getValue();
+            ClassSection section = new ClassSection(level1Class, teacher, fallBlock,
+                    fallBlock.getRoom().getStudentCapacity());
+            level1Sections.add(section);
+            GameLogger.logScheduling("Created " + level1Class + " section: Fall Block " +
+                    fallBlock.getBlockNumber() + " with " +
+                    teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
         }
 
-        for (int i = 0; i < neededSections && i < level2Teachers.size(); i++) {
-            Staff teacher = level2Teachers.get(i);
-            TeacherBlock springBlock = findBlockBySemester(teacher, level2Class, "Spring");
-            if (springBlock != null) {
-                ClassSection section = new ClassSection(level2Class, teacher, springBlock,
-                        springBlock.getRoom().getStudentCapacity());
-                level2Sections.add(section);
-                GameLogger.logScheduling("Created " + level2Class + " section: Spring Block " +
-                        springBlock.getBlockNumber() + " with " +
-                        teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
-            }
+        for (int i = 0; i < neededSections && i < level2Blocks.size(); i++) {
+            Map.Entry<Staff, TeacherBlock> teacherBlock = level2Blocks.get(i);
+            Staff teacher = teacherBlock.getKey();
+            TeacherBlock springBlock = teacherBlock.getValue();
+            ClassSection section = new ClassSection(level2Class, teacher, springBlock,
+                    springBlock.getRoom().getStudentCapacity());
+            level2Sections.add(section);
+            GameLogger.logScheduling("Created " + level2Class + " section: Spring Block " +
+                    springBlock.getBlockNumber() + " with " +
+                    teacher.teacherName.getFirstName() + " " + teacher.teacherName.getLastName());
         }
 
         classSections.put(level1Class, level1Sections);
@@ -379,14 +389,27 @@ public class SectionManager {
 
     /** Finds a teacher block in the specified semester. */
     public static TeacherBlock findBlockBySemester(Staff teacher, String className, String targetSemester) {
+        List<TeacherBlock> blocks = findBlocksBySemester(teacher, className, targetSemester);
+        return blocks.isEmpty() ? null : blocks.get(0);
+    }
+
+    public static List<TeacherBlock> findBlocksBySemester(Staff teacher, String className, String targetSemester) {
         List<TeacherBlock> availableBlocks = teacher.teacherStatistics.getTeacherSchedule()
                 .getBlocksByClassName(className);
-        for (TeacherBlock block : availableBlocks) {
-            if (block.getSemester().equals(targetSemester)) {
-                return block;
+        return availableBlocks.stream()
+                .filter(block -> block.getSemester().equals(targetSemester))
+                .collect(Collectors.toList());
+    }
+
+    private static List<Map.Entry<Staff, TeacherBlock>> getTeacherBlocksForSemester(List<Staff> teachers, String className,
+            String targetSemester) {
+        List<Map.Entry<Staff, TeacherBlock>> blocks = new ArrayList<>();
+        for (Staff teacher : teachers) {
+            for (TeacherBlock block : findBlocksBySemester(teacher, className, targetSemester)) {
+                blocks.add(new AbstractMap.SimpleEntry<>(teacher, block));
             }
         }
-        return null;
+        return blocks;
     }
 
     /** Returns teachers that have blocks assigned for the given class. */

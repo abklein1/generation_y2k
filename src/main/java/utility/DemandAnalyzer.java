@@ -5,7 +5,6 @@ import entity.StaffType;
 import entity.Student;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static constants.SchoolConstants.TOTAL_SCHOOL_PERIODS;
 
@@ -85,6 +84,11 @@ public class DemandAnalyzer {
         /** Room type string (e.g. "Classroom", "ScienceLab") -> count needed. */
         public Map<String, Integer> getRoomsNeeded() {
             return roomsNeeded;
+        }
+
+        /** Class name -> preferred room type used during adaptation. */
+        public Map<String, String> getRoomTypeByClass() {
+            return roomTypeByClass;
         }
 
         /** Alias so callers can use {@code demand.roomNeeds()} as in the plan. */
@@ -195,6 +199,11 @@ public class DemandAnalyzer {
                     className, students.size(), students);
             demandTracker.put(className, demand);
         }
+    }
+
+    /** Exposes room-type mapping for scheduling diagnostics and expansion heuristics. */
+    public static String getRoomTypeForClass(String className) {
+        return mapClassToRoomType(className);
     }
 
     // --------------------------------------------------- private helpers

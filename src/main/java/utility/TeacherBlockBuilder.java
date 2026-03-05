@@ -126,7 +126,16 @@ public class TeacherBlockBuilder {
             for (Staff assignedStaff : room.getAssignedStaff()) {
                 String assignedName = assignedStaff.teacherName.getFirstName() + " "
                         + assignedStaff.teacherName.getLastName();
-                if (staffName.equals(assignedName))
+                if (staffName.equals(assignedName) || room.getAssignedStaff().contains(staff))
+                    return room;
+            }
+        }
+
+        for (Auditorium room : standardSchool.getAuditoriums()) {
+            for (Staff assignedStaff : room.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " "
+                        + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName) || room.getAssignedStaff().contains(staff))
                     return room;
             }
         }
@@ -208,10 +217,20 @@ public class TeacherBlockBuilder {
             if (room.getAssignedStaff().isEmpty())
                 availableDramaRooms.add(room);
         }
+        List<Room> availableAuditoriums = new ArrayList<>();
+        for (Auditorium room : standardSchool.getAuditoriums()) {
+            if (room.getAssignedStaff().isEmpty())
+                availableAuditoriums.add(room);
+        }
         List<Room> availableGyms = new ArrayList<>();
         for (Gym gym : standardSchool.getGyms()) {
             if (gym.getAssignedStaff().isEmpty())
                 availableGyms.add(gym);
+        }
+        List<Room> availableAthleticFields = new ArrayList<>();
+        for (AthleticField field : standardSchool.getAthleticFields()) {
+            if (field.getAssignedStaff().isEmpty())
+                availableAthleticFields.add(field);
         }
         List<Room> availableVocationalRooms = new ArrayList<>();
         for (VocationalRoom room : standardSchool.getVocationalRooms()) {
@@ -264,6 +283,8 @@ public class TeacherBlockBuilder {
                         assignedRoom = availableMusicRooms.remove(0);
                     else if (!availableDramaRooms.isEmpty())
                         assignedRoom = availableDramaRooms.remove(0);
+                    else if (!availableAuditoriums.isEmpty())
+                        assignedRoom = availableAuditoriums.remove(0);
                     else if (!availableClassrooms.isEmpty())
                         assignedRoom = availableClassrooms.remove(0);
                     else if (!availablePortables.isEmpty())
@@ -272,6 +293,12 @@ public class TeacherBlockBuilder {
                 case PHYSICAL_ED:
                     if (!availableGyms.isEmpty())
                         assignedRoom = availableGyms.remove(0);
+                    else if (!availableAthleticFields.isEmpty())
+                        assignedRoom = availableAthleticFields.remove(0);
+                    else if (!availableClassrooms.isEmpty())
+                        assignedRoom = availableClassrooms.remove(0);
+                    else if (!availablePortables.isEmpty())
+                        assignedRoom = availablePortables.remove(0);
                     break;
                 case VOCATIONAL:
                     if (!availableVocationalRooms.isEmpty())

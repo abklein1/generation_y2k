@@ -537,25 +537,36 @@ public class Director {
     public static void adaptSchoolToDemand(StandardSchool school, Map<String, Integer> roomNeeds, GameView view) {
         view.appendOutput("Adapting school rooms to meet demand...");
 
-        // Only add classrooms if we need more than we have
-        int classroomsNeeded = roomNeeds.getOrDefault("Classroom", 0);
-        int currentClassrooms = school.getClassrooms().length;
-        if (classroomsNeeded > currentClassrooms) {
-            int toAdd = classroomsNeeded - currentClassrooms;
-            view.appendOutput("  Adding " + toAdd + " classrooms (have " + currentClassrooms +
-                    ", need " + classroomsNeeded + ")");
-            school.addClassrooms(toAdd, view);
-        }
-
-        // Similarly for science labs
-        int labsNeeded = roomNeeds.getOrDefault("ScienceLab", 0);
-        if (labsNeeded > school.getScienceLabs().length) {
-            view.appendOutput("  Need more science labs (have " + school.getScienceLabs().length +
-                    ", need " + labsNeeded + ")");
-        }
+        adaptIfNeeded("classrooms", roomNeeds.getOrDefault("Classroom", 0), school.getClassrooms().length,
+                count -> school.addClassrooms(count, view), view);
+        adaptIfNeeded("science labs", roomNeeds.getOrDefault("ScienceLab", 0), school.getScienceLabs().length,
+                count -> school.addScienceLabs(count, view), view);
+        adaptIfNeeded("art studios", roomNeeds.getOrDefault("ArtStudio", 0), school.getArtStudios().length,
+                count -> school.addArtStudios(count, view), view);
+        adaptIfNeeded("drama rooms", roomNeeds.getOrDefault("DramaRoom", 0), school.getDramaRooms().length,
+                count -> school.addDramaRooms(count, view), view);
+        adaptIfNeeded("music rooms", roomNeeds.getOrDefault("MusicRoom", 0), school.getMusicRooms().length,
+                count -> school.addMusicRooms(count, view), view);
+        adaptIfNeeded("gyms", roomNeeds.getOrDefault("Gym", 0), school.getGyms().length,
+                count -> school.addGyms(count, view), view);
+        adaptIfNeeded("vocational rooms", roomNeeds.getOrDefault("VocationalRoom", 0),
+                school.getVocationalRooms().length, count -> school.addVocationalRooms(count, view), view);
+        adaptIfNeeded("computer labs", roomNeeds.getOrDefault("ComputerLab", 0), school.getComputerLabs().length,
+                count -> school.addComputerLabs(count, view), view);
 
         view.appendOutput("Adaptation complete. Classrooms: " + school.getClassrooms().length +
                 ", Optimal capacity: " + school.getOptimalCapacity());
+    }
+
+    private static void adaptIfNeeded(String label, int needed, int current,
+            java.util.function.IntUnaryOperator roomAdder, GameView view) {
+        if (needed <= current) {
+            return;
+        }
+
+        int toAdd = needed - current;
+        view.appendOutput("  Adding " + toAdd + " " + label + " (have " + current + ", need " + needed + ")");
+        roomAdder.applyAsInt(toAdd);
     }
 
     /**

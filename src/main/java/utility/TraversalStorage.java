@@ -54,6 +54,15 @@ public class TraversalStorage {
                 if (i + 2 < blocks.size()) {
                     Room nextRoom = blocks.get(i + 2).getRoom();
                     if (room != null && nextRoom != null) {
+                        if (!schoolConnect.containsVertex(room) || !schoolConnect.containsVertex(nextRoom)) {
+                            GameLogger.logDebug("Skipping path for student " + student.studentName.getFirstName() +
+                                    " " + student.studentName.getLastName() + " because a scheduled room is not in " +
+                                    "the school graph. source=" + describeRoom(room) + " (inGraph=" +
+                                    schoolConnect.containsVertex(room) + "), sink=" + describeRoom(nextRoom) +
+                                    " (inGraph=" + schoolConnect.containsVertex(nextRoom) + ")");
+                            continue;
+                        }
+
                         GraphPath<Room, DefaultEdge> path = DijkstraShortestPath.findPathBetween(schoolConnect, room,
                                 nextRoom);
                         if (path != null) {
@@ -67,10 +76,27 @@ public class TraversalStorage {
                                         + student.studentName.getFirstName());
                                 studentPathsSpring.put(student, roomList);
                             }
+                        } else {
+                            GameLogger.logDebug("No path found between " + describeRoom(room) + " and " +
+                                    describeRoom(nextRoom) + " for student " +
+                                    student.studentName.getFirstName() + " " +
+                                    student.studentName.getLastName());
                         }
                     }
                 }
             }
         }
+    }
+
+    private String describeRoom(Room room) {
+        if (room == null) {
+            return "null";
+        }
+
+        String roomName = room.getRoomName();
+        if (roomName == null || roomName.isBlank()) {
+            return room.getClass().getSimpleName();
+        }
+        return roomName;
     }
 }

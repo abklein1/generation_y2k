@@ -436,6 +436,43 @@ public class StaffAssignmentService {
             }
         }
 
+        // If the pool is exhausted, synthesize additional staff so expansion can
+        // react to actual shortages instead of stalling on town-pop limits.
+        if (shortages > 0) {
+            Map<StaffType, Integer> remainingNeeds = new LinkedHashMap<>();
+            for (Map.Entry<StaffType, Integer> need : staffNeeds.entrySet()) {
+                StaffType type = need.getKey();
+                long assignedOfType = newlyAssigned.values().stream()
+                        .filter(staff -> type.equals(staff.teacherStatistics.getStaffType()))
+                        .count();
+                int remainingForType = need.getValue() - (int) assignedOfType;
+                if (remainingForType > 0) {
+                    remainingNeeds.put(type, remainingForType);
+                }
+            }
+
+            int syntheticCount = remainingNeeds.values().stream().mapToInt(Integer::intValue).sum();
+            if (syntheticCount > 0) {
+                view.appendOutput("  Generating " + syntheticCount + " additional staff to cover remaining shortages...");
+                List<Staff> generatedStaff = TownPopulationGenerator.generateAdditionalStaff(town, syntheticCount, view);
+                int generatedIndex = 0;
+
+                for (Map.Entry<StaffType, Integer> entry : remainingNeeds.entrySet()) {
+                    StaffType type = entry.getKey();
+                    for (int i = 0; i < entry.getValue() && generatedIndex < generatedStaff.size(); i++) {
+                        Staff generated = generatedStaff.get(generatedIndex++);
+                        generated.teacherStatistics.setStaffType(type);
+                        if (pool.assignToSchool(generated, school)) {
+                            newlyAssigned.put(totalAssigned, generated);
+                            totalAssigned++;
+                            view.appendOutput("  Generated and hired " + generated.teacherName.getFirstName() + " " +
+                                    generated.teacherName.getLastName() + " as " + type);
+                        }
+                    }
+                }
+            }
+        }
+
         // Assign newly hired teachers to classrooms
         if (!newlyAssigned.isEmpty()) {
             Classroom[] classrooms = school.getClassrooms();
