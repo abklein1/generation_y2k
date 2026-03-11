@@ -114,9 +114,18 @@ class NeighborhoodAssignmentServiceTest {
                 () -> assertFalse(neighborhoods.isEmpty()),
                 () -> assertEquals(totalResidents, assignedResidents),
                 () -> assertTrue(neighborhoods.stream()
+                        .allMatch(neighborhood -> neighborhood.getDistanceFromSchoolMiles() >= 0
+                                && neighborhood.getDistanceFromSchoolMiles() <= 10)),
+                () -> assertTrue(neighborhoods.stream()
                         .allMatch(neighborhood -> neighborhood.getCurrentPopulation() <= neighborhood.getPopulationCapacity())),
                 () -> assertTrue(neighborhoods.stream()
                         .anyMatch(neighborhood -> neighborhood.getCurrentPopulation() < neighborhood.getPopulationCapacity())),
+                () -> assertTrue(neighborhoods.stream()
+                        .filter(neighborhood -> neighborhood.getCurrentPopulation() == 0)
+                        .count() >= 1),
+                () -> assertTrue(neighborhoods.stream()
+                        .filter(neighborhood -> neighborhood.getCurrentPopulation() == 0)
+                        .count() <= 3),
                 () -> assertTrue(town.getStudentPool().getAllStudents().values().stream()
                         .allMatch(student -> student.studentStatistics.getNeighborhoodName() != null)),
                 () -> assertTrue(town.getStaffPool().getAllStaff().values().stream()

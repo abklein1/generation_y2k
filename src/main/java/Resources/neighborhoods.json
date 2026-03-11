@@ -14,7 +14,10 @@
         "Palm Cove",
         "La Jolla",
         "Timberline",
-        "Fisher"
+        "Fisher",
+        "Brookfield",
+        "Woodfield",
+        "Hawk Pointe"
     ],
     "secondNames_affluent": [
         "Estates",
@@ -27,7 +30,8 @@
         "Sands",
         "Shores",
         "Island",
-        "Landing"
+        "Landing",
+        "Bluff"
     ],
     "firstNames_middle_class": [
         "Winding",
@@ -42,7 +46,13 @@
         "Forest",
         "Colonial",
         "Hawk",
-        "Shaded"
+        "Shaded",
+        "Rattan",
+        "Copper",
+        "Silver",
+        "Willow",
+        "Foxwood",
+        "Wind"
     ],
     "secondNames_middle_class": [
         "Creek",
@@ -55,7 +65,10 @@
         "Point",
         "Trace",
         "Vista",
-        "Terrace"
+        "Terrace",
+        "Run",
+        "River",
+        "Square"
     ],
     "firstNames_working_class": [
         "Ridgeline",
@@ -70,7 +83,14 @@
         "Rose Point",
         "East",
         "Jordan",
-        "Bells"
+        "Bells",
+        "Kashmere",
+        "Morgan",
+        "Holiday",
+        "Imperial",
+        "Domino",
+        "Aloha",
+        "Grant"
     ],
     "secondNames_working_class": [
         "Apartment Complex",
@@ -85,14 +105,18 @@
         "Projects",
         "Knolls",
         "Mutual",
-        "Towers"
+        "Towers",
+        "Park"
     ],
     "uniqueNames_working_class": [
         "Alcontarra",
         "Savona",
         "Crosses",
         "St. Andrews",
-        "St. John's"
+        "St. John's",
+        "Alief",
+        "Sunnyside",
+        "Third Ward"
     ],
     "uniqueNames_middle_class": [
         "Greenwood",
@@ -101,12 +125,18 @@
         "Oakwood",
         "Pinewood",
         "Redwood",
-        "Sycamore"
+        "Sycamore",
+        "Willowbrook"
     ],
     "uniqueNames_affluent": [
         "The Estates at Holly Lake",
         "The Estates at Palmetto Woods",
         "Cherrywood",
-        "The Club at Oak Ridge"
+        "The Club at Oak Ridge",
+        "The Breakers",
+        "The Shores of Lakewood",
+        "The Shores of Cypress Creek",
+        "The Estates at Deer Ridge",
+        "The Harbor Waterfront"
     ]
 }

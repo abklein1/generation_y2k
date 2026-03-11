@@ -552,10 +552,11 @@ public class SchoolController {
         summaryArea.setEditable(false);
         summaryArea.setLineWrap(true);
         summaryArea.setWrapStyleWord(true);
-        summaryArea.setRows(4);
+        summaryArea.setRows(5);
         summaryArea.setText(
                 "Neighborhood: " + neighborhood.getName() + "\n" +
                         "Wealth Level: " + capitalizeLabel(neighborhood.getWealthLevel()) + "\n" +
+                        "Distance From School: " + neighborhood.getDistanceFromSchoolMiles() + " miles\n" +
                         "Population: " + neighborhood.getCurrentPopulation() + " / " +
                         neighborhood.getPopulationCapacity() + "\n" +
                         "Residents: " + neighborhood.getStudentsInSchool().size() + " students in school, " +

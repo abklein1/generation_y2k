@@ -24,6 +24,11 @@ public final class NeighborhoodAssignmentService {
 
     private static final double STAFF_LOW_WEIGHT = 0.20;
     private static final double STAFF_MIDDLE_WEIGHT = 0.60;
+    private static final double NEIGHBORHOOD_DISTANCE_MEAN = 2.5;
+    private static final double NEIGHBORHOOD_DISTANCE_STD_DEV = 1.75;
+    private static final int MAX_NEIGHBORHOOD_DISTANCE_MILES = 10;
+    private static final int EXTRA_NEIGHBORHOODS_MIN = 1;
+    private static final int EXTRA_NEIGHBORHOODS_MAX = 3;
     private static final int LOW_CAPACITY_MIN = 150;
     private static final int LOW_CAPACITY_MAX = 225;
     private static final int MIDDLE_CAPACITY_MIN = 165;
@@ -47,6 +52,7 @@ public final class NeighborhoodAssignmentService {
         List<Neighborhood> neighborhoods = createInitialNeighborhoods(students, staff.size(), usedNames);
         assignStudentHouseholds(buildStudentHouseholds(students), neighborhoods, usedNames);
         assignStaffMembers(staff, neighborhoods, usedNames);
+        addExtraNeighborhoods(neighborhoods, usedNames, countStudentsByIncome(students));
         town.setNeighborhoods(neighborhoods);
     }
 
@@ -98,6 +104,14 @@ public final class NeighborhoodAssignmentService {
         createTierNeighborhoods("high", highTarget, neighborhoods, usedNames);
 
         return neighborhoods;
+    }
+
+    private static void addExtraNeighborhoods(List<Neighborhood> neighborhoods, Set<String> usedNames,
+            Map<String, Integer> studentCounts) {
+        int extraNeighborhoodCount = GameRandom.nextInt(EXTRA_NEIGHBORHOODS_MIN, EXTRA_NEIGHBORHOODS_MAX);
+        for (int i = 0; i < extraNeighborhoodCount; i++) {
+            neighborhoods.add(createNeighborhood(rollExtraNeighborhoodWealthLevel(studentCounts), usedNames));
+        }
     }
 
     private static void createTierNeighborhoods(String wealthLevel, int targetResidents,
@@ -291,7 +305,8 @@ public final class NeighborhoodAssignmentService {
         String normalizedWealthLevel = normalizeIncomeLevel(wealthLevel);
         String name = NeighborhoodNameLoader.generateUniqueNeighborhoodName(normalizedWealthLevel, usedNames);
         usedNames.add(name);
-        return new Neighborhood(name, normalizedWealthLevel, rollCapacity(normalizedWealthLevel));
+        return new Neighborhood(name, normalizedWealthLevel, rollCapacity(normalizedWealthLevel),
+                rollDistanceFromSchoolMiles());
     }
 
     private static int rollCapacity(String wealthLevel) {
@@ -304,6 +319,11 @@ public final class NeighborhoodAssignmentService {
 
     private static int calculateBuffer(int targetResidents) {
         return Math.max(20, (int) Math.ceil(targetResidents * 0.08));
+    }
+
+    private static int rollDistanceFromSchoolMiles() {
+        int miles = (int) Math.round(GameRandom.nextGaussian(NEIGHBORHOOD_DISTANCE_MEAN, NEIGHBORHOOD_DISTANCE_STD_DEV));
+        return Math.max(0, Math.min(MAX_NEIGHBORHOOD_DISTANCE_MILES, miles));
     }
 
     private static List<Student> getAllStudents(Town town) {
@@ -378,6 +398,25 @@ public final class NeighborhoodAssignmentService {
             return "low";
         }
         if (roll < STAFF_LOW_WEIGHT + STAFF_MIDDLE_WEIGHT) {
+            return "middle";
+        }
+        return "high";
+    }
+
+    private static String rollExtraNeighborhoodWealthLevel(Map<String, Integer> studentCounts) {
+        int lowCount = studentCounts.getOrDefault("low", 0);
+        int middleCount = studentCounts.getOrDefault("middle", 0);
+        int highCount = studentCounts.getOrDefault("high", 0);
+        int total = lowCount + middleCount + highCount;
+        if (total <= 0) {
+            return "middle";
+        }
+
+        int roll = GameRandom.nextInt(total);
+        if (roll < lowCount) {
+            return "low";
+        }
+        if (roll < lowCount + middleCount) {
             return "middle";
         }
         return "high";

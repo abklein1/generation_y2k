@@ -14,14 +14,20 @@ public class Neighborhood implements Serializable {
     private String name;
     private String wealthLevel;
     private int populationCapacity;
+    private int distanceFromSchoolMiles;
     private final List<Student> studentsInSchool;
     private final List<Student> siblingsNotInSchool;
     private final List<Staff> staff;
 
     public Neighborhood(String name, String wealthLevel, int populationCapacity) {
+        this(name, wealthLevel, populationCapacity, 0);
+    }
+
+    public Neighborhood(String name, String wealthLevel, int populationCapacity, int distanceFromSchoolMiles) {
         this.name = name;
         this.wealthLevel = wealthLevel;
         this.populationCapacity = populationCapacity;
+        this.distanceFromSchoolMiles = distanceFromSchoolMiles;
         this.studentsInSchool = new ArrayList<>();
         this.siblingsNotInSchool = new ArrayList<>();
         this.staff = new ArrayList<>();
@@ -49,6 +55,14 @@ public class Neighborhood implements Serializable {
 
     public void setPopulationCapacity(int populationCapacity) {
         this.populationCapacity = populationCapacity;
+    }
+
+    public int getDistanceFromSchoolMiles() {
+        return distanceFromSchoolMiles;
+    }
+
+    public void setDistanceFromSchoolMiles(int distanceFromSchoolMiles) {
+        this.distanceFromSchoolMiles = distanceFromSchoolMiles;
     }
 
     public List<Student> getStudentsInSchool() {
@@ -106,6 +120,7 @@ public class Neighborhood implements Serializable {
                 "name='" + name + '\'' +
                 ", wealthLevel='" + wealthLevel + '\'' +
                 ", populationCapacity=" + populationCapacity +
+                ", distanceFromSchoolMiles=" + distanceFromSchoolMiles +
                 ", currentPopulation=" + getCurrentPopulation() +
                 '}';
     }
