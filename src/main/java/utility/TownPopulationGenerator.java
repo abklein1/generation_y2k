@@ -44,6 +44,9 @@ public class TownPopulationGenerator {
         GameLogger.logGeneration("Generating staff population...");
         generateStaffPopulation(town, demographics, view);
 
+        GameLogger.logGeneration("Assigning neighborhoods...");
+        NeighborhoodAssignmentService.assignNeighborhoods(town);
+
         GameLogger.logGeneration("Town generation complete. Total students: " + town.getTotalStudentPopulation() +
                 ", Total staff: " + town.getTotalStaffPopulation());
 
@@ -78,7 +81,7 @@ public class TownPopulationGenerator {
 
         // Generate students using the existing StudentPopGenerator
         // Note: We don't pass school colors here - they can be set later per school
-        StudentPopGenerator.generateStudents(studentCount, tempMap, view);
+        StudentPopGenerator.generateStudentsWithDemographics(studentCount, tempMap, view, demographics);
 
         // Generate sibling relationships
         // Note: SiblingGenerator adds new students to the map
@@ -113,7 +116,7 @@ public class TownPopulationGenerator {
         HashMap<Integer, Student> tempMap = new HashMap<>();
 
         // Generate students
-        StudentPopGenerator.generateStudents(studentCount, tempMap, view);
+        StudentPopGenerator.generateStudentsWithDemographics(studentCount, tempMap, view, demographics);
 
         // Generate sibling relationships
         SiblingGenerator.siblingGenerator(tempMap, studentCount, view);
@@ -158,15 +161,21 @@ public class TownPopulationGenerator {
      */
     public static List<Student> generateAdditionalStudents(Town town, int count, GameView view) {
         StudentPool pool = town.getStudentPool();
+        TownDemographics demographics = town.getDemographics();
 
         HashMap<Integer, Student> tempMap = new HashMap<>();
-        StudentPopGenerator.generateStudents(count, tempMap, view);
+        if (demographics != null) {
+            StudentPopGenerator.generateStudentsWithDemographics(count, tempMap, view, demographics);
+        } else {
+            StudentPopGenerator.generateStudents(count, tempMap, view);
+        }
 
         // Optionally generate siblings for new students
         SiblingGenerator.siblingGenerator(tempMap, count, view);
 
         // Add to pool
         pool.addStudentsFromMap(tempMap);
+        NeighborhoodAssignmentService.assignNeighborhoodsForNewResidents(town);
 
         // Return the new students
         List<Student> newStudents = new ArrayList<>(tempMap.values());
@@ -192,6 +201,7 @@ public class TownPopulationGenerator {
 
         // Add to pool
         pool.addStaffFromMap(tempMap);
+        NeighborhoodAssignmentService.assignNeighborhoodsForNewResidents(town);
 
         // Return the new staff
         List<Staff> newStaff = new ArrayList<>(tempMap.values());

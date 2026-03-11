@@ -6,7 +6,9 @@ import entity.StaffType;
 import entity.StandardSchool;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class RoomAssignment {
     public static void assignTeacherToRoom(Staff staff, Room room) {
@@ -18,6 +20,50 @@ public class RoomAssignment {
             String newName = RoomNameGenerator.generateClassroomName(classroom, staff, originalName);
             classroom.setRoomName(newName);
         }
+    }
+
+    public static boolean canUseOverflowTeachingRoom(StaffType type) {
+        if (type == null) {
+            return false;
+        }
+        return switch (type) {
+            case ENGLISH, MATH, SCIENCE, HISTORY, LANGUAGES, BUSINESS, CONSUMER_SCI -> true;
+            default -> false;
+        };
+    }
+
+    public static List<Room> getOverflowTeachingRooms(StandardSchool school) {
+        List<Room> rooms = new ArrayList<>();
+        for (LibraryR library : school.getLibraries()) {
+            rooms.add(library);
+        }
+        for (ConferenceRoom conferenceRoom : school.getConferenceRooms()) {
+            rooms.add(conferenceRoom);
+        }
+        for (Auditorium auditorium : school.getAuditoriums()) {
+            rooms.add(auditorium);
+        }
+        for (Lunchroom lunchroom : school.getLunchrooms()) {
+            rooms.add(lunchroom);
+        }
+        return rooms;
+    }
+
+    public static boolean tryAssignOverflowTeachingRoom(Staff staff, StandardSchool school) {
+        StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
+        if (!canUseOverflowTeachingRoom(type)) {
+            return false;
+        }
+
+        for (Room room : getOverflowTeachingRooms(school)) {
+            if (room.getAssignedStaff().isEmpty()) {
+                assignTeacherToRoom(staff, room);
+                GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                        + staff.teacherName.getLastName() + " to overflow space " + room.getRoomName());
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void initialRoomAssignmentHelper(Staff staff, StandardSchool school) {
@@ -259,6 +305,10 @@ public class RoomAssignment {
                     }
                 }
                 break;
+        }
+
+        if (!teacherAssigned && canUseOverflowTeachingRoom(type)) {
+            teacherAssigned = tryAssignOverflowTeachingRoom(staff, school);
         }
 
         if (!teacherAssigned) {

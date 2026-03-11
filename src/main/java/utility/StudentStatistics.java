@@ -59,6 +59,8 @@ public class StudentStatistics implements PStatistics {
     // Allostatic load meter
     private final AllostaticLoad allostaticLoad;
     private String incomeLevel;
+    private String neighborhoodName;
+    private String neighborhoodWealthLevel;
     private final ArrayList<String> completedClasses;
     private final StudentSchedule studentSchedule;
     private final ArrayList<Student> siblingsInSchool;
@@ -130,6 +132,8 @@ public class StudentStatistics implements PStatistics {
         this.maxOpenmindedness = 0;
         this.allostaticLoad = new AllostaticLoad();
         this.incomeLevel = null;
+        this.neighborhoodName = null;
+        this.neighborhoodWealthLevel = null;
         this.completedClasses = new ArrayList<>();
         this.studentSchedule = new StudentSchedule();
         this.siblingsInSchool = new ArrayList<>();
@@ -627,6 +631,27 @@ public class StudentStatistics implements PStatistics {
 
     public void setIncomeLevel(String incomeLevel) {
         this.incomeLevel = incomeLevel;
+    }
+
+    public String getNeighborhoodName() {
+        return neighborhoodName;
+    }
+
+    public void setNeighborhoodName(String neighborhoodName) {
+        this.neighborhoodName = neighborhoodName;
+    }
+
+    public String getNeighborhoodWealthLevel() {
+        return neighborhoodWealthLevel;
+    }
+
+    public void setNeighborhoodWealthLevel(String neighborhoodWealthLevel) {
+        this.neighborhoodWealthLevel = neighborhoodWealthLevel;
+    }
+
+    public void clearNeighborhoodAssignment() {
+        this.neighborhoodName = null;
+        this.neighborhoodWealthLevel = null;
     }
 
     public void setInitIncomeLevel(int choice) {

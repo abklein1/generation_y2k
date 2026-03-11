@@ -1,0 +1,112 @@
+{
+    "firstNames_affluent": [
+        "Hampton",
+        "Monarch",
+        "Greenlawn",
+        "Laurel",
+        "Palm Bay",
+        "Mariposa",
+        "Balcones",
+        "Westview",
+        "Lakeside",
+        "Waterford",
+        "Crane Watch",
+        "Palm Cove",
+        "La Jolla",
+        "Timberline",
+        "Fisher"
+    ],
+    "secondNames_affluent": [
+        "Estates",
+        "Country Club",
+        "Golf Club",
+        "Yacht Club",
+        "Shores",
+        "Marina",
+        "Club",
+        "Sands",
+        "Shores",
+        "Island",
+        "Landing"
+    ],
+    "firstNames_middle_class": [
+        "Winding",
+        "Falcon",
+        "Forest",
+        "Eagle",
+        "Sunset",
+        "Lost",
+        "Settlers",
+        "Hilltop",
+        "Mesa",
+        "Forest",
+        "Colonial",
+        "Hawk",
+        "Shaded"
+    ],
+    "secondNames_middle_class": [
+        "Creek",
+        "Pass",
+        "Ridge",
+        "Glade",
+        "Farms",
+        "View",
+        "Pointe",
+        "Point",
+        "Trace",
+        "Vista",
+        "Terrace"
+    ],
+    "firstNames_working_class": [
+        "Ridgeline",
+        "Normandy",
+        "Aster",
+        "Westend",
+        "Bella",
+        "Mansion",
+        "Grande",
+        "Colony",
+        "Crown",
+        "Rose Point",
+        "East",
+        "Jordan",
+        "Bells"
+    ],
+    "secondNames_working_class": [
+        "Apartment Complex",
+        "Street",
+        "Trailer Park",
+        "Hills",
+        "View",
+        "Avenue",
+        "Villa",
+        "Court",
+        "Apartments",
+        "Projects",
+        "Knolls",
+        "Mutual",
+        "Towers"
+    ],
+    "uniqueNames_working_class": [
+        "Alcontarra",
+        "Savona",
+        "Crosses",
+        "St. Andrews",
+        "St. John's"
+    ],
+    "uniqueNames_middle_class": [
+        "Greenwood",
+        "Hillcrest",
+        "Maplewood",
+        "Oakwood",
+        "Pinewood",
+        "Redwood",
+        "Sycamore"
+    ],
+    "uniqueNames_affluent": [
+        "The Estates at Holly Lake",
+        "The Estates at Palmetto Woods",
+        "Cherrywood",
+        "The Club at Oak Ridge"
+    ]
+}

@@ -3,7 +3,6 @@ package behavior;
 import behavior.composite.Selector;
 import behavior.composite.Sequence;
 import behavior.composite.RandomSelector;
-import behavior.decorator.Inverter;
 import behavior.leaf.student.*;
 import entity.Student;
 import simulation.InteractionManager;

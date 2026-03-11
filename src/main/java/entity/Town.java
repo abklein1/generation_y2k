@@ -4,7 +4,9 @@ import config.TownDemographics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a town that contains the population pools and schools.
@@ -22,6 +24,8 @@ public class Town implements Serializable {
     private StudentPool studentPool;
     private StaffPool staffPool;
     private List<StandardSchool> schools;
+    private final List<Neighborhood> neighborhoods;
+    private final Map<String, Neighborhood> neighborhoodsByName;
     private TownDemographics demographics;
     private String[] townColors; // Colors that can be used for school spirit items
 
@@ -30,6 +34,8 @@ public class Town implements Serializable {
      */
     public Town() {
         this.schools = new ArrayList<>();
+        this.neighborhoods = new ArrayList<>();
+        this.neighborhoodsByName = new HashMap<>();
         this.studentPool = new StudentPool();
         this.staffPool = new StaffPool();
     }
@@ -83,6 +89,42 @@ public class Town implements Serializable {
 
     public List<StandardSchool> getSchools() {
         return new ArrayList<>(schools);
+    }
+
+    public List<Neighborhood> getNeighborhoods() {
+        return new ArrayList<>(neighborhoods);
+    }
+
+    public void setNeighborhoods(List<Neighborhood> neighborhoods) {
+        clearNeighborhoods();
+        if (neighborhoods == null) {
+            return;
+        }
+        for (Neighborhood neighborhood : neighborhoods) {
+            addNeighborhood(neighborhood);
+        }
+    }
+
+    public void addNeighborhood(Neighborhood neighborhood) {
+        if (neighborhood == null || neighborhood.getName() == null) {
+            return;
+        }
+        neighborhoods.removeIf(existing -> neighborhood.getName().equals(existing.getName()));
+        neighborhoods.add(neighborhood);
+        neighborhoodsByName.put(neighborhood.getName(), neighborhood);
+    }
+
+    public void clearNeighborhoods() {
+        neighborhoods.clear();
+        neighborhoodsByName.clear();
+    }
+
+    public Neighborhood getNeighborhoodByName(String neighborhoodName) {
+        return neighborhoodsByName.get(neighborhoodName);
+    }
+
+    public int getNeighborhoodCount() {
+        return neighborhoods.size();
     }
 
     public TownDemographics getDemographics() {

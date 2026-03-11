@@ -5,12 +5,15 @@ import entity.StudentPool;
 import view.GameView;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static constants.SimConstants.*;
 import static utility.Randomizer.setRandom;
 
 public class SiblingGenerator {
+    private static final int MIN_BIOLOGICAL_SIBLING_GAP_DAYS = 270;
+    private static final int MAX_SIBLING_BIRTHDAY_ATTEMPTS = 250;
 
     // School colors for braces band color selection
     private static String[] schoolColors = null;
@@ -104,10 +107,7 @@ public class SiblingGenerator {
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
 
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(year), sibling.studentStatistics.getGender());
-        while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(year), sibling.studentStatistics.getGender());
-        }
+        f_name = generateUniqueSiblingFirstName(student, sibling);
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
 
@@ -150,10 +150,12 @@ public class SiblingGenerator {
     public static java.util.List<entity.SiblingInfo> generateSiblingInfosForPlayer(entity.Student player, int count,
             view.GameView view) {
         java.util.List<entity.SiblingInfo> infos = new java.util.ArrayList<>();
+        java.util.List<Boolean> spacingRestricted = new java.util.ArrayList<>();
 
         for (int i = 0; i < count; i++) {
             // Decide if sibling is in school with the player
             boolean inSchool = setRandom(0, 12) <= 3;
+            boolean sharedMotherPossible = false;
             if (inSchool) {
                 int choice = setRandom(0, SIBLING_SAMPLE_SIZE);
                 entity.Student sib;
@@ -164,36 +166,148 @@ public class SiblingGenerator {
                 } else if (choice < STEP_SIBLING_RATE + ADOPTED_SIBLING_RATE + HALF_SIBLING_RATE) {
                     sib = generateHalfSibling(player, view);
                 } else {
-                    sib = generateSibling(player, view);
+                    sharedMotherPossible = true;
+                    int attempts = 0;
+                    do {
+                        sib = generateSibling(player, view);
+                        attempts++;
+                    } while (hasBirthdaySpacingConflict(sib.studentStatistics.getBirthday(),
+                            player.studentStatistics.getBirthday(), infos, spacingRestricted)
+                            && attempts < MAX_SIBLING_BIRTHDAY_ATTEMPTS);
                 }
-                infos.add(new entity.SiblingInfo(sib.studentName.getFirstName(), sib.studentStatistics.getBirthday(),
-                        true, sib.studentStatistics.getGender()));
+                String uniqueFirstName = generateUniquePlayerSiblingFirstName(player, infos,
+                        sib.studentStatistics.getBirthday(), sib.studentStatistics.getGender());
+                sib.studentName.setFirstName(uniqueFirstName);
+                entity.SiblingInfo info = new entity.SiblingInfo(uniqueFirstName,
+                        sib.studentStatistics.getBirthday(), true, sib.studentStatistics.getGender());
+                infos.add(info);
+                spacingRestricted.add(sharedMotherPossible);
             } else {
                 // Not in school: pick older or younger and synthesize birthday
                 boolean older = setRandom(0, 1) == 0;
                 java.time.LocalDate birthday;
                 if (older) {
                     // Older sibling: 1982–1985
-                    int year = setRandom(1982, 1985);
-                    int month = setRandom(1, 12);
-                    int day = setRandom(1, java.time.Month.of(month).length(false));
-                    birthday = java.time.LocalDate.of(year, month, day);
+                    birthday = generateNonSchoolSiblingBirthday(true, player.studentStatistics.getBirthday(), infos,
+                            spacingRestricted);
                 } else {
                     // Younger sibling: after 1990
-                    int year = setRandom(1992, 2000);
-                    int month = setRandom(1, 12);
-                    int day = setRandom(1, java.time.Month.of(month).length(false));
-                    birthday = java.time.LocalDate.of(year, month, day);
+                    birthday = generateNonSchoolSiblingBirthday(false, player.studentStatistics.getBirthday(), infos,
+                            spacingRestricted);
                 }
                 String gen = GenderLoader.genderSelection();
-                // Ensure name data for the selected year is loaded
-                NameLoader.readCSVFirst(String.valueOf(birthday.getYear()));
-                String first = NameLoader.nameGenerator(String.valueOf(birthday.getYear()), gen);
-                infos.add(new entity.SiblingInfo(first, birthday, false, gen));
+                String first = generateUniquePlayerSiblingFirstName(player, infos, birthday, gen);
+                entity.SiblingInfo info = new entity.SiblingInfo(first, birthday, false, gen);
+                infos.add(info);
+                spacingRestricted.add(true);
             }
         }
 
         return infos;
+    }
+
+    private static LocalDate generateNonSchoolSiblingBirthday(boolean older, LocalDate playerBirthday,
+            java.util.List<entity.SiblingInfo> infos, java.util.List<Boolean> spacingRestricted) {
+        LocalDate candidate = older ? LocalDate.of(1982, 1, 1) : LocalDate.of(1992, 1, 1);
+        int attempts = 0;
+
+        do {
+            int year = older ? setRandom(1982, 1985) : setRandom(1992, 2000);
+            int month = setRandom(1, 12);
+            int day = setRandom(1, java.time.Month.of(month).length(false));
+            candidate = java.time.LocalDate.of(year, month, day);
+            attempts++;
+        } while (hasBirthdaySpacingConflict(candidate, playerBirthday, infos, spacingRestricted)
+                && attempts < MAX_SIBLING_BIRTHDAY_ATTEMPTS);
+
+        if (!hasBirthdaySpacingConflict(candidate, playerBirthday, infos, spacingRestricted)) {
+            return candidate;
+        }
+
+        LocalDate start = older ? LocalDate.of(1982, 1, 1) : LocalDate.of(1992, 1, 1);
+        LocalDate end = older ? LocalDate.of(1985, 12, 31) : LocalDate.of(2000, 12, 31);
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            if (!hasBirthdaySpacingConflict(date, playerBirthday, infos, spacingRestricted)) {
+                return date;
+            }
+        }
+
+        return candidate;
+    }
+
+    private static boolean hasBirthdaySpacingConflict(LocalDate candidate, LocalDate playerBirthday,
+            java.util.List<entity.SiblingInfo> infos, java.util.List<Boolean> spacingRestricted) {
+        if (candidate == null) {
+            return true;
+        }
+        if (playerBirthday != null && daysBetween(candidate, playerBirthday) < MIN_BIOLOGICAL_SIBLING_GAP_DAYS) {
+            return true;
+        }
+        for (int i = 0; i < infos.size(); i++) {
+            if (!spacingRestricted.get(i)) {
+                continue;
+            }
+            if (daysBetween(candidate, infos.get(i).getBirthday()) < MIN_BIOLOGICAL_SIBLING_GAP_DAYS) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static long daysBetween(LocalDate first, LocalDate second) {
+        if (first == null || second == null) {
+            return -1;
+        }
+        return Math.abs(ChronoUnit.DAYS.between(first, second));
+    }
+
+    private static String generateUniquePlayerSiblingFirstName(Student player,
+            java.util.List<entity.SiblingInfo> existingSiblings, LocalDate birthday, String gender) {
+        Set<String> forbiddenNames = new HashSet<>();
+        addForbiddenName(forbiddenNames, player.studentName.getFirstName());
+        for (entity.SiblingInfo sibling : existingSiblings) {
+            addForbiddenName(forbiddenNames, sibling.getFirstName());
+        }
+        return generateUniqueFirstName(String.valueOf(birthday.getYear()), gender, forbiddenNames);
+    }
+
+    private static String generateUniqueSiblingFirstName(Student sourceStudent, Student sibling) {
+        Set<String> forbiddenNames = new HashSet<>();
+        addForbiddenName(forbiddenNames, sourceStudent.studentName.getFirstName());
+        for (Student existingSibling : sourceStudent.studentStatistics.getSiblingsInSchool()) {
+            addForbiddenName(forbiddenNames, existingSibling.studentName.getFirstName());
+        }
+        for (Student existingSibling : sourceStudent.studentStatistics.getSiblingsNotInSchool()) {
+            addForbiddenName(forbiddenNames, existingSibling.studentName.getFirstName());
+        }
+        return generateUniqueFirstName(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
+                sibling.studentStatistics.getGender(), forbiddenNames);
+    }
+
+    private static String generateUniqueFirstName(String year, String gender, Set<String> forbiddenNames) {
+        String firstName = NameLoader.nameGenerator(year, gender);
+        while (forbiddenNames.contains(normalizeName(firstName))) {
+            firstName = NameLoader.nameGenerator(year, gender);
+        }
+        return firstName;
+    }
+
+    private static void addForbiddenName(Set<String> forbiddenNames, String name) {
+        String normalizedName = normalizeName(name);
+        if (normalizedName != null) {
+            forbiddenNames.add(normalizedName);
+        }
+    }
+
+    private static String normalizeName(String name) {
+        if (name == null) {
+            return null;
+        }
+        String trimmedName = name.trim();
+        if (trimmedName.isEmpty()) {
+            return null;
+        }
+        return trimmedName.toLowerCase(Locale.ROOT);
     }
 
     public static void siblingGenerator(HashMap<Integer, Student> studentHashMap, int studentCap, GameView view) {
@@ -512,12 +626,7 @@ public class SiblingGenerator {
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
 
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                sibling.studentStatistics.getGender());
-        while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                    sibling.studentStatistics.getGender());
-        }
+        f_name = generateUniqueSiblingFirstName(student, sibling);
 
         // Chance of having different last name than sibling (33%)
         if (setRandom(0, 3) == 2) {
@@ -587,12 +696,7 @@ public class SiblingGenerator {
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
 
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                sibling.studentStatistics.getGender());
-        while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                    sibling.studentStatistics.getGender());
-        }
+        f_name = generateUniqueSiblingFirstName(student, sibling);
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
 
@@ -634,12 +738,7 @@ public class SiblingGenerator {
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
 
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                sibling.studentStatistics.getGender());
-        while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                    sibling.studentStatistics.getGender());
-        }
+        f_name = generateUniqueSiblingFirstName(student, sibling);
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
 
@@ -676,12 +775,7 @@ public class SiblingGenerator {
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
 
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                sibling.studentStatistics.getGender());
-        while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                    sibling.studentStatistics.getGender());
-        }
+        f_name = generateUniqueSiblingFirstName(student, sibling);
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
 
@@ -738,12 +832,7 @@ public class SiblingGenerator {
         sibling.studentStatistics.setGender(GenderLoader.genderSelection());
 
         // Generate unique first name
-        f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                sibling.studentStatistics.getGender());
-        while (f_name.equals(student.studentName.getFirstName())) {
-            f_name = NameLoader.nameGenerator(String.valueOf(sibling.studentStatistics.getBirthday().getYear()),
-                    sibling.studentStatistics.getGender());
-        }
+        f_name = generateUniqueSiblingFirstName(student, sibling);
         sibling.studentName.setFirstName(f_name);
         sibling.studentName.setLastName(student.studentName.getLastName());
 

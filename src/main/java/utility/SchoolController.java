@@ -26,8 +26,10 @@ import org.jdatepicker.impl.UtilDateModel;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import javax.swing.JFormattedTextField.AbstractFormatter;
+import javax.swing.table.DefaultTableModel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Properties;
 
 import static utility.Randomizer.setRandom;
@@ -404,6 +406,11 @@ public class SchoolController {
     }
 
     private void showInspectionWindow(String type) {
+        if (type.equals("Neighborhoods")) {
+            showNeighborhoodWindow();
+            return;
+        }
+
         JFrame inspectionFrame = new JFrame(type + " Inspection");
         inspectionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -507,6 +514,120 @@ public class SchoolController {
         }
 
         inspectionFrame.setVisible(true);
+    }
+
+    private void showNeighborhoodWindow() {
+        JFrame neighborhoodFrame = new JFrame("Neighborhood Inspection");
+        neighborhoodFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        neighborhoodFrame.setSize(900, 600);
+
+        if (town == null || town.getNeighborhoods().isEmpty()) {
+            JTextArea emptyState = new JTextArea("No neighborhoods have been generated yet.");
+            emptyState.setEditable(false);
+            emptyState.setLineWrap(true);
+            emptyState.setWrapStyleWord(true);
+            neighborhoodFrame.add(new JScrollPane(emptyState), BorderLayout.CENTER);
+            neighborhoodFrame.setVisible(true);
+            return;
+        }
+
+        JTabbedPane neighborhoodTabs = new JTabbedPane();
+        List<Neighborhood> neighborhoods = new ArrayList<>(town.getNeighborhoods());
+        neighborhoods.sort(Comparator.comparing(Neighborhood::getWealthLevel).thenComparing(Neighborhood::getName));
+
+        for (Neighborhood neighborhood : neighborhoods) {
+            neighborhoodTabs.addTab(neighborhood.getName(), buildNeighborhoodPanel(neighborhood));
+        }
+
+        neighborhoodFrame.setLayout(new BorderLayout());
+        neighborhoodFrame.add(neighborhoodTabs, BorderLayout.CENTER);
+        neighborhoodFrame.setVisible(true);
+    }
+
+    private JPanel buildNeighborhoodPanel(Neighborhood neighborhood) {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JTextArea summaryArea = new JTextArea();
+        summaryArea.setEditable(false);
+        summaryArea.setLineWrap(true);
+        summaryArea.setWrapStyleWord(true);
+        summaryArea.setRows(4);
+        summaryArea.setText(
+                "Neighborhood: " + neighborhood.getName() + "\n" +
+                        "Wealth Level: " + capitalizeLabel(neighborhood.getWealthLevel()) + "\n" +
+                        "Population: " + neighborhood.getCurrentPopulation() + " / " +
+                        neighborhood.getPopulationCapacity() + "\n" +
+                        "Residents: " + neighborhood.getStudentsInSchool().size() + " students in school, " +
+                        neighborhood.getSiblingsNotInSchool().size() + " siblings not in school, " +
+                        neighborhood.getStaff().size() + " staff");
+
+        JTable residentTable = buildNeighborhoodResidentTable(neighborhood);
+        JScrollPane tableScrollPane = new JScrollPane(residentTable);
+        tableScrollPane.setBorder(BorderFactory.createTitledBorder("Residents"));
+
+        panel.add(summaryArea, BorderLayout.NORTH);
+        panel.add(tableScrollPane, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private JTable buildNeighborhoodResidentTable(Neighborhood neighborhood) {
+        String[] columns = { "Name", "Resident Type", "School Status", "Grade / Role", "Income" };
+        DefaultTableModel model = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        List<Student> inSchoolStudents = new ArrayList<>(neighborhood.getStudentsInSchool());
+        inSchoolStudents.sort(Comparator.comparing(student -> student.studentName.getLastName()));
+        for (Student student : inSchoolStudents) {
+            model.addRow(new Object[] {
+                    student.studentName.getFullName(),
+                    "Student",
+                    "In School",
+                    student.studentStatistics.getGradeLevel(),
+                    capitalizeLabel(student.studentStatistics.getIncomeLevel())
+            });
+        }
+
+        List<Student> outOfSchoolSiblings = new ArrayList<>(neighborhood.getSiblingsNotInSchool());
+        outOfSchoolSiblings.sort(Comparator.comparing(student -> student.studentName.getLastName()));
+        for (Student sibling : outOfSchoolSiblings) {
+            model.addRow(new Object[] {
+                    sibling.studentName.getFullName(),
+                    "Sibling",
+                    "Not In School",
+                    sibling.studentStatistics.getGradeLevel(),
+                    capitalizeLabel(sibling.studentStatistics.getIncomeLevel())
+            });
+        }
+
+        List<Staff> staffMembers = new ArrayList<>(neighborhood.getStaff());
+        staffMembers.sort(Comparator.comparing(staff -> staff.teacherName.getLastName()));
+        for (Staff staff : staffMembers) {
+            Object staffType = staff.teacherStatistics.getStaffType();
+            model.addRow(new Object[] {
+                    staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName(),
+                    "Staff",
+                    "Assigned Staff",
+                    staffType != null ? staffType.toString() : "Unassigned",
+                    "-"
+            });
+        }
+
+        JTable table = new JTable(model);
+        table.setAutoCreateRowSorter(true);
+        table.setFillsViewportHeight(true);
+        return table;
+    }
+
+    private String capitalizeLabel(String value) {
+        if (value == null || value.isBlank()) {
+            return "-";
+        }
+        return Character.toUpperCase(value.charAt(0)) + value.substring(1);
     }
 
     /**

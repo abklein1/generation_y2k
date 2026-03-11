@@ -176,6 +176,33 @@ public class TeacherBlockBuilder {
             }
         }
 
+        for (LibraryR library : standardSchool.getLibraries()) {
+            for (Staff assignedStaff : library.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " "
+                        + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName))
+                    return library;
+            }
+        }
+
+        for (ConferenceRoom conferenceRoom : standardSchool.getConferenceRooms()) {
+            for (Staff assignedStaff : conferenceRoom.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " "
+                        + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName))
+                    return conferenceRoom;
+            }
+        }
+
+        for (Lunchroom lunchroom : standardSchool.getLunchrooms()) {
+            for (Staff assignedStaff : lunchroom.getAssignedStaff()) {
+                String assignedName = assignedStaff.teacherName.getFirstName() + " "
+                        + assignedStaff.teacherName.getLastName();
+                if (staffName.equals(assignedName))
+                    return lunchroom;
+            }
+        }
+
         return null;
     }
 
@@ -247,9 +274,28 @@ public class TeacherBlockBuilder {
             if (portable.getAssignedStaff().isEmpty())
                 availablePortables.add(portable);
         }
+        List<Room> availableLibraries = new ArrayList<>();
+        for (LibraryR library : standardSchool.getLibraries()) {
+            if (library.getAssignedStaff().isEmpty())
+                availableLibraries.add(library);
+        }
+        List<Room> availableConferenceRooms = new ArrayList<>();
+        for (ConferenceRoom conferenceRoom : standardSchool.getConferenceRooms()) {
+            if (conferenceRoom.getAssignedStaff().isEmpty())
+                availableConferenceRooms.add(conferenceRoom);
+        }
+        List<Room> availableLunchrooms = new ArrayList<>();
+        for (Lunchroom lunchroom : standardSchool.getLunchrooms()) {
+            if (lunchroom.getAssignedStaff().isEmpty())
+                availableLunchrooms.add(lunchroom);
+        }
         GameLogger.logScheduling("  Available portables for teacher assignment: " + availablePortables.size());
 
-        for (Staff staff : staffHashMap.values()) {
+        List<Staff> orderedStaff = new ArrayList<>(staffHashMap.values());
+        orderedStaff.sort(Comparator.comparingInt(staff -> getRoomAssignmentPriority(
+                (StaffType) staff.teacherStatistics.getStaffType())));
+
+        for (Staff staff : orderedStaff) {
             StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
             if (type == null || !isTeachingStaffType(type))
                 continue;
@@ -269,6 +315,9 @@ public class TeacherBlockBuilder {
                         assignedRoom = availableClassrooms.remove(0);
                     else if (!availablePortables.isEmpty())
                         assignedRoom = availablePortables.remove(0);
+                    else if (RoomAssignment.canUseOverflowTeachingRoom(type))
+                        assignedRoom = takeOverflowRoom(availableLibraries, availableConferenceRooms,
+                                availableAuditoriums, availableLunchrooms);
                     break;
                 case VISUAL_ARTS:
                     if (!availableArtStudios.isEmpty())
@@ -321,6 +370,9 @@ public class TeacherBlockBuilder {
                         assignedRoom = availableClassrooms.remove(0);
                     else if (!availablePortables.isEmpty())
                         assignedRoom = availablePortables.remove(0);
+                    else if (RoomAssignment.canUseOverflowTeachingRoom(type))
+                        assignedRoom = takeOverflowRoom(availableLibraries, availableConferenceRooms,
+                                availableAuditoriums, availableLunchrooms);
                     break;
             }
 
@@ -584,5 +636,35 @@ public class TeacherBlockBuilder {
         for (int i = 0; i < indices.length; i++)
             result[i] = indices[i];
         return result;
+    }
+
+    private static Room takeOverflowRoom(List<Room> availableLibraries,
+            List<Room> availableConferenceRooms,
+            List<Room> availableAuditoriums,
+            List<Room> availableLunchrooms) {
+        if (!availableLibraries.isEmpty())
+            return availableLibraries.remove(0);
+        if (!availableConferenceRooms.isEmpty())
+            return availableConferenceRooms.remove(0);
+        if (!availableAuditoriums.isEmpty())
+            return availableAuditoriums.remove(0);
+        if (!availableLunchrooms.isEmpty())
+            return availableLunchrooms.remove(0);
+        return null;
+    }
+
+    private static int getRoomAssignmentPriority(StaffType type) {
+        if (type == null) {
+            return Integer.MAX_VALUE;
+        }
+        return switch (type) {
+            case PERFORMING_ARTS -> 1;
+            case PHYSICAL_ED -> 2;
+            case SCIENCE -> 3;
+            case VISUAL_ARTS -> 4;
+            case VOCATIONAL -> 5;
+            case COMP_SCI -> 6;
+            default -> 10;
+        };
     }
 }

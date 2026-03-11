@@ -378,23 +378,33 @@ public class StaffAssignmentService {
 
         HashMap<Integer, Staff> newlyAssigned = new HashMap<>();
         int totalAssigned = 0;
-        int shortages = 0;
+        Map<StaffType, Integer> remainingNeeds = new LinkedHashMap<>();
+        for (Map.Entry<StaffType, Integer> entry : staffNeeds.entrySet()) {
+            if (entry.getValue() > 0) {
+                remainingNeeds.put(entry.getKey(), entry.getValue());
+            }
+        }
 
-        // Assign teachers by type based on needs
-        for (Map.Entry<StaffType, Integer> need : staffNeeds.entrySet()) {
+        HashMap<Integer, Staff> currentSchoolStaff = town.getStaffPool().getStaffBySchoolAsMap(school);
+        List<Staff> repurposedStaff = repurposeExistingStaffForShortages(currentSchoolStaff, remainingNeeds, view);
+        for (Staff repurposed : repurposedStaff) {
+            newlyAssigned.put(totalAssigned, repurposed);
+            totalAssigned++;
+        }
+
+        // Assign teachers by type based on remaining needs
+        for (Map.Entry<StaffType, Integer> need : remainingNeeds.entrySet()) {
             StaffType type = need.getKey();
             int count = need.getValue();
 
             if (count <= 0)
                 continue;
 
-            // Get available staff of this type
             List<Staff> availableOfType = pool.getAvailableStaffForSubject(type);
-            int toAssign = Math.min(count, availableOfType.size());
-
             int assigned = 0;
-            for (int i = 0; i < toAssign; i++) {
-                Staff staff = availableOfType.get(i);
+            for (Staff staff : availableOfType) {
+                if (assigned >= count)
+                    break;
                 if (pool.assignToSchool(staff, school)) {
                     staff.teacherStatistics.setStaffType(type);
                     newlyAssigned.put(totalAssigned, staff);
@@ -405,91 +415,59 @@ public class StaffAssignmentService {
                 }
             }
 
+            remainingNeeds.put(type, Math.max(0, count - assigned));
             if (assigned < count) {
-                shortages += (count - assigned);
                 view.appendOutput("  " + type + ": hired " + assigned + "/" + count +
-                        " (shortage: " + (count - assigned) + ")");
+                        " (remaining shortage: " + (count - assigned) + ")");
             }
         }
 
         // Try to fill remaining shortages with any available staff
-        if (shortages > 0) {
-            view.appendOutput("  Attempting to fill remaining " + shortages + " positions with available staff...");
-            List<Staff> remaining = pool.getUnassignedStaff();
+        for (Map.Entry<StaffType, Integer> need : remainingNeeds.entrySet()) {
+            StaffType type = need.getKey();
+            int count = need.getValue();
+            if (count <= 0)
+                continue;
+
+            view.appendOutput("  Attempting to fill remaining " + count + " " + type +
+                    " position(s) with available staff...");
+            List<Staff> remaining = new ArrayList<>(pool.getUnassignedStaff());
             int filled = 0;
 
             for (Staff staff : remaining) {
-                if (filled >= shortages)
+                if (filled >= count)
                     break;
                 if (pool.assignToSchool(staff, school)) {
-                    // Default to MATH if no type, as core subjects are usually in shortage
-                    if (staff.teacherStatistics.getStaffType() == null) {
-                        staff.teacherStatistics.setStaffType(StaffType.MATH);
-                    }
+                    staff.teacherStatistics.setStaffType(type);
                     newlyAssigned.put(totalAssigned, staff);
                     totalAssigned++;
                     filled++;
-                    view.appendOutput("  Hired " + staff.teacherName.getFirstName() + " " +
-                            staff.teacherName.getLastName() + " as " +
-                            staff.teacherStatistics.getStaffType());
+                    view.appendOutput("  Reassigned available staff " + staff.teacherName.getFirstName() + " " +
+                            staff.teacherName.getLastName() + " as " + type);
                 }
             }
+
+            remainingNeeds.put(type, Math.max(0, count - filled));
         }
 
         // If the pool is exhausted, synthesize additional staff so expansion can
         // react to actual shortages instead of stalling on town-pop limits.
-        if (shortages > 0) {
-            Map<StaffType, Integer> remainingNeeds = new LinkedHashMap<>();
-            for (Map.Entry<StaffType, Integer> need : staffNeeds.entrySet()) {
-                StaffType type = need.getKey();
-                long assignedOfType = newlyAssigned.values().stream()
-                        .filter(staff -> type.equals(staff.teacherStatistics.getStaffType()))
-                        .count();
-                int remainingForType = need.getValue() - (int) assignedOfType;
-                if (remainingForType > 0) {
-                    remainingNeeds.put(type, remainingForType);
-                }
-            }
+        int syntheticCount = remainingNeeds.values().stream().mapToInt(Integer::intValue).sum();
+        if (syntheticCount > 0) {
+            view.appendOutput("  Generating " + syntheticCount + " additional staff to cover remaining shortages...");
+            List<Staff> generatedStaff = TownPopulationGenerator.generateAdditionalStaff(town, syntheticCount, view);
+            int generatedIndex = 0;
 
-            int syntheticCount = remainingNeeds.values().stream().mapToInt(Integer::intValue).sum();
-            if (syntheticCount > 0) {
-                view.appendOutput("  Generating " + syntheticCount + " additional staff to cover remaining shortages...");
-                List<Staff> generatedStaff = TownPopulationGenerator.generateAdditionalStaff(town, syntheticCount, view);
-                int generatedIndex = 0;
-
-                for (Map.Entry<StaffType, Integer> entry : remainingNeeds.entrySet()) {
-                    StaffType type = entry.getKey();
-                    for (int i = 0; i < entry.getValue() && generatedIndex < generatedStaff.size(); i++) {
-                        Staff generated = generatedStaff.get(generatedIndex++);
-                        generated.teacherStatistics.setStaffType(type);
-                        if (pool.assignToSchool(generated, school)) {
-                            newlyAssigned.put(totalAssigned, generated);
-                            totalAssigned++;
-                            view.appendOutput("  Generated and hired " + generated.teacherName.getFirstName() + " " +
-                                    generated.teacherName.getLastName() + " as " + type);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Assign newly hired teachers to classrooms
-        if (!newlyAssigned.isEmpty()) {
-            Classroom[] classrooms = school.getClassrooms();
-
-            // Find classrooms without teachers and assign
-            int classroomIndex = 0;
-            for (Map.Entry<Integer, Staff> entry : newlyAssigned.entrySet()) {
-                Staff staff = entry.getValue();
-
-                // Find an empty classroom or one matching teacher's subject
-                for (int i = classroomIndex; i < classrooms.length; i++) {
-                    Classroom classroom = classrooms[i];
-                    if (classroom.getAssignedStaff().isEmpty()) {
-                        classroom.setAssignedStaff(staff);
-                        classroom.reassignClassroomByTeacher(newlyAssigned, view);
-                        classroomIndex = i + 1;
-                        break;
+            for (Map.Entry<StaffType, Integer> entry : remainingNeeds.entrySet()) {
+                StaffType type = entry.getKey();
+                for (int i = 0; i < entry.getValue() && generatedIndex < generatedStaff.size(); i++) {
+                    Staff generated = generatedStaff.get(generatedIndex++);
+                    generated.teacherStatistics.setStaffType(type);
+                    if (pool.assignToSchool(generated, school)) {
+                        newlyAssigned.put(totalAssigned, generated);
+                        totalAssigned++;
+                        view.appendOutput("  Generated and hired " + generated.teacherName.getFirstName() + " " +
+                                generated.teacherName.getLastName() + " as " + type);
                     }
                 }
             }
@@ -497,6 +475,71 @@ public class StaffAssignmentService {
 
         view.appendOutput("Hired " + totalAssigned + " additional teachers for " + school.getSchoolName());
         return totalAssigned;
+    }
+
+    private static List<Staff> repurposeExistingStaffForShortages(HashMap<Integer, Staff> currentSchoolStaff,
+            Map<StaffType, Integer> remainingNeeds,
+            GameView view) {
+        List<Staff> repurposed = new ArrayList<>();
+        Set<Staff> alreadyUsed = new HashSet<>();
+
+        for (Map.Entry<StaffType, Integer> need : remainingNeeds.entrySet()) {
+            StaffType neededType = need.getKey();
+            int neededCount = need.getValue();
+            if (neededCount <= 0) {
+                continue;
+            }
+
+            List<Staff> candidates = currentSchoolStaff.values().stream()
+                    .filter(staff -> canRepurposeExistingStaff((StaffType) staff.teacherStatistics.getStaffType()))
+                    .filter(staff -> !alreadyUsed.contains(staff))
+                    .sorted(Comparator.comparingInt(staff -> repurposePriority(
+                            (StaffType) staff.teacherStatistics.getStaffType())))
+                    .toList();
+
+            int filled = 0;
+            for (Staff candidate : candidates) {
+                if (filled >= neededCount) {
+                    break;
+                }
+
+                StaffType previousType = (StaffType) candidate.teacherStatistics.getStaffType();
+                candidate.teacherStatistics.setStaffType(neededType);
+                repurposed.add(candidate);
+                alreadyUsed.add(candidate);
+                filled++;
+                view.appendOutput("  Repurposed " + candidate.teacherName.getFirstName() + " " +
+                        candidate.teacherName.getLastName() + " from " + previousType + " to " + neededType);
+            }
+
+            remainingNeeds.put(neededType, Math.max(0, neededCount - filled));
+        }
+
+        return repurposed;
+    }
+
+    private static boolean canRepurposeExistingStaff(StaffType type) {
+        if (type == null) {
+            return false;
+        }
+        return switch (type) {
+            case SUB, LIBRARY, LUNCH, OFFICE, MAINTENANCE -> true;
+            default -> false;
+        };
+    }
+
+    private static int repurposePriority(StaffType type) {
+        if (type == null) {
+            return Integer.MAX_VALUE;
+        }
+        return switch (type) {
+            case SUB -> 1;
+            case LIBRARY -> 2;
+            case LUNCH -> 3;
+            case OFFICE -> 4;
+            case MAINTENANCE -> 5;
+            default -> 10;
+        };
     }
 
     /**

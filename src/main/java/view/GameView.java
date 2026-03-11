@@ -125,6 +125,7 @@ public class GameView {
         JMenuItem juniorsItem = new JMenuItem("Junior");
         JMenuItem seniorsItem = new JMenuItem("Senior");
         JMenuItem staffItem = new JMenuItem("Staff");
+        JMenuItem neighborhoodsItem = new JMenuItem("Neighborhoods");
         visualizeItem = new JMenuItem("School Layout...");
         socialGraphItem = new JMenuItem("Social Graph...");
         // Add items in correct order (grade levels first, then separator, then tools)
@@ -133,6 +134,7 @@ public class GameView {
         inspectionMenu.add(juniorsItem);
         inspectionMenu.add(seniorsItem);
         inspectionMenu.add(staffItem);
+        inspectionMenu.add(neighborhoodsItem);
         inspectionMenu.addSeparator();
         inspectionMenu.add(visualizeItem);
         inspectionMenu.add(socialGraphItem);
@@ -1059,10 +1061,12 @@ public class GameView {
     }
 
     public void addInspectionMenuListener(ActionListener listener) {
-        for (int i = 0; i < 5; i++) { // First 5 items are grade levels and staff
-            Component comp = inspectionMenu.getMenuComponent(i);
-            if (comp instanceof JMenuItem) {
-                ((JMenuItem) comp).addActionListener(listener);
+        for (Component comp : inspectionMenu.getMenuComponents()) {
+            if (comp instanceof JSeparator) {
+                break;
+            }
+            if (comp instanceof JMenuItem menuItem) {
+                menuItem.addActionListener(listener);
             }
         }
     }

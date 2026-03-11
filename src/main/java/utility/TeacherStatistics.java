@@ -1,7 +1,6 @@
 package utility;
 
 import entity.AllostaticLoad;
-import entity.StaffType;
 import entity.TeacherBlock;
 import entity.TeacherSchedule;
 
@@ -36,9 +35,11 @@ public class TeacherStatistics implements PStatistics {
     private int curiosity;
     private int responsibility;
     private int openmindedness;
-    private Enum staffType;
+    private Enum<?> staffType;
     private final TeacherSchedule teacherSchedule;
     private int yearsOfExperience;
+    private String neighborhoodName;
+    private String neighborhoodWealthLevel;
 
     // Secondary stat max caps
     private int maxCreativity;
@@ -97,6 +98,8 @@ public class TeacherStatistics implements PStatistics {
         this.staffType = null;
         this.teacherSchedule = new TeacherSchedule();
         this.yearsOfExperience = 0;
+        this.neighborhoodName = null;
+        this.neighborhoodWealthLevel = null;
         this.hasMyopia = false;
         this.hasHyperopia = false;
         this.hasAstigmatism = false;
@@ -533,11 +536,11 @@ public class TeacherStatistics implements PStatistics {
         this.hairType = hairType;
     }
 
-    public Enum getStaffType() {
+    public Enum<?> getStaffType() {
         return this.staffType;
     }
 
-    public void setStaffType(Enum<StaffType> type) {
+    public void setStaffType(Enum<?> type) {
         this.staffType = type;
     }
 
@@ -569,6 +572,27 @@ public class TeacherStatistics implements PStatistics {
 
     public void setYearsOfExperience(int yearsOfExperience) {
         this.yearsOfExperience = yearsOfExperience;
+    }
+
+    public String getNeighborhoodName() {
+        return neighborhoodName;
+    }
+
+    public void setNeighborhoodName(String neighborhoodName) {
+        this.neighborhoodName = neighborhoodName;
+    }
+
+    public String getNeighborhoodWealthLevel() {
+        return neighborhoodWealthLevel;
+    }
+
+    public void setNeighborhoodWealthLevel(String neighborhoodWealthLevel) {
+        this.neighborhoodWealthLevel = neighborhoodWealthLevel;
+    }
+
+    public void clearNeighborhoodAssignment() {
+        this.neighborhoodName = null;
+        this.neighborhoodWealthLevel = null;
     }
 
     // Vision issue getters and setters

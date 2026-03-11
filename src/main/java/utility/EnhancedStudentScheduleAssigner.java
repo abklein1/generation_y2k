@@ -34,7 +34,7 @@ public class EnhancedStudentScheduleAssigner {
     /** Backward compatibility – calls enhanced version with null parameters. */
     public static void scheduleAllStudentsEnhanced(HashMap<Integer, Student> studentHashMap,
             HashMap<Integer, Staff> staffHashMap) {
-        scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, null, null);
+        scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, null, null, null, true);
     }
 
     /** Enhanced entry point (backward-compatible overload). */
@@ -42,7 +42,7 @@ public class EnhancedStudentScheduleAssigner {
             HashMap<Integer, Staff> staffHashMap,
             StandardSchool standardSchool,
             GameView view) {
-        scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view, null);
+        scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view, null, true);
     }
 
     /**
@@ -59,6 +59,15 @@ public class EnhancedStudentScheduleAssigner {
             StandardSchool standardSchool,
             GameView view,
             entity.StudentPool studentPool) {
+        scheduleAllStudentsEnhanced(studentHashMap, staffHashMap, standardSchool, view, studentPool, true);
+    }
+
+    public static void scheduleAllStudentsEnhanced(HashMap<Integer, Student> studentHashMap,
+            HashMap<Integer, Staff> staffHashMap,
+            StandardSchool standardSchool,
+            GameView view,
+            entity.StudentPool studentPool,
+            boolean allowCriticalRemoval) {
         GraduationVerifier.setStudentPool(studentPool);
         GameLogger.logScheduling("Starting enhanced scheduling for " + studentHashMap.size() + " students");
 
@@ -128,7 +137,8 @@ public class EnhancedStudentScheduleAssigner {
 
         // Phase 6: Verify graduation requirements
         GraduationVerifier.verifyGraduationRequirements(studentHashMap, staffHashMap,
-                (student, className, staff) -> attemptToScheduleMissingClass(student, className, staff));
+                (student, className, staff) -> attemptToScheduleMissingClass(student, className, staff),
+                allowCriticalRemoval);
 
         printEnhancedStatistics();
     }
@@ -881,22 +891,31 @@ public class EnhancedStudentScheduleAssigner {
     // ================================================================
 
     private static void checkForIncompleteSchedules(List<Student> students) {
-        int incompleteByCount = 0;
+        int incompleteByPolicy = 0;
         int incompleteByPeriod = 0;
         int periodConflictCount = 0;
+        int optionalOffBlockCount = 0;
 
         for (Student student : students) {
+            GraduationVerifier.StudentSchedulePolicyStatus status =
+                    GraduationVerifier.evaluateStudentSchedulePolicy(student);
             List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
             int scheduleSize = schedule.size();
-            String grade = student.studentStatistics.getGradeLevel();
+            String grade = status.getGrade();
             int expectedSize = StudentClassDeterminer.getExpectedScheduleSize(grade);
             String studentLabel = student.studentName.getFirstName() + " " +
                     student.studentName.getLastName() + " (" + grade + ")";
 
-            if (scheduleSize < expectedSize) {
-                incompleteByCount++;
-                GameLogger.logScheduling("INCOMPLETE SCHEDULE (count): " + studentLabel +
-                        " has " + scheduleSize + "/" + expectedSize + " classes");
+            if (!status.meetsCompletionPolicy()) {
+                incompleteByPolicy++;
+                GameLogger.logScheduling("INCOMPLETE SCHEDULE (policy): " + studentLabel +
+                        " missing required targets " + status.getRecoveryTargetClasses() +
+                        " with " + scheduleSize + "/" + expectedSize + " scheduled");
+            } else if (status.isOptionalOffBlocksAllowed() && !status.getMissingOptionalClasses().isEmpty()) {
+                optionalOffBlockCount++;
+                GameLogger.logScheduling("OPTIONAL OFF BLOCKS: " + studentLabel +
+                        " has allowed open periods due to unscheduled optional classes " +
+                        status.getMissingOptionalClasses());
             }
 
             for (String semester : new String[] { "Fall", "Spring" }) {
@@ -911,9 +930,11 @@ public class EnhancedStudentScheduleAssigner {
                 }
                 for (int period = 1; period <= 4; period++) {
                     if (!coveredPeriods.contains(period)) {
-                        incompleteByPeriod++;
-                        GameLogger.logScheduling("PERIOD GAP: " + studentLabel +
-                                " has no class for " + semester + " Period " + period);
+                        if (!status.meetsCompletionPolicy()) {
+                            incompleteByPeriod++;
+                            GameLogger.logScheduling("PERIOD GAP: " + studentLabel +
+                                    " has no class for " + semester + " Period " + period);
+                        }
                     }
                 }
                 for (Map.Entry<Integer, List<String>> entry : periodClasses.entrySet()) {
@@ -929,8 +950,9 @@ public class EnhancedStudentScheduleAssigner {
 
         GameLogger.logScheduling("=== SCHEDULE COMPLETENESS SUMMARY ===");
         GameLogger
-                .logScheduling("Students with insufficient class count: " + incompleteByCount + "/" + students.size());
-        GameLogger.logScheduling("Total period gaps (missing periods): " + incompleteByPeriod);
+                .logScheduling("Students missing completion policy: " + incompleteByPolicy + "/" + students.size());
+        GameLogger.logScheduling("Students with allowed optional off blocks: " + optionalOffBlockCount);
+        GameLogger.logScheduling("Total period gaps that violate policy: " + incompleteByPeriod);
         GameLogger.logScheduling("Total period conflicts (double-booked): " + periodConflictCount);
     }
 
