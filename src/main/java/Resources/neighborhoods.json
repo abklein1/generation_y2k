@@ -17,7 +17,14 @@
         "Fisher",
         "Brookfield",
         "Woodfield",
-        "Hawk Pointe"
+        "Hawk Pointe",
+        "Windmill",
+        "Indian",
+        "Nautilus",
+        "Bayshore",
+        "Venetian",
+        "Lauderdale",
+        "Bougainvillea"
     ],
     "secondNames_affluent": [
         "Estates",
@@ -31,7 +38,11 @@
         "Shores",
         "Island",
         "Landing",
-        "Bluff"
+        "Bluff",
+        "Cay",
+        "Bay",
+        "Harbor",
+        "Arts District"
     ],
     "firstNames_middle_class": [
         "Winding",
@@ -52,7 +63,14 @@
         "Silver",
         "Willow",
         "Foxwood",
-        "Wind"
+        "Wind",
+        "Sunrise",
+        "Centennial",
+        "Whiterock",
+        "Turtle",
+        "Cinnamon",
+        "Blooming",
+        "Magnolia"
     ],
     "secondNames_middle_class": [
         "Creek",
@@ -68,7 +86,12 @@
         "Terrace",
         "Run",
         "River",
-        "Square"
+        "Square",
+        "Gables",
+        "Springs",
+        "Fountains",
+        "Glen",
+        "Green"
     ],
     "firstNames_working_class": [
         "Ridgeline",
@@ -90,7 +113,13 @@
         "Imperial",
         "Domino",
         "Aloha",
-        "Grant"
+        "Grant",
+        "Liberty",
+        "Lincoln",
+        "Hollywood",
+        "Dessau",
+        "Lyrewood",
+        "San Luis"
     ],
     "secondNames_working_class": [
         "Apartment Complex",
@@ -106,17 +135,25 @@
         "Knolls",
         "Mutual",
         "Towers",
-        "Park"
+        "Park",
+        "Gardens"
     ],
     "uniqueNames_working_class": [
         "Alcontarra",
         "Savona",
         "Crosses",
         "St. Andrews",
-        "St. John's",
+        "St. Johns",
         "Alief",
         "Sunnyside",
-        "Third Ward"
+        "Third Ward",
+        "Gateway",
+        "Archway",
+        "Granada",
+        "Overtown",
+        "Twain",
+        "Los Altos",
+        "El Trompe"
     ],
     "uniqueNames_middle_class": [
         "Greenwood",
@@ -126,7 +163,10 @@
         "Pinewood",
         "Redwood",
         "Sycamore",
-        "Willowbrook"
+        "Willowbrook",
+        "Spicewood",
+        "Summerlin",
+        "Tierra Verde"
     ],
     "uniqueNames_affluent": [
         "The Estates at Holly Lake",
@@ -137,6 +177,8 @@
         "The Shores of Lakewood",
         "The Shores of Cypress Creek",
         "The Estates at Deer Ridge",
-        "The Harbor Waterfront"
+        "The Harbor Waterfront",
+        "Belle Anne",
+        "Ballard"
     ]
 }

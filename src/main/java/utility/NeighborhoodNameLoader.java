@@ -21,7 +21,7 @@ import java.util.Set;
 public final class NeighborhoodNameLoader implements Serializable {
 
     private static final String RESOURCE_PATH = "src/main/java/Resources/neighborhoods.json";
-    private static final double UNIQUE_NAME_PROBABILITY = 0.35;
+    private static final double UNIQUE_NAME_PROBABILITY = 0.15;
     private static final int MAX_NAME_ATTEMPTS = 500;
     private static boolean loaded = false;
     private static final Map<String, List<String>> firstNamesByTier = new HashMap<>();
