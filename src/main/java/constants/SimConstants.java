@@ -585,6 +585,49 @@ public final class SimConstants {
     // Secondary stat sleep replenishment: percentage of max to restore
     public static final double SECONDARY_STAT_SLEEP_REPLENISH_RATE = 1.0; // 100% restored on sleep
 
+    // Ear Piercing System Constants (based on 2004 survey data)
+    // From a 2004 survey of 500 people aged 18-50: 34% had ear lobe piercings
+    // A 2005 UK survey of 10,000+ aged 16+ found 10% had non-ear body piercings
+    // Of those, 46% were female aged 16-24
+    // Rates adjusted below for U.S. high school population (14-18)
+
+    // Base piercing rates by gender
+    // Females: ear piercing is culturally normative by high school age
+    // Males: less common but growing in popularity through 2000s
+    public static final double PIERCING_EAR_FEMALE_BASE_RATE = 0.48;
+    public static final double PIERCING_EAR_MALE_BASE_RATE = 0.12;
+
+    // Male grade multipliers for piercing probability
+    // Younger males are significantly less likely to have piercings;
+    // piercing likelihood increases as they get older and more independent
+    public static final double PIERCING_MALE_GRADE_FRESHMAN = 0.55;
+    public static final double PIERCING_MALE_GRADE_SOPHOMORE = 0.75;
+    public static final double PIERCING_MALE_GRADE_JUNIOR = 1.15;
+    public static final double PIERCING_MALE_GRADE_SENIOR = 1.40;
+
+    // Both ears vs single ear (proportion of those with piercings)
+    // Females overwhelmingly pierce both ears; males often pierce just one
+    public static final double PIERCING_BOTH_EARS_FEMALE_RATE = 0.85;
+    public static final double PIERCING_BOTH_EARS_MALE_RATE = 0.35;
+
+    // Base rates for multiple piercings per ear (proportion of those with piercings)
+    public static final double PIERCING_DOUBLE_PER_EAR_RATE = 0.10;
+    public static final double PIERCING_TRIPLE_PER_EAR_RATE = 0.03;
+
+    // Grade multipliers for multiple piercings per ear
+    // Older students have had more time/opportunity to accumulate additional piercings
+    public static final double PIERCING_MULTI_GRADE_FRESHMAN = 0.40;
+    public static final double PIERCING_MULTI_GRADE_SOPHOMORE = 0.70;
+    public static final double PIERCING_MULTI_GRADE_JUNIOR = 1.30;
+    public static final double PIERCING_MULTI_GRADE_SENIOR = 1.80;
+
+    // Gauge rate among those with piercings (subcultural in 2004, increases over years)
+    // In 2004, gauges were part of punk/alternative subcultures and not yet mainstream
+    public static final double PIERCING_GAUGE_RATE_2004 = 0.05;
+
+    // Charisma boost from wearing jewelry (minor stat improvement)
+    public static final int PIERCING_EARRING_CHARISMA_BOOST = 2;
+
     // Adult/Teacher Vision Constants
     // Older adults have higher rates of vision issues, especially hyperopia and astigmatism
     // Adults are much more likely to have corrective lenses if needed

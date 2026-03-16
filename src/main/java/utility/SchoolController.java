@@ -987,6 +987,9 @@ public class SchoolController {
             // Apply braces attributes (timing, cosmetics, charisma effects)
             SiblingGenerator.applyBracesAttributes(playerCharacter);
 
+            // Apply ear piercing attributes (jewelry, charisma boost)
+            SiblingGenerator.applyPiercingAttributes(playerCharacter);
+
             PlayerStoryGenerator.reportBaseStats(playerCharacter, storyOutput);
 
             // Generate and attach family info (parents and siblings) BEFORE story

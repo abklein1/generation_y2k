@@ -85,6 +85,10 @@ public class Inspector {
         if (student.studentStatistics.getHasGlasses() && !student.studentStatistics.getHasContacts()) {
             sb.append(" They wear glasses.");
         }
+        // Add ear piercings to physical description
+        if (student.studentStatistics.getHasEarPiercing()) {
+            sb.append(" ").append(student.studentStatistics.getEarPiercingDescription());
+        }
         sb.append("\n");
 
         // Grade and birthday
@@ -99,6 +103,9 @@ public class Inspector {
             sb.append(" (reduced by braces)");
         } else if (hadBracesRemoved) {
             sb.append(" (boosted by past braces)");
+        }
+        if (student.studentStatistics.getHasEarPiercing()) {
+            sb.append(" (boosted by earrings)");
         }
         sb.append("\n   AGILITY: ");
         sb.append(student.studentStatistics.getEffectiveAgility());

@@ -98,6 +98,9 @@ public class StudentPopGenerator {
 
         // Apply vision attributes
         applyVisionAttributes(student);
+
+        // Apply ear piercing attributes
+        applyPiercingAttributes(student);
     }
 
     /**
@@ -202,6 +205,45 @@ public class StudentPopGenerator {
                     race, gender, incomeLevel, gradeLevel);
             student.studentStatistics.setHasGlasses(correctiveLenses[0]);
             student.studentStatistics.setHasContacts(correctiveLenses[1]);
+        }
+    }
+
+    /**
+     * Applies ear piercing attributes to a student.
+     * Determines piercing presence, ear configuration, jewelry type/material/size,
+     * and applies minor charisma boost from wearing jewelry.
+     *
+     * @param student the student to apply piercing attributes to
+     */
+    public static void applyPiercingAttributes(Student student) {
+        String gender = student.studentStatistics.getGender();
+        String gradeLevel = student.studentStatistics.getGradeLevel();
+
+        boolean hasEarPiercing = TraitSelection.determineEarPiercing(gender, gradeLevel);
+        student.studentStatistics.setHasEarPiercing(hasEarPiercing);
+
+        if (hasEarPiercing) {
+            boolean bothEars = TraitSelection.determineBothEarsPierced(gender);
+
+            if (bothEars) {
+                student.studentStatistics.setEarPiercingLeftCount(
+                        TraitSelection.determineEarPiercingCount(gradeLevel));
+                student.studentStatistics.setEarPiercingRightCount(
+                        TraitSelection.determineEarPiercingCount(gradeLevel));
+            } else {
+                boolean leftEar = TraitSelection.determineSingleEarIsLeft();
+                int count = TraitSelection.determineEarPiercingCount(gradeLevel);
+                student.studentStatistics.setEarPiercingLeftCount(leftEar ? count : 0);
+                student.studentStatistics.setEarPiercingRightCount(leftEar ? 0 : count);
+            }
+
+            String type = TraitSelection.selectEarringType(gender);
+            student.studentStatistics.setEarPiercingType(type);
+            student.studentStatistics.setEarPiercingMaterial(TraitSelection.selectEarringMaterial(type));
+            student.studentStatistics.setEarPiercingSize(TraitSelection.selectEarringSize(type));
+
+            student.studentStatistics.setEarPiercingCharismaBoost(PIERCING_EARRING_CHARISMA_BOOST);
+            student.studentStatistics.recalculateCharismaDependentStats();
         }
     }
 

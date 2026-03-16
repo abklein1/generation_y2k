@@ -973,4 +973,14 @@ public class SiblingGenerator {
             }
         }
     }
+
+    /**
+     * Applies ear piercing attributes to a student.
+     * Delegates to StudentPopGenerator for consistent behavior.
+     *
+     * @param student the student to apply piercing attributes to
+     */
+    public static void applyPiercingAttributes(Student student) {
+        StudentPopGenerator.applyPiercingAttributes(student);
+    }
 }

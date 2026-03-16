@@ -89,6 +89,14 @@ public class StudentStatistics implements PStatistics {
     // Corrective lenses - glasses or contacts
     private boolean hasGlasses; // Wears glasses
     private boolean hasContacts; // Wears contact lenses (may also have glasses as backup)
+    // Ear piercing attributes
+    private boolean hasEarPiercing;
+    private int earPiercingLeftCount;       // 0, 1, 2, or 3 piercings on left ear
+    private int earPiercingRightCount;      // 0, 1, 2, or 3 piercings on right ear
+    private String earPiercingType;         // studs, hoops, gauges, dangling earrings
+    private String earPiercingMaterial;     // gold, silver, surgical steel, etc.
+    private String earPiercingSize;         // small, medium, large (primarily for gauges/hoops)
+    private int earPiercingCharismaBoost;   // minor stat improvement from jewelry
 
     public StudentStatistics() {
         this.height = 0;
@@ -870,6 +878,11 @@ public class StudentStatistics implements PStatistics {
         // bracesCharismaBoost)
         // The boost is applied when setHadBracesRemoved is called during generation
 
+        // Apply minor boost from ear piercings (jewelry enhances appearance)
+        if (hasEarPiercing) {
+            effectiveCharisma += earPiercingCharismaBoost;
+        }
+
         return effectiveCharisma;
     }
 
@@ -997,6 +1010,148 @@ public class StudentStatistics implements PStatistics {
             return "glasses";
         } else {
             return "no correction";
+        }
+    }
+
+    // Ear piercing getters and setters
+
+    public boolean getHasEarPiercing() {
+        return hasEarPiercing;
+    }
+
+    public void setHasEarPiercing(boolean hasEarPiercing) {
+        this.hasEarPiercing = hasEarPiercing;
+    }
+
+    public int getEarPiercingLeftCount() {
+        return earPiercingLeftCount;
+    }
+
+    public void setEarPiercingLeftCount(int earPiercingLeftCount) {
+        this.earPiercingLeftCount = earPiercingLeftCount;
+    }
+
+    public int getEarPiercingRightCount() {
+        return earPiercingRightCount;
+    }
+
+    public void setEarPiercingRightCount(int earPiercingRightCount) {
+        this.earPiercingRightCount = earPiercingRightCount;
+    }
+
+    public String getEarPiercingType() {
+        return earPiercingType;
+    }
+
+    public void setEarPiercingType(String earPiercingType) {
+        this.earPiercingType = earPiercingType;
+    }
+
+    public String getEarPiercingMaterial() {
+        return earPiercingMaterial;
+    }
+
+    public void setEarPiercingMaterial(String earPiercingMaterial) {
+        this.earPiercingMaterial = earPiercingMaterial;
+    }
+
+    public String getEarPiercingSize() {
+        return earPiercingSize;
+    }
+
+    public void setEarPiercingSize(String earPiercingSize) {
+        this.earPiercingSize = earPiercingSize;
+    }
+
+    public int getEarPiercingCharismaBoost() {
+        return earPiercingCharismaBoost;
+    }
+
+    public void setEarPiercingCharismaBoost(int earPiercingCharismaBoost) {
+        this.earPiercingCharismaBoost = earPiercingCharismaBoost;
+    }
+
+    /**
+     * Gets a natural-language description of the student's ear piercings.
+     * Handles singular/plural forms, asymmetric counts (different number of
+     * piercings per ear), and varies phrasing by ear configuration.
+     *
+     * Examples:
+     * - "They have both ears pierced with gold studs."
+     * - "Their left ear is pierced with a small silver hoop."
+     * - "They have both ears pierced with small, black gauges."
+     * - "They have both ears pierced with gold studs (2 per ear)."
+     * - "They have both ears pierced with silver studs, with 2 on the left and 1 on the right."
+     * - "Their left ear has 2 gold studs."
+     *
+     * @return a String describing the ear piercings, or null if none
+     */
+    public String getEarPiercingDescription() {
+        if (!hasEarPiercing) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        boolean bothEars = earPiercingLeftCount > 0 && earPiercingRightCount > 0;
+        boolean leftOnly = earPiercingLeftCount > 0 && earPiercingRightCount == 0;
+
+        if (bothEars) {
+            sb.append("They have both ears pierced with ");
+            appendJewelryName(sb, true);
+
+            if (earPiercingLeftCount == earPiercingRightCount && earPiercingLeftCount > 1) {
+                sb.append(" (").append(earPiercingLeftCount).append(" per ear)");
+            } else if (earPiercingLeftCount != earPiercingRightCount) {
+                sb.append(", with ").append(earPiercingLeftCount)
+                        .append(" on the left and ").append(earPiercingRightCount).append(" on the right");
+            }
+        } else {
+            String ear = leftOnly ? "left" : "right";
+            int count = leftOnly ? earPiercingLeftCount : earPiercingRightCount;
+
+            if (count > 1) {
+                sb.append("Their ").append(ear).append(" ear has ").append(count).append(" ");
+                appendJewelryName(sb, true);
+            } else {
+                sb.append("Their ").append(ear).append(" ear is pierced with ");
+                appendJewelryName(sb, false);
+            }
+        }
+
+        sb.append(".");
+        return sb.toString();
+    }
+
+    /**
+     * Appends the jewelry type description (material + type name) to a
+     * StringBuilder, handling size prefixes and singular/plural forms.
+     *
+     * @param sb     the StringBuilder to append to
+     * @param plural whether to use plural form of the jewelry type
+     */
+    private void appendJewelryName(StringBuilder sb, boolean plural) {
+        if (!plural) {
+            sb.append("a ");
+        }
+
+        boolean isGauge = "gauges".equals(earPiercingType);
+        boolean isHoop = "hoops".equals(earPiercingType);
+
+        if ((isGauge || isHoop) && earPiercingSize != null) {
+            sb.append(earPiercingSize);
+            sb.append(isGauge ? ", " : " ");
+        }
+
+        sb.append(earPiercingMaterial).append(" ");
+
+        if (isGauge) {
+            sb.append(plural ? "gauges" : "gauge");
+        } else if (isHoop) {
+            sb.append(plural ? "hoops" : "hoop");
+        } else if ("dangling earrings".equals(earPiercingType)) {
+            sb.append("dangling ").append(plural ? "earrings" : "earring");
+        } else {
+            sb.append(plural ? "studs" : "stud");
         }
     }
 

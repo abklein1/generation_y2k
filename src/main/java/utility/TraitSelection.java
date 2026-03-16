@@ -601,6 +601,25 @@ public class TraitSelection {
             "elastic bands", "rubber bands", "ligature ties", "power chains"
     };
 
+    // Ear piercing materials for standard jewelry (studs, hoops, dangling earrings)
+    private static final String[] EARRING_MATERIALS = {
+            "gold", "silver", "surgical steel", "diamond", "white gold",
+            "rose gold", "titanium"
+    };
+
+    private static final double[] EARRING_MATERIAL_WEIGHTS = {
+            0.30, 0.30, 0.15, 0.08, 0.07, 0.05, 0.05
+    };
+
+    // Materials used for gauge earrings (alternative/subcultural aesthetic)
+    private static final String[] GAUGE_MATERIALS = {
+            "black", "surgical steel", "titanium", "silver", "acrylic", "wood"
+    };
+
+    private static final double[] GAUGE_MATERIAL_WEIGHTS = {
+            0.25, 0.25, 0.15, 0.15, 0.12, 0.08
+    };
+
     /**
      * Selects a random band color for braces.
      *
@@ -1344,5 +1363,182 @@ public class TraitSelection {
         }
 
         return new boolean[] { hasGlasses, hasContacts };
+    }
+
+    // ==================== Ear Piercing System ====================
+
+    /**
+     * Determines if a student has ear piercings based on gender and grade level.
+     * Rates derived from 2004 survey data (34% ear lobe piercing rate ages 18-50),
+     * adjusted for the high school population.
+     * Females: ~48% (ear piercing is culturally normative, consistent across grades)
+     * Males: ~12% base, but younger males are significantly less likely to have
+     * piercings. Freshman males are roughly half as likely as the base rate,
+     * while senior males are ~40% more likely.
+     *
+     * @param gender     the student's gender
+     * @param gradeLevel the student's grade level
+     * @return true if the student has ear piercings
+     */
+    public static boolean determineEarPiercing(String gender, String gradeLevel) {
+        if (gender.equalsIgnoreCase("Female")) {
+            return GameRandom.nextDouble() < PIERCING_EAR_FEMALE_BASE_RATE;
+        }
+
+        double gradeMultiplier = switch (gradeLevel) {
+            case "Freshman" -> PIERCING_MALE_GRADE_FRESHMAN;
+            case "Sophomore" -> PIERCING_MALE_GRADE_SOPHOMORE;
+            case "Junior" -> PIERCING_MALE_GRADE_JUNIOR;
+            case "Senior" -> PIERCING_MALE_GRADE_SENIOR;
+            default -> 1.0;
+        };
+
+        double rate = PIERCING_EAR_MALE_BASE_RATE * gradeMultiplier;
+        return GameRandom.nextDouble() < rate;
+    }
+
+    /**
+     * Determines if a student has both ears pierced or just one.
+     * Females overwhelmingly pierce both ears (80%).
+     * Males in 2004 more often had a single ear pierced (65% single).
+     *
+     * @param gender the student's gender
+     * @return true if both ears are pierced
+     */
+    public static boolean determineBothEarsPierced(String gender) {
+        double rate = gender.equalsIgnoreCase("Female")
+                ? PIERCING_BOTH_EARS_FEMALE_RATE
+                : PIERCING_BOTH_EARS_MALE_RATE;
+        return GameRandom.nextDouble() < rate;
+    }
+
+    /**
+     * Determines which single ear is pierced (when only one ear has piercings).
+     *
+     * @return true if the left ear is pierced, false for right
+     */
+    public static boolean determineSingleEarIsLeft() {
+        return GameRandom.nextDouble() < 0.50;
+    }
+
+    /**
+     * Determines how many piercings a student has on a single ear.
+     * Most have 1; base rates are ~10% for 2 and ~3% for 3, modified by
+     * grade level. Older students have had more time and opportunity to
+     * accumulate additional piercings.
+     *
+     * Effective rates by grade (approximate):
+     * - Freshman: 4% double, 1.2% triple
+     * - Sophomore: 7% double, 2.1% triple
+     * - Junior: 13% double, 3.9% triple
+     * - Senior: 18% double, 5.4% triple
+     *
+     * @param gradeLevel the student's grade level
+     * @return the number of piercings for this ear (1, 2, or 3)
+     */
+    public static int determineEarPiercingCount(String gradeLevel) {
+        double gradeMultiplier = switch (gradeLevel) {
+            case "Freshman" -> PIERCING_MULTI_GRADE_FRESHMAN;
+            case "Sophomore" -> PIERCING_MULTI_GRADE_SOPHOMORE;
+            case "Junior" -> PIERCING_MULTI_GRADE_JUNIOR;
+            case "Senior" -> PIERCING_MULTI_GRADE_SENIOR;
+            default -> 1.0;
+        };
+
+        double tripleRate = PIERCING_TRIPLE_PER_EAR_RATE * gradeMultiplier;
+        double doubleRate = PIERCING_DOUBLE_PER_EAR_RATE * gradeMultiplier;
+
+        double roll = GameRandom.nextDouble();
+        if (roll < tripleRate) {
+            return 3;
+        } else if (roll < tripleRate + doubleRate) {
+            return 2;
+        }
+        return 1;
+    }
+
+    /**
+     * Selects an earring type based on gender.
+     * Type distribution varies by gender (2004 era):
+     * - Females: studs 50%, hoops 25%, dangling earrings 20%, gauges 5%
+     * - Males: studs 55%, hoops 25%, gauges 15%, dangling earrings 5%
+     * Gauges were still subcultural in 2004, more common among males in
+     * alternative subcultures.
+     *
+     * @param gender the student's gender
+     * @return the earring type string
+     */
+    public static String selectEarringType(String gender) {
+        double roll = GameRandom.nextDouble();
+        boolean isFemale = gender.equalsIgnoreCase("Female");
+
+        if (isFemale) {
+            if (roll < 0.50) return "studs";
+            else if (roll < 0.75) return "hoops";
+            else if (roll < 0.95) return "dangling earrings";
+            else return "gauges";
+        } else {
+            if (roll < 0.55) return "studs";
+            else if (roll < 0.80) return "hoops";
+            else if (roll < 0.95) return "gauges";
+            else return "dangling earrings";
+        }
+    }
+
+    /**
+     * Selects an earring material based on the jewelry type.
+     * Standard jewelry uses gold/silver/etc., while gauges favor
+     * alternative materials (black, acrylic, wood) that were common in
+     * 2004 subcultural fashion.
+     *
+     * @param type the earring type
+     * @return the material string
+     */
+    public static String selectEarringMaterial(String type) {
+        if ("gauges".equals(type)) {
+            return selectWeightedOption(GAUGE_MATERIALS, GAUGE_MATERIAL_WEIGHTS);
+        }
+        return selectWeightedOption(EARRING_MATERIALS, EARRING_MATERIAL_WEIGHTS);
+    }
+
+    /**
+     * Selects an earring size descriptor based on the jewelry type.
+     * Only gauges and hoops have meaningful size descriptors.
+     * In 2004, most gauges were small (subcultural, not yet mainstream).
+     *
+     * @param type the earring type
+     * @return the size string, or null if size is not applicable
+     */
+    public static String selectEarringSize(String type) {
+        if ("gauges".equals(type)) {
+            double roll = GameRandom.nextDouble();
+            if (roll < 0.60) return "small";
+            if (roll < 0.90) return "medium";
+            return "large";
+        } else if ("hoops".equals(type)) {
+            double roll = GameRandom.nextDouble();
+            if (roll < 0.70) return "small";
+            return "medium";
+        }
+        return null;
+    }
+
+    /**
+     * Selects an option from a weighted array using cumulative probability.
+     *
+     * @param options the array of options
+     * @param weights the corresponding weights (must sum to ~1.0)
+     * @return the selected option
+     */
+    private static String selectWeightedOption(String[] options, double[] weights) {
+        double roll = GameRandom.nextDouble();
+        double cumulative = 0;
+        for (int i = 0; i < options.length; i++) {
+            cumulative += weights[i];
+            if (roll < cumulative) {
+                return options[i];
+            }
+        }
+        return options[0];
     }
 }
