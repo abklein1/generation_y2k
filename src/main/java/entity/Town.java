@@ -4,9 +4,12 @@ import config.TownDemographics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a town that contains the population pools and schools.
@@ -28,6 +31,9 @@ public class Town implements Serializable {
     private final Map<String, Neighborhood> neighborhoodsByName;
     private TownDemographics demographics;
     private String[] townColors; // Colors that can be used for school spirit items
+    private final Map<Student, CellPhone> studentPhones;
+    private final Map<Staff, CellPhone> staffPhones;
+    private final Set<String> usedPhoneNumbers;
 
     /**
      * Creates a new Town with empty pools and no schools.
@@ -38,6 +44,9 @@ public class Town implements Serializable {
         this.neighborhoodsByName = new HashMap<>();
         this.studentPool = new StudentPool();
         this.staffPool = new StaffPool();
+        this.studentPhones = new HashMap<>();
+        this.staffPhones = new HashMap<>();
+        this.usedPhoneNumbers = new HashSet<>();
     }
 
     /**
@@ -255,6 +264,97 @@ public class Town implements Serializable {
      */
     public boolean hasAvailableStaff() {
         return staffPool.hasUnassigned();
+    }
+
+    // ==================== Cell Phone Management ====================
+
+    /**
+     * Assigns a cell phone to a student.
+     *
+     * @param student the student
+     * @param phone   the cell phone to assign
+     */
+    public void assignStudentPhone(Student student, CellPhone phone) {
+        studentPhones.put(student, phone);
+        usedPhoneNumbers.add(phone.getPhoneNumber());
+    }
+
+    /**
+     * Assigns a cell phone to a staff member.
+     *
+     * @param staff the staff member
+     * @param phone the cell phone to assign
+     */
+    public void assignStaffPhone(Staff staff, CellPhone phone) {
+        staffPhones.put(staff, phone);
+        usedPhoneNumbers.add(phone.getPhoneNumber());
+    }
+
+    /**
+     * Gets a student's cell phone.
+     *
+     * @param student the student
+     * @return the cell phone, or null if the student doesn't have one
+     */
+    public CellPhone getStudentPhone(Student student) {
+        return studentPhones.get(student);
+    }
+
+    /**
+     * Gets a staff member's cell phone.
+     *
+     * @param staff the staff member
+     * @return the cell phone, or null if the staff member doesn't have one
+     */
+    public CellPhone getStaffPhone(Staff staff) {
+        return staffPhones.get(staff);
+    }
+
+    /**
+     * Checks whether a student owns a cell phone.
+     *
+     * @param student the student
+     * @return true if the student has a phone
+     */
+    public boolean hasPhone(Student student) {
+        return studentPhones.containsKey(student);
+    }
+
+    /**
+     * Checks whether a staff member owns a cell phone.
+     *
+     * @param staff the staff member
+     * @return true if the staff member has a phone
+     */
+    public boolean hasPhone(Staff staff) {
+        return staffPhones.containsKey(staff);
+    }
+
+    /**
+     * Gets an unmodifiable view of all student phone assignments.
+     *
+     * @return map of students to their cell phones
+     */
+    public Map<Student, CellPhone> getAllStudentPhones() {
+        return Collections.unmodifiableMap(studentPhones);
+    }
+
+    /**
+     * Gets an unmodifiable view of all staff phone assignments.
+     *
+     * @return map of staff to their cell phones
+     */
+    public Map<Staff, CellPhone> getAllStaffPhones() {
+        return Collections.unmodifiableMap(staffPhones);
+    }
+
+    /**
+     * Gets the set of all phone numbers currently in use.
+     *
+     * @return unmodifiable set of assigned phone numbers
+     */
+    public Set<String> getUsedPhoneNumbers() {
+        return Collections.unmodifiableSet(usedPhoneNumbers);
     }
 
     @Override

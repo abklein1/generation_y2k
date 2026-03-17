@@ -47,6 +47,9 @@ public class TownPopulationGenerator {
         GameLogger.logGeneration("Assigning neighborhoods...");
         NeighborhoodAssignmentService.assignNeighborhoods(town);
 
+        GameLogger.logGeneration("Assigning cell phones...");
+        CellPhoneAssignmentService.assignPhonesForTown(town, constants.SimConstants.STARTING_YEAR);
+
         GameLogger.logGeneration("Town generation complete. Total students: " + town.getTotalStudentPopulation() +
                 ", Total staff: " + town.getTotalStaffPopulation());
 

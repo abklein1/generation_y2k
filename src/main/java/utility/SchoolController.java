@@ -443,6 +443,12 @@ public class SchoolController {
             schedArea.setWrapStyleWord(true);
             schedArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
 
+            JTextArea phoneArea = new JTextArea();
+            phoneArea.setEditable(false);
+            phoneArea.setLineWrap(true);
+            phoneArea.setWrapStyleWord(true);
+            phoneArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+
             JTabbedPane staffTabs = new JTabbedPane();
             staffTabs.addTab("Description", new JScrollPane(descArea));
             staffTabs.addTab("Stats", new JScrollPane(statsArea));
@@ -450,6 +456,7 @@ public class SchoolController {
             emptySchedule.add(new JLabel("Select a staff member to view their schedule",
                     SwingConstants.CENTER), java.awt.BorderLayout.CENTER);
             staffTabs.addTab("Schedule", emptySchedule);
+            staffTabs.addTab("Cell Phone", new JScrollPane(phoneArea));
 
             staffJList.addListSelectionListener(e -> {
                 if (!e.getValueIsAdjusting()) {
@@ -459,6 +466,11 @@ public class SchoolController {
                         Inspector.updateStaffStatsArea(selectedStaff, statsArea);
                         Inspector.updateStaffScheduleArea(selectedStaff, schedArea);
                         staffTabs.setComponentAt(2, new JScrollPane(schedArea));
+
+                        CellPhone staffPhone = town != null
+                                ? town.getStaffPhone(selectedStaff) : null;
+                        Inspector.updateCellPhoneArea(staffPhone,
+                                selectedStaff.toString(), phoneArea);
                     }
                 }
             });
@@ -499,6 +511,12 @@ public class SchoolController {
                 statsArea.setWrapStyleWord(true);
                 statsArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
 
+                JTextArea phoneArea = new JTextArea();
+                phoneArea.setEditable(false);
+                phoneArea.setLineWrap(true);
+                phoneArea.setWrapStyleWord(true);
+                phoneArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+
                 JTabbedPane studentTabs = new JTabbedPane();
                 studentTabs.addTab("Description", new JScrollPane(descArea));
                 studentTabs.addTab("Stats", new JScrollPane(statsArea));
@@ -506,6 +524,7 @@ public class SchoolController {
                 emptySchedule.add(new JLabel("Select a student to view their schedule",
                         SwingConstants.CENTER), java.awt.BorderLayout.CENTER);
                 studentTabs.addTab("Schedule", emptySchedule);
+                studentTabs.addTab("Cell Phone", new JScrollPane(phoneArea));
 
                 final Student[] currentlySelectedStudent = { null };
 
@@ -519,6 +538,11 @@ public class SchoolController {
 
                             JPanel schedulePanel = Inspector.buildStudentSchedulePanel(selectedStudent);
                             studentTabs.setComponentAt(2, schedulePanel);
+
+                            CellPhone studentPhone = town != null
+                                    ? town.getStudentPhone(selectedStudent) : null;
+                            Inspector.updateCellPhoneArea(studentPhone,
+                                    selectedStudent.toString(), phoneArea);
 
                             showSocialLinksButton.setEnabled(true);
                             showSocialLinksButton.setToolTipText("View social links for " +

@@ -476,6 +476,40 @@ public class Inspector {
     }
 
     /**
+     * Updates a JTextArea with cell phone information.
+     * Shows phone details if the person owns one, or a message if they don't.
+     * Used by SchoolController's tabbed inspection window.
+     *
+     * @param phone     the CellPhone object, or null if the person has no phone
+     * @param ownerName the display name of the owner
+     * @param area      the JTextArea to update
+     */
+    public static void updateCellPhoneArea(CellPhone phone, String ownerName, JTextArea area) {
+        if (phone == null) {
+            area.setText(ownerName + " does not own a cell phone.");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Cell Phone\n=====================================\n\n");
+            sb.append("Owner:        ").append(phone.getOwnerName()).append("\n");
+            sb.append("Number:       ").append(phone.getPhoneNumber()).append("\n");
+            sb.append("Color:        ").append(phone.getColor()).append("\n");
+            String make = phone.getMake();
+            String model = phone.getModel();
+            if (make != null && !make.isEmpty()) {
+                sb.append("Make:         ").append(make).append("\n");
+            }
+            if (model != null && !model.isEmpty()) {
+                sb.append("Model:        ").append(model).append("\n");
+            }
+            sb.append("\nData Plan\n-------------------------------------\n");
+            sb.append("Minutes:      ").append(phone.getMinutePlan()).append("/month\n");
+            sb.append("Text Limit:   ").append(phone.getTextLimit()).append("/month\n");
+            area.setText(sb.toString());
+        }
+        area.setCaretPosition(0);
+    }
+
+    /**
      * Opens a full student inspection dialog with tabbed panes.
      * Tab 1 (Description): Physical appearance, grade, birthday, family, history.
      * Tab 2 (Stats): Base stats, secondary stats, and status effects.

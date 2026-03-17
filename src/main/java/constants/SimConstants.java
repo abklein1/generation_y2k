@@ -659,6 +659,32 @@ public final class SimConstants {
     public static final double ADULT_CONTACTS_40_TO_59_RATE = 0.15;
     public static final double ADULT_CONTACTS_60_PLUS_RATE = 0.05;
 
+    // Cell Phone Ownership (2004 baseline rates by grade level)
+    // Based on research: 43% of 14yo, 48% of 15yo, 59% of 16yo, 64% of 17yo
+    public static final double CELLPHONE_OWNERSHIP_FRESHMAN = 0.43;
+    public static final double CELLPHONE_OWNERSHIP_SOPHOMORE = 0.48;
+    public static final double CELLPHONE_OWNERSHIP_JUNIOR = 0.59;
+    public static final double CELLPHONE_OWNERSHIP_SENIOR = 0.64;
+    public static final double CELLPHONE_OWNERSHIP_STAFF = 0.80;
+
+    // Year-over-year compound growth rate (~11.7% annual, 45% -> ~70% from 2004-2008)
+    public static final double CELLPHONE_YEARLY_GROWTH_RATE = 0.117;
+    // Ownership cap to prevent exceeding realistic saturation
+    public static final double CELLPHONE_OWNERSHIP_MAX_RATE = 0.95;
+
+    // Cell phone plan tiers (2004-era monthly allowances)
+    public static final int CELLPHONE_PLAN_BASIC_MINUTES = 300;
+    public static final int CELLPHONE_PLAN_BASIC_TEXTS = 100;
+    public static final int CELLPHONE_PLAN_STANDARD_MINUTES = 600;
+    public static final int CELLPHONE_PLAN_STANDARD_TEXTS = 500;
+    public static final int CELLPHONE_PLAN_PREMIUM_MINUTES = 1000;
+    public static final int CELLPHONE_PLAN_PREMIUM_TEXTS = 1500;
+
+    // Plan tier distribution (out of 100)
+    // Students skew toward basic plans; staff toward standard/premium
+    public static final int CELLPHONE_PLAN_BASIC_THRESHOLD = 50;
+    public static final int CELLPHONE_PLAN_STANDARD_THRESHOLD = 85;
+
     private SimConstants() {
     }
 }
