@@ -20,13 +20,13 @@ import java.util.Map;
 public class Inspector {
 
     /**
-     * Builds the inspection text for a student containing their personal info,
-     * stats, status effects, family info, and schedule.
+     * Builds the physical description text for a student.
+     * Includes appearance, grade, birthday, family info, and braces/piercing history.
      *
-     * @param student the student to build inspection text for
-     * @return the formatted inspection text as a String
+     * @param student the student to describe
+     * @return the formatted description text
      */
-    private static String buildStudentInspectionText(Student student) {
+    private static String buildStudentDescriptionText(Student student) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
 
@@ -53,14 +53,11 @@ public class Inspector {
         String grade = student.studentStatistics.getGradeLevel();
         String income = student.studentStatistics.getIncomeLevel();
         LocalDate birth = student.studentStatistics.getBirthday();
-        List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
         List<Student> siblingsNotInSchool = student.studentStatistics.getSiblingsNotInSchool();
         List<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
 
-        // Header with name (using getFullName for consistency)
         sb.append(student.studentName.getFullName()).append("\n=====================================\n");
 
-        // Physical description
         sb.append(firstName).append(" is a ").append(gender.toLowerCase()).append(" with ");
         sb.append(skinColor).append(" colored skin and ");
         sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ")
@@ -81,22 +78,66 @@ public class Inspector {
             }
             sb.append(".");
         }
-        // Add glasses to physical description (contacts are not visible)
         if (student.studentStatistics.getHasGlasses() && !student.studentStatistics.getHasContacts()) {
             sb.append(" They wear glasses.");
         }
-        // Add ear piercings to physical description
         if (student.studentStatistics.getHasEarPiercing()) {
             sb.append(" ").append(student.studentStatistics.getEarPiercingDescription());
         }
         sb.append("\n");
 
-        // Grade and birthday
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
 
+        // Family info
+        sb.append("\nTheir family has the following income: ").append(income).append("\n");
+        if (!siblingsInSchool.isEmpty()) {
+            sb.append("They have the following siblings in school:\n");
+            for (Student sibling : siblingsInSchool) {
+                sb.append("   ").append(sibling.studentName.getFullName()).append("\n");
+            }
+        }
+        if (!siblingsNotInSchool.isEmpty()) {
+            sb.append("They have the following siblings not in school:\n");
+            for (Student sibling : siblingsNotInSchool) {
+                sb.append("   ").append(sibling.studentName.getFullName()).append("\n");
+            }
+        }
+
+        // Braces history
+        if (hasBraces) {
+            if (bracesStartDate != null && bracesEndDate != null) {
+                sb.append("\n(Got braces: ").append(bracesStartDate)
+                        .append(", Expected removal: ").append(bracesEndDate).append(")\n");
+            }
+        } else if (hadBracesRemoved) {
+            sb.append("\nThey previously had braces");
+            if (bracesStartDate != null && bracesEndDate != null) {
+                sb.append(" (").append(bracesStartDate).append(" to ").append(bracesEndDate).append(")");
+            }
+            sb.append(".\n");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Builds the stats and status effects text for a student.
+     * Includes base stats, secondary stats, and active status effects.
+     *
+     * @param student the student to build stats for
+     * @return the formatted stats text
+     */
+    private static String buildStudentStatsText(Student student) {
+        StringBuilder sb = new StringBuilder();
+        String firstName = student.studentName.getFirstName();
+        boolean hasBraces = student.studentStatistics.getHasBraces();
+        boolean hadBracesRemoved = student.studentStatistics.getHadBracesRemoved();
+
+        sb.append(student.studentName.getFullName()).append("\n=====================================\n");
+
         // Base stats
-        sb.append("They have the following base stats:\n   INTELLIGENCE: ")
+        sb.append("Base Stats:\n   INTELLIGENCE: ")
                 .append(student.studentStatistics.getIntelligence());
         sb.append("\n   CHARISMA: ").append(student.studentStatistics.getEffectiveCharisma());
         if (hasBraces) {
@@ -124,32 +165,31 @@ public class Inspector {
         sb.append("   EXP: ").append(student.studentStatistics.getExperience()).append("\n");
 
         // Secondary stats
-        sb.append("They have the following secondary stats:\n   Creativity: ")
+        sb.append("\nSecondary Stats:\n   Creativity: ")
                 .append(student.studentStatistics.getCreativity());
-        sb.append("\n   Empathy: ").append(student.studentStatistics.getEmpathy()).append("\n   Adaptability: ");
-        sb.append(student.studentStatistics.getAdaptability()).append("\n   Initiative: ")
-                .append(student.studentStatistics.getInitiative());
-        sb.append("\n   Resilience: ").append(student.studentStatistics.getResilience()).append("\n   Curiosity: ");
-        sb.append(student.studentStatistics.getCuriosity()).append("\n   Responsibility: ")
-                .append(student.studentStatistics.getResponsibility());
+        sb.append("\n   Empathy: ").append(student.studentStatistics.getEmpathy());
+        sb.append("\n   Adaptability: ").append(student.studentStatistics.getAdaptability());
+        sb.append("\n   Initiative: ").append(student.studentStatistics.getInitiative());
+        sb.append("\n   Resilience: ").append(student.studentStatistics.getResilience());
+        sb.append("\n   Curiosity: ").append(student.studentStatistics.getCuriosity());
+        sb.append("\n   Responsibility: ").append(student.studentStatistics.getResponsibility());
         sb.append("\n   Open-Mindedness: ").append(student.studentStatistics.getOpenMindedness()).append("\n");
 
         // Status effects
-        sb.append(firstName).append(" has the following status effects:\n");
+        sb.append("\nStatus Effects:\n");
         if (student.studentStatistics.getBoredom() == 0) {
-            sb.append(firstName).append(" is not bored.\n");
+            sb.append("   ").append(firstName).append(" is not bored.\n");
         } else {
-            sb.append(firstName).append(" is slightly bored.\n");
+            sb.append("   ").append(firstName).append(" is slightly bored.\n");
         }
         if (student.studentStatistics.getSleepState()) {
-            sb.append(firstName).append(" is asleep!\n");
+            sb.append("   ").append(firstName).append(" is asleep!\n");
         } else {
-            sb.append(firstName).append(" is not asleep.\n");
+            sb.append("   ").append(firstName).append(" is not asleep.\n");
         }
-        // Vision issues and corrective lenses
         if (student.studentStatistics.hasVisionIssue()) {
             String visionDescription = student.studentStatistics.getVisionIssueDescription();
-            sb.append(firstName).append(" has ").append(visionDescription);
+            sb.append("   ").append(firstName).append(" has ").append(visionDescription);
             if (student.studentStatistics.hasVisionCorrection()) {
                 String correctionDesc = student.studentStatistics.getVisionCorrectionDescription();
                 sb.append(", corrected with ").append(correctionDesc).append(".\n");
@@ -161,48 +201,21 @@ public class Inspector {
                         .append(").\n");
             }
         } else {
-            sb.append(firstName).append(" has normal vision.\n");
-        }
-
-        // Family info
-        sb.append("Their family has the following income: ").append(income).append("\n");
-        if (!siblingsInSchool.isEmpty()) {
-            sb.append("They have the following siblings in school: ").append("\n");
-            for (Student sibling : siblingsInSchool) {
-                sb.append(sibling.studentName.getFullName()).append("\n");
-            }
-        }
-        if (!siblingsNotInSchool.isEmpty()) {
-            sb.append("They have the following siblings not in school: ").append("\n");
-            for (Student sibling : siblingsNotInSchool) {
-                sb.append(sibling.studentName.getFullName()).append("\n");
-            }
-        }
-
-        // Braces history
-        if (hasBraces) {
-            if (bracesStartDate != null && bracesEndDate != null) {
-                sb.append("(Got braces: ").append(bracesStartDate).append(", Expected removal: ").append(bracesEndDate)
-                        .append(")").append("\n");
-            }
-        } else if (hadBracesRemoved) {
-            sb.append(" They previously had braces");
-            if (bracesStartDate != null && bracesEndDate != null) {
-                sb.append(" (").append(bracesStartDate).append(" to ").append(bracesEndDate).append(")");
-            }
-            sb.append(".");
-            sb.append("\n");
-        }
-
-        // Schedule is now displayed in its own tab via buildSchedulePanel()
-        // Include a brief summary here for the text view
-        if (!schedule.isEmpty()) {
-            sb.append("\n(See Schedule tab for full class schedule)\n");
-        } else {
-            sb.append("\nNo classes scheduled.\n");
+            sb.append("   ").append(firstName).append(" has normal vision.\n");
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Builds the combined inspection text for legacy single-text-area views.
+     * Combines description and stats into one block.
+     *
+     * @param student the student to build inspection text for
+     * @return the formatted inspection text as a String
+     */
+    private static String buildStudentInspectionText(Student student) {
+        return buildStudentDescriptionText(student) + "\n" + buildStudentStatsText(student);
     }
 
     /**
@@ -418,22 +431,76 @@ public class Inspector {
     }
 
     /**
+     * Updates a JTextArea with the student's physical description.
+     * Used by SchoolController's tabbed inspection window.
+     */
+    public static void updateStudentDescriptionArea(Student student, JTextArea area) {
+        area.setText(buildStudentDescriptionText(student));
+        area.setCaretPosition(0);
+    }
+
+    /**
+     * Updates a JTextArea with the student's stats and status effects.
+     * Used by SchoolController's tabbed inspection window.
+     */
+    public static void updateStudentStatsArea(Student student, JTextArea area) {
+        area.setText(buildStudentStatsText(student));
+        area.setCaretPosition(0);
+    }
+
+    /**
+     * Updates a JTextArea with the staff member's physical description.
+     * Used by SchoolController's tabbed inspection window.
+     */
+    public static void updateStaffDescriptionArea(Staff staff, JTextArea area) {
+        area.setText(buildStaffDescriptionText(staff));
+        area.setCaretPosition(0);
+    }
+
+    /**
+     * Updates a JTextArea with the staff member's stats and status effects.
+     * Used by SchoolController's tabbed inspection window.
+     */
+    public static void updateStaffStatsArea(Staff staff, JTextArea area) {
+        area.setText(buildStaffStatsText(staff));
+        area.setCaretPosition(0);
+    }
+
+    /**
+     * Updates a JTextArea with the staff member's teaching schedule.
+     * Used by SchoolController's tabbed inspection window.
+     */
+    public static void updateStaffScheduleArea(Staff staff, JTextArea area) {
+        area.setText(buildStaffScheduleText(staff));
+        area.setCaretPosition(0);
+    }
+
+    /**
      * Opens a full student inspection dialog with tabbed panes.
-     * Tab 1 (Info): Personal details, stats, status effects, and family info.
-     * Tab 2 (Schedule): Class schedule organized by Fall/Spring semesters with
-     * periods 1-4.
+     * Tab 1 (Description): Physical appearance, grade, birthday, family, history.
+     * Tab 2 (Stats): Base stats, secondary stats, and status effects.
+     * Tab 3 (Schedule): Class schedule organized by Fall/Spring semesters.
      *
      * @param student the student to inspect
      */
     public static void inspectStudent(Student student) {
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Info tab
-        JTextArea infoArea = new JTextArea(buildStudentInspectionText(student));
-        infoArea.setEditable(false);
-        infoArea.setCaretPosition(0);
-        JScrollPane infoScroll = new JScrollPane(infoArea);
-        tabbedPane.addTab("Info", infoScroll);
+        // Description tab
+        JTextArea descArea = new JTextArea(buildStudentDescriptionText(student));
+        descArea.setEditable(false);
+        descArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        descArea.setCaretPosition(0);
+        JScrollPane descScroll = new JScrollPane(descArea);
+        tabbedPane.addTab("Description", descScroll);
+
+        // Stats tab
+        JTextArea statsArea = new JTextArea(buildStudentStatsText(student));
+        statsArea.setEditable(false);
+        statsArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        statsArea.setCaretPosition(0);
+        JScrollPane statsScroll = new JScrollPane(statsArea);
+        tabbedPane.addTab("Stats", statsScroll);
 
         // Schedule tab
         JPanel schedulePanel = buildSchedulePanel(student);
@@ -449,7 +516,14 @@ public class Inspector {
         dialog.setVisible(true);
     }
 
-    public static void staffInspection(Staff staff, JTextArea inspectionArea) {
+    /**
+     * Builds the physical description text for a staff member.
+     * Includes appearance, age, birthday, assignment, and experience.
+     *
+     * @param staff the staff member to describe
+     * @return the formatted description text
+     */
+    private static String buildStaffDescriptionText(Staff staff) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
 
@@ -465,7 +539,6 @@ public class Inspector {
         double height = staff.teacherStatistics.getHeight();
         LocalDate birth = staff.teacherStatistics.getBirthday();
         String assignment = staff.teacherStatistics.getStaffType().toString().toLowerCase();
-        List<String> teacherSchedule = staff.teacherStatistics.getTeacherSchedule().toStringArray();
         String yearsOfExperience = Integer.toString(staff.teacherStatistics.getYearsOfExperience());
 
         sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
@@ -479,45 +552,68 @@ public class Inspector {
         }
 
         sb.append("They stand ").append(df.format(height)).append(" inches tall.");
-        // Add glasses to physical description (contacts are not visible)
         if (staff.teacherStatistics.getHasGlasses() && !staff.teacherStatistics.getHasContacts()) {
             sb.append(" They wear glasses.");
         }
         sb.append("\n");
+
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
-        sb.append("They have the following stats:\n   INTELLIGENCE: ")
+        sb.append("\nThey are assigned as: ").append(assignment).append("\n");
+        sb.append("They have ").append(yearsOfExperience).append(" year(s) of teaching experience.\n");
+
+        return sb.toString();
+    }
+
+    /**
+     * Builds the stats and status effects text for a staff member.
+     * Includes base stats, secondary stats, and active status effects.
+     *
+     * @param staff the staff member to build stats for
+     * @return the formatted stats text
+     */
+    private static String buildStaffStatsText(Staff staff) {
+        StringBuilder sb = new StringBuilder();
+        String firstName = staff.teacherName.getFirstName();
+        String lastName = staff.teacherName.getLastName();
+
+        sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
+
+        // Base stats
+        sb.append("Base Stats:\n   INTELLIGENCE: ")
                 .append(staff.teacherStatistics.getIntelligence());
-        sb.append("\n   CHARISMA: ").append(staff.teacherStatistics.getCharisma()).append("\n   AGILITY: ");
-        sb.append(staff.teacherStatistics.getAgility()).append("\n   DETERMINATION: ")
-                .append(staff.teacherStatistics.getDetermination());
-        sb.append("\n   PERCEPTION: ").append(staff.teacherStatistics.getPerception()).append("\n   STRENGTH: ");
-        sb.append(staff.teacherStatistics.getStrength()).append("\n");
-        sb.append("   LUCK: ").append(staff.teacherStatistics.getLuck()).append("\n");
-        sb.append("They have the following secondary stats:\n   Creativity: ")
+        sb.append("\n   CHARISMA: ").append(staff.teacherStatistics.getCharisma());
+        sb.append("\n   AGILITY: ").append(staff.teacherStatistics.getAgility());
+        sb.append("\n   DETERMINATION: ").append(staff.teacherStatistics.getDetermination());
+        sb.append("\n   PERCEPTION: ").append(staff.teacherStatistics.getPerception());
+        sb.append("\n   STRENGTH: ").append(staff.teacherStatistics.getStrength());
+        sb.append("\n   LUCK: ").append(staff.teacherStatistics.getLuck()).append("\n");
+
+        // Secondary stats
+        sb.append("\nSecondary Stats:\n   Creativity: ")
                 .append(staff.teacherStatistics.getCreativity());
-        sb.append("\n   Empathy: ").append(staff.teacherStatistics.getEmpathy()).append("\n   Adaptability: ");
-        sb.append(staff.teacherStatistics.getAdaptability()).append("\n   Initiative: ")
-                .append(staff.teacherStatistics.getInitiative());
-        sb.append("\n   Resilience: ").append(staff.teacherStatistics.getResilience()).append("\n   Curiosity: ");
-        sb.append(staff.teacherStatistics.getCuriosity()).append("\n   Responsibility: ")
-                .append(staff.teacherStatistics.getResponsibility());
+        sb.append("\n   Empathy: ").append(staff.teacherStatistics.getEmpathy());
+        sb.append("\n   Adaptability: ").append(staff.teacherStatistics.getAdaptability());
+        sb.append("\n   Initiative: ").append(staff.teacherStatistics.getInitiative());
+        sb.append("\n   Resilience: ").append(staff.teacherStatistics.getResilience());
+        sb.append("\n   Curiosity: ").append(staff.teacherStatistics.getCuriosity());
+        sb.append("\n   Responsibility: ").append(staff.teacherStatistics.getResponsibility());
         sb.append("\n   Open-Mindedness: ").append(staff.teacherStatistics.getOpenMindedness()).append("\n");
-        sb.append("They have ").append(yearsOfExperience).append(" year(s) of teaching experience.").append("\n");
-        sb.append(firstName).append(" has the following status effects:\n");
+
+        // Status effects
+        sb.append("\nStatus Effects:\n");
         if (staff.teacherStatistics.getBoredom() == 0) {
-            sb.append(firstName).append(" is not bored.\n");
+            sb.append("   ").append(firstName).append(" is not bored.\n");
         } else {
-            sb.append(firstName).append(" is slightly bored.\n");
+            sb.append("   ").append(firstName).append(" is slightly bored.\n");
         }
         if (staff.teacherStatistics.getSleepState()) {
-            sb.append(firstName).append(" is asleep!\n");
+            sb.append("   ").append(firstName).append(" is asleep!\n");
         } else {
-            sb.append(firstName).append(" is not asleep.\n");
+            sb.append("   ").append(firstName).append(" is not asleep.\n");
         }
-        // Vision issues and corrective lenses
         if (staff.teacherStatistics.hasVisionIssue()) {
             String visionDescription = staff.teacherStatistics.getVisionIssueDescription();
-            sb.append(firstName).append(" has ").append(visionDescription);
+            sb.append("   ").append(firstName).append(" has ").append(visionDescription);
             if (staff.teacherStatistics.hasVisionCorrection()) {
                 String correctionDesc = staff.teacherStatistics.getVisionCorrectionDescription();
                 sb.append(", corrected with ").append(correctionDesc).append(".\n");
@@ -525,12 +621,140 @@ public class Inspector {
                 sb.append(" (uncorrected).\n");
             }
         } else {
-            sb.append(firstName).append(" has normal vision.\n");
+            sb.append("   ").append(firstName).append(" has normal vision.\n");
         }
-        sb.append("They are assigned as: ").append(assignment).append("\n");
-        sb.append("Teacher schedule is: ").append(teacherSchedule);
 
-        inspectionArea.setText(sb.toString());
+        return sb.toString();
+    }
+
+    /**
+     * Builds the schedule text for a staff member.
+     * Lists each teaching block with semester, period, and class name.
+     *
+     * @param staff the staff member whose schedule to format
+     * @return the formatted schedule text
+     */
+    private static String buildStaffScheduleText(Staff staff) {
+        StringBuilder sb = new StringBuilder();
+        String firstName = staff.teacherName.getFirstName();
+        String lastName = staff.teacherName.getLastName();
+        List<TeacherBlock> blocks = staff.teacherStatistics.getTeacherSchedule().getTeacherSchedule();
+
+        sb.append(firstName).append(" ").append(lastName).append("\n=====================================\n");
+
+        if (blocks.isEmpty()) {
+            sb.append("No classes assigned.\n");
+            return sb.toString();
+        }
+
+        List<TeacherBlock> fallBlocks = new java.util.ArrayList<>();
+        List<TeacherBlock> springBlocks = new java.util.ArrayList<>();
+
+        for (TeacherBlock block : blocks) {
+            if ("Fall".equalsIgnoreCase(block.getSemester())) {
+                fallBlocks.add(block);
+            } else if ("Spring".equalsIgnoreCase(block.getSemester())) {
+                springBlocks.add(block);
+            }
+        }
+
+        fallBlocks.sort(java.util.Comparator.comparingInt(TeacherBlock::getBlockNumber));
+        springBlocks.sort(java.util.Comparator.comparingInt(TeacherBlock::getBlockNumber));
+
+        sb.append("===============================\n");
+        sb.append("        FALL SEMESTER\n");
+        sb.append("===============================\n");
+        if (fallBlocks.isEmpty()) {
+            sb.append("  (No fall classes)\n");
+        } else {
+            for (TeacherBlock block : fallBlocks) {
+                sb.append("  Period ").append(block.getBlockNumber()).append(": ");
+                sb.append(block.getClassName());
+                List<Student> students = block.getClassPopulation();
+                if (students != null) {
+                    sb.append("  [").append(students.size()).append(" students]");
+                }
+                sb.append("\n");
+            }
+        }
+
+        sb.append("\n");
+
+        sb.append("===============================\n");
+        sb.append("       SPRING SEMESTER\n");
+        sb.append("===============================\n");
+        if (springBlocks.isEmpty()) {
+            sb.append("  (No spring classes)\n");
+        } else {
+            for (TeacherBlock block : springBlocks) {
+                sb.append("  Period ").append(block.getBlockNumber()).append(": ");
+                sb.append(block.getClassName());
+                List<Student> students = block.getClassPopulation();
+                if (students != null) {
+                    sb.append("  [").append(students.size()).append(" students]");
+                }
+                sb.append("\n");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Displays staff inspection information in a text area (legacy method).
+     * Combines description and stats into one view.
+     * For the full tabbed view, use {@link #inspectStaff(Staff)}.
+     *
+     * @param staff          the staff member to inspect
+     * @param inspectionArea the text area to display the information in
+     */
+    public static void staffInspection(Staff staff, JTextArea inspectionArea) {
+        inspectionArea.setText(buildStaffDescriptionText(staff) + "\n" + buildStaffStatsText(staff));
+    }
+
+    /**
+     * Opens a full staff inspection dialog with tabbed panes.
+     * Tab 1 (Description): Physical appearance, birthday, assignment, experience.
+     * Tab 2 (Stats): Base stats, secondary stats, and status effects.
+     * Tab 3 (Schedule): Teaching schedule organized by Fall/Spring semesters.
+     *
+     * @param staff the staff member to inspect
+     */
+    public static void inspectStaff(Staff staff) {
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        // Description tab
+        JTextArea descArea = new JTextArea(buildStaffDescriptionText(staff));
+        descArea.setEditable(false);
+        descArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        descArea.setCaretPosition(0);
+        JScrollPane descScroll = new JScrollPane(descArea);
+        tabbedPane.addTab("Description", descScroll);
+
+        // Stats tab
+        JTextArea statsArea = new JTextArea(buildStaffStatsText(staff));
+        statsArea.setEditable(false);
+        statsArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        statsArea.setCaretPosition(0);
+        JScrollPane statsScroll = new JScrollPane(statsArea);
+        tabbedPane.addTab("Stats", statsScroll);
+
+        // Schedule tab
+        JTextArea schedArea = new JTextArea(buildStaffScheduleText(staff));
+        schedArea.setEditable(false);
+        schedArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        schedArea.setCaretPosition(0);
+        JScrollPane schedScroll = new JScrollPane(schedArea);
+        tabbedPane.addTab("Schedule", schedScroll);
+
+        // Create the dialog
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Staff: " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
+        dialog.setContentPane(tabbedPane);
+        dialog.setModal(true);
+        dialog.setSize(800, 600);
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
 
     public static String gradeClassInspection(HashMap<Integer, Student> studentGradeClass) {

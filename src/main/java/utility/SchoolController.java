@@ -414,14 +414,8 @@ public class SchoolController {
         JFrame inspectionFrame = new JFrame(type + " Inspection");
         inspectionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        JTextArea inspectionArea = new JTextArea();
-        inspectionArea.setEditable(false);
-        inspectionArea.setLineWrap(true);
-        inspectionArea.setWrapStyleWord(true);
-        JScrollPane scrollPane = new JScrollPane(inspectionArea);
-
         if (type.equals("Staff")) {
-            inspectionFrame.setSize(550, 500);
+            inspectionFrame.setSize(850, 550);
             ArrayList<Staff> staffList = new ArrayList<>(staffHashMap.values());
             staffList.sort(Comparator.comparing(staff -> staff.teacherName.getLastName()));
 
@@ -432,20 +426,47 @@ public class SchoolController {
 
             JList<Staff> staffJList = new JList<>(listModel);
             staffJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+            JTextArea descArea = new JTextArea();
+            descArea.setEditable(false);
+            descArea.setLineWrap(true);
+            descArea.setWrapStyleWord(true);
+            descArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+            JTextArea statsArea = new JTextArea();
+            statsArea.setEditable(false);
+            statsArea.setLineWrap(true);
+            statsArea.setWrapStyleWord(true);
+            statsArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+            JTextArea schedArea = new JTextArea();
+            schedArea.setEditable(false);
+            schedArea.setLineWrap(true);
+            schedArea.setWrapStyleWord(true);
+            schedArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+
+            JTabbedPane staffTabs = new JTabbedPane();
+            staffTabs.addTab("Description", new JScrollPane(descArea));
+            staffTabs.addTab("Stats", new JScrollPane(statsArea));
+            JPanel emptySchedule = new JPanel(new java.awt.BorderLayout());
+            emptySchedule.add(new JLabel("Select a staff member to view their schedule",
+                    SwingConstants.CENTER), java.awt.BorderLayout.CENTER);
+            staffTabs.addTab("Schedule", emptySchedule);
+
             staffJList.addListSelectionListener(e -> {
                 if (!e.getValueIsAdjusting()) {
                     Staff selectedStaff = staffJList.getSelectedValue();
                     if (selectedStaff != null) {
-                        staffInspection(selectedStaff, inspectionArea);
+                        Inspector.updateStaffDescriptionArea(selectedStaff, descArea);
+                        Inspector.updateStaffStatsArea(selectedStaff, statsArea);
+                        Inspector.updateStaffScheduleArea(selectedStaff, schedArea);
+                        staffTabs.setComponentAt(2, new JScrollPane(schedArea));
                     }
                 }
             });
 
-            inspectionFrame.setLayout(new BorderLayout());
-            inspectionFrame.add(new JScrollPane(staffJList), BorderLayout.WEST);
-            inspectionFrame.add(scrollPane, BorderLayout.CENTER);
+            inspectionFrame.setLayout(new java.awt.BorderLayout());
+            inspectionFrame.add(new JScrollPane(staffJList), java.awt.BorderLayout.WEST);
+            inspectionFrame.add(staffTabs, java.awt.BorderLayout.CENTER);
         } else {
-            // Student inspection uses a tabbed pane (Info + Schedule tabs)
             inspectionFrame.setSize(850, 550);
             HashMap<Integer, Student> studentGradeClass = standardSchool.getStudentGradeClass(type);
 
@@ -461,23 +482,31 @@ public class SchoolController {
                 JList<Student> studentListComponent = new JList<>(listModel);
                 studentListComponent.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-                // Create button panel with Show Social Links button
                 JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
                 JButton showSocialLinksButton = new JButton("Show Social Links");
                 showSocialLinksButton.setEnabled(false);
                 showSocialLinksButton.setToolTipText("Select a student to view their social links");
                 buttonPanel.add(showSocialLinksButton);
 
-                // Tabbed pane for Info + Schedule
+                JTextArea descArea = new JTextArea();
+                descArea.setEditable(false);
+                descArea.setLineWrap(true);
+                descArea.setWrapStyleWord(true);
+                descArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+                JTextArea statsArea = new JTextArea();
+                statsArea.setEditable(false);
+                statsArea.setLineWrap(true);
+                statsArea.setWrapStyleWord(true);
+                statsArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+
                 JTabbedPane studentTabs = new JTabbedPane();
-                studentTabs.addTab("Info", scrollPane);
-                // Placeholder schedule panel until a student is selected
-                JPanel emptySchedule = new JPanel(new BorderLayout());
+                studentTabs.addTab("Description", new JScrollPane(descArea));
+                studentTabs.addTab("Stats", new JScrollPane(statsArea));
+                JPanel emptySchedule = new JPanel(new java.awt.BorderLayout());
                 emptySchedule.add(new JLabel("Select a student to view their schedule",
-                        SwingConstants.CENTER), BorderLayout.CENTER);
+                        SwingConstants.CENTER), java.awt.BorderLayout.CENTER);
                 studentTabs.addTab("Schedule", emptySchedule);
 
-                // Track the currently selected student for the button action
                 final Student[] currentlySelectedStudent = { null };
 
                 studentListComponent.addListSelectionListener(e -> {
@@ -485,11 +514,11 @@ public class SchoolController {
                         Student selectedStudent = studentListComponent.getSelectedValue();
                         if (selectedStudent != null) {
                             currentlySelectedStudent[0] = selectedStudent;
-                            studentInspection(selectedStudent, inspectionArea);
+                            Inspector.updateStudentDescriptionArea(selectedStudent, descArea);
+                            Inspector.updateStudentStatsArea(selectedStudent, statsArea);
 
-                            // Replace the Schedule tab content with this student's schedule
                             JPanel schedulePanel = Inspector.buildStudentSchedulePanel(selectedStudent);
-                            studentTabs.setComponentAt(1, schedulePanel);
+                            studentTabs.setComponentAt(2, schedulePanel);
 
                             showSocialLinksButton.setEnabled(true);
                             showSocialLinksButton.setToolTipText("View social links for " +
@@ -499,17 +528,16 @@ public class SchoolController {
                     }
                 });
 
-                // Add action listener for the Show Social Links button
                 showSocialLinksButton.addActionListener(e -> {
                     if (currentlySelectedStudent[0] != null) {
                         socialLinkConnector.studentVisualizer(currentlySelectedStudent[0]);
                     }
                 });
 
-                inspectionFrame.setLayout(new BorderLayout());
-                inspectionFrame.add(new JScrollPane(studentListComponent), BorderLayout.WEST);
-                inspectionFrame.add(studentTabs, BorderLayout.CENTER);
-                inspectionFrame.add(buttonPanel, BorderLayout.SOUTH);
+                inspectionFrame.setLayout(new java.awt.BorderLayout());
+                inspectionFrame.add(new JScrollPane(studentListComponent), java.awt.BorderLayout.WEST);
+                inspectionFrame.add(studentTabs, java.awt.BorderLayout.CENTER);
+                inspectionFrame.add(buttonPanel, java.awt.BorderLayout.SOUTH);
             }
         }
 
