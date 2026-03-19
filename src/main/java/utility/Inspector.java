@@ -489,18 +489,24 @@ public class Inspector {
             area.setText(ownerName + " does not own a cell phone.");
         } else {
             StringBuilder sb = new StringBuilder();
-            sb.append("Cell Phone\n=====================================\n\n");
-            sb.append("Owner:        ").append(phone.getOwnerName()).append("\n");
-            sb.append("Number:       ").append(phone.getPhoneNumber()).append("\n");
-            sb.append("Color:        ").append(phone.getColor()).append("\n");
             String make = phone.getMake();
             String model = phone.getModel();
+            if (make != null && !make.isEmpty() && model != null && !model.isEmpty()) {
+                sb.append(make).append(" ").append(model).append("\n");
+            } else {
+                sb.append("Cell Phone\n");
+            }
+            sb.append("=====================================\n\n");
+            sb.append("Owner:        ").append(phone.getOwnerName()).append("\n");
+            sb.append("Number:       ").append(phone.getPhoneNumber()).append("\n");
             if (make != null && !make.isEmpty()) {
                 sb.append("Make:         ").append(make).append("\n");
             }
             if (model != null && !model.isEmpty()) {
                 sb.append("Model:        ").append(model).append("\n");
             }
+            sb.append("Color:        ").append(phone.getColor()).append("\n");
+
             sb.append("\nData Plan\n-------------------------------------\n");
             sb.append("Minutes:      ").append(phone.getMinutePlan()).append("/month\n");
             sb.append("Text Limit:   ").append(phone.getTextLimit()).append("/month\n");

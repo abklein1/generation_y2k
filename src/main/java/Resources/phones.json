@@ -1,0 +1,541 @@
+{
+    "2002": {
+        "G-Cellular": {
+            "KickFlip": {
+                "price": 150,
+                "size": "small",
+                "battery": 180,
+                "keyboard": true,
+                "camera": false,
+                "video": false,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Charcoal",
+                    "White"
+                ]
+            }
+        }
+    },
+    "2003": {
+        "Motoroid": {
+            "GGx100": {
+                "price": 120,
+                "size": "compact",
+                "battery": 180,
+                "keyboard": false,
+                "camera": false,
+                "video": false,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Liquorice Black"
+                ]
+            }
+        },
+        "Brokia": {
+            "2200": {
+                "price": 120,
+                "size": "compact",
+                "battery": 180,
+                "keyboard": false,
+                "camera": false,
+                "video": false,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Light Blue",
+                    "Orange",
+                    "Black",
+                    "Dark Blue",
+                    "Yellow",
+                    "Red",
+                    "Green"
+                ]
+            },
+            "Brik": {
+                "price": 90,
+                "size": "compact",
+                "battery": 280,
+                "keyboard": false,
+                "camera": false,
+                "video": false,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Yellow",
+                    "Green",
+                    "Grey"
+                ]
+            },
+            "3200": {
+                "price": 90,
+                "size": "compact",
+                "battery": 200,
+                "keyboard": false,
+                "camera": false,
+                "video": false,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Blue",
+                    "Transparent Blue",
+                    "Red",
+                    "White"
+                ]
+            }
+        },
+        "JamZung": {
+            "JZ-B100": {
+                "price": 100,
+                "size": "compact",
+                "battery": 150,
+                "keyboard": false,
+                "camera": true,
+                "video": false,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Indigo Blue",
+                    "Metallic Silver",
+                    "Beaujolais Red",
+                    "Pearl White"
+                ]
+            }
+        },
+        "Ziemans": {
+            "VY1": {
+                "price": 130,
+                "size": "small",
+                "battery": 200,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": false,
+                "bluetooth": true,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Ice Blue",
+                    "Black"
+                ]
+            }
+        },
+        "Pony Richardson": {
+            "B320": {
+                "price": 200,
+                "size": "small",
+                "battery": 180,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": false,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": true,
+                "mp3": false,
+                "colors": [
+                    "Urban Gray",
+                    "Premium Silver"
+                ]
+            },
+            "A230": {
+                "price": 120,
+                "size": "compact",
+                "battery": 180,
+                "keyboard": false,
+                "camera": true,
+                "video": false,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Aluminum Haze",
+                    "Volcanic Red",
+                    "Abyss Blue"
+                ]
+            }
+        }
+    },
+    "2004": {
+        "Horizon": {
+            "ZZ3300": {
+                "price": 650,
+                "size": "large",
+                "battery": 360,
+                "keyboard": true,
+                "camera": true,
+                "video": true,
+                "wifi": true,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": true,
+                "mp3": true,
+                "colors": [
+                    "Metallic Silver",
+                    "Dark Gray"
+                ]
+            }
+        },
+        "G-Cellular": {
+            "HDM-III": {
+                "price": 650,
+                "size": "large",
+                "battery": 360,
+                "keyboard": true,
+                "camera": true,
+                "video": true,
+                "wifi": true,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": true,
+                "mp3": true,
+                "colors": [
+                    "Metallic Silver",
+                    "Dark Gray"
+                ]
+            },
+            "KickFlip II": {
+                "price": 350,
+                "size": "small",
+                "battery": 200,
+                "keyboard": true,
+                "camera": true,
+                "video": true,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Silver",
+                    "Black",
+                    "White"
+                ]
+            }
+        },
+        "Motoroid": {
+            "M670": {
+                "price": 600,
+                "size": "medium",
+                "battery": 360,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": true,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": true,
+                "mp3": true,
+                "colors": [
+                    "Metallic Silver",
+                    "Dark Gray"
+                ]
+            },
+            "G320": {
+                "price": 200,
+                "size": "compact",
+                "battery": 150,
+                "keyboard": false,
+                "camera": true,
+                "video": false,
+                "wifi": true,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Shadow Anthracite",
+                    "Cosmic Blue"
+                ]
+            },
+            "G330": {
+                "price": 250,
+                "size": "compact",
+                "battery": 170,
+                "keyboard": false,
+                "camera": true,
+                "video": false,
+                "wifi": true,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Dark Blue",
+                    "Grass Green",
+                    "Dark Roast Black"
+                ]
+            },
+            "V2000": {
+                "price": 250,
+                "size": "compact",
+                "battery": 150,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": true,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Black"
+                ]
+            },
+            "Lazr v3": {
+                "price": 450,
+                "size": "compact",
+                "battery": 200,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": true,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Silver Quartz",
+                    "Matte Black",
+                    "Magenta",
+                    "Hot Pink",
+                    "Dark Blue"
+                ]
+            }
+        },
+        "Brokia": {
+            "1600": {
+                "price": 150,
+                "size": "compact",
+                "battery": 300,
+                "keyboard": false,
+                "camera": false,
+                "video": false,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Iron Blue",
+                    "Grey",
+                    "Black",
+                    "Tree Green"
+                ]
+            },
+            "1660": {
+                "price": 200,
+                "size": "compact",
+                "battery": 200,
+                "keyboard": false,
+                "camera": false,
+                "video": false,
+                "wifi": true,
+                "bluetooth": false,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Blue/White",
+                    "Red/Blue",
+                    "Blue/Orange",
+                    "Black/Grey"
+                ]
+            },
+            "5010": {
+                "price": 225,
+                "size": "compact",
+                "battery": 220,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": true,
+                "colors": [
+                    "Graphite",
+                    "White",
+                    "Silver"
+                ]
+            },
+            "5230": {
+                "price": 220,
+                "size": "compact",
+                "battery": 200,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": false,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": true,
+                "colors": [
+                    "Graphite",
+                    "Pearl White"
+                ]
+            },
+            "5530": {
+                "price": 250,
+                "size": "small",
+                "battery": 180,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": true,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": true,
+                "colors": [
+                    "Rustic Red",
+                    "Aluminum Gray"
+                ]
+            },
+            "7100": {
+                "price": 450,
+                "size": "compact",
+                "battery": 200,
+                "keyboard": false,
+                "camera": true,
+                "video": false,
+                "wifi": true,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": false,
+                "colors": [
+                    "Glossy Black",
+                    "White",
+                    "Silver"
+                ]
+            },
+            "8200": {
+                "price": 300,
+                "size": "medium",
+                "battery": 200,
+                "keyboard": true,
+                "camera": false,
+                "video": false,
+                "wifi": false,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": true,
+                "mp3": true,
+                "colors": [
+                    "Silver"
+                ]
+            }
+        },
+        "JamZung": {
+            "JZ-F100": {
+                "price": 180,
+                "size": "compact",
+                "battery": 300,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": false,
+                "pda": false,
+                "mp3": true,
+                "colors": [
+                    "Deep Blue",
+                    "Blue Black",
+                    "Metallic Silver",
+                    "Dark Gray"
+                ]
+            }
+        },
+        "Ziemans": {
+            "X60": {
+                "price": 170,
+                "size": "compact",
+                "battery": 300,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": false,
+                "bluetooth": false,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": true,
+                "colors": [
+                    "Silver/Black"
+                ]
+            }
+        },
+        "Pony Richardson": {
+            "B400": {
+                "price": 400,
+                "size": "small",
+                "battery": 180,
+                "keyboard": false,
+                "camera": true,
+                "video": true,
+                "wifi": false,
+                "bluetooth": true,
+                "sms": true,
+                "IM": true,
+                "pda": false,
+                "mp3": true,
+                "colors": [
+                    "Optic Silver",
+                    "Tinted Blue Silver"
+                ]
+            }
+        }
+    },
+    "2005": {}
+}

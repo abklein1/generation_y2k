@@ -18,13 +18,11 @@ import static constants.SimConstants.*;
  * using a compound growth model. Re-calling this service in a later simulation
  * year will only assign new phones to people who do not already have one,
  * using the higher year-adjusted rates.
+ *
+ * Phone make/model/color are drawn from phones.json via PhoneDataLoader,
+ * with working-class students weighted toward cheaper and older models.
  */
 public class CellPhoneAssignmentService {
-
-    private static final String[] PHONE_COLORS = {
-        "silver", "black", "blue", "red", "navy", "gray",
-        "white", "pink", "dark blue", "charcoal"
-    };
 
     /**
      * Assigns cell phones to all students and staff in the town's pools.
@@ -34,6 +32,7 @@ public class CellPhoneAssignmentService {
      * @param simulationYear the current simulation year (2004+)
      */
     public static void assignPhonesForTown(Town town, int simulationYear) {
+        PhoneDataLoader.ensureLoaded();
         Set<String> usedNumbers = new HashSet<>(town.getUsedPhoneNumbers());
         int studentCount = 0;
         int staffCount = 0;
@@ -49,7 +48,8 @@ public class CellPhoneAssignmentService {
             }
             double rate = getStudentOwnershipRate(grade, simulationYear);
             if (GameRandom.nextDouble() < rate) {
-                CellPhone phone = createPhone(student.toString(), usedNumbers, true);
+                String income = student.studentStatistics.getIncomeLevel();
+                CellPhone phone = createStudentPhone(student.toString(), income, usedNumbers);
                 town.assignStudentPhone(student, phone);
                 studentCount++;
             }
@@ -62,7 +62,7 @@ public class CellPhoneAssignmentService {
             }
             double rate = getStaffOwnershipRate(simulationYear);
             if (GameRandom.nextDouble() < rate) {
-                CellPhone phone = createPhone(staff.toString(), usedNumbers, false);
+                CellPhone phone = createStaffPhone(staff.toString(), usedNumbers);
                 town.assignStaffPhone(staff, phone);
                 staffCount++;
             }
@@ -74,11 +74,6 @@ public class CellPhoneAssignmentService {
 
     /**
      * Returns the year-adjusted ownership rate for a student grade level.
-     * Applies compound growth from the 2004 baseline, capped at the max rate.
-     *
-     * @param gradeLevel     the student's grade level
-     * @param simulationYear the current simulation year
-     * @return the effective ownership probability
      */
     static double getStudentOwnershipRate(String gradeLevel, int simulationYear) {
         double baseRate = switch (gradeLevel) {
@@ -93,21 +88,11 @@ public class CellPhoneAssignmentService {
 
     /**
      * Returns the year-adjusted ownership rate for staff members.
-     *
-     * @param simulationYear the current simulation year
-     * @return the effective ownership probability
      */
     static double getStaffOwnershipRate(int simulationYear) {
         return applyYearlyGrowth(CELLPHONE_OWNERSHIP_STAFF, simulationYear);
     }
 
-    /**
-     * Applies compound yearly growth to a base rate, capping at the maximum.
-     *
-     * @param baseRate       the 2004 baseline rate
-     * @param simulationYear the current simulation year
-     * @return the adjusted rate, capped at CELLPHONE_OWNERSHIP_MAX_RATE
-     */
     private static double applyYearlyGrowth(double baseRate, int simulationYear) {
         int yearsElapsed = simulationYear - STARTING_YEAR;
         if (yearsElapsed <= 0) {
@@ -118,27 +103,53 @@ public class CellPhoneAssignmentService {
     }
 
     /**
-     * Creates a CellPhone with a unique number, random color, and a random plan tier.
-     *
-     * @param ownerName   display name of the owner
-     * @param usedNumbers set of numbers already assigned (mutated to include the new number)
-     * @param isStudent   true for student plan distribution, false for staff
-     * @return a new CellPhone instance
+     * Creates a phone for a student, selecting a model weighted by income level.
      */
-    private static CellPhone createPhone(String ownerName, Set<String> usedNumbers,
-                                         boolean isStudent) {
+    private static CellPhone createStudentPhone(String ownerName, String incomeLevel,
+                                                Set<String> usedNumbers) {
+        PhoneDataLoader.PhoneSpec spec = PhoneDataLoader.selectByIncome(
+                incomeLevel != null ? incomeLevel : "Middle");
+        return buildPhone(ownerName, spec, usedNumbers, true);
+    }
+
+    /**
+     * Creates a phone for a staff member with a general distribution.
+     */
+    private static CellPhone createStaffPhone(String ownerName, Set<String> usedNumbers) {
+        PhoneDataLoader.PhoneSpec spec = PhoneDataLoader.selectForStaff();
+        return buildPhone(ownerName, spec, usedNumbers, false);
+    }
+
+    /**
+     * Assembles a CellPhone from a loaded PhoneSpec, a unique number, and a plan tier.
+     */
+    private static CellPhone buildPhone(String ownerName, PhoneDataLoader.PhoneSpec spec,
+                                        Set<String> usedNumbers, boolean isStudent) {
         String number = generateUniquePhoneNumber(usedNumbers);
-        String color = PHONE_COLORS[GameRandom.nextInt(0, PHONE_COLORS.length - 1)];
+        String color = spec.randomColor();
         Map.Entry<Integer, Integer> plan = rollPlanTier(isStudent);
-        return new CellPhone(number, ownerName, color, plan.getKey(), plan.getValue());
+
+        CellPhone phone = new CellPhone(number, ownerName, spec.getMake(),
+                spec.getModel(), color, plan.getKey(), plan.getValue());
+
+        phone.setPrice(spec.getPrice());
+        phone.setSize(spec.getSize());
+        phone.setBattery(spec.getBattery());
+        phone.setKeyboard(spec.hasKeyboard());
+        phone.setCamera(spec.hasCamera());
+        phone.setVideo(spec.hasVideo());
+        phone.setWifi(spec.hasWifi());
+        phone.setBluetooth(spec.hasBluetooth());
+        phone.setSms(spec.hasSms());
+        phone.setIm(spec.hasIm());
+        phone.setPda(spec.hasPda());
+        phone.setMp3(spec.hasMp3());
+
+        return phone;
     }
 
     /**
      * Generates a unique 7-digit phone number in XXX-XXXX format.
-     * Retries until a number not already in the used set is found.
-     *
-     * @param usedNumbers set of numbers already assigned (mutated on success)
-     * @return a unique phone number string
      */
     static String generateUniquePhoneNumber(Set<String> usedNumbers) {
         String number;
@@ -151,13 +162,6 @@ public class CellPhoneAssignmentService {
         return number;
     }
 
-    /**
-     * Rolls a random plan tier and returns the minute/text limits.
-     * Students lean toward basic plans; staff lean toward standard/premium.
-     *
-     * @param isStudent true for student distribution, false for staff
-     * @return a Map.Entry with minutes as key and text limit as value
-     */
     private static Map.Entry<Integer, Integer> rollPlanTier(boolean isStudent) {
         int roll = GameRandom.nextInt(0, 99);
         int basicThreshold;

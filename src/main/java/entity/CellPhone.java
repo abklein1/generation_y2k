@@ -6,10 +6,11 @@ import java.util.Objects;
 /**
  * Represents a cell phone owned by a student or staff member.
  * Phone numbers use a local 7-digit format (XXX-XXXX) with no area code.
+ * Hardware fields (keyboard, camera, pda, etc.) are stored for future use.
  */
 public class CellPhone implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private String phoneNumber;
     private String ownerName;
@@ -19,16 +20,22 @@ public class CellPhone implements Serializable {
     private int minutePlan;
     private int textLimit;
 
+    private int price;
+    private String size;
+    private int battery;
+    private boolean keyboard;
+    private boolean camera;
+    private boolean video;
+    private boolean wifi;
+    private boolean bluetooth;
+    private boolean sms;
+    private boolean im;
+    private boolean pda;
+    private boolean mp3;
+
     /**
-     * Creates a cell phone with all fields specified.
-     *
-     * @param phoneNumber the 7-digit phone number in XXX-XXXX format
-     * @param ownerName   the display name of the phone's owner
-     * @param make        the manufacturer (may be empty)
-     * @param model       the model name (may be empty)
-     * @param color       the phone's color
-     * @param minutePlan  monthly minute allowance
-     * @param textLimit   monthly text message limit
+     * Creates a cell phone with core fields specified.
+     * Hardware fields default to false/zero and can be set via setters.
      */
     public CellPhone(String phoneNumber, String ownerName, String make,
                      String model, String color, int minutePlan, int textLimit) {
@@ -39,20 +46,7 @@ public class CellPhone implements Serializable {
         this.color = color;
         this.minutePlan = minutePlan;
         this.textLimit = textLimit;
-    }
-
-    /**
-     * Creates a cell phone with make and model left blank.
-     *
-     * @param phoneNumber the 7-digit phone number in XXX-XXXX format
-     * @param ownerName   the display name of the phone's owner
-     * @param color       the phone's color
-     * @param minutePlan  monthly minute allowance
-     * @param textLimit   monthly text message limit
-     */
-    public CellPhone(String phoneNumber, String ownerName, String color,
-                     int minutePlan, int textLimit) {
-        this(phoneNumber, ownerName, "", "", color, minutePlan, textLimit);
+        this.size = "";
     }
 
     public String getPhoneNumber() {
@@ -111,6 +105,102 @@ public class CellPhone implements Serializable {
         this.textLimit = textLimit;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public int getBattery() {
+        return battery;
+    }
+
+    public void setBattery(int battery) {
+        this.battery = battery;
+    }
+
+    public boolean hasKeyboard() {
+        return keyboard;
+    }
+
+    public void setKeyboard(boolean keyboard) {
+        this.keyboard = keyboard;
+    }
+
+    public boolean hasCamera() {
+        return camera;
+    }
+
+    public void setCamera(boolean camera) {
+        this.camera = camera;
+    }
+
+    public boolean hasVideo() {
+        return video;
+    }
+
+    public void setVideo(boolean video) {
+        this.video = video;
+    }
+
+    public boolean hasWifi() {
+        return wifi;
+    }
+
+    public void setWifi(boolean wifi) {
+        this.wifi = wifi;
+    }
+
+    public boolean hasBluetooth() {
+        return bluetooth;
+    }
+
+    public void setBluetooth(boolean bluetooth) {
+        this.bluetooth = bluetooth;
+    }
+
+    public boolean hasSms() {
+        return sms;
+    }
+
+    public void setSms(boolean sms) {
+        this.sms = sms;
+    }
+
+    public boolean hasIm() {
+        return im;
+    }
+
+    public void setIm(boolean im) {
+        this.im = im;
+    }
+
+    public boolean hasPda() {
+        return pda;
+    }
+
+    public void setPda(boolean pda) {
+        this.pda = pda;
+    }
+
+    public boolean hasMp3() {
+        return mp3;
+    }
+
+    public void setMp3(boolean mp3) {
+        this.mp3 = mp3;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -133,9 +223,9 @@ public class CellPhone implements Serializable {
         return "CellPhone{" +
                 "number='" + phoneNumber + '\'' +
                 ", owner='" + ownerName + '\'' +
+                ", make='" + make + '\'' +
+                ", model='" + model + '\'' +
                 ", color='" + color + '\'' +
-                ", minutes=" + minutePlan +
-                ", texts=" + textLimit +
                 '}';
     }
 }
