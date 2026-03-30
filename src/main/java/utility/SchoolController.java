@@ -1496,6 +1496,9 @@ public class SchoolController {
                 RoomNameGenerator.generateRoomName(auditorium, standardSchool);
             }
 
+            publish("Assigning student cliques...");
+            CliqueAssigner.assignCliques(studentHashMap, view);
+
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
@@ -1585,6 +1588,10 @@ public class SchoolController {
             for (Auditorium auditorium : auditoriums) {
                 RoomNameGenerator.generateRoomName(auditorium, standardSchool);
             }
+
+            publish("Assigning student cliques...");
+            CliqueAssigner.assignCliques(studentHashMap, view);
+
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 

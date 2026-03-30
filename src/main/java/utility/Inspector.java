@@ -87,6 +87,15 @@ public class Inspector {
         sb.append("\n");
 
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
+        String cliqueLabel = student.studentStatistics.getCliqueLabel();
+        if (cliqueLabel != null) {
+            sb.append(firstName).append(" is a ").append(cliqueLabel).append(".");
+            String secondary = student.studentStatistics.getSecondaryClique();
+            if (secondary != null) {
+                sb.append(" Secondary: ").append(secondary).append(".");
+            }
+            sb.append("\n");
+        }
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
 
         // Family info

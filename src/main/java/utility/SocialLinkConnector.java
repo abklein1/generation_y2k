@@ -6,6 +6,7 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import entity.Student;
 import org.jgrapht.Graph;
@@ -186,7 +187,8 @@ public class SocialLinkConnector {
             int maxAttempts = Math.max(targetFriendCount * SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER, 5);
 
             while (friendsAdded < targetFriendCount && attempts < maxAttempts) {
-                Student potentialFriend = findPotentialFriend(student, standardSchool);
+                Student potentialFriend = findPotentialFriend(
+                        student, standardSchool, false);
                 attempts++;
 
                 if (potentialFriend == null) {
@@ -254,7 +256,8 @@ public class SocialLinkConnector {
             int maxAttempts = Math.max(numRivals * SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER, 3);
 
             while (rivalsAdded < numRivals && attempts < maxAttempts) {
-                Student rival = findPotentialFriend(student, standardSchool);
+                Student rival = findPotentialFriend(
+                        student, standardSchool, true);
                 attempts++;
 
                 if (rival == null) {
@@ -652,16 +655,19 @@ public class SocialLinkConnector {
      *
      * @param student        The student seeking friends.
      * @param standardSchool The standard school entity.
-     * @return A potential friend or null if none found.
+     * @param forRival       If true, uses rival affinity weights (prefers
+     *                       Hate/Negative cliques); otherwise uses friend
+     *                       affinity weights (prefers Same/Aligns cliques).
+     * @return A potential friend/rival or null if none found.
      */
-    private Student findPotentialFriend(Student student, StandardSchool standardSchool) {
+    private Student findPotentialFriend(Student student,
+            StandardSchool standardSchool, boolean forRival) {
         String gradeLevel = student.studentStatistics.getGradeLevel();
         String gender = student.studentStatistics.getGender();
         ArrayList<Student> potentialFriends = new ArrayList<>();
 
         if (random.nextInt(
                 SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD) {
-            // Prefer same grade friends (90% chance)
             HashMap<Integer, Student> gradeClassmates = standardSchool.getStudentGradeClass(gradeLevel);
             if (gradeClassmates != null) {
                 for (Student otherStudent : gradeClassmates.values()) {
@@ -671,7 +677,6 @@ public class SocialLinkConnector {
                 }
             }
         } else {
-            // Consider adjacent or other grades
             if (random.nextInt(
                     SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD) {
                 String[] adjacentGrades = getAdjacentGrades(gradeLevel);
@@ -696,8 +701,6 @@ public class SocialLinkConnector {
             return null;
         }
 
-        // Apply same-gender preference: in a high school context, students are more
-        // likely to form friendships with people of the same gender
         if (random.nextInt(SOCIAL_LINK_SAME_GENDER_SAMPLE_SIZE) < SOCIAL_LINK_SAME_GENDER_THRESHOLD) {
             ArrayList<Student> sameGenderCandidates = new ArrayList<>();
             for (Student candidate : potentialFriends) {
@@ -707,12 +710,76 @@ public class SocialLinkConnector {
                 }
             }
             if (!sameGenderCandidates.isEmpty()) {
-                return sameGenderCandidates.get(random.nextInt(sameGenderCandidates.size()));
+                return weightedCliqueSelect(
+                        sameGenderCandidates, student, forRival);
             }
-            // Fall through to any gender if no same-gender candidates are available
         }
 
-        return potentialFriends.get(random.nextInt(potentialFriends.size()));
+        return weightedCliqueSelect(potentialFriends, student, forRival);
+    }
+
+    /**
+     * Selects a student from the candidate list using weighted random
+     * selection based on clique affinity. Friend mode favours Same and
+     * Aligns cliques; rival mode favours Hate and Negative cliques.
+     */
+    private Student weightedCliqueSelect(List<Student> candidates,
+            Student student, boolean forRival) {
+        if (candidates.size() == 1) {
+            return candidates.get(0);
+        }
+
+        String myClique = student.studentStatistics.getMainClique();
+        double[] weights = new double[candidates.size()];
+        double total = 0;
+
+        for (int i = 0; i < candidates.size(); i++) {
+            String theirClique =
+                    candidates.get(i).studentStatistics.getMainClique();
+            weights[i] = getCliqueWeight(myClique, theirClique, forRival);
+            total += weights[i];
+        }
+
+        double roll = random.nextDouble() * total;
+        double cumulative = 0;
+        for (int i = 0; i < candidates.size(); i++) {
+            cumulative += weights[i];
+            if (roll < cumulative) {
+                return candidates.get(i);
+            }
+        }
+        return candidates.get(candidates.size() - 1);
+    }
+
+    private double getCliqueWeight(String myClique, String theirClique,
+            boolean forRival) {
+        if (myClique == null || theirClique == null) {
+            return forRival
+                    ? CLIQUE_RIVAL_AFFINITY_NEUTRAL
+                    : CLIQUE_AFFINITY_NEUTRAL;
+        }
+        if (myClique.equals(theirClique)) {
+            return forRival
+                    ? CLIQUE_RIVAL_AFFINITY_SAME
+                    : CLIQUE_AFFINITY_SAME;
+        }
+        String rel = CliqueLoader.getRelationship(myClique, theirClique);
+        if (forRival) {
+            return switch (rel) {
+                case "Aligns" -> CLIQUE_RIVAL_AFFINITY_ALIGNS;
+                case "Positive" -> CLIQUE_RIVAL_AFFINITY_POSITIVE;
+                case "Negative" -> CLIQUE_RIVAL_AFFINITY_NEGATIVE;
+                case "Hate" -> CLIQUE_RIVAL_AFFINITY_HATE;
+                default -> CLIQUE_RIVAL_AFFINITY_NEUTRAL;
+            };
+        }
+        return switch (rel) {
+            case "Aligns" -> CLIQUE_AFFINITY_ALIGNS;
+            case "Positive" -> CLIQUE_AFFINITY_POSITIVE;
+            case "Negative" -> CLIQUE_AFFINITY_NEGATIVE;
+            case "Hate" -> CLIQUE_AFFINITY_HATE;
+            default -> CLIQUE_AFFINITY_NEUTRAL;
+        };
     }
 
     // ---- Grade Helper Methods ----

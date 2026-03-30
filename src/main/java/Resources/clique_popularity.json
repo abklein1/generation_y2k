@@ -1,0 +1,74 @@
+{
+    "2004" : {
+        "cliques" : [
+            "Emo",
+            "Punk",
+            "Skater",
+            "Goth",
+            "Band",
+            "Theater",
+            "Anime",
+            "Metal",
+            "Geek",
+            "NoLife",
+            "Latino",
+            "Electronic",
+            "Bling",
+            "Trap",
+            "Suit",
+            "Beach",
+            "Jock",
+            "Prep",
+            "Country",
+            "Christian",
+            "ROTC",
+            "Outcast"
+        ],
+        "In-groups" : [
+            "Country",
+            "Christian",
+            "ROTC",
+            "Jock",
+            "Prep",
+            "Suit",
+            "Bling",
+            "Band",
+            "Theater",
+            "Beach"
+        ],
+        "Neutral Groups" : [
+            "Geek",
+            "NoLife"
+        ],
+        "Out-groups" : [
+            "Emo",
+            "Punk",
+            "Skater",
+            "Goth",
+            "Metal",
+            "Trap",
+            "Electronic",
+            "Anime",
+            "Outcast"
+        ],
+        "Declining Subgroups" : [
+            "Nu Metal",
+            "Ska Punk",
+            "Cyber Goth",
+            "Dad Metal",
+            "Pop Latino",
+            "Euro Electronic",
+            "Gang Trap"
+        ],
+        "Rising Subgroups" : [
+            "Pop Punk",
+            "Screamo Emo",
+            "Progressive Metal",
+            "Mixtape Trap"
+        ]
+    }
+}
+
+
+
+

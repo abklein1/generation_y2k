@@ -98,6 +98,11 @@ public class StudentStatistics implements PStatistics {
     private String earPiercingSize;         // small, medium, large (primarily for gauges/hoops)
     private int earPiercingCharismaBoost;   // minor stat improvement from jewelry
 
+    // Clique identity
+    private String mainClique;
+    private String subgroup;
+    private String secondaryClique;
+
     public StudentStatistics() {
         this.height = 0;
         this.eyeColor = null;
@@ -164,6 +169,9 @@ public class StudentStatistics implements PStatistics {
         this.hasAstigmatism = false;
         this.hasGlasses = false;
         this.hasContacts = false;
+        this.mainClique = null;
+        this.subgroup = null;
+        this.secondaryClique = null;
     }
 
     @Override
@@ -1372,6 +1380,39 @@ public class StudentStatistics implements PStatistics {
         this.curiosity = this.maxCuriosity;
         this.responsibility = this.maxResponsibility;
         this.openmindedness = this.maxOpenmindedness;
+    }
+
+    // ---- Clique Identity ----
+
+    public String getMainClique() {
+        return mainClique;
+    }
+
+    public void setMainClique(String mainClique) {
+        this.mainClique = mainClique;
+    }
+
+    public String getSubgroup() {
+        return subgroup;
+    }
+
+    public void setSubgroup(String subgroup) {
+        this.subgroup = subgroup;
+    }
+
+    public String getCliqueLabel() {
+        if (subgroup == null || mainClique == null) {
+            return mainClique;
+        }
+        return subgroup + " " + mainClique;
+    }
+
+    public String getSecondaryClique() {
+        return secondaryClique;
+    }
+
+    public void setSecondaryClique(String secondaryClique) {
+        this.secondaryClique = secondaryClique;
     }
 
 }

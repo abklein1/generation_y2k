@@ -1,0 +1,854 @@
+{
+    "2004": {
+        "Emo": {
+            "subgroups": [
+                "Core",
+                "Pop",
+                "Mall",
+                "Screamo"
+            ],
+            "Aligns": [
+                "Punk",
+                "Skater",
+                "Goth",
+                "Electronic"
+            ],
+            "Positive": [
+                "Band",
+                "Metal",
+                "Theater",
+                "Anime"
+            ],
+            "Neutral": [
+                "Geek",
+                "NoLife",
+                "Outcast",
+                "Latino"
+            ],
+            "Negative": [
+                "Bling",
+                "Trap",
+                "Suit",
+                "Beach",
+                "ROTC"
+            ],
+            "Hate": [
+                "Jock",
+                "Prep",
+                "Christian",
+                "Country"
+            ]
+        },
+        "Punk": {
+            "subgroups": [
+                "Pop",
+                "Straight Edge",
+                "Hardcore",
+                "Anarcho",
+                "Ska"
+            ],
+            "Aligns": [
+                "Skater",
+                "Goth",
+                "Metal"
+            ],
+            "Positive": [
+                "Emo",
+                "Band",
+                "Electronic",
+                "Geek"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Trap",
+                "Outcast",
+                "Anime",
+                "Latino"
+            ],
+            "Negative": [
+                "Country",
+                "Bling",
+                "Theater",
+                "Beach"
+            ],
+            "Hate": [
+                "Prep",
+                "Jock",
+                "Christian",
+                "Suit",
+                "ROTC"
+            ]
+        },
+        "Skater": {
+            "subgroups": [
+                "Street",
+                "Industry",
+                "Punk",
+                "Prank"
+            ],
+            "Aligns": [
+                "Punk",
+                "Emo",
+                "Goth",
+                "Metal"
+            ],
+            "Positive": [
+                "Beach",
+                "Latino",
+                "Electronic",
+                "Trap"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Country",
+                "Outcast",
+                "Band",
+                "Bling"
+            ],
+            "Negative": [
+                "Jock",
+                "Geek",
+                "Theater",
+                "Anime",
+                "Christian"
+            ],
+            "Hate": [
+                "Prep",
+                "Suit",
+                "ROTC"
+            ]
+        },
+        "Goth": {
+            "subgroups": [
+                "Mall",
+                "Occult",
+                "Core",
+                "Cyber"
+            ],
+            "Aligns": [
+                "Punk",
+                "Metal",
+                "Emo",
+                "Electronic"
+            ],
+            "Positive": [
+                "Theater",
+                "Geek",
+                "Skater"
+            ],
+            "Neutral": [
+                "Outcast",
+                "Anime",
+                "Latino",
+                "Trap",
+                "Band",
+                "NoLife"
+            ],
+            "Negative": [
+                "Country",
+                "Beach",
+                "Bling",
+                "Christian"
+            ],
+            "Hate": [
+                "Prep",
+                "Jock",
+                "ROTC",
+                "Suit"
+            ]
+        },
+        "Band": {
+            "subgroups": [
+                "Marching",
+                "Jazz",
+                "Concert"
+            ],
+            "Aligns": [
+                "Theater",
+                "Geek",
+                "Metal"
+            ],
+            "Positive": [
+                "Emo",
+                "Anime",
+                "Suit",
+                "ROTC",
+                "Prep"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Bling",
+                "Latino",
+                "Christian",
+                "Outcast",
+                "Goth",
+                "Country"
+            ],
+            "Negative": [
+                "Skater",
+                "Jock",
+                "Beach",
+                "Electronic"
+            ],
+            "Hate": [
+                "Trap",
+                "Punk"
+            ]
+        },
+        "Theater": {
+            "subgroups": [
+                "Broadway",
+                "Techs",
+                "Hollywood"
+            ],
+            "Aligns": [
+                "Prep",
+                "Band",
+                "Suit"
+            ],
+            "Positive": [
+                "Christian",
+                "Anime",
+                "Beach",
+                "Country"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Geek",
+                "ROTC",
+                "Latino",
+                "Metal"
+            ],
+            "Negative": [
+                "Trap",
+                "Emo",
+                "Jock",
+                "Skater",
+                "Bling"
+            ],
+            "Hate": [
+                "Goth",
+                "Punk",
+                "Electronic",
+                "Outcast"
+            ]
+        },
+        "Anime": {
+            "subgroups": [
+                "Shonen",
+                "SciFi",
+                "Romance",
+                "Purist"
+            ],
+            "Aligns": [
+                "Geek",
+                "Outcast",
+                "Band",
+                "Goth"
+            ],
+            "Positive": [
+                "Electronic",
+                "Metal",
+                "Emo",
+                "Suit",
+                "Theater"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Punk",
+                "ROTC",
+                "Skater"
+            ],
+            "Negative": [
+                "Prep",
+                "Country",
+                "Christian",
+                "Latino"
+            ],
+            "Hate": [
+                "Jock",
+                "Beach",
+                "Bling",
+                "Trap"
+            ]
+        },
+        "Metal": {
+            "subgroups": [
+                "Nu",
+                "Hardcore",
+                "Death",
+                "Dad",
+                "Progressive"
+            ],
+            "Aligns": [
+                "Skater",
+                "Emo"
+            ],
+            "Positive": [
+                "Punk",
+                "Band",
+                "Goth",
+                "Geek",
+                "Christian"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Anime",
+                "Jock",
+                "Latino",
+                "Outcast",
+                "ROTC",
+                "Theater"
+            ],
+            "Negative": [
+                "Bling",
+                "Trap",
+                "Country",
+                "Electronic"
+            ],
+            "Hate": [
+                "Prep",
+                "Suit",
+                "Beach"
+            ]
+        },
+        "Geek": {
+            "subgroups": [
+                "Academic",
+                "Gamer",
+                "History",
+                "Fedora"
+            ],
+            "Aligns": [
+                "Outcast",
+                "ROTC",
+                "Band",
+                "Suit"
+            ],
+            "Positive": [
+                "Country",
+                "Anime",
+                "Electronic",
+                "Metal"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Punk",
+                "Emo",
+                "Goth",
+                "Latino"
+            ],
+            "Negative": [
+                "Skater",
+                "Theater",
+                "Christian",
+                "Trap"
+            ],
+            "Hate": [
+                "Prep",
+                "Jock",
+                "Beach",
+                "Bling"
+            ]
+        },
+        "NoLife": {
+            "subgroups": [
+                "Standard"
+            ],
+            "Aligns": [],
+            "Positive": [],
+            "Neutral": [
+                "Emo",
+                "Punk",
+                "Skater",
+                "Goth",
+                "Band",
+                "Theater",
+                "Anime",
+                "Metal",
+                "Geek",
+                "Latino",
+                "Electronic",
+                "Bling",
+                "Trap",
+                "Suit",
+                "Beach",
+                "Jock",
+                "Prep",
+                "Country",
+                "Christian",
+                "ROTC",
+                "Outcast"
+            ],
+            "Negative": [],
+            "Hate": []
+        },
+        "Latino": {
+            "subgroups": [
+                "Cholo",
+                "Reggaton",
+                "Chonga",
+                "Pop"
+            ],
+            "Aligns": [
+                "Trap",
+                "Bling",
+                "Skater"
+            ],
+            "Positive": [
+                "Jock",
+                "Christian",
+                "Beach"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Country",
+                "Punk",
+                "Prep",
+                "Metal",
+                "Band"
+            ],
+            "Negative": [
+                "Geek",
+                "Electronic",
+                "Emo",
+                "Goth",
+                "Theater"
+            ],
+            "Hate": [
+                "Suit",
+                "ROTC",
+                "Anime",
+                "Outcast"
+            ]
+        },
+        "Electronic": {
+            "subgroups": [
+                "Rave",
+                "House",
+                "Euro"
+            ],
+            "Aligns": [
+                "Goth",
+                "Geek",
+                "Anime"
+            ],
+            "Positive": [
+                "Emo",
+                "Punk",
+                "Outcast",
+                "Skater"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Beach",
+                "Latino",
+                "Trap",
+                "Band",
+                "Theater"
+            ],
+            "Negative": [
+                "Prep",
+                "Christian",
+                "Country",
+                "Metal",
+                "Bling"
+            ],
+            "Hate": [
+                "Jock",
+                "ROTC",
+                "Suit"
+            ]
+        },
+        "Bling": {
+            "subgroups": [
+                "ATL",
+                "NYC",
+                "West Coast"
+            ],
+            "Aligns": [
+                "Jock",
+                "Christian"
+            ],
+            "Positive": [
+                "Prep",
+                "Latino",
+                "Trap",
+                "Suit"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Beach",
+                "Electronic",
+                "ROTC",
+                "Skater",
+                "Country"
+            ],
+            "Negative": [
+                "Goth",
+                "Geek",
+                "Theater",
+                "Band",
+                "Metal"
+            ],
+            "Hate": [
+                "Punk",
+                "Emo",
+                "Anime",
+                "Outcast"
+            ]
+        },
+        "Trap": {
+            "subgroups": [
+                "Hustle",
+                "Grime",
+                "Mixtape",
+                "Gang"
+            ],
+            "Aligns": [
+                "Latino",
+                "Bling",
+                "Skater"
+            ],
+            "Positive": [
+                "Jock",
+                "Electronic",
+                "Punk"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Anime",
+                "Christian",
+                "Goth",
+                "Country",
+                "Metal"
+            ],
+            "Negative": [
+                "ROTC",
+                "Suit",
+                "Band",
+                "Beach",
+                "Emo"
+            ],
+            "Hate": [
+                "Outcast",
+                "Geek",
+                "Theater",
+                "Prep"
+            ]
+        },
+        "Suit": {
+            "subgroups": [
+                "Cable News",
+                "Trust Fund",
+                "Debate",
+                "Business"
+            ],
+            "Aligns": [
+                "Prep",
+                "Jock",
+                "Christian",
+                "ROTC"
+            ],
+            "Positive": [
+                "Country",
+                "Band",
+                "Beach"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Geek",
+                "Theater",
+                "Bling"
+            ],
+            "Negative": [
+                "Electronic",
+                "Skater",
+                "Latino",
+                "Metal",
+                "Outcast"
+            ],
+            "Hate": [
+                "Punk",
+                "Emo",
+                "Goth",
+                "Trap",
+                "Anime"
+            ]
+        },
+        "Beach": {
+            "subgroups": [
+                "Surfer",
+                "Tanline",
+                "Tourist",
+                "Boater"
+            ],
+            "Aligns": [
+                "Skater",
+                "Prep",
+                "Country"
+            ],
+            "Positive": [
+                "Jock",
+                "Bling"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Latino",
+                "Theater",
+                "Christian",
+                "ROTC",
+                "Suit"
+            ],
+            "Negative": [
+                "Geek",
+                "Trap",
+                "Punk",
+                "Electronic",
+                "Band",
+                "Metal"
+            ],
+            "Hate": [
+                "Goth",
+                "Anime",
+                "Outcast",
+                "Emo"
+            ]
+        },
+        "Jock": {
+            "subgroups": [
+                "Basketball",
+                "Football",
+                "Baseball",
+                "Soccer",
+                "Hockey",
+                "Track",
+                "Super Fan"
+            ],
+            "Aligns": [
+                "Christian",
+                "Prep",
+                "Country",
+                "Bling"
+            ],
+            "Positive": [
+                "Latino",
+                "Trap",
+                "Metal"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Band",
+                "Beach",
+                "ROTC",
+                "Skater",
+                "Suit"
+            ],
+            "Negative": [
+                "Emo",
+                "Theater",
+                "Electronic",
+                "Anime"
+            ],
+            "Hate": [
+                "Goth",
+                "Geek",
+                "Punk",
+                "Outcast"
+            ]
+        },
+        "Prep": {
+            "subgroups": [
+                "Casual",
+                "Mall",
+                "Celebrity"
+            ],
+            "Aligns": [
+                "Beach",
+                "Jock"
+            ],
+            "Positive": [
+                "Country",
+                "Christian",
+                "Bling",
+                "Theater"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Suit",
+                "Emo",
+                "Skater",
+                "Band",
+                "Latino",
+                "ROTC"
+            ],
+            "Negative": [
+                "Punk",
+                "Geek",
+                "Electronic",
+                "Metal"
+            ],
+            "Hate": [
+                "Goth",
+                "Anime",
+                "Trap",
+                "Outcast"
+            ]
+        },
+        "Country": {
+            "subgroups": [
+                "Hunter",
+                "Motorsport",
+                "Traditionalist",
+                "Rodeo"
+            ],
+            "Aligns": [
+                "Christian",
+                "ROTC",
+                "Jock"
+            ],
+            "Positive": [
+                "Suit",
+                "Beach",
+                "Metal"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Prep",
+                "Latino",
+                "Skater"
+            ],
+            "Negative": [
+                "Band",
+                "Theater",
+                "Punk",
+                "Electronic",
+                "Bling",
+                "Trap"
+            ],
+            "Hate": [
+                "Outcast",
+                "Geek",
+                "Emo",
+                "Goth",
+                "Anime"
+            ]
+        },
+        "Christian": {
+            "subgroups": [
+                "Megachurch",
+                "Baptist",
+                "Catholic",
+                "Pop"
+            ],
+            "Aligns": [
+                "Country",
+                "Prep",
+                "Jock",
+                "ROTC",
+                "Suit"
+            ],
+            "Positive": [
+                "Band",
+                "Theater",
+                "Latino",
+                "Bling"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Metal",
+                "Geek",
+                "Beach"
+            ],
+            "Negative": [
+                "Anime",
+                "Electronic",
+                "Skater",
+                "Outcast"
+            ],
+            "Hate": [
+                "Trap",
+                "Punk",
+                "Goth",
+                "Emo"
+            ]
+        },
+        "ROTC": {
+            "subgroups": [
+                "Military",
+                "Police",
+                "Fire"
+            ],
+            "Aligns": [
+                "Christian",
+                "Prep",
+                "Jock",
+                "Country"
+            ],
+            "Positive": [
+                "Suit",
+                "Geek",
+                "Anime"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Metal",
+                "Latino",
+                "Band",
+                "Theater"
+            ],
+            "Negative": [
+                "Electronic",
+                "Beach",
+                "Bling",
+                "Skater",
+                "Outcast"
+            ],
+            "Hate": [
+                "Punk",
+                "Emo",
+                "Goth",
+                "Trap"
+            ]
+        },
+        "Outcast": {
+            "subgroups": [
+                "Toon",
+                "Furry",
+                "Random",
+                "Trenchcoat"
+            ],
+            "Aligns": [
+                "Geek",
+                "Goth",
+                "Emo",
+                "Punk"
+            ],
+            "Positive": [
+                "Skater",
+                "Anime",
+                "Electronic",
+                "Metal",
+                "Band"
+            ],
+            "Neutral": [
+                "NoLife",
+                "Latino",
+                "Trap",
+                "Theater",
+                "ROTC"
+            ],
+            "Negative": [
+                "Beach",
+                "Bling"
+            ],
+            "Hate": [
+                "Jock",
+                "Prep",
+                "Christian",
+                "Country",
+                "Suit"
+            ]
+        }
+    }
+}

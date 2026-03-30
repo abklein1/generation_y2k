@@ -685,6 +685,33 @@ public final class SimConstants {
     public static final int CELLPHONE_PLAN_BASIC_THRESHOLD = 50;
     public static final int CELLPHONE_PLAN_STANDARD_THRESHOLD = 85;
 
+    // CLIQUE DISTRIBUTION WEIGHTS
+    // Relative weights used to distribute students across cliques during generation.
+    // NoLife absorbs the majority; in-groups are mainstream, out-groups are niche.
+    public static final double CLIQUE_WEIGHT_NOLIFE = 42.0;
+    public static final double CLIQUE_WEIGHT_IN_GROUP = 4.5;
+    public static final double CLIQUE_WEIGHT_NEUTRAL = 3.0;
+    public static final double CLIQUE_WEIGHT_OUT_GROUP = 2.0;
+    public static final double CLIQUE_SECONDARY_CHANCE = 0.35;
+    public static final double CLIQUE_DECLINING_SUBGROUP_WEIGHT = 0.3;
+    public static final double CLIQUE_RISING_SUBGROUP_WEIGHT = 0.5;
+
+    // CLIQUE SOCIAL LINK AFFINITY (friend selection bias)
+    public static final double CLIQUE_AFFINITY_SAME = 5.0;
+    public static final double CLIQUE_AFFINITY_ALIGNS = 4.0;
+    public static final double CLIQUE_AFFINITY_POSITIVE = 3.0;
+    public static final double CLIQUE_AFFINITY_NEUTRAL = 2.0;
+    public static final double CLIQUE_AFFINITY_NEGATIVE = 0.5;
+    public static final double CLIQUE_AFFINITY_HATE = 0.1;
+
+    // CLIQUE SOCIAL LINK AFFINITY (rival selection bias -- inverted)
+    public static final double CLIQUE_RIVAL_AFFINITY_HATE = 5.0;
+    public static final double CLIQUE_RIVAL_AFFINITY_NEGATIVE = 3.0;
+    public static final double CLIQUE_RIVAL_AFFINITY_NEUTRAL = 1.0;
+    public static final double CLIQUE_RIVAL_AFFINITY_POSITIVE = 0.3;
+    public static final double CLIQUE_RIVAL_AFFINITY_ALIGNS = 0.1;
+    public static final double CLIQUE_RIVAL_AFFINITY_SAME = 0.05;
+
     private SimConstants() {
     }
 }
