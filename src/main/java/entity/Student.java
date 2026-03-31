@@ -3,6 +3,7 @@ package entity;
 import behavior.BehaviorContext;
 import behavior.BehaviorTree;
 import entity.Body.StudentArms;
+import entity.Body.StudentHead;
 import entity.Body.StudentLegs;
 import entity.Body.StudentUpperT;
 import utility.StudentFactory;
@@ -13,6 +14,7 @@ import java.io.Serializable;
 
 public class Student implements Serializable {
 
+    private final StudentHead studentHead;
     private final StudentUpperT studentUpperT;
     private final StudentLegs studentLegs;
     private final StudentArms studentArms;
@@ -31,12 +33,17 @@ public class Student implements Serializable {
 
     public Student() {
         studentName = studentFactory.createName();
+        studentHead = studentFactory.createHead();
         studentUpperT = studentFactory.createUpperTorso();
         studentLegs = studentFactory.createLegs();
         studentArms = studentFactory.createArms();
         backpack = studentFactory.createCarry();
         studentStatistics = studentFactory.setStats();
         entityState = new EntityState();
+    }
+
+    public StudentHead getStudentHead() {
+        return studentHead;
     }
     
     /**

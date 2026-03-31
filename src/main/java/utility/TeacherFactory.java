@@ -2,6 +2,7 @@ package utility;
 
 import entity.ShoulderBag;
 import entity.Body.TeacherArms;
+import entity.Body.TeacherHead;
 import entity.Body.TeacherLegs;
 import entity.Body.TeacherUpperT;
 
@@ -12,6 +13,11 @@ public class TeacherFactory implements PersonFactory {
     @Override
     public TeacherName createName() {
         return new TeacherName();
+    }
+
+    @Override
+    public TeacherHead createHead() {
+        return new TeacherHead();
     }
 
     @Override

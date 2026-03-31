@@ -1,6 +1,8 @@
 package utility;
 
 import config.TownDemographics;
+import entity.Items.EquipmentSlot;
+import entity.Items.Piercing;
 import entity.Student;
 import view.GameView;
 
@@ -99,8 +101,8 @@ public class StudentPopGenerator {
         // Apply vision attributes
         applyVisionAttributes(student);
 
-        // Apply ear piercing attributes
-        applyPiercingAttributes(student);
+        // Piercings are applied separately after clique assignment
+        // via applyPiercingAttributes so clique preferences can be used.
     }
 
     /**
@@ -209,41 +211,197 @@ public class StudentPopGenerator {
     }
 
     /**
-     * Applies ear piercing attributes to a student.
-     * Determines piercing presence, ear configuration, jewelry type/material/size,
-     * and applies minor charisma boost from wearing jewelry.
+     * Applies all piercing attributes to a student.
+     * Uses clique-specific piercing data when the student's clique has
+     * defined preferences, otherwise falls back to generic TraitSelection logic.
+     * Creates Piercing items and equips them on the student's head.
      *
      * @param student the student to apply piercing attributes to
      */
     public static void applyPiercingAttributes(Student student) {
         String gender = student.studentStatistics.getGender();
         String gradeLevel = student.studentStatistics.getGradeLevel();
+        String clique = student.studentStatistics.getMainClique();
 
+        boolean useCliqueData = clique != null
+                && CliquePiercingLoader.hasPiercingData(clique, gender);
+
+        // --- Ear piercings (use existing rate system) ---
         boolean hasEarPiercing = TraitSelection.determineEarPiercing(gender, gradeLevel);
         student.studentStatistics.setHasEarPiercing(hasEarPiercing);
 
         if (hasEarPiercing) {
-            boolean bothEars = TraitSelection.determineBothEarsPierced(gender);
+            applyEarPiercings(student, gender, gradeLevel, clique, useCliqueData);
+        }
 
-            if (bothEars) {
-                student.studentStatistics.setEarPiercingLeftCount(
-                        TraitSelection.determineEarPiercingCount(gradeLevel));
-                student.studentStatistics.setEarPiercingRightCount(
-                        TraitSelection.determineEarPiercingCount(gradeLevel));
-            } else {
-                boolean leftEar = TraitSelection.determineSingleEarIsLeft();
-                int count = TraitSelection.determineEarPiercingCount(gradeLevel);
-                student.studentStatistics.setEarPiercingLeftCount(leftEar ? count : 0);
-                student.studentStatistics.setEarPiercingRightCount(leftEar ? 0 : count);
+        // --- Non-ear piercings (only when clique defines options for the slot) ---
+        if (useCliqueData) {
+            applyNonEarPiercings(student, gender, clique);
+        }
+    }
+
+    /**
+     * Generates and equips ear piercings using the existing rate system.
+     */
+    private static void applyEarPiercings(Student student, String gender,
+                                          String gradeLevel, String clique,
+                                          boolean useCliqueData) {
+        boolean bothEars = TraitSelection.determineBothEarsPierced(gender);
+
+        if (bothEars) {
+            int leftCount = TraitSelection.determineEarPiercingCount(gradeLevel);
+            int rightCount = TraitSelection.determineEarPiercingCount(gradeLevel);
+            student.studentStatistics.setEarPiercingLeftCount(leftCount);
+            student.studentStatistics.setEarPiercingRightCount(rightCount);
+            equipEarPiercings(student, EquipmentSlot.LEFT_EAR, leftCount,
+                    gender, clique, useCliqueData);
+            equipEarPiercings(student, EquipmentSlot.RIGHT_EAR, rightCount,
+                    gender, clique, useCliqueData);
+        } else {
+            boolean leftEar = TraitSelection.determineSingleEarIsLeft();
+            int count = TraitSelection.determineEarPiercingCount(gradeLevel);
+            student.studentStatistics.setEarPiercingLeftCount(leftEar ? count : 0);
+            student.studentStatistics.setEarPiercingRightCount(leftEar ? 0 : count);
+            EquipmentSlot slot = leftEar ? EquipmentSlot.LEFT_EAR : EquipmentSlot.RIGHT_EAR;
+            equipEarPiercings(student, slot, count, gender, clique, useCliqueData);
+        }
+
+        // Backward compat: mirror first piercing's details into stats fields
+        Piercing first = (Piercing) student.getStudentHead().getEquipped(
+                student.studentStatistics.getEarPiercingLeftCount() > 0
+                        ? EquipmentSlot.LEFT_EAR : EquipmentSlot.RIGHT_EAR);
+        if (first != null) {
+            student.studentStatistics.setEarPiercingType(first.getName());
+            String displayMaterial = first.getColor() != null
+                    ? first.getColor() + " " + first.getMaterial()
+                    : first.getMaterial();
+            student.studentStatistics.setEarPiercingMaterial(displayMaterial);
+            student.studentStatistics.setEarPiercingSize(first.getSize());
+        }
+
+        student.studentStatistics.setEarPiercingCharismaBoost(PIERCING_EARRING_CHARISMA_BOOST);
+        student.studentStatistics.recalculateCharismaDependentStats();
+    }
+
+    private static final EquipmentSlot[] NON_EAR_SLOTS = {
+            EquipmentSlot.NOSE, EquipmentSlot.LIPS,
+            EquipmentSlot.EYEBROW, EquipmentSlot.TONGUE,
+            EquipmentSlot.NAVEL
+    };
+
+    /**
+     * Generates non-ear piercings (nose, lips, eyebrow, tongue, navel)
+     * based on clique-specific data. Each slot is rolled independently
+     * against its own rate constant. Only slots where the clique defines
+     * at least one option are considered.
+     */
+    private static void applyNonEarPiercings(Student student, String gender,
+                                             String clique) {
+        boolean isFemale = gender.equalsIgnoreCase("Female");
+
+        for (EquipmentSlot slot : NON_EAR_SLOTS) {
+            List<String> types = CliquePiercingLoader.getPiercingTypes(
+                    clique, gender, slot.getDisplayName());
+            if (types.isEmpty()) {
+                continue;
             }
 
-            String type = TraitSelection.selectEarringType(gender);
-            student.studentStatistics.setEarPiercingType(type);
-            student.studentStatistics.setEarPiercingMaterial(TraitSelection.selectEarringMaterial(type));
-            student.studentStatistics.setEarPiercingSize(TraitSelection.selectEarringSize(type));
+            double rate = getNonEarPiercingRate(slot, isFemale);
+            if (GameRandom.nextDouble() >= rate) {
+                continue;
+            }
 
-            student.studentStatistics.setEarPiercingCharismaBoost(PIERCING_EARRING_CHARISMA_BOOST);
-            student.studentStatistics.recalculateCharismaDependentStats();
+            Piercing p = createCliquePiercing(clique, gender, slot);
+            if (p != null) {
+                student.getStudentHead().equip(p);
+            }
+        }
+    }
+
+    private static double getNonEarPiercingRate(EquipmentSlot slot,
+                                                boolean isFemale) {
+        return switch (slot) {
+            case NOSE -> isFemale
+                    ? PIERCING_NOSE_FEMALE_RATE : PIERCING_NOSE_MALE_RATE;
+            case LIPS -> isFemale
+                    ? PIERCING_LIP_FEMALE_RATE : PIERCING_LIP_MALE_RATE;
+            case EYEBROW -> isFemale
+                    ? PIERCING_EYEBROW_FEMALE_RATE : PIERCING_EYEBROW_MALE_RATE;
+            case TONGUE -> isFemale
+                    ? PIERCING_TONGUE_FEMALE_RATE : PIERCING_TONGUE_MALE_RATE;
+            case NAVEL -> isFemale
+                    ? PIERCING_NAVEL_FEMALE_RATE : PIERCING_NAVEL_MALE_RATE;
+            default -> 0.0;
+        };
+    }
+
+    /**
+     * Creates and equips ear piercings for a single ear slot.
+     */
+    private static void equipEarPiercings(Student student, EquipmentSlot slot,
+                                          int count, String gender,
+                                          String clique, boolean useCliqueData) {
+        for (int i = 0; i < count; i++) {
+            Piercing p = useCliqueData
+                    ? createCliquePiercing(clique, gender, slot)
+                    : createGenericPiercing(gender, slot);
+            if (p != null) {
+                p.setStatModifier("charisma", PIERCING_EARRING_CHARISMA_BOOST);
+                student.getStudentHead().equip(p);
+            }
+        }
+    }
+
+    /**
+     * Creates a piercing using clique-specific data from CliquePiercingLoader.
+     */
+    private static Piercing createCliquePiercing(String clique, String gender,
+                                                 EquipmentSlot slot) {
+        List<String> types = CliquePiercingLoader.getPiercingTypes(
+                clique, gender, slot.getDisplayName());
+        if (types.isEmpty()) {
+            return createGenericPiercing(gender, slot);
+        }
+
+        String type = types.get((int) (GameRandom.nextDouble() * types.size()));
+
+        List<String> materials = CliquePiercingLoader.getMaterials(clique, gender);
+        String material = materials.isEmpty()
+                ? TraitSelection.selectEarringMaterial(type)
+                : materials.get((int) (GameRandom.nextDouble() * materials.size()));
+
+        List<String> colors = CliquePiercingLoader.getColors(clique, gender);
+        String color = colors.isEmpty()
+                ? null
+                : colors.get((int) (GameRandom.nextDouble() * colors.size()));
+
+        String size = TraitSelection.selectEarringSize(type);
+
+        return new Piercing(type, material, color, slot, size);
+    }
+
+    /**
+     * Creates a piercing using the existing generic TraitSelection logic.
+     */
+    private static Piercing createGenericPiercing(String gender,
+                                                  EquipmentSlot slot) {
+        String type = TraitSelection.selectEarringType(gender);
+        String material = TraitSelection.selectEarringMaterial(type);
+        String size = TraitSelection.selectEarringSize(type);
+        return new Piercing(type, material, null, slot, size);
+    }
+
+    /**
+     * Applies piercing attributes to all students in a HashMap.
+     * Intended to be called after clique assignment so clique
+     * preferences can influence piercing selection.
+     *
+     * @param studentHashMap the student population
+     */
+    public static void applyAllPiercingAttributes(
+            HashMap<Integer, Student> studentHashMap) {
+        for (Student student : studentHashMap.values()) {
+            applyPiercingAttributes(student);
         }
     }
 

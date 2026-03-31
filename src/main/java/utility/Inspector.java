@@ -1,5 +1,8 @@
 package utility;
 
+import entity.Body.StudentHead;
+import entity.Items.EquipmentSlot;
+import entity.Items.WearableItem;
 import entity.Rooms.Classroom;
 import entity.*;
 import entity.Rooms.Room;
@@ -81,8 +84,9 @@ public class Inspector {
         if (student.studentStatistics.getHasGlasses() && !student.studentStatistics.getHasContacts()) {
             sb.append(" They wear glasses.");
         }
-        if (student.studentStatistics.getHasEarPiercing()) {
-            sb.append(" ").append(student.studentStatistics.getEarPiercingDescription());
+        String piercingDesc = buildHeadPiercingDescription(student);
+        if (piercingDesc != null) {
+            sb.append(" ").append(piercingDesc);
         }
         sb.append("\n");
 
@@ -128,6 +132,97 @@ public class Inspector {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Builds a natural-language description of piercings equipped on a
+     * student's head. Handles ear piercings (both/single ear, counts,
+     * mixed types) and other facial/body piercings.
+     *
+     * @param student the student whose head equipment to describe
+     * @return description string, or null if no piercings equipped
+     */
+    private static String buildHeadPiercingDescription(Student student) {
+        StudentHead head = student.getStudentHead();
+        if (head == null || !head.hasAnyEquipped()) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        List<WearableItem> leftEar = head.getEquippedList(EquipmentSlot.LEFT_EAR);
+        List<WearableItem> rightEar = head.getEquippedList(EquipmentSlot.RIGHT_EAR);
+
+        if (!leftEar.isEmpty() || !rightEar.isEmpty()) {
+            appendEarDescription(sb, leftEar, rightEar);
+        }
+
+        appendSlotDescription(sb, head, EquipmentSlot.NOSE, "nose");
+        appendSlotDescription(sb, head, EquipmentSlot.LIPS, "lip");
+        appendSlotDescription(sb, head, EquipmentSlot.EYEBROW, "eyebrow");
+
+        return sb.length() > 0 ? sb.toString() : null;
+    }
+
+    private static void appendEarDescription(StringBuilder sb,
+                                             List<WearableItem> left,
+                                             List<WearableItem> right) {
+        boolean bothEars = !left.isEmpty() && !right.isEmpty();
+        if (bothEars) {
+            sb.append("They have both ears pierced with ");
+            appendItemName(sb, left.get(0), true);
+
+            int leftCount = left.size();
+            int rightCount = right.size();
+            if (leftCount == rightCount && leftCount > 1) {
+                sb.append(" (").append(leftCount).append(" per ear)");
+            } else if (leftCount != rightCount) {
+                sb.append(", with ").append(leftCount)
+                        .append(" on the left and ").append(rightCount)
+                        .append(" on the right");
+            }
+        } else {
+            String ear = !left.isEmpty() ? "left" : "right";
+            List<WearableItem> items = !left.isEmpty() ? left : right;
+            int count = items.size();
+
+            if (count > 1) {
+                sb.append("Their ").append(ear).append(" ear has ")
+                        .append(count).append(" ");
+                appendItemName(sb, items.get(0), true);
+            } else {
+                sb.append("Their ").append(ear)
+                        .append(" ear is pierced with ");
+                appendItemName(sb, items.get(0), false);
+            }
+        }
+        sb.append(".");
+    }
+
+    private static void appendSlotDescription(StringBuilder sb,
+                                              StudentHead head,
+                                              EquipmentSlot slot,
+                                              String areaName) {
+        WearableItem item = head.getEquipped(slot);
+        if (item == null) {
+            return;
+        }
+        if (sb.length() > 0) {
+            sb.append(" ");
+        }
+        sb.append("They have a ").append(item.getDisplayName())
+                .append(" ").append(areaName).append(" piercing.");
+    }
+
+    private static void appendItemName(StringBuilder sb, WearableItem item,
+                                       boolean plural) {
+        if (!plural) {
+            sb.append("a ");
+        }
+        sb.append(item.getDisplayName());
+        if (plural && !item.getDisplayName().endsWith("s")) {
+            sb.append("s");
+        }
     }
 
     /**

@@ -1,0 +1,934 @@
+{
+    "2004": {
+        "Emo": {
+            "female": {
+                "left ear": [
+                    "spiky studs",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "dangling skull",
+                    "industrial stud",
+                    "small hoop",
+                    "dangling star"
+                ],
+                "right ear": [
+                    "spiky studs",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "dangling skull",
+                    "industrial stud",
+                    "small hoop",
+                    "dangling star"
+                ],
+                "lips": [
+                    "snakebites",
+                    "small hoop",
+                    "stud"
+                ],
+                "nose": [
+                    "small hoop",
+                    "septum"
+                ],
+                "navel": [
+                    "stud",
+                    "dangling star",
+                    "dangling skull"
+                ],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
+                "tongue": [
+                    "stud"
+                ],
+                "colors": [
+                    "black",
+                    "white",
+                    "silver",
+                    "gunmetal"
+                ],
+                "materials": [
+                    "silicone",
+                    "steel",
+                    "surgical steel",
+                    "titanium"
+                ]
+            },
+            "male": {
+                "left ear": [
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "industrial stud"
+                ],
+                "right ear": [
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "industrial stud"
+                ],
+                "lips": [
+                    "snakebites",
+                    "stud",
+                    "small hoop"
+                ],
+                "nose": [
+                    "small hoop",
+                    "septum"
+                ],
+                "navel": [],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
+                "tongue": [
+                    "stud"
+                ],
+                "colors": [
+                    "black",
+                    "white",
+                    "silver",
+                    "gunmetal"
+                ],
+                "materials": [
+                    "silicone",
+                    "steel",
+                    "surgical steel",
+                    "titanium",
+                    "acrylic"
+                ]
+            }
+        },
+        "Punk": {
+            "female": {
+                "left ear": [
+                    "horseshoe",
+                    "industrial stud",
+                    "small hoop",
+                    "stud",
+                    "safety pin",
+                    "spike"
+                ],
+                "right ear": [
+                    "horseshoe",
+                    "industrial stud",
+                    "small hoop",
+                    "stud",
+                    "safety pin",
+                    "spike"
+                ],
+                "lips": [
+                    "snakebites"
+                ],
+                "nose": [
+                    "small hoop",
+                    "septum"
+                ],
+                "navel": [
+                    "stud"
+                ],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
+                "tongue": [
+                    "stud"
+                ],
+                "colors": [
+                    "silver",
+                    "gunmetal",
+                    "black"
+                ],
+                "materials": [
+                    "steel",
+                    "surgical steel",
+                    "titanium"
+                ]
+            },
+            "male": {
+                "left ear": [
+                    "horseshoe",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "industrial stud",
+                    "stud",
+                    "safety pin",
+                    "spike"
+                ],
+                "right ear": [
+                    "horseshoe",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "industrial stud",
+                    "stud",
+                    "safety pin",
+                    "spike"
+                ],
+                "lips": [
+                    "snakebites"
+                ],
+                "nose": [
+                    "small hoop",
+                    "septum"
+                ],
+                "navel": [],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
+                "tongue": [
+                    "stud"
+                ],
+                "colors": [
+                    "silver",
+                    "gunmetal",
+                    "black"
+                ],
+                "materials": [
+                    "steel",
+                    "surgical steel",
+                    "titanium"
+                ]
+            }
+        },
+        "Skater": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [
+                    "small hoop",
+                    "stud"
+                ],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": [
+                    "steel",
+                    "silver",
+                    "titanium",
+                    "acrylic"
+                ]
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [
+                    "black",
+                    "silver",
+                    "gunmetal",
+                    "pink",
+                    "green",
+                    "yellow",
+                    "blue",
+                    "red"
+                ],
+                "materials": [
+                    "titanium",
+                    "acrylic",
+                    "wood"
+                ]
+            }
+        },
+        "Goth": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud",
+                    "dangling cross",
+                    "dangling spiderweb",
+                    "dangling spider",
+                    "horseshoe",
+                    "dangling dragon",
+                    "dangling knife"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud",
+                    "dangling cross",
+                    "dangling spiderweb",
+                    "dangling spider",
+                    "horseshoe",
+                    "dangling dragon",
+                    "dangling knife"
+                ],
+                "lips": [
+                    "small hoop",
+                    "stud"
+                ],
+                "nose": [
+                    "septum"
+                ],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [
+                    "stud"
+                ],
+                "colors": [
+                    "black",
+                    "silver"
+                ],
+                "materials": [
+                    "steel",
+                    "acrylic",
+                    "wood",
+                    "titanium"
+                ]
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Band": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "yellow gold",
+                    "silver",
+                    "diamond",
+                    "platinum",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald"
+                ]
+            },
+            "male": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Theater": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver",
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby"
+                ]
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Anime": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Metal": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Geek": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "NoLife": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Latino": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "medium hoop",
+                    "large hoop",
+                    "name hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "medium hoop",
+                    "large hoop",
+                    "name hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Electronic": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Bling": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Trap": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Suit": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Beach": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Jock": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Prep": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Country": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Christian": {
+            "female": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "ROTC": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [],
+                "right ear": [],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        },
+        "Outcast": {
+            "female": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            },
+            "male": {
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "lips": [],
+                "nose": [],
+                "navel": [],
+                "eyebrow": [],
+                "tongue": [],
+                "colors": [],
+                "materials": []
+            }
+        }
+    }
+}

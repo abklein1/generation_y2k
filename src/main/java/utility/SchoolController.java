@@ -1499,6 +1499,9 @@ public class SchoolController {
             publish("Assigning student cliques...");
             CliqueAssigner.assignCliques(studentHashMap, view);
 
+            publish("Applying clique-aware piercings...");
+            StudentPopGenerator.applyAllPiercingAttributes(studentHashMap);
+
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
@@ -1591,6 +1594,9 @@ public class SchoolController {
 
             publish("Assigning student cliques...");
             CliqueAssigner.assignCliques(studentHashMap, view);
+
+            publish("Applying clique-aware piercings...");
+            StudentPopGenerator.applyAllPiercingAttributes(studentHashMap);
 
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);

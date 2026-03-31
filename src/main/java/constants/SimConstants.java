@@ -625,6 +625,24 @@ public final class SimConstants {
     // In 2004, gauges were part of punk/alternative subcultures and not yet mainstream
     public static final double PIERCING_GAUGE_RATE_2004 = 0.05;
 
+    // Non-ear piercing rates (2004 era)
+    // These rates apply ONLY when the student's clique defines options for the slot.
+    // Nose: popular among alternative subcultures, female-skewed
+    public static final double PIERCING_NOSE_FEMALE_RATE = 0.12;
+    public static final double PIERCING_NOSE_MALE_RATE = 0.06;
+    // Lip piercings (snakebites, labret, etc.): subcultural in 2004
+    public static final double PIERCING_LIP_FEMALE_RATE = 0.08;
+    public static final double PIERCING_LIP_MALE_RATE = 0.06;
+    // Eyebrow: peaked in early 2000s alt culture
+    public static final double PIERCING_EYEBROW_FEMALE_RATE = 0.05;
+    public static final double PIERCING_EYEBROW_MALE_RATE = 0.04;
+    // Tongue: surprisingly popular in early 2000s
+    public static final double PIERCING_TONGUE_FEMALE_RATE = 0.07;
+    public static final double PIERCING_TONGUE_MALE_RATE = 0.04;
+    // Navel: very popular for females in early 2000s, rare for males
+    public static final double PIERCING_NAVEL_FEMALE_RATE = 0.18;
+    public static final double PIERCING_NAVEL_MALE_RATE = 0.01;
+
     // Charisma boost from wearing jewelry (minor stat improvement)
     public static final int PIERCING_EARRING_CHARISMA_BOOST = 2;
 
