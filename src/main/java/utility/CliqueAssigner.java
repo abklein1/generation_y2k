@@ -17,6 +17,11 @@ import static constants.SimConstants.*;
  * to every student in the population based on the distribution weights
  * defined in {@code SimConstants} and the group categories loaded by
  * {@link CliqueLoader}.
+ *
+ * <p>Certain cliques have demographic biases that make them more likely
+ * to draw students matching particular traits (race, income, gender,
+ * physical stats). The target distribution is still honoured; biases
+ * only influence <em>which</em> students fill each clique's slots.</p>
  */
 public final class CliqueAssigner {
 
@@ -25,6 +30,9 @@ public final class CliqueAssigner {
 
     /**
      * Assigns cliques to all students in the provided map.
+     * Students are shuffled, then each is assigned a clique via
+     * weighted random selection that combines the remaining target
+     * capacity with a per-student demographic suitability multiplier.
      *
      * @param studentHashMap the student population
      * @param view           the game view (for logging consistency)
@@ -37,21 +45,38 @@ public final class CliqueAssigner {
             return;
         }
 
-        Map<String, Integer> targetCounts =
-                buildTargetCounts(students.size());
-        List<String> assignmentPool = buildAssignmentPool(targetCounts);
-        Collections.shuffle(assignmentPool, new java.util.Random(
+        Map<String, Integer> remaining = new LinkedHashMap<>(
+                buildTargetCounts(students.size()));
+
+        Collections.shuffle(students, new java.util.Random(
                 GameRandom.nextInt(Integer.MAX_VALUE)));
 
         Map<String, Integer> actualCounts = new LinkedHashMap<>();
-        for (int i = 0; i < students.size(); i++) {
-            Student student = students.get(i);
-            String clique = assignmentPool.get(i);
+        for (Student student : students) {
+            List<String> available = new ArrayList<>();
+            List<Double> weights = new ArrayList<>();
+
+            for (Map.Entry<String, Integer> entry : remaining.entrySet()) {
+                if (entry.getValue() > 0) {
+                    available.add(entry.getKey());
+                    double base = entry.getValue();
+                    double suit = getCliqueSuitability(
+                            student, entry.getKey());
+                    weights.add(base * suit);
+                }
+            }
+
+            double[] wArr = new double[weights.size()];
+            for (int i = 0; i < weights.size(); i++) {
+                wArr[i] = weights.get(i);
+            }
+
+            String clique = weightedPick(available, wArr);
+            remaining.merge(clique, -1, Integer::sum);
 
             student.studentStatistics.setMainClique(clique);
             assignSubgroup(student, clique);
             assignSecondaryClique(student, clique);
-
             actualCounts.merge(clique, 1, Integer::sum);
         }
 
@@ -99,15 +124,67 @@ public final class CliqueAssigner {
         return targets;
     }
 
-    private static List<String> buildAssignmentPool(
-            Map<String, Integer> targetCounts) {
-        List<String> pool = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : targetCounts.entrySet()) {
-            for (int i = 0; i < entry.getValue(); i++) {
-                pool.add(entry.getKey());
+    /**
+     * Returns a demographic suitability multiplier for assigning the
+     * given student to the given clique. Values above 1.0 make the
+     * clique more likely; below 1.0 make it less likely.
+     */
+    private static double getCliqueSuitability(
+            Student student, String clique) {
+        String race = student.studentStatistics.getRace();
+        String income = student.studentStatistics.getIncomeLevel();
+        String gender = student.studentStatistics.getGender();
+        int strength = student.studentStatistics.getStrength();
+        int agility = student.studentStatistics.getAgility();
+
+        return switch (clique) {
+            case "Latino" -> {
+                if ("hispanic".equals(race)) {
+                    yield 3.0;
+                }
+                if ("2prace".equals(race)) {
+                    yield 2.0;
+                }
+                yield 0.3;
             }
-        }
-        return pool;
+            case "Trap" -> {
+                double mult = 1.0;
+                if ("black".equals(race)) {
+                    mult *= 2.5;
+                }
+                if ("low".equals(income)) {
+                    mult *= 2.0;
+                }
+                yield mult;
+            }
+            case "Outcast" -> {
+                if ("Male".equals(gender)) {
+                    yield 2.0;
+                }
+                yield 0.5;
+            }
+            case "Bling" -> {
+                if ("white".equals(race)) {
+                    yield 0.2;
+                }
+                yield 1.5;
+            }
+            case "Jock" -> {
+                boolean strongEnough = strength > 65;
+                boolean agileEnough = agility > 65;
+                if (strongEnough && agileEnough) {
+                    yield 3.0;
+                }
+                if (strongEnough || agileEnough) {
+                    yield 2.0;
+                }
+                if (strength < 40 && agility < 40) {
+                    yield 0.3;
+                }
+                yield 1.0;
+            }
+            default -> 1.0;
+        };
     }
 
     private static void assignSubgroup(Student student, String clique) {
