@@ -842,8 +842,14 @@
         },
         "Christian": {
             "female": {
-                "left ear": [],
-                "right ear": [],
+                "left ear": [
+                    "small hoop",
+                    "stud"
+                ],
+                "right ear": [
+                    "small hoop",
+                    "stud"
+                ],
                 "lips": [],
                 "nose": [],
                 "navel": [],
@@ -897,37 +903,111 @@
         "Outcast": {
             "female": {
                 "left ear": [
-                    "small hoop",
-                    "stud"
+                    "horseshoe",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "industrial stud",
+                    "stud",
+                    "safety pin",
+                    "spike"
                 ],
                 "right ear": [
+                    "horseshoe",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "industrial stud",
+                    "stud",
+                    "safety pin",
+                    "spike"
+                ],
+                "lips": [
                     "small hoop",
                     "stud"
                 ],
-                "lips": [],
-                "nose": [],
+                "nose": [
+                    "small hoop",
+                    "septum",
+                    "stud"
+                ],
                 "navel": [],
-                "eyebrow": [],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
                 "tongue": [],
-                "colors": [],
-                "materials": []
+                "colors": [
+                    "black",
+                    "red",
+                    "green",
+                    "blue",
+                    "yellow",
+                    "purple",
+                    "pink"
+                ],
+                "materials": [
+                    "steel",
+                    "surgical steel",
+                    "titanium",
+                    "acrylic",
+                    "wood"
+                ]
             },
             "male": {
                 "left ear": [
-                    "small hoop",
-                    "stud"
+                    "horseshoe",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "industrial stud",
+                    "stud",
+                    "safety pin",
+                    "spike"
                 ],
                 "right ear": [
+                    "horseshoe",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
+                    "industrial stud",
+                    "stud",
+                    "safety pin",
+                    "spike"
+                ],
+                "lips": [
                     "small hoop",
                     "stud"
                 ],
-                "lips": [],
-                "nose": [],
+                "nose": [
+                    "small hoop",
+                    "septum",
+                    "stud"
+                ],
                 "navel": [],
-                "eyebrow": [],
-                "tongue": [],
-                "colors": [],
-                "materials": []
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
+                "tongue": [
+                    "stud"
+                ],
+                "colors": [
+                    "black",
+                    "red",
+                    "green",
+                    "blue",
+                    "yellow",
+                    "purple",
+                    "pink"
+                ],
+                "materials": [
+                    "steel",
+                    "surgical steel",
+                    "titanium",
+                    "acrylic",
+                    "wood"
+                ]
             }
         }
     }
