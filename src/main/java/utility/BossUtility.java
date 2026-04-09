@@ -39,26 +39,16 @@ public class BossUtility {
         bossHP = bossStat * boss.getStatsDifficulty();
         // Calculate student attack power
         studentAtk = student.studentStatistics.getIntelligence()
-                * (student.studentStatistics.getDetermination() - student.studentStatistics.getBoredom() * .10);
+                * student.studentStatistics.getDetermination();
         // Run the fight
         result = bossHP / studentAtk;
 
-        // if student is asleep random chance to wake back up before test based on
-        // determination
-        if (student.studentStatistics.getSleepState()) {
-            int chance = setRandom(0, 10) * student.studentStatistics.getDetermination();
-            if (chance >= 50) {
-                student.studentStatistics.setSleepState(false);
-                student.studentStatistics.setBoredom(0);
-            }
-        }
         if (result <= 0.5) {
             // entity.Student got an A
             finalGrade = setRandom(90, 100);
             student.studentStatistics.setExperience(15);
             // Chance for stat boost
             if (finalGrade == 100) {
-                student.studentStatistics.setBoredom(0);
                 student.studentStatistics.setDetermination(student.studentStatistics.getDetermination() + 1);
                 student.studentStatistics.setExperience(20);
             }
@@ -78,13 +68,6 @@ public class BossUtility {
         } else if (result >= 9) {
             // entity.Student got an F
             finalGrade = setRandom(0, 59);
-            // Chance for boredom to set in
-            if (finalGrade < 3) {
-                student.studentStatistics.setBoredom(student.studentStatistics.getBoredom() + 1);
-            }
-            if (finalGrade < 2) {
-                student.studentStatistics.setSleepState(true);
-            }
             student.studentStatistics.setExperience(2);
         }
         // Record student grade

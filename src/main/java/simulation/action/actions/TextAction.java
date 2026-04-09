@@ -23,9 +23,9 @@ import java.util.List;
  *
  * <p><b>In class:</b> Requires SMS-capable phone. Catch chance starts at a
  * moderate base, adjusted by phone size and keyboard, then reduced by
- * perception. Lower stat drains and boredom relief than talking.</p>
+ * perception. Lower stat drains and entertainment boost than talking.</p>
  *
- * <p><b>Outside class:</b> No risk. Modest boredom relief and allostatic
+ * <p><b>Outside class:</b> No risk. Modest entertainment boost and allostatic
  * recovery.</p>
  */
 public class TextAction implements Action {
@@ -123,21 +123,21 @@ public class TextAction implements Action {
             ).withEffect("friendship", -1);
         }
 
-        int boredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(
-                Math.max(0, boredom - constants.SimConstants.TEXT_BOREDOM_DECREASE_IN_CLASS));
+        student.getEntityState().setEntertainment(
+                student.getEntityState().getEntertainment()
+                        + constants.SimConstants.TEXT_ENTERTAINMENT_BOOST_IN_CLASS);
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                 constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_TEXTING);
 
         return ActionResult.success("Sent a quick text to a friend")
                 .withEffect("friendship", 2)
-                .withEffect("boredom_change", -constants.SimConstants.TEXT_BOREDOM_DECREASE_IN_CLASS);
+                .withEffect("entertainment_change", constants.SimConstants.TEXT_ENTERTAINMENT_BOOST_IN_CLASS);
     }
 
     private ActionResult executeOutOfClass(Student student) {
-        int boredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(
-                Math.max(0, boredom - constants.SimConstants.TEXT_BOREDOM_DECREASE_OUT_OF_CLASS));
+        student.getEntityState().setEntertainment(
+                student.getEntityState().getEntertainment()
+                        + constants.SimConstants.TEXT_ENTERTAINMENT_BOOST_OUT_OF_CLASS);
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                 constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_TEXTING);
         student.studentStatistics.drainSecondaryStat("empathy", 1,
@@ -145,7 +145,7 @@ public class TextAction implements Action {
 
         return ActionResult.success("Texted a friend between classes")
                 .withEffect("friendship", 2)
-                .withEffect("boredom_change", -constants.SimConstants.TEXT_BOREDOM_DECREASE_OUT_OF_CLASS);
+                .withEffect("entertainment_change", constants.SimConstants.TEXT_ENTERTAINMENT_BOOST_OUT_OF_CLASS);
     }
 
     private int computeCatchChance(CellPhone phone, Student student) {

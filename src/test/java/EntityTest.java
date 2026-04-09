@@ -63,7 +63,6 @@ public class EntityTest {
             student.studentStatistics.setStrength(3);
             student.studentStatistics.setAgility(4);
             student.studentStatistics.setCharisma(5);
-            student.studentStatistics.setBoredom(1);
             student.studentStatistics.setIntelligence(6);
             
             assertAll("Primary Stats",
@@ -71,17 +70,25 @@ public class EntityTest {
                 () -> assertEquals(3, student.studentStatistics.getStrength()),
                 () -> assertEquals(4, student.studentStatistics.getAgility()),
                 () -> assertEquals(5, student.studentStatistics.getCharisma()),
-                () -> assertEquals(1, student.studentStatistics.getBoredom()),
                 () -> assertEquals(6, student.studentStatistics.getIntelligence())
             );
         }
 
         @Test
-        @DisplayName("Should set and get sleep state correctly")
-        void testStudentSleepState() {
+        @DisplayName("Should set and get entertainment and energy correctly via EntityState")
+        void testStudentEntertainmentAndEnergy() {
             Student student = new Student();
-            student.studentStatistics.setSleepState(true);
-            assertTrue(student.studentStatistics.getSleepState());
+            entity.EntityState state = student.getEntityState();
+            
+            assertEquals(100.0, state.getEntertainment());
+            assertEquals(100.0, state.getEnergy());
+            assertFalse(state.isAsleep());
+            
+            state.setEntertainment(50.0);
+            assertEquals(50.0, state.getEntertainment());
+            
+            state.setEnergy(0.0);
+            assertEquals(0.0, state.getEnergy());
         }
 
         @Test
@@ -162,7 +169,6 @@ public class EntityTest {
             staff.teacherStatistics.setStrength(3);
             staff.teacherStatistics.setAgility(4);
             staff.teacherStatistics.setCharisma(5);
-            staff.teacherStatistics.setBoredom(1);
             staff.teacherStatistics.setIntelligence(6);
             
             assertAll("Staff Stats",
@@ -170,17 +176,25 @@ public class EntityTest {
                 () -> assertEquals(3, staff.teacherStatistics.getStrength()),
                 () -> assertEquals(4, staff.teacherStatistics.getAgility()),
                 () -> assertEquals(5, staff.teacherStatistics.getCharisma()),
-                () -> assertEquals(1, staff.teacherStatistics.getBoredom()),
                 () -> assertEquals(6, staff.teacherStatistics.getIntelligence())
             );
         }
 
         @Test
-        @DisplayName("Should set and get staff sleep state correctly")
-        void testStaffSleepState() {
+        @DisplayName("Should set and get staff entertainment and energy correctly via EntityState")
+        void testStaffEntertainmentAndEnergy() {
             Staff staff = new Staff();
-            staff.teacherStatistics.setSleepState(true);
-            assertTrue(staff.teacherStatistics.getSleepState());
+            entity.EntityState state = staff.getEntityState();
+            
+            assertEquals(100.0, state.getEntertainment());
+            assertEquals(100.0, state.getEnergy());
+            assertFalse(state.isAsleep());
+            
+            state.setEntertainment(30.0);
+            assertEquals(30.0, state.getEntertainment());
+            
+            state.setEnergy(0.0);
+            assertEquals(0.0, state.getEnergy());
         }
 
         @Test

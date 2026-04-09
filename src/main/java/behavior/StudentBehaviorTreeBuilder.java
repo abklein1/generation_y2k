@@ -329,7 +329,8 @@ public class StudentBehaviorTreeBuilder {
                 return BehaviorStatus.RUNNING;
             }
             
-            // Done, clear needs
+            // Done — bladder relieved, clear flags
+            state.setBladder(100);
             state.setNeedsBathroom(false);
             state.setHasPermissionToLeave(false);
             state.setCurrentActivity(entity.ActivityType.IDLE);
@@ -364,13 +365,13 @@ public class StudentBehaviorTreeBuilder {
      *       Drains empathy and responsibility. Prefers friends.</li>
      *   <li><b>Outside class</b> (hallways, lunchrooms): Normal expected behavior.
      *       No risk of being caught. Provides strong allostatic recovery and
-     *       significant boredom reduction. Prefers friends.</li>
+     *       significant entertainment boost. Prefers friends.</li>
      * </ul>
      */
     private static class TalkActionNode extends behavior.leaf.ActionNode {
         private static final int FRIENDSHIP_GAIN = 3;
-        private static final int BOREDOM_DECREASE_IN_CLASS = 5;
-        private static final int BOREDOM_DECREASE_OUT_OF_CLASS = 8;
+        private static final int ENTERTAINMENT_BOOST_IN_CLASS = 5;
+        private static final int ENTERTAINMENT_BOOST_OUT_OF_CLASS = 8;
         
         public TalkActionNode() {
             super("Talk", 1);
@@ -445,16 +446,14 @@ public class StudentBehaviorTreeBuilder {
                     return BehaviorStatus.FAILURE;
                 }
                 
-                // Success in class - boredom decrease and slight recovery
-                int boredom = student.studentStatistics.getBoredom();
-                student.studentStatistics.setBoredom(Math.max(0, boredom - BOREDOM_DECREASE_IN_CLASS));
+                // Success in class - entertainment boost and slight recovery
+                state.setEntertainment(state.getEntertainment() + ENTERTAINMENT_BOOST_IN_CLASS);
                 student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                         constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING);
             } else {
                 // --- OUTSIDE CLASS: normal, expected behavior ---
                 // No risk of being caught. Socializing is relaxing and restorative.
-                int boredom = student.studentStatistics.getBoredom();
-                student.studentStatistics.setBoredom(Math.max(0, boredom - BOREDOM_DECREASE_OUT_OF_CLASS));
+                state.setEntertainment(state.getEntertainment() + ENTERTAINMENT_BOOST_OUT_OF_CLASS);
                 
                 // Stronger allostatic recovery since this is free-time socializing
                 student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
@@ -564,9 +563,8 @@ public class StudentBehaviorTreeBuilder {
                     constants.SimConstants.STAT_DRAIN_WHISPER_EMPATHY,
                     constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
             
-            // Decrease boredom
-            int boredom = student.studentStatistics.getBoredom();
-            student.studentStatistics.setBoredom(Math.max(0, boredom - 3));
+            // Boost entertainment (whispering relieves boredom)
+            student.getEntityState().setEntertainment(student.getEntityState().getEntertainment() + 3);
             
             // Socializing is positive - slight allostatic recovery
             student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
@@ -677,15 +675,13 @@ public class StudentBehaviorTreeBuilder {
                     return BehaviorStatus.FAILURE;
                 }
                 
-                int boredom = student.studentStatistics.getBoredom();
-                student.studentStatistics.setBoredom(
-                        Math.max(0, boredom - constants.SimConstants.TEXT_BOREDOM_DECREASE_IN_CLASS));
+                state.setEntertainment(state.getEntertainment()
+                        + constants.SimConstants.TEXT_ENTERTAINMENT_BOOST_IN_CLASS);
                 student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                         constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_TEXTING);
             } else {
-                int boredom = student.studentStatistics.getBoredom();
-                student.studentStatistics.setBoredom(
-                        Math.max(0, boredom - constants.SimConstants.TEXT_BOREDOM_DECREASE_OUT_OF_CLASS));
+                state.setEntertainment(state.getEntertainment()
+                        + constants.SimConstants.TEXT_ENTERTAINMENT_BOOST_OUT_OF_CLASS);
                 student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                         constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_TEXTING);
                 student.studentStatistics.drainSecondaryStat("empathy", 1,
@@ -763,9 +759,8 @@ public class StudentBehaviorTreeBuilder {
             
             student.getEntityState().setCurrentActivity(entity.ActivityType.TAKING_NOTES);
             
-            // Small boredom increase
-            int boredom = student.studentStatistics.getBoredom();
-            student.studentStatistics.setBoredom(Math.min(100, boredom + 1));
+            // Small entertainment drain (note-taking is tedious)
+            student.getEntityState().setEntertainment(student.getEntityState().getEntertainment() - 1);
             
             // Drain creativity and initiative from note-taking effort
             student.studentStatistics.drainSecondaryStat("creativity",
@@ -780,7 +775,7 @@ public class StudentBehaviorTreeBuilder {
     }
 
     /**
-     * Hang out at locker: mild boredom reduction, small allostatic recovery.
+     * Hang out at locker: mild entertainment boost, small allostatic recovery.
      * Represents a student killing time at their locker between classes.
      */
     private static class HangOutAtLockerActionNode extends behavior.leaf.ActionNode {
@@ -796,8 +791,7 @@ public class StudentBehaviorTreeBuilder {
             }
             student.getEntityState().setCurrentActivity(entity.ActivityType.AT_LOCKER);
 
-            int boredom = student.studentStatistics.getBoredom();
-            student.studentStatistics.setBoredom(Math.max(0, boredom - 2));
+            student.getEntityState().setEntertainment(student.getEntityState().getEntertainment() + 2);
             student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                     constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING);
             return BehaviorStatus.SUCCESS;
@@ -805,7 +799,7 @@ public class StudentBehaviorTreeBuilder {
     }
 
     /**
-     * Out-of-class daydreaming: stronger boredom relief than in-class
+     * Out-of-class daydreaming: stronger entertainment boost than in-class
      * daydreaming, with no risk of being caught.
      */
     private static class OutOfClassDaydreamActionNode extends behavior.leaf.ActionNode {
@@ -821,8 +815,7 @@ public class StudentBehaviorTreeBuilder {
             }
             student.getEntityState().setCurrentActivity(entity.ActivityType.DAYDREAMING);
 
-            int boredom = student.studentStatistics.getBoredom();
-            student.studentStatistics.setBoredom(Math.max(0, boredom - 6));
+            student.getEntityState().setEntertainment(student.getEntityState().getEntertainment() + 6);
             student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                     constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING);
             return BehaviorStatus.SUCCESS;

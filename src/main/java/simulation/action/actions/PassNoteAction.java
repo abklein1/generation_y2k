@@ -108,9 +108,8 @@ public class PassNoteAction implements Action {
             }
         }
         
-        // Decrease boredom from social interaction
-        int currentBoredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(Math.max(0, currentBoredom - 5));
+        // Boost entertainment from social interaction
+        state.setEntertainment(state.getEntertainment() + 5);
         
         // Socializing is positive - slight allostatic recovery
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
@@ -118,7 +117,7 @@ public class PassNoteAction implements Action {
         
         return ActionResult.success("Successfully passed a note to a friend")
                 .withEffect("friendship", FRIENDSHIP_GAIN)
-                .withEffect("boredom_change", -5);
+                .withEffect("entertainment_change", 5);
     }
     
     private static boolean hasTeacherPresent(Room room) {

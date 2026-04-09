@@ -10,12 +10,12 @@ import simulation.action.ActionResult;
 
 /**
  * Action for paying attention in class.
- * Increases learning and slowly decreases boredom.
+ * Increases learning but slowly drains entertainment.
  */
 public class PayAttentionAction implements Action {
     
     private static final int LEARNING_GAIN = 5;
-    private static final int BOREDOM_DECREASE = 1;
+    private static final int ENTERTAINMENT_DRAIN = 2;
     
     @Override
     public String getName() {
@@ -53,10 +53,8 @@ public class PayAttentionAction implements Action {
         int learningBonus = (intelligence - 100) / 10; // Bonus/penalty based on intelligence
         int totalLearning = LEARNING_GAIN + learningBonus;
         
-        // Update boredom (increases slightly while paying attention)
-        int currentBoredom = student.studentStatistics.getBoredom();
-        int boredomChange = 2; // Boredom increases slowly while paying attention
-        student.studentStatistics.setBoredom(Math.min(100, currentBoredom + boredomChange));
+        // Decrease entertainment (paying attention is tedious)
+        state.setEntertainment(state.getEntertainment() - ENTERTAINMENT_DRAIN);
         
         // Drain curiosity from sustained attention
         student.studentStatistics.drainSecondaryStat("curiosity",
@@ -65,7 +63,7 @@ public class PayAttentionAction implements Action {
         
         return ActionResult.success("Paying attention to the lesson")
                 .withEffect("learning", totalLearning)
-                .withEffect("boredom_change", boredomChange);
+                .withEffect("entertainment_change", -ENTERTAINMENT_DRAIN);
     }
     
     @Override

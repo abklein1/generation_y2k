@@ -13,7 +13,7 @@ import entity.Student;
 public class PayAttentionActionNode extends ActionNode {
     
     private static final int LEARNING_GAIN = 5;
-    private static final int BOREDOM_INCREASE = 2;
+    private static final int ENTERTAINMENT_DRAIN = 2;
     
     public PayAttentionActionNode() {
         super("PayAttention", 1);
@@ -53,9 +53,8 @@ public class PayAttentionActionNode extends ActionNode {
         // Store learning in context for later processing
         context.setVariable("learning_gained", totalLearning);
         
-        // Increase boredom slightly
-        int currentBoredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(Math.min(100, currentBoredom + BOREDOM_INCREASE));
+        // Decrease entertainment (paying attention is boring)
+        state.setEntertainment(state.getEntertainment() - ENTERTAINMENT_DRAIN);
         
         // Drain curiosity from sustained attention
         student.studentStatistics.drainSecondaryStat("curiosity",

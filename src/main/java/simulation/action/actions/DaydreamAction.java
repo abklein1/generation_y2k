@@ -11,12 +11,12 @@ import utility.GameRandom;
 
 /**
  * Action for daydreaming in class.
- * No learning, but boredom decreases faster.
+ * No learning, but entertainment increases (relieves boredom).
  * Risk of getting caught by the teacher.
  */
 public class DaydreamAction implements Action {
     
-    private static final int BOREDOM_DECREASE = 8;
+    private static final int ENTERTAINMENT_BOOST = 8;
     private static final int BASE_CATCH_CHANCE = 15; // 15% base chance to get caught
     
     @Override
@@ -50,10 +50,8 @@ public class DaydreamAction implements Action {
         // Update activity
         state.setCurrentActivity(ActivityType.DAYDREAMING);
         
-        // Decrease boredom
-        int currentBoredom = student.studentStatistics.getBoredom();
-        int newBoredom = Math.max(0, currentBoredom - BOREDOM_DECREASE);
-        student.studentStatistics.setBoredom(newBoredom);
+        // Boost entertainment (relieves boredom)
+        state.setEntertainment(state.getEntertainment() + ENTERTAINMENT_BOOST);
         
         // Daydreaming is a non-stressful activity - slight allostatic load recovery
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
@@ -74,11 +72,11 @@ public class DaydreamAction implements Action {
             return ActionResult.caught(
                     "Got lost in daydreaming...",
                     "The teacher calls your name to answer a question!"
-            ).withEffect("boredom_change", -BOREDOM_DECREASE);
+            ).withEffect("entertainment_change", ENTERTAINMENT_BOOST);
         }
         
         return ActionResult.success("Mind wandering to more interesting things...")
-                .withEffect("boredom_change", -BOREDOM_DECREASE)
+                .withEffect("entertainment_change", ENTERTAINMENT_BOOST)
                 .withEffect("learning", 0);
     }
     

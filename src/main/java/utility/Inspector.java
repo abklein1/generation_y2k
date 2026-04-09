@@ -22,6 +22,28 @@ import java.util.Map;
 
 public class Inspector {
 
+    private static final DecimalFormat NEED_FORMAT = new DecimalFormat("#.#");
+
+    /**
+     * Formats a physiological need value as a readable string with its
+     * numeric value and a short status label.
+     */
+    private static String formatNeed(double value) {
+        String label;
+        if (value >= 80) {
+            label = "Good";
+        } else if (value >= 50) {
+            label = "Okay";
+        } else if (value >= 30) {
+            label = "Low";
+        } else if (value >= 10) {
+            label = "Critical";
+        } else {
+            label = "Desperate";
+        }
+        return NEED_FORMAT.format(value) + " (" + label + ")";
+    }
+
     /**
      * Builds the physical description text for a student.
      * Includes appearance, grade, birthday, family info, and braces/piercing history.
@@ -279,18 +301,23 @@ public class Inspector {
         sb.append("\n   Responsibility: ").append(student.studentStatistics.getResponsibility());
         sb.append("\n   Open-Mindedness: ").append(student.studentStatistics.getOpenMindedness()).append("\n");
 
+        // Physiological needs
+        EntityState entityState = student.getEntityState();
+        if (entityState != null) {
+            sb.append("\nNeeds:\n");
+            sb.append("   Hunger:         ").append(formatNeed(entityState.getHunger())).append("\n");
+            sb.append("   Thirst:         ").append(formatNeed(entityState.getThirst())).append("\n");
+            sb.append("   Bladder:        ").append(formatNeed(entityState.getBladder())).append("\n");
+            sb.append("   Temperature:    ").append(formatNeed(entityState.getTemperature())).append("\n");
+            sb.append("   Entertainment:  ").append(formatNeed(entityState.getEntertainment())).append("\n");
+            sb.append("   Energy:         ").append(formatNeed(entityState.getEnergy())).append("\n");
+            if (entityState.isAsleep()) {
+                sb.append("   ** ").append(firstName).append(" is asleep! **\n");
+            }
+        }
+
         // Status effects
         sb.append("\nStatus Effects:\n");
-        if (student.studentStatistics.getBoredom() == 0) {
-            sb.append("   ").append(firstName).append(" is not bored.\n");
-        } else {
-            sb.append("   ").append(firstName).append(" is slightly bored.\n");
-        }
-        if (student.studentStatistics.getSleepState()) {
-            sb.append("   ").append(firstName).append(" is asleep!\n");
-        } else {
-            sb.append("   ").append(firstName).append(" is not asleep.\n");
-        }
         if (student.studentStatistics.hasVisionIssue()) {
             String visionDescription = student.studentStatistics.getVisionIssueDescription();
             sb.append("   ").append(firstName).append(" has ").append(visionDescription);
@@ -613,7 +640,8 @@ public class Inspector {
 
             sb.append("\nData Plan\n-------------------------------------\n");
             sb.append("Minutes:      ").append(phone.getMinutePlan()).append("/month\n");
-            sb.append("Text Limit:   ").append(phone.getTextLimit()).append("/month\n");
+            sb.append("Texts:        ").append(phone.getTextsRemaining())
+              .append(" / ").append(phone.getTextLimit()).append("\n");
             area.setText(sb.toString());
         }
         area.setCaretPosition(0);
@@ -768,18 +796,23 @@ public class Inspector {
         sb.append("\n   Responsibility: ").append(staff.teacherStatistics.getResponsibility());
         sb.append("\n   Open-Mindedness: ").append(staff.teacherStatistics.getOpenMindedness()).append("\n");
 
+        // Physiological needs
+        EntityState entityState = staff.getEntityState();
+        if (entityState != null) {
+            sb.append("\nNeeds:\n");
+            sb.append("   Hunger:         ").append(formatNeed(entityState.getHunger())).append("\n");
+            sb.append("   Thirst:         ").append(formatNeed(entityState.getThirst())).append("\n");
+            sb.append("   Bladder:        ").append(formatNeed(entityState.getBladder())).append("\n");
+            sb.append("   Temperature:    ").append(formatNeed(entityState.getTemperature())).append("\n");
+            sb.append("   Entertainment:  ").append(formatNeed(entityState.getEntertainment())).append("\n");
+            sb.append("   Energy:         ").append(formatNeed(entityState.getEnergy())).append("\n");
+            if (entityState.isAsleep()) {
+                sb.append("   ** ").append(firstName).append(" is asleep! **\n");
+            }
+        }
+
         // Status effects
         sb.append("\nStatus Effects:\n");
-        if (staff.teacherStatistics.getBoredom() == 0) {
-            sb.append("   ").append(firstName).append(" is not bored.\n");
-        } else {
-            sb.append("   ").append(firstName).append(" is slightly bored.\n");
-        }
-        if (staff.teacherStatistics.getSleepState()) {
-            sb.append("   ").append(firstName).append(" is asleep!\n");
-        } else {
-            sb.append("   ").append(firstName).append(" is not asleep.\n");
-        }
         if (staff.teacherStatistics.hasVisionIssue()) {
             String visionDescription = staff.teacherStatistics.getVisionIssueDescription();
             sb.append("   ").append(firstName).append(" has ").append(visionDescription);

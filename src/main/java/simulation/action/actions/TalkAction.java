@@ -24,7 +24,7 @@ import java.util.List;
  *
  * <p><b>Outside class</b> (hallways, lunchrooms, between periods): Talking is
  * completely normal and expected. No risk of being caught. Provides strong
- * allostatic load recovery and significant boredom reduction. Prefers friends
+ * allostatic load recovery and significant entertainment boost. Prefers friends
  * as targets.</p>
  */
 public class TalkAction implements Action {
@@ -127,15 +127,14 @@ public class TalkAction implements Action {
              .withEffect("reputation", -3);
         }
         
-        // Success - boredom decrease and slight recovery
-        int currentBoredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(Math.max(0, currentBoredom - 5));
+        // Success - entertainment boost and slight recovery
+        state.setEntertainment(state.getEntertainment() + 5);
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                 constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING);
         
         return ActionResult.success("Had a quick chat with a classmate")
                 .withEffect("friendship", FRIENDSHIP_GAIN)
-                .withEffect("boredom_change", -5);
+                .withEffect("entertainment_change", 5);
     }
     
     /**
@@ -143,8 +142,7 @@ public class TalkAction implements Action {
      */
     private ActionResult executeOutOfClass(Student student, EntityState state, BehaviorContext context) {
         // No risk of being caught - talking is expected behavior
-        int currentBoredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(Math.max(0, currentBoredom - 8));
+        student.getEntityState().setEntertainment(student.getEntityState().getEntertainment() + 8);
         
         // Strong allostatic recovery - free-time socializing is restorative
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
@@ -156,7 +154,7 @@ public class TalkAction implements Action {
         
         return ActionResult.success("Had a nice conversation with a friend")
                 .withEffect("friendship", FRIENDSHIP_GAIN)
-                .withEffect("boredom_change", -8);
+                .withEffect("entertainment_change", 8);
     }
     
     private static boolean hasTeacherPresent(Room room) {

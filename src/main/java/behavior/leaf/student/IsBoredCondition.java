@@ -2,10 +2,12 @@ package behavior.leaf.student;
 
 import behavior.BehaviorContext;
 import behavior.leaf.ConditionNode;
+import entity.EntityState;
 import entity.Student;
 
 /**
- * Condition that checks if the student's boredom is above a threshold.
+ * Condition that checks if the student's entertainment has dropped below a threshold
+ * (i.e. the student is bored).
  */
 public class IsBoredCondition extends ConditionNode {
     
@@ -13,6 +15,7 @@ public class IsBoredCondition extends ConditionNode {
     
     /**
      * Creates a boredom check with default threshold of 50.
+     * Returns true when entertainment is below this value.
      */
     public IsBoredCondition() {
         this(50);
@@ -21,7 +24,7 @@ public class IsBoredCondition extends ConditionNode {
     /**
      * Creates a boredom check with a custom threshold.
      *
-     * @param threshold boredom level to check against (0-100)
+     * @param threshold entertainment level below which the student is considered bored
      */
     public IsBoredCondition(int threshold) {
         super("IsBored");
@@ -35,7 +38,10 @@ public class IsBoredCondition extends ConditionNode {
             return false;
         }
         
-        int boredom = student.studentStatistics.getBoredom();
-        return boredom >= threshold;
+        EntityState state = student.getEntityState();
+        if (state == null) {
+            return false;
+        }
+        return state.getEntertainment() < threshold;
     }
 }

@@ -31,8 +31,6 @@ public class StudentStatistics implements PStatistics {
     private int strength;
     private int perception;
     private int luck;
-    private boolean sleep;
-    private int boredom;
     private int experience;
     private int grade_average;
     private String gender;
@@ -119,8 +117,6 @@ public class StudentStatistics implements PStatistics {
         this.perception = 0;
         this.strength = 0;
         this.luck = 0;
-        this.sleep = false;
-        this.boredom = 0;
         this.experience = 0;
         this.grade_average = 0;
         this.grades = new ArrayList<>();
@@ -172,26 +168,6 @@ public class StudentStatistics implements PStatistics {
         this.mainClique = null;
         this.subgroup = null;
         this.secondaryClique = null;
-    }
-
-    @Override
-    public int getBoredom() {
-        return this.boredom;
-    }
-
-    @Override
-    public void setBoredom(int boredom) {
-        this.boredom = boredom;
-    }
-
-    @Override
-    public boolean getSleepState() {
-        return this.sleep;
-    }
-
-    @Override
-    public void setSleepState(boolean sleepState) {
-        this.sleep = sleepState;
     }
 
     @Override

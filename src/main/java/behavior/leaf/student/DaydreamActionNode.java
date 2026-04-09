@@ -13,7 +13,7 @@ import utility.GameRandom;
  */
 public class DaydreamActionNode extends ActionNode {
     
-    private static final int BOREDOM_DECREASE = 8;
+    private static final int ENTERTAINMENT_BOOST = 8;
     private static final int BASE_CATCH_CHANCE = 15;
     
     public DaydreamActionNode() {
@@ -46,9 +46,8 @@ public class DaydreamActionNode extends ActionNode {
         // Update activity
         state.setCurrentActivity(ActivityType.DAYDREAMING);
         
-        // Decrease boredom
-        int currentBoredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(Math.max(0, currentBoredom - BOREDOM_DECREASE));
+        // Boost entertainment (relieves boredom)
+        state.setEntertainment(state.getEntertainment() + ENTERTAINMENT_BOOST);
         
         // Daydreaming is a non-stressful activity - slight allostatic load recovery
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(

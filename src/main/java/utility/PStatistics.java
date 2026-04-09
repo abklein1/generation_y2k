@@ -5,14 +5,6 @@ import entity.AllostaticLoad;
 import java.io.Serializable;
 
 public interface PStatistics extends Serializable {
-    int getBoredom();
-
-    void setBoredom(int boredom);
-
-    boolean getSleepState();
-
-    void setSleepState(boolean sleepState);
-
     int getStrength();
 
     void setStrength(int strength);

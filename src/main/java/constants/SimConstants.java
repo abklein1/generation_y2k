@@ -592,8 +592,8 @@ public final class SimConstants {
     public static final int STAT_DRAIN_TEXT_RESPONSIBILITY = 1;
     public static final double SOCIAL_LINK_GAIN_TEXTING = 2.0;
     public static final double ALLOSTATIC_RELAXATION_RECOVERY_TEXTING = 1.0;
-    public static final int TEXT_BOREDOM_DECREASE_IN_CLASS = 3;
-    public static final int TEXT_BOREDOM_DECREASE_OUT_OF_CLASS = 5;
+    public static final int TEXT_ENTERTAINMENT_BOOST_IN_CLASS = 3;
+    public static final int TEXT_ENTERTAINMENT_BOOST_OUT_OF_CLASS = 5;
 
     // Secondary stat sleep replenishment: percentage of max to restore
     public static final double SECONDARY_STAT_SLEEP_REPLENISH_RATE = 1.0; // 100% restored on sleep
@@ -742,6 +742,28 @@ public final class SimConstants {
     public static final double CLIQUE_RIVAL_AFFINITY_POSITIVE = 0.3;
     public static final double CLIQUE_RIVAL_AFFINITY_ALIGNS = 0.1;
     public static final double CLIQUE_RIVAL_AFFINITY_SAME = 0.05;
+
+    // PHYSIOLOGICAL NEEDS (per-tick decay on a 0-100 scale)
+    public static final double NEED_HUNGER_DECAY_PER_TICK = 0.75;
+    public static final double NEED_THIRST_DECAY_PER_TICK = 0.75;
+    public static final double NEED_BLADDER_DECAY_PER_TICK = 1.0;
+    public static final double NEED_BLADDER_POST_MEAL_DECAY_PER_TICK = 3.0;
+    public static final double NEED_CRITICAL_THRESHOLD = 30.0;
+
+    // Allostatic load increase per tick while a need is below the critical threshold.
+    // Hunger and thirst are the most physically stressful; bladder is moderate.
+    public static final double NEED_HUNGER_ALLOSTATIC_STRESS = 0.15;
+    public static final double NEED_THIRST_ALLOSTATIC_STRESS = 0.15;
+    public static final double NEED_BLADDER_ALLOSTATIC_STRESS = 0.10;
+
+    // Entertainment and energy decay (per-tick, 0-100 scale)
+    public static final double NEED_ENTERTAINMENT_DECAY_PER_TICK = 1.0;
+    public static final double NEED_ENTERTAINMENT_DECAY_BORING_ACTIVITY = 2.0;
+    public static final double NEED_ENERGY_DECAY_PER_TICK = 0.25;
+    public static final double NEED_ENERGY_DECAY_WHEN_BORED = 0.75;
+    public static final double NEED_ENERGY_ASLEEP_THRESHOLD = 0.0;
+
+    public static final double NEED_ENTERTAINMENT_ALLOSTATIC_STRESS = 0.10;
 
     private SimConstants() {
     }

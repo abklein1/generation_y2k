@@ -241,6 +241,9 @@ public class SimulationEngine {
             advanceStudentMovement();
         }
 
+        // 3.75. Tick physiological needs for all entities
+        tickAllNeeds();
+
         // 4. Process NPC behavior trees (every tick, regardless of speed)
         processStudentBehaviors();
         processStaffBehaviors();
@@ -358,6 +361,75 @@ public class SimulationEngine {
             if (assignedRoom != null) {
                 state.setExpectedRoom(assignedRoom);
             }
+        }
+    }
+
+    /**
+     * Ticks physiological needs (hunger, thirst, bladder) for every student
+     * and staff member. When bladder drops below the critical threshold the
+     * entity's {@code needsBathroom} flag is set automatically.
+     */
+    private void tickAllNeeds() {
+        if (students != null) {
+            for (Student student : students.values()) {
+                EntityState state = student.getEntityState();
+                if (state != null) {
+                    state.tickNeeds(
+                            SimConstants.NEED_HUNGER_DECAY_PER_TICK,
+                            SimConstants.NEED_THIRST_DECAY_PER_TICK,
+                            SimConstants.NEED_BLADDER_DECAY_PER_TICK,
+                            SimConstants.NEED_BLADDER_POST_MEAL_DECAY_PER_TICK,
+                            SimConstants.NEED_ENTERTAINMENT_DECAY_PER_TICK,
+                            SimConstants.NEED_ENERGY_DECAY_PER_TICK,
+                            SimConstants.NEED_ENERGY_DECAY_WHEN_BORED);
+                    if (state.getBladder() < SimConstants.NEED_CRITICAL_THRESHOLD) {
+                        state.setNeedsBathroom(true);
+                    }
+                    applyNeedStress(state, student.studentStatistics.getAllostaticLoad());
+                }
+            }
+        }
+        if (staff != null) {
+            for (Staff staffMember : staff.values()) {
+                EntityState state = staffMember.getEntityState();
+                if (state != null) {
+                    state.tickNeeds(
+                            SimConstants.NEED_HUNGER_DECAY_PER_TICK,
+                            SimConstants.NEED_THIRST_DECAY_PER_TICK,
+                            SimConstants.NEED_BLADDER_DECAY_PER_TICK,
+                            SimConstants.NEED_BLADDER_POST_MEAL_DECAY_PER_TICK,
+                            SimConstants.NEED_ENTERTAINMENT_DECAY_PER_TICK,
+                            SimConstants.NEED_ENERGY_DECAY_PER_TICK,
+                            SimConstants.NEED_ENERGY_DECAY_WHEN_BORED);
+                    if (state.getBladder() < SimConstants.NEED_CRITICAL_THRESHOLD) {
+                        state.setNeedsBathroom(true);
+                    }
+                    applyNeedStress(state, staffMember.teacherStatistics.getAllostaticLoad());
+                }
+            }
+        }
+    }
+
+    /**
+     * Increases allostatic load for each physiological need that has dropped
+     * below the critical threshold. The stress is applied every tick the
+     * need remains unmet, so prolonged deprivation compounds over time.
+     */
+    private void applyNeedStress(EntityState state, AllostaticLoad allostaticLoad) {
+        if (allostaticLoad == null) {
+            return;
+        }
+        if (state.getHunger() < SimConstants.NEED_CRITICAL_THRESHOLD) {
+            allostaticLoad.increaseLoad(SimConstants.NEED_HUNGER_ALLOSTATIC_STRESS);
+        }
+        if (state.getThirst() < SimConstants.NEED_CRITICAL_THRESHOLD) {
+            allostaticLoad.increaseLoad(SimConstants.NEED_THIRST_ALLOSTATIC_STRESS);
+        }
+        if (state.getBladder() < SimConstants.NEED_CRITICAL_THRESHOLD) {
+            allostaticLoad.increaseLoad(SimConstants.NEED_BLADDER_ALLOSTATIC_STRESS);
+        }
+        if (state.getEntertainment() < SimConstants.NEED_CRITICAL_THRESHOLD) {
+            allostaticLoad.increaseLoad(SimConstants.NEED_ENTERTAINMENT_ALLOSTATIC_STRESS);
         }
     }
 
@@ -643,12 +715,6 @@ public class SimulationEngine {
 
         // Replenish all secondary stats to their max caps
         stats.replenishAllSecondaryStats();
-
-        // Reset boredom
-        stats.setBoredom(0);
-
-        // Set sleep state
-        stats.setSleepState(true);
     }
 
     /**

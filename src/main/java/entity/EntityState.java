@@ -29,7 +29,17 @@ public class EntityState implements Serializable {
     private int[] floorPosition;        // [row, col] on room's OccupancyGrid
     private transient Queue<Room> movementPath; // Room-by-room path during transitions
     private int decisionCooldown;       // Ticks until the next behavior tree re-evaluation
-    
+
+    // Physiological needs (0-100 scale, higher is better)
+    private double hunger;              // 100 = full, 0 = starving
+    private double thirst;              // 100 = hydrated, 0 = dehydrated
+    private double bladder;             // 100 = empty, 0 = full/urgent
+    private double temperature;         // 100 = too hot, 0 = freezing, 50 = ideal
+    private int postMealBladderTicks;   // Ticks remaining of accelerated bladder decay after eating
+    private double entertainment;       // 100 = entertained, 0 = completely bored
+    private double energy;              // 100 = well-rested, 0 = exhausted
+    private boolean asleep;             // true when energy reaches 0
+
     private static final int MAX_ACTION_LOG_SIZE = 50;
     private final transient LinkedList<String> actionLog = new LinkedList<>();
     
@@ -48,6 +58,14 @@ public class EntityState implements Serializable {
         this.needsBathroom = false;
         this.hasPermissionToLeave = false;
         this.lunchPeriod = "A"; // Default to A lunch
+        this.hunger = 100.0;
+        this.thirst = 100.0;
+        this.bladder = 100.0;
+        this.temperature = 50.0;
+        this.postMealBladderTicks = 0;
+        this.entertainment = 100.0;
+        this.energy = 100.0;
+        this.asleep = false;
     }
     
     // Current Room
@@ -297,6 +315,132 @@ public class EntityState implements Serializable {
                currentActivity.requiresClassroom();
     }
     
+    // Physiological needs
+
+    public double getHunger() {
+        return hunger;
+    }
+
+    public void setHunger(double hunger) {
+        this.hunger = Math.max(0, Math.min(100, hunger));
+    }
+
+    public double getThirst() {
+        return thirst;
+    }
+
+    public void setThirst(double thirst) {
+        this.thirst = Math.max(0, Math.min(100, thirst));
+    }
+
+    public double getBladder() {
+        return bladder;
+    }
+
+    public void setBladder(double bladder) {
+        this.bladder = Math.max(0, Math.min(100, bladder));
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(double temperature) {
+        this.temperature = Math.max(0, Math.min(100, temperature));
+    }
+
+    public double getEntertainment() {
+        return entertainment;
+    }
+
+    public void setEntertainment(double entertainment) {
+        this.entertainment = Math.max(0, Math.min(100, entertainment));
+    }
+
+    public double getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(double energy) {
+        this.energy = Math.max(0, Math.min(100, energy));
+    }
+
+    public boolean isAsleep() {
+        return asleep;
+    }
+
+    public void setAsleep(boolean asleep) {
+        this.asleep = asleep;
+    }
+
+    /**
+     * Signals that this person has eaten, triggering accelerated bladder
+     * decay for the next 2 hours (120 ticks).
+     */
+    public void onAte() {
+        this.postMealBladderTicks = 120;
+    }
+
+    /**
+     * Advances all physiological needs by one simulation tick.
+     *
+     * @param hungerDecay              amount hunger decreases per tick
+     * @param thirstDecay              amount thirst decreases per tick
+     * @param bladderDecay             normal bladder decrease per tick
+     * @param bladderPostMealDecay     bladder decrease per tick after eating
+     * @param entertainmentDecay       amount entertainment decreases per tick
+     * @param energyDecay              base energy decrease per tick
+     * @param energyDecayWhenBored     energy decrease when entertainment is 0
+     */
+    public void tickNeeds(double hungerDecay, double thirstDecay,
+                          double bladderDecay, double bladderPostMealDecay,
+                          double entertainmentDecay, double energyDecay,
+                          double energyDecayWhenBored) {
+        this.hunger = Math.max(0, this.hunger - hungerDecay);
+        this.thirst = Math.max(0, this.thirst - thirstDecay);
+
+        if (postMealBladderTicks > 0) {
+            this.bladder = Math.max(0, this.bladder - bladderPostMealDecay);
+            postMealBladderTicks--;
+        } else {
+            this.bladder = Math.max(0, this.bladder - bladderDecay);
+        }
+
+        this.entertainment = Math.max(0, this.entertainment - entertainmentDecay);
+
+        double actualEnergyDecay = (this.entertainment <= 0) ? energyDecayWhenBored : energyDecay;
+        this.energy = Math.max(0, this.energy - actualEnergyDecay);
+        if (this.energy <= 0) {
+            this.asleep = true;
+        }
+    }
+
+    /**
+     * Checks if a physiological need has crossed below the critical threshold.
+     *
+     * @param threshold the critical threshold (e.g. 30)
+     * @return true if hunger, thirst, or bladder is below the threshold
+     */
+    public boolean hasNeedBelowThreshold(double threshold) {
+        return hunger < threshold || thirst < threshold
+                || bladder < threshold || entertainment < threshold;
+    }
+
+    /**
+     * Resets all physiological needs to their start-of-day values.
+     * Called when the person sleeps / at the end of each day.
+     */
+    public void resetNeeds() {
+        this.hunger = 100.0;
+        this.thirst = 100.0;
+        this.bladder = 100.0;
+        this.temperature = 50.0;
+        this.postMealBladderTicks = 0;
+        this.entertainment = 100.0;
+        this.energy = 100.0;
+        this.asleep = false;
+    }
+
     /**
      * Resets the state for a new day.
      */
@@ -314,6 +458,7 @@ public class EntityState implements Serializable {
         this.floorPosition = null;
         this.movementPath = null;
         this.decisionCooldown = 0;
+        resetNeeds();
     }
     
     /**

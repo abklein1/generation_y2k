@@ -29,7 +29,7 @@ import java.util.List;
 public class PassNoteActionNode extends ActionNode {
     
     private static final int FRIENDSHIP_GAIN = 5;
-    private static final int BOREDOM_DECREASE = 5;
+    private static final int ENTERTAINMENT_BOOST = 5;
     private static final int BASE_CATCH_CHANCE = 25;
     
     public PassNoteActionNode() {
@@ -116,9 +116,8 @@ public class PassNoteActionNode extends ActionNode {
             }
         }
 
-        // Decrease boredom and slight allostatic recovery (socializing is positive)
-        int currentBoredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(Math.max(0, currentBoredom - BOREDOM_DECREASE));
+        // Boost entertainment and slight allostatic recovery (socializing is positive)
+        state.setEntertainment(state.getEntertainment() + ENTERTAINMENT_BOOST);
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                 constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING);
         

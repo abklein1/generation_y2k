@@ -102,9 +102,8 @@ public class WhisperAction implements Action {
             }
         }
         
-        // Small boredom decrease
-        int currentBoredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(Math.max(0, currentBoredom - 3));
+        // Small entertainment boost (whispering relieves boredom)
+        state.setEntertainment(state.getEntertainment() + 3);
         
         // Socializing is positive - slight allostatic recovery
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
@@ -112,7 +111,7 @@ public class WhisperAction implements Action {
         
         return ActionResult.success("Shared a quick whisper with a friend")
                 .withEffect("friendship", FRIENDSHIP_GAIN)
-                .withEffect("boredom_change", -3);
+                .withEffect("entertainment_change", 3);
     }
     
     private static boolean hasTeacherPresent(Room room) {

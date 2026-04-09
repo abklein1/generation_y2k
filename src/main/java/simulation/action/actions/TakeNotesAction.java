@@ -10,12 +10,12 @@ import simulation.action.ActionResult;
 
 /**
  * Action for taking notes in class.
- * Higher learning if high intelligence, moderate boredom increase.
+ * Higher learning if high intelligence, moderate entertainment drain.
  */
 public class TakeNotesAction implements Action {
     
     private static final int BASE_LEARNING = 7;
-    private static final int BOREDOM_INCREASE = 1;
+    private static final int ENTERTAINMENT_DRAIN = 1;
     
     @Override
     public String getName() {
@@ -57,9 +57,8 @@ public class TakeNotesAction implements Action {
         
         int totalLearning = BASE_LEARNING * learningMultiplier;
         
-        // Boredom increases slightly
-        int currentBoredom = student.studentStatistics.getBoredom();
-        student.studentStatistics.setBoredom(Math.min(100, currentBoredom + BOREDOM_INCREASE));
+        // Entertainment decreases slightly (note-taking is tedious)
+        state.setEntertainment(state.getEntertainment() - ENTERTAINMENT_DRAIN);
         
         // Drain creativity and initiative from note-taking effort
         student.studentStatistics.drainSecondaryStat("creativity",
@@ -71,7 +70,7 @@ public class TakeNotesAction implements Action {
         
         return ActionResult.success("Diligently taking notes")
                 .withEffect("learning", totalLearning)
-                .withEffect("boredom_change", BOREDOM_INCREASE);
+                .withEffect("entertainment_change", -ENTERTAINMENT_DRAIN);
     }
     
     @Override

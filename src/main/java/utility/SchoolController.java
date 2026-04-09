@@ -580,10 +580,15 @@ public class SchoolController {
                     }
                 });
 
-                // Poll the activity log every 500ms while the window is visible
+                // Poll live data every 500ms while the window is visible
                 Timer activityPollTimer = new Timer(500, e -> {
                     if (currentlySelectedStudent[0] != null && simulationRunning) {
                         Inspector.updateActivityArea(currentlySelectedStudent[0], activityArea);
+                        Inspector.updateStudentStatsArea(currentlySelectedStudent[0], statsArea);
+                        CellPhone polledPhone = town != null
+                                ? town.getStudentPhone(currentlySelectedStudent[0]) : null;
+                        Inspector.updateCellPhoneArea(polledPhone,
+                                currentlySelectedStudent[0].toString(), phoneArea);
                     }
                 });
                 activityPollTimer.start();
