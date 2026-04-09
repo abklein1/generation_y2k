@@ -86,34 +86,37 @@ public class PassNoteActionNode extends ActionNode {
         // Store the target in context for later reference
         context.setVariable("interaction_target", target);
         
-        // Drain empathy (social effort) and responsibility (breaking rules)
-        student.studentStatistics.drainSecondaryStat("empathy",
-                constants.SimConstants.STAT_DRAIN_PASS_NOTE_EMPATHY,
-                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
-        student.studentStatistics.drainSecondaryStat("responsibility",
-                constants.SimConstants.STAT_DRAIN_PASS_NOTE_RESPONSIBILITY,
-                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
-        
-        // Calculate catch chance
-        int agility = student.studentStatistics.getAgility();
-        int charisma = student.studentStatistics.getCharisma();
-        int catchChance = BASE_CATCH_CHANCE - (agility / 10) - (charisma / 20);
-        catchChance = Math.max(5, catchChance);
-        
-        if (GameRandom.nextDouble(100) < catchChance) {
-            context.setVariable("was_caught", true);
-            context.setVariable("catch_type", "passing_note");
-            // Getting caught is stressful - drain resilience and adaptability
-            student.studentStatistics.drainSecondaryStat("resilience",
-                    constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
-                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
-            student.studentStatistics.drainSecondaryStat("adaptability",
-                    constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
-                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
-            return BehaviorStatus.FAILURE; // Failed because caught
+        boolean teacherPresent = state.isInClass() && hasTeacherPresent(state.getCurrentRoom());
+
+        if (teacherPresent) {
+            // Drain empathy (social effort) and responsibility (breaking rules)
+            student.studentStatistics.drainSecondaryStat("empathy",
+                    constants.SimConstants.STAT_DRAIN_PASS_NOTE_EMPATHY,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
+            student.studentStatistics.drainSecondaryStat("responsibility",
+                    constants.SimConstants.STAT_DRAIN_PASS_NOTE_RESPONSIBILITY,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
+
+            // Calculate catch chance
+            int agility = student.studentStatistics.getAgility();
+            int charisma = student.studentStatistics.getCharisma();
+            int catchChance = BASE_CATCH_CHANCE - (agility / 10) - (charisma / 20);
+            catchChance = Math.max(5, catchChance);
+
+            if (GameRandom.nextDouble(100) < catchChance) {
+                context.setVariable("was_caught", true);
+                context.setVariable("catch_type", "passing_note");
+                student.studentStatistics.drainSecondaryStat("resilience",
+                        constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
+                student.studentStatistics.drainSecondaryStat("adaptability",
+                        constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
+                return BehaviorStatus.FAILURE;
+            }
         }
-        
-        // Success - decrease boredom and slight allostatic recovery (socializing is positive)
+
+        // Decrease boredom and slight allostatic recovery (socializing is positive)
         int currentBoredom = student.studentStatistics.getBoredom();
         student.studentStatistics.setBoredom(Math.max(0, currentBoredom - BOREDOM_DECREASE));
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
@@ -125,6 +128,12 @@ public class PassNoteActionNode extends ActionNode {
         return BehaviorStatus.SUCCESS;
     }
     
+    private static boolean hasTeacherPresent(Room room) {
+        return room != null
+                && room.getAssignedStaff() != null
+                && !room.getAssignedStaff().isEmpty();
+    }
+
     private List<Student> getCandidates(Student student, EntityState state) {
         List<Student> candidates = new ArrayList<>();
         Room room = state.getCurrentRoom();

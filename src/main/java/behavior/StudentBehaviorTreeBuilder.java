@@ -79,8 +79,8 @@ public class StudentBehaviorTreeBuilder {
         // Priority 2: Class behavior (when in class)
         root.addChild(buildClassBehaviorSequence(student, type));
         
-        // Priority 3: Non-class social behavior (hallways, lunchroom, etc.)
-        root.addChild(buildNonClassSocialSequence(type));
+        // Priority 3: Non-class behavior (hallways, lunchroom, before/after school)
+        root.addChild(buildOutOfClassBehavior(type));
         
         // Priority 4: Default idle action
         root.addChild(new IdleActionNode());
@@ -231,25 +231,39 @@ public class StudentBehaviorTreeBuilder {
     }
     
     /**
-     * Builds the non-class social behavior sequence.
-     * When students are in hallways, lunchrooms, or other non-class areas,
-     * talking is a normal expected behavior with no risk of being caught.
-     * Social personality types are more likely to seek conversation.
+     * Builds the out-of-class behavior selector.
+     * Covers hallways, lunchrooms, before/after school, and transitions.
+     * Students can socialize (if friends/peers are available), hang out
+     * at their locker, daydream, or just stand around.
      */
-    private static BehaviorNode buildNonClassSocialSequence(PersonalityType type) {
-        Sequence nonClassSocial = new Sequence("NonClassSocial");
-        
-        // Only activates when NOT in class (hallways, lunchroom, etc.)
-        nonClassSocial.addChild(new IsNotInClassCondition());
-        nonClassSocial.addChild(new HasFriendNearbyCondition());
-        
-        // Talk or text outside of class
-        RandomSelector outOfClassChoice = new RandomSelector("OutOfClassSocial");
-        outOfClassChoice.addChild(new TalkActionNode());
-        outOfClassChoice.addChild(new TextActionNode());
-        nonClassSocial.addChild(outOfClassChoice);
-        
-        return nonClassSocial;
+    private static BehaviorNode buildOutOfClassBehavior(PersonalityType type) {
+        Sequence outOfClass = new Sequence("OutOfClassBehavior");
+
+        // Gate: only when NOT in class
+        outOfClass.addChild(new IsNotInClassCondition());
+
+        Selector activities = new Selector("OutOfClassActivities");
+
+        // Option 1: Socialize (requires a friend or peer nearby)
+        Sequence socialize = new Sequence("OutOfClassSocialize");
+        socialize.addChild(new HasFriendNearbyCondition());
+        RandomSelector socialChoice = new RandomSelector("OutOfClassSocialChoice");
+        socialChoice.addChild(new TalkActionNode());
+        socialChoice.addChild(new TextActionNode());
+        socialize.addChild(socialChoice);
+        activities.addChild(socialize);
+
+        // Option 2: Hang out at locker (personality-influenced)
+        activities.addChild(new HangOutAtLockerActionNode());
+
+        // Option 3: Daydream / zone out (daydreamers and troublemakers prefer this)
+        activities.addChild(new OutOfClassDaydreamActionNode());
+
+        // Option 4: Just stand around (always succeeds -- soft fallback)
+        activities.addChild(new StandAroundActionNode());
+
+        outOfClass.addChild(activities);
+        return outOfClass;
     }
     
     /**
@@ -385,7 +399,7 @@ public class StudentBehaviorTreeBuilder {
             }
             
             entity.EntityState state = student.getEntityState();
-            boolean inClass = state.isInClass();
+            boolean inClass = state.isInClass() && hasTeacherPresent(state.getCurrentRoom());
             
             // Select a target using tiered social preference
             Student target = TargetSelector.selectTarget(student, getCandidates(student, state));
@@ -602,16 +616,16 @@ public class StudentBehaviorTreeBuilder {
                 return false;
             }
             CellPhone phone = town.getStudentPhone(student);
-            return phone != null && phone.hasSms();
+            return phone != null && phone.hasSms() && phone.getTextsRemaining() > 0;
         }
-        
+
         @Override
         public BehaviorStatus execute(BehaviorContext context) {
             Student student = context.getStudent();
             if (student == null || student.getEntityState() == null) {
                 return BehaviorStatus.FAILURE;
             }
-            
+
             Town town = context.getTown();
             if (town == null || !town.hasPhone(student)) {
                 return BehaviorStatus.FAILURE;
@@ -620,9 +634,12 @@ public class StudentBehaviorTreeBuilder {
             if (phone == null || !phone.hasSms()) {
                 return BehaviorStatus.FAILURE;
             }
-            
+            if (!phone.useText()) {
+                return BehaviorStatus.FAILURE;
+            }
+
             entity.EntityState state = student.getEntityState();
-            boolean inClass = state.isInClass();
+            boolean inClass = state.isInClass() && hasTeacherPresent(state.getCurrentRoom());
             
             // Select a target using the tiered preference system
             Student target = TargetSelector.selectTarget(student, getClassmates(student, state));
@@ -760,5 +777,90 @@ public class StudentBehaviorTreeBuilder {
             
             return BehaviorStatus.SUCCESS;
         }
+    }
+
+    /**
+     * Hang out at locker: mild boredom reduction, small allostatic recovery.
+     * Represents a student killing time at their locker between classes.
+     */
+    private static class HangOutAtLockerActionNode extends behavior.leaf.ActionNode {
+        public HangOutAtLockerActionNode() {
+            super("HangOutAtLocker", 1);
+        }
+
+        @Override
+        public BehaviorStatus execute(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null) {
+                return BehaviorStatus.FAILURE;
+            }
+            student.getEntityState().setCurrentActivity(entity.ActivityType.AT_LOCKER);
+
+            int boredom = student.studentStatistics.getBoredom();
+            student.studentStatistics.setBoredom(Math.max(0, boredom - 2));
+            student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                    constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING);
+            return BehaviorStatus.SUCCESS;
+        }
+    }
+
+    /**
+     * Out-of-class daydreaming: stronger boredom relief than in-class
+     * daydreaming, with no risk of being caught.
+     */
+    private static class OutOfClassDaydreamActionNode extends behavior.leaf.ActionNode {
+        public OutOfClassDaydreamActionNode() {
+            super("OutOfClassDaydream", 1);
+        }
+
+        @Override
+        public BehaviorStatus execute(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null) {
+                return BehaviorStatus.FAILURE;
+            }
+            student.getEntityState().setCurrentActivity(entity.ActivityType.DAYDREAMING);
+
+            int boredom = student.studentStatistics.getBoredom();
+            student.studentStatistics.setBoredom(Math.max(0, boredom - 6));
+            student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                    constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING);
+            return BehaviorStatus.SUCCESS;
+        }
+    }
+
+    /**
+     * Stand around: the student isn't doing anything in particular.
+     * Provides minimal recovery. Always succeeds -- used as a soft
+     * fallback so the student is never truly idle outside of class.
+     */
+    private static class StandAroundActionNode extends behavior.leaf.ActionNode {
+        public StandAroundActionNode() {
+            super("StandAround", 1);
+        }
+
+        @Override
+        public BehaviorStatus execute(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null) {
+                return BehaviorStatus.FAILURE;
+            }
+            student.getEntityState().setCurrentActivity(entity.ActivityType.SOCIALIZING);
+
+            student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                    constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING * 0.5);
+            return BehaviorStatus.SUCCESS;
+        }
+    }
+
+    /**
+     * Checks whether a room has at least one teacher assigned.
+     * Students can only be "caught" misbehaving when a teacher is
+     * present and class is in session.
+     */
+    private static boolean hasTeacherPresent(entity.Rooms.Room room) {
+        return room != null
+                && room.getAssignedStaff() != null
+                && !room.getAssignedStaff().isEmpty();
     }
 }

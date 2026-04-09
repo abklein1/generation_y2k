@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Central controller for the game simulation loop.
@@ -35,6 +36,7 @@ public class SimulationEngine {
     private RoomOccupancyManager roomOccupancyManager;
     private TraversalStorage traversalStorage;
     private int currentTransitionIndex;
+    private int lastProcessedMonth = -1;
 
     // Simulation speed options (ticks per real-time second)
     public static final int SPEED_SLOW = 1; // 1 tick per second
@@ -96,6 +98,7 @@ public class SimulationEngine {
         this.school = school;
         this.students = students;
         this.staff = staff;
+        this.lastProcessedMonth = time.getMonth();
     }
 
     /**
@@ -114,6 +117,7 @@ public class SimulationEngine {
         this.students = students;
         this.staff = staff;
         this.bellSchedule = new BellScheduleManager();
+        this.lastProcessedMonth = time.getMonth();
 
         // Initialize entity states if needed
         initializeEntityStates();
@@ -374,8 +378,8 @@ public class SimulationEngine {
         // Phase 1: Tick all behavior trees (social actions register pending
         // interactions).
         // Actions last ~5 minutes: the tree is only re-evaluated when the
-        // student's current activity has run for ACTION_DURATION_TICKS or when
-        // the student is idle/transitioning (needs a new decision immediately).
+        // student's cooldown counter has elapsed, or when the student is
+        // idle/transitioning (needs a new decision immediately).
         for (Student student : students.values()) {
             BehaviorTree tree = student.getBehaviorTree();
             if (tree != null) {
@@ -397,7 +401,7 @@ public class SimulationEngine {
                     ActivityType current = state.getCurrentActivity();
                     boolean isActiveAction = current != ActivityType.IDLE
                             && current != ActivityType.TRANSITIONING;
-                    if (isActiveAction && state.getTicksInActivity() < ACTION_DURATION_TICKS) {
+                    if (isActiveAction && state.getDecisionCooldown() > 0) {
                         shouldDecide = false;
                     }
                 }
@@ -405,12 +409,16 @@ public class SimulationEngine {
                 if (shouldDecide) {
                     tree.tick(context);
                     logStudentAction(student, context);
+                    if (state != null) {
+                        state.resetDecisionCooldown(ACTION_DURATION_TICKS);
+                    }
                 }
             }
 
-            // Increment activity ticks
+            // Tick down cooldowns each tick
             EntityState state = student.getEntityState();
             if (state != null) {
+                state.decrementDecisionCooldown();
                 state.incrementTicksInActivity();
             }
         }
@@ -566,6 +574,13 @@ public class SimulationEngine {
      * Secondary stats are replenished and allostatic load is reduced.
      */
     private void processEndOfDay() {
+        // Reset phone text limits at the start of each new month
+        int currentMonth = time.getMonth();
+        if (currentMonth != lastProcessedMonth) {
+            resetMonthlyTextLimits();
+            lastProcessedMonth = currentMonth;
+        }
+
         // Process students
         if (students != null) {
             for (Student student : students.values()) {
@@ -634,6 +649,22 @@ public class SimulationEngine {
 
         // Set sleep state
         stats.setSleepState(true);
+    }
+
+    /**
+     * Resets the monthly text allowance on every student and staff phone
+     * in the town back to the plan's limit.
+     */
+    private void resetMonthlyTextLimits() {
+        if (town == null) {
+            return;
+        }
+        for (Map.Entry<Student, CellPhone> entry : town.getAllStudentPhones().entrySet()) {
+            entry.getValue().resetTextLimit();
+        }
+        for (Map.Entry<Staff, CellPhone> entry : town.getAllStaffPhones().entrySet()) {
+            entry.getValue().resetTextLimit();
+        }
     }
 
     // ==================== Transition Movement ====================

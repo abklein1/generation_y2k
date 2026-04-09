@@ -19,6 +19,7 @@ public class CellPhone implements Serializable {
     private String color;
     private int minutePlan;
     private int textLimit;
+    private int textsRemaining;
 
     private int price;
     private String size;
@@ -46,6 +47,7 @@ public class CellPhone implements Serializable {
         this.color = color;
         this.minutePlan = minutePlan;
         this.textLimit = textLimit;
+        this.textsRemaining = textLimit;
         this.size = "";
     }
 
@@ -103,6 +105,36 @@ public class CellPhone implements Serializable {
 
     public void setTextLimit(int textLimit) {
         this.textLimit = textLimit;
+    }
+
+    public int getTextsRemaining() {
+        return textsRemaining;
+    }
+
+    public void setTextsRemaining(int textsRemaining) {
+        this.textsRemaining = textsRemaining;
+    }
+
+    /**
+     * Consumes one text from the monthly allowance.
+     *
+     * @return true if there was remaining capacity and the text was sent,
+     *         false if the limit has been reached
+     */
+    public boolean useText() {
+        if (textsRemaining <= 0) {
+            return false;
+        }
+        textsRemaining--;
+        return true;
+    }
+
+    /**
+     * Resets the remaining text count back to the plan's monthly limit.
+     * Called at the start of each new month.
+     */
+    public void resetTextLimit() {
+        this.textsRemaining = this.textLimit;
     }
 
     public int getPrice() {

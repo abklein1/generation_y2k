@@ -54,22 +54,29 @@ public class DaydreamActionNode extends ActionNode {
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                 constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING);
         
-        // Check if caught (perception helps avoid detection)
-        int perception = student.studentStatistics.getPerception();
-        int catchChance = BASE_CATCH_CHANCE - (perception / 10);
-        
-        if (GameRandom.nextDouble(100) < catchChance) {
-            // Got caught - drains resilience and adaptability from the stress
-            context.setVariable("was_caught", true);
-            context.setVariable("catch_type", "daydreaming");
-            student.studentStatistics.drainSecondaryStat("resilience",
-                    constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
-                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
-            student.studentStatistics.drainSecondaryStat("adaptability",
-                    constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
-                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
+        // Only risk being caught if a teacher is present and class is in session
+        if (hasTeacherPresent(state.getCurrentRoom())) {
+            int perception = student.studentStatistics.getPerception();
+            int catchChance = BASE_CATCH_CHANCE - (perception / 10);
+
+            if (GameRandom.nextDouble(100) < catchChance) {
+                context.setVariable("was_caught", true);
+                context.setVariable("catch_type", "daydreaming");
+                student.studentStatistics.drainSecondaryStat("resilience",
+                        constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
+                student.studentStatistics.drainSecondaryStat("adaptability",
+                        constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
+            }
         }
         
         return BehaviorStatus.SUCCESS;
+    }
+
+    private static boolean hasTeacherPresent(entity.Rooms.Room room) {
+        return room != null
+                && room.getAssignedStaff() != null
+                && !room.getAssignedStaff().isEmpty();
     }
 }

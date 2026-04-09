@@ -59,7 +59,7 @@ public class TextAction implements Action {
             return false;
         }
         CellPhone phone = town.getStudentPhone(student);
-        return phone != null && phone.hasSms();
+        return phone != null && phone.hasSms() && phone.getTextsRemaining() > 0;
     }
 
     @Override
@@ -77,6 +77,9 @@ public class TextAction implements Action {
         if (phone == null || !phone.hasSms()) {
             return ActionResult.failure("Phone does not support SMS");
         }
+        if (!phone.useText()) {
+            return ActionResult.failure("Monthly text limit reached");
+        }
 
         Student target = selectTarget(student, state);
         if (target != null) {
@@ -89,7 +92,7 @@ public class TextAction implements Action {
 
         state.setCurrentActivity(ActivityType.TEXTING);
 
-        boolean inClass = state.isInClass();
+        boolean inClass = state.isInClass() && hasTeacherPresent(state.getCurrentRoom());
         if (inClass) {
             return executeInClass(student, phone, context);
         } else {
@@ -163,6 +166,12 @@ public class TextAction implements Action {
 
         catchChance -= student.studentStatistics.getPerception() / 20;
         return Math.max(5, catchChance);
+    }
+
+    private static boolean hasTeacherPresent(entity.Rooms.Room room) {
+        return room != null
+                && room.getAssignedStaff() != null
+                && !room.getAssignedStaff().isEmpty();
     }
 
     private Student selectTarget(Student student, EntityState state) {

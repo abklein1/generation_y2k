@@ -28,6 +28,7 @@ public class EntityState implements Serializable {
     private String lunchPeriod;         // "A" or "B"
     private int[] floorPosition;        // [row, col] on room's OccupancyGrid
     private transient Queue<Room> movementPath; // Room-by-room path during transitions
+    private int decisionCooldown;       // Ticks until the next behavior tree re-evaluation
     
     private static final int MAX_ACTION_LOG_SIZE = 50;
     private final transient LinkedList<String> actionLog = new LinkedList<>();
@@ -243,6 +244,22 @@ public class EntityState implements Serializable {
         return movementPath != null && !movementPath.isEmpty();
     }
     
+    // Decision cooldown (prevents re-evaluating the behavior tree every tick)
+    
+    public int getDecisionCooldown() {
+        return decisionCooldown;
+    }
+    
+    public void resetDecisionCooldown(int ticks) {
+        this.decisionCooldown = ticks;
+    }
+    
+    public void decrementDecisionCooldown() {
+        if (decisionCooldown > 0) {
+            decisionCooldown--;
+        }
+    }
+    
     // Utility methods
     
     /**
@@ -296,6 +313,7 @@ public class EntityState implements Serializable {
         this.hasPermissionToLeave = false;
         this.floorPosition = null;
         this.movementPath = null;
+        this.decisionCooldown = 0;
     }
     
     /**

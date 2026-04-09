@@ -73,7 +73,7 @@ public class TalkAction implements Action {
             return ActionResult.failure("No student in context");
         }
         
-        boolean inClass = state.isInClass();
+        boolean inClass = state.isInClass() && hasTeacherPresent(state.getCurrentRoom());
         
         // Select a target (prefer friends)
         Student target = selectTarget(student, state);
@@ -159,6 +159,12 @@ public class TalkAction implements Action {
                 .withEffect("boredom_change", -8);
     }
     
+    private static boolean hasTeacherPresent(Room room) {
+        return room != null
+                && room.getAssignedStaff() != null
+                && !room.getAssignedStaff().isEmpty();
+    }
+
     /**
      * Selects a talk target, preferring friends in the same room.
      */

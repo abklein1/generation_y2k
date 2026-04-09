@@ -222,6 +222,15 @@ public class Time {
     }
     
     /**
+     * Gets the current calendar month (0-based: 0=January, 11=December).
+     *
+     * @return the current month
+     */
+    public int getMonth() {
+        return calendar.get(Calendar.MONTH);
+    }
+
+    /**
      * Resets the time to the starting values.
      * Call this when starting a new game/simulation.
      */

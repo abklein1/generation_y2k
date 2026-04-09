@@ -85,20 +85,21 @@ public class WhisperAction implements Action {
                 constants.SimConstants.STAT_DRAIN_WHISPER_EMPATHY,
                 constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
         
-        // Calculate catch chance
-        int perception = student.studentStatistics.getPerception();
-        int catchChance = BASE_CATCH_CHANCE - (perception / 15);
-        catchChance = Math.max(3, catchChance);
-        
-        if (GameRandom.nextDouble(100) < catchChance) {
-            // Getting caught is stressful
-            student.studentStatistics.drainSecondaryStat("resilience",
-                    constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
-                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
-            return ActionResult.caught(
-                    "Was whispering to a friend when...",
-                    "The teacher gives a warning look."
-            );
+        // Only risk being caught if a teacher is present
+        if (hasTeacherPresent(state.getCurrentRoom())) {
+            int perception = student.studentStatistics.getPerception();
+            int catchChance = BASE_CATCH_CHANCE - (perception / 15);
+            catchChance = Math.max(3, catchChance);
+
+            if (GameRandom.nextDouble(100) < catchChance) {
+                student.studentStatistics.drainSecondaryStat("resilience",
+                        constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
+                return ActionResult.caught(
+                        "Was whispering to a friend when...",
+                        "The teacher gives a warning look."
+                );
+            }
         }
         
         // Small boredom decrease
@@ -114,6 +115,12 @@ public class WhisperAction implements Action {
                 .withEffect("boredom_change", -3);
     }
     
+    private static boolean hasTeacherPresent(Room room) {
+        return room != null
+                && room.getAssignedStaff() != null
+                && !room.getAssignedStaff().isEmpty();
+    }
+
     /**
      * Gets students adjacent to the given student in the current seating arrangement.
      */

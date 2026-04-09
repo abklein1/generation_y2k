@@ -78,33 +78,34 @@ public class PassNoteAction implements Action {
         
         state.setCurrentActivity(ActivityType.PASSING_NOTE);
         
-        // Drain empathy (social effort) and responsibility (breaking rules)
-        student.studentStatistics.drainSecondaryStat("empathy",
-                constants.SimConstants.STAT_DRAIN_PASS_NOTE_EMPATHY,
-                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
-        student.studentStatistics.drainSecondaryStat("responsibility",
-                constants.SimConstants.STAT_DRAIN_PASS_NOTE_RESPONSIBILITY,
-                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
-        
-        // Calculate catch chance based on agility and charisma
-        int agility = student.studentStatistics.getAgility();
-        int charisma = student.studentStatistics.getCharisma();
-        int catchChance = BASE_CATCH_CHANCE - (agility / 10) - (charisma / 20);
-        catchChance = Math.max(5, catchChance); // Minimum 5% chance
-        
-        if (GameRandom.nextDouble(100) < catchChance) {
-            // Getting caught is stressful
-            student.studentStatistics.drainSecondaryStat("resilience",
-                    constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
-                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
-            student.studentStatistics.drainSecondaryStat("adaptability",
-                    constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
-                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
-            return ActionResult.caught(
-                    "Tried to pass a note but...",
-                    "The teacher intercepts the note and reads it aloud!"
-            ).withEffect("friendship", -2)
-             .withEffect("reputation", -5);
+        if (hasTeacherPresent(state.getCurrentRoom())) {
+            // Drain empathy (social effort) and responsibility (breaking rules)
+            student.studentStatistics.drainSecondaryStat("empathy",
+                    constants.SimConstants.STAT_DRAIN_PASS_NOTE_EMPATHY,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
+            student.studentStatistics.drainSecondaryStat("responsibility",
+                    constants.SimConstants.STAT_DRAIN_PASS_NOTE_RESPONSIBILITY,
+                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
+
+            // Calculate catch chance based on agility and charisma
+            int agility = student.studentStatistics.getAgility();
+            int charisma = student.studentStatistics.getCharisma();
+            int catchChance = BASE_CATCH_CHANCE - (agility / 10) - (charisma / 20);
+            catchChance = Math.max(5, catchChance);
+
+            if (GameRandom.nextDouble(100) < catchChance) {
+                student.studentStatistics.drainSecondaryStat("resilience",
+                        constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
+                student.studentStatistics.drainSecondaryStat("adaptability",
+                        constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
+                return ActionResult.caught(
+                        "Tried to pass a note but...",
+                        "The teacher intercepts the note and reads it aloud!"
+                ).withEffect("friendship", -2)
+                 .withEffect("reputation", -5);
+            }
         }
         
         // Decrease boredom from social interaction
@@ -120,6 +121,12 @@ public class PassNoteAction implements Action {
                 .withEffect("boredom_change", -5);
     }
     
+    private static boolean hasTeacherPresent(Room room) {
+        return room != null
+                && room.getAssignedStaff() != null
+                && !room.getAssignedStaff().isEmpty();
+    }
+
     /**
      * Selects a target for passing the note, preferring friends in the same room.
      */
