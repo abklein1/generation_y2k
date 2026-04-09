@@ -1,15 +1,16 @@
 package simulation;
 
 import behavior.BehaviorContext;
-import behavior.BehaviorStatus;
 import behavior.BehaviorTree;
 import constants.SimConstants;
 import entity.*;
 import entity.Rooms.Room;
 import utility.SocialLinkConnector;
+import utility.TraversalStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class SimulationEngine {
 
     private Time time;
     private StandardSchool school;
+    private Town town;
     private HashMap<Integer, Student> students;
     private HashMap<Integer, Staff> staff;
     private BellScheduleManager bellSchedule;
@@ -30,6 +32,9 @@ public class SimulationEngine {
     private final List<SimulationListener> listeners;
     private final InteractionManager interactionManager;
     private SocialLinkConnector socialLinkConnector;
+    private RoomOccupancyManager roomOccupancyManager;
+    private TraversalStorage traversalStorage;
+    private int currentTransitionIndex;
 
     // Simulation speed options (ticks per real-time second)
     public static final int SPEED_SLOW = 1; // 1 tick per second
@@ -39,6 +44,9 @@ public class SimulationEngine {
 
     // Fixed in-game time progression
     public static final int MINUTES_PER_TICK = 1; // Each tick = 1 in-game minute
+
+    // How many ticks (minutes) an action lasts before the student re-evaluates
+    private static final int ACTION_DURATION_TICKS = 5;
 
     /**
      * Interface for listening to simulation events.
@@ -123,6 +131,23 @@ public class SimulationEngine {
     }
 
     /**
+     * Sets the town reference so behavior contexts can access phone data.
+     *
+     * @param town the town
+     */
+    public void setTown(Town town) {
+        this.town = town;
+    }
+
+    public void setRoomOccupancyManager(RoomOccupancyManager manager) {
+        this.roomOccupancyManager = manager;
+    }
+
+    public void setTraversalStorage(TraversalStorage storage) {
+        this.traversalStorage = storage;
+    }
+
+    /**
      * Initializes EntityState for all entities that don't have one.
      */
     private void initializeEntityStates() {
@@ -193,7 +218,9 @@ public class SimulationEngine {
         // Fire transition events
         if (!wasTransition && isTransition) {
             notifyTransitionStart();
+            initiateTransitionMovement();
         } else if (wasTransition && !isTransition) {
+            finalizeTransitionArrival(currentPeriod);
             notifyTransitionEnd();
         }
 
@@ -204,6 +231,11 @@ public class SimulationEngine {
 
         // 3. Update expected locations based on schedule
         updateExpectedLocations();
+
+        // 3.5. Advance students along their transition paths
+        if (isTransition) {
+            advanceStudentMovement();
+        }
 
         // 4. Process NPC behavior trees (every tick, regardless of speed)
         processStudentBehaviors();
@@ -340,7 +372,10 @@ public class SimulationEngine {
         interactionManager.clearTick();
 
         // Phase 1: Tick all behavior trees (social actions register pending
-        // interactions)
+        // interactions).
+        // Actions last ~5 minutes: the tree is only re-evaluated when the
+        // student's current activity has run for ACTION_DURATION_TICKS or when
+        // the student is idle/transitioning (needs a new decision immediately).
         for (Student student : students.values()) {
             BehaviorTree tree = student.getBehaviorTree();
             if (tree != null) {
@@ -348,35 +383,150 @@ public class SimulationEngine {
                 if (context == null) {
                     context = new BehaviorContext(student, time, school);
                     context.setInteractionManager(interactionManager);
+                    context.setTown(town);
                     student.setBehaviorContext(context);
                 } else {
-                    // Update context with current time and ensure manager is set
                     context.setTime(time);
                     context.setInteractionManager(interactionManager);
+                    context.setTown(town);
                 }
 
-                // Tick the behavior tree
-                tree.tick(context);
+                EntityState state = student.getEntityState();
+                boolean shouldDecide = true;
+                if (state != null) {
+                    ActivityType current = state.getCurrentActivity();
+                    boolean isActiveAction = current != ActivityType.IDLE
+                            && current != ActivityType.TRANSITIONING;
+                    if (isActiveAction && state.getTicksInActivity() < ACTION_DURATION_TICKS) {
+                        shouldDecide = false;
+                    }
+                }
+
+                if (shouldDecide) {
+                    tree.tick(context);
+                    logStudentAction(student, context);
+                }
             }
 
             // Increment activity ticks
             EntityState state = student.getEntityState();
             if (state != null) {
                 state.incrementTicksInActivity();
-
-                // Process movement
-                if (state.isMoving()) {
-                    state.decrementMovementTicks();
-                    if (state.getMovementTicksRemaining() <= 0) {
-                        state.completeMovement();
-                    }
-                }
             }
         }
 
         // Phase 2: Resolve social interaction conflicts
         // The highest DET + CHR student wins when multiple target the same person
         interactionManager.resolveInteractions();
+    }
+
+    /**
+     * Builds a human-readable log entry from the student's post-tick state
+     * and appends it to the student's action log on their EntityState.
+     * Includes location context so the reader knows where the student is.
+     */
+    private void logStudentAction(Student student, BehaviorContext context) {
+        EntityState state = student.getEntityState();
+        if (state == null) {
+            return;
+        }
+
+        ActivityType activity = state.getCurrentActivity();
+        String timeStamp = String.format("[%02d:%02d]",
+                time.getHour(), time.getMinute());
+
+        StringBuilder entry = new StringBuilder(timeStamp);
+
+        String locationDesc = buildLocationDescription(state, activity);
+        if (locationDesc != null) {
+            entry.append(" ").append(locationDesc);
+        } else {
+            entry.append(" ").append(activity.getDisplayName());
+            appendRoomContext(entry, state, activity);
+        }
+
+        Object target = context.getVariable("interaction_target");
+        if (target instanceof Student targetStudent) {
+            entry.append(" with ").append(targetStudent.studentName.getFirstName())
+                    .append(" ").append(targetStudent.studentName.getLastName());
+        }
+
+        boolean wasCaught = context.getBoolVariable("was_caught", false);
+        if (wasCaught) {
+            String catchType = context.getVariable("catch_type", "");
+            entry.append(" [CAUGHT");
+            if (!catchType.isEmpty()) {
+                entry.append(": ").append(catchType);
+            }
+            entry.append("]");
+        }
+
+        state.addLogEntry(entry.toString());
+
+        // Clear ephemeral context variables to avoid stale data
+        context.removeVariable("was_caught");
+        context.removeVariable("catch_type");
+        context.removeVariable("interaction_target");
+        context.removeVariable("friendship_gained");
+    }
+
+    /**
+     * Returns a full location-aware description for transition/idle states,
+     * or null when the default activity display name should be used instead.
+     */
+    private String buildLocationDescription(EntityState state, ActivityType activity) {
+        boolean beforeSchool = bellSchedule.isBeforeSchool(time);
+        boolean afterSchool = bellSchedule.isAfterSchool(time);
+        boolean inTransition = bellSchedule.isTransitionTime(time);
+
+        if (beforeSchool) {
+            Room room = state.getCurrentRoom();
+            if (room != null) {
+                return "Standing outside before class (" + room.getRoomName() + ")";
+            }
+            return "Standing outside before class";
+        }
+
+        if (afterSchool) {
+            Room room = state.getCurrentRoom();
+            if (room != null) {
+                return "Leaving school (" + room.getRoomName() + ")";
+            }
+            return "Leaving school";
+        }
+
+        if (inTransition || activity == ActivityType.TRANSITIONING) {
+            if (state.isMoving() && state.getDestinationRoom() != null) {
+                return "Walking to " + state.getDestinationRoom().getRoomName();
+            }
+            Room room = state.getCurrentRoom();
+            if (room != null) {
+                return "Walking in " + room.getRoomName();
+            }
+            return "Walking in hallway";
+        }
+
+        if (activity == ActivityType.IDLE && !state.isInClass()) {
+            Room room = state.getCurrentRoom();
+            if (room != null) {
+                return "Standing around in " + room.getRoomName();
+            }
+            return "Standing around in hallway";
+        }
+
+        return null;
+    }
+
+    /**
+     * Appends a short room tag to the log entry for in-class or named-location
+     * activities (e.g. "Taking Notes in Room 201").
+     */
+    private void appendRoomContext(StringBuilder entry, EntityState state,
+                                   ActivityType activity) {
+        Room room = state.getCurrentRoom();
+        if (room != null) {
+            entry.append(" in ").append(room.getRoomName());
+        }
     }
 
     /**
@@ -442,6 +592,12 @@ public class SimulationEngine {
             }
         }
 
+        // Clear all OccupancyGrids for the new day
+        if (roomOccupancyManager != null) {
+            roomOccupancyManager.clearAllGrids();
+        }
+        currentTransitionIndex = 0;
+
         // Apply daily relationship decay: all social link scores drift toward neutral.
         // Family and best-friend bonds decay slower, incentivizing active maintenance.
         if (socialLinkConnector != null) {
@@ -478,6 +634,109 @@ public class SimulationEngine {
 
         // Set sleep state
         stats.setSleepState(true);
+    }
+
+    // ==================== Transition Movement ====================
+
+    /**
+     * Called once when a transition period begins.
+     * Loads each student's pre-computed path from TraversalStorage and
+     * stores it as a movement queue on their EntityState.
+     */
+    private void initiateTransitionMovement() {
+        if (students == null || traversalStorage == null) {
+            return;
+        }
+        // TODO: determine semester dynamically; defaulting to Fall for now
+        String semester = "Fall";
+
+        for (Student student : students.values()) {
+            EntityState state = student.getEntityState();
+            if (state == null) {
+                continue;
+            }
+
+            List<Room> path = traversalStorage.getPath(
+                    student, currentTransitionIndex, semester);
+
+            if (path.isEmpty()) {
+                continue;
+            }
+
+            // Build a queue of rooms to walk through, skipping the source
+            // (the student is already in the source room).
+            LinkedList<Room> queue = new LinkedList<>();
+            for (int i = 1; i < path.size(); i++) {
+                queue.add(path.get(i));
+            }
+            state.setMovementPath(queue);
+            state.setCurrentActivity(ActivityType.TRANSITIONING);
+            state.setMoving(true);
+            if (!queue.isEmpty()) {
+                state.setDestinationRoom(queue.peekLast());
+            }
+        }
+
+        currentTransitionIndex++;
+    }
+
+    /**
+     * Called each tick during a transition period.
+     * Advances each student one room along their movement path queue,
+     * paced so they arrive before the transition ends.
+     */
+    private void advanceStudentMovement() {
+        if (students == null || roomOccupancyManager == null) {
+            return;
+        }
+
+        for (Student student : students.values()) {
+            EntityState state = student.getEntityState();
+            if (state == null || !state.hasPathRemaining()) {
+                continue;
+            }
+
+            Room nextRoom = state.pollNextPathRoom();
+            if (nextRoom != null) {
+                Room currentRoom = state.getCurrentRoom();
+                roomOccupancyManager.transferStudent(student, currentRoom, nextRoom);
+            }
+        }
+    }
+
+    /**
+     * Called once when a transition period ends.
+     * Ensures every student has arrived at their destination and is placed
+     * on the correct room's OccupancyGrid for the new period.
+     */
+    private void finalizeTransitionArrival(int newPeriod) {
+        if (students == null) {
+            return;
+        }
+        for (Student student : students.values()) {
+            EntityState state = student.getEntityState();
+            if (state == null) {
+                continue;
+            }
+
+            // Clear any remaining path
+            state.setMovementPath(null);
+            state.setMoving(false);
+            state.setDestinationRoom(null);
+
+            // Ensure the student is on the correct room's grid for the new period
+            if (newPeriod > 0 && roomOccupancyManager != null) {
+                Room scheduledRoom = getStudentScheduledRoom(student, newPeriod);
+                if (scheduledRoom != null) {
+                    Room currentRoom = state.getCurrentRoom();
+                    if (currentRoom != scheduledRoom) {
+                        roomOccupancyManager.transferStudent(student, currentRoom, scheduledRoom);
+                    }
+                    state.setExpectedRoom(scheduledRoom);
+                    state.setCurrentActivity(ActivityType.IDLE);
+                }
+            }
+        }
     }
 
     // Simulation control methods

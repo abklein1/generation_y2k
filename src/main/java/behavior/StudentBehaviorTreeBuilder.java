@@ -4,7 +4,9 @@ import behavior.composite.Selector;
 import behavior.composite.Sequence;
 import behavior.composite.RandomSelector;
 import behavior.leaf.student.*;
+import entity.CellPhone;
 import entity.Student;
+import entity.Town;
 import simulation.InteractionManager;
 import utility.GameRandom;
 
@@ -189,11 +191,12 @@ public class StudentBehaviorTreeBuilder {
         Sequence distracted = new Sequence("DistractedBehavior");
         distracted.addChild(new HasFriendNearbyCondition());
         
-        // Random choice between passing note, whispering, and talking
+        // Random choice between passing note, whispering, talking, and texting
         RandomSelector socialChoice = new RandomSelector("SocialChoice");
         socialChoice.addChild(new PassNoteActionNode());
         socialChoice.addChild(new WhisperActionNode());
         socialChoice.addChild(new TalkActionNode());
+        socialChoice.addChild(new TextActionNode());
         
         distracted.addChild(socialChoice);
         return distracted;
@@ -211,6 +214,7 @@ public class StudentBehaviorTreeBuilder {
         RandomSelector socialChoice = new RandomSelector("SocialTypeChoice");
         socialChoice.addChild(new TalkActionNode());
         socialChoice.addChild(new PassNoteActionNode());
+        socialChoice.addChild(new TextActionNode());
         
         social.addChild(socialChoice);
         return social;
@@ -239,8 +243,11 @@ public class StudentBehaviorTreeBuilder {
         nonClassSocial.addChild(new IsNotInClassCondition());
         nonClassSocial.addChild(new HasFriendNearbyCondition());
         
-        // Talk is the primary social action outside of class
-        nonClassSocial.addChild(new TalkActionNode());
+        // Talk or text outside of class
+        RandomSelector outOfClassChoice = new RandomSelector("OutOfClassSocial");
+        outOfClassChoice.addChild(new TalkActionNode());
+        outOfClassChoice.addChild(new TextActionNode());
+        nonClassSocial.addChild(outOfClassChoice);
         
         return nonClassSocial;
     }
@@ -350,7 +357,6 @@ public class StudentBehaviorTreeBuilder {
         private static final int FRIENDSHIP_GAIN = 3;
         private static final int BOREDOM_DECREASE_IN_CLASS = 5;
         private static final int BOREDOM_DECREASE_OUT_OF_CLASS = 8;
-        private static final int FRIEND_PREFERENCE_CHANCE = 80;
         
         public TalkActionNode() {
             super("Talk", 1);
@@ -381,8 +387,8 @@ public class StudentBehaviorTreeBuilder {
             entity.EntityState state = student.getEntityState();
             boolean inClass = state.isInClass();
             
-            // Select a target (prefer friends)
-            Student target = selectTalkTarget(student, state);
+            // Select a target using tiered social preference
+            Student target = TargetSelector.selectTarget(student, getCandidates(student, state));
             if (target == null) {
                 return BehaviorStatus.FAILURE;
             }
@@ -449,52 +455,24 @@ public class StudentBehaviorTreeBuilder {
             return BehaviorStatus.SUCCESS;
         }
         
-        /**
-         * Selects a talk target. Prefers friends, falls back to any classmate in the room.
-         */
-        private Student selectTalkTarget(Student student, entity.EntityState state) {
-            ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
+        private java.util.List<Student> getCandidates(Student student, entity.EntityState state) {
+            java.util.List<Student> candidates = new ArrayList<>();
             entity.Rooms.Room room = state.getCurrentRoom();
-            
-            // Build list of other students in the same room
-            java.util.List<Student> classmates = new ArrayList<>();
             if (room != null && room.getStudents() != null) {
                 for (Student s : room.getStudents()) {
                     if (s != null && s != student) {
-                        classmates.add(s);
+                        candidates.add(s);
                     }
                 }
             }
-            
-            // Find friends in this room
-            java.util.List<Student> friendsInRoom = new ArrayList<>();
-            for (Student friend : friends) {
-                if (classmates.contains(friend)) {
-                    friendsInRoom.add(friend);
+            if (candidates.isEmpty()) {
+                for (Student friend : student.studentStatistics.getFriendsInSchool()) {
+                    if (friend != student) {
+                        candidates.add(friend);
+                    }
                 }
             }
-            
-            // Prefer friends (80% chance)
-            if (!friendsInRoom.isEmpty() && GameRandom.nextInt(100) < FRIEND_PREFERENCE_CHANCE) {
-                return friendsInRoom.get(GameRandom.nextInt(friendsInRoom.size()));
-            }
-            
-            // Fall back to friends not confirmed in room (e.g., hallway encounter)
-            if (!friends.isEmpty() && classmates.isEmpty()) {
-                return friends.get(GameRandom.nextInt(friends.size()));
-            }
-            
-            // Fall back to any classmate
-            if (!classmates.isEmpty()) {
-                return classmates.get(GameRandom.nextInt(classmates.size()));
-            }
-            
-            // Last resort: any friend
-            if (!friends.isEmpty()) {
-                return friends.get(GameRandom.nextInt(friends.size()));
-            }
-            
-            return null;
+            return candidates;
         }
     }
     
@@ -550,7 +528,7 @@ public class StudentBehaviorTreeBuilder {
                 return BehaviorStatus.FAILURE;
             }
             
-            Student target = selectWhisperTarget(student, adjacent);
+            Student target = TargetSelector.selectTarget(student, adjacent);
             if (target == null) {
                 return BehaviorStatus.FAILURE;
             }
@@ -598,28 +576,147 @@ public class StudentBehaviorTreeBuilder {
             return room.getAdjacentStudentsFor(student, period);
         }
         
-        /**
-         * Selects a whisper target from adjacent students, preferring friends.
-         * 80% chance to pick an adjacent friend if one exists.
-         */
-        private Student selectWhisperTarget(Student student, java.util.List<Student> adjacent) {
-            ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
+    }
+    
+    /**
+     * Text action node: sends a text message to another student via cell phone.
+     * Lower benefit than talking but generally lower catch chance.
+     * Catch chance depends on phone size (smaller = easier to hide) and whether
+     * the phone has a physical keyboard (faster texting = less time exposed).
+     * Requires the student to own a phone with SMS capability.
+     */
+    private static class TextActionNode extends behavior.leaf.ActionNode {
+        
+        public TextActionNode() {
+            super("Text", 1);
+        }
+        
+        @Override
+        public boolean canExecute(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null) {
+                return false;
+            }
+            Town town = context.getTown();
+            if (town == null || !town.hasPhone(student)) {
+                return false;
+            }
+            CellPhone phone = town.getStudentPhone(student);
+            return phone != null && phone.hasSms();
+        }
+        
+        @Override
+        public BehaviorStatus execute(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null) {
+                return BehaviorStatus.FAILURE;
+            }
             
-            // Find adjacent friends
-            java.util.List<Student> adjacentFriends = new ArrayList<>();
-            for (Student neighbor : adjacent) {
-                if (friends.contains(neighbor)) {
-                    adjacentFriends.add(neighbor);
+            Town town = context.getTown();
+            if (town == null || !town.hasPhone(student)) {
+                return BehaviorStatus.FAILURE;
+            }
+            CellPhone phone = town.getStudentPhone(student);
+            if (phone == null || !phone.hasSms()) {
+                return BehaviorStatus.FAILURE;
+            }
+            
+            entity.EntityState state = student.getEntityState();
+            boolean inClass = state.isInClass();
+            
+            // Select a target using the tiered preference system
+            Student target = TargetSelector.selectTarget(student, getClassmates(student, state));
+            if (target == null) {
+                return BehaviorStatus.FAILURE;
+            }
+            
+            InteractionManager manager = context.getInteractionManager();
+            if (manager != null) {
+                manager.registerInteraction(student, target, entity.ActivityType.TEXTING);
+            }
+            
+            state.setCurrentActivity(entity.ActivityType.TEXTING);
+            context.setVariable("interaction_target", target);
+            
+            if (inClass) {
+                student.studentStatistics.drainSecondaryStat("empathy",
+                        constants.SimConstants.STAT_DRAIN_TEXT_EMPATHY,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY);
+                student.studentStatistics.drainSecondaryStat("responsibility",
+                        constants.SimConstants.STAT_DRAIN_TEXT_RESPONSIBILITY,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
+                
+                int catchChance = computeCatchChance(phone, student);
+                
+                if (GameRandom.nextDouble(100) < catchChance) {
+                    context.setVariable("was_caught", true);
+                    context.setVariable("catch_type", "texting");
+                    student.studentStatistics.drainSecondaryStat("resilience",
+                            constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
+                            constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
+                    student.studentStatistics.drainSecondaryStat("adaptability",
+                            constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
+                            constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
+                    return BehaviorStatus.FAILURE;
+                }
+                
+                int boredom = student.studentStatistics.getBoredom();
+                student.studentStatistics.setBoredom(
+                        Math.max(0, boredom - constants.SimConstants.TEXT_BOREDOM_DECREASE_IN_CLASS));
+                student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                        constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_TEXTING);
+            } else {
+                int boredom = student.studentStatistics.getBoredom();
+                student.studentStatistics.setBoredom(
+                        Math.max(0, boredom - constants.SimConstants.TEXT_BOREDOM_DECREASE_OUT_OF_CLASS));
+                student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
+                        constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_TEXTING);
+                student.studentStatistics.drainSecondaryStat("empathy", 1,
+                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_EMPATHY * 0.3);
+            }
+            
+            context.setVariable("friendship_gained", 2);
+            return BehaviorStatus.SUCCESS;
+        }
+        
+        private int computeCatchChance(CellPhone phone, Student student) {
+            int catchChance = constants.SimConstants.TEXT_IN_CLASS_BASE_CATCH_CHANCE;
+            
+            String size = phone.getSize();
+            if (size != null) {
+                switch (size.toLowerCase()) {
+                    case "small" -> catchChance += constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_SMALL;
+                    case "large" -> catchChance += constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_LARGE;
+                    default -> catchChance += constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_MEDIUM;
                 }
             }
             
-            // Prefer adjacent friends (80% chance)
-            if (!adjacentFriends.isEmpty() && GameRandom.nextInt(100) < 80) {
-                return adjacentFriends.get(GameRandom.nextInt(adjacentFriends.size()));
+            if (phone.hasKeyboard()) {
+                catchChance += constants.SimConstants.TEXT_KEYBOARD_SPEED_MODIFIER;
             }
             
-            // Fall back to any adjacent student
-            return adjacent.get(GameRandom.nextInt(adjacent.size()));
+            catchChance -= student.studentStatistics.getPerception() / 20;
+            return Math.max(5, catchChance);
+        }
+        
+        private java.util.List<Student> getClassmates(Student student, entity.EntityState state) {
+            java.util.List<Student> classmates = new ArrayList<>();
+            entity.Rooms.Room room = state.getCurrentRoom();
+            if (room != null && room.getStudents() != null) {
+                for (Student s : room.getStudents()) {
+                    if (s != null && s != student) {
+                        classmates.add(s);
+                    }
+                }
+            }
+            if (classmates.isEmpty()) {
+                for (Student friend : student.studentStatistics.getFriendsInSchool()) {
+                    if (friend != student) {
+                        classmates.add(friend);
+                    }
+                }
+            }
+            return classmates;
         }
     }
     

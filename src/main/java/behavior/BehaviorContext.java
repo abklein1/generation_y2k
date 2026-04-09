@@ -5,6 +5,7 @@ import entity.Staff;
 import entity.StandardSchool;
 import entity.Student;
 import entity.Time;
+import entity.Town;
 import simulation.InteractionManager;
 
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class BehaviorContext {
     private Staff staff;
     private Time time;
     private StandardSchool school;
+    private Town town;
     private Room currentRoom;
     private final HashMap<String, Object> variables;
     private boolean isPlayer;
@@ -94,6 +96,15 @@ public class BehaviorContext {
     
     public void setSchool(StandardSchool school) {
         this.school = school;
+    }
+    
+    // Town getters/setters
+    public Town getTown() {
+        return town;
+    }
+    
+    public void setTown(Town town) {
+        this.town = town;
     }
     
     // Current room getters/setters

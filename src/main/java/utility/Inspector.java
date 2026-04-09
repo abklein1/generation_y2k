@@ -620,6 +620,31 @@ public class Inspector {
     }
 
     /**
+     * Updates a JTextArea with the student's recent action log.
+     * Auto-scrolls to the bottom so the latest actions are visible.
+     *
+     * @param student the student whose log to display
+     * @param area    the JTextArea to update
+     */
+    public static void updateActivityArea(Student student, JTextArea area) {
+        if (student == null || student.getEntityState() == null) {
+            area.setText("No activity data available.");
+            return;
+        }
+        java.util.List<String> log = student.getEntityState().getActionLog();
+        if (log.isEmpty()) {
+            area.setText("No activity recorded yet.");
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String entry : log) {
+            sb.append(entry).append("\n");
+        }
+        area.setText(sb.toString());
+        area.setCaretPosition(area.getDocument().getLength());
+    }
+
+    /**
      * Opens a full student inspection dialog with tabbed panes.
      * Tab 1 (Description): Physical appearance, grade, birthday, family, history.
      * Tab 2 (Stats): Base stats, secondary stats, and status effects.

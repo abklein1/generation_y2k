@@ -68,6 +68,12 @@ public enum ActivityType {
     TALKING("Talking", false, false),
     
     /**
+     * Entity is texting another student on their cell phone.
+     * Can happen in class (risky, but quieter than talking) or outside class.
+     */
+    TEXTING("Texting", true, false),
+    
+    /**
      * Entity is studying in the library or study hall.
      */
     STUDYING("Studying", true, false),

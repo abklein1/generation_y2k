@@ -3,6 +3,11 @@ package entity;
 import entity.Rooms.Room;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * Tracks the current state of an entity (student or staff) in the simulation.
@@ -21,6 +26,11 @@ public class EntityState implements Serializable {
     private boolean needsBathroom;      // Urgency flag
     private boolean hasPermissionToLeave; // If they asked and got permission
     private String lunchPeriod;         // "A" or "B"
+    private int[] floorPosition;        // [row, col] on room's OccupancyGrid
+    private transient Queue<Room> movementPath; // Room-by-room path during transitions
+    
+    private static final int MAX_ACTION_LOG_SIZE = 50;
+    private final transient LinkedList<String> actionLog = new LinkedList<>();
     
     /**
      * Creates a new entity state with default values.
@@ -193,6 +203,46 @@ public class EntityState implements Serializable {
         this.lunchPeriod = lunchPeriod;
     }
     
+    // Floor position (on OccupancyGrid)
+    
+    public int[] getFloorPosition() {
+        return floorPosition;
+    }
+    
+    public void setFloorPosition(int[] floorPosition) {
+        this.floorPosition = floorPosition;
+    }
+    
+    public void setFloorPosition(int row, int col) {
+        this.floorPosition = new int[]{row, col};
+    }
+    
+    // Movement path (room-by-room queue for transitions)
+    
+    public Queue<Room> getMovementPath() {
+        return movementPath;
+    }
+    
+    public void setMovementPath(Queue<Room> path) {
+        this.movementPath = path;
+    }
+    
+    /**
+     * Polls the next room from the movement path queue.
+     *
+     * @return the next room, or null if the path is empty or not set
+     */
+    public Room pollNextPathRoom() {
+        if (movementPath != null && !movementPath.isEmpty()) {
+            return movementPath.poll();
+        }
+        return null;
+    }
+    
+    public boolean hasPathRemaining() {
+        return movementPath != null && !movementPath.isEmpty();
+    }
+    
     // Utility methods
     
     /**
@@ -244,6 +294,33 @@ public class EntityState implements Serializable {
         this.movementTicksRemaining = 0;
         this.needsBathroom = false;
         this.hasPermissionToLeave = false;
+        this.floorPosition = null;
+        this.movementPath = null;
+    }
+    
+    /**
+     * Appends a timestamped entry to this entity's action log.
+     * The log is capped at {@value #MAX_ACTION_LOG_SIZE} entries (oldest are discarded).
+     *
+     * @param entry the human-readable log line
+     */
+    public void addLogEntry(String entry) {
+        if (entry == null) {
+            return;
+        }
+        actionLog.addLast(entry);
+        while (actionLog.size() > MAX_ACTION_LOG_SIZE) {
+            actionLog.removeFirst();
+        }
+    }
+    
+    /**
+     * Returns an unmodifiable snapshot of the action log.
+     *
+     * @return the action log entries, oldest first
+     */
+    public List<String> getActionLog() {
+        return Collections.unmodifiableList(new ArrayList<>(actionLog));
     }
     
     @Override

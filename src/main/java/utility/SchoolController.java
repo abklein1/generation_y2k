@@ -51,6 +51,7 @@ public class SchoolController {
     // Simulation components
     private SimulationEngine simulationEngine;
     private EntityStateManager entityStateManager;
+    private TraversalStorage traversalStorage;
     private Timer simulationTimer;
     private boolean simulationRunning = false;
 
@@ -207,11 +208,28 @@ public class SchoolController {
             simulationEngine.setSocialLinkConnector(socialLinkConnector);
         }
 
+        // Provide town reference for phone lookups in behavior tree actions
+        if (town != null) {
+            simulationEngine.setTown(town);
+        }
+
         // Create entity state manager and initialize all entities
         entityStateManager = new EntityStateManager(studentHashMap, staffHashMap, standardSchool, time);
         entityStateManager.initializeAll();
         entityStateManager.placeStudentsAtStartOfDay();
         entityStateManager.placeStaffAtStartOfDay();
+
+        // Initialize room OccupancyGrids and place students on them
+        simulation.RoomOccupancyManager occupancyManager =
+                new simulation.RoomOccupancyManager(standardSchool);
+        occupancyManager.initializeAllGrids();
+        occupancyManager.placeStudentsForStartOfDay(studentHashMap);
+        simulationEngine.setRoomOccupancyManager(occupancyManager);
+
+        // Provide pre-computed traversal paths for room-to-room movement
+        if (traversalStorage != null) {
+            simulationEngine.setTraversalStorage(traversalStorage);
+        }
 
         // Add simulation listener to update UI
         simulationEngine.addListener(new SimulationEngine.SimulationListener() {
@@ -517,6 +535,12 @@ public class SchoolController {
                 phoneArea.setWrapStyleWord(true);
                 phoneArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
 
+                JTextArea activityArea = new JTextArea();
+                activityArea.setEditable(false);
+                activityArea.setLineWrap(true);
+                activityArea.setWrapStyleWord(true);
+                activityArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+
                 JTabbedPane studentTabs = new JTabbedPane();
                 studentTabs.addTab("Description", new JScrollPane(descArea));
                 studentTabs.addTab("Stats", new JScrollPane(statsArea));
@@ -525,6 +549,8 @@ public class SchoolController {
                         SwingConstants.CENTER), java.awt.BorderLayout.CENTER);
                 studentTabs.addTab("Schedule", emptySchedule);
                 studentTabs.addTab("Cell Phone", new JScrollPane(phoneArea));
+                JScrollPane activityScroll = new JScrollPane(activityArea);
+                studentTabs.addTab("Activity", activityScroll);
 
                 final Student[] currentlySelectedStudent = { null };
 
@@ -544,11 +570,27 @@ public class SchoolController {
                             Inspector.updateCellPhoneArea(studentPhone,
                                     selectedStudent.toString(), phoneArea);
 
+                            Inspector.updateActivityArea(selectedStudent, activityArea);
+
                             showSocialLinksButton.setEnabled(true);
                             showSocialLinksButton.setToolTipText("View social links for " +
                                     selectedStudent.studentName.getFirstName() + " " +
                                     selectedStudent.studentName.getLastName());
                         }
+                    }
+                });
+
+                // Poll the activity log every 500ms while the window is visible
+                Timer activityPollTimer = new Timer(500, e -> {
+                    if (currentlySelectedStudent[0] != null && simulationRunning) {
+                        Inspector.updateActivityArea(currentlySelectedStudent[0], activityArea);
+                    }
+                });
+                activityPollTimer.start();
+                inspectionFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent e) {
+                        activityPollTimer.stop();
                     }
                 });
 
@@ -1505,7 +1547,7 @@ public class SchoolController {
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
-            new TraversalStorage(studentHashMap, view, roomConnector);
+            traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
 
             // Log population summary
             publish(SchoolAssignmentService.getPopulationSummary(town, standardSchool));
@@ -1601,7 +1643,7 @@ public class SchoolController {
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
-            new TraversalStorage(studentHashMap, view, roomConnector);
+            traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
         }
 
         @Override

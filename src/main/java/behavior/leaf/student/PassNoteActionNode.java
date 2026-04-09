@@ -2,6 +2,7 @@ package behavior.leaf.student;
 
 import behavior.BehaviorContext;
 import behavior.BehaviorStatus;
+import behavior.TargetSelector;
 import behavior.leaf.ActionNode;
 import entity.ActivityType;
 import entity.EntityState;
@@ -30,8 +31,6 @@ public class PassNoteActionNode extends ActionNode {
     private static final int FRIENDSHIP_GAIN = 5;
     private static final int BOREDOM_DECREASE = 5;
     private static final int BASE_CATCH_CHANCE = 25;
-    /** Probability (out of 100) that the student picks a friend over a random classmate. */
-    private static final int FRIEND_PREFERENCE_CHANCE = 80;
     
     public PassNoteActionNode() {
         super("PassNote", 1);
@@ -69,8 +68,8 @@ public class PassNoteActionNode extends ActionNode {
             return BehaviorStatus.FAILURE;
         }
         
-        // Select a target: prefer friends, fall back to any classmate
-        Student target = selectTarget(student, state);
+        // Select a target using tiered social preference
+        Student target = TargetSelector.selectTarget(student, getCandidates(student, state));
         if (target == null) {
             return BehaviorStatus.FAILURE;
         }
@@ -126,56 +125,23 @@ public class PassNoteActionNode extends ActionNode {
         return BehaviorStatus.SUCCESS;
     }
     
-    /**
-     * Selects a target student for passing the note.
-     * Strongly prefers friends, but can fall back to any classmate in the room.
-     *
-     * @param student the initiating student
-     * @param state   the student's entity state
-     * @return the selected target, or null if no valid target exists
-     */
-    private Student selectTarget(Student student, EntityState state) {
-        ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
+    private List<Student> getCandidates(Student student, EntityState state) {
+        List<Student> candidates = new ArrayList<>();
         Room room = state.getCurrentRoom();
-        
-        // Build list of classmates in the same room (excluding self)
-        List<Student> classmates = new ArrayList<>();
         if (room != null && room.getStudents() != null) {
             for (Student s : room.getStudents()) {
                 if (s != null && s != student) {
-                    classmates.add(s);
+                    candidates.add(s);
                 }
             }
         }
-        
-        // Find friends who are also in this room (best targets)
-        List<Student> friendsInRoom = new ArrayList<>();
-        for (Student friend : friends) {
-            if (classmates.contains(friend)) {
-                friendsInRoom.add(friend);
+        if (candidates.isEmpty()) {
+            for (Student friend : student.studentStatistics.getFriendsInSchool()) {
+                if (friend != student) {
+                    candidates.add(friend);
+                }
             }
         }
-        
-        // Prefer friends with high probability
-        if (!friendsInRoom.isEmpty() && GameRandom.nextInt(100) < FRIEND_PREFERENCE_CHANCE) {
-            return friendsInRoom.get(GameRandom.nextInt(friendsInRoom.size()));
-        }
-        
-        // Fall back: if there are any friends at all (even not confirmed in room), pick one
-        if (!friends.isEmpty() && classmates.isEmpty()) {
-            return friends.get(GameRandom.nextInt(friends.size()));
-        }
-        
-        // Fall back to any classmate in the room
-        if (!classmates.isEmpty()) {
-            return classmates.get(GameRandom.nextInt(classmates.size()));
-        }
-        
-        // Last resort: pick from friends list
-        if (!friends.isEmpty()) {
-            return friends.get(GameRandom.nextInt(friends.size()));
-        }
-        
-        return null;
+        return candidates;
     }
 }

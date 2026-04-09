@@ -211,6 +211,7 @@ public class InteractionManager {
             case TALKING -> SOCIAL_LINK_GAIN_TALKING;
             case WHISPERING -> SOCIAL_LINK_GAIN_WHISPERING;
             case PASSING_NOTE -> SOCIAL_LINK_GAIN_PASSING_NOTE;
+            case TEXTING -> SOCIAL_LINK_GAIN_TEXTING;
             default -> SOCIAL_LINK_GAIN_SOCIALIZING;
         };
     }

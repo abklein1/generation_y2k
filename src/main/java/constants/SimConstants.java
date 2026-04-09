@@ -582,6 +582,19 @@ public final class SimConstants {
     // Talk in-class catch chance: talking is louder and more obvious than whispering
     public static final int TALK_IN_CLASS_BASE_CATCH_CHANCE = 40;
 
+    // Texting in-class catch chance and phone hardware modifiers
+    public static final int TEXT_IN_CLASS_BASE_CATCH_CHANCE = 20;
+    public static final int TEXT_PHONE_SIZE_MODIFIER_SMALL = -5;
+    public static final int TEXT_PHONE_SIZE_MODIFIER_MEDIUM = 0;
+    public static final int TEXT_PHONE_SIZE_MODIFIER_LARGE = 8;
+    public static final int TEXT_KEYBOARD_SPEED_MODIFIER = -3;
+    public static final int STAT_DRAIN_TEXT_EMPATHY = 1;
+    public static final int STAT_DRAIN_TEXT_RESPONSIBILITY = 1;
+    public static final double SOCIAL_LINK_GAIN_TEXTING = 2.0;
+    public static final double ALLOSTATIC_RELAXATION_RECOVERY_TEXTING = 1.0;
+    public static final int TEXT_BOREDOM_DECREASE_IN_CLASS = 3;
+    public static final int TEXT_BOREDOM_DECREASE_OUT_OF_CLASS = 5;
+
     // Secondary stat sleep replenishment: percentage of max to restore
     public static final double SECONDARY_STAT_SLEEP_REPLENISH_RATE = 1.0; // 100% restored on sleep
 

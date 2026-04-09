@@ -1,5 +1,6 @@
 package entity.Rooms;
 
+import entity.OccupancyGrid;
 import entity.Staff;
 import entity.Student;
 import utility.GameLogger;
@@ -32,6 +33,8 @@ public abstract class Room implements Serializable {
     protected boolean restrictF;
     protected String classRoomType;
     
+    protected transient OccupancyGrid floorGrid;
+
     // Room divider fields - allows a room to be split into two teaching spaces
     /** Whether this room has a divider that can split it into two spaces */
     protected boolean hasDivider = false;
@@ -184,12 +187,64 @@ public abstract class Room implements Serializable {
         this.studentCap = studentCap;
     }
 
+    /**
+     * @deprecated Use {@link OccupancyGrid#place} via {@link #getFloorGrid()} instead.
+     */
+    @Deprecated
     public void addStudent(Student student) {
-        students.add(student);
+        if (floorGrid != null) {
+            int[] cell = floorGrid.findEmpty();
+            if (cell != null) {
+                floorGrid.place(student, cell[0], cell[1]);
+            }
+        } else {
+            students.add(student);
+        }
     }
 
+    /**
+     * Returns the students physically present in this room.
+     * Delegates to the OccupancyGrid when available, providing a live roster.
+     */
     public List<Student> getStudents() {
+        if (floorGrid != null) {
+            return floorGrid.getOccupants();
+        }
         return this.students;
+    }
+
+    public OccupancyGrid getFloorGrid() {
+        return floorGrid;
+    }
+
+    /**
+     * Initializes the floor grid for this room. Grid sizing depends on the
+     * room type:
+     * <ul>
+     *   <li>Classrooms / instructional: sized from studentCap</li>
+     *   <li>Hallways (studentCap=0): sized from numOfConnections</li>
+     *   <li>Other rooms: scaled from studentCap with headroom</li>
+     * </ul>
+     */
+    public void initializeFloorGrid() {
+        int gridRows;
+        int gridCols;
+
+        if (this instanceof Hallway || this instanceof Courtyard) {
+            int base = 10 + 5 * Math.max(1, numOfConnections);
+            gridRows = 3;
+            gridCols = Math.max(6, base);
+        } else if (studentCap > 0) {
+            int[] factors = utility.StudentSeatingAssigner.selectFactors(
+                    utility.StudentSeatingAssigner.findTotalFactors(
+                            Math.max(4, (int) (studentCap * 1.5))));
+            gridRows = factors[0];
+            gridCols = factors[1];
+        } else {
+            gridRows = 4;
+            gridCols = 6;
+        }
+        this.floorGrid = new OccupancyGrid(gridRows, gridCols);
     }
 
     public void setPeriodSeatingArrangement(int period, Student[][] seatArrangement) {
