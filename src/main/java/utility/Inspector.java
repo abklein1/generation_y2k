@@ -87,7 +87,20 @@ public class Inspector {
         sb.append(skinColor).append(" colored skin and ");
         sb.append(hairLength.toLowerCase()).append(", ").append(hairType.toLowerCase()).append(", ")
                 .append(hairColor.toLowerCase());
-        sb.append(" hair and ").append(eyeColor.toLowerCase()).append(" eyes. ");
+        sb.append(" hair");
+        String hairDye = student.studentStatistics.getHairDye();
+        String hairHighlights = student.studentStatistics.getHairHighlights();
+        String hairStyle = student.studentStatistics.getHairStyle();
+        if (hairDye != null) {
+            sb.append(" dyed ").append(hairDye.toLowerCase());
+        }
+        if (hairHighlights != null) {
+            sb.append(" with ").append(hairHighlights.toLowerCase()).append(" highlights");
+        }
+        if (hairStyle != null) {
+            sb.append(" in a ").append(hairStyle.toLowerCase());
+        }
+        sb.append(" and ").append(eyeColor.toLowerCase()).append(" eyes. ");
         sb.append("They stand ").append(df.format(height)).append(" inches tall.");
         if (hasBraces) {
             sb.append(" They have braces with ");

@@ -101,6 +101,11 @@ public class StudentStatistics implements PStatistics {
     private String subgroup;
     private String secondaryClique;
 
+    // Clique-driven hair cosmetics
+    private String hairDye;
+    private String hairHighlights;
+    private String hairStyle;
+
     public StudentStatistics() {
         this.height = 0;
         this.eyeColor = null;
@@ -168,6 +173,9 @@ public class StudentStatistics implements PStatistics {
         this.mainClique = null;
         this.subgroup = null;
         this.secondaryClique = null;
+        this.hairDye = null;
+        this.hairHighlights = null;
+        this.hairStyle = null;
     }
 
     @Override
@@ -591,6 +599,30 @@ public class StudentStatistics implements PStatistics {
 
     public void setHairType(String hairType) {
         this.hairType = hairType;
+    }
+
+    public String getHairDye() {
+        return this.hairDye;
+    }
+
+    public void setHairDye(String hairDye) {
+        this.hairDye = hairDye;
+    }
+
+    public String getHairHighlights() {
+        return this.hairHighlights;
+    }
+
+    public void setHairHighlights(String hairHighlights) {
+        this.hairHighlights = hairHighlights;
+    }
+
+    public String getHairStyle() {
+        return this.hairStyle;
+    }
+
+    public void setHairStyle(String hairStyle) {
+        this.hairStyle = hairStyle;
     }
 
     public String getRace() {

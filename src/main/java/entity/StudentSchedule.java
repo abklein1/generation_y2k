@@ -63,6 +63,9 @@ public class StudentSchedule {
     
     /**
      * Gets a block by block number (1-based period number).
+     * When multiple blocks share the same number (Fall and Spring),
+     * this returns the first match — prefer
+     * {@link #getByBlockNumber(int, String)} to avoid ambiguity.
      *
      * @param blockNumber the block/period number (1-4)
      * @return the StudentBlock for that period, or null if not found
@@ -70,6 +73,23 @@ public class StudentSchedule {
     public StudentBlock getByBlockNumber(int blockNumber) {
         for (StudentBlock block : classSchedule) {
             if (block.getBlockNumber() == blockNumber) {
+                return block;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets a block by block number and semester.
+     *
+     * @param blockNumber the block/period number (1-4)
+     * @param semester    "Fall" or "Spring"
+     * @return the matching StudentBlock, or null if not found
+     */
+    public StudentBlock getByBlockNumber(int blockNumber, String semester) {
+        for (StudentBlock block : classSchedule) {
+            if (block.getBlockNumber() == blockNumber
+                    && block.getSemester().equals(semester)) {
                 return block;
             }
         }

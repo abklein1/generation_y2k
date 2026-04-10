@@ -49,10 +49,11 @@ public class RoomOccupancyManager {
     }
 
     /**
-     * Places all students on their scheduled room's grid for the given period.
-     * Removes them from whatever room they were in previously.
+     * Places all students on their scheduled room's grid for the given period
+     * and semester. Removes them from whatever room they were in previously.
      */
-    public void placeStudentsForPeriod(HashMap<Integer, Student> students, int period) {
+    public void placeStudentsForPeriod(HashMap<Integer, Student> students,
+                                       int period, String semester) {
         if (students == null || period <= 0) {
             return;
         }
@@ -62,7 +63,7 @@ public class RoomOccupancyManager {
                 continue;
             }
 
-            Room scheduled = getStudentRoomForPeriod(student, period);
+            Room scheduled = getStudentRoomForPeriod(student, period, semester);
             if (scheduled == null) {
                 continue;
             }
@@ -158,16 +159,13 @@ public class RoomOccupancyManager {
         }
     }
 
-    private Room getStudentRoomForPeriod(Student student, int period) {
+    private Room getStudentRoomForPeriod(Student student, int period,
+                                        String semester) {
         StudentSchedule schedule = student.studentStatistics.getStudentSchedule();
         if (schedule == null) {
             return null;
         }
-        int periodIndex = period - 1;
-        if (periodIndex < 0 || periodIndex >= schedule.size()) {
-            return null;
-        }
-        StudentBlock block = schedule.get(periodIndex);
+        StudentBlock block = schedule.getByBlockNumber(period, semester);
         return block != null ? block.getRoom() : null;
     }
 

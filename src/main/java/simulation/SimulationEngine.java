@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import utility.GameRandom;
+
 /**
  * Central controller for the game simulation loop.
  * Manages time progression, entity updates, and behavior tree execution.
@@ -311,36 +313,67 @@ public class SimulationEngine {
             Room scheduledRoom = getStudentScheduledRoom(student, period);
             if (scheduledRoom != null) {
                 state.setExpectedRoom(scheduledRoom);
+            } else {
+                Room freeRoom = getFreePeriodRoom();
+                if (freeRoom != null) {
+                    state.setExpectedRoom(freeRoom);
+                }
             }
         }
     }
 
     /**
-     * Gets the room a student should be in for a given period.
+     * Gets the room a student should be in for a given period in the
+     * current semester.
      *
      * @param student the student
      * @param period  the period number (1-4)
      * @return the scheduled room, or null if not found
      */
     private Room getStudentScheduledRoom(Student student, int period) {
-        // Access student's schedule
         StudentSchedule schedule = student.studentStatistics.getStudentSchedule();
         if (schedule == null) {
             return null;
         }
 
-        // Period is 1-based, schedule is likely 0-based
-        int periodIndex = period - 1;
-        if (periodIndex < 0 || periodIndex >= schedule.size()) {
-            return null;
-        }
-
-        StudentBlock block = schedule.get(periodIndex);
+        String semester = time.getCurrentSemester();
+        StudentBlock block = schedule.getByBlockNumber(period, semester);
         if (block != null) {
             return block.getRoom();
         }
 
         return null;
+    }
+
+    /**
+     * Returns a common-area room for a student who has no class scheduled
+     * during the current period.  Picks randomly from libraries, courtyards,
+     * lunchrooms, and hallways (in that preference order, falling through
+     * when a category is empty).
+     *
+     * @return a common-area Room, or null if the school has none
+     */
+    private Room getFreePeriodRoom() {
+        if (school == null) {
+            return null;
+        }
+
+        List<Room> candidates = new ArrayList<>();
+        addIfPresent(candidates, school.getLibraries());
+        addIfPresent(candidates, school.getCourtyards());
+        addIfPresent(candidates, school.getLunchrooms());
+        addIfPresent(candidates, school.getHallways());
+
+        if (candidates.isEmpty()) {
+            return null;
+        }
+        return candidates.get(GameRandom.nextInt(candidates.size()));
+    }
+
+    private static void addIfPresent(List<Room> list, Room[] rooms) {
+        if (rooms != null) {
+            java.util.Collections.addAll(list, rooms);
+        }
     }
 
     /**
@@ -738,14 +771,17 @@ public class SimulationEngine {
     /**
      * Called once when a transition period begins.
      * Loads each student's pre-computed path from TraversalStorage and
-     * stores it as a movement queue on their EntityState.
+     * stores it as a movement queue on their EntityState.  Students whose
+     * next period is a free period (no precomputed path) are still marked
+     * as transitioning so they vacate their current classroom;
+     * {@link #finalizeTransitionArrival} will place them in a common area.
      */
     private void initiateTransitionMovement() {
         if (students == null || traversalStorage == null) {
             return;
         }
-        // TODO: determine semester dynamically; defaulting to Fall for now
-        String semester = "Fall";
+        String semester = time.getCurrentSemester();
+        int nextPeriod = currentTransitionIndex + 2;
 
         for (Student student : students.values()) {
             EntityState state = student.getEntityState();
@@ -756,18 +792,24 @@ public class SimulationEngine {
             List<Room> path = traversalStorage.getPath(
                     student, currentTransitionIndex, semester);
 
+            state.setCurrentActivity(ActivityType.TRANSITIONING);
+
             if (path.isEmpty()) {
+                Room dest = getStudentScheduledRoom(student, nextPeriod);
+                if (dest == null) {
+                    dest = getFreePeriodRoom();
+                }
+                state.setMovementPath(null);
+                state.setMoving(dest != null);
+                state.setDestinationRoom(dest);
                 continue;
             }
 
-            // Build a queue of rooms to walk through, skipping the source
-            // (the student is already in the source room).
             LinkedList<Room> queue = new LinkedList<>();
             for (int i = 1; i < path.size(); i++) {
                 queue.add(path.get(i));
             }
             state.setMovementPath(queue);
-            state.setCurrentActivity(ActivityType.TRANSITIONING);
             state.setMoving(true);
             if (!queue.isEmpty()) {
                 state.setDestinationRoom(queue.peekLast());
@@ -804,7 +846,8 @@ public class SimulationEngine {
     /**
      * Called once when a transition period ends.
      * Ensures every student has arrived at their destination and is placed
-     * on the correct room's OccupancyGrid for the new period.
+     * on the correct room's OccupancyGrid for the new period.  Students
+     * with no class scheduled are sent to a free-period common area.
      */
     private void finalizeTransitionArrival(int newPeriod) {
         if (students == null) {
@@ -821,18 +864,24 @@ public class SimulationEngine {
             state.setMoving(false);
             state.setDestinationRoom(null);
 
-            // Ensure the student is on the correct room's grid for the new period
-            if (newPeriod > 0 && roomOccupancyManager != null) {
-                Room scheduledRoom = getStudentScheduledRoom(student, newPeriod);
-                if (scheduledRoom != null) {
-                    Room currentRoom = state.getCurrentRoom();
-                    if (currentRoom != scheduledRoom) {
-                        roomOccupancyManager.transferStudent(student, currentRoom, scheduledRoom);
-                    }
-                    state.setExpectedRoom(scheduledRoom);
-                    state.setCurrentActivity(ActivityType.IDLE);
-                }
+            if (newPeriod <= 0 || roomOccupancyManager == null) {
+                continue;
             }
+
+            Room targetRoom = getStudentScheduledRoom(student, newPeriod);
+            if (targetRoom == null) {
+                targetRoom = getFreePeriodRoom();
+            }
+            if (targetRoom == null) {
+                continue;
+            }
+
+            Room currentRoom = state.getCurrentRoom();
+            if (currentRoom != targetRoom) {
+                roomOccupancyManager.transferStudent(student, currentRoom, targetRoom);
+            }
+            state.setExpectedRoom(targetRoom);
+            state.setCurrentActivity(ActivityType.IDLE);
         }
     }
 

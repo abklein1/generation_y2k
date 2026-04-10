@@ -4,8 +4,12 @@ import behavior.BehaviorTree;
 import behavior.StudentBehaviorTreeBuilder;
 import entity.*;
 import entity.Rooms.Room;
+import utility.GameRandom;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Manages entity states and behavior trees for the simulation.
@@ -138,9 +142,15 @@ public class EntityStateManager {
                 continue;
             }
 
-            StudentBlock block = schedule.getByBlockNumber(currentPeriod);
+            String semester = time.getCurrentSemester();
+            StudentBlock block = schedule.getByBlockNumber(currentPeriod, semester);
             if (block != null && block.getRoom() != null) {
                 state.setExpectedRoom(block.getRoom());
+            } else {
+                Room freeRoom = getFreePeriodRoom();
+                if (freeRoom != null) {
+                    state.setExpectedRoom(freeRoom);
+                }
             }
         }
     }
@@ -154,6 +164,8 @@ public class EntityStateManager {
             return;
         }
 
+        String semester = time.getCurrentSemester();
+
         for (Student student : students.values()) {
             EntityState state = student.getEntityState();
             if (state == null) {
@@ -163,16 +175,24 @@ public class EntityStateManager {
             // Reset state for new day
             state.resetForNewDay();
 
-            // Get first period room
+            // Get first period room for the current semester
             StudentSchedule schedule = student.studentStatistics.getStudentSchedule();
+            Room room = null;
             if (schedule != null) {
-                StudentBlock block = schedule.getByBlockNumber(1);
-                if (block != null && block.getRoom() != null) {
-                    Room room = block.getRoom();
-                    state.setCurrentRoom(room);
-                    state.setExpectedRoom(room);
-                    state.setCurrentActivity(ActivityType.ATTENDING_CLASS);
+                StudentBlock block = schedule.getByBlockNumber(1, semester);
+                if (block != null) {
+                    room = block.getRoom();
                 }
+            }
+
+            if (room == null) {
+                room = getFreePeriodRoom();
+            }
+
+            if (room != null) {
+                state.setCurrentRoom(room);
+                state.setExpectedRoom(room);
+                state.setCurrentActivity(ActivityType.IDLE);
             }
         }
     }
@@ -200,6 +220,31 @@ public class EntityStateManager {
                 state.setExpectedRoom(assignedRoom);
                 state.setCurrentActivity(ActivityType.TEACHING);
             }
+        }
+    }
+
+    /**
+     * Returns a random common-area room (library, courtyard, lunchroom, or
+     * hallway) for students with a free period.
+     */
+    private Room getFreePeriodRoom() {
+        if (school == null) {
+            return null;
+        }
+        List<Room> candidates = new ArrayList<>();
+        addIfPresent(candidates, school.getLibraries());
+        addIfPresent(candidates, school.getCourtyards());
+        addIfPresent(candidates, school.getLunchrooms());
+        addIfPresent(candidates, school.getHallways());
+        if (candidates.isEmpty()) {
+            return null;
+        }
+        return candidates.get(GameRandom.nextInt(candidates.size()));
+    }
+
+    private static void addIfPresent(List<Room> list, Room[] rooms) {
+        if (rooms != null) {
+            Collections.addAll(list, rooms);
         }
     }
 

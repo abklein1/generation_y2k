@@ -1,0 +1,2336 @@
+{
+    "2004": {
+        "Emo": {
+            "female": {
+                "white": {
+                    "short": ["pixie"],
+                    "chin-length": ["bob"],
+                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
+                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
+                    "waist-length": ["chopped layer cut"],
+                    "extremely long": ["long layer cut", "chopped layer cut"],
+                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
+                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                },
+                "black": {
+                    "short": ["pixie"],
+                    "chin-length": ["bob"],
+                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
+                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
+                    "waist-length": ["chopped layer cut"],
+                    "extremely long": ["long layer cut", "chopped layer cut"],
+                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
+                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                },
+                "api": {
+                    "short": ["pixie"],
+                    "chin-length": ["bob"],
+                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
+                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
+                    "waist-length": ["chopped layer cut"],
+                    "extremely long": ["long layer cut", "chopped layer cut"],
+                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
+                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                },
+                "hispanic": {
+                    "short": ["pixie"],
+                    "chin-length": ["bob"],
+                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
+                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
+                    "waist-length": ["chopped layer cut"],
+                    "extremely long": ["long layer cut", "chopped layer cut"],
+                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
+                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                },
+                "2prace": {
+                    "short": ["pixie"],
+                    "chin-length": ["bob"],
+                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
+                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
+                    "waist-length": ["chopped layer cut"],
+                    "extremely long": ["long layer cut", "chopped layer cut"],
+                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
+                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": ["buzz cut"],
+                    "short": ["side sweep", "bob"],
+                    "chin-length": ["side sweep", "shag", "swoop", "bob"],
+                    "long": ["shag", "swoop", "side sweep"],
+                    "shoulder-length": ["shag"],
+                    "waist-length": ["chopped layer cut"],
+                    "dyes": ["black", "dark brown"],
+                    "highlights": ["bleach blond", "dark red"]
+                },
+                "black": {
+                    "very short": ["buzz cut"],
+                    "short": ["swoop"],
+                    "chin-length": ["swoop"],
+                    "long": ["chopped layer cut"],
+                    "shoulder-length": ["chopped layer cut"],
+                    "waist-length": ["chopped layer cut"],
+                    "dyes": [],
+                    "highlights": ["dark red", "purple"]
+                },
+                "api": {
+                    "very short": ["buzz cut"],
+                    "short": ["side sweep", "bob"],
+                    "chin-length": ["side sweep", "shag", "swoop", "bob"],
+                    "long": ["shag", "swoop", "side sweep"],
+                    "shoulder-length": ["shag"],
+                    "waist-length": ["chopped layer cut"],
+                    "dyes": ["black", "dark brown"],
+                    "highlights": ["bleach blond", "dark red"]
+                },
+                "hispanic": {
+                    "very short": ["buzz cut"],
+                    "short": ["side sweep", "bob"],
+                    "chin-length": ["side sweep", "shag", "swoop", "bob"],
+                    "long": ["shag", "swoop", "side sweep"],
+                    "shoulder-length": ["shag"],
+                    "waist-length": ["chopped layer cut"],
+                    "dyes": ["black", "dark brown"],
+                    "highlights": ["bleach blond", "dark red"]
+                },
+                "2prace": {
+                    "very short": ["buzz cut"],
+                    "short": ["side sweep", "bob"],
+                    "chin-length": ["side sweep", "shag", "swoop", "bob"],
+                    "long": ["shag", "swoop", "side sweep"],
+                    "shoulder-length": ["shag"],
+                    "waist-length": ["chopped layer cut"],
+                    "dyes": ["black", "dark brown"],
+                    "highlights": ["bleach blond", "dark red"]
+                }
+            }
+        },
+        "Punk": {
+            "female": {
+                "white": {
+                    "short": ["buzz cut", "pixie", "spike cut"],
+                    "chin-length": ["mohawk", "spike cut"],
+                    "neck-length": ["mohawk", "liberty spike"],
+                    "shoulder-length": ["mohawk", "liberty spike"],
+                    "waist-length": ["chopped layer cut"],
+                    "extremely long": ["long layer cut"],
+                    "dyes": ["bleach blond", "magenta", "pink", "black", "red", "florescent green"],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": ["buzz cut", "spike cut"],
+                    "short": ["spike cut", "faux hawk"],
+                    "chin-length": ["mohawk", "liberty spike"],
+                    "long": ["mohawk", "liberty spike"],
+                    "shoulder-length": ["mohawk", "liberty spike"],
+                    "waist-length": [],
+                    "dyes": ["bleach blond", "green", "blue", "red", "black"],
+                    "highlights": ["bleach blond", "blond"]
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Skater": {
+            "female": {
+                "white": {
+                    "short": ["pixie", "spike cut", "buzz cut"],
+                    "chin-length": ["faux hawk", "boy cut"],
+                    "neck-length": ["shag", "swoop", "bun", "braid"],
+                    "shoulder-length": ["shag", "swoop", "chopped layer cut", "bun", "braid"],
+                    "waist-length": ["chopped layer cut", "braid", "ponytail"],
+                    "extremely long": ["long layer cut"],
+                    "dyes": ["black", "amber", "dark red", "chestnut", "bleach blond"],
+                    "highlights": ["bleach blond", "blond"]
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": ["buzz cut", "spike cut"],
+                    "short": ["spike cut", "swoop", "side sweep"],
+                    "chin-length": ["side sweep", "swoop"],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": ["ponytail"],
+                    "dyes": ["bleach blond"],
+                    "highlights": ["bleach blond", "blond"]
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Goth": {
+            "female": {
+                "white": {
+                    "short": ["pixie", "spike cut", "buzz cut"],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": ["black"],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Band": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Theater": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Anime": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Metal": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Geek": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "NoLife": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Latino": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Electronic": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Bling": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Trap": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Suit": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Beach": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Jock": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Prep": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Country": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Christian": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "ROTC": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        },
+        "Outcast": {
+            "female": {
+                "white": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "short": [],
+                    "chin-length": [],
+                    "neck-length": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "extremely long": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            },
+            "male": {
+                "white": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "black": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "api": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "hispanic": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                },
+                "2prace": {
+                    "very short": [],
+                    "short": [],
+                    "chin-length": [],
+                    "long": [],
+                    "shoulder-length": [],
+                    "waist-length": [],
+                    "dyes": [],
+                    "highlights": []
+                }
+            }
+        }
+    }
+}

@@ -841,6 +841,12 @@ public class SchoolController {
             return singleRace; // Single race
         };
 
+        // Hair length options per gender, declared early so the gender listener can reference them
+        String[] maleHairLengths = { "very short", "short", "chin-length", "long", "shoulder-length", "waist-length" };
+        String[] femaleHairLengths = { "short", "chin-length", "neck-length", "shoulder-length", "waist-length",
+                "extremely long" };
+        JComboBox<String> hairLengthDropdown = new JComboBox<>(maleHairLengths);
+
         // Add an action listener to enable/disable the suffix dropdown based on gender
         // selection
         genderDropdown.addActionListener(e -> {
@@ -850,6 +856,13 @@ public class SchoolController {
             } else {
                 suffixDropdown.setEnabled(false);
             }
+            String previousSelection = (String) hairLengthDropdown.getSelectedItem();
+            hairLengthDropdown.removeAllItems();
+            String[] lengths = "Male".equals(selectedGender) ? maleHairLengths : femaleHairLengths;
+            for (String len : lengths) {
+                hairLengthDropdown.addItem(len);
+            }
+            hairLengthDropdown.setSelectedItem(previousSelection);
         });
 
         // Set initial state of suffix dropdown
@@ -884,7 +897,6 @@ public class SchoolController {
         gbc.gridy = row;
         gbc.weightx = 0;
         formPanel.add(new JLabel("Hair Length:"), gbc);
-        JComboBox<String> hairLengthDropdown = new JComboBox<>(new String[] { "Short", "Medium", "Long" });
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         formPanel.add(hairLengthDropdown, gbc);
@@ -1201,10 +1213,6 @@ public class SchoolController {
             String hairColor = TraitSelection.studentHairSelection(raceCode, eyeColor);
             String hairType = TraitSelection.studentHairType(raceCode, hairColor);
 
-            // Hair length from available UI options
-            int hlCount = hairLengthDropdown.getItemCount();
-            String hairLength = hairLengthDropdown.getItemAt(setRandom(0, hlCount - 1));
-
             // Income distribution: Low (25%), Middle (60%), High (15%) - from SimConstants
             int incomeRoll = setRandom(0, STUDENT_INCOME_LEVEL_SAMPLE_SIZE);
             String incomeUi = (incomeRoll <= INCOME_THRESHOLD_LOW) ? "Low"
@@ -1224,7 +1232,9 @@ public class SchoolController {
             eyeColorDropdown.setSelectedItem(eyeColor);
             hairColorDropdown.setSelectedItem(hairColor);
             hairTypeDropdown.setSelectedItem(hairType);
-            hairLengthDropdown.setSelectedItem(hairLength);
+            // Pick hair length after gender is set so the dropdown has the correct options
+            int hlCount = hairLengthDropdown.getItemCount();
+            hairLengthDropdown.setSelectedIndex(setRandom(0, hlCount - 1));
             incomeDropdown.setSelectedItem(incomeUi);
             siblingsDropdown.setSelectedItem(siblings);
 
@@ -1549,6 +1559,9 @@ public class SchoolController {
             publish("Applying clique-aware piercings...");
             StudentPopGenerator.applyAllPiercingAttributes(studentHashMap);
 
+            publish("Applying clique-aware haircuts...");
+            StudentPopGenerator.applyAllHaircutAttributes(studentHashMap);
+
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
@@ -1644,6 +1657,9 @@ public class SchoolController {
 
             publish("Applying clique-aware piercings...");
             StudentPopGenerator.applyAllPiercingAttributes(studentHashMap);
+
+            publish("Applying clique-aware haircuts...");
+            StudentPopGenerator.applyAllHaircutAttributes(studentHashMap);
 
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);

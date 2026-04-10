@@ -2,6 +2,7 @@ package utility;
 
 import entity.Student;
 import entity.StudentBlock;
+import entity.StudentSchedule;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultEdge;
@@ -16,14 +17,17 @@ import entity.Rooms.Room;
 
 /**
  * Pre-computes and stores per-transition shortest paths for every student.
- * Each student can have multiple transition paths (one per pair of consecutive
- * classes within the same semester).
  * <p>
- * Storage: {@code Map<Student, List<List<Room>>>} -- a list of paths per
- * student, indexed by transition number (0-based). Each path is an ordered
- * list of rooms from source to destination (inclusive of both endpoints).
+ * There are exactly {@value #NUM_TRANSITIONS} transition boundaries per day
+ * (Period 1→2, 2→3, 3→4).  Each student's path list is a fixed-size array
+ * where index {@code i} holds the path for the transition after period
+ * {@code i + 1}.  Slots where the student has no class on one or both sides
+ * of the boundary contain an empty list.
  */
 public class TraversalStorage {
+
+    static final int NUM_PERIODS = 4;
+    static final int NUM_TRANSITIONS = NUM_PERIODS - 1;
 
     private final HashMap<Student, List<List<Room>>> studentPathsFall;
     private final HashMap<Student, List<List<Room>>> studentPathsSpring;
@@ -43,11 +47,11 @@ public class TraversalStorage {
     }
 
     /**
-     * Gets the transition path for a student for a specific transition number
+     * Gets the transition path for a student for a specific transition index
      * within a semester.
      *
      * @param student          the student
-     * @param transitionIndex  0-based transition number
+     * @param transitionIndex  0-based transition number (0 = P1→P2, 1 = P2→P3, 2 = P3→P4)
      * @param semester         "Fall" or "Spring"
      * @return the path as a list of rooms, or an empty list if not found
      */
@@ -66,67 +70,79 @@ public class TraversalStorage {
         Graph<Room, DefaultEdge> schoolConnect = roomConnector.getSchoolConnect();
 
         for (Student student : students.values()) {
-            List<StudentBlock> blocks = student.studentStatistics.getStudentSchedule().getClassSchedule();
+            StudentSchedule schedule = student.studentStatistics.getStudentSchedule();
 
-            List<List<Room>> fallPaths = new ArrayList<>();
-            List<List<Room>> springPaths = new ArrayList<>();
+            List<List<Room>> fallPaths = buildSemesterPaths(
+                    student, schedule, "Fall", schoolConnect);
+            List<List<Room>> springPaths = buildSemesterPaths(
+                    student, schedule, "Spring", schoolConnect);
 
-            for (int i = 0; i < blocks.size(); i++) {
-                StudentBlock block = blocks.get(i);
-                Room room = block.getRoom();
-                if (i + 2 >= blocks.size()) {
-                    continue;
-                }
-                Room nextRoom = blocks.get(i + 2).getRoom();
-                if (room == null || nextRoom == null) {
-                    continue;
-                }
-                if (!schoolConnect.containsVertex(room) || !schoolConnect.containsVertex(nextRoom)) {
-                    GameLogger.logDebug("Skipping path for student " + student.studentName.getFirstName() +
-                            " " + student.studentName.getLastName() + " because a scheduled room is not in " +
-                            "the school graph. source=" + describeRoom(room) + " (inGraph=" +
-                            schoolConnect.containsVertex(room) + "), sink=" + describeRoom(nextRoom) +
-                            " (inGraph=" + schoolConnect.containsVertex(nextRoom) + ")");
-                    addEmptyPath(block.getSemester(), fallPaths, springPaths);
-                    continue;
-                }
-
-                GraphPath<Room, DefaultEdge> path = DijkstraShortestPath.findPathBetween(
-                        schoolConnect, room, nextRoom);
-                if (path != null) {
-                    ArrayList<Room> roomList = new ArrayList<>(path.getVertexList());
-                    GameLogger.logDebug(block.getSemester() + " path: " + roomList
-                            + " for student " + student.studentName.getFirstName());
-                    if ("Fall".equals(block.getSemester())) {
-                        fallPaths.add(roomList);
-                    } else {
-                        springPaths.add(roomList);
-                    }
-                } else {
-                    GameLogger.logDebug("No path found between " + describeRoom(room) + " and " +
-                            describeRoom(nextRoom) + " for student " +
-                            student.studentName.getFirstName() + " " +
-                            student.studentName.getLastName());
-                    addEmptyPath(block.getSemester(), fallPaths, springPaths);
-                }
-            }
-
-            if (!fallPaths.isEmpty()) {
-                studentPathsFall.put(student, fallPaths);
-            }
-            if (!springPaths.isEmpty()) {
-                studentPathsSpring.put(student, springPaths);
-            }
+            studentPathsFall.put(student, fallPaths);
+            studentPathsSpring.put(student, springPaths);
         }
     }
 
-    private void addEmptyPath(String semester, List<List<Room>> fallPaths,
-                              List<List<Room>> springPaths) {
-        if ("Fall".equals(semester)) {
-            fallPaths.add(Collections.emptyList());
-        } else {
-            springPaths.add(Collections.emptyList());
+    /**
+     * Builds a fixed-size list of {@value #NUM_TRANSITIONS} transition paths
+     * for one student in one semester.  Slot {@code i} is the path from the
+     * student's period {@code i+1} room to their period {@code i+2} room.
+     * If either period is unscheduled the slot is an empty list.
+     */
+    private List<List<Room>> buildSemesterPaths(Student student,
+                                                StudentSchedule schedule,
+                                                String semester,
+                                                Graph<Room, DefaultEdge> schoolConnect) {
+        List<List<Room>> paths = new ArrayList<>(NUM_TRANSITIONS);
+        String studentLabel = student.studentName.getFirstName() + " "
+                + student.studentName.getLastName();
+
+        for (int t = 0; t < NUM_TRANSITIONS; t++) {
+            int fromPeriod = t + 1;
+            int toPeriod = t + 2;
+
+            StudentBlock fromBlock = schedule.getByBlockNumber(fromPeriod, semester);
+            StudentBlock toBlock = schedule.getByBlockNumber(toPeriod, semester);
+
+            if (fromBlock == null || toBlock == null) {
+                paths.add(Collections.emptyList());
+                continue;
+            }
+
+            Room source = fromBlock.getRoom();
+            Room dest = toBlock.getRoom();
+
+            if (source == null || dest == null) {
+                paths.add(Collections.emptyList());
+                continue;
+            }
+            if (!schoolConnect.containsVertex(source)
+                    || !schoolConnect.containsVertex(dest)) {
+                GameLogger.logDebug("Skipping path for student " + studentLabel
+                        + " because a scheduled room is not in the school graph. source="
+                        + describeRoom(source) + " (inGraph="
+                        + schoolConnect.containsVertex(source) + "), sink="
+                        + describeRoom(dest) + " (inGraph="
+                        + schoolConnect.containsVertex(dest) + ")");
+                paths.add(Collections.emptyList());
+                continue;
+            }
+
+            GraphPath<Room, DefaultEdge> path =
+                    DijkstraShortestPath.findPathBetween(schoolConnect, source, dest);
+            if (path != null) {
+                ArrayList<Room> roomList = new ArrayList<>(path.getVertexList());
+                GameLogger.logDebug(semester + " transition " + fromPeriod + "→" + toPeriod
+                        + " path: " + roomList + " for student "
+                        + student.studentName.getFirstName());
+                paths.add(roomList);
+            } else {
+                GameLogger.logDebug("No path found between " + describeRoom(source)
+                        + " and " + describeRoom(dest) + " for student "
+                        + studentLabel);
+                paths.add(Collections.emptyList());
+            }
         }
+        return paths;
     }
 
     private String describeRoom(Room room) {

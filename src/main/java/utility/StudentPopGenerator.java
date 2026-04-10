@@ -406,6 +406,89 @@ public class StudentPopGenerator {
     }
 
     /**
+     * Applies clique-driven haircut attributes (style, dye, highlights)
+     * to a single student based on their clique, gender, race, and hair length.
+     */
+    public static void applyHaircutAttributes(Student student) {
+        String clique = student.studentStatistics.getMainClique();
+        String gender = student.studentStatistics.getGender();
+        String race = student.studentStatistics.getRace();
+        String hairLength = student.studentStatistics.getHairLength();
+        String hairColor = student.studentStatistics.getHairColor();
+
+        if (clique == null || gender == null || race == null || hairLength == null) {
+            return;
+        }
+        if (!CliqueHaircutLoader.hasHaircutData(clique, gender, race)) {
+            return;
+        }
+
+        List<String> styles = CliqueHaircutLoader.getStyles(clique, gender, race, hairLength);
+        if (!styles.isEmpty()) {
+            student.studentStatistics.setHairStyle(
+                    styles.get(setRandom(0, styles.size() - 1)));
+        }
+
+        List<String> dyes = CliqueHaircutLoader.getDyes(clique, gender, race);
+        List<String> highlights = CliqueHaircutLoader.getHighlights(clique, gender, race);
+
+        boolean highlightOnly = !highlights.isEmpty()
+                && setRandom(0, 99) < CLIQUE_HAIR_HIGHLIGHT_ONLY_CHANCE;
+
+        if (highlightOnly) {
+            student.studentStatistics.setHairHighlights(
+                    pickAvoidingColor(highlights, hairColor));
+            return;
+        }
+
+        String chosenDye = null;
+        if (!dyes.isEmpty() && setRandom(0, 99) < CLIQUE_HAIR_DYE_CHANCE) {
+            chosenDye = pickAvoidingColor(dyes, hairColor);
+            student.studentStatistics.setHairDye(chosenDye);
+        }
+
+        if (!highlights.isEmpty() && setRandom(0, 99) < CLIQUE_HAIR_HIGHLIGHT_CHANCE) {
+            String avoidColor = chosenDye != null ? chosenDye : hairColor;
+            student.studentStatistics.setHairHighlights(
+                    pickAvoidingColor(highlights, avoidColor));
+        }
+    }
+
+    /**
+     * Picks a random entry from the list, avoiding the given color when
+     * possible. If the list has only one entry that matches the avoided
+     * color, it is returned anyway.
+     */
+    private static String pickAvoidingColor(List<String> options, String avoid) {
+        if (options.size() == 1) {
+            return options.get(0);
+        }
+        List<String> filtered = new ArrayList<>();
+        for (String opt : options) {
+            if (!opt.equalsIgnoreCase(avoid)) {
+                filtered.add(opt);
+            }
+        }
+        if (filtered.isEmpty()) {
+            return options.get(setRandom(0, options.size() - 1));
+        }
+        return filtered.get(setRandom(0, filtered.size() - 1));
+    }
+
+    /**
+     * Applies clique-driven haircut attributes to all students.
+     * Intended to be called after clique assignment.
+     *
+     * @param studentHashMap the student population
+     */
+    public static void applyAllHaircutAttributes(
+            HashMap<Integer, Student> studentHashMap) {
+        for (Student student : studentHashMap.values()) {
+            applyHaircutAttributes(student);
+        }
+    }
+
+    /**
      * Generates students and returns them as a list.
      * This is the preferred method for the new Town-based architecture.
      *

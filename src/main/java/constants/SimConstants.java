@@ -659,6 +659,11 @@ public final class SimConstants {
     // Charisma boost from wearing jewelry (minor stat improvement)
     public static final int PIERCING_EARRING_CHARISMA_BOOST = 2;
 
+    // Clique hair dye/highlight probability (out of 100)
+    public static final int CLIQUE_HAIR_DYE_CHANCE = 40;
+    public static final int CLIQUE_HAIR_HIGHLIGHT_CHANCE = 25;
+    public static final int CLIQUE_HAIR_HIGHLIGHT_ONLY_CHANCE = 35;
+
     // Adult/Teacher Vision Constants
     // Older adults have higher rates of vision issues, especially hyperopia and astigmatism
     // Adults are much more likely to have corrective lenses if needed

@@ -212,6 +212,17 @@ public class Time {
     }
     
     /**
+     * Returns the current academic semester based on the calendar month.
+     * August through December is "Fall"; January through July is "Spring".
+     *
+     * @return "Fall" or "Spring"
+     */
+    public String getCurrentSemester() {
+        int month = calendar.get(Calendar.MONTH);
+        return month >= Calendar.AUGUST ? "Fall" : "Spring";
+    }
+
+    /**
      * Checks if it's a weekend day.
      *
      * @return true if Saturday or Sunday
