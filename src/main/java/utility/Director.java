@@ -179,6 +179,15 @@ public class Director {
             standardSchool.setPortables(0, view); // Initialize empty array
         }
 
+        // Stairwells - larger schools are more likely to be multi-story
+        int stairwellCount = calculateStairwellCount(classroomCount);
+        if (stairwellCount > 0) {
+            view.appendOutput("Building stairwells...");
+            standardSchool.setStairwells(stairwellCount, view);
+        } else {
+            standardSchool.setStairwells(0, view);
+        }
+
         view.appendOutput("Building bathrooms...");
         standardSchool.setBathrooms(BATHROOM_AMOUNT, view);
 
@@ -307,6 +316,15 @@ public class Director {
             standardSchool.setPortables(0, view); // Initialize empty array
         }
 
+        // Stairwells - larger schools are more likely to be multi-story
+        int stairwellCount = calculateStairwellCount(classroomsNeeded);
+        if (stairwellCount > 0) {
+            view.appendOutput("Building stairwells...");
+            standardSchool.setStairwells(stairwellCount, view);
+        } else {
+            standardSchool.setStairwells(0, view);
+        }
+
         view.appendOutput("Building bathrooms...");
         // Scale bathrooms to population
         int bathroomCount = Math.max(BATHROOM_AMOUNT, targetPopulation / 100);
@@ -385,6 +403,33 @@ public class Director {
         int roll = setRandom(0, 100);
         if (roll < chanceOfPortables) {
             return setRandom(lowerLimit, upperLimit);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Calculates the number of stairwells based on school size (classroom count).
+     * Larger schools are more likely to be multi-story. Single-story schools
+     * return 0.
+     *
+     * @param classroomCount the number of classrooms in the school
+     * @return the number of stairwells to create (0 if single-story)
+     */
+    private int calculateStairwellCount(int classroomCount) {
+        int chanceOfStairs;
+
+        if (classroomCount >= STAIRWELL_LARGE_SCHOOL_THRESHOLD) {
+            chanceOfStairs = STAIRWELL_CHANCE_LARGE_SCHOOL;
+        } else if (classroomCount >= STAIRWELL_SMALL_SCHOOL_THRESHOLD) {
+            chanceOfStairs = STAIRWELL_CHANCE_MEDIUM_SCHOOL;
+        } else {
+            chanceOfStairs = STAIRWELL_CHANCE_SMALL_SCHOOL;
+        }
+
+        int roll = setRandom(0, 100);
+        if (roll < chanceOfStairs) {
+            return setRandom(STAIRWELL_AMOUNT_LOWER_LIMIT, STAIRWELL_AMOUNT_UPPER_LIMIT);
         }
 
         return 0;
@@ -503,6 +548,15 @@ public class Director {
             standardSchool.setPortables(portableCount, view);
         } else {
             standardSchool.setPortables(0, view);
+        }
+
+        // Stairwells - larger schools are more likely to be multi-story
+        int stairwellCount = calculateStairwellCount(classrooms);
+        if (stairwellCount > 0) {
+            view.appendOutput("Building stairwells...");
+            standardSchool.setStairwells(stairwellCount, view);
+        } else {
+            standardSchool.setStairwells(0, view);
         }
 
         view.appendOutput("Building bathrooms...");

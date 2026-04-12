@@ -98,7 +98,8 @@ public class Inspector {
             sb.append(" with ").append(hairHighlights.toLowerCase()).append(" highlights");
         }
         if (hairStyle != null) {
-            sb.append(" in a ").append(hairStyle.toLowerCase());
+            String styleLower = hairStyle.toLowerCase();
+            sb.append(styleLower.endsWith("s") ? " in " : " in a ").append(styleLower);
         }
         sb.append(" and ").append(eyeColor.toLowerCase()).append(" eyes. ");
         sb.append("They stand ").append(df.format(height)).append(" inches tall.");

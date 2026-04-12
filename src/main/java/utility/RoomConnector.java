@@ -2,8 +2,10 @@ package utility;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
-import entity.Rooms.Classroom;
+import com.mxgraph.util.mxConstants;
+import entity.Rooms.*;
 import entity.StandardSchool;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
@@ -14,17 +16,14 @@ import org.jgrapht.traverse.DepthFirstIterator;
 import view.GameView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static utility.Randomizer.setRandom;
-
-import entity.Rooms.Room;
 
 // Procedural generation that builds the school by connecting rooms. Room connection starts
 // by connecting hallways and courtyards at random, and then allows other connections to build
@@ -32,7 +31,7 @@ import entity.Rooms.Room;
 // vertex is door
 // edge is room
 public class RoomConnector {
-    private final Room[][] roomPool = new Room[22][];
+    private final Room[][] roomPool = new Room[23][];
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);
     private int locker_count = 0;
     private int labs_count = 0;
@@ -60,6 +59,7 @@ public class RoomConnector {
         roomPool[19] = standardSchool.getParkingLots();
         roomPool[20] = standardSchool.getVocationalRooms();
         roomPool[21] = standardSchool.getPortables();
+        roomPool[22] = standardSchool.getStairwells();
 
         connectRooms(view);
     }
@@ -704,6 +704,7 @@ public class RoomConnector {
     private void constructBackbone() {
         Room[] hallways = roomPool[10];
         Room[] courtyards = roomPool[7];
+        Room[] stairwells = roomPool[22];
 
         for (Room hallway : hallways) {
             int choice = setRandom(0, 10);
@@ -725,24 +726,42 @@ public class RoomConnector {
                 targetCourtyard.setConnections(targetCourtyard.getConnections() - 1);
             }
         }
+
+        // Wire stairwells into backbone (multi-story schools only)
+        if (stairwells != null && stairwells.length > 0 && hallways.length > 1) {
+            for (Room stairwell : stairwells) {
+                int idxA = setRandom(0, hallways.length - 1);
+                int idxB;
+                do {
+                    idxB = setRandom(0, hallways.length - 1);
+                } while (idxB == idxA);
+
+                schoolConnect.addEdge(stairwell, hallways[idxA]);
+                stairwell.setConnections(stairwell.getConnections() - 1);
+                hallways[idxA].setConnections(hallways[idxA].getConnections() - 1);
+
+                schoolConnect.addEdge(stairwell, hallways[idxB]);
+                stairwell.setConnections(stairwell.getConnections() - 1);
+                hallways[idxB].setConnections(hallways[idxB].getConnections() - 1);
+            }
+        }
     }
 
     private void connectivityInspectionBackbone() {
         ConnectivityInspector<Room, DefaultEdge> inspector = new ConnectivityInspector<>(schoolConnect);
         List<Set<Room>> connectedSets = inspector.connectedSets();
 
-        // Filter sets to include only those that contain hallways or courtyards
+        // Filter sets to include only those that contain backbone rooms
         List<Set<Room>> filteredSets = connectedSets.stream()
-                .filter(set -> set.stream().anyMatch(this::isHallwayOrCourtyard)).toList();
+                .filter(set -> set.stream().anyMatch(this::isBackboneRoom)).toList();
 
         if (filteredSets.size() > 1) {
             for (int i = 0; i < filteredSets.size() - 1; i++) {
                 Set<Room> currentSet = filteredSets.get(i);
                 Set<Room> nextSet = filteredSets.get(i + 1);
 
-                // Find hallways or courtyards within the current and next sets to connect
-                Room roomFromCurrentSet = findHallwayOrCourtyard(currentSet);
-                Room roomFromNextSet = findHallwayOrCourtyard(nextSet);
+                Room roomFromCurrentSet = findBackboneRoom(currentSet);
+                Room roomFromNextSet = findBackboneRoom(nextSet);
 
                 if (roomFromCurrentSet != null && roomFromNextSet != null) {
                     schoolConnect.addEdge(roomFromCurrentSet, roomFromNextSet);
@@ -753,14 +772,16 @@ public class RoomConnector {
         }
     }
 
-    // Helper method to check if a room is a hallway or courtyard
-    private boolean isHallwayOrCourtyard(Room room) {
-        return Stream.of(roomPool[10], roomPool[7]).flatMap(Arrays::stream).anyMatch(r -> r.equals(room));
+    private boolean isBackboneRoom(Room room) {
+        Stream<Room[]> backbonePools = Stream.of(roomPool[10], roomPool[7]);
+        if (roomPool[22] != null && roomPool[22].length > 0) {
+            backbonePools = Stream.of(roomPool[10], roomPool[7], roomPool[22]);
+        }
+        return backbonePools.flatMap(Arrays::stream).anyMatch(r -> r.equals(room));
     }
 
-    // Helper method to find a hallway or courtyard in a set
-    private Room findHallwayOrCourtyard(Set<Room> roomSet) {
-        return roomSet.stream().filter(this::isHallwayOrCourtyard).findAny().orElse(null);
+    private Room findBackboneRoom(Set<Room> roomSet) {
+        return roomSet.stream().filter(this::isBackboneRoom).findAny().orElse(null);
     }
 
     // Perform simple print for now
@@ -905,21 +926,32 @@ public class RoomConnector {
         }
     }
 
-    // TODO: fix visibility on graphs
     public void visualizer(StandardSchool school) {
         String schoolName = school.getSchoolName();
         JGraphXAdapter<Room, DefaultEdge> graphAdapter = new JGraphXAdapter<>(schoolConnect);
-        JFrame frame = new JFrame(schoolName);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(800, 600);
-        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-        frame.add(graphComponent);
+
+        // Prevent users from moving edges or creating new connections
+        graphAdapter.setCellsDisconnectable(false);
+        graphAdapter.setConnectableEdges(false);
+        graphAdapter.setEdgeLabelsMovable(false);
+
+        // Apply color-coding by room type
+        applyRoomStyles(graphAdapter);
+
         mxFastOrganicLayout layout = new mxFastOrganicLayout(graphAdapter);
         layout.setForceConstant(50);
         layout.setMinDistanceLimit(2.5);
         layout.setInitialTemp(200);
         layout.setMaxIterations(1000);
         layout.execute(graphAdapter.getDefaultParent());
+
+        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
+        graphComponent.setPreferredSize(new Dimension(1200, 800));
+
+        JFrame frame = new JFrame(schoolName);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(1200, 800);
+        frame.add(graphComponent);
 
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
             @Override
@@ -932,5 +964,55 @@ public class RoomConnector {
         });
         frame.pack();
         frame.setVisible(true);
+    }
+
+    private void applyRoomStyles(JGraphXAdapter<Room, DefaultEdge> graphAdapter) {
+        Map<Room, mxICell> vertexMap = graphAdapter.getVertexToCellMap();
+        graphAdapter.getModel().beginUpdate();
+        try {
+            for (Map.Entry<Room, mxICell> entry : vertexMap.entrySet()) {
+                Room room = entry.getKey();
+                mxICell cell = entry.getValue();
+                String style = getStyleForRoom(room);
+                graphAdapter.getModel().setStyle(cell, style);
+            }
+        } finally {
+            graphAdapter.getModel().endUpdate();
+        }
+    }
+
+    private String getStyleForRoom(Room room) {
+        String base = mxConstants.STYLE_FONTSIZE + "=10;";
+
+        if (room instanceof Hallway) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#D3D3D3;"
+                    + mxConstants.STYLE_ROUNDED + "=1;"
+                    + mxConstants.STYLE_SHAPE + "=" + mxConstants.SHAPE_RECTANGLE + ";";
+        } else if (room instanceof Courtyard) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#90EE90;"
+                    + mxConstants.STYLE_SHAPE + "=" + mxConstants.SHAPE_RECTANGLE + ";";
+        } else if (room instanceof Stairwell) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#ADD8E6;"
+                    + mxConstants.STYLE_SHAPE + "=" + mxConstants.SHAPE_RHOMBUS + ";";
+        } else if (room instanceof Classroom || room instanceof Portable) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#FFFACD;";
+        } else if (room instanceof Gym || room instanceof AthleticField || room instanceof LockerRoom) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#FFD699;";
+        } else if (room instanceof Office || room instanceof ConferenceRoom) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#FFB6C1;";
+        } else if (room instanceof Lunchroom) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#FFDAB9;";
+        } else if (room instanceof LibraryR || room instanceof ComputerLab) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#E6E6FA;";
+        } else if (room instanceof Auditorium || room instanceof DramaRoom || room instanceof MusicRoom
+                || room instanceof ArtStudio) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#DDA0DD;";
+        } else if (room instanceof Bathroom) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#E0FFFF;";
+        } else if (room instanceof ParkingLot) {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#C0C0C0;";
+        } else {
+            return base + mxConstants.STYLE_FILLCOLOR + "=#FFFFFF;";
+        }
     }
 }

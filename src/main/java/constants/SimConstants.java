@@ -619,8 +619,8 @@ public final class SimConstants {
     public static final double PIERCING_MALE_GRADE_SENIOR = 1.40;
 
     // Both ears vs single ear (proportion of those with piercings)
-    // Females overwhelmingly pierce both ears; males often pierce just one
-    public static final double PIERCING_BOTH_EARS_FEMALE_RATE = 0.85;
+    // Females almost always pierce both ears; males often pierce just one
+    public static final double PIERCING_BOTH_EARS_FEMALE_RATE = 0.97;
     public static final double PIERCING_BOTH_EARS_MALE_RATE = 0.35;
 
     // Base rates for multiple piercings per ear (proportion of those with piercings)

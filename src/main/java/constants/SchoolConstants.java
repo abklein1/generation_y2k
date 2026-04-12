@@ -278,6 +278,21 @@ public final class SchoolConstants {
     public static final int PORTABLE_CHANCE_ADEQUATE = 15;
     public static final int PORTABLE_CHANCE_WELL_FUNDED = 5;
     public static final int PORTABLE_CHANCE_EXCELLENTLY_FUNDED = 5;
+    // STAIRWELLS
+    // Stairwells connect hallways across floors. They are part of the backbone
+    // but limited to exactly 2 connections. Not all schools are multi-story.
+    public static final int STAIRWELL_CONNECTION_COUNT = 2;
+    public static final int STAIRWELL_WINDOW_COUNT = 0;
+    public static final int STAIRWELL_INITIAL_STAFF = 0;
+    public static final int STAIRWELL_STUDENT_CAPACITY_LOWER_LIMIT = 10;
+    public static final int STAIRWELL_STUDENT_CAPACITY_UPPER_LIMIT = 20;
+    // Multi-story probability by school size (based on classroom count)
+    // Small: <35 classrooms, Medium: 35-55, Large: >55
+    public static final int STAIRWELL_SMALL_SCHOOL_THRESHOLD = 35;
+    public static final int STAIRWELL_LARGE_SCHOOL_THRESHOLD = 55;
+    public static final int STAIRWELL_CHANCE_SMALL_SCHOOL = 20;
+    public static final int STAIRWELL_CHANCE_MEDIUM_SCHOOL = 50;
+    public static final int STAIRWELL_CHANCE_LARGE_SCHOOL = 75;
     // AMOUNT OF EACH ROOM
     public static final int ART_AMOUNT_LOWER_LIMIT = 1;
     public static final int ART_AMOUNT_UPPER_LIMIT = 4;
@@ -328,6 +343,9 @@ public final class SchoolConstants {
     public static final int PORTABLE_AMOUNT_WELL_FUNDED_UPPER = 1;
     public static final int PORTABLE_AMOUNT_EXCELLENTLY_FUNDED_LOWER = 0;
     public static final int PORTABLE_AMOUNT_EXCELLENTLY_FUNDED_UPPER = 1;
+    // Stairwell amounts when school is multi-story
+    public static final int STAIRWELL_AMOUNT_LOWER_LIMIT = 2;
+    public static final int STAIRWELL_AMOUNT_UPPER_LIMIT = 6;
 
     public static final int LOCKER_ROOM_MODIFIER = 2;
 

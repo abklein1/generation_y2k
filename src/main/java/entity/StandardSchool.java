@@ -61,6 +61,7 @@ public class StandardSchool implements SchoolPlan {
     ParkingLot[] parkingLots;
     VocationalRoom[] vocationalRooms;
     Portable[] portables;
+    Stairwell[] stairwells;
     HashMap<Integer, Student> freshmanClass = new HashMap<>();
     HashMap<Integer, Student> sophomoreClass = new HashMap<>();
     HashMap<Integer, Student> juniorClass = new HashMap<>();
@@ -1671,6 +1672,56 @@ public class StandardSchool implements SchoolPlan {
             total += portable.getStudentCapacity();
         }
         return total;
+    }
+
+    /**
+     * Gets the stairwells array.
+     *
+     * @return array of stairwells, or empty array if none (single-story school)
+     */
+    public Stairwell[] getStairwells() {
+        return stairwells != null ? stairwells : new Stairwell[0];
+    }
+
+    /**
+     * Sets up stairwells for the school. Stairwells are part of the backbone
+     * and connect hallways across different floors. They are limited to exactly
+     * 2 connections. Single-story schools will have 0 stairwells.
+     *
+     * @param number the number of stairwells to create
+     * @param view   the game view for output
+     */
+    public void setStairwells(int number, GameView view) {
+        if (number <= 0) {
+            stairwells = new Stairwell[0];
+            return;
+        }
+
+        stairwells = new Stairwell[number];
+        GameLogger.logGeneration("   Generating " + number + " stairwell(s)...");
+        for (int i = 0; i < number; i++) {
+            stairwells[i] = new Stairwell();
+            stairwells[i].setRoomName("Stairwell" + i);
+            GameLogger.logGeneration("      Generating " + stairwells[i].getRoomName());
+            stairwells[i].setConnections(STAIRWELL_CONNECTION_COUNT);
+            stairwells[i].setDoors(STAIRWELL_CONNECTION_COUNT);
+            stairwells[i].setWindowCount(STAIRWELL_WINDOW_COUNT);
+            stairwells[i].setInitialStaff(STAIRWELL_INITIAL_STAFF);
+            stairwells[i].setStudentCap(
+                    setRandom(STAIRWELL_STUDENT_CAPACITY_LOWER_LIMIT, STAIRWELL_STUDENT_CAPACITY_UPPER_LIMIT));
+            stairwells[i].setSeatArrangement();
+            stairwells[i].setStudentRestriction(false);
+            stairwells[i].setRoomNumber("SW" + i);
+        }
+    }
+
+    /**
+     * Checks if the school is multi-story (has stairwells).
+     *
+     * @return true if the school has stairwells
+     */
+    public boolean isMultiStory() {
+        return stairwells != null && stairwells.length > 0;
     }
 
     public void schoolColorsLoader() {

@@ -111,8 +111,8 @@
                 "white": {
                     "short": ["buzz cut", "pixie", "spike cut"],
                     "chin-length": ["mohawk", "spike cut"],
-                    "neck-length": ["mohawk", "liberty spike"],
-                    "shoulder-length": ["mohawk", "liberty spike"],
+                    "neck-length": ["mohawk", "liberty spikes"],
+                    "shoulder-length": ["mohawk", "liberty spikes"],
                     "waist-length": ["chopped layer cut"],
                     "extremely long": ["long layer cut"],
                     "dyes": ["bleach blond", "magenta", "pink", "black", "red", "florescent green"],
@@ -163,9 +163,9 @@
                 "white": {
                     "very short": ["buzz cut", "spike cut"],
                     "short": ["spike cut", "faux hawk"],
-                    "chin-length": ["mohawk", "liberty spike"],
-                    "long": ["mohawk", "liberty spike"],
-                    "shoulder-length": ["mohawk", "liberty spike"],
+                    "chin-length": ["mohawk", "liberty spikes"],
+                    "long": ["mohawk", "liberty spikes"],
+                    "shoulder-length": ["mohawk", "liberty spikes"],
                     "waist-length": [],
                     "dyes": ["bleach blond", "green", "blue", "red", "black"],
                     "highlights": ["bleach blond", "blond"]
