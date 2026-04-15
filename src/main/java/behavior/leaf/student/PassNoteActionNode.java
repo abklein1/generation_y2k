@@ -112,7 +112,9 @@ public class PassNoteActionNode extends ActionNode {
                 student.studentStatistics.drainSecondaryStat("adaptability",
                         constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
                         constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
-                return BehaviorStatus.FAILURE;
+                // Treat being caught as a completed outcome so the selector
+                // does not immediately fall through into a different action.
+                return BehaviorStatus.SUCCESS;
             }
         }
 

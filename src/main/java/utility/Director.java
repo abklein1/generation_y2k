@@ -187,6 +187,8 @@ public class Director {
         } else {
             standardSchool.setStairwells(0, view);
         }
+        int numberOfFloors = computeNumberOfFloors(stairwellCount, classroomCount);
+        standardSchool.setNumberOfFloors(numberOfFloors);
 
         view.appendOutput("Building bathrooms...");
         standardSchool.setBathrooms(BATHROOM_AMOUNT, view);
@@ -324,6 +326,8 @@ public class Director {
         } else {
             standardSchool.setStairwells(0, view);
         }
+        int numberOfFloors = computeNumberOfFloors(stairwellCount, classroomsNeeded);
+        standardSchool.setNumberOfFloors(numberOfFloors);
 
         view.appendOutput("Building bathrooms...");
         // Scale bathrooms to population
@@ -433,6 +437,16 @@ public class Director {
         }
 
         return 0;
+    }
+
+    private int computeNumberOfFloors(int stairwellCount, int classroomCount) {
+        if (stairwellCount <= 0) {
+            return 1;
+        }
+        if (classroomCount >= STAIRWELL_LARGE_SCHOOL_THRESHOLD && stairwellCount > 4) {
+            return 3;
+        }
+        return 2;
     }
 
     // ==================== Demand-Based Construction (Phase 2b)
@@ -558,6 +572,8 @@ public class Director {
         } else {
             standardSchool.setStairwells(0, view);
         }
+        int numberOfFloors = computeNumberOfFloors(stairwellCount, classrooms);
+        standardSchool.setNumberOfFloors(numberOfFloors);
 
         view.appendOutput("Building bathrooms...");
         standardSchool.setBathrooms(

@@ -436,43 +436,54 @@ public class StudentPopGenerator {
                 && setRandom(0, 99) < CLIQUE_HAIR_HIGHLIGHT_ONLY_CHANCE;
 
         if (highlightOnly) {
-            student.studentStatistics.setHairHighlights(
-                    pickAvoidingColor(highlights, hairColor));
+            String chosenHighlight = pickAvoidingColor(highlights, hairColor);
+            if (chosenHighlight != null) {
+                student.studentStatistics.setHairHighlights(chosenHighlight);
+            }
             return;
         }
 
         String chosenDye = null;
         if (!dyes.isEmpty() && setRandom(0, 99) < CLIQUE_HAIR_DYE_CHANCE) {
             chosenDye = pickAvoidingColor(dyes, hairColor);
-            student.studentStatistics.setHairDye(chosenDye);
+            if (chosenDye != null) {
+                student.studentStatistics.setHairDye(chosenDye);
+            }
         }
 
         if (!highlights.isEmpty() && setRandom(0, 99) < CLIQUE_HAIR_HIGHLIGHT_CHANCE) {
             String avoidColor = chosenDye != null ? chosenDye : hairColor;
-            student.studentStatistics.setHairHighlights(
-                    pickAvoidingColor(highlights, avoidColor));
+            String chosenHighlight = pickAvoidingColor(highlights, avoidColor);
+            if (chosenHighlight != null) {
+                student.studentStatistics.setHairHighlights(chosenHighlight);
+            }
         }
     }
 
     /**
      * Picks a random entry from the list, avoiding the given color when
-     * possible. If the list has only one entry that matches the avoided
-     * color, it is returned anyway.
+     * possible. Returns null when every candidate collapses to the avoided
+     * color after normalization.
      */
     private static String pickAvoidingColor(List<String> options, String avoid) {
-        if (options.size() == 1) {
-            return options.get(0);
-        }
         List<String> filtered = new ArrayList<>();
+        String normalizedAvoid = normalizeColor(avoid);
         for (String opt : options) {
-            if (!opt.equalsIgnoreCase(avoid)) {
+            if (opt != null && !normalizeColor(opt).equals(normalizedAvoid)) {
                 filtered.add(opt);
             }
         }
         if (filtered.isEmpty()) {
-            return options.get(setRandom(0, options.size() - 1));
+            return null;
         }
         return filtered.get(setRandom(0, filtered.size() - 1));
+    }
+
+    private static String normalizeColor(String color) {
+        if (color == null) {
+            return "";
+        }
+        return color.trim().replaceAll("\\s+", " ").toLowerCase();
     }
 
     /**

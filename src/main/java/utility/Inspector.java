@@ -91,7 +91,8 @@ public class Inspector {
         String hairDye = student.studentStatistics.getHairDye();
         String hairHighlights = student.studentStatistics.getHairHighlights();
         String hairStyle = student.studentStatistics.getHairStyle();
-        if (hairDye != null) {
+        if (hairDye != null && !hairDye.isBlank()
+                && !hairDye.equalsIgnoreCase(hairColor)) {
             sb.append(" dyed ").append(hairDye.toLowerCase());
         }
         if (hairHighlights != null) {
@@ -252,13 +253,39 @@ public class Inspector {
 
     private static void appendItemName(StringBuilder sb, WearableItem item,
                                        boolean plural) {
+        String displayName = item.getDisplayName();
         if (!plural) {
             sb.append("a ");
         }
-        sb.append(item.getDisplayName());
-        if (plural && !item.getDisplayName().endsWith("s")) {
-            sb.append("s");
+        if (plural) {
+            sb.append(pluralizeDisplayName(displayName));
+        } else {
+            sb.append(displayName);
         }
+    }
+
+    private static String pluralizeDisplayName(String displayName) {
+        if (displayName == null || displayName.isBlank()) {
+            return displayName;
+        }
+        String lower = displayName.toLowerCase();
+        if (lower.endsWith("ch")
+                || lower.endsWith("sh")
+                || lower.endsWith("x")
+                || lower.endsWith("z")
+                || lower.endsWith("ss")) {
+            return displayName + "es";
+        }
+        if (lower.endsWith("s")) {
+            return displayName;
+        }
+        if (lower.endsWith("y") && displayName.length() > 1) {
+            char beforeY = lower.charAt(lower.length() - 2);
+            if ("aeiou".indexOf(beforeY) == -1) {
+                return displayName.substring(0, displayName.length() - 1) + "ies";
+            }
+        }
+        return displayName + "s";
     }
 
     /**

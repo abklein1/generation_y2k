@@ -32,6 +32,7 @@ public abstract class Room implements Serializable {
     protected boolean restrictM;
     protected boolean restrictF;
     protected String classRoomType;
+    protected int floorNumber = 1;
     
     protected transient OccupancyGrid floorGrid;
 
@@ -60,6 +61,7 @@ public abstract class Room implements Serializable {
         this.hasDivider = false;
         this.isDivided = false;
         this.originalCapacity = 0;
+        this.floorNumber = 1;
         this.staffAssign = new ArrayList<>();
         this.students = new ArrayList<>();
         this.seatingArrangements = new HashMap<>();
@@ -94,6 +96,14 @@ public abstract class Room implements Serializable {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public int getFloorNumber() {
+        return this.floorNumber;
+    }
+
+    public void setFloorNumber(int floorNumber) {
+        this.floorNumber = floorNumber;
     }
 
     public void setStudentRestriction(boolean studentRestriction) {
@@ -412,6 +422,25 @@ public abstract class Room implements Serializable {
 
     public void setClassRoomType(String type) {
         this.classRoomType = type;
+    }
+
+    /**
+     * Returns whether this room is a teaching space where "in class" behaviors
+     * can happen. Common areas like lunchrooms and hallways should return false
+     * even when they are the student's expected location.
+     */
+    public boolean isInstructionalSpace() {
+        return this instanceof Classroom
+                || this instanceof Portable
+                || this instanceof ScienceLab
+                || this instanceof ComputerLab
+                || this instanceof ArtStudio
+                || this instanceof MusicRoom
+                || this instanceof DramaRoom
+                || this instanceof VocationalRoom
+                || this instanceof Auditorium
+                || this instanceof Gym
+                || this instanceof LibraryR;
     }
 
     public void setUtilityType(UtilityRoom.utilityType utilityType) {

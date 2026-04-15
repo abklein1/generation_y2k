@@ -443,7 +443,9 @@ public class StudentBehaviorTreeBuilder {
                     student.studentStatistics.drainSecondaryStat("adaptability",
                             constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
                             constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
-                    return BehaviorStatus.FAILURE;
+                    // Treat being caught as a completed outcome so the selector
+                    // does not immediately replace this with another action.
+                    return BehaviorStatus.SUCCESS;
                 }
                 
                 // Success in class - entertainment boost and slight recovery
@@ -672,7 +674,9 @@ public class StudentBehaviorTreeBuilder {
                     student.studentStatistics.drainSecondaryStat("adaptability",
                             constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
                             constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
-                    return BehaviorStatus.FAILURE;
+                    // Treat being caught as a completed outcome so the selector
+                    // does not immediately replace this with another action.
+                    return BehaviorStatus.SUCCESS;
                 }
                 
                 state.setEntertainment(state.getEntertainment()

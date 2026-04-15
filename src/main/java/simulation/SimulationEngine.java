@@ -592,7 +592,7 @@ public class SimulationEngine {
         boolean afterSchool = bellSchedule.isAfterSchool(time);
         boolean inTransition = bellSchedule.isTransitionTime(time);
 
-        if (beforeSchool) {
+        if (beforeSchool && isPassiveWaitingActivity(activity)) {
             Room room = state.getCurrentRoom();
             if (room != null) {
                 return "Standing outside before class (" + room.getRoomName() + ")";
@@ -600,7 +600,7 @@ public class SimulationEngine {
             return "Standing outside before class";
         }
 
-        if (afterSchool) {
+        if (afterSchool && isPassiveWaitingActivity(activity)) {
             Room room = state.getCurrentRoom();
             if (room != null) {
                 return "Leaving school (" + room.getRoomName() + ")";
@@ -640,6 +640,11 @@ public class SimulationEngine {
         if (room != null) {
             entry.append(" in ").append(room.getRoomName());
         }
+    }
+
+    private boolean isPassiveWaitingActivity(ActivityType activity) {
+        return activity == ActivityType.IDLE
+                || activity == ActivityType.SOCIALIZING;
     }
 
     /**

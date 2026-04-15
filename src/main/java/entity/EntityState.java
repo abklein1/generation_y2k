@@ -306,13 +306,14 @@ public class EntityState implements Serializable {
     }
     
     /**
-     * Checks if the entity is in class (current room matches expected and in classroom activity).
+     * Checks if the entity is physically in their scheduled instructional space.
      *
      * @return true if in class
      */
     public boolean isInClass() {
-        return isWhereExpected() && 
-               currentActivity.requiresClassroom();
+        return isWhereExpected()
+                && currentRoom != null
+                && currentRoom.isInstructionalSpace();
     }
     
     // Physiological needs

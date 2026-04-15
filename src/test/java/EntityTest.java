@@ -1,4 +1,6 @@
 import entity.*;
+import entity.Rooms.Classroom;
+import entity.Rooms.Lunchroom;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -141,6 +143,34 @@ public class EntityTest {
             Student student = new Student();
             student.studentStatistics.setCuriosity(80);
             assertEquals(80, student.studentStatistics.getCuriosity());
+        }
+
+        @Test
+        @DisplayName("Should treat instructional rooms as in class regardless of current activity")
+        void testInstructionalRoomCountsAsInClass() {
+            Student student = new Student();
+            EntityState state = student.getEntityState();
+            Classroom classroom = new Classroom();
+
+            state.setCurrentRoom(classroom);
+            state.setExpectedRoom(classroom);
+            state.setCurrentActivity(ActivityType.TEXTING);
+
+            assertTrue(state.isInClass());
+        }
+
+        @Test
+        @DisplayName("Should not treat lunchrooms as in class even when expected")
+        void testLunchroomDoesNotCountAsInClass() {
+            Student student = new Student();
+            EntityState state = student.getEntityState();
+            Lunchroom lunchroom = new Lunchroom();
+
+            state.setCurrentRoom(lunchroom);
+            state.setExpectedRoom(lunchroom);
+            state.setCurrentActivity(ActivityType.TEXTING);
+
+            assertFalse(state.isInClass());
         }
     }
 

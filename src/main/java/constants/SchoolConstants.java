@@ -346,6 +346,8 @@ public final class SchoolConstants {
     // Stairwell amounts when school is multi-story
     public static final int STAIRWELL_AMOUNT_LOWER_LIMIT = 2;
     public static final int STAIRWELL_AMOUNT_UPPER_LIMIT = 6;
+    public static final int STAIRWELL_MAX_FLOORS = 3;
+    public static final double UPPER_FLOOR_HALLWAY_RATIO = 0.3;
 
     public static final int LOCKER_ROOM_MODIFIER = 2;
 

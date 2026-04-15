@@ -67,6 +67,8 @@ public class StandardSchool implements SchoolPlan {
     HashMap<Integer, Student> juniorClass = new HashMap<>();
     HashMap<Integer, Student> seniorClass = new HashMap<>();
 
+    private int numberOfFloors = 1;
+
     // Funding model for capacity calculations
     private SchoolFundingModel fundingModel = new SchoolFundingModel();
 
@@ -1722,6 +1724,14 @@ public class StandardSchool implements SchoolPlan {
      */
     public boolean isMultiStory() {
         return stairwells != null && stairwells.length > 0;
+    }
+
+    public int getNumberOfFloors() {
+        return numberOfFloors;
+    }
+
+    public void setNumberOfFloors(int numberOfFloors) {
+        this.numberOfFloors = numberOfFloors;
     }
 
     public void schoolColorsLoader() {
