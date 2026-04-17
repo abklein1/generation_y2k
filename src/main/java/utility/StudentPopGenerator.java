@@ -8,6 +8,8 @@ import view.GameView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -100,6 +102,9 @@ public class StudentPopGenerator {
 
         // Apply vision attributes
         applyVisionAttributes(student);
+
+        // Apply charisma-driven unique traits
+        applyUniqueTraits(student);
 
         // Piercings are applied separately after clique assignment
         // via applyPiercingAttributes so clique preferences can be used.
@@ -208,6 +213,59 @@ public class StudentPopGenerator {
             student.studentStatistics.setHasGlasses(correctiveLenses[0]);
             student.studentStatistics.setHasContacts(correctiveLenses[1]);
         }
+    }
+
+    /**
+     * Selects 3-5 unique physical/behavioral traits for a student based on
+     * their charisma. Charisma is N(50,15), so the z-score drives the
+     * probability of drawing from positive, neutral, or negative trait pools.
+     * Each trait is drawn from a distinct subcategory to avoid duplicate
+     * descriptions for the same body part.
+     *
+     * @param student the student to assign unique traits to
+     */
+    public static void applyUniqueTraits(Student student) {
+        int charisma = student.studentStatistics.getCharisma();
+        double z = (charisma - STUDENT_POP_CHARISMA_MEAN)
+                / (double) STUDENT_POP_CHARISMA_STANDARD_DEVIATION;
+
+        double positiveWeight = Math.max(0, z);
+        double negativeWeight = Math.max(0, -z);
+        double neutralWeight = 1.0;
+        double total = positiveWeight + negativeWeight + neutralWeight;
+
+        double pPositive = positiveWeight / total;
+        double pNeutral = neutralWeight / total;
+
+        int traitCount = GameRandom.nextInt(3, 5);
+
+        List<String> subcategories = new ArrayList<>(
+                Arrays.asList(UniqueTraitLoader.getSubcategories()));
+        Collections.shuffle(subcategories, new java.util.Random(
+                (long) (GameRandom.nextDouble() * Long.MAX_VALUE)));
+
+        List<String> selectedTraits = new ArrayList<>();
+        for (int i = 0; i < traitCount && i < subcategories.size(); i++) {
+            String subcategory = subcategories.get(i);
+
+            double roll = GameRandom.nextDouble();
+            String category;
+            if (roll < pPositive) {
+                category = "positive";
+            } else if (roll < pPositive + pNeutral) {
+                category = "neutral";
+            } else {
+                category = "negative";
+            }
+
+            List<String> traits = UniqueTraitLoader.getTraits(category, subcategory);
+            if (traits.isEmpty()) {
+                continue;
+            }
+            selectedTraits.add(traits.get(GameRandom.nextInt(traits.size())));
+        }
+
+        student.studentStatistics.setUniqueTraits(selectedTraits);
     }
 
     /**

@@ -8,6 +8,7 @@ import entity.StudentSchedule;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class StudentStatistics implements PStatistics {
@@ -106,6 +107,9 @@ public class StudentStatistics implements PStatistics {
     private String hairHighlights;
     private String hairStyle;
 
+    // Charisma-driven unique physical/behavioral traits
+    private List<String> uniqueTraits;
+
     public StudentStatistics() {
         this.height = 0;
         this.eyeColor = null;
@@ -176,6 +180,7 @@ public class StudentStatistics implements PStatistics {
         this.hairDye = null;
         this.hairHighlights = null;
         this.hairStyle = null;
+        this.uniqueTraits = new ArrayList<>();
     }
 
     @Override
@@ -623,6 +628,14 @@ public class StudentStatistics implements PStatistics {
 
     public void setHairStyle(String hairStyle) {
         this.hairStyle = hairStyle;
+    }
+
+    public List<String> getUniqueTraits() {
+        return Collections.unmodifiableList(this.uniqueTraits);
+    }
+
+    public void setUniqueTraits(List<String> traits) {
+        this.uniqueTraits = new ArrayList<>(traits);
     }
 
     public String getRace() {

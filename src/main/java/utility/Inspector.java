@@ -103,6 +103,12 @@ public class Inspector {
             sb.append(styleLower.endsWith("s") ? " in " : " in a ").append(styleLower);
         }
         sb.append(" and ").append(eyeColor.toLowerCase()).append(" eyes. ");
+        List<String> uniqueTraits = student.studentStatistics.getUniqueTraits();
+        if (uniqueTraits != null && !uniqueTraits.isEmpty()) {
+            for (String trait : uniqueTraits) {
+                sb.append(trait).append(" ");
+            }
+        }
         sb.append("They stand ").append(df.format(height)).append(" inches tall.");
         if (hasBraces) {
             sb.append(" They have braces with ");
@@ -247,8 +253,30 @@ public class Inspector {
         if (sb.length() > 0) {
             sb.append(" ");
         }
-        sb.append("They have a ").append(item.getDisplayName())
-                .append(" ").append(areaName).append(" piercing.");
+        String typeName = item.getName();
+        boolean isPaired = typeName != null && typeName.endsWith("s");
+        if (isPaired) {
+            sb.append("They have ").append(singularizeDisplayName(item))
+                    .append(" ").append(areaName).append(" piercings.");
+        } else {
+            sb.append("They have a ").append(item.getDisplayName())
+                    .append(" ").append(areaName).append(" piercing.");
+        }
+    }
+
+    /**
+     * Returns the display name with the piercing type name singularized
+     * (e.g. "gunmetal surgical steel snakebites" becomes
+     * "gunmetal surgical steel snakebite").
+     */
+    private static String singularizeDisplayName(WearableItem item) {
+        String display = item.getDisplayName();
+        String name = item.getName();
+        if (name != null && name.endsWith("s") && display.endsWith(name)) {
+            return display.substring(0, display.length() - name.length())
+                    + name.substring(0, name.length() - 1);
+        }
+        return display;
     }
 
     private static void appendItemName(StringBuilder sb, WearableItem item,
