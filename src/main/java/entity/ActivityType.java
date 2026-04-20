@@ -35,6 +35,11 @@ public enum ActivityType {
      * Entity is eating lunch in the cafeteria.
      */
     EATING_LUNCH("Eating Lunch", false, false),
+
+    /**
+     * Entity is eating lunch off campus (upperclassmen with sufficient income).
+     */
+    EATING_LUNCH_OFF_CAMPUS("Eating Lunch Off Campus", false, false),
     
     /**
      * Entity is not where they should be.
@@ -96,7 +101,27 @@ public enum ActivityType {
     /**
      * Entity is supervising (staff only).
      */
-    SUPERVISING("Supervising", false, false);
+    SUPERVISING("Supervising", false, false),
+
+    /**
+     * Entity is walking to school from their neighborhood.
+     */
+    COMMUTING_WALK("Walking to School", false, true),
+
+    /**
+     * Entity is riding the school bus.
+     */
+    COMMUTING_BUS("Riding the Bus", false, true),
+
+    /**
+     * Entity is driving to school.
+     */
+    COMMUTING_DRIVE("Driving to School", false, true),
+
+    /**
+     * Entity is carpooling to school with neighbors.
+     */
+    COMMUTING_CARPOOL("Carpooling to School", false, true);
     
     private final String displayName;
     private final boolean requiresClassroom;

@@ -511,6 +511,42 @@ public class BellScheduleManager {
         return scheduleLoaded;
     }
 
+    /** Minutes-from-midnight boundary: after-school ends, evening begins. */
+    private static final int AFTER_SCHOOL_END_MINUTES = 18 * 60; // 6:00 PM
+
+    /** Minutes-from-midnight boundary: evening ends. */
+    private static final int EVENING_END_MINUTES = 22 * 60; // 10:00 PM
+
+    /**
+     * Returns the current {@link DayPhase} based on the time of day and
+     * day of week.
+     *
+     * @param time the current game time
+     * @return the active day phase
+     */
+    public DayPhase getDayPhase(Time time) {
+        if (time.isWeekend()) {
+            return DayPhase.WEEKEND;
+        }
+
+        int minutesFromMidnight = time.getMinutesFromMidnight();
+
+        if (isBeforeSchool(time)) {
+            return DayPhase.PRE_SCHOOL;
+        }
+        if (!isAfterSchool(time)) {
+            return DayPhase.SCHOOL_DAY;
+        }
+        if (minutesFromMidnight < AFTER_SCHOOL_END_MINUTES) {
+            return DayPhase.AFTER_SCHOOL;
+        }
+        if (minutesFromMidnight < EVENING_END_MINUTES) {
+            return DayPhase.EVENING;
+        }
+        // Past 10 PM — effectively end of day
+        return DayPhase.EVENING;
+    }
+
     /**
      * Helper to extract Calendar from Time object.
      *

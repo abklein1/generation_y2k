@@ -62,6 +62,7 @@ public class StandardSchool implements SchoolPlan {
     VocationalRoom[] vocationalRooms;
     Portable[] portables;
     Stairwell[] stairwells;
+    OffCampus offCampus;
     HashMap<Integer, Student> freshmanClass = new HashMap<>();
     HashMap<Integer, Student> sophomoreClass = new HashMap<>();
     HashMap<Integer, Student> juniorClass = new HashMap<>();
@@ -950,6 +951,13 @@ public class StandardSchool implements SchoolPlan {
 
     public Lunchroom[] getLunchrooms() {
         return lunchrooms;
+    }
+
+    public OffCampus getOffCampus() {
+        if (offCampus == null) {
+            offCampus = new OffCampus();
+        }
+        return offCampus;
     }
 
     @Override

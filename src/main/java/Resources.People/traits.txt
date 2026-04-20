@@ -5,6 +5,7 @@ Strict Parents: Forced bedtime and more restrictive social events but no cost to
 Close Parents: Parents can serve as social links, but other social links are less rewarding
 One of Many: Parents are unable to provide rides to school or social events but adaptability and responsibility drain slower
 Helicopter Parents: Negative events are less likely to happen/have less impact but cannot attend parties or use social media
+Business Casual: Both parents work all of the time. More allowance and material goods but can not form social links with parents
 
 
 Personal Traits:
@@ -15,7 +16,7 @@ Loner: Less social needs, but one social link must be "true friend" or must be h
 Positively Positive: Negative events are less draining but stats take longer to recharge
 L33t: Good at video games. Social links can be developed through gaming, but non-gaming events drain stats faster
 Sketch: Creativity and Adaptability can be burned in place of other stats but social links are harder to form
-Bromancer: Same-sex relationships are more rewarding and easier to acquire but others are less
+Bro Code: Same-sex relationships are more rewarding and easier to acquire but others are less
 Theater Kid: When in performing arts classes social links form faster, performance is better
 Fake: Can mirror any social target interest but cannot form any "true friend"
 Off The Chain: Stat bonuses when in rebellious status, but social links cannot be formed or improved while rebellious
@@ -31,4 +32,5 @@ Dude...: negative effects from academics have no effects but determination canno
 Limewire: music and movies are free but social media/computer can become unavailable temporarily
 New Kid: initial stages of social links gain faster, but higher social links gain slower
 What's My Age Again: bonuses from discovering/consuming kid's media. Cannot gain social links from talking about mutual interests that are not kid's media
+Black Parade: Stats drain slower for each item of black apparel, but drain faster for each differently colored piece of apparel
 

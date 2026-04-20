@@ -17,6 +17,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -212,34 +213,97 @@ public class Inspector {
                                              List<WearableItem> right) {
         boolean bothEars = !left.isEmpty() && !right.isEmpty();
         if (bothEars) {
-            sb.append("They have both ears pierced with ");
-            appendItemName(sb, left.get(0), true);
+            boolean allUniform = allSameType(left) && allSameType(right)
+                    && left.get(0).getDisplayName().equals(
+                            right.get(0).getDisplayName());
 
-            int leftCount = left.size();
-            int rightCount = right.size();
-            if (leftCount == rightCount && leftCount > 1) {
-                sb.append(" (").append(leftCount).append(" per ear)");
-            } else if (leftCount != rightCount) {
-                sb.append(", with ").append(leftCount)
-                        .append(" on the left and ").append(rightCount)
-                        .append(" on the right");
+            if (allUniform) {
+                sb.append("They have both ears pierced with ");
+                appendItemName(sb, left.get(0), true);
+
+                int leftCount = left.size();
+                int rightCount = right.size();
+                if (leftCount == rightCount && leftCount > 1) {
+                    sb.append(" (").append(leftCount).append(" per ear)");
+                } else if (leftCount != rightCount) {
+                    sb.append(", with ").append(leftCount)
+                            .append(" on the left and ").append(rightCount)
+                            .append(" on the right");
+                }
+                sb.append(".");
+            } else {
+                sb.append("They have both ears pierced.");
+                sb.append(" Their left ear has ");
+                appendItemList(sb, left);
+                sb.append(".");
+                sb.append(" Their right ear has ");
+                appendItemList(sb, right);
+                sb.append(".");
             }
         } else {
             String ear = !left.isEmpty() ? "left" : "right";
             List<WearableItem> items = !left.isEmpty() ? left : right;
-            int count = items.size();
 
-            if (count > 1) {
-                sb.append("Their ").append(ear).append(" ear has ")
-                        .append(count).append(" ");
-                appendItemName(sb, items.get(0), true);
-            } else {
+            if (items.size() == 1) {
                 sb.append("Their ").append(ear)
                         .append(" ear is pierced with ");
                 appendItemName(sb, items.get(0), false);
+            } else if (allSameType(items)) {
+                sb.append("Their ").append(ear).append(" ear has ")
+                        .append(items.size()).append(" ");
+                appendItemName(sb, items.get(0), true);
+            } else {
+                sb.append("Their ").append(ear).append(" ear has ");
+                appendItemList(sb, items);
+            }
+            sb.append(".");
+        }
+    }
+
+    private static boolean allSameType(List<WearableItem> items) {
+        if (items.size() <= 1) {
+            return true;
+        }
+        String first = items.get(0).getDisplayName();
+        for (int i = 1; i < items.size(); i++) {
+            if (!items.get(i).getDisplayName().equals(first)) {
+                return false;
             }
         }
-        sb.append(".");
+        return true;
+    }
+
+    /**
+     * Appends a natural-language list of piercings, grouping duplicates
+     * by display name (e.g. "2 silver studs, a gold hoop, and a black
+     * titanium small hoop").
+     */
+    private static void appendItemList(StringBuilder sb,
+                                       List<WearableItem> items) {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        for (WearableItem item : items) {
+            counts.merge(item.getDisplayName(), 1, Integer::sum);
+        }
+
+        int idx = 0;
+        int total = counts.size();
+        for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+            if (idx > 0 && idx == total - 1) {
+                sb.append(total > 2 ? ", and " : " and ");
+            } else if (idx > 0) {
+                sb.append(", ");
+            }
+
+            int count = entry.getValue();
+            String name = entry.getKey();
+            if (count > 1) {
+                sb.append(count).append(" ")
+                        .append(pluralizeDisplayName(name));
+            } else {
+                sb.append("a ").append(name);
+            }
+            idx++;
+        }
     }
 
     private static void appendSlotDescription(StringBuilder sb,

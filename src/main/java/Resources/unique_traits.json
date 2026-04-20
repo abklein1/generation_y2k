@@ -37,7 +37,8 @@
         ],
         "hair": [
             "Their hair carries a luster in the sunlight.",
-            "Their hair is perfectly maintained."
+            "Their hair is perfectly maintained.",
+            "Their hair is silky."
         ],
         "skin": [
             "Their skin appears to be smooth and flawless.",
@@ -47,7 +48,8 @@
             "They move with graceful, fluid motions.",
             "They walk with a confident stride.",
             "They carry themselves with poise and grace.",
-            "They stand tall and straight."
+            "They stand tall and straight.",
+            "They seem to glide as they walk."
         ]
     },
     "neutral": {
@@ -88,7 +90,8 @@
             "Their ears are tucked close to their head.",
             "They have rounded ears.",
             "They have attached earlobes.",
-            "They have detached earlobes."
+            "They have detached earlobes.",
+            "Their ears sit low on their head."
         ],
         "mouth": [
             "They have a small, pursed mouth.",
@@ -102,7 +105,9 @@
             "They have a toothy smile.",
             "Their smile reveals mostly gums.",
             "They have a friendly smile.",
-            "They have a lopsided grin."
+            "They have a lopsided grin.",
+            "They have a slight overbite.",
+            "They constantly chew on their lip."
         ],
         "face": [
             "They have a round face.",
@@ -114,7 +119,15 @@
             "They have a large forehead.",
             "Their chin is slightly pointed.",
             "Their chin juts out slightly.",
-            "They have large dimples."
+            "They have large dimples.",
+            "Their face is heart-shaped.",
+            "They have a long, narrow face.",
+            "Their face is shaped like an oval.",
+            "They have thick eyebrows.",
+            "They have wide cheekbones.",
+            "They have a small chin.",
+            "Their chin is large",
+            "Their chin is slightly receded."
         ],
         "hair": [
             "Their hair is shiny.",
@@ -129,7 +142,8 @@
             "They have a large scar on their arm.",
             "They have a large scar on their leg.",
             "They have several acne scars.",
-            "They have some visible vitiligo patches."
+            "They have a small scar on their leg.",
+            "Their kneecaps are scarred."
         ],
         "misc": [
             "They have long limbs.",
@@ -138,7 +152,9 @@
             "They stand slightly pigeon-toed.",
             "They have noticeable amount of thick body hair.",
             "Their knees are slightly bowed.",
-            "Their knees are knobbly."
+            "Their knees are knobbly.",
+            "They walk with a slow saunter.",
+            "Their movements are slow and deliberate."
         ]
     },
     "negative": {
@@ -175,7 +191,8 @@
             "Their ears are very oily.",
             "Their ear is missing a chunk of cartilage.",
             "They have a cauliflower ear.",
-            "Their ears appear rubbery."
+            "Their ears appear rubbery.",
+            "Their ears are oblong."
         ],
         "mouth": [
             "Their mouth hangs slightly open.",
@@ -193,17 +210,22 @@
             "Their face seems misshapen.",
             "Their face is narrow and sharp.",
             "Their head seems to be too large for their body.",
-            "They have a double chin."
+            "They have a double chin.",
+            "Their facial features appear squashed together.",
+            "Their skull is bumpy and uneven."
         ],
         "hair": [
             "Their hair is greasy and oily.",
             "Their scalp is dry and flaky.",
             "Their hair is patchy.",
-            "They have a receding hairline."
+            "They have a receding hairline.",
+            "Their hairline is uneven."
         ],
         "skin": [
             "Their skin is dry and flaky.",
-            "Their skin appears clammy."
+            "Their skin appears clammy.",
+            "Their skin seems slightly ashen.",
+            "Their skin is dull."
         ],
         "misc": [
             "They walk with an unsteady gait.",
@@ -213,7 +235,8 @@
             "They move in quick, jerky movements.",
             "They appear to shrink in on themselves.",
             "They shuffle their feet as they walk.",
-            "They appear frail and sickly."
+            "They appear frail and sickly.",
+            "They walk on the tips of their toes."
         ]
     }
 }

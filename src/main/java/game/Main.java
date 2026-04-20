@@ -10,22 +10,19 @@ import utility.SchoolController;
 import view.GameView;
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.OceanTheme;
 
 public class Main {
     // Seed-based random generation is now supported via GameRandom class
     // The seed is displayed in the console when generating a school
     public static void main(String[] args) {
 
-        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if ("Windows".equals(info.getName())) {
-                try {
-                    UIManager.setLookAndFeel(info.getClassName());
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                        | UnsupportedLookAndFeelException ex) {
-                    throw new RuntimeException(ex);
-                }
-                break;
-            }
+        try {
+            MetalLookAndFeel.setCurrentTheme(new OceanTheme());
+            UIManager.setLookAndFeel(new MetalLookAndFeel());
+        } catch (UnsupportedLookAndFeelException ex) {
+            throw new RuntimeException(ex);
         }
 
         SwingUtilities.invokeLater(() -> {

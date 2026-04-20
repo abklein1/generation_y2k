@@ -67,6 +67,11 @@ public class EntityStateManager {
             String lunchPeriod = assignLunchPeriod(grade);
             student.getEntityState().setLunchPeriod(lunchPeriod);
 
+            // Determine off-campus lunch eligibility for upperclassmen
+            student.getEntityState().setCanAffordOffCampus(
+                    determineOffCampusEligibility(grade,
+                            student.studentStatistics.getIncomeLevel()));
+
             // Build and assign behavior tree
             BehaviorTree tree = StudentBehaviorTreeBuilder.buildTree(student);
             student.setBehaviorTree(tree);
@@ -118,6 +123,30 @@ public class EntityStateManager {
             default:
                 return "A";
         }
+    }
+
+    /**
+     * Determines whether an upperclassman can afford to leave campus for
+     * lunch.  Freshmen and Sophomores are never eligible.  For Juniors and
+     * Seniors, high-income students always qualify, middle-income students
+     * qualify with roughly 50% probability (rolled once and cached), and
+     * low-income students never qualify.
+     */
+    private boolean determineOffCampusEligibility(String gradeLevel,
+                                                  String incomeLevel) {
+        if (gradeLevel == null || incomeLevel == null) {
+            return false;
+        }
+        boolean isUpperclassman = gradeLevel.equals("Junior")
+                || gradeLevel.equals("Senior");
+        if (!isUpperclassman) {
+            return false;
+        }
+        return switch (incomeLevel) {
+            case "high" -> true;
+            case "middle" -> GameRandom.nextDouble() < 0.5;
+            default -> false;
+        };
     }
 
     /**

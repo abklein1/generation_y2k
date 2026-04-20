@@ -19,8 +19,8 @@
                     "shoulder-length": ["swoop", "shag", "chopped layer cut"],
                     "waist-length": ["chopped layer cut"],
                     "extremely long": ["long layer cut", "chopped layer cut"],
-                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
-                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                    "dyes": ["black", "deep red", "magenta", "purple"],
+                    "highlights": ["bleach white", "silver", "bleach blond", "red"]
                 },
                 "api": {
                     "short": ["pixie"],
@@ -110,23 +110,23 @@
             "female": {
                 "white": {
                     "short": ["buzz cut", "pixie", "spike cut"],
-                    "chin-length": ["mohawk", "spike cut"],
-                    "neck-length": ["mohawk", "liberty spikes"],
+                    "chin-length": ["mohawk", "spike cut", "devil locks"],
+                    "neck-length": ["mohawk", "liberty spikes", "devil locks"],
                     "shoulder-length": ["mohawk", "liberty spikes"],
                     "waist-length": ["chopped layer cut"],
                     "extremely long": ["long layer cut"],
                     "dyes": ["bleach blond", "magenta", "pink", "black", "red", "florescent green"],
-                    "highlights": []
+                    "highlights": ["red", "pink", "purple", "bleach white", "blue"]
                 },
                 "black": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
+                    "short": ["locs"],
+                    "chin-length": ["bantu knots", "locs", "braids", "twists", "afro blowout"],
+                    "neck-length": ["bantu knots", "locs", "braids", "twists", "afro blowout"],
+                    "shoulder-length": ["bantu knots", "locs", "braids", "twists"],
+                    "waist-length": ["locs", "braids", "twists"],
                     "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "dyes": ["purple", "maroon", "dark red", "dark blue"],
+                    "highlights": ["red", "pink", "purple"]
                 },
                 "api": {
                     "short": [],
@@ -163,8 +163,8 @@
                 "white": {
                     "very short": ["buzz cut", "spike cut"],
                     "short": ["spike cut", "faux hawk"],
-                    "chin-length": ["mohawk", "liberty spikes"],
-                    "long": ["mohawk", "liberty spikes"],
+                    "chin-length": ["mohawk", "liberty spikes", "devil locks"],
+                    "long": ["mohawk", "liberty spikes", "devil locks"],
                     "shoulder-length": ["mohawk", "liberty spikes"],
                     "waist-length": [],
                     "dyes": ["bleach blond", "green", "blue", "red", "black"],
@@ -225,7 +225,7 @@
                     "highlights": ["bleach blond", "blond"]
                 },
                 "black": {
-                    "short": [],
+                    "short": ["short afro"],
                     "chin-length": [],
                     "neck-length": [],
                     "shoulder-length": [],

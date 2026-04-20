@@ -10,7 +10,9 @@
                     "dangling skull",
                     "industrial stud",
                     "small hoop",
-                    "dangling star"
+                    "dangling star",
+                    "dangling bat",
+                    "dangling razor blade"
                 ],
                 "right ear": [
                     "spiky studs",
@@ -20,7 +22,9 @@
                     "dangling skull",
                     "industrial stud",
                     "small hoop",
-                    "dangling star"
+                    "dangling star",
+                    "dangling bat",
+                    "dangling razor blade"
                 ],
                 "lips": [
                     "snakebites",
@@ -61,13 +65,15 @@
                     "00g gauge",
                     "12mm gauge",
                     "14mm gauge",
-                    "industrial stud"
+                    "industrial stud",
+                    "stud"
                 ],
                 "right ear": [
                     "00g gauge",
                     "12mm gauge",
                     "14mm gauge",
-                    "industrial stud"
+                    "industrial stud",
+                    "stud"
                 ],
                 "lips": [
                     "snakebites",
@@ -209,10 +215,20 @@
                     "small hoop",
                     "stud"
                 ],
-                "nose": [],
-                "navel": [],
-                "eyebrow": [],
-                "tongue": [],
+                "nose": [
+                    "small hoop",
+                    "septum"
+                ],
+                "navel": [
+                    "stud"
+                ],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
+                "tongue": [
+                    "stud"
+                ],
                 "colors": [],
                 "materials": [
                     "steel",
@@ -230,10 +246,19 @@
                     "small hoop",
                     "stud"
                 ],
-                "lips": [],
-                "nose": [],
+                "lips": [
+                    "small hoop",
+                    "snakebites"
+                ],
+                "nose": [
+                    "small hoop",
+                    "stud"
+                ],
                 "navel": [],
-                "eyebrow": [],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
                 "tongue": [],
                 "colors": [
                     "black",
@@ -262,7 +287,8 @@
                     "dangling spider",
                     "horseshoe",
                     "dangling dragon",
-                    "dangling knife"
+                    "dangling knife",
+                    "dangling jack skelly"
                 ],
                 "right ear": [
                     "small hoop",
@@ -272,7 +298,8 @@
                     "dangling spider",
                     "horseshoe",
                     "dangling dragon",
-                    "dangling knife"
+                    "dangling knife",
+                    "dangling jack skelly"
                 ],
                 "lips": [
                     "small hoop",
@@ -282,7 +309,10 @@
                     "septum"
                 ],
                 "navel": [],
-                "eyebrow": [],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
                 "tongue": [
                     "stud"
                 ],
@@ -319,11 +349,15 @@
             "female": {
                 "left ear": [
                     "small hoop",
-                    "stud"
+                    "medium hoop",
+                    "stud",
+                    "pendant"
                 ],
                 "right ear": [
                     "small hoop",
-                    "stud"
+                    "medium hoop",
+                    "stud",
+                    "pendant"
                 ],
                 "lips": [],
                 "nose": [],
@@ -340,7 +374,9 @@
                     "platinum",
                     "cubic zirconia",
                     "sapphire",
-                    "emerald"
+                    "emerald",
+                    "ruby",
+                    "pearl"
                 ]
             },
             "male": {
@@ -359,11 +395,15 @@
             "female": {
                 "left ear": [
                     "small hoop",
-                    "stud"
+                    "medium hoop",
+                    "stud",
+                    "pendant"
                 ],
                 "right ear": [
                     "small hoop",
-                    "stud"
+                    "medium hoop",
+                    "stud",
+                    "pendant"
                 ],
                 "lips": [],
                 "nose": [],
@@ -442,19 +482,48 @@
             "female": {
                 "left ear": [
                     "small hoop",
-                    "stud"
+                    "medium hoop",
+                    "stud",
+                    "industrial stud",
+                    "spike"
                 ],
                 "right ear": [
                     "small hoop",
+                    "medium hoop",
+                    "stud",
+                    "industrial stud",
+                    "spike"
+                ],
+                "lips": [
+                    "small hoop",
                     "stud"
                 ],
-                "lips": [],
-                "nose": [],
-                "navel": [],
-                "eyebrow": [],
-                "tongue": [],
-                "colors": [],
-                "materials": []
+                "nose": [
+                    "small hoop",
+                    "septum"
+                ],
+                "navel": [
+                    "stud"
+                ],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
+                "tongue": [
+                    "stud"
+                ],
+                "colors": [
+                    "silver",
+                    "gunmetal",
+                    "black",
+                    "white",
+                    "red"
+                ],
+                "materials": [
+                    "steel",
+                    "surgical steel",
+                    "titanium"
+                ]
             },
             "male": {
                 "left ear": [

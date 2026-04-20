@@ -242,6 +242,26 @@ public class Time {
     }
 
     /**
+     * Advances the clock to the next school day morning (skipping weekends).
+     * Sets the time to STARTING_HOUR:STARTING_MINUTE and increments the day counter.
+     */
+    public void advanceToNextSchoolDay() {
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        dayCounter++;
+
+        // Skip weekends
+        while (isWeekend()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            dayCounter++;
+        }
+
+        calendar.set(Calendar.HOUR_OF_DAY, STARTING_HOUR);
+        calendar.set(Calendar.MINUTE, STARTING_MINUTE);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    /**
      * Resets the time to the starting values.
      * Call this when starting a new game/simulation.
      */

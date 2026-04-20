@@ -24,7 +24,10 @@
         "Bayshore",
         "Venetian",
         "Lauderdale",
-        "Bougainvillea"
+        "Bougainvillea",
+        "Hudson",
+        "Bethany",
+        "Greenwich"
     ],
     "secondNames_affluent": [
         "Estates",
@@ -35,14 +38,16 @@
         "Marina",
         "Club",
         "Sands",
-        "Shores",
         "Island",
         "Landing",
         "Bluff",
         "Cay",
         "Bay",
         "Harbor",
-        "Arts District"
+        "Arts District",
+        "Beach",
+        "Highlands",
+        "Canyon"
     ],
     "firstNames_middle_class": [
         "Winding",
@@ -70,7 +75,10 @@
         "Turtle",
         "Cinnamon",
         "Blooming",
-        "Magnolia"
+        "Magnolia",
+        "Fox",
+        "Salmon",
+        "Sage"
     ],
     "secondNames_middle_class": [
         "Creek",

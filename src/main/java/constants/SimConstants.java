@@ -5,7 +5,7 @@ public final class SimConstants {
     public static final int STARTING_YEAR = 2004;
     public static final int STARTING_MONTH = 7;
     public static final int STARTING_DATE = 23;
-    public static final int STARTING_HOUR = 8;
+    public static final int STARTING_HOUR = 7;
     public static final int STARTING_MINUTE = 0;
 
     // GENDER RATES
@@ -656,6 +656,11 @@ public final class SimConstants {
     public static final double PIERCING_NAVEL_FEMALE_RATE = 0.18;
     public static final double PIERCING_NAVEL_MALE_RATE = 0.01;
 
+    // When both ears are pierced, probability that each right-ear piercing
+    // mirrors the corresponding left-ear piercing (type, material, color).
+    // The remainder of the time a fresh random piercing is rolled instead.
+    public static final double PIERCING_EAR_MATCH_RATE = 0.75;
+
     // Charisma boost from wearing jewelry (minor stat improvement)
     public static final int PIERCING_EARRING_CHARISMA_BOOST = 2;
 
@@ -760,6 +765,11 @@ public final class SimConstants {
     public static final double NEED_HUNGER_ALLOSTATIC_STRESS = 0.15;
     public static final double NEED_THIRST_ALLOSTATIC_STRESS = 0.15;
     public static final double NEED_BLADDER_ALLOSTATIC_STRESS = 0.10;
+
+    // Hunger/thirst refill while eating lunch (per-tick, 0-100 scale).
+    // Lunch lasts 40 minutes; these rates restore ~80 points over that window.
+    public static final double NEED_HUNGER_REFILL_PER_TICK = 2.0;
+    public static final double NEED_THIRST_REFILL_PER_TICK = 2.0;
 
     // Entertainment and energy decay (per-tick, 0-100 scale)
     public static final double NEED_ENTERTAINMENT_DECAY_PER_TICK = 1.0;

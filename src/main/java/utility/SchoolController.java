@@ -216,14 +216,19 @@ public class SchoolController {
         // Create entity state manager and initialize all entities
         entityStateManager = new EntityStateManager(studentHashMap, staffHashMap, standardSchool, time);
         entityStateManager.initializeAll();
-        entityStateManager.placeStudentsAtStartOfDay();
+        // Staff are placed in their rooms; students start off-campus for transit
         entityStateManager.placeStaffAtStartOfDay();
 
-        // Initialize room OccupancyGrids and place students on them
+        // Assign transit modes and departure times based on neighborhood distance + income
+        if (town != null) {
+            simulation.TransitAssigner.assignAll(studentHashMap, town);
+            view.appendOutput("Transit modes assigned to " + studentHashMap.size() + " students");
+        }
+
+        // Initialize room OccupancyGrids (students will be placed when they arrive)
         simulation.RoomOccupancyManager occupancyManager =
                 new simulation.RoomOccupancyManager(standardSchool);
         occupancyManager.initializeAllGrids();
-        occupancyManager.placeStudentsForStartOfDay(studentHashMap);
         simulationEngine.setRoomOccupancyManager(occupancyManager);
 
         // Provide pre-computed traversal paths for room-to-room movement
@@ -283,7 +288,12 @@ public class SchoolController {
             public void onDayEnd() {
                 SwingUtilities.invokeLater(() -> {
                     view.appendOutput("School day has ended!");
-                    stopSimulation();
+                    pauseSimulation();
+                    updateTimeLabel();
+                    updateWeatherLabels();
+                    updatePeriodDisplay();
+                    view.appendOutput("Day " + time.getDayCounter() + " (" + time.getDayName()
+                            + ") ready — press Play to continue.");
                 });
             }
         });
@@ -393,10 +403,15 @@ public class SchoolController {
             return null;
         }
 
-        if (bellSchedule.isBeforeSchool(time)) {
+        simulation.DayPhase phase = bellSchedule.getDayPhase(time);
+        if (phase == simulation.DayPhase.PRE_SCHOOL) {
             return "Before School";
-        } else if (bellSchedule.isAfterSchool(time)) {
+        } else if (phase == simulation.DayPhase.AFTER_SCHOOL) {
             return "After School";
+        } else if (phase == simulation.DayPhase.EVENING) {
+            return "Evening";
+        } else if (phase == simulation.DayPhase.WEEKEND) {
+            return "Weekend";
         } else if (bellSchedule.isTransitionTime(time)) {
             return "Transition";
         }

@@ -4,6 +4,7 @@ import behavior.BehaviorContext;
 import behavior.BehaviorTree;
 import constants.SimConstants;
 import entity.*;
+import entity.Rooms.OffCampus;
 import entity.Rooms.Room;
 import utility.SocialLinkConnector;
 import utility.TraversalStorage;
@@ -39,6 +40,9 @@ public class SimulationEngine {
     private TraversalStorage traversalStorage;
     private int currentTransitionIndex;
     private int lastProcessedMonth = -1;
+    private LunchDestinationSelector lunchDestinationSelector;
+    private boolean wasLunchA = false;
+    private boolean wasLunchB = false;
 
     // Simulation speed options (ticks per real-time second)
     public static final int SPEED_SLOW = 1; // 1 tick per second
@@ -217,6 +221,15 @@ public class SimulationEngine {
         time.stepForwardMinutes(minutesPerTick);
         currentTick++;
 
+        // 1.5. Update day phase on all entities
+        DayPhase currentDayPhase = bellSchedule.getDayPhase(time);
+        updateAllDayPhases(currentDayPhase);
+
+        // 1.75. Process morning transit (commutes from neighborhoods)
+        if (currentDayPhase == DayPhase.PRE_SCHOOL) {
+            processMorningTransit();
+        }
+
         // 2. Check for period transitions
         int currentPeriod = bellSchedule.getCurrentPeriod(time);
         boolean isTransition = bellSchedule.isTransitionTime(time);
@@ -238,6 +251,9 @@ public class SimulationEngine {
         // 3. Update expected locations based on schedule
         updateExpectedLocations();
 
+        // 3.25. Handle mid-block lunch transitions (enter/exit lunch)
+        processLunchTransitions();
+
         // 3.5. Advance students along their transition paths
         if (isTransition) {
             advanceStudentMovement();
@@ -246,7 +262,8 @@ public class SimulationEngine {
         // 3.75. Tick physiological needs for all entities
         tickAllNeeds();
 
-        // 4. Process NPC behavior trees (every tick, regardless of speed)
+        // 4. Process NPC behavior trees
+        // During pre-school, only run trees for students who have arrived
         processStudentBehaviors();
         processStaffBehaviors();
 
@@ -259,6 +276,102 @@ public class SimulationEngine {
         // 6. Notify listeners
         notifyTick();
     }
+
+    // ==================== Morning Transit ====================
+
+    /**
+     * Sets the current {@link DayPhase} on every entity's state.
+     */
+    private void updateAllDayPhases(DayPhase phase) {
+        if (students != null) {
+            for (Student student : students.values()) {
+                EntityState state = student.getEntityState();
+                if (state != null) {
+                    state.setCurrentPhase(phase);
+                }
+            }
+        }
+        if (staff != null) {
+            for (Staff staffMember : staff.values()) {
+                EntityState state = staffMember.getEntityState();
+                if (state != null) {
+                    state.setCurrentPhase(phase);
+                }
+            }
+        }
+    }
+
+    /**
+     * Processes morning commutes for all students.
+     * <ul>
+     *   <li>Students whose departure time has arrived begin their commute.</li>
+     *   <li>Students already in transit tick down their remaining travel time.</li>
+     *   <li>Students whose travel time reaches 0 are placed on campus.</li>
+     * </ul>
+     * Commuting students can socialize with their transit group via the
+     * normal behavior tree (the tree runs for in-transit students and they
+     * can target transit group members).
+     */
+    private void processMorningTransit() {
+        if (students == null) {
+            return;
+        }
+
+        int currentMinutes = time.getMinutesFromMidnight();
+
+        for (Student student : students.values()) {
+            EntityState state = student.getEntityState();
+            if (state == null || state.hasArrivedAtSchool()) {
+                continue;
+            }
+
+            if (state.isInTransit()) {
+                // Already commuting — tick down
+                state.decrementTransitTicks();
+                if (state.getTransitTicksRemaining() <= 0) {
+                    completeArrival(student, state);
+                }
+            } else if (currentMinutes >= state.getDepartureTimeMinutes()) {
+                // Time to leave home
+                beginCommute(student, state);
+            }
+        }
+    }
+
+    /**
+     * Starts a student's commute from their neighborhood.
+     */
+    private void beginCommute(Student student, EntityState state) {
+        state.setInTransit(true);
+        state.setTransitTicksRemaining(state.getTravelTimeMinutes());
+        state.setCurrentActivity(state.getCommutingActivity());
+        state.setCurrentRoom(null);
+        state.setExpectedRoom(null);
+    }
+
+    /**
+     * Places a student on campus after their commute completes.
+     */
+    private void completeArrival(Student student, EntityState state) {
+        state.setInTransit(false);
+        state.setArrivedAtSchool(true);
+        state.setCurrentActivity(ActivityType.IDLE);
+
+        // Place in first-period room or a common area
+        Room room = getStudentScheduledRoom(student, 1);
+        if (room == null) {
+            room = getFreePeriodRoom();
+        }
+        if (room != null) {
+            state.setCurrentRoom(room);
+            state.setExpectedRoom(room);
+            if (roomOccupancyManager != null) {
+                roomOccupancyManager.enterRoom(student, room);
+            }
+        }
+    }
+
+    // ==================== Expected Locations ====================
 
     /**
      * Updates expected locations for all entities based on current schedule.
@@ -281,6 +394,9 @@ public class SimulationEngine {
 
     /**
      * Updates a student's expected location based on their schedule.
+     * During lunch, the expected room is the lunch destination (set by
+     * {@link #processLunchTransitions}). Outside lunch the normal
+     * schedule/free-period logic applies.
      *
      * @param student the student
      * @param period  the current period (1-4)
@@ -291,21 +407,19 @@ public class SimulationEngine {
             return;
         }
 
-        // Check if it's lunch time for this student
-        String lunchPeriod = state.getLunchPeriod();
-        if (bellSchedule.isLunchTime(time, lunchPeriod)) {
-            // Expected in cafeteria during their lunch period
-            if (school != null && school.getLunchrooms() != null &&
-                    school.getLunchrooms().length > 0) {
-                state.setExpectedRoom(school.getLunchrooms()[0]);
-            }
+        // Skip students who are still commuting or haven't left home yet
+        if (!state.hasArrivedAtSchool() && bellSchedule.isBeforeSchool(time)) {
+            return;
+        }
+
+        // While at lunch the expected room is managed by processLunchTransitions
+        if (state.isAtLunch()) {
             return;
         }
 
         // Check if it's transition time
         if (bellSchedule.isTransitionTime(time)) {
             // During transitions, expected location is next class
-            // For now, keep the expected room as the next scheduled class
         }
 
         // Get scheduled room for current period from student schedule
@@ -320,6 +434,132 @@ public class SimulationEngine {
                 }
             }
         }
+    }
+
+    /**
+     * Handles mid-block lunch transitions: dispatching students to their
+     * lunch destination when their lunch window begins, and returning them
+     * to their classroom when it ends.  Also fires the lunch start/end
+     * notifications for UI logging.
+     */
+    private void processLunchTransitions() {
+        if (students == null || school == null) {
+            return;
+        }
+
+        boolean isLunchA = bellSchedule.isLunchTime(time, "A");
+        boolean isLunchB = bellSchedule.isLunchTime(time, "B");
+
+        // Fire lunch start/end notifications on edges
+        if (isLunchA && !wasLunchA) {
+            notifyLunchStart("A");
+        } else if (!isLunchA && wasLunchA) {
+            notifyLunchEnd("A");
+        }
+        if (isLunchB && !wasLunchB) {
+            notifyLunchStart("B");
+        } else if (!isLunchB && wasLunchB) {
+            notifyLunchEnd("B");
+        }
+
+        // Lazily create the selector on first use
+        if (lunchDestinationSelector == null) {
+            lunchDestinationSelector = new LunchDestinationSelector(
+                    school, socialLinkConnector);
+        }
+
+        for (Student student : students.values()) {
+            EntityState state = student.getEntityState();
+            if (state == null) {
+                continue;
+            }
+            String lunchPeriod = state.getLunchPeriod();
+            boolean isMyLunch = bellSchedule.isLunchTime(time, lunchPeriod);
+
+            if (isMyLunch && !state.isAtLunch()) {
+                sendStudentToLunch(student, state);
+            } else if (!isMyLunch && state.isAtLunch()) {
+                returnStudentFromLunch(student, state);
+            }
+        }
+
+        wasLunchA = isLunchA;
+        wasLunchB = isLunchB;
+    }
+
+    /**
+     * Transfers a student from their classroom to a lunch destination.
+     */
+    private void sendStudentToLunch(Student student, EntityState state) {
+        state.setPreLunchRoom(state.getCurrentRoom());
+
+        Room destination = lunchDestinationSelector.selectDestination(student);
+        if (destination == null) {
+            return;
+        }
+
+        state.setExpectedRoom(destination);
+
+        boolean offCampus = destination instanceof OffCampus;
+        if (offCampus) {
+            // Remove from the physical grid; they leave campus
+            if (roomOccupancyManager != null) {
+                roomOccupancyManager.removeStudentFromCurrentRoom(student);
+            }
+            state.setCurrentRoom(destination);
+            state.setCurrentActivity(ActivityType.EATING_LUNCH_OFF_CAMPUS);
+        } else {
+            if (roomOccupancyManager != null) {
+                roomOccupancyManager.transferStudent(
+                        student, state.getCurrentRoom(), destination);
+            } else {
+                state.setCurrentRoom(destination);
+            }
+            state.setCurrentActivity(ActivityType.EATING_LUNCH);
+        }
+
+        state.setAtLunch(true);
+        state.resetDecisionCooldown(0);
+        state.onAte();
+    }
+
+    /**
+     * Returns a student from their lunch destination back to their
+     * pre-lunch classroom.
+     */
+    private void returnStudentFromLunch(Student student, EntityState state) {
+        Room returnRoom = state.getPreLunchRoom();
+        if (returnRoom == null) {
+            // Fallback: use their scheduled room for the current period
+            int period = bellSchedule.getCurrentPeriod(time);
+            returnRoom = getStudentScheduledRoom(student, period);
+            if (returnRoom == null) {
+                returnRoom = getFreePeriodRoom();
+            }
+        }
+
+        if (returnRoom != null) {
+            boolean wasOffCampus = state.getCurrentRoom() instanceof OffCampus;
+            if (wasOffCampus) {
+                if (roomOccupancyManager != null) {
+                    roomOccupancyManager.enterRoom(student, returnRoom);
+                }
+                state.setCurrentRoom(returnRoom);
+            } else {
+                if (roomOccupancyManager != null) {
+                    roomOccupancyManager.transferStudent(
+                            student, state.getCurrentRoom(), returnRoom);
+                } else {
+                    state.setCurrentRoom(returnRoom);
+                }
+            }
+            state.setExpectedRoom(returnRoom);
+        }
+
+        state.setAtLunch(false);
+        state.setPreLunchRoom(null);
+        state.setCurrentActivity(ActivityType.IDLE);
+        state.resetDecisionCooldown(0);
     }
 
     /**
@@ -407,9 +647,15 @@ public class SimulationEngine {
             for (Student student : students.values()) {
                 EntityState state = student.getEntityState();
                 if (state != null) {
+                    if (isEatingLunch(state)) {
+                        state.setHunger(state.getHunger()
+                                + SimConstants.NEED_HUNGER_REFILL_PER_TICK);
+                        state.setThirst(state.getThirst()
+                                + SimConstants.NEED_THIRST_REFILL_PER_TICK);
+                    }
                     state.tickNeeds(
-                            SimConstants.NEED_HUNGER_DECAY_PER_TICK,
-                            SimConstants.NEED_THIRST_DECAY_PER_TICK,
+                            isEatingLunch(state) ? 0 : SimConstants.NEED_HUNGER_DECAY_PER_TICK,
+                            isEatingLunch(state) ? 0 : SimConstants.NEED_THIRST_DECAY_PER_TICK,
                             SimConstants.NEED_BLADDER_DECAY_PER_TICK,
                             SimConstants.NEED_BLADDER_POST_MEAL_DECAY_PER_TICK,
                             SimConstants.NEED_ENTERTAINMENT_DECAY_PER_TICK,
@@ -441,6 +687,12 @@ public class SimulationEngine {
                 }
             }
         }
+    }
+
+    private static boolean isEatingLunch(EntityState state) {
+        ActivityType activity = state.getCurrentActivity();
+        return activity == ActivityType.EATING_LUNCH
+                || activity == ActivityType.EATING_LUNCH_OFF_CAMPUS;
     }
 
     /**
@@ -486,6 +738,14 @@ public class SimulationEngine {
         // student's cooldown counter has elapsed, or when the student is
         // idle/transitioning (needs a new decision immediately).
         for (Student student : students.values()) {
+            EntityState preCheckState = student.getEntityState();
+
+            // Skip students who haven't left home yet
+            if (preCheckState != null && !preCheckState.hasArrivedAtSchool()
+                    && !preCheckState.isInTransit()) {
+                continue;
+            }
+
             BehaviorTree tree = student.getBehaviorTree();
             if (tree != null) {
                 BehaviorContext context = student.getBehaviorContext();
@@ -505,7 +765,8 @@ public class SimulationEngine {
                 if (state != null) {
                     ActivityType current = state.getCurrentActivity();
                     boolean isActiveAction = current != ActivityType.IDLE
-                            && current != ActivityType.TRANSITIONING;
+                            && current != ActivityType.TRANSITIONING
+                            && !current.isMovement();
                     if (isActiveAction && state.getDecisionCooldown() > 0) {
                         shouldDecide = false;
                     }
@@ -591,6 +852,14 @@ public class SimulationEngine {
         boolean beforeSchool = bellSchedule.isBeforeSchool(time);
         boolean afterSchool = bellSchedule.isAfterSchool(time);
         boolean inTransition = bellSchedule.isTransitionTime(time);
+
+        // Commuting descriptions
+        if (state.isInTransit()) {
+            TransitMode mode = state.getTransitMode();
+            int remaining = state.getTransitTicksRemaining();
+            String modeStr = (mode != null) ? mode.getDisplayName() : "Commuting";
+            return modeStr + " to school (" + remaining + " min remaining)";
+        }
 
         if (beforeSchool && isPassiveWaitingActivity(activity)) {
             Room room = state.getCurrentRoom();
@@ -722,11 +991,63 @@ public class SimulationEngine {
             roomOccupancyManager.clearAllGrids();
         }
         currentTransitionIndex = 0;
+        wasLunchA = false;
+        wasLunchB = false;
 
         // Apply daily relationship decay: all social link scores drift toward neutral.
         // Family and best-friend bonds decay slower, incentivizing active maintenance.
         if (socialLinkConnector != null) {
             socialLinkConnector.applyDailyDecay();
+        }
+
+        // Advance clock to next school day morning so unpausing doesn't
+        // re-trigger end-of-day immediately.
+        time.advanceToNextSchoolDay();
+
+        // Re-place all entities in their first-period rooms for the new day
+        placeEntitiesForNewDay();
+    }
+
+    /**
+     * Prepares all entities for a new day.  Students start off-campus (at
+     * their neighborhood) and will commute in via {@link #processMorningTransit()}.
+     * Staff are placed directly in their assigned rooms (simplified commute).
+     */
+    private void placeEntitiesForNewDay() {
+        if (students != null) {
+            for (Student student : students.values()) {
+                EntityState state = student.getEntityState();
+                if (state == null) {
+                    continue;
+                }
+
+                // Students start at home — no room, not arrived
+                state.setCurrentRoom(null);
+                state.setExpectedRoom(null);
+                state.setCurrentActivity(ActivityType.IDLE);
+                state.setArrivedAtSchool(false);
+                state.setInTransit(false);
+                state.setCurrentPhase(DayPhase.PRE_SCHOOL);
+            }
+        }
+
+        // Staff arrive directly between 7:30-8:00 AM (simplified)
+        if (staff != null) {
+            for (Staff staffMember : staff.values()) {
+                EntityState state = staffMember.getEntityState();
+                if (state == null) {
+                    continue;
+                }
+
+                Room assignedRoom = (school != null) ? school.getClassroomByStaff(staffMember) : null;
+                if (assignedRoom != null) {
+                    state.setCurrentRoom(assignedRoom);
+                    state.setExpectedRoom(assignedRoom);
+                    state.setCurrentActivity(ActivityType.IDLE);
+                }
+                state.setArrivedAtSchool(true);
+                state.setCurrentPhase(DayPhase.PRE_SCHOOL);
+            }
         }
     }
 

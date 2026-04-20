@@ -3,6 +3,7 @@ package utility;
 import config.TownDemographics;
 import entity.Items.EquipmentSlot;
 import entity.Items.Piercing;
+import entity.Items.WearableItem;
 import entity.Student;
 import view.GameView;
 
@@ -313,8 +314,10 @@ public class StudentPopGenerator {
             student.studentStatistics.setEarPiercingRightCount(rightCount);
             equipEarPiercings(student, EquipmentSlot.LEFT_EAR, leftCount,
                     gender, clique, useCliqueData);
-            equipEarPiercings(student, EquipmentSlot.RIGHT_EAR, rightCount,
-                    gender, clique, useCliqueData);
+            List<WearableItem> leftPiercings = student.getStudentHead()
+                    .getEquippedList(EquipmentSlot.LEFT_EAR);
+            equipMirroredEarPiercings(student, EquipmentSlot.RIGHT_EAR,
+                    rightCount, leftPiercings, gender, clique, useCliqueData);
         } else {
             boolean leftEar = TraitSelection.determineSingleEarIsLeft();
             int count = TraitSelection.determineEarPiercingCount(gradeLevel);
@@ -403,6 +406,39 @@ public class StudentPopGenerator {
             Piercing p = useCliqueData
                     ? createCliquePiercing(clique, gender, slot)
                     : createGenericPiercing(gender, slot);
+            if (p != null) {
+                p.setStatModifier("charisma", PIERCING_EARRING_CHARISMA_BOOST);
+                student.getStudentHead().equip(p);
+            }
+        }
+    }
+
+    /**
+     * Equips ear piercings that tend to mirror the opposite ear. For each
+     * position that has a corresponding template piercing, the same type/
+     * material/color is reused with probability PIERCING_EAR_MATCH_RATE;
+     * otherwise a fresh random piercing is rolled. Positions beyond the
+     * template list are always rolled independently.
+     */
+    private static void equipMirroredEarPiercings(Student student,
+                                                  EquipmentSlot slot,
+                                                  int count,
+                                                  List<WearableItem> templates,
+                                                  String gender,
+                                                  String clique,
+                                                  boolean useCliqueData) {
+        for (int i = 0; i < count; i++) {
+            Piercing p;
+            if (i < templates.size()
+                    && GameRandom.nextDouble() < PIERCING_EAR_MATCH_RATE) {
+                Piercing source = (Piercing) templates.get(i);
+                p = new Piercing(source.getName(), source.getMaterial(),
+                        source.getColor(), slot, source.getSize());
+            } else {
+                p = useCliqueData
+                        ? createCliquePiercing(clique, gender, slot)
+                        : createGenericPiercing(gender, slot);
+            }
             if (p != null) {
                 p.setStatModifier("charisma", PIERCING_EARRING_CHARISMA_BOOST);
                 student.getStudentHead().equip(p);

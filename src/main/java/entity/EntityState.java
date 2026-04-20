@@ -1,6 +1,7 @@
 package entity;
 
 import entity.Rooms.Room;
+import simulation.DayPhase;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,6 +41,23 @@ public class EntityState implements Serializable {
     private double energy;              // 100 = well-rested, 0 = exhausted
     private boolean asleep;             // true when energy reaches 0
 
+    // Lunch state tracking
+    private boolean atLunch;            // Currently dispatched to lunch destination
+    private Room preLunchRoom;          // Classroom the student left when lunch started
+    private boolean canAffordOffCampus; // Cached eligibility for off-campus lunch (upperclassmen only)
+
+    // Transit state (morning commute from neighborhood to school)
+    private TransitMode transitMode;         // How this entity gets to school
+    private int travelTimeMinutes;           // Duration of their commute in minutes
+    private int departureTimeMinutes;        // Departure time as minutes from midnight
+    private int transitTicksRemaining;       // Countdown ticks during active commute
+    private boolean inTransit;               // Currently commuting to school
+    private boolean arrivedAtSchool;         // Has arrived on campus today
+    private transient List<Student> transitGroup; // Co-travelers for social interaction
+
+    // Day phase tracking (extensibility for after-school / weekend)
+    private DayPhase currentPhase;
+
     private static final int MAX_ACTION_LOG_SIZE = 50;
     private final transient LinkedList<String> actionLog = new LinkedList<>();
     
@@ -66,6 +84,17 @@ public class EntityState implements Serializable {
         this.entertainment = 100.0;
         this.energy = 100.0;
         this.asleep = false;
+        this.atLunch = false;
+        this.preLunchRoom = null;
+        this.canAffordOffCampus = false;
+        this.transitMode = null;
+        this.travelTimeMinutes = 0;
+        this.departureTimeMinutes = 0;
+        this.transitTicksRemaining = 0;
+        this.inTransit = false;
+        this.arrivedAtSchool = false;
+        this.transitGroup = null;
+        this.currentPhase = DayPhase.PRE_SCHOOL;
     }
     
     // Current Room
@@ -221,7 +250,124 @@ public class EntityState implements Serializable {
     public void setLunchPeriod(String lunchPeriod) {
         this.lunchPeriod = lunchPeriod;
     }
-    
+
+    // Lunch state
+
+    public boolean isAtLunch() {
+        return atLunch;
+    }
+
+    public void setAtLunch(boolean atLunch) {
+        this.atLunch = atLunch;
+    }
+
+    public Room getPreLunchRoom() {
+        return preLunchRoom;
+    }
+
+    public void setPreLunchRoom(Room preLunchRoom) {
+        this.preLunchRoom = preLunchRoom;
+    }
+
+    public boolean canAffordOffCampus() {
+        return canAffordOffCampus;
+    }
+
+    public void setCanAffordOffCampus(boolean canAffordOffCampus) {
+        this.canAffordOffCampus = canAffordOffCampus;
+    }
+
+    // Transit state
+
+    public TransitMode getTransitMode() {
+        return transitMode;
+    }
+
+    public void setTransitMode(TransitMode transitMode) {
+        this.transitMode = transitMode;
+    }
+
+    public int getTravelTimeMinutes() {
+        return travelTimeMinutes;
+    }
+
+    public void setTravelTimeMinutes(int travelTimeMinutes) {
+        this.travelTimeMinutes = travelTimeMinutes;
+    }
+
+    public int getDepartureTimeMinutes() {
+        return departureTimeMinutes;
+    }
+
+    public void setDepartureTimeMinutes(int departureTimeMinutes) {
+        this.departureTimeMinutes = departureTimeMinutes;
+    }
+
+    public int getTransitTicksRemaining() {
+        return transitTicksRemaining;
+    }
+
+    public void setTransitTicksRemaining(int transitTicksRemaining) {
+        this.transitTicksRemaining = transitTicksRemaining;
+    }
+
+    public void decrementTransitTicks() {
+        if (transitTicksRemaining > 0) {
+            transitTicksRemaining--;
+        }
+    }
+
+    public boolean isInTransit() {
+        return inTransit;
+    }
+
+    public void setInTransit(boolean inTransit) {
+        this.inTransit = inTransit;
+    }
+
+    public boolean hasArrivedAtSchool() {
+        return arrivedAtSchool;
+    }
+
+    public void setArrivedAtSchool(boolean arrivedAtSchool) {
+        this.arrivedAtSchool = arrivedAtSchool;
+    }
+
+    public List<Student> getTransitGroup() {
+        return transitGroup;
+    }
+
+    public void setTransitGroup(List<Student> transitGroup) {
+        this.transitGroup = transitGroup;
+    }
+
+    // Day phase
+
+    public DayPhase getCurrentPhase() {
+        return currentPhase;
+    }
+
+    public void setCurrentPhase(DayPhase currentPhase) {
+        this.currentPhase = currentPhase;
+    }
+
+    /**
+     * Returns the commuting ActivityType that corresponds to this entity's transit mode.
+     *
+     * @return the matching COMMUTING_* activity, or TRANSITIONING as fallback
+     */
+    public ActivityType getCommutingActivity() {
+        if (transitMode == null) {
+            return ActivityType.TRANSITIONING;
+        }
+        return switch (transitMode) {
+            case WALK -> ActivityType.COMMUTING_WALK;
+            case BUS -> ActivityType.COMMUTING_BUS;
+            case DRIVE -> ActivityType.COMMUTING_DRIVE;
+            case CARPOOL -> ActivityType.COMMUTING_CARPOOL;
+        };
+    }
+
     // Floor position (on OccupancyGrid)
     
     public int[] getFloorPosition() {
@@ -459,6 +605,12 @@ public class EntityState implements Serializable {
         this.floorPosition = null;
         this.movementPath = null;
         this.decisionCooldown = 0;
+        this.atLunch = false;
+        this.preLunchRoom = null;
+        this.transitTicksRemaining = 0;
+        this.inTransit = false;
+        this.arrivedAtSchool = false;
+        this.currentPhase = DayPhase.PRE_SCHOOL;
         resetNeeds();
     }
     

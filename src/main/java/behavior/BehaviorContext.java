@@ -1,14 +1,18 @@
 package behavior;
 
+import entity.EntityState;
 import entity.Rooms.Room;
 import entity.Staff;
 import entity.StandardSchool;
 import entity.Student;
 import entity.Time;
 import entity.Town;
+import simulation.DayPhase;
 import simulation.InteractionManager;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Holds per-entity state during behavior tree traversal.
@@ -145,6 +149,60 @@ public class BehaviorContext {
         this.interactionManager = interactionManager;
     }
     
+    // Transit group access
+
+    /**
+     * Returns the student's transit group (co-travelers during the morning
+     * commute).  Returns an empty list if the student has no group or no
+     * entity state.
+     *
+     * @return unmodifiable list of co-travelers (may include the student itself)
+     */
+    public List<Student> getTransitGroup() {
+        if (student == null) {
+            return Collections.emptyList();
+        }
+        EntityState state = student.getEntityState();
+        if (state == null || state.getTransitGroup() == null) {
+            return Collections.emptyList();
+        }
+        return state.getTransitGroup();
+    }
+
+    /**
+     * Checks whether the student is currently commuting to school.
+     *
+     * @return true if in transit
+     */
+    public boolean isInTransit() {
+        if (student == null) {
+            return false;
+        }
+        EntityState state = student.getEntityState();
+        return state != null && state.isInTransit();
+    }
+
+    /**
+     * Returns the current day phase from the student's entity state.
+     *
+     * @return the current day phase, or null
+     */
+    public DayPhase getDayPhase() {
+        if (student != null) {
+            EntityState state = student.getEntityState();
+            if (state != null) {
+                return state.getCurrentPhase();
+            }
+        }
+        if (staff != null) {
+            EntityState state = staff.getEntityState();
+            if (state != null) {
+                return state.getCurrentPhase();
+            }
+        }
+        return null;
+    }
+
     // Variable storage methods
     
     /**
