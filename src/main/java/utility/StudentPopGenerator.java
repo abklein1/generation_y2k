@@ -419,6 +419,12 @@ public class StudentPopGenerator {
      * material/color is reused with probability PIERCING_EAR_MATCH_RATE;
      * otherwise a fresh random piercing is rolled. Positions beyond the
      * template list are always rolled independently.
+     *
+     * Gauges are treated as a special case: when the corresponding template
+     * piercing is a gauge, this ear is paired as a matching gauge with
+     * probability PIERCING_GAUGE_MATCH_RATE (rather than the normal match
+     * rate), and the gauge size is always forced to match the template so
+     * paired gauges share the same size on both ears.
      */
     private static void equipMirroredEarPiercings(Student student,
                                                   EquipmentSlot slot,
@@ -428,10 +434,27 @@ public class StudentPopGenerator {
                                                   String clique,
                                                   boolean useCliqueData) {
         for (int i = 0; i < count; i++) {
+            Piercing source = (i < templates.size())
+                    ? (Piercing) templates.get(i)
+                    : null;
+            boolean templateIsGauge = isGaugePiercing(source);
+
             Piercing p;
-            if (i < templates.size()
+            if (source != null && templateIsGauge) {
+                if (GameRandom.nextDouble() < PIERCING_GAUGE_MATCH_RATE) {
+                    p = new Piercing(source.getName(), source.getMaterial(),
+                            source.getColor(), slot, source.getSize());
+                } else {
+                    p = useCliqueData
+                            ? createCliquePiercing(clique, gender, slot)
+                            : createGenericPiercing(gender, slot);
+                    if (isGaugePiercing(p)) {
+                        p = new Piercing(source.getName(), p.getMaterial(),
+                                p.getColor(), slot, source.getSize());
+                    }
+                }
+            } else if (source != null
                     && GameRandom.nextDouble() < PIERCING_EAR_MATCH_RATE) {
-                Piercing source = (Piercing) templates.get(i);
                 p = new Piercing(source.getName(), source.getMaterial(),
                         source.getColor(), slot, source.getSize());
             } else {
@@ -439,11 +462,25 @@ public class StudentPopGenerator {
                         ? createCliquePiercing(clique, gender, slot)
                         : createGenericPiercing(gender, slot);
             }
+
             if (p != null) {
                 p.setStatModifier("charisma", PIERCING_EARRING_CHARISMA_BOOST);
                 student.getStudentHead().equip(p);
             }
         }
+    }
+
+    /**
+     * Returns true if the given piercing is any flavor of gauge. Generic
+     * gauges use the type name "gauges" (with a separate size descriptor),
+     * while clique-defined gauges encode the size in the type name itself
+     * (e.g. "00g gauge", "14mm gauge"); both are matched here.
+     */
+    private static boolean isGaugePiercing(Piercing piercing) {
+        if (piercing == null || piercing.getName() == null) {
+            return false;
+        }
+        return piercing.getName().toLowerCase().contains("gauge");
     }
 
     /**

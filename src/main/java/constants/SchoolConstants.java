@@ -76,6 +76,20 @@ public final class SchoolConstants {
     public static final int CLASSROOM_SIZE_SMALL_WEIGHT = 40;   // 40% chance
     public static final int CLASSROOM_SIZE_MEDIUM_WEIGHT = 80;  // 40% chance (40-80)
     // Remaining 20% is large (80-100)
+    // ROOM OCCUPANCY GRID (physical floor-grid sizing)
+    // The OccupancyGrid must hold every student physically present in the
+    // room plus headroom for movement. Scheduling can occasionally place
+    // slightly more students than studentCap into a single classroom (e.g.
+    // when balancing teacher loads), so the grid is generously oversized
+    // relative to the nominal capacity to avoid "OccupancyGrid full" errors.
+    public static final double ROOM_OCCUPANCY_GRID_MULTIPLIER = 2.5;
+    public static final int ROOM_OCCUPANCY_GRID_MIN_CELLS = 60;
+    // Hallway / Courtyard floor grids absorb passing-period traffic and need
+    // substantial standing room. Sized as rows x (base + perConnection * connections).
+    public static final int HALLWAY_GRID_ROWS = 4;
+    public static final int HALLWAY_GRID_BASE_COLS = 16;
+    public static final int HALLWAY_GRID_COLS_PER_CONNECTION = 8;
+    public static final int HALLWAY_GRID_MIN_COLS = 12;
     // ROOM DIVIDERS
     // Dividers allow a room to be split into two teaching spaces with two teachers
     // Only rooms with capacity >= minimum can have dividers

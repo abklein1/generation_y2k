@@ -1,11 +1,13 @@
 package simulation;
 
+import behavior.BehaviorContext;
 import entity.ActivityType;
 import entity.EntityState;
 import entity.Student;
 import utility.SocialLinkConnector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -27,14 +29,19 @@ import static constants.SimConstants.*;
  * </p>
  *
  * <p>
- * When an interaction is confirmed, both the initiator and target gain social
- * score
- * toward each other. The gain amount depends on the activity type (talking &gt;
- * passing
- * notes &gt; whispering &gt; generic socializing). Score increases are subject
- * to the
- * best-friend soft cap: scores cannot cross the best-friend threshold without a
- * catalyst event.
+ * When an interaction is confirmed, both the initiator and target are placed
+ * into the same social activity (e.g. both end up TALKING), the target's
+ * behavior context is updated so its action log entry references the
+ * initiator, and both students' decision cooldowns are reset so neither party
+ * immediately drops back out of the interaction. If the initiator was caught
+ * by a teacher, the caught flag is propagated to the target as well — both
+ * participants are part of the same incident.
+ * </p>
+ *
+ * <p>
+ * Score gains depend on the activity type (talking &gt; passing notes &gt;
+ * whispering &gt; generic socializing) and are subject to the best-friend
+ * soft cap enforced by {@link SocialLinkConnector#modifySocialScore}.
  * </p>
  *
  * <p>
@@ -44,24 +51,33 @@ import static constants.SimConstants.*;
  * <li>Behavior tree action nodes call {@link #registerInteraction} to record
  * intended social actions</li>
  * <li>{@link #resolveInteractions()} after all behavior trees have been
- * ticked</li>
+ * ticked. The returned set lists the targets that were drawn into a confirmed
+ * interaction this tick — callers should log those students even if their
+ * own tree did not run.</li>
  * </ol>
- * </p>
- *
- * <p>
- * Each student may only be involved in one social interaction per tick, whether
- * as
- * initiator or target. The resolution sorts all pending interactions by
- * priority
- * (highest DET + CHR first) and grants them in order, skipping any interaction
- * where
- * either the initiator or target is already occupied.
  * </p>
  */
 public class InteractionManager {
 
     private final List<PendingInteraction> pendingInteractions;
     private SocialLinkConnector socialLinkConnector;
+    private static final int TARGET_COOLDOWN_TICKS = 5;
+
+    /**
+     * Activities that intrinsically can't be interrupted by a peer initiating
+     * a social action — physically separate (off-campus lunch), in motion
+     * (commuting/transitioning), or private (in the bathroom). Targets in
+     * these states stay in their current activity even if an interaction is
+     * granted.
+     */
+    private static final Set<ActivityType> NON_INTERRUPTIBLE_ACTIVITIES = Collections.unmodifiableSet(new HashSet<>(List.of(
+            ActivityType.IN_BATHROOM,
+            ActivityType.TRANSITIONING,
+            ActivityType.COMMUTING_WALK,
+            ActivityType.COMMUTING_BUS,
+            ActivityType.COMMUTING_DRIVE,
+            ActivityType.COMMUTING_CARPOOL,
+            ActivityType.EATING_LUNCH_OFF_CAMPUS)));
 
     /**
      * Creates a new InteractionManager.
@@ -122,13 +138,20 @@ public class InteractionManager {
      * </p>
      *
      * <p>
-     * Denied students have their activity set to IDLE, since the person they
-     * wanted to interact with is now occupied.
+     * If an initiator is also a target of a higher-priority confirmed
+     * interaction, the lower-priority registration they made is silently
+     * dropped — their activity is <i>not</i> reset to IDLE, since they're now
+     * legitimately engaged in someone else's conversation.
      * </p>
+     *
+     * @return the set of students that were confirmed as targets this tick.
+     *         Callers should ensure these students get an action-log entry
+     *         even if their own behavior tree did not tick.
      */
-    public void resolveInteractions() {
+    public Set<Student> resolveInteractions() {
+        Set<Student> confirmedTargets = new HashSet<>();
         if (pendingInteractions.isEmpty()) {
-            return;
+            return confirmedTargets;
         }
 
         // Sort by priority descending (highest DET + CHR first)
@@ -136,64 +159,133 @@ public class InteractionManager {
 
         // Track which students are occupied (either as initiator or target)
         Set<Student> occupied = new HashSet<>();
+        List<PendingInteraction> deferredDenials = new ArrayList<>();
 
+        // First pass: confirm interactions in priority order.
         for (PendingInteraction pending : pendingInteractions) {
             Student initiator = pending.getInitiator();
             Student target = pending.getTarget();
 
-            // Check if either party is already occupied this tick
             if (occupied.contains(initiator) || occupied.contains(target)) {
-                // Denied: revert the initiator to idle since their target is occupied
-                denyInteraction(pending);
+                deferredDenials.add(pending);
                 continue;
             }
 
-            // Granted: mark both parties as occupied for this tick
+            // Always reserve the initiator so they can't be re-considered for
+            // another interaction this tick, even if the target turns out to
+            // be unreachable and the interaction gets downgraded to a denial.
             occupied.add(initiator);
-            occupied.add(target);
-            confirmInteraction(pending);
+            if (confirmInteraction(pending)) {
+                occupied.add(target);
+                confirmedTargets.add(target);
+            }
         }
+
+        // Second pass: deny the rest, skipping any initiator that was already
+        // confirmed as a target — those students are legitimately engaged and
+        // their activity should not be flipped back to IDLE.
+        for (PendingInteraction pending : deferredDenials) {
+            Student initiator = pending.getInitiator();
+            if (initiator != null && confirmedTargets.contains(initiator)) {
+                continue;
+            }
+            denyInteraction(pending);
+        }
+
+        return confirmedTargets;
     }
 
     /**
      * Confirms a granted interaction. The initiator's activity is already set
-     * tentatively by the action node, so we just need to mark the target as
-     * engaged in a social interaction.
+     * tentatively by the action node; this method makes the target a real
+     * participant in the same activity:
+     *
+     * <ul>
+     *   <li>Mirrors the specific social activity onto the target (e.g. both
+     *       students end up in {@code TALKING}, not a generic
+     *       {@code SOCIALIZING}). Targets in non-interruptible states
+     *       (bathroom, transitioning, off-campus) keep their current activity.</li>
+     *   <li>Sets {@code interaction_target} on the target's
+     *       {@link BehaviorContext} so its log line reads "with &lt;initiator&gt;".</li>
+     *   <li>Propagates the {@code was_caught}/{@code catch_type} flags from
+     *       the initiator to the target — both students are part of the same
+     *       incident, so if one is caught, both get the [CAUGHT] tag.</li>
+     *   <li>Resets the target's decision cooldown so they remain engaged for
+     *       the same duration as the initiator instead of immediately
+     *       picking a new action.</li>
+     *   <li>Bumps the social link in both directions, subject to the
+     *       best-friend soft cap.</li>
+     * </ul>
      *
      * <p>
-     * Additionally, both the initiator and target gain social score toward
-     * each other based on the activity type. All social actions are treated as
-     * positive for NPC interactions. Score increases are subject to the
-     * best-friend soft cap enforced by
-     * {@link SocialLinkConnector#modifySocialScore}.
+     * If the target has no {@link BehaviorContext} yet — meaning their
+     * behavior tree has not run today (e.g. the student is still at home
+     * before school) — they are not a valid interaction partner and the
+     * confirmation is downgraded to a denial of the initiator. This guards
+     * against stale candidate lists silently linking a present student to
+     * one who is not yet in the simulation.
      * </p>
      *
      * @param interaction the confirmed interaction
+     * @return true if the interaction was actually applied (target is a real
+     *         participant), false if it was downgraded to a denial because
+     *         the target was not reachable
      */
-    private void confirmInteraction(PendingInteraction interaction) {
+    private boolean confirmInteraction(PendingInteraction interaction) {
         Student initiator = interaction.getInitiator();
         Student target = interaction.getTarget();
+        ActivityType activity = interaction.getIntendedActivity();
 
-        if (target != null && target.getEntityState() != null) {
-            EntityState targetState = target.getEntityState();
-            // Mark the target as being in a social interaction (they're the recipient)
-            // Only change their activity if they're doing something interruptible
-            ActivityType currentActivity = targetState.getCurrentActivity();
-            if (currentActivity == ActivityType.ATTENDING_CLASS
-                    || currentActivity == ActivityType.IDLE
-                    || currentActivity == ActivityType.DAYDREAMING) {
-                targetState.setCurrentActivity(ActivityType.SOCIALIZING);
+        if (target == null || target.getEntityState() == null
+                || target.getBehaviorContext() == null) {
+            // Target is not actually present in the simulation right now
+            // (no behavior context means their tree has not run today, e.g.
+            // they are still at home pre-school). Treat as a denial of the
+            // initiator rather than silently mutating a phantom partner.
+            denyInteraction(interaction);
+            return false;
+        }
+
+        EntityState targetState = target.getEntityState();
+        ActivityType currentActivity = targetState.getCurrentActivity();
+
+        // Mirror the initiator's activity onto the target unless the
+        // target is in a state that intrinsically can't be interrupted.
+        if (activity != null && !NON_INTERRUPTIBLE_ACTIVITIES.contains(currentActivity)) {
+            targetState.setCurrentActivity(activity);
+        }
+
+        // Reset the target's decision cooldown so they stay engaged in the
+        // interaction for the same window the initiator does.
+        targetState.resetDecisionCooldown(TARGET_COOLDOWN_TICKS);
+
+        // Surface the interaction in the target's behavior context so the
+        // logger picks up the "with <initiator>" suffix, and propagate any
+        // caught state so both students share the [CAUGHT] tag.
+        BehaviorContext targetContext = target.getBehaviorContext();
+        if (initiator != null) {
+            targetContext.setVariable("interaction_target", initiator);
+
+            BehaviorContext initiatorContext = initiator.getBehaviorContext();
+            if (initiatorContext != null
+                    && initiatorContext.getBoolVariable("was_caught", false)) {
+                targetContext.setVariable("was_caught", true);
+                Object catchType = initiatorContext.getVariable("catch_type");
+                if (catchType != null) {
+                    targetContext.setVariable("catch_type", catchType);
+                }
             }
         }
 
         // Apply social score gains for the confirmed interaction.
         // Both parties gain score toward each other (all NPC actions are positive for
         // now).
-        if (socialLinkConnector != null && initiator != null && target != null) {
-            double gain = getFriendshipGain(interaction.getIntendedActivity());
+        if (socialLinkConnector != null && initiator != null) {
+            double gain = getFriendshipGain(activity);
             socialLinkConnector.modifySocialScore(initiator, target, gain);
             socialLinkConnector.modifySocialScore(target, initiator, gain);
         }
+        return true;
     }
 
     /**
@@ -207,6 +299,9 @@ public class InteractionManager {
      * @return the friendship score gain
      */
     private double getFriendshipGain(ActivityType activity) {
+        if (activity == null) {
+            return SOCIAL_LINK_GAIN_SOCIALIZING;
+        }
         return switch (activity) {
             case TALKING -> SOCIAL_LINK_GAIN_TALKING;
             case WHISPERING -> SOCIAL_LINK_GAIN_WHISPERING;
@@ -218,16 +313,27 @@ public class InteractionManager {
 
     /**
      * Denies an interaction because the target (or initiator) is already occupied.
-     * The initiator is reverted to IDLE since their intended social action cannot
-     * proceed.
+     * The initiator is reverted to IDLE since their intended social action
+     * cannot proceed, and the stale interaction-related context variables are
+     * cleared so the logger does not show a partner or caught tag for an
+     * action that effectively did not happen.
      *
      * @param interaction the denied interaction
      */
     private void denyInteraction(PendingInteraction interaction) {
         Student initiator = interaction.getInitiator();
-        if (initiator != null && initiator.getEntityState() != null) {
-            // Revert the initiator to idle - the person they wanted is occupied
+        if (initiator == null) {
+            return;
+        }
+        if (initiator.getEntityState() != null) {
             initiator.getEntityState().setCurrentActivity(ActivityType.IDLE);
+        }
+        BehaviorContext context = initiator.getBehaviorContext();
+        if (context != null) {
+            context.removeVariable("interaction_target");
+            context.removeVariable("was_caught");
+            context.removeVariable("catch_type");
+            context.removeVariable("friendship_gained");
         }
     }
 

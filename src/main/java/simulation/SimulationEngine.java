@@ -6,14 +6,18 @@ import constants.SimConstants;
 import entity.*;
 import entity.Rooms.OffCampus;
 import entity.Rooms.Room;
+import utility.GameLogger;
+import utility.PStatistics;
 import utility.SocialLinkConnector;
 import utility.TraversalStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import utility.GameRandom;
 
@@ -638,61 +642,109 @@ public class SimulationEngine {
     }
 
     /**
-     * Ticks physiological needs (hunger, thirst, bladder) for every student
-     * and staff member. When bladder drops below the critical threshold the
-     * entity's {@code needsBathroom} flag is set automatically.
+     * Secondary stats drained one-by-one each tick once an entity's energy
+     * reaches 0. The strings here match the keys accepted by
+     * {@link PStatistics#drainSecondaryStat(String, int, double)}.
+     */
+    private static final String[] SECONDARY_STAT_NAMES = {
+            "creativity", "empathy", "adaptability", "initiative",
+            "resilience", "curiosity", "responsibility", "openMindedness"
+    };
+
+    /**
+     * Ticks physiological needs for every student and staff member. Energy
+     * decay is scaled by the entity's determination, eased by socializing,
+     * and partially refilled while eating. When energy hits 0 the entity
+     * begins burning down secondary stats; once those are exhausted the
+     * entity falls asleep. Edge-triggered status messages are emitted as
+     * each need crosses below the critical threshold.
      */
     private void tickAllNeeds() {
         if (students != null) {
             for (Student student : students.values()) {
                 EntityState state = student.getEntityState();
-                if (state != null) {
-                    if (isEatingLunch(state)) {
-                        state.setHunger(state.getHunger()
-                                + SimConstants.NEED_HUNGER_REFILL_PER_TICK);
-                        state.setThirst(state.getThirst()
-                                + SimConstants.NEED_THIRST_REFILL_PER_TICK);
-                    }
-                    state.tickNeeds(
-                            isEatingLunch(state) ? 0 : SimConstants.NEED_HUNGER_DECAY_PER_TICK,
-                            isEatingLunch(state) ? 0 : SimConstants.NEED_THIRST_DECAY_PER_TICK,
-                            SimConstants.NEED_BLADDER_DECAY_PER_TICK,
-                            SimConstants.NEED_BLADDER_POST_MEAL_DECAY_PER_TICK,
-                            SimConstants.NEED_ENTERTAINMENT_DECAY_PER_TICK,
-                            SimConstants.NEED_ENERGY_DECAY_PER_TICK,
-                            SimConstants.NEED_ENERGY_DECAY_WHEN_BORED);
-                    if (state.getBladder() < SimConstants.NEED_CRITICAL_THRESHOLD) {
-                        state.setNeedsBathroom(true);
-                    }
-                    applyNeedStress(state, student.studentStatistics.getAllostaticLoad());
+                if (state == null) {
+                    continue;
                 }
+                String displayName = student.studentName.getFirstName()
+                        + " " + student.studentName.getLastName();
+                tickEntityNeeds(state, student.studentStatistics, displayName);
             }
         }
         if (staff != null) {
             for (Staff staffMember : staff.values()) {
                 EntityState state = staffMember.getEntityState();
-                if (state != null) {
-                    state.tickNeeds(
-                            SimConstants.NEED_HUNGER_DECAY_PER_TICK,
-                            SimConstants.NEED_THIRST_DECAY_PER_TICK,
-                            SimConstants.NEED_BLADDER_DECAY_PER_TICK,
-                            SimConstants.NEED_BLADDER_POST_MEAL_DECAY_PER_TICK,
-                            SimConstants.NEED_ENTERTAINMENT_DECAY_PER_TICK,
-                            SimConstants.NEED_ENERGY_DECAY_PER_TICK,
-                            SimConstants.NEED_ENERGY_DECAY_WHEN_BORED);
-                    if (state.getBladder() < SimConstants.NEED_CRITICAL_THRESHOLD) {
-                        state.setNeedsBathroom(true);
-                    }
-                    applyNeedStress(state, staffMember.teacherStatistics.getAllostaticLoad());
+                if (state == null) {
+                    continue;
                 }
+                String displayName = staffMember.teacherName.getFirstName()
+                        + " " + staffMember.teacherName.getLastName();
+                tickEntityNeeds(state, staffMember.teacherStatistics, displayName);
             }
         }
+    }
+
+    /**
+     * Advances all needs for a single entity, applies stress, fires
+     * critical-need messages, and runs the exhaustion cascade.
+     */
+    private void tickEntityNeeds(EntityState state, PStatistics stats,
+                                 String displayName) {
+        boolean eating = isEatingLunch(state);
+        boolean socializing = isSocializing(state);
+
+        if (eating) {
+            state.setHunger(state.getHunger()
+                    + SimConstants.NEED_HUNGER_REFILL_PER_TICK);
+            state.setThirst(state.getThirst()
+                    + SimConstants.NEED_THIRST_REFILL_PER_TICK);
+            state.setEnergy(state.getEnergy()
+                    + SimConstants.NEED_ENERGY_REFILL_PER_TICK_EATING);
+        }
+
+        double determinationMult = SimConstants.NEED_ENERGY_DETERMINATION_BASE
+                - SimConstants.NEED_ENERGY_DETERMINATION_SLOPE
+                        * stats.getDetermination();
+        if (determinationMult < 0) {
+            determinationMult = 0;
+        }
+        double energyDecay = SimConstants.NEED_ENERGY_DECAY_PER_TICK
+                * determinationMult;
+        double energyDecayBored = SimConstants.NEED_ENERGY_DECAY_WHEN_BORED
+                * determinationMult;
+        if (socializing) {
+            energyDecay *= SimConstants.NEED_ENERGY_DECAY_SOCIAL_MULTIPLIER;
+            energyDecayBored *= SimConstants.NEED_ENERGY_DECAY_SOCIAL_MULTIPLIER;
+        }
+
+        state.tickNeeds(
+                eating ? 0 : SimConstants.NEED_HUNGER_DECAY_PER_TICK,
+                eating ? 0 : SimConstants.NEED_THIRST_DECAY_PER_TICK,
+                SimConstants.NEED_BLADDER_DECAY_PER_TICK,
+                SimConstants.NEED_BLADDER_POST_MEAL_DECAY_PER_TICK,
+                SimConstants.NEED_ENTERTAINMENT_DECAY_PER_TICK,
+                energyDecay,
+                energyDecayBored);
+
+        if (state.getBladder() < SimConstants.NEED_CRITICAL_THRESHOLD) {
+            state.setNeedsBathroom(true);
+        }
+
+        applyNeedStress(state, stats.getAllostaticLoad());
+        fireCriticalNeedMessages(state, displayName);
+        runExhaustionCascade(state, stats, displayName);
     }
 
     private static boolean isEatingLunch(EntityState state) {
         ActivityType activity = state.getCurrentActivity();
         return activity == ActivityType.EATING_LUNCH
                 || activity == ActivityType.EATING_LUNCH_OFF_CAMPUS;
+    }
+
+    private static boolean isSocializing(EntityState state) {
+        ActivityType activity = state.getCurrentActivity();
+        return activity == ActivityType.SOCIALIZING
+                || activity == ActivityType.TALKING;
     }
 
     /**
@@ -719,24 +771,114 @@ public class SimulationEngine {
     }
 
     /**
+     * Emits one-shot story messages when a need crosses below the critical
+     * threshold and has not yet been notified. Resets the notified flag
+     * once the need recovers above the threshold so a future relapse
+     * re-fires the message.
+     */
+    private static void fireCriticalNeedMessages(EntityState state,
+                                                 String displayName) {
+        checkCriticalEdge(state, displayName, EntityState.NeedType.HUNGER,
+                state.getHunger(),
+                SimConstants.NEED_HUNGER_CRITICAL_MESSAGE);
+        checkCriticalEdge(state, displayName, EntityState.NeedType.THIRST,
+                state.getThirst(),
+                SimConstants.NEED_THIRST_CRITICAL_MESSAGE);
+        checkCriticalEdge(state, displayName, EntityState.NeedType.BLADDER,
+                state.getBladder(),
+                SimConstants.NEED_BLADDER_CRITICAL_MESSAGE);
+        checkCriticalEdge(state, displayName, EntityState.NeedType.ENTERTAINMENT,
+                state.getEntertainment(),
+                SimConstants.NEED_ENTERTAINMENT_CRITICAL_MESSAGE);
+        checkCriticalEdge(state, displayName, EntityState.NeedType.ENERGY,
+                state.getEnergy(),
+                SimConstants.NEED_ENERGY_CRITICAL_MESSAGE);
+    }
+
+    private static void checkCriticalEdge(EntityState state, String displayName,
+                                          EntityState.NeedType need, double value,
+                                          String formatStr) {
+        boolean below = value < SimConstants.NEED_CRITICAL_THRESHOLD;
+        boolean alreadyNotified = state.isCriticalNotified(need);
+        if (below && !alreadyNotified) {
+            GameLogger.logStory(String.format(formatStr, displayName));
+            state.setCriticalNotified(need, true);
+        } else if (!below && alreadyNotified) {
+            state.setCriticalNotified(need, false);
+        }
+    }
+
+    /**
+     * While an entity has 0 energy and is not yet asleep, drains every
+     * secondary stat by a small amount each tick. Once every secondary
+     * stat has been driven to 0 the entity falls asleep and a story
+     * message is emitted.
+     */
+    private static void runExhaustionCascade(EntityState state, PStatistics stats,
+                                             String displayName) {
+        if (stats == null || state.isAsleep() || state.getEnergy() > 0) {
+            return;
+        }
+        int amount = SimConstants.EXHAUSTION_SECONDARY_STAT_DRAIN_PER_TICK;
+        double stress = SimConstants.EXHAUSTION_DRAIN_STRESS_FACTOR;
+        for (String statName : SECONDARY_STAT_NAMES) {
+            stats.drainSecondaryStat(statName, amount, stress);
+        }
+        if (allSecondaryStatsZero(stats)) {
+            state.setAsleep(true);
+            GameLogger.logStory(String.format(
+                    SimConstants.NEED_FELL_ASLEEP_MESSAGE, displayName));
+        }
+    }
+
+    private static boolean allSecondaryStatsZero(PStatistics stats) {
+        return stats.getCreativity() == 0
+                && stats.getEmpathy() == 0
+                && stats.getAdaptability() == 0
+                && stats.getInitiative() == 0
+                && stats.getResilience() == 0
+                && stats.getCuriosity() == 0
+                && stats.getResponsibility() == 0
+                && stats.getOpenMindedness() == 0;
+    }
+
+    /**
      * Processes behavior trees for all students.
-     * Social interactions are collected during tree ticking and resolved afterwards
-     * so that when multiple students target the same person, the one with the
-     * highest Determination + Charisma wins.
+     *
+     * <p>
+     * Runs in three phases so that social interactions are captured for
+     * <i>both</i> participants in the action log:
+     * </p>
+     * <ol>
+     *   <li><b>Tick</b> — every eligible student's behavior tree is ticked.
+     *       Action nodes register pending interactions and tentatively set
+     *       their own activity, but no log entries are written yet.</li>
+     *   <li><b>Resolve</b> — {@link InteractionManager#resolveInteractions()}
+     *       picks winners by DET + CHR, mirrors the social activity onto the
+     *       target, and propagates the {@code interaction_target} /
+     *       {@code was_caught} flags to the target's behavior context. The
+     *       set of confirmed targets is returned.</li>
+     *   <li><b>Log</b> — every student that either ticked their tree or was
+     *       drawn into someone else's confirmed interaction gets an action
+     *       log entry, using the post-resolution state. This guarantees that
+     *       when Danielle starts talking with Baby Carey, Baby's log line for
+     *       that minute reads "Talking with Danielle Beddoe" — even if
+     *       Baby's own behavior tree was on cooldown and never ticked.</li>
+     * </ol>
      */
     private void processStudentBehaviors() {
         if (students == null) {
             return;
         }
 
-        // Clear the interaction manager for this tick
         interactionManager.clearTick();
 
-        // Phase 1: Tick all behavior trees (social actions register pending
-        // interactions).
-        // Actions last ~5 minutes: the tree is only re-evaluated when the
-        // student's cooldown counter has elapsed, or when the student is
-        // idle/transitioning (needs a new decision immediately).
+        Set<Student> tickedStudents = new HashSet<>();
+
+        // Phase 1: Tick all behavior trees. Defer logging until after social
+        // interaction conflicts are resolved so that targets get their log
+        // entries written with the bilateral state, not the stale pre-resolution
+        // state.
         for (Student student : students.values()) {
             EntityState preCheckState = student.getEntityState();
 
@@ -774,24 +916,47 @@ public class SimulationEngine {
 
                 if (shouldDecide) {
                     tree.tick(context);
-                    logStudentAction(student, context);
-                    if (state != null) {
-                        state.resetDecisionCooldown(ACTION_DURATION_TICKS);
-                    }
+                    tickedStudents.add(student);
                 }
-            }
-
-            // Tick down cooldowns each tick
-            EntityState state = student.getEntityState();
-            if (state != null) {
-                state.decrementDecisionCooldown();
-                state.incrementTicksInActivity();
             }
         }
 
-        // Phase 2: Resolve social interaction conflicts
-        // The highest DET + CHR student wins when multiple target the same person
-        interactionManager.resolveInteractions();
+        // Phase 2: Resolve social interaction conflicts. The highest DET + CHR
+        // student wins when multiple target the same person; the resolver
+        // mirrors the activity onto each confirmed target and returns the set
+        // of targets that were drawn into an interaction this tick.
+        Set<Student> confirmedTargets = interactionManager.resolveInteractions();
+
+        // Phase 3: Log every student whose state changed this tick — those that
+        // ticked their tree, plus the confirmed interaction targets (whose tree
+        // may have been on cooldown and never ran, but who are now genuinely
+        // engaged with another student).
+        Set<Student> studentsToLog = new HashSet<>(tickedStudents);
+        studentsToLog.addAll(confirmedTargets);
+        for (Student student : studentsToLog) {
+            BehaviorContext context = student.getBehaviorContext();
+            if (context != null) {
+                logStudentAction(student, context);
+            }
+            EntityState state = student.getEntityState();
+            if (state != null) {
+                state.resetDecisionCooldown(ACTION_DURATION_TICKS);
+            }
+        }
+
+        // Phase 4: Tick down cooldowns and increment activity ticks for every
+        // student that's on campus / in transit.
+        for (Student student : students.values()) {
+            EntityState state = student.getEntityState();
+            if (state == null) {
+                continue;
+            }
+            if (!state.hasArrivedAtSchool() && !state.isInTransit()) {
+                continue;
+            }
+            state.decrementDecisionCooldown();
+            state.incrementTicksInActivity();
+        }
     }
 
     /**

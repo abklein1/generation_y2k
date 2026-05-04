@@ -19,7 +19,7 @@ import java.util.Map;
  * Loads and caches unique physical/behavioral trait descriptions from
  * unique_traits.json. Traits are organized by sentiment category
  * (positive, neutral, negative) and body-part subcategory
- * (eyes, nose, ears, mouth, face, hair, skin, misc).
+ * (eyes, nose, ears, mouth, face, hair, skin, body, misc).
  */
 public final class UniqueTraitLoader implements Serializable {
 
@@ -29,7 +29,7 @@ public final class UniqueTraitLoader implements Serializable {
 
     private static final String[] CATEGORIES = {"positive", "neutral", "negative"};
     private static final String[] SUBCATEGORIES = {
-            "eyes", "nose", "ears", "mouth", "face", "hair", "skin", "misc"
+            "eyes", "nose", "ears", "mouth", "face", "hair", "skin", "body", "misc"
     };
 
     private static boolean loaded = false;

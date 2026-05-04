@@ -15,6 +15,16 @@ import java.util.Queue;
  * Maintains actual vs expected locations and current activity information.
  */
 public class EntityState implements Serializable {
+
+    /**
+     * Tracked physiological needs that emit a one-shot status message when
+     * they cross below the critical threshold. Used as a key for the
+     * critical-notified flag set.
+     */
+    public enum NeedType {
+        HUNGER, THIRST, BLADDER, ENTERTAINMENT, ENERGY
+    }
+
     
     private Room currentRoom;           // Where they actually are
     private Room expectedRoom;          // Where schedule says they should be
@@ -40,6 +50,15 @@ public class EntityState implements Serializable {
     private double entertainment;       // 100 = entertained, 0 = completely bored
     private double energy;              // 100 = well-rested, 0 = exhausted
     private boolean asleep;             // true when energy reaches 0
+
+    // Edge-triggered notification flags: set when a need has crossed below the
+    // critical threshold and a status message has already been emitted. Cleared
+    // when the need recovers above the threshold so a future relapse re-fires.
+    private boolean hungerCriticalNotified;
+    private boolean thirstCriticalNotified;
+    private boolean bladderCriticalNotified;
+    private boolean entertainmentCriticalNotified;
+    private boolean energyCriticalNotified;
 
     // Lunch state tracking
     private boolean atLunch;            // Currently dispatched to lunch destination
@@ -84,6 +103,11 @@ public class EntityState implements Serializable {
         this.entertainment = 100.0;
         this.energy = 100.0;
         this.asleep = false;
+        this.hungerCriticalNotified = false;
+        this.thirstCriticalNotified = false;
+        this.bladderCriticalNotified = false;
+        this.entertainmentCriticalNotified = false;
+        this.energyCriticalNotified = false;
         this.atLunch = false;
         this.preLunchRoom = null;
         this.canAffordOffCampus = false;
@@ -521,6 +545,41 @@ public class EntityState implements Serializable {
     }
 
     /**
+     * Returns whether a one-shot critical-need status message has already
+     * been emitted for the given need (and not yet been reset by recovery).
+     *
+     * @param need the need to query
+     * @return true if the entity has already been notified for this need
+     */
+    public boolean isCriticalNotified(NeedType need) {
+        return switch (need) {
+            case HUNGER -> hungerCriticalNotified;
+            case THIRST -> thirstCriticalNotified;
+            case BLADDER -> bladderCriticalNotified;
+            case ENTERTAINMENT -> entertainmentCriticalNotified;
+            case ENERGY -> energyCriticalNotified;
+        };
+    }
+
+    /**
+     * Records whether the one-shot critical-need notification for the given
+     * need has been emitted. Set to true after firing the message; set back
+     * to false when the need recovers above the critical threshold.
+     *
+     * @param need     the need to update
+     * @param notified the new flag value
+     */
+    public void setCriticalNotified(NeedType need, boolean notified) {
+        switch (need) {
+            case HUNGER -> this.hungerCriticalNotified = notified;
+            case THIRST -> this.thirstCriticalNotified = notified;
+            case BLADDER -> this.bladderCriticalNotified = notified;
+            case ENTERTAINMENT -> this.entertainmentCriticalNotified = notified;
+            case ENERGY -> this.energyCriticalNotified = notified;
+        }
+    }
+
+    /**
      * Signals that this person has eaten, triggering accelerated bladder
      * decay for the next 2 hours (120 ticks).
      */
@@ -530,6 +589,11 @@ public class EntityState implements Serializable {
 
     /**
      * Advances all physiological needs by one simulation tick.
+     * <p>
+     * Does NOT toggle the {@code asleep} flag when energy reaches 0. The
+     * exhaustion cascade (secondary-stat drain followed by sleep) is driven
+     * by {@code SimulationEngine}, which has access to the entity's
+     * {@code PStatistics} and can decide when sleep is warranted.
      *
      * @param hungerDecay              amount hunger decreases per tick
      * @param thirstDecay              amount thirst decreases per tick
@@ -557,9 +621,6 @@ public class EntityState implements Serializable {
 
         double actualEnergyDecay = (this.entertainment <= 0) ? energyDecayWhenBored : energyDecay;
         this.energy = Math.max(0, this.energy - actualEnergyDecay);
-        if (this.energy <= 0) {
-            this.asleep = true;
-        }
     }
 
     /**
@@ -586,6 +647,11 @@ public class EntityState implements Serializable {
         this.entertainment = 100.0;
         this.energy = 100.0;
         this.asleep = false;
+        this.hungerCriticalNotified = false;
+        this.thirstCriticalNotified = false;
+        this.bladderCriticalNotified = false;
+        this.entertainmentCriticalNotified = false;
+        this.energyCriticalNotified = false;
     }
 
     /**

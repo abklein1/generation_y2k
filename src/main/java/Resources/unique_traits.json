@@ -47,7 +47,8 @@
             "Their skin is without blemishes."
         ],
         "body": [
-            "Their arms are toned and muscular."
+            "Their arms are toned and muscular.",
+            "Their legs are toned and muscular."
         ],
         "misc": [
             "They move with graceful, fluid motions.",
@@ -148,13 +149,17 @@
             "They have a large scar on their leg.",
             "They have several acne scars.",
             "They have a small scar on their leg.",
-            "Their kneecaps are scarred."
+            "Their kneecaps are scarred.",
+            "They have a few spots of hyper-pigmentation."
         ],
         "body": [
             "They have long limbs.",
             "They have wide shoulders.",
             "They have a thick neck.",
-            "They have a long neck."
+            "They have a long neck.",
+            "Their shoulders are narrow.",
+            "They have a narrow waist.",
+            "Their body is pear-shaped."
         ],
         "misc": [
             "They are constantly fidgeting.",
@@ -229,7 +234,8 @@
             "Their scalp is dry and flaky.",
             "Their hair is patchy.",
             "They have a receding hairline.",
-            "Their hairline is uneven."
+            "Their hairline is uneven.",
+            "Their hair is full of dead ends."
         ],
         "skin": [
             "Their skin is dry and flaky.",
@@ -241,7 +247,8 @@
             "They have a thin neck.",
             "Their shoulders are rounded and hunched.",
             "Their arms are thin and scrawny.",
-            "Their chest is uneven."
+            "Their chest is uneven.",
+            "They seem to have almost no neck."
         ],
         "misc": [
             "They walk with an unsteady gait.",
@@ -252,7 +259,8 @@
             "They appear to shrink in on themselves.",
             "They shuffle their feet as they walk.",
             "They appear frail and sickly.",
-            "They walk on the tips of their toes."
+            "They walk on the tips of their toes.",
+            "They seem to stand off-balance."
         ]
     }
 }

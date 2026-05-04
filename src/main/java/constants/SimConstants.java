@@ -661,6 +661,11 @@ public final class SimConstants {
     // The remainder of the time a fresh random piercing is rolled instead.
     public static final double PIERCING_EAR_MATCH_RATE = 0.75;
 
+    // Gauges are a strong stylistic commitment, so when one ear is gauged
+    // the other ear is almost always gauged too (in matching size). The
+    // rare remainder leaves room for asymmetric / single-ear styles.
+    public static final double PIERCING_GAUGE_MATCH_RATE = 0.95;
+
     // Charisma boost from wearing jewelry (minor stat improvement)
     public static final int PIERCING_EARRING_CHARISMA_BOOST = 2;
 
@@ -754,7 +759,11 @@ public final class SimConstants {
     public static final double CLIQUE_RIVAL_AFFINITY_SAME = 0.05;
 
     // PHYSIOLOGICAL NEEDS (per-tick decay on a 0-100 scale)
-    public static final double NEED_HUNGER_DECAY_PER_TICK = 0.75;
+    // Hunger is tuned so a student starting the day at full hunger first
+    // reaches the critical threshold (30) around 1:00 PM if they skip lunch:
+    // 100 - 280 minutes * 0.25/min = 30. Block 1 ends at ~77, Lunch A starts
+    // at ~50 -- mild hunger pressure that lunch meaningfully relieves.
+    public static final double NEED_HUNGER_DECAY_PER_TICK = 0.25;
     public static final double NEED_THIRST_DECAY_PER_TICK = 0.75;
     public static final double NEED_BLADDER_DECAY_PER_TICK = 1.0;
     public static final double NEED_BLADDER_POST_MEAL_DECAY_PER_TICK = 3.0;
@@ -779,6 +788,42 @@ public final class SimConstants {
     public static final double NEED_ENERGY_ASLEEP_THRESHOLD = 0.0;
 
     public static final double NEED_ENTERTAINMENT_ALLOSTATIC_STRESS = 0.10;
+
+    // Energy decay scales linearly with determination around a neutral point of 50:
+    //   effectiveDecay = baseDecay * (BASE - SLOPE * determination)
+    //   determination = 0   -> 1.4x decay (drains fast)
+    //   determination = 50  -> 1.0x decay (neutral)
+    //   determination = 100 -> 0.6x decay (drains slowly)
+    public static final double NEED_ENERGY_DETERMINATION_BASE = 1.4;
+    public static final double NEED_ENERGY_DETERMINATION_SLOPE = 0.008;
+
+    // Energy refill while eating (per-tick). 40-minute lunch tops off ~20 points --
+    // a meaningful but partial recharge so sleep is still the main restorer.
+    public static final double NEED_ENERGY_REFILL_PER_TICK_EATING = 0.5;
+    // While SOCIALIZING / TALKING, energy decay is reduced by this multiplier.
+    public static final double NEED_ENERGY_DECAY_SOCIAL_MULTIPLIER = 0.5;
+
+    // Exhaustion cascade: once energy hits 0, all eight secondary stats drain by
+    // this many points per tick until every secondary stat is 0, at which point
+    // the entity falls asleep.
+    public static final int EXHAUSTION_SECONDARY_STAT_DRAIN_PER_TICK = 1;
+    public static final double EXHAUSTION_DRAIN_STRESS_FACTOR = 1.5;
+
+    // Critical-need status messages (edge-triggered: fired once when a need crosses
+    // below NEED_CRITICAL_THRESHOLD, re-fires only after recovering above it).
+    // The leading "%s " is filled with the entity's first + last name.
+    public static final String NEED_HUNGER_CRITICAL_MESSAGE =
+            "%s is feeling very hungry!";
+    public static final String NEED_THIRST_CRITICAL_MESSAGE =
+            "%s is parched.";
+    public static final String NEED_BLADDER_CRITICAL_MESSAGE =
+            "%s desperately needs the bathroom.";
+    public static final String NEED_ENTERTAINMENT_CRITICAL_MESSAGE =
+            "%s is bored out of their mind.";
+    public static final String NEED_ENERGY_CRITICAL_MESSAGE =
+            "%s is exhausted and barely functional.";
+    public static final String NEED_FELL_ASLEEP_MESSAGE =
+            "%s has run out of steam and fallen asleep.";
 
     private SimConstants() {
     }

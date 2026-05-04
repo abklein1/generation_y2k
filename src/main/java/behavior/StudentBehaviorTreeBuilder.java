@@ -383,13 +383,10 @@ public class StudentBehaviorTreeBuilder {
             if (student == null || student.getEntityState() == null) {
                 return false;
             }
-            
-            // Need someone to talk to: friends or classmates in the room
-            if (!student.studentStatistics.getFriendsInSchool().isEmpty()) {
-                return true;
-            }
-            entity.Rooms.Room room = student.getEntityState().getCurrentRoom();
-            return room != null && room.getStudents() != null && room.getStudents().size() > 1;
+            // Only succeed if there is at least one co-located peer to talk to.
+            // During transit that means a co-traveler currently in transit; on
+            // campus that means another student in the same room.
+            return !getCandidates(student, student.getEntityState()).isEmpty();
         }
         
         @Override
@@ -471,23 +468,7 @@ public class StudentBehaviorTreeBuilder {
         }
         
         private java.util.List<Student> getCandidates(Student student, entity.EntityState state) {
-            java.util.List<Student> candidates = new ArrayList<>();
-            entity.Rooms.Room room = state.getCurrentRoom();
-            if (room != null && room.getStudents() != null) {
-                for (Student s : room.getStudents()) {
-                    if (s != null && s != student) {
-                        candidates.add(s);
-                    }
-                }
-            }
-            if (candidates.isEmpty()) {
-                for (Student friend : student.studentStatistics.getFriendsInSchool()) {
-                    if (friend != student) {
-                        candidates.add(friend);
-                    }
-                }
-            }
-            return candidates;
+            return collectCoLocatedPeers(student, state);
         }
     }
     
@@ -616,7 +597,11 @@ public class StudentBehaviorTreeBuilder {
                 return false;
             }
             CellPhone phone = town.getStudentPhone(student);
-            return phone != null && phone.hasSms() && phone.getTextsRemaining() > 0;
+            if (phone == null || !phone.hasSms() || phone.getTextsRemaining() <= 0) {
+                return false;
+            }
+            // Need at least one co-located peer to text.
+            return !collectCoLocatedPeers(student, student.getEntityState()).isEmpty();
         }
 
         @Override
@@ -717,23 +702,7 @@ public class StudentBehaviorTreeBuilder {
         }
         
         private java.util.List<Student> getClassmates(Student student, entity.EntityState state) {
-            java.util.List<Student> classmates = new ArrayList<>();
-            entity.Rooms.Room room = state.getCurrentRoom();
-            if (room != null && room.getStudents() != null) {
-                for (Student s : room.getStudents()) {
-                    if (s != null && s != student) {
-                        classmates.add(s);
-                    }
-                }
-            }
-            if (classmates.isEmpty()) {
-                for (Student friend : student.studentStatistics.getFriendsInSchool()) {
-                    if (friend != student) {
-                        classmates.add(friend);
-                    }
-                }
-            }
-            return classmates;
+            return collectCoLocatedPeers(student, state);
         }
     }
     
@@ -859,5 +828,67 @@ public class StudentBehaviorTreeBuilder {
         return room != null
                 && room.getAssignedStaff() != null
                 && !room.getAssignedStaff().isEmpty();
+    }
+
+    /**
+     * Returns the set of peers that the given student can plausibly initiate
+     * a social interaction with right now, scoped to who is actually
+     * co-located.
+     *
+     * <ul>
+     *   <li><b>In transit:</b> co-travelers from the student's transit group
+     *       who are also currently in transit. A friend who is still at home,
+     *       has already arrived at school, or is in a different transit group
+     *       cannot be reached during the commute.</li>
+     *   <li><b>On campus:</b> other students currently in the same room.
+     *       Notes/talk/text are room-bounded, so an unrelated friend across
+     *       the building is not a candidate.</li>
+     * </ul>
+     *
+     * The previous implementation fell back to {@code getFriendsInSchool()}
+     * any time the room was unavailable, which let students initiate
+     * "interactions" with friends who were not even in the simulation yet
+     * (still at home before school). That manifested as Ryan Carnell
+     * "Walking to school with Robert Nguyen" while Robert had no log entry
+     * at all — Robert had not departed yet, so his behavior tree never ran
+     * and he could not be reached.
+     *
+     * @param student the initiating student
+     * @param state   the initiator's entity state (must be non-null)
+     * @return a freshly-allocated, mutable list of candidate peers
+     */
+    static java.util.List<Student> collectCoLocatedPeers(Student student,
+                                                          entity.EntityState state) {
+        java.util.List<Student> candidates = new ArrayList<>();
+        if (student == null || state == null) {
+            return candidates;
+        }
+
+        if (state.isInTransit()) {
+            java.util.List<Student> group = state.getTransitGroup();
+            if (group == null) {
+                return candidates;
+            }
+            for (Student peer : group) {
+                if (peer == null || peer == student) {
+                    continue;
+                }
+                entity.EntityState peerState = peer.getEntityState();
+                if (peerState != null && peerState.isInTransit()) {
+                    candidates.add(peer);
+                }
+            }
+            return candidates;
+        }
+
+        entity.Rooms.Room room = state.getCurrentRoom();
+        if (room != null && room.getStudents() != null) {
+            for (Student s : room.getStudents()) {
+                if (s != null && s != student) {
+                    candidates.add(s);
+                }
+            }
+        }
+        return candidates;
     }
 }

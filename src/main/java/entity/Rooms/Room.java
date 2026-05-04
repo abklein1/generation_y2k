@@ -12,6 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static constants.SchoolConstants.HALLWAY_GRID_BASE_COLS;
+import static constants.SchoolConstants.HALLWAY_GRID_COLS_PER_CONNECTION;
+import static constants.SchoolConstants.HALLWAY_GRID_MIN_COLS;
+import static constants.SchoolConstants.HALLWAY_GRID_ROWS;
+import static constants.SchoolConstants.ROOM_OCCUPANCY_GRID_MIN_CELLS;
+import static constants.SchoolConstants.ROOM_OCCUPANCY_GRID_MULTIPLIER;
 import static utility.StudentSeatingAssigner.initialSeatingGenerator;
 
 public abstract class Room implements Serializable {
@@ -231,9 +237,12 @@ public abstract class Room implements Serializable {
      * Initializes the floor grid for this room. Grid sizing depends on the
      * room type:
      * <ul>
-     *   <li>Classrooms / instructional: sized from studentCap</li>
-     *   <li>Hallways (studentCap=0): sized from numOfConnections</li>
-     *   <li>Other rooms: scaled from studentCap with headroom</li>
+     *   <li>Classrooms / instructional: scaled from studentCap with a
+     *       generous multiplier and a fixed minimum so even small rooms
+     *       have standing room and absorb scheduling overflow</li>
+     *   <li>Hallways / Courtyards (studentCap=0): sized from numOfConnections
+     *       to handle passing-period traffic</li>
+     *   <li>Other rooms with no studentCap: small fixed grid</li>
      * </ul>
      */
     public void initializeFloorGrid() {
@@ -241,13 +250,17 @@ public abstract class Room implements Serializable {
         int gridCols;
 
         if (this instanceof Hallway || this instanceof Courtyard) {
-            int base = 10 + 5 * Math.max(1, numOfConnections);
-            gridRows = 3;
-            gridCols = Math.max(6, base);
+            int base = HALLWAY_GRID_BASE_COLS
+                    + HALLWAY_GRID_COLS_PER_CONNECTION
+                            * Math.max(1, numOfConnections);
+            gridRows = HALLWAY_GRID_ROWS;
+            gridCols = Math.max(HALLWAY_GRID_MIN_COLS, base);
         } else if (studentCap > 0) {
+            int targetCells = Math.max(ROOM_OCCUPANCY_GRID_MIN_CELLS,
+                    (int) Math.ceil(studentCap * ROOM_OCCUPANCY_GRID_MULTIPLIER));
             int[] factors = utility.StudentSeatingAssigner.selectFactors(
                     utility.StudentSeatingAssigner.findTotalFactors(
-                            Math.max(4, (int) (studentCap * 1.5))));
+                            Math.max(4, targetCells)));
             gridRows = factors[0];
             gridCols = factors[1];
         } else {
