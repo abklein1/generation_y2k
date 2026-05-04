@@ -696,7 +696,7 @@
                     "chin-length": ["side sweep", "swoop", "bob", "long sideburns"],
                     "long": ["ponytail", "swoop"],
                     "shoulder-length": ["ponytail"],
-                    "waist-length": [],
+                    "waist-length": ["ponytail"],
                     "dyes": [],
                     "highlights": []
                 },
@@ -904,11 +904,11 @@
             "male": {
                 "white": {
                     "very short": ["buzz cut"],
-                    "short": [],
-                    "chin-length": [],
-                    "long": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
+                    "short": ["comb over", "front flip", "high and tight", "spike cut"],
+                    "chin-length": ["bob", "long sideburns"],
+                    "long": ["ponytail"],
+                    "shoulder-length": ["ponytail"],
+                    "waist-length": ["ponytail"],
                     "dyes": [],
                     "highlights": []
                 },
