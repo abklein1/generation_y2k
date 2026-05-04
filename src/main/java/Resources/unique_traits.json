@@ -38,11 +38,16 @@
         "hair": [
             "Their hair carries a luster in the sunlight.",
             "Their hair is perfectly maintained.",
-            "Their hair is silky."
+            "Their hair is silky.",
+            "Their haircut seems stylish and fresh."
         ],
         "skin": [
             "Their skin appears to be smooth and flawless.",
-            "Their skin seems to glow."
+            "Their skin seems to glow.",
+            "Their skin is without blemishes."
+        ],
+        "body": [
+            "Their arms are toned and muscular."
         ],
         "misc": [
             "They move with graceful, fluid motions.",
@@ -145,8 +150,13 @@
             "They have a small scar on their leg.",
             "Their kneecaps are scarred."
         ],
-        "misc": [
+        "body": [
             "They have long limbs.",
+            "They have wide shoulders.",
+            "They have a thick neck.",
+            "They have a long neck."
+        ],
+        "misc": [
             "They are constantly fidgeting.",
             "They have a heavy footed gait.",
             "They stand slightly pigeon-toed.",
@@ -226,6 +236,12 @@
             "Their skin appears clammy.",
             "Their skin seems slightly ashen.",
             "Their skin is dull."
+        ],
+        "body": [
+            "They have a thin neck.",
+            "Their shoulders are rounded and hunched.",
+            "Their arms are thin and scrawny.",
+            "Their chest is uneven."
         ],
         "misc": [
             "They walk with an unsteady gait.",
