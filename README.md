@@ -325,10 +325,10 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Unique trait system: Students can be described with random unique traits to provide more flavor to their appearance. The trait system was later made generic so that it can be applied to items as well. Traits can be used to describe things in various conditions. Right now traits are applied to student appearance but the framework has been set for cellphones
 - Sim for needs: Students and staff now have pools that track hunger, thirst, temperature, bladder, entertainment, and energy. People will now eat and go to the bathroom and attempt to keep their various pools from falling to 0. Pools falling to 0 will start to drain their secondary stat pools. I will still need to work out how this interacts with allostatic load
 
-![](src/main/java/Resources.Screencaps/r16_1.png)
-![](src/main/java/Resources.Screencaps/r16_2.png)
-![](src/main/java/Resources.Screencaps/r16_3.png)
-![](src/main/java/Resources.Screencaps/r16_4.png)
+![](src/main/java/Resources.Screencaps/r16-1.png)
+![](src/main/java/Resources.Screencaps/r16-2.png)
+![](src/main/java/Resources.Screencaps/r16-3.png)
+![](src/main/java/Resources.Screencaps/r16-4.png)
 
 ### Bugfixes
 
