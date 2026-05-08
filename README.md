@@ -307,9 +307,35 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Graph visualization of rooms/social links cannot handle dragging of connections/ allows connections to be moved
 - Initial staff assignment is not efficient and sometimes runs out of available teachers. This happens less frequently now
 - Some teachers are not properly assigned a room
-- Some last name capitalization is wrong
 - Classroom distribution is not ideal for students. Some students are still missing required classes
-- Student friend distribution not ideal
+- Grid system runs out of space at times
+
+## Release 0.0.16
+
+### Features
+
+- Tried to improve classroom and teacher assignments once again as well as student scheduling based on demand. Mostly due to inefficiencies in electives
+- Neighborhoods: Students and staff now belong to neighborhoods situated around the school. Neighborhoods are split into general income-levels and include students and staff from households with said incomes. Neighborhood names are randomly generated. Students have to commute from neighborhoods to the school through various means (like carpools or the bus) which allows for further interactions. Students will also prefer to interact with people in their neighborhood if they have no other friends. This will allow for more socialization between grades and cliques
+- Piercings: Clique-specific piercings are now added to generated student descriptions. Each clique can have different combinations period-appropriate piercings that make their appearance more unique. Piercings come in a wide variety of materials and types and can improve base statistics. Students can have multiple body parts pierced.
+- Cell phones: Students have a chance of having a cell phone depending on income-level and age. Cell phones are simmed with their own numbers, minutes, text limits and contact lists as well as battery life, camera and web capabilities. Students can text each other during class or at other times for socialization. Cell phones are modeled after real-world equivalents from the time. Not all capabilities are hooked up at the moment, but will be useful for future simulation
+- Cliques and socialization: Some students now belong to a defined set of cliques. Cliques are defined by year and have their own subgroups that rise and fall in popularity as the sim runs (eventually). Cliques are separated into in- and out-groups, basically meaning that some cliques follow more "establishment" social trends and others are "anti-establishment". Cliques have their own system of alignment. Certain cliques are more friendly with others and may hate people from certain cliques. Cliques allow for unique appearances as well. If people are not friends, they will tend to socialize with people from their own cliques
+- Grid system and improved movement: There used to be a simple desk arrangement/setup per room. This has been expanded to a grid system so that students can move around within the classroom if needed. The grid system still needs a lot of work but can support basic movement, with only one student occupying a grid space at a time
+- Haircuts: cliques can now have hairstyles specific to their clique. Before, students were described simply by their hair length, but now students can have styles to their hair depending on the generated length. Styles are split by gender, clique and race. More styles have yet to be defined but the base is there
+- Stairs: schools can now be two stories with stairwells being generated like other rooms
+- Unique trait system: Students can be described with random unique traits to provide more flavor to their appearance. The trait system was later made generic so that it can be applied to items as well. Traits can be used to describe things in various conditions. Right now traits are applied to student appearance but the framework has been set for cellphones
+- Sim for needs: Students and staff now have pools that track hunger, thirst, temperature, bladder, entertainment, and energy. People will now eat and go to the bathroom and attempt to keep their various pools from falling to 0. Pools falling to 0 will start to drain their secondary stat pools. I will still need to work out how this interacts with allostatic load
+
+![](src/main/java/Resources.Screencaps/r16_1.png)
+![](src/main/java/Resources.Screencaps/r16_2.png)
+![](src/main/java/Resources.Screencaps/r16_3.png)
+![](src/main/java/Resources.Screencaps/r16_4.png)
+
+### Bugfixes
+
+- Friend distribution for students is now better
+- Last name capitalization/suffixes should be nearly fixed
+- Awkward descriptions for piercings and other items should seem more natural now
+- Students could be "caught" talking in hallways and other common areas where teachers were not present
 
 ## Release 0.0.15
 
