@@ -225,10 +225,10 @@
                     "highlights": ["bleach blond", "blond"]
                 },
                 "black": {
-                    "short": ["short afro"],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
+                    "short": ["short afro", "pixie", "buzz cut"],
+                    "chin-length": ["afro", "afro blowout", "corkscrew coils", "locs", "braids"],
+                    "neck-length": ["afro", "afro blowout", "corkscrew coils", "locs", "braids"],
+                    "shoulder-length": ["locs", "braids"],
                     "waist-length": [],
                     "extremely long": [],
                     "dyes": [],
@@ -270,7 +270,7 @@
                     "very short": ["buzz cut", "spike cut"],
                     "short": ["spike cut", "swoop", "side sweep"],
                     "chin-length": ["side sweep", "swoop"],
-                    "long": [],
+                    "long": ["side sweep"],
                     "shoulder-length": [],
                     "waist-length": ["ponytail"],
                     "dyes": ["bleach blond"],

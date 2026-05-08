@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class BellScheduleManager {
 
-    private static final String SCHEDULE_PATH = "src/main/java/Resources/bell_schedule.json";
+    private static final String SCHEDULE_PATH = "src/main/java/Resources/School/bell_schedule.json";
 
     private final List<ScheduleBlock> blocks;
     private final List<ScheduleBlock> transitions;

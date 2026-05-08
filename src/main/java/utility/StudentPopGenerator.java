@@ -5,12 +5,14 @@ import entity.Items.EquipmentSlot;
 import entity.Items.Piercing;
 import entity.Items.WearableItem;
 import entity.Student;
+import utility.traits.StudentCharismaWeightFunction;
+import utility.traits.TraitDataset;
+import utility.traits.TraitDatasetLoader;
+import utility.traits.TraitSelector;
 import view.GameView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,6 +21,14 @@ import static utility.Randomizer.setRandom;
 
 // TODO: improve performance. It is horrible
 public class StudentPopGenerator {
+
+    // Trait-selection knobs for the unique-traits pipeline.  The path
+    // and count window are local because they are student-specific;
+    // other domains (cell phones, etc.) will declare their own.
+    private static final String UNIQUE_TRAITS_PATH =
+            "src/main/java/Resources/Flavor/unique_traits.json";
+    private static final int UNIQUE_TRAIT_MIN_COUNT = 3;
+    private static final int UNIQUE_TRAIT_MAX_COUNT = 5;
 
     // School colors for braces band color selection (set before generation)
     private static String[] schoolColors = null;
@@ -226,46 +236,13 @@ public class StudentPopGenerator {
      * @param student the student to assign unique traits to
      */
     public static void applyUniqueTraits(Student student) {
-        int charisma = student.studentStatistics.getCharisma();
-        double z = (charisma - STUDENT_POP_CHARISMA_MEAN)
-                / (double) STUDENT_POP_CHARISMA_STANDARD_DEVIATION;
-
-        double positiveWeight = Math.max(0, z);
-        double negativeWeight = Math.max(0, -z);
-        double neutralWeight = 1.0;
-        double total = positiveWeight + negativeWeight + neutralWeight;
-
-        double pPositive = positiveWeight / total;
-        double pNeutral = neutralWeight / total;
-
-        int traitCount = GameRandom.nextInt(3, 5);
-
-        List<String> subcategories = new ArrayList<>(
-                Arrays.asList(UniqueTraitLoader.getSubcategories()));
-        Collections.shuffle(subcategories, new java.util.Random(
-                (long) (GameRandom.nextDouble() * Long.MAX_VALUE)));
-
-        List<String> selectedTraits = new ArrayList<>();
-        for (int i = 0; i < traitCount && i < subcategories.size(); i++) {
-            String subcategory = subcategories.get(i);
-
-            double roll = GameRandom.nextDouble();
-            String category;
-            if (roll < pPositive) {
-                category = "positive";
-            } else if (roll < pPositive + pNeutral) {
-                category = "neutral";
-            } else {
-                category = "negative";
-            }
-
-            List<String> traits = UniqueTraitLoader.getTraits(category, subcategory);
-            if (traits.isEmpty()) {
-                continue;
-            }
-            selectedTraits.add(traits.get(GameRandom.nextInt(traits.size())));
-        }
-
+        TraitDataset dataset = TraitDatasetLoader.load(UNIQUE_TRAITS_PATH);
+        List<String> selectedTraits = TraitSelector.selectTraits(
+                dataset,
+                student,
+                new StudentCharismaWeightFunction(),
+                UNIQUE_TRAIT_MIN_COUNT,
+                UNIQUE_TRAIT_MAX_COUNT);
         student.studentStatistics.setUniqueTraits(selectedTraits);
     }
 
@@ -316,8 +293,12 @@ public class StudentPopGenerator {
                     gender, clique, useCliqueData);
             List<WearableItem> leftPiercings = student.getStudentHead()
                     .getEquippedList(EquipmentSlot.LEFT_EAR);
+            // A simple matched pair (one piercing per ear) almost always
+            // wears identical earrings on each side; bump the match rate.
+            boolean simplePair = (leftCount == 1 && rightCount == 1);
             equipMirroredEarPiercings(student, EquipmentSlot.RIGHT_EAR,
-                    rightCount, leftPiercings, gender, clique, useCliqueData);
+                    rightCount, leftPiercings, gender, clique, useCliqueData,
+                    simplePair);
         } else {
             boolean leftEar = TraitSelection.determineSingleEarIsLeft();
             int count = TraitSelection.determineEarPiercingCount(gradeLevel);
@@ -416,9 +397,11 @@ public class StudentPopGenerator {
     /**
      * Equips ear piercings that tend to mirror the opposite ear. For each
      * position that has a corresponding template piercing, the same type/
-     * material/color is reused with probability PIERCING_EAR_MATCH_RATE;
-     * otherwise a fresh random piercing is rolled. Positions beyond the
-     * template list are always rolled independently.
+     * material/color/jewel is reused with probability PIERCING_EAR_MATCH_RATE
+     * (or the elevated PIERCING_EAR_PAIR_MATCH_*_RATE when this is a simple
+     * one-piercing-per-ear matched pair); otherwise a fresh random piercing
+     * is rolled. Positions beyond the template list are always rolled
+     * independently.
      *
      * Gauges are treated as a special case: when the corresponding template
      * piercing is a gauge, this ear is paired as a matching gauge with
@@ -432,7 +415,12 @@ public class StudentPopGenerator {
                                                   List<WearableItem> templates,
                                                   String gender,
                                                   String clique,
-                                                  boolean useCliqueData) {
+                                                  boolean useCliqueData,
+                                                  boolean simplePair) {
+        double matchRate = simplePair
+                ? earPairMatchRate(gender)
+                : PIERCING_EAR_MATCH_RATE;
+
         for (int i = 0; i < count; i++) {
             Piercing source = (i < templates.size())
                     ? (Piercing) templates.get(i)
@@ -442,21 +430,20 @@ public class StudentPopGenerator {
             Piercing p;
             if (source != null && templateIsGauge) {
                 if (GameRandom.nextDouble() < PIERCING_GAUGE_MATCH_RATE) {
-                    p = new Piercing(source.getName(), source.getMaterial(),
-                            source.getColor(), slot, source.getSize());
+                    p = mirrorPiercing(source, slot);
                 } else {
                     p = useCliqueData
                             ? createCliquePiercing(clique, gender, slot)
                             : createGenericPiercing(gender, slot);
                     if (isGaugePiercing(p)) {
                         p = new Piercing(source.getName(), p.getMaterial(),
-                                p.getColor(), slot, source.getSize());
+                                p.getColor(), slot, source.getSize(),
+                                p.getJewel());
                     }
                 }
             } else if (source != null
-                    && GameRandom.nextDouble() < PIERCING_EAR_MATCH_RATE) {
-                p = new Piercing(source.getName(), source.getMaterial(),
-                        source.getColor(), slot, source.getSize());
+                    && GameRandom.nextDouble() < matchRate) {
+                p = mirrorPiercing(source, slot);
             } else {
                 p = useCliqueData
                         ? createCliquePiercing(clique, gender, slot)
@@ -468,6 +455,27 @@ public class StudentPopGenerator {
                 student.getStudentHead().equip(p);
             }
         }
+    }
+
+    /**
+     * Returns the elevated match rate for a one-piercing-per-ear pair,
+     * gendered to honor the convention that females wear matched pairs
+     * slightly more consistently than males.
+     */
+    private static double earPairMatchRate(String gender) {
+        return "Female".equalsIgnoreCase(gender)
+                ? PIERCING_EAR_PAIR_MATCH_FEMALE_RATE
+                : PIERCING_EAR_PAIR_MATCH_MALE_RATE;
+    }
+
+    /**
+     * Builds a Piercing for {@code slot} that mirrors the source piercing's
+     * type, material, color, size, and jewel. Centralizes the copy so the
+     * jewel field is preserved consistently across all matching branches.
+     */
+    private static Piercing mirrorPiercing(Piercing source, EquipmentSlot slot) {
+        return new Piercing(source.getName(), source.getMaterial(),
+                source.getColor(), slot, source.getSize(), source.getJewel());
     }
 
     /**
@@ -506,9 +514,23 @@ public class StudentPopGenerator {
                 ? null
                 : colors.get((int) (GameRandom.nextDouble() * colors.size()));
 
+        List<String> jewels = CliquePiercingLoader.getJewels(clique, gender);
+        String jewel;
+        if (jewels.isEmpty()) {
+            jewel = null;
+        } else if ("hoops".equals(type)
+                && GameRandom.nextDouble() >= PIERCING_HOOP_JEWEL_RATE) {
+            // Hoops were mostly plain metal in the early 2000s; only a
+            // small fraction had a set jewel, so most hoops skip the
+            // clique's jewel palette entirely.
+            jewel = null;
+        } else {
+            jewel = jewels.get((int) (GameRandom.nextDouble() * jewels.size()));
+        }
+
         String size = TraitSelection.selectEarringSize(type);
 
-        return new Piercing(type, material, color, slot, size);
+        return new Piercing(type, material, color, slot, size, jewel);
     }
 
     /**

@@ -1,0 +1,37 @@
+{
+    "excellent": {
+        "screen":  [],
+        "battery": [],
+        "casing":  [],
+        "overall": []
+    },
+    "good": {
+        "screen":  [],
+        "battery": [],
+        "casing":  [],
+        "overall": []
+    },
+    "fair": {
+        "screen":  [],
+        "battery": [],
+        "casing":  [],
+        "overall": []
+    },
+    "damaged": {
+        "screen":  [
+            "The screen is cracked in several places.",
+            "The screen is sun damaged and yellowed.",
+            "The screen has a large section of dead pixels."
+        ],
+        "battery": [
+            "The battery is swollen.",
+            "The battery cover is missing."
+        ],
+        "casing":  [],
+        "overall": [
+            "The phone is nearly broken in half.",
+            "The phone keyboard is missing several keys",
+            "The phone antenna is missing."
+        ]
+    }
+}

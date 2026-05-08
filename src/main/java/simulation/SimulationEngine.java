@@ -668,7 +668,8 @@ public class SimulationEngine {
                 }
                 String displayName = student.studentName.getFirstName()
                         + " " + student.studentName.getLastName();
-                tickEntityNeeds(state, student.studentStatistics, displayName);
+                tickEntityNeeds(state, student.studentStatistics, displayName,
+                        false);
             }
         }
         if (staff != null) {
@@ -679,7 +680,8 @@ public class SimulationEngine {
                 }
                 String displayName = staffMember.teacherName.getFirstName()
                         + " " + staffMember.teacherName.getLastName();
-                tickEntityNeeds(state, staffMember.teacherStatistics, displayName);
+                tickEntityNeeds(state, staffMember.teacherStatistics, displayName,
+                        true);
             }
         }
     }
@@ -687,9 +689,18 @@ public class SimulationEngine {
     /**
      * Advances all needs for a single entity, applies stress, fires
      * critical-need messages, and runs the exhaustion cascade.
+     *
+     * <p>When {@code isStaff} is true, all decay rates are multiplied by
+     * the corresponding {@code STAFF_*_DECAY_MULTIPLIER} (modeling that
+     * adults handle most of these needs off-screen) and per-tick
+     * auto-refills are applied during transitions and lunch periods (the
+     * equivalent of a quick coffee, restroom trip, or lounge bite that we
+     * never explicitly simulate). This keeps teachers functional through
+     * a normal school day even though they have no behavior tree driving
+     * eating, drinking, or bathroom actions.</p>
      */
     private void tickEntityNeeds(EntityState state, PStatistics stats,
-                                 String displayName) {
+                                 String displayName, boolean isStaff) {
         boolean eating = isEatingLunch(state);
         boolean socializing = isSocializing(state);
 
@@ -717,14 +728,38 @@ public class SimulationEngine {
             energyDecayBored *= SimConstants.NEED_ENERGY_DECAY_SOCIAL_MULTIPLIER;
         }
 
+        double hungerDecay = eating ? 0 : SimConstants.NEED_HUNGER_DECAY_PER_TICK;
+        double thirstDecay = eating ? 0 : SimConstants.NEED_THIRST_DECAY_PER_TICK;
+        double bladderDecay = SimConstants.NEED_BLADDER_DECAY_PER_TICK;
+        double bladderPostMealDecay = SimConstants.NEED_BLADDER_POST_MEAL_DECAY_PER_TICK;
+        double entertainmentDecay = SimConstants.NEED_ENTERTAINMENT_DECAY_PER_TICK;
+
+        if (isStaff) {
+            hungerDecay        *= SimConstants.STAFF_HUNGER_DECAY_MULTIPLIER;
+            thirstDecay        *= SimConstants.STAFF_THIRST_DECAY_MULTIPLIER;
+            bladderDecay       *= SimConstants.STAFF_BLADDER_DECAY_MULTIPLIER;
+            bladderPostMealDecay *= SimConstants.STAFF_BLADDER_DECAY_MULTIPLIER;
+            entertainmentDecay *= SimConstants.STAFF_ENTERTAINMENT_DECAY_MULTIPLIER;
+            energyDecay        *= SimConstants.STAFF_ENERGY_DECAY_MULTIPLIER;
+            energyDecayBored   *= SimConstants.STAFF_ENERGY_DECAY_MULTIPLIER;
+        }
+
         state.tickNeeds(
-                eating ? 0 : SimConstants.NEED_HUNGER_DECAY_PER_TICK,
-                eating ? 0 : SimConstants.NEED_THIRST_DECAY_PER_TICK,
-                SimConstants.NEED_BLADDER_DECAY_PER_TICK,
-                SimConstants.NEED_BLADDER_POST_MEAL_DECAY_PER_TICK,
-                SimConstants.NEED_ENTERTAINMENT_DECAY_PER_TICK,
+                hungerDecay,
+                thirstDecay,
+                bladderDecay,
+                bladderPostMealDecay,
+                entertainmentDecay,
                 energyDecay,
                 energyDecayBored);
+
+        // Staff-only off-screen self-care: applied AFTER the normal decay
+        // tick so the refill is visible as a slight regen against the
+        // baseline drain. Net effect is roughly steady-state during
+        // transitions / lunch instead of monotonic decay.
+        if (isStaff) {
+            applyStaffOffScreenRefills(state);
+        }
 
         if (state.getBladder() < SimConstants.NEED_CRITICAL_THRESHOLD) {
             state.setNeedsBathroom(true);
@@ -733,6 +768,50 @@ public class SimulationEngine {
         applyNeedStress(state, stats.getAllostaticLoad());
         fireCriticalNeedMessages(state, displayName);
         runExhaustionCascade(state, stats, displayName);
+    }
+
+    /**
+     * Applies the silent off-screen refills staff get during natural
+     * breaks: between bells (transitions) and during either student
+     * lunch period (A or B). Each window contributes a per-tick top-up to
+     * needs so that adults never collapse into critical territory under
+     * normal conditions, even though they have no behavior tree driving
+     * eating, drinking, or bathroom actions.
+     */
+    private void applyStaffOffScreenRefills(EntityState state) {
+        if (state == null || bellSchedule == null || time == null) {
+            return;
+        }
+
+        boolean inTransition = bellSchedule.isTransitionTime(time);
+        boolean inAnyLunch = bellSchedule.isLunchTime(time, "A")
+                || bellSchedule.isLunchTime(time, "B");
+
+        if (inTransition) {
+            state.setHunger(state.getHunger()
+                    + SimConstants.STAFF_TRANSITION_HUNGER_REFILL);
+            state.setThirst(state.getThirst()
+                    + SimConstants.STAFF_TRANSITION_THIRST_REFILL);
+            state.setBladder(state.getBladder()
+                    + SimConstants.STAFF_TRANSITION_BLADDER_REFILL);
+            state.setEntertainment(state.getEntertainment()
+                    + SimConstants.STAFF_TRANSITION_ENTERTAINMENT_REFILL);
+            state.setEnergy(state.getEnergy()
+                    + SimConstants.STAFF_TRANSITION_ENERGY_REFILL);
+        }
+
+        if (inAnyLunch) {
+            state.setHunger(state.getHunger()
+                    + SimConstants.STAFF_LUNCH_HUNGER_REFILL);
+            state.setThirst(state.getThirst()
+                    + SimConstants.STAFF_LUNCH_THIRST_REFILL);
+            state.setBladder(state.getBladder()
+                    + SimConstants.STAFF_LUNCH_BLADDER_REFILL);
+            state.setEntertainment(state.getEntertainment()
+                    + SimConstants.STAFF_LUNCH_ENTERTAINMENT_REFILL);
+            state.setEnergy(state.getEnergy()
+                    + SimConstants.STAFF_LUNCH_ENERGY_REFILL);
+        }
     }
 
     private static boolean isEatingLunch(EntityState state) {

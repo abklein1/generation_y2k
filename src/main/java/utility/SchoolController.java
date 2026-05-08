@@ -1580,6 +1580,9 @@ public class SchoolController {
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
+            publish("Populating phone contacts...");
+            CellPhoneAssignmentService.populatePhoneContacts(town);
+
             traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
 
             // Log population summary

@@ -400,7 +400,7 @@ public class StandardSchool implements SchoolPlan {
         Object object;
         try {
             object = new JSONParser()
-                    .parse(new FileReader("src/main/java/Resources/highschool_gen.json", StandardCharsets.UTF_8));
+                    .parse(new FileReader("src/main/java/Resources/School/highschool_gen.json", StandardCharsets.UTF_8));
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
@@ -445,7 +445,7 @@ public class StandardSchool implements SchoolPlan {
 
     // Weighted chance of random mascot
     private String schoolMascotLoader() {
-        String pathCSVMascots = "src/main/java/Resources/mascots.csv";
+        String pathCSVMascots = "src/main/java/Resources/Town/mascots.csv";
         List<String> mascots = new ArrayList<>();
         List<Integer> counts = new ArrayList<>();
         List<Integer> cumulativeCounts = new ArrayList<>();
@@ -1743,7 +1743,7 @@ public class StandardSchool implements SchoolPlan {
     }
 
     public void schoolColorsLoader() {
-        String pathColors = "src/main/java/Resources/colors.txt";
+        String pathColors = "src/main/java/Resources/Town/colors.txt";
         Map<String, String> colorMap = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(pathColors, StandardCharsets.UTF_8))) {

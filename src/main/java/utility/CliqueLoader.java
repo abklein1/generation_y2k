@@ -25,9 +25,9 @@ public final class CliqueLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String CLIQUES_PATH =
-            "src/main/java/Resources/cliques.json";
+            "src/main/java/Resources/Cliques/cliques.json";
     private static final String POPULARITY_PATH =
-            "src/main/java/Resources/clique_popularity.json";
+            "src/main/java/Resources/Cliques/clique_popularity.json";
     private static final String YEAR = "2004";
 
     private static boolean loaded = false;

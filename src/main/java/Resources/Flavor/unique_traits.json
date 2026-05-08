@@ -20,7 +20,8 @@
         ],
         "ears": [
             "Their ears appear graceful.",
-            "Their ears are perfectly symmetrical."
+            "Their ears are perfectly symmetrical.",
+            "Their ears balance their face well."
         ],
         "mouth": [
             "They have full lips.",
@@ -44,7 +45,8 @@
         "skin": [
             "Their skin appears to be smooth and flawless.",
             "Their skin seems to glow.",
-            "Their skin is without blemishes."
+            "Their skin is without blemishes.",
+            "Their skin appears radiant."
         ],
         "body": [
             "Their arms are toned and muscular.",
@@ -55,7 +57,8 @@
             "They walk with a confident stride.",
             "They carry themselves with poise and grace.",
             "They stand tall and straight.",
-            "They seem to glide as they walk."
+            "They seem to glide as they walk.",
+            "They move effortlessly."
         ]
     },
     "neutral": {
@@ -133,11 +136,13 @@
             "They have wide cheekbones.",
             "They have a small chin.",
             "Their chin is large",
-            "Their chin is slightly receded."
+            "Their chin is slightly receded.",
+            "They have a cleft chin."
         ],
         "hair": [
             "Their hair is shiny.",
-            "Their hair is flowing."
+            "Their hair is flowing.",
+            "They have a widow's peak."
         ],
         "skin": [
             "They are covered in freckles.",
@@ -159,7 +164,8 @@
             "They have a long neck.",
             "Their shoulders are narrow.",
             "They have a narrow waist.",
-            "Their body is pear-shaped."
+            "Their body is pear-shaped.",
+            "Their limbs are short and stocky."
         ],
         "misc": [
             "They are constantly fidgeting.",
@@ -205,7 +211,6 @@
             "Their ears are noticeably red.",
             "Their ears are very oily.",
             "Their ear is missing a chunk of cartilage.",
-            "They have a cauliflower ear.",
             "Their ears appear rubbery.",
             "Their ears are oblong."
         ],
@@ -227,13 +232,14 @@
             "Their head seems to be too large for their body.",
             "They have a double chin.",
             "Their facial features appear squashed together.",
-            "Their skull is bumpy and uneven."
+            "Their skull is bumpy and uneven.",
+            "They have a large forehead",
+            "They have a protruding brow."
         ],
         "hair": [
             "Their hair is greasy and oily.",
             "Their scalp is dry and flaky.",
             "Their hair is patchy.",
-            "They have a receding hairline.",
             "Their hairline is uneven.",
             "Their hair is full of dead ends."
         ],
@@ -241,7 +247,8 @@
             "Their skin is dry and flaky.",
             "Their skin appears clammy.",
             "Their skin seems slightly ashen.",
-            "Their skin is dull."
+            "Their skin is dull.",
+            "Their skin seems irritated."
         ],
         "body": [
             "They have a thin neck.",

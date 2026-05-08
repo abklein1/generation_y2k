@@ -661,10 +661,23 @@ public final class SimConstants {
     // The remainder of the time a fresh random piercing is rolled instead.
     public static final double PIERCING_EAR_MATCH_RATE = 0.75;
 
+    // When a student has exactly one piercing per ear (a simple matched
+    // pair), people overwhelmingly wear identical earrings on each side.
+    // Females treat matched pairs as the strong default; males trend the
+    // same way but slightly less consistently.
+    public static final double PIERCING_EAR_PAIR_MATCH_FEMALE_RATE = 0.95;
+    public static final double PIERCING_EAR_PAIR_MATCH_MALE_RATE = 0.85;
+
     // Gauges are a strong stylistic commitment, so when one ear is gauged
     // the other ear is almost always gauged too (in matching size). The
     // rare remainder leaves room for asymmetric / single-ear styles.
     public static final double PIERCING_GAUGE_MATCH_RATE = 0.95;
+
+    // Hoop earrings in the early 2000s were predominantly plain metal;
+    // jewel-set hoops (huggies with stones, etc.) existed but were a
+    // minority style. This caps how often a clique's jewel palette is
+    // applied to a hoop, even when the clique would otherwise use jewels.
+    public static final double PIERCING_HOOP_JEWEL_RATE = 0.12;
 
     // Charisma boost from wearing jewelry (minor stat improvement)
     public static final int PIERCING_EARRING_CHARISMA_BOOST = 2;
@@ -730,6 +743,27 @@ public final class SimConstants {
     // Students skew toward basic plans; staff toward standard/premium
     public static final int CELLPHONE_PLAN_BASIC_THRESHOLD = 50;
     public static final int CELLPHONE_PLAN_STANDARD_THRESHOLD = 85;
+
+    // Phone contact list population
+    // Probability that a student saves a given friend's phone number when
+    // both own phones.  Realistic: most-but-not-all friends end up in your
+    // contacts.  Family / siblings always exchange numbers and bypass this
+    // probability check.
+    public static final double PHONE_CONTACT_FRIEND_PROBABILITY = 0.75;
+
+    // CELL PHONE DECORATION RATES
+    // Per-slot probability that a student whose clique declares decoration
+    // options for a given slot will actually accessorize that slot.  Cases
+    // are by far the most common form of phone customization (almost
+    // everyone has one), accessories like lanyards/charms are a strong
+    // second among certain cliques, while screen and front/back stickers
+    // are rarer and stylistically loaded.  Slots whose clique catalog is
+    // empty are skipped regardless of these rates.
+    public static final double DECORATION_PHONE_CASE_RATE = 0.70;
+    public static final double DECORATION_PHONE_ACCESSORIES_RATE = 0.45;
+    public static final double DECORATION_PHONE_BACK_RATE = 0.30;
+    public static final double DECORATION_PHONE_FRONT_RATE = 0.15;
+    public static final double DECORATION_PHONE_SCREEN_RATE = 0.10;
 
     // CLIQUE DISTRIBUTION WEIGHTS
     // Relative weights used to distribute students across cliques during generation.
@@ -808,6 +842,50 @@ public final class SimConstants {
     // the entity falls asleep.
     public static final int EXHAUSTION_SECONDARY_STAT_DRAIN_PER_TICK = 1;
     public static final double EXHAUSTION_DRAIN_STRESS_FACTOR = 1.5;
+
+    // ===== STAFF NEED DECAY MULTIPLIERS =====
+    // Adults handle most physiological self-care off-screen: coffee mugs at
+    // their desk, quick faculty-lounge runs during planning periods,
+    // bathroom trips between bells, snacks in the desk drawer. The
+    // simulation does not model any of these explicitly, so staff need
+    // decay rates are scaled down from the student baselines to keep
+    // teachers functional through a normal school day instead of
+    // collapsing into "exhausted and barely functional" by 9 AM.
+    //
+    // Values are multiplicative against the corresponding NEED_*_DECAY_PER_TICK
+    // constants above. Tuned so that a typical teacher (determination ~50)
+    // never crosses any need's critical threshold during regular school
+    // hours unless something abnormal happens.
+    public static final double STAFF_HUNGER_DECAY_MULTIPLIER = 0.40;
+    public static final double STAFF_THIRST_DECAY_MULTIPLIER = 0.30;
+    public static final double STAFF_BLADDER_DECAY_MULTIPLIER = 0.40;
+    public static final double STAFF_ENTERTAINMENT_DECAY_MULTIPLIER = 0.50;
+    public static final double STAFF_ENERGY_DECAY_MULTIPLIER = 0.55;
+
+    // ===== STAFF AUTO-REFILLS DURING NATURAL BREAKS =====
+    // Staff don't have behavior trees that drive them to eat lunch, hit
+    // the restroom, or grab water. To keep parity with what students get
+    // through their behavior tree, staff are silently topped up during
+    // bell transitions (a sip of coffee, a quick restroom trip, a chat
+    // in the hallway) and during the school's lunch windows (lounge
+    // lunch, however brief). These per-tick refill amounts are applied
+    // on top of decay, so the net effect is a partial recovery rather
+    // than a hard cap.
+    public static final double STAFF_TRANSITION_HUNGER_REFILL = 0.5;
+    public static final double STAFF_TRANSITION_THIRST_REFILL = 1.5;
+    public static final double STAFF_TRANSITION_BLADDER_REFILL = 4.0;
+    public static final double STAFF_TRANSITION_ENTERTAINMENT_REFILL = 1.5;
+    public static final double STAFF_TRANSITION_ENERGY_REFILL = 0.3;
+
+    // During either student lunch period (A or B) staff get the same
+    // hunger/thirst/energy refills students get when EATING_LUNCH —
+    // teachers eat too, even if we don't simulate them sitting in the
+    // lunchroom. Bladder also gets a small bump for the same reason.
+    public static final double STAFF_LUNCH_HUNGER_REFILL = 1.5;
+    public static final double STAFF_LUNCH_THIRST_REFILL = 1.5;
+    public static final double STAFF_LUNCH_BLADDER_REFILL = 1.0;
+    public static final double STAFF_LUNCH_ENTERTAINMENT_REFILL = 1.0;
+    public static final double STAFF_LUNCH_ENERGY_REFILL = 0.5;
 
     // Critical-need status messages (edge-triggered: fired once when a need crosses
     // below NEED_CRITICAL_THRESHOLD, re-fires only after recovering above it).

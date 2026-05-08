@@ -1,6 +1,7 @@
 package utility;
 
 import entity.Body.StudentHead;
+import entity.Items.Decoration;
 import entity.Items.EquipmentSlot;
 import entity.Items.WearableItem;
 import entity.Rooms.Classroom;
@@ -13,7 +14,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -46,6 +46,28 @@ public class Inspector {
     }
 
     /**
+     * Formats a height given in inches as a human-friendly "X feet and Y inches"
+     * string. The underlying numeric value is preserved elsewhere; this is only
+     * used for display in descriptions. The inches portion is rounded to the
+     * nearest whole inch and overflow to the next foot is handled (e.g. a value
+     * that rounds to 12 inches becomes an extra foot).
+     */
+    private static String formatHeightFeetInches(double heightInInches) {
+        int totalInches = (int) Math.round(heightInInches);
+        if (totalInches < 0) {
+            totalInches = 0;
+        }
+        int feet = totalInches / 12;
+        int inches = totalInches % 12;
+        StringBuilder sb = new StringBuilder();
+        sb.append(feet).append(feet == 1 ? " foot" : " feet");
+        if (inches > 0) {
+            sb.append(" and ").append(inches).append(inches == 1 ? " inch" : " inches");
+        }
+        return sb.toString();
+    }
+
+    /**
      * Builds the physical description text for a student.
      * Includes appearance, grade, birthday, family info, and braces/piercing history.
      *
@@ -53,9 +75,6 @@ public class Inspector {
      * @return the formatted description text
      */
     private static String buildStudentDescriptionText(Student student) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.CEILING);
-
         StringBuilder sb = new StringBuilder();
         String firstName = student.studentName.getFirstName();
         String gender = student.studentStatistics.getGender();
@@ -110,7 +129,7 @@ public class Inspector {
                 sb.append(trait).append(" ");
             }
         }
-        sb.append("They stand ").append(df.format(height)).append(" inches tall.");
+        sb.append("They stand ").append(formatHeightFeetInches(height)).append(" tall.");
         if (hasBraces) {
             sb.append(" They have braces with ");
             if (hasAlternatingBands) {
@@ -775,9 +794,92 @@ public class Inspector {
             sb.append("Minutes:      ").append(phone.getMinutePlan()).append("/month\n");
             sb.append("Texts:        ").append(phone.getTextsRemaining())
               .append(" / ").append(phone.getTextLimit()).append("\n");
+
+            appendDecorationsSection(sb, phone);
+            appendContactsSection(sb, phone);
+
             area.setText(sb.toString());
         }
         area.setCaretPosition(0);
+    }
+
+    /**
+     * Appends a "Decorations" block listing every slot that carries at
+     * least one decoration on the phone, ordered by slot insertion
+     * order.  When the phone is undecorated the section is omitted
+     * entirely so plain phones don't gain visual clutter in the
+     * inspector.  Decoration data is a separate concern from the
+     * phone's intrinsic specs (price, battery, etc.) and is sourced
+     * from the clique decoration system rather than the phone's own
+     * fields.
+     *
+     * @param sb    the target builder
+     * @param phone the phone whose decorations should be displayed
+     */
+    private static void appendDecorationsSection(StringBuilder sb, CellPhone phone) {
+        if (!phone.hasDecorations()) {
+            return;
+        }
+        sb.append("\nDecorations\n-------------------------------------\n");
+        Map<String, java.util.List<Decoration>> grouped = phone.getDecorations();
+        for (Map.Entry<String, java.util.List<Decoration>> entry : grouped.entrySet()) {
+            java.util.List<Decoration> list = entry.getValue();
+            if (list == null || list.isEmpty()) {
+                continue;
+            }
+            String slotLabel = capitalize(entry.getKey());
+            StringBuilder names = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                if (i > 0) {
+                    names.append(", ");
+                }
+                names.append(list.get(i).getDisplayName());
+            }
+            sb.append(String.format("%-13s %s%n", slotLabel + ":", names.toString()));
+        }
+    }
+
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    /**
+     * Appends a "Contacts" block to the phone display area listing every
+     * saved contact, sorted alphabetically by display name. Each row is
+     * formatted in two monospaced columns: name (left, padded) and phone
+     * number (right). When the phone has no saved contacts a placeholder
+     * line is shown instead.
+     *
+     * @param sb    the target StringBuilder receiving the formatted text
+     * @param phone the phone whose contact list should be displayed
+     */
+    private static void appendContactsSection(StringBuilder sb, CellPhone phone) {
+        sb.append("\nContacts (")
+          .append(phone.getContactCount())
+          .append(")\n-------------------------------------\n");
+
+        java.util.List<CellPhone.Contact> contacts = phone.getContacts();
+        if (contacts.isEmpty()) {
+            sb.append("(no saved contacts)\n");
+            return;
+        }
+
+        java.util.List<CellPhone.Contact> sorted = new java.util.ArrayList<>(contacts);
+        sorted.sort((a, b) -> {
+            String an = a.getName() == null ? "" : a.getName();
+            String bn = b.getName() == null ? "" : b.getName();
+            return an.compareToIgnoreCase(bn);
+        });
+
+        for (CellPhone.Contact contact : sorted) {
+            String name = (contact.getName() == null || contact.getName().isEmpty())
+                    ? "(unknown)" : contact.getName();
+            String number = contact.getPhoneNumber() == null ? "" : contact.getPhoneNumber();
+            sb.append(String.format("%-28s%s%n", name, number));
+        }
     }
 
     /**
@@ -854,9 +956,6 @@ public class Inspector {
      * @return the formatted description text
      */
     private static String buildStaffDescriptionText(Staff staff) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.CEILING);
-
         StringBuilder sb = new StringBuilder();
         String firstName = staff.teacherName.getFirstName();
         String lastName = staff.teacherName.getLastName();
@@ -881,7 +980,7 @@ public class Inspector {
                     .append(" hair and ").append(eyeColor).append(" eyes. ");
         }
 
-        sb.append("They stand ").append(df.format(height)).append(" inches tall.");
+        sb.append("They stand ").append(formatHeightFeetInches(height)).append(" tall.");
         if (staff.teacherStatistics.getHasGlasses() && !staff.teacherStatistics.getHasContacts()) {
             sb.append(" They wear glasses.");
         }

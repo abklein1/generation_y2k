@@ -25,7 +25,7 @@ public final class CliquePiercingLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String PIERCINGS_PATH =
-            "src/main/java/Resources/clique_piercings.json";
+            "src/main/java/Resources/Cliques/clique_piercings.json";
     private static final String YEAR = "2004";
 
     private static final String[] SLOT_KEYS = {
@@ -50,12 +50,15 @@ public final class CliquePiercingLoader implements Serializable {
         private final Map<String, List<String>> piercingsBySlot;
         private final List<String> colors;
         private final List<String> materials;
+        private final List<String> jewels;
 
         CliquePiercingData(Map<String, List<String>> piercingsBySlot,
-                           List<String> colors, List<String> materials) {
+                           List<String> colors, List<String> materials,
+                           List<String> jewels) {
             this.piercingsBySlot = piercingsBySlot;
             this.colors = colors;
             this.materials = materials;
+            this.jewels = jewels;
         }
 
         public Map<String, List<String>> getPiercingsBySlot() {
@@ -68,6 +71,10 @@ public final class CliquePiercingLoader implements Serializable {
 
         public List<String> getMaterials() {
             return Collections.unmodifiableList(materials);
+        }
+
+        public List<String> getJewels() {
+            return Collections.unmodifiableList(jewels);
         }
 
         /**
@@ -116,6 +123,16 @@ public final class CliquePiercingLoader implements Serializable {
     public static List<String> getMaterials(String clique, String gender) {
         CliquePiercingData data = resolve(clique, gender);
         return data == null ? List.of() : data.getMaterials();
+    }
+
+    /**
+     * Returns the jewel/gemstone options for a clique/gender combination.
+     * An empty list means jewels should not be applied to this clique's
+     * piercings (the default for cliques whose materials are metals only).
+     */
+    public static List<String> getJewels(String clique, String gender) {
+        CliquePiercingData data = resolve(clique, gender);
+        return data == null ? List.of() : data.getJewels();
     }
 
     /**
@@ -224,8 +241,9 @@ public final class CliquePiercingLoader implements Serializable {
 
         List<String> colors = readStringList(obj.get("colors"));
         List<String> materials = readStringList(obj.get("materials"));
+        List<String> jewels = readStringList(obj.get("jewels"));
 
-        return new CliquePiercingData(slots, colors, materials);
+        return new CliquePiercingData(slots, colors, materials, jewels);
     }
 
     private static List<String> readStringList(Object value) {

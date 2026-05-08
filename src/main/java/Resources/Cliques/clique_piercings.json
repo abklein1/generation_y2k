@@ -96,7 +96,8 @@
                     "black",
                     "white",
                     "silver",
-                    "gunmetal"
+                    "gunmetal",
+                    "charcoal"
                 ],
                 "materials": [
                     "silicone",
@@ -205,15 +206,18 @@
             "female": {
                 "left ear": [
                     "small hoop",
-                    "stud"
+                    "stud",
+                    "industrial stud"
                 ],
                 "right ear": [
                     "small hoop",
-                    "stud"
+                    "stud",
+                    "industrial stud"
                 ],
                 "lips": [
                     "small hoop",
-                    "stud"
+                    "stud",
+                    "snakebites"
                 ],
                 "nose": [
                     "small hoop",
@@ -229,7 +233,17 @@
                 "tongue": [
                     "stud"
                 ],
-                "colors": [],
+                "colors": [
+                    "black",
+                    "red",
+                    "green",
+                    "blue",
+                    "yellow",
+                    "purple",
+                    "pink",
+                    "white",
+                    "silver"
+                ],
                 "materials": [
                     "steel",
                     "silver",
@@ -308,7 +322,11 @@
                 "nose": [
                     "septum"
                 ],
-                "navel": [],
+                "navel": [
+                    "stud",
+                    "dangling cross",
+                    "pendant"
+                ],
                 "eyebrow": [
                     "small hoop",
                     "stud"
@@ -318,13 +336,15 @@
                 ],
                 "colors": [
                     "black",
-                    "silver"
+                    "silver",
+                    "gunmetal",
+                    "charcoal"
                 ],
                 "materials": [
                     "steel",
-                    "acrylic",
-                    "wood",
-                    "titanium"
+                    "surgical steel",
+                    "titanium",
+                    "acrylic"
                 ]
             },
             "male": {
@@ -336,13 +356,35 @@
                     "small hoop",
                     "stud"
                 ],
-                "lips": [],
-                "nose": [],
+                "lips": [
+                    "small hoop",
+                    "stud"
+                ],
+                "nose": [
+                    "small hoop",
+                    "stud",
+                    "septum"
+                ],
                 "navel": [],
-                "eyebrow": [],
-                "tongue": [],
-                "colors": [],
-                "materials": []
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
+                "tongue": [
+                    "stud"
+                ],
+                "colors": [
+                    "black",
+                    "silver",
+                    "gunmetal",
+                    "charcoal"
+                ],
+                "materials": [
+                    "steel",
+                    "surgical steel",
+                    "titanium",
+                    "acrylic"
+                ]
             }
         },
         "Band": {
@@ -370,8 +412,10 @@
                     "white gold",
                     "yellow gold",
                     "silver",
+                    "platinum"
+                ],
+                "jewels": [
                     "diamond",
-                    "platinum",
                     "cubic zirconia",
                     "sapphire",
                     "emerald",
@@ -415,7 +459,9 @@
                     "rose gold",
                     "white gold",
                     "gold",
-                    "silver",
+                    "silver"
+                ],
+                "jewels": [
                     "diamond",
                     "cubic zirconia",
                     "sapphire",
@@ -556,7 +602,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [],
@@ -586,7 +652,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [],
@@ -597,7 +683,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             }
         },
         "Latino": {
@@ -622,7 +728,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [
@@ -639,7 +765,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             }
         },
         "Electronic": {
@@ -682,19 +828,55 @@
             "female": {
                 "left ear": [
                     "small hoop",
+                    "medium hoop",
+                    "large hoop",
+                    "name hoop",
                     "stud"
                 ],
                 "right ear": [
                     "small hoop",
+                    "medium hoop",
+                    "large hoop",
+                    "name hoop",
                     "stud"
                 ],
                 "lips": [],
-                "nose": [],
-                "navel": [],
-                "eyebrow": [],
+                "nose": [
+                    "small hoop",
+                    "stud"
+                ],
+                "navel": [
+                    "stud",
+                    "pendant"
+                ],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver",
+                    "platinum"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [
@@ -711,7 +893,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             }
         },
         "Trap": {
@@ -763,7 +965,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [],
@@ -793,7 +1015,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [
@@ -810,17 +1052,39 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             }
         },
         "Jock": {
             "female": {
                 "left ear": [
                     "small hoop",
+                    "medium hoop",
                     "stud"
                 ],
                 "right ear": [
                     "small hoop",
+                    "medium hoop",
                     "stud"
                 ],
                 "lips": [],
@@ -829,7 +1093,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [
@@ -846,26 +1130,71 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             }
         },
         "Prep": {
             "female": {
                 "left ear": [
                     "small hoop",
+                    "medium hoop",
                     "stud"
                 ],
                 "right ear": [
                     "small hoop",
+                    "medium hoop",
                     "stud"
                 ],
                 "lips": [],
                 "nose": [],
-                "navel": [],
+                "navel": [
+                    "stud",
+                    "pendant"
+                ],
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [],
@@ -895,7 +1224,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [],
@@ -925,7 +1274,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [],
@@ -955,7 +1324,27 @@
                 "eyebrow": [],
                 "tongue": [],
                 "colors": [],
-                "materials": []
+                "materials": [
+                    "rose gold",
+                    "white gold",
+                    "gold",
+                    "silver"
+                ],
+                "jewels": [
+                    "diamond",
+                    "cubic zirconia",
+                    "sapphire",
+                    "emerald",
+                    "pearl",
+                    "ruby",
+                    "amethyst",
+                    "topaz",
+                    "garnet",
+                    "turquoise",
+                    "opal",
+                    "peridot",
+                    "aquamarine"
+                ]
             },
             "male": {
                 "left ear": [],

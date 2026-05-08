@@ -600,8 +600,10 @@ public class StudentBehaviorTreeBuilder {
             if (phone == null || !phone.hasSms() || phone.getTextsRemaining() <= 0) {
                 return false;
             }
-            // Need at least one co-located peer to text.
-            return !collectCoLocatedPeers(student, student.getEntityState()).isEmpty();
+            // Need at least one co-located peer who is reachable by text:
+            // they must own an SMS-capable phone AND their number must be in
+            // this student's saved contact list.
+            return !getTextableCandidates(student, student.getEntityState(), phone, town).isEmpty();
         }
 
         @Override
@@ -619,16 +621,20 @@ public class StudentBehaviorTreeBuilder {
             if (phone == null || !phone.hasSms()) {
                 return BehaviorStatus.FAILURE;
             }
-            if (!phone.useText()) {
-                return BehaviorStatus.FAILURE;
-            }
 
             entity.EntityState state = student.getEntityState();
             boolean inClass = state.isInClass() && hasTeacherPresent(state.getCurrentRoom());
-            
-            // Select a target using the tiered preference system
-            Student target = TargetSelector.selectTarget(student, getClassmates(student, state));
+
+            // Filter candidates to those we can actually text BEFORE consuming
+            // a text from the monthly allowance.  Otherwise we'd burn a text
+            // on a target lookup that fails, lying to the player about how
+            // many texts they have left.
+            java.util.List<Student> textable = getTextableCandidates(student, state, phone, town);
+            Student target = TargetSelector.selectTarget(student, textable);
             if (target == null) {
+                return BehaviorStatus.FAILURE;
+            }
+            if (!phone.useText()) {
                 return BehaviorStatus.FAILURE;
             }
             
@@ -701,8 +707,19 @@ public class StudentBehaviorTreeBuilder {
             return Math.max(5, catchChance);
         }
         
-        private java.util.List<Student> getClassmates(Student student, entity.EntityState state) {
-            return collectCoLocatedPeers(student, state);
+        /**
+         * Returns the co-located peers that this student can actually text
+         * right now: each must own an SMS-capable phone and be saved as a
+         * contact on the student's own phone.  Empty list if the student is
+         * out of range of a textable peer.
+         */
+        private java.util.List<Student> getTextableCandidates(Student student,
+                                                              entity.EntityState state,
+                                                              CellPhone studentPhone,
+                                                              Town town) {
+            java.util.List<Student> coLocated = collectCoLocatedPeers(student, state);
+            return utility.CellPhoneAssignmentService.filterTextableCandidates(
+                    student, studentPhone, town, coLocated);
         }
     }
     

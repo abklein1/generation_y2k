@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class PhoneDataLoader {
 
-    private static final String PHONES_PATH = "src/main/java/Resources/phones.json";
+    private static final String PHONES_PATH = "src/main/java/Resources/Items/phones.json";
 
     private static List<PhoneSpec> allPhones = null;
     private static List<PhoneSpec> budgetPhones = null;

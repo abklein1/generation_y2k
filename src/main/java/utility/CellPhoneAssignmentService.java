@@ -5,8 +5,10 @@ import entity.Staff;
 import entity.Student;
 import entity.Town;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,6 +53,7 @@ public class CellPhoneAssignmentService {
                 String income = student.studentStatistics.getIncomeLevel();
                 CellPhone phone = createStudentPhone(student.toString(), income, usedNumbers);
                 town.assignStudentPhone(student, phone);
+                ItemDecorationService.decoratePhone(phone, student);
                 studentCount++;
             }
         }
@@ -70,6 +73,226 @@ public class CellPhoneAssignmentService {
 
         GameLogger.logGeneration("Cell phone assignment complete (year " + simulationYear + "): "
                 + studentCount + " students, " + staffCount + " staff");
+    }
+
+    /**
+     * Populates each student phone's contact list based on existing social
+     * relationships.  This must run <i>after</i> phones have been assigned
+     * (see {@link #assignPhonesForTown}) <i>and</i> after friend/sibling
+     * relationships have been initialized (see
+     * {@link SocialLinkConnector#initializeSocialLinks}).
+     *
+     * <p>Contact population rules, evaluated per ordered (owner, peer) pair
+     * where both own a phone:</p>
+     * <ul>
+     *   <li><b>Sibling (in or out of school):</b> the owner <i>always</i>
+     *       saves the sibling's number whenever both own a phone — phones
+     *       are family devices and parents make sure these are saved.
+     *       This rule is applied <i>unconditionally</i> regardless of how
+     *       the siblings feel about each other (close, neutral, or
+     *       outright rivals).</li>
+     *   <li><b>Friend (peer is in owner's friends list):</b> the owner saves
+     *       the peer's number with probability
+     *       {@link constants.SimConstants#PHONE_CONTACT_FRIEND_PROBABILITY}.
+     *       This means a typical student carries most of their friends'
+     *       numbers but not every single one.  Friends who already came in
+     *       through the sibling rule are left untouched.</li>
+     *   <li><b>Acquaintance / stranger:</b> not saved.</li>
+     * </ul>
+     *
+     * <p>Population is asymmetric: A may have B's number while B does not
+     * have A's, mirroring the directed nature of the social link graph.
+     * The sibling guarantee is intentionally <i>symmetric</i> though — if
+     * both siblings own phones, both directions are added.  Existing
+     * contact entries are preserved across re-runs.</p>
+     *
+     * @param town the town whose phones should have contacts populated
+     */
+    public static void populatePhoneContacts(Town town) {
+        if (town == null) {
+            return;
+        }
+
+        Map<Student, CellPhone> studentPhones = town.getAllStudentPhones();
+        if (studentPhones == null || studentPhones.isEmpty()) {
+            return;
+        }
+
+        // Build a quick lookup so we can resolve each peer's CellPhone
+        // without a linear scan per pair.
+        Map<Student, CellPhone> phoneByStudent = new HashMap<>(studentPhones);
+
+        int siblingContacts = 0;
+        int friendContacts = 0;
+        int phonesPopulated = 0;
+
+        for (Map.Entry<Student, CellPhone> entry : studentPhones.entrySet()) {
+            Student owner = entry.getKey();
+            CellPhone ownerPhone = entry.getValue();
+            if (owner == null || ownerPhone == null) {
+                continue;
+            }
+
+            int before = ownerPhone.getContactCount();
+
+            // Rule 1 (HARD GUARANTEE): siblings are ALWAYS in the contact
+            // list whenever both parties own a phone.  No relationship
+            // check, no probability roll — siblings come first so a later
+            // friend roll can never displace or skip them.
+            siblingContacts += addSiblingContactsAlways(owner, ownerPhone, phoneByStudent);
+
+            // Rule 2: friends with a probability roll.  Siblings already
+            // saved above will be a no-op here because hasContactNumber
+            // short-circuits the add.
+            friendContacts += addFriendContactsProbabilistic(owner, ownerPhone, phoneByStudent);
+
+            if (ownerPhone.getContactCount() > before) {
+                phonesPopulated++;
+            }
+        }
+
+        GameLogger.logGeneration("Phone contacts populated: "
+                + (siblingContacts + friendContacts) + " entries ("
+                + siblingContacts + " sibling, " + friendContacts + " friend) across "
+                + phonesPopulated + " student phones");
+    }
+
+    /**
+     * Unconditionally saves every sibling's number into the owner's phone
+     * (when the sibling also owns a phone).  Both in-school and
+     * out-of-school siblings are considered so that any sibling who has
+     * been issued a phone — for any reason — ends up in the owner's
+     * contacts.  This implements the "siblings always, regardless of
+     * relationship" guarantee documented on {@link #populatePhoneContacts}.
+     *
+     * @return the number of new sibling contacts added
+     */
+    private static int addSiblingContactsAlways(Student owner,
+                                                CellPhone ownerPhone,
+                                                Map<Student, CellPhone> phoneByStudent) {
+        int added = 0;
+
+        List<Student> inSchool = owner.studentStatistics.getSiblingsInSchool();
+        if (inSchool != null) {
+            for (Student sibling : inSchool) {
+                if (addContactIfPossible(ownerPhone, sibling, phoneByStudent)) {
+                    added++;
+                }
+            }
+        }
+
+        // Also include out-of-school siblings so that if they ever own a
+        // phone (e.g. a younger sibling with a basic phone), we still
+        // honor the family-contacts rule.  In the common case they have
+        // no phone and addContactIfPossible no-ops.
+        List<Student> outOfSchool = owner.studentStatistics.getSiblingsNotInSchool();
+        if (outOfSchool != null) {
+            for (Student sibling : outOfSchool) {
+                if (addContactIfPossible(ownerPhone, sibling, phoneByStudent)) {
+                    added++;
+                }
+            }
+        }
+
+        return added;
+    }
+
+    /**
+     * Saves friends' numbers into the owner's phone with probability
+     * {@link constants.SimConstants#PHONE_CONTACT_FRIEND_PROBABILITY}.
+     * Friends already saved as siblings are no-ops here.
+     *
+     * @return the number of new friend contacts added
+     */
+    private static int addFriendContactsProbabilistic(Student owner,
+                                                      CellPhone ownerPhone,
+                                                      Map<Student, CellPhone> phoneByStudent) {
+        int added = 0;
+        List<Student> friends = owner.studentStatistics.getFriendsInSchool();
+        if (friends == null) {
+            return 0;
+        }
+        for (Student friend : friends) {
+            if (GameRandom.nextDouble() <= PHONE_CONTACT_FRIEND_PROBABILITY) {
+                if (addContactIfPossible(ownerPhone, friend, phoneByStudent)) {
+                    added++;
+                }
+            }
+        }
+        return added;
+    }
+
+    /**
+     * Adds the given peer to the owner's contact list, but only if the peer
+     * is real, distinct, and owns a phone of their own.  Without a phone of
+     * their own there's no number to save and no way to receive a text.
+     *
+     * @param ownerPhone     the phone whose contact list to mutate
+     * @param peer           the peer to potentially add as a contact
+     * @param phoneByStudent map from student to their cell phone
+     * @return true if a new contact was added, false if it was skipped or
+     *         already saved
+     */
+    private static boolean addContactIfPossible(CellPhone ownerPhone, Student peer,
+                                                Map<Student, CellPhone> phoneByStudent) {
+        if (peer == null || ownerPhone == null) {
+            return false;
+        }
+        CellPhone peerPhone = phoneByStudent.get(peer);
+        if (peerPhone == null) {
+            return false;
+        }
+        String peerNumber = peerPhone.getPhoneNumber();
+        if (peerNumber == null || peerNumber.isEmpty()) {
+            return false;
+        }
+        if (ownerPhone.hasContactNumber(peerNumber)) {
+            return false;
+        }
+        ownerPhone.addContact(peer.toString(), peerNumber);
+        return true;
+    }
+
+    /**
+     * Returns the list of co-located peers from {@code candidates} that the
+     * given student can plausibly text right now: each candidate must own a
+     * phone with SMS capability, and that number must be saved on the
+     * student's own phone as a contact.  This is the canonical "who can I
+     * text?" filter used by the texting behavior.
+     *
+     * @param student         the would-be sender
+     * @param studentPhone    the sender's phone (must be non-null and
+     *                        SMS-capable; callers usually verify this earlier)
+     * @param town            the town used to resolve each candidate's phone
+     * @param candidates      the pool of co-located peers (room mates or
+     *                        transit-group members)
+     * @return a freshly-allocated mutable list of textable candidates
+     */
+    public static List<Student> filterTextableCandidates(Student student,
+                                                         CellPhone studentPhone,
+                                                         Town town,
+                                                         List<Student> candidates) {
+        List<Student> textable = new ArrayList<>();
+        if (student == null || studentPhone == null || town == null
+                || candidates == null || candidates.isEmpty()) {
+            return textable;
+        }
+        for (Student candidate : candidates) {
+            if (candidate == null || candidate == student) {
+                continue;
+            }
+            CellPhone peerPhone = town.getStudentPhone(candidate);
+            if (peerPhone == null || !peerPhone.hasSms()) {
+                // Peer either has no phone or no SMS capability
+                continue;
+            }
+            if (!studentPhone.hasContactNumber(peerPhone.getPhoneNumber())) {
+                // Sender doesn't have this peer's number saved
+                continue;
+            }
+            textable.add(candidate);
+        }
+        return textable;
     }
 
     /**

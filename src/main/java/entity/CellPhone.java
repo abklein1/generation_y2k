@@ -1,16 +1,29 @@
 package entity;
 
+import entity.Items.Decoration;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * Represents a cell phone owned by a student or staff member.
  * Phone numbers use a local 7-digit format (XXX-XXXX) with no area code.
  * Hardware fields (keyboard, camera, pda, etc.) are stored for future use.
+ *
+ * <p>
+ * Each phone also stores a personal contact list — the phone numbers (with
+ * display names) the owner has saved.  Texting another person requires that
+ * person's number be in this contact list, just like a real phone in 2004.
+ * </p>
  */
 public class CellPhone implements Serializable {
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     private String phoneNumber;
     private String ownerName;
@@ -33,6 +46,23 @@ public class CellPhone implements Serializable {
     private boolean im;
     private boolean pda;
     private boolean mp3;
+
+    /**
+     * Saved contacts keyed by phone number so duplicates can never be added
+     * and lookups by number are O(1).  Insertion order is preserved (the most
+     * recent contact added appears last) for natural iteration in the UI.
+     */
+    private final Map<String, Contact> contacts = new LinkedHashMap<>();
+
+    /**
+     * Decorations applied to this phone, grouped by slot (e.g.
+     * {@code "case"}, {@code "screen"}, {@code "accessories"}) so a
+     * single slot can hold more than one decoration when needed (e.g.
+     * multiple charms on the wrist strap).  Driven by the clique
+     * decoration system at assignment time and intentionally separate
+     * from the trait/condition descriptor system.
+     */
+    private final Map<String, List<Decoration>> decorations = new LinkedHashMap<>();
 
     /**
      * Creates a cell phone with core fields specified.
@@ -259,5 +289,221 @@ public class CellPhone implements Serializable {
                 ", model='" + model + '\'' +
                 ", color='" + color + '\'' +
                 '}';
+    }
+
+    // ---- Contact list ----------------------------------------------------
+
+    /**
+     * Adds (or overwrites) a contact entry for the given phone number.
+     * Self-entries (the owner's own number) and null/empty numbers are
+     * silently ignored.
+     *
+     * @param contactName  the display name to show for this contact
+     * @param contactNumber the contact's 7-digit phone number
+     */
+    public void addContact(String contactName, String contactNumber) {
+        if (contactNumber == null || contactNumber.isEmpty()) {
+            return;
+        }
+        if (contactNumber.equals(this.phoneNumber)) {
+            return;
+        }
+        contacts.put(contactNumber, new Contact(contactName, contactNumber));
+    }
+
+    /**
+     * Adds (or overwrites) the given contact.  No-op if the contact is null
+     * or refers to this phone's own number.
+     *
+     * @param contact the contact entry to save
+     */
+    public void addContact(Contact contact) {
+        if (contact == null || contact.getPhoneNumber() == null) {
+            return;
+        }
+        if (contact.getPhoneNumber().equals(this.phoneNumber)) {
+            return;
+        }
+        contacts.put(contact.getPhoneNumber(), contact);
+    }
+
+    /**
+     * Removes the contact with the given phone number, if present.
+     *
+     * @param contactNumber the number to forget
+     */
+    public void removeContact(String contactNumber) {
+        if (contactNumber != null) {
+            contacts.remove(contactNumber);
+        }
+    }
+
+    /**
+     * Checks whether this phone has saved the given phone number as a
+     * contact.  Used by the texting behavior to gate who the owner can
+     * actually message.
+     *
+     * @param contactNumber the number to look up
+     * @return true if the contact list contains this number
+     */
+    public boolean hasContactNumber(String contactNumber) {
+        return contactNumber != null && contacts.containsKey(contactNumber);
+    }
+
+    /**
+     * Returns an unmodifiable snapshot of all saved contacts in
+     * insertion order.
+     *
+     * @return the saved contacts (never null, possibly empty)
+     */
+    public List<Contact> getContacts() {
+        return Collections.unmodifiableList(new java.util.ArrayList<>(contacts.values()));
+    }
+
+    /**
+     * @return the number of saved contacts on this phone
+     */
+    public int getContactCount() {
+        return contacts.size();
+    }
+
+    /**
+     * Removes every saved contact from this phone.  Useful for tests and
+     * when a simulation is regenerated.
+     */
+    public void clearContacts() {
+        contacts.clear();
+    }
+
+    // ---- Decorations ----------------------------------------------------
+
+    /**
+     * Attaches a decoration to this phone in its declared slot.  Null
+     * decorations or decorations without a slot are silently ignored
+     * so callers can pass through optional rolls without explicit null
+     * checks.
+     *
+     * @param decoration the decoration to attach
+     */
+    public void addDecoration(Decoration decoration) {
+        if (decoration == null || decoration.getSlot() == null) {
+            return;
+        }
+        decorations.computeIfAbsent(decoration.getSlot(),
+                k -> new ArrayList<>()).add(decoration);
+    }
+
+    /**
+     * @return an unmodifiable, slot-grouped view of every decoration
+     *         on this phone, with insertion order preserved
+     */
+    public Map<String, List<Decoration>> getDecorations() {
+        Map<String, List<Decoration>> snapshot = new LinkedHashMap<>();
+        for (Map.Entry<String, List<Decoration>> entry : decorations.entrySet()) {
+            snapshot.put(entry.getKey(),
+                    Collections.unmodifiableList(new ArrayList<>(entry.getValue())));
+        }
+        return Collections.unmodifiableMap(snapshot);
+    }
+
+    /**
+     * Returns the decorations for a single slot.
+     *
+     * @param slot the slot key (e.g. {@code "case"}, {@code "accessories"})
+     * @return an unmodifiable list of decorations in that slot
+     *         (empty when no decorations are attached there)
+     */
+    public List<Decoration> getDecorationsBySlot(String slot) {
+        List<Decoration> list = decorations.get(slot);
+        if (list == null) {
+            return List.of();
+        }
+        return Collections.unmodifiableList(new ArrayList<>(list));
+    }
+
+    /**
+     * @return a flat unmodifiable list of every decoration on this
+     *         phone, in slot iteration order
+     */
+    public List<Decoration> getAllDecorations() {
+        List<Decoration> flat = new ArrayList<>();
+        for (List<Decoration> list : decorations.values()) {
+            flat.addAll(list);
+        }
+        return Collections.unmodifiableList(flat);
+    }
+
+    /**
+     * @return true when at least one slot has at least one decoration
+     */
+    public boolean hasDecorations() {
+        for (List<Decoration> list : decorations.values()) {
+            if (!list.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Removes every decoration from this phone.  Useful for tests and
+     * for regenerating a phone when the simulation is reset.
+     */
+    public void clearDecorations() {
+        decorations.clear();
+    }
+
+    /**
+     * A single saved contact entry: a display name plus the phone number
+     * stored on the owner's phone.  Equality is based on the phone number
+     * alone — a contact is uniquely identified by their number, just like
+     * on a real phone.
+     */
+    public static class Contact implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final String name;
+        private final String phoneNumber;
+
+        /**
+         * Creates a saved contact entry.
+         *
+         * @param name        the display name (may be null or empty)
+         * @param phoneNumber the contact's phone number (must be non-null)
+         */
+        public Contact(String name, String phoneNumber) {
+            this.name = name;
+            this.phoneNumber = phoneNumber;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getPhoneNumber() {
+            return phoneNumber;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Contact other)) {
+                return false;
+            }
+            return Objects.equals(phoneNumber, other.phoneNumber);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(phoneNumber);
+        }
+
+        @Override
+        public String toString() {
+            return (name == null || name.isEmpty() ? "?" : name)
+                    + " <" + phoneNumber + ">";
+        }
     }
 }

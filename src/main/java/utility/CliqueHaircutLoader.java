@@ -27,7 +27,7 @@ public final class CliqueHaircutLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String HAIRCUTS_PATH =
-            "src/main/java/Resources/clique_haircuts.json";
+            "src/main/java/Resources/Cliques/clique_haircuts.json";
     private static final String YEAR = "2004";
 
     private static final String[] MALE_LENGTH_KEYS = {
