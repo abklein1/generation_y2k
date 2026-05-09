@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 public class CellPhone implements Serializable {
 
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 4L;
 
     private String phoneNumber;
     private String ownerName;
@@ -37,6 +37,7 @@ public class CellPhone implements Serializable {
     private int price;
     private String size;
     private int battery;
+    private int releaseYear;
     private boolean keyboard;
     private boolean camera;
     private boolean video;
@@ -46,6 +47,23 @@ public class CellPhone implements Serializable {
     private boolean im;
     private boolean pda;
     private boolean mp3;
+
+    /**
+     * The phone's overall physical condition bucket (e.g.
+     * {@code "excellent"}, {@code "good"}, {@code "fair"}, {@code "damaged"}),
+     * derived at assignment time from phone age, owner agility/luck, and
+     * household income.  Null when the condition system hasn't been run on
+     * this phone (e.g. legacy save data or a unit-test stub).
+     */
+    private String condition;
+
+    /**
+     * The 2-3 flavor-text descriptors chosen from
+     * {@code cellphone_traits.json} based on this phone's condition.  Each
+     * string is drawn from a distinct subcategory (screen / casing /
+     * overall) so a single phone can't repeat e.g. two casing lines.
+     */
+    private final List<String> conditionTraits = new ArrayList<>();
 
     /**
      * Saved contacts keyed by phone number so duplicates can never be added
@@ -189,6 +207,54 @@ public class CellPhone implements Serializable {
 
     public void setBattery(int battery) {
         this.battery = battery;
+    }
+
+    /**
+     * @return the year this phone model was released (the outer key in
+     *         {@code phones.json}); used together with the simulation year
+     *         to compute how aged the phone is when rolling its condition.
+     *         Returns 0 when the year is unknown.
+     */
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    /**
+     * @return the phone's overall condition bucket, or null if the
+     *         condition system has not been applied to this phone
+     */
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    /**
+     * @return an unmodifiable snapshot of the flavor-text descriptors
+     *         currently attached to this phone (possibly empty)
+     */
+    public List<String> getConditionTraits() {
+        return Collections.unmodifiableList(new ArrayList<>(conditionTraits));
+    }
+
+    /**
+     * Replaces this phone's condition descriptors with the given list.
+     * A null argument clears the descriptors.  Called once at phone
+     * assignment by the condition / trait pipeline.
+     *
+     * @param traits the new descriptor list (copied defensively)
+     */
+    public void setConditionTraits(List<String> traits) {
+        conditionTraits.clear();
+        if (traits != null) {
+            conditionTraits.addAll(traits);
+        }
     }
 
     public boolean hasKeyboard() {

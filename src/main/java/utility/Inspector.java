@@ -772,23 +772,24 @@ public class Inspector {
             area.setText(ownerName + " does not own a cell phone.");
         } else {
             StringBuilder sb = new StringBuilder();
-            String make = phone.getMake();
-            String model = phone.getModel();
-            if (make != null && !make.isEmpty() && model != null && !model.isEmpty()) {
-                sb.append(make).append(" ").append(model).append("\n");
+            String makeModel = joinMakeModel(phone.getMake(), phone.getModel());
+
+            if (!makeModel.isEmpty()) {
+                sb.append(makeModel).append("\n");
             } else {
                 sb.append("Cell Phone\n");
             }
-            sb.append("=====================================\n\n");
-            sb.append("Owner:        ").append(phone.getOwnerName()).append("\n");
+            sb.append("=====================================\n");
+
+            appendPhoneDescription(sb, phone, makeModel);
+
+            String condition = phone.getCondition();
+            if (condition != null && !condition.isEmpty()) {
+                sb.append("Overall condition: ").append(capitalize(condition)).append("\n");
+            }
+
+            sb.append("\nOwner:        ").append(phone.getOwnerName()).append("\n");
             sb.append("Number:       ").append(phone.getPhoneNumber()).append("\n");
-            if (make != null && !make.isEmpty()) {
-                sb.append("Make:         ").append(make).append("\n");
-            }
-            if (model != null && !model.isEmpty()) {
-                sb.append("Model:        ").append(model).append("\n");
-            }
-            sb.append("Color:        ").append(phone.getColor()).append("\n");
 
             sb.append("\nData Plan\n-------------------------------------\n");
             sb.append("Minutes:      ").append(phone.getMinutePlan()).append("/month\n");
@@ -801,6 +802,99 @@ public class Inspector {
             area.setText(sb.toString());
         }
         area.setCaretPosition(0);
+    }
+
+    /**
+     * Builds the natural-language opener for a phone, mirroring the
+     * prose-paragraph style used for student appearance descriptions.
+     * Combines color + make/model into a single subject sentence
+     * (e.g. {@code "A Dark Roast Black Motoroid G330."}) and then
+     * appends each condition trait line as its own sentence so the
+     * paragraph reads like an in-universe description rather than a
+     * field dump.  Skipped entirely when there's nothing to say.
+     *
+     * @param sb        the target builder
+     * @param phone     the phone being described
+     * @param makeModel the pre-joined "make model" string (possibly empty)
+     */
+    private static void appendPhoneDescription(StringBuilder sb, CellPhone phone,
+                                               String makeModel) {
+        String color = phone.getColor();
+        boolean hasColor = color != null && !color.isEmpty();
+        boolean hasMakeModel = !makeModel.isEmpty();
+
+        StringBuilder paragraph = new StringBuilder();
+        if (hasColor || hasMakeModel) {
+            String subject;
+            if (hasColor && hasMakeModel) {
+                subject = color + " " + makeModel;
+            } else if (hasColor) {
+                subject = color + " phone";
+            } else {
+                subject = makeModel;
+            }
+            paragraph.append(article(subject)).append(' ')
+                    .append(subject).append('.');
+        }
+
+        java.util.List<String> traits = phone.getConditionTraits();
+        if (traits != null && !traits.isEmpty()) {
+            for (String trait : traits) {
+                if (trait == null || trait.isEmpty()) {
+                    continue;
+                }
+                if (paragraph.length() > 0) {
+                    paragraph.append(' ');
+                }
+                paragraph.append(trait);
+                // Source JSON ends each trait with a period, but guard
+                // against future entries that omit it so the prose stays
+                // well-punctuated.
+                if (!endsWithSentenceTerminator(trait)) {
+                    paragraph.append('.');
+                }
+            }
+        }
+
+        if (paragraph.length() > 0) {
+            sb.append(paragraph).append('\n');
+        }
+    }
+
+    private static String joinMakeModel(String make, String model) {
+        boolean hasMake = make != null && !make.isEmpty();
+        boolean hasModel = model != null && !model.isEmpty();
+        if (hasMake && hasModel) {
+            return make + " " + model;
+        }
+        if (hasMake) {
+            return make;
+        }
+        if (hasModel) {
+            return model;
+        }
+        return "";
+    }
+
+    /**
+     * Picks {@code "A"} or {@code "An"} based on the first letter of the
+     * given subject so the prose reads correctly for vowel-starting
+     * colors / brands (e.g. "An Antique White ...").
+     */
+    private static String article(String subject) {
+        if (subject == null || subject.isEmpty()) {
+            return "A";
+        }
+        char c = Character.toLowerCase(subject.charAt(0));
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+            return "An";
+        }
+        return "A";
+    }
+
+    private static boolean endsWithSentenceTerminator(String s) {
+        char last = s.charAt(s.length() - 1);
+        return last == '.' || last == '!' || last == '?';
     }
 
     /**

@@ -4,6 +4,11 @@ import entity.CellPhone;
 import entity.Staff;
 import entity.Student;
 import entity.Town;
+import utility.traits.PhoneConditionContext;
+import utility.traits.PhoneConditionWeightFunction;
+import utility.traits.TraitDataset;
+import utility.traits.TraitDatasetLoader;
+import utility.traits.TraitSelector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +30,28 @@ import static constants.SimConstants.*;
  * with working-class students weighted toward cheaper and older models.
  */
 public class CellPhoneAssignmentService {
+
+    /**
+     * Filesystem path to the phone condition / trait dataset.  Loaded
+     * lazily by {@link TraitDatasetLoader} on first use; subsequent
+     * loads are cached so the per-phone selection cost is negligible.
+     */
+    private static final String CELLPHONE_TRAITS_PATH =
+            "src/main/java/Resources/Flavor/cellphone_traits.json";
+
+    /** Inclusive lower bound on the number of flavor descriptors per phone. */
+    private static final int CELLPHONE_TRAIT_MIN_COUNT = 2;
+
+    /** Inclusive upper bound on the number of flavor descriptors per phone. */
+    private static final int CELLPHONE_TRAIT_MAX_COUNT = 3;
+
+    /**
+     * Single weight-function instance reused across every condition roll.
+     * The function is stateless, so sharing one instance avoids a fresh
+     * allocation per phone.
+     */
+    private static final PhoneConditionWeightFunction CONDITION_WEIGHTS =
+            new PhoneConditionWeightFunction();
 
     /**
      * Assigns cell phones to all students and staff in the town's pools.
@@ -54,6 +81,8 @@ public class CellPhoneAssignmentService {
                 CellPhone phone = createStudentPhone(student.toString(), income, usedNumbers);
                 town.assignStudentPhone(student, phone);
                 ItemDecorationService.decoratePhone(phone, student);
+                applyConditionTraits(phone,
+                        PhoneConditionContext.forStudent(student, phone, simulationYear));
                 studentCount++;
             }
         }
@@ -67,6 +96,8 @@ public class CellPhoneAssignmentService {
             if (GameRandom.nextDouble() < rate) {
                 CellPhone phone = createStaffPhone(staff.toString(), usedNumbers);
                 town.assignStaffPhone(staff, phone);
+                applyConditionTraits(phone,
+                        PhoneConditionContext.forStaff(staff, phone, simulationYear));
                 staffCount++;
             }
         }
@@ -358,6 +389,7 @@ public class CellPhoneAssignmentService {
         phone.setPrice(spec.getPrice());
         phone.setSize(spec.getSize());
         phone.setBattery(spec.getBattery());
+        phone.setReleaseYear(spec.getReleaseYear());
         phone.setKeyboard(spec.hasKeyboard());
         phone.setCamera(spec.hasCamera());
         phone.setVideo(spec.hasVideo());
@@ -369,6 +401,34 @@ public class CellPhoneAssignmentService {
         phone.setMp3(spec.hasMp3());
 
         return phone;
+    }
+
+    /**
+     * Loads the cellphone trait dataset, draws 2-3 condition descriptors
+     * biased by the given context, and stores both the descriptors and
+     * the dominant condition bucket on the phone.  The dominant bucket
+     * is computed independently from the trait selector's draws so the
+     * displayed condition is always consistent with the underlying
+     * stats, even when the selector mixes in lines from neighbouring
+     * buckets.  No-ops when the dataset fails to load (the phone simply
+     * carries no condition information).
+     *
+     * @param phone the phone to annotate
+     * @param ctx   the inputs that drive the condition roll
+     */
+    private static void applyConditionTraits(CellPhone phone, PhoneConditionContext ctx) {
+        if (phone == null || ctx == null) {
+            return;
+        }
+        TraitDataset dataset = TraitDatasetLoader.load(CELLPHONE_TRAITS_PATH);
+        if (dataset == null) {
+            return;
+        }
+        List<String> traits = TraitSelector.selectTraits(dataset, ctx,
+                CONDITION_WEIGHTS,
+                CELLPHONE_TRAIT_MIN_COUNT, CELLPHONE_TRAIT_MAX_COUNT);
+        phone.setCondition(PhoneConditionWeightFunction.dominantCategory(ctx));
+        phone.setConditionTraits(traits);
     }
 
     /**

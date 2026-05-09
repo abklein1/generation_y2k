@@ -1,37 +1,96 @@
 {
     "excellent": {
-        "screen":  [],
-        "battery": [],
-        "casing":  [],
-        "overall": []
+        "screen":  [
+            "The screen still has the protective film on it.",
+            "The screen is bright and clear.",
+            "The display seems responsive."
+        ],
+        "casing":  [
+            "The case is in perfect condition.",
+            "The case is shiny and new.",
+            "The case has no scratches or wear."
+        ],
+        "overall": [
+            "The keys are all seem to work perfectly.",
+            "The battery has no noticeable wear."
+        ]
     },
     "good": {
-        "screen":  [],
-        "battery": [],
-        "casing":  [],
-        "overall": []
+        "screen":  [
+            "The screen has a light scratch.",
+            "The screen backlight has dimmed slightly.",
+            "The screen is in good condition."
+        ],
+        "casing":  [
+            "The case seems to be in pretty good condition.",
+            "The phone is used, but it's still in good condition.",
+            "The exterior is shiny and clean."
+        ],
+        "overall": [
+            "The keys are still responsive.",
+            "Moving parts on the phone seem to function smoothly.",
+            "The battery cover is slightly loose.",
+            "There doesn't seem to be any noticeable wear on the battery."
+        ]
     },
     "fair": {
-        "screen":  [],
-        "battery": [],
-        "casing":  [],
-        "overall": []
+        "screen":  [
+            "The screen has some small scratches.",
+            "The screen has a dead pixel.",
+            "The screen is slightly warped.",
+            "The screen has some burn-in",
+            "The screen backlight dies randomly."
+        ],
+        "casing":  [
+            "The case is starting to become discolored.",
+            "The case has a few light scratches.",
+            "Certain parts of the case have been noticeably replaced."
+        ],
+        "overall": [
+            "The keys are starting to show wear.",
+            "The phone has a few dents from being dropped.",
+            "Some parts on the phone have trouble moving.",
+            "There's dirt and sand in the charging port.",
+            "There is grime between the keys.",
+            "The battery is slightly swollen.",
+            "The battery cover is loose.",
+            "There are several scratches on the battery cover.",
+            "The battery cover is from a different phone."
+        ]
     },
     "damaged": {
         "screen":  [
             "The screen is cracked in several places.",
             "The screen is sun damaged and yellowed.",
-            "The screen has a large section of dead pixels."
+            "The screen has a large section of dead pixels.",
+            "The screen backlight is flickering.",
+            "The screen backlight is dead.",
+            "A corner of the screen is missing plastic.",
+            "The screen seems cloudy.",
+            "The screen is discolored from UV exposure"
         ],
-        "battery": [
-            "The battery is swollen.",
-            "The battery cover is missing."
+        "casing":  [
+            "The casing is discolored.",
+            "The case has several deep scratches.",
+            "The phone looks like it has been run over.",
+            "A part of the case is missing.",
+            "The case looks like it has been rubbed against the concrete."
         ],
-        "casing":  [],
         "overall": [
             "The phone is nearly broken in half.",
             "The phone keyboard is missing several keys",
-            "The phone antenna is missing."
+            "The phone antenna is missing.",
+            "The numbers on several keys have been rubbed off.",
+            "The charging port is damaged.",
+            "The charging port has been bent out of shape.",
+            "The phone is sticky and covered in dirt.",
+            "The phone has some exposed wiring.",
+            "Some keys are stuck and won't work.",
+            "The phone seems like it was dropped in water at some point.",
+            "The battery is swollen.",
+            "The battery cover is missing.",
+            "There is a bunch of dirt and sand in the battery compartment.",
+            "The battery has corrosion on the contacts."
         ]
     }
 }

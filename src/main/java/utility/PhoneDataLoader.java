@@ -32,10 +32,11 @@ public class PhoneDataLoader {
      * A single phone model entry loaded from the JSON catalogue.
      */
     public static class PhoneSpec implements Serializable {
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 2L;
 
         private final String make;
         private final String model;
+        private final int releaseYear;
         private final int price;
         private final String size;
         private final int battery;
@@ -50,12 +51,13 @@ public class PhoneDataLoader {
         private final boolean mp3;
         private final List<String> colors;
 
-        public PhoneSpec(String make, String model, int price, String size, int battery,
-                         boolean keyboard, boolean camera, boolean video, boolean wifi,
-                         boolean bluetooth, boolean sms, boolean im, boolean pda,
+        public PhoneSpec(String make, String model, int releaseYear, int price, String size,
+                         int battery, boolean keyboard, boolean camera, boolean video,
+                         boolean wifi, boolean bluetooth, boolean sms, boolean im, boolean pda,
                          boolean mp3, List<String> colors) {
             this.make = make;
             this.model = model;
+            this.releaseYear = releaseYear;
             this.price = price;
             this.size = size;
             this.battery = battery;
@@ -77,6 +79,16 @@ public class PhoneDataLoader {
 
         public String getModel() {
             return model;
+        }
+
+        /**
+         * @return the year this phone model was released, parsed from the
+         *         outermost year key in {@code phones.json}; used to compute
+         *         the phone's age relative to the simulation year for
+         *         condition / wear flavor rolls.
+         */
+        public int getReleaseYear() {
+            return releaseYear;
         }
 
         public int getPrice() {
@@ -162,13 +174,14 @@ public class PhoneDataLoader {
                 if (makesObj == null || makesObj.isEmpty()) {
                     continue;
                 }
+                int releaseYear = parseYearKey(yearKey);
                 for (Object makeKey : makesObj.keySet()) {
                     String makeName = (String) makeKey;
                     JSONObject modelsObj = (JSONObject) makesObj.get(makeKey);
                     for (Object modelKey : modelsObj.keySet()) {
                         String modelName = (String) modelKey;
                         JSONObject spec = (JSONObject) modelsObj.get(modelKey);
-                        PhoneSpec ps = parseSpec(makeName, modelName, spec);
+                        PhoneSpec ps = parseSpec(makeName, modelName, releaseYear, spec);
                         allPhones.add(ps);
                         if (ps.price < MID_RANGE_THRESHOLD) {
                             budgetPhones.add(ps);
@@ -190,7 +203,8 @@ public class PhoneDataLoader {
                 + premiumPhones.size() + " premium)");
     }
 
-    private static PhoneSpec parseSpec(String make, String model, JSONObject spec) {
+    private static PhoneSpec parseSpec(String make, String model, int releaseYear,
+                                       JSONObject spec) {
         int price = ((Number) spec.get("price")).intValue();
         String size = (String) spec.get("size");
         int battery = ((Number) spec.get("battery")).intValue();
@@ -211,8 +225,25 @@ public class PhoneDataLoader {
                 colors.add((String) c);
             }
         }
-        return new PhoneSpec(make, model, price, size, battery,
+        return new PhoneSpec(make, model, releaseYear, price, size, battery,
                 keyboard, camera, video, wifi, bluetooth, smsFlag, im, pda, mp3, colors);
+    }
+
+    /**
+     * Converts the outer JSON year key into an integer, defaulting to 0 if
+     * the key is missing, malformed, or not a numeric string.  A 0 release
+     * year is treated as "unknown" by downstream condition logic and
+     * falls back to a neutral age penalty rather than throwing.
+     */
+    private static int parseYearKey(Object yearKey) {
+        if (yearKey == null) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(yearKey.toString().trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     /** All loaded phone specs. */
@@ -243,16 +274,24 @@ public class PhoneDataLoader {
      * Selects a random phone spec weighted by income level.
      * Low income heavily favors budget phones; high income favors premium.
      *
-     * @param incomeLevel "Low", "Middle", or "High"
+     * <p>The income level is matched case-insensitively because
+     * {@code StudentStatistics.getIncomeLevel()} returns lowercase
+     * values ({@code "low"}, {@code "middle"}, {@code "high"}) while
+     * older callers may still pass capitalized strings.  Unrecognized
+     * or null values fall through to the middle-tier distribution.</p>
+     *
+     * @param incomeLevel income tier label (any casing); typically
+     *                    one of "low", "middle", or "high"
      * @return a randomly selected PhoneSpec
      */
     public static PhoneSpec selectByIncome(String incomeLevel) {
         ensureLoaded();
         int roll = GameRandom.nextInt(0, 99);
+        String tier = incomeLevel == null ? "" : incomeLevel.toLowerCase();
 
         List<PhoneSpec> pool;
-        switch (incomeLevel) {
-            case "Low":
+        switch (tier) {
+            case "low":
                 if (roll < 70) {
                     pool = budgetPhones;
                 } else if (roll < 95) {
@@ -261,7 +300,7 @@ public class PhoneDataLoader {
                     pool = premiumPhones;
                 }
                 break;
-            case "High":
+            case "high":
                 if (roll < 10) {
                     pool = budgetPhones;
                 } else if (roll < 40) {
