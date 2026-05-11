@@ -607,7 +607,7 @@ public final class SimConstants {
     public static final int ACADEMIC_HOMEWORK_MAX_PROBLEMS = 18;
     public static final int ACADEMIC_HOMEWORK_INITIATIVE_DRAIN = 2;
     public static final int ACADEMIC_HOMEWORK_RESPONSIBILITY_DRAIN = 2;
-    public static final double ACADEMIC_ATTENTION_UNDERSTANDING_SCALE = 0.18;
+    public static final double ACADEMIC_ATTENTION_UNDERSTANDING_SCALE = 0.06;
     public static final double ACADEMIC_HOMEWORK_UNDERSTANDING_GAIN = 2.5;
     public static final double ACADEMIC_HOMEWORK_SKILL_GAIN = 1.5;
     public static final double ACADEMIC_LOW_UNDERSTANDING_THRESHOLD = 35.0;

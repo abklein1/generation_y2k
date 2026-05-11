@@ -7,7 +7,7 @@ import com.mxgraph.view.mxGraph;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 import entity.Student;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
@@ -28,8 +28,9 @@ public class SocialLinkConnector {
     private JSlider zoomSlider;
     private mxGraph graph;
     private mxGraphComponent graphComponent;
-    private Random random = new Random(); // Single Random instance
     private HashMap<Student, Object> vertexToCellMap = new HashMap<>();
+    private final HashMap<Student, Integer> studentIds = new HashMap<>();
+    private int nextFallbackStudentId;
 
     // Catalyst records: keyed by a canonical pair identifier, storing the catalyst
     // text.
@@ -139,6 +140,7 @@ public class SocialLinkConnector {
         if (studentHashMap == null || standardSchool == null) {
             throw new IllegalArgumentException("Student hash map and standard school cannot be null.");
         }
+        registerStudentIds(studentHashMap);
 
         // Phase 1: Add all students as vertices in the social graph
         for (Student student : studentHashMap.values()) {
@@ -310,8 +312,8 @@ public class SocialLinkConnector {
     private void generateInitialCatalysts(HashMap<Integer, Student> studentHashMap) {
         for (Student student : studentHashMap.values()) {
             for (Student friend : student.studentStatistics.getFriendsInSchool()) {
-                // Only process each pair once using identity hash ordering
-                if (System.identityHashCode(student) >= System.identityHashCode(friend)) {
+                // Only process each pair once using stable student identifiers.
+                if (getStableStudentId(student) >= getStableStudentId(friend)) {
                     continue;
                 }
 
@@ -344,10 +346,30 @@ public class SocialLinkConnector {
     private String generateCatalystText(Student studentA, Student studentB) {
         String nameA = studentA.studentName.getFirstName() + " " + studentA.studentName.getLastName();
         String nameB = studentB.studentName.getFirstName() + " " + studentB.studentName.getLastName();
-        String action = CATALYST_ACTIONS[random.nextInt(CATALYST_ACTIONS.length)];
-        String time = CATALYST_TIMES[random.nextInt(CATALYST_TIMES.length)];
+        String action = CATALYST_ACTIONS[GameRandom.nextInt(CATALYST_ACTIONS.length)];
+        String time = CATALYST_TIMES[GameRandom.nextInt(CATALYST_TIMES.length)];
 
         return nameA + " and " + nameB + " became best friends when they " + action + " " + time + ".";
+    }
+
+    private void registerStudentIds(HashMap<Integer, Student> studentHashMap) {
+        studentIds.clear();
+        int maxId = -1;
+        for (Map.Entry<Integer, Student> entry : studentHashMap.entrySet()) {
+            studentIds.put(entry.getValue(), entry.getKey());
+            maxId = Math.max(maxId, entry.getKey());
+        }
+        nextFallbackStudentId = maxId + 1;
+    }
+
+    private int getStableStudentId(Student student) {
+        Integer existingId = studentIds.get(student);
+        if (existingId != null) {
+            return existingId;
+        }
+        int fallbackId = nextFallbackStudentId++;
+        studentIds.put(student, fallbackId);
+        return fallbackId;
     }
 
     /**
@@ -359,8 +381,8 @@ public class SocialLinkConnector {
      * @return A canonical string key for the pair.
      */
     private String makePairKey(Student a, Student b) {
-        int idA = System.identityHashCode(a);
-        int idB = System.identityHashCode(b);
+        int idA = getStableStudentId(a);
+        int idB = getStableStudentId(b);
         if (idA <= idB) {
             return idA + ":" + idB;
         }
@@ -574,7 +596,7 @@ public class SocialLinkConnector {
     private int generateFriendCount(Student student) {
         int maxFriends = student.studentStatistics.getMaxBestFriends();
         double mean = maxFriends * SOCIAL_LINK_FRIEND_COUNT_MEAN_RATIO;
-        double count = random.nextGaussian() * SOCIAL_LINK_FRIEND_COUNT_STD_DEV + mean;
+        double count = GameRandom.nextGaussian() * SOCIAL_LINK_FRIEND_COUNT_STD_DEV + mean;
         return (int) Math.round(Math.max(0, Math.min(maxFriends, count)));
     }
 
@@ -585,7 +607,7 @@ public class SocialLinkConnector {
      * @return Number of rivals to generate.
      */
     private int generateRivalCount() {
-        double count = random.nextGaussian() * SOCIAL_LINK_RIVAL_COUNT_STD_DEV + SOCIAL_LINK_RIVAL_COUNT_MEAN;
+        double count = GameRandom.nextGaussian() * SOCIAL_LINK_RIVAL_COUNT_STD_DEV + SOCIAL_LINK_RIVAL_COUNT_MEAN;
         return (int) Math.round(Math.max(0, Math.min(SOCIAL_LINK_RIVAL_MAXIMUM, count)));
     }
 
@@ -613,7 +635,7 @@ public class SocialLinkConnector {
                 + (luck * SOCIAL_LINK_FRIEND_LUCK_MODIFIER);
 
         // Introduce variability to avoid deterministic outcomes
-        double variabilityFactor = 1 + (random.nextDouble() * SOCIAL_LINK_FRIEND_VARIABILITY_RANGE)
+        double variabilityFactor = 1 + (GameRandom.nextDouble() * SOCIAL_LINK_FRIEND_VARIABILITY_RANGE)
                 - (SOCIAL_LINK_FRIEND_VARIABILITY_RANGE / 2);
 
         // Apply variability to the composite score
@@ -666,7 +688,7 @@ public class SocialLinkConnector {
         String gender = student.studentStatistics.getGender();
         ArrayList<Student> potentialFriends = new ArrayList<>();
 
-        if (random.nextInt(
+        if (GameRandom.nextInt(
                 SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD) {
             HashMap<Integer, Student> gradeClassmates = standardSchool.getStudentGradeClass(gradeLevel);
             if (gradeClassmates != null) {
@@ -677,7 +699,7 @@ public class SocialLinkConnector {
                 }
             }
         } else {
-            if (random.nextInt(
+            if (GameRandom.nextInt(
                     SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD) {
                 String[] adjacentGrades = getAdjacentGrades(gradeLevel);
                 for (String grade : adjacentGrades) {
@@ -701,7 +723,7 @@ public class SocialLinkConnector {
             return null;
         }
 
-        if (random.nextInt(SOCIAL_LINK_SAME_GENDER_SAMPLE_SIZE) < SOCIAL_LINK_SAME_GENDER_THRESHOLD) {
+        if (GameRandom.nextInt(SOCIAL_LINK_SAME_GENDER_SAMPLE_SIZE) < SOCIAL_LINK_SAME_GENDER_THRESHOLD) {
             ArrayList<Student> sameGenderCandidates = new ArrayList<>();
             for (Student candidate : potentialFriends) {
                 if (candidate.studentStatistics.getGender() != null
@@ -740,7 +762,7 @@ public class SocialLinkConnector {
             total += weights[i];
         }
 
-        double roll = random.nextDouble() * total;
+        double roll = GameRandom.nextDouble() * total;
         double cumulative = 0;
         for (int i = 0; i < candidates.size(); i++) {
             cumulative += weights[i];
@@ -823,7 +845,7 @@ public class SocialLinkConnector {
      * @return A weight in the range [FLOOR, 100].
      */
     private double assignFriendWeight() {
-        double weight = random.nextGaussian() * SOCIAL_LINK_FRIEND_WEIGHT_STD_DEV
+        double weight = GameRandom.nextGaussian() * SOCIAL_LINK_FRIEND_WEIGHT_STD_DEV
                 + SOCIAL_LINK_FRIEND_WEIGHT_MEAN;
         return Math.max(SOCIAL_LINK_FRIEND_WEIGHT_FLOOR, Math.min(SOCIAL_LINK_SCORE_MAX, weight));
     }
@@ -837,7 +859,7 @@ public class SocialLinkConnector {
      * @return A weight in the range [-100, 100].
      */
     private double assignReciprocalWeight() {
-        double weight = random.nextGaussian() * SOCIAL_LINK_RECIPROCAL_WEIGHT_STD_DEV
+        double weight = GameRandom.nextGaussian() * SOCIAL_LINK_RECIPROCAL_WEIGHT_STD_DEV
                 + SOCIAL_LINK_RECIPROCAL_WEIGHT_MEAN;
         return Math.max(SOCIAL_LINK_SCORE_MIN, Math.min(SOCIAL_LINK_SCORE_MAX, weight));
     }
@@ -851,7 +873,7 @@ public class SocialLinkConnector {
      * @return A weight in the range [-100, 100].
      */
     private double assignSiblingWeight() {
-        double weight = random.nextGaussian() * SOCIAL_LINK_SIBLING_WEIGHT_STD_DEV
+        double weight = GameRandom.nextGaussian() * SOCIAL_LINK_SIBLING_WEIGHT_STD_DEV
                 + SOCIAL_LINK_SIBLING_WEIGHT_MEAN;
         return Math.max(SOCIAL_LINK_SCORE_MIN, Math.min(SOCIAL_LINK_SCORE_MAX, weight));
     }
@@ -864,7 +886,7 @@ public class SocialLinkConnector {
      * @return A weight in the range [-100, -5].
      */
     private double assignRivalWeight() {
-        double weight = random.nextGaussian() * SOCIAL_LINK_RIVAL_WEIGHT_STD_DEV
+        double weight = GameRandom.nextGaussian() * SOCIAL_LINK_RIVAL_WEIGHT_STD_DEV
                 + SOCIAL_LINK_RIVAL_WEIGHT_MEAN;
         return Math.max(SOCIAL_LINK_SCORE_MIN, Math.min(SOCIAL_LINK_RIVAL_WEIGHT_CEILING, weight));
     }

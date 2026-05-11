@@ -1,6 +1,7 @@
 package utility;
 
 import entity.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DisplayName("Scheduling Logic Tests")
 class SchedulingLogicTest {
+
+    @BeforeEach
+    void resetRandomSeed() {
+        GameRandom.reset();
+        GameRandom.initialize(20260305L);
+    }
 
     @Nested
     @DisplayName("Class Path Determination Tests")
@@ -129,7 +136,7 @@ class SchedulingLogicTest {
             apProbability = (apProbability / total) * 100;
             honorsProbability = (honorsProbability / total) * 100;
 
-            double random = Math.random() * 100;
+            double random = GameRandom.nextDouble(100);
             if (random < apProbability)
                 return "AP";
             else if (random < apProbability + honorsProbability)

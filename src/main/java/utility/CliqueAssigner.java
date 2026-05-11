@@ -4,7 +4,6 @@ import entity.Student;
 import view.GameView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,8 +47,7 @@ public final class CliqueAssigner {
         Map<String, Integer> remaining = new LinkedHashMap<>(
                 buildTargetCounts(students.size()));
 
-        Collections.shuffle(students, new java.util.Random(
-                GameRandom.nextInt(Integer.MAX_VALUE)));
+        GameRandom.shuffle(students);
 
         Map<String, Integer> actualCounts = new LinkedHashMap<>();
         for (Student student : students) {

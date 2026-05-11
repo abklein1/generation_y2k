@@ -860,8 +860,8 @@ public class SimulationEngine {
      * once the need recovers above the threshold so a future relapse
      * re-fires the message.
      */
-    private static void fireCriticalNeedMessages(EntityState state,
-                                                 String displayName) {
+    private void fireCriticalNeedMessages(EntityState state,
+                                          String displayName) {
         checkCriticalEdge(state, displayName, EntityState.NeedType.HUNGER,
                 state.getHunger(),
                 SimConstants.NEED_HUNGER_CRITICAL_MESSAGE);
@@ -879,17 +879,25 @@ public class SimulationEngine {
                 SimConstants.NEED_ENERGY_CRITICAL_MESSAGE);
     }
 
-    private static void checkCriticalEdge(EntityState state, String displayName,
-                                          EntityState.NeedType need, double value,
-                                          String formatStr) {
+    private void checkCriticalEdge(EntityState state, String displayName,
+                                   EntityState.NeedType need, double value,
+                                   String formatStr) {
         boolean below = value < SimConstants.NEED_CRITICAL_THRESHOLD;
         boolean alreadyNotified = state.isCriticalNotified(need);
         if (below && !alreadyNotified) {
-            GameLogger.logStory(String.format(formatStr, displayName));
+            addEntityStatusLogEntry(state, String.format(formatStr, displayName));
             state.setCriticalNotified(need, true);
         } else if (!below && alreadyNotified) {
             state.setCriticalNotified(need, false);
         }
+    }
+
+    private void addEntityStatusLogEntry(EntityState state, String message) {
+        if (state == null || message == null || time == null) {
+            return;
+        }
+        String timeStamp = String.format("[%02d:%02d]", time.getHour(), time.getMinute());
+        state.addLogEntry(timeStamp + " " + message);
     }
 
     /**
@@ -898,8 +906,8 @@ public class SimulationEngine {
      * stat has been driven to 0 the entity falls asleep and a story
      * message is emitted.
      */
-    private static void runExhaustionCascade(EntityState state, PStatistics stats,
-                                             String displayName) {
+    private void runExhaustionCascade(EntityState state, PStatistics stats,
+                                      String displayName) {
         if (stats == null || state.isAsleep() || state.getEnergy() > 0) {
             return;
         }
@@ -910,7 +918,7 @@ public class SimulationEngine {
         }
         if (allSecondaryStatsZero(stats)) {
             state.setAsleep(true);
-            GameLogger.logStory(String.format(
+            addEntityStatusLogEntry(state, String.format(
                     SimConstants.NEED_FELL_ASLEEP_MESSAGE, displayName));
         }
     }

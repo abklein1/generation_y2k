@@ -1,5 +1,7 @@
 package utility;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -161,6 +163,17 @@ public class GameRandom {
     public static boolean nextBoolean() {
         ensureInitialized();
         return random.nextBoolean();
+    }
+
+    /**
+     * Shuffle a list using the active seeded random generator.
+     *
+     * @param list The list to shuffle in place
+     * @param <T>  The list element type
+     */
+    public static <T> void shuffle(List<T> list) {
+        ensureInitialized();
+        Collections.shuffle(list, random);
     }
 
     /**

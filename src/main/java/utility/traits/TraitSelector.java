@@ -3,11 +3,9 @@ package utility.traits;
 import utility.GameRandom;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Pure utility that draws a list of trait strings out of a
@@ -64,8 +62,7 @@ public final class TraitSelector {
         int traitCount = GameRandom.nextInt(minCount, maxCount);
 
         List<String> subcategories = new ArrayList<>(dataset.getSubcategories());
-        Collections.shuffle(subcategories,
-                new Random((long) (GameRandom.nextDouble() * Long.MAX_VALUE)));
+        GameRandom.shuffle(subcategories);
 
         List<String> selected = new ArrayList<>();
         for (int i = 0; i < traitCount && i < subcategories.size(); i++) {

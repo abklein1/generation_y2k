@@ -117,7 +117,7 @@ public class RoomConnector {
         upperHallwayCount = Math.max(upperHallwayCount, numberOfFloors - 1);
 
         List<Room> shuffledHallways = new ArrayList<>(Arrays.asList(hallways));
-        Collections.shuffle(shuffledHallways);
+        GameRandom.shuffle(shuffledHallways);
 
         int assigned = 0;
         for (int floor = 2; floor <= numberOfFloors && assigned < upperHallwayCount; floor++) {
@@ -145,7 +145,7 @@ public class RoomConnector {
             }
             int upperCount = (int) Math.ceil(rooms.length * ratio);
             List<Room> shuffled = new ArrayList<>(Arrays.asList(rooms));
-            Collections.shuffle(shuffled);
+            GameRandom.shuffle(shuffled);
 
             int roomAssigned = 0;
             for (int floor = 2; floor <= numberOfFloors && roomAssigned < upperCount; floor++) {

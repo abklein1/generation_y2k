@@ -31,7 +31,10 @@ public final class AcademicProgressService {
     public static double recordCurrentClassLearning(Student student, Time time,
                                                     int learningAmount, ActivityType activityType) {
         StudentBlock block = getCurrentClassBlock(student, time);
-        String className = block == null ? GENERAL_STUDY : block.getClassName();
+        if (block == null) {
+            return 0.0;
+        }
+        String className = block.getClassName();
         return recordClassLearning(student, className, block, learningAmount, activityType);
     }
 

@@ -145,6 +145,19 @@ class AcademicProgressServiceTest {
         assertTrue(second.getProblemCount() >= first.getProblemCount());
     }
 
+    @Test
+    @DisplayName("Does not record general study learning outside scheduled class time")
+    void ignoresCurrentClassLearningOutsideScheduledPeriod() {
+        Student student = createStudentWithStats(100, 50, 50, 50, 50);
+        Time time = new Time();
+
+        double gained = AcademicProgressService.recordCurrentClassLearning(
+                student, time, 5, ActivityType.ATTENDING_CLASS);
+
+        assertEquals(0.0, gained);
+        assertTrue(student.studentStatistics.getAcademicRecord().getCourseProgressByKey().isEmpty());
+    }
+
     private Student createStudentWithStats(int intelligence, int determination, int perception,
                                            int initiative, int responsibility) {
         Student student = new Student();
