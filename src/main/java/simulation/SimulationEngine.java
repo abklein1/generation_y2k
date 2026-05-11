@@ -7,6 +7,7 @@ import entity.*;
 import entity.Rooms.OffCampus;
 import entity.Rooms.Room;
 import utility.GameLogger;
+import utility.AcademicProgressService;
 import utility.PStatistics;
 import utility.SocialLinkConnector;
 import utility.TraversalStorage;
@@ -44,6 +45,7 @@ public class SimulationEngine {
     private TraversalStorage traversalStorage;
     private int currentTransitionIndex;
     private int lastProcessedMonth = -1;
+    private int lastHomeworkAssignmentDay = -1;
     private LunchDestinationSelector lunchDestinationSelector;
     private boolean wasLunchA = false;
     private boolean wasLunchB = false;
@@ -254,6 +256,9 @@ public class SimulationEngine {
 
         // 3. Update expected locations based on schedule
         updateExpectedLocations();
+
+        // 3.1. Assign regular homework once per eligible school day.
+        processHomeworkAssignments(currentDayPhase);
 
         // 3.25. Handle mid-block lunch transitions (enter/exit lunch)
         processLunchTransitions();
@@ -1079,6 +1084,17 @@ public class SimulationEngine {
             entry.append("]");
         }
 
+        Object learning = context.getVariable("learning_gained");
+        boolean finalActivityCanShowLearning = activity == ActivityType.ATTENDING_CLASS
+                || activity == ActivityType.TAKING_NOTES;
+        if (finalActivityCanShowLearning
+                && learning instanceof Number learningNumber
+                && learningNumber.doubleValue() > 0.0) {
+            entry.append(" [Learning +")
+                    .append(String.format("%.1f", learningNumber.doubleValue()))
+                    .append("]");
+        }
+
         state.addLogEntry(entry.toString());
 
         // Clear ephemeral context variables to avoid stale data
@@ -1086,6 +1102,26 @@ public class SimulationEngine {
         context.removeVariable("catch_type");
         context.removeVariable("interaction_target");
         context.removeVariable("friendship_gained");
+        context.removeVariable("learning_gained");
+    }
+
+    private void processHomeworkAssignments(DayPhase currentDayPhase) {
+        if (students == null || time == null || currentDayPhase != DayPhase.SCHOOL_DAY) {
+            return;
+        }
+        int day = time.getDayCounter();
+        if (lastHomeworkAssignmentDay == day) {
+            return;
+        }
+
+        int assignedCount = 0;
+        for (Student student : students.values()) {
+            assignedCount += AcademicProgressService.assignHomeworkIfDue(student, time);
+        }
+        if (assignedCount > 0) {
+            GameLogger.logDebug("Assigned " + assignedCount + " homework item(s) for day " + day);
+        }
+        lastHomeworkAssignmentDay = day;
     }
 
     /**
@@ -1207,6 +1243,7 @@ public class SimulationEngine {
         // Process students
         if (students != null) {
             for (Student student : students.values()) {
+                AcademicProgressService.resolveHomeworkForDay(student, time.getDayCounter());
                 processEntitySleepRecovery(student.studentStatistics);
 
                 // Reset entity state for new day
@@ -1237,6 +1274,7 @@ public class SimulationEngine {
         currentTransitionIndex = 0;
         wasLunchA = false;
         wasLunchB = false;
+        lastHomeworkAssignmentDay = -1;
 
         // Apply daily relationship decay: all social link scores drift toward neutral.
         // Family and best-friend bonds decay slower, incentivizing active maintenance.

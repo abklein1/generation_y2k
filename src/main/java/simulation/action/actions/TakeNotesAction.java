@@ -7,6 +7,7 @@ import entity.Student;
 import simulation.action.Action;
 import simulation.action.ActionCategory;
 import simulation.action.ActionResult;
+import utility.AcademicProgressService;
 
 /**
  * Action for taking notes in class.
@@ -56,20 +57,20 @@ public class TakeNotesAction implements Action {
         }
         
         int totalLearning = BASE_LEARNING * learningMultiplier;
+        double appliedLearning = AcademicProgressService.recordCurrentClassLearning(
+                student, context.getTime(), totalLearning, ActivityType.TAKING_NOTES);
         
         // Entertainment decreases slightly (note-taking is tedious)
         state.setEntertainment(state.getEntertainment() - ENTERTAINMENT_DRAIN);
         
-        // Drain creativity and initiative from note-taking effort
+        // Drain creativity from note-taking effort; academic service drains
+        // initiative and responsibility for sustained class work.
         student.studentStatistics.drainSecondaryStat("creativity",
                 constants.SimConstants.STAT_DRAIN_TAKE_NOTES_CREATIVITY,
                 constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_CREATIVITY);
-        student.studentStatistics.drainSecondaryStat("initiative",
-                constants.SimConstants.STAT_DRAIN_TAKE_NOTES_INITIATIVE,
-                constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_INITIATIVE);
         
         return ActionResult.success("Diligently taking notes")
-                .withEffect("learning", totalLearning)
+                .withEffect("learning", appliedLearning)
                 .withEffect("entertainment_change", -ENTERTAINMENT_DRAIN);
     }
     

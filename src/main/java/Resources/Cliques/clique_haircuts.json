@@ -220,7 +220,7 @@
                     "neck-length": ["shag", "swoop", "bun", "braid"],
                     "shoulder-length": ["shag", "swoop", "chopped layer cut", "bun", "braid"],
                     "waist-length": ["chopped layer cut", "braid", "ponytail"],
-                    "extremely long": ["long layer cut"],
+                    "extremely long": ["long layer cut", "braids"],
                     "dyes": ["black", "amber", "dark red", "chestnut", "bleach blond"],
                     "highlights": ["bleach blond", "blond"]
                 },
@@ -272,7 +272,7 @@
                     "chin-length": ["side sweep", "swoop"],
                     "long": ["side sweep"],
                     "shoulder-length": [],
-                    "waist-length": ["ponytail"],
+                    "waist-length": ["ponytail", "locs"],
                     "dyes": ["bleach blond"],
                     "highlights": ["bleach blond", "blond"]
                 },
@@ -321,17 +321,17 @@
         "Goth": {
             "female": {
                 "white": {
-                    "short": ["pixie", "spike cut", "buzz cut"],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
+                    "short": ["pixie", "spike cut", "buzz cut", "mullet"],
+                    "chin-length": ["deathhawk", "chopped layer cut", "mullet"],
+                    "neck-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
+                    "shoulder-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
+                    "waist-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
+                    "extremely long": ["long layer cut", "locs"],
                     "dyes": ["black"],
-                    "highlights": []
+                    "highlights": ["purple", "violet", "maroon", "dark red", "dark blue"]
                 },
                 "black": {
-                    "short": [],
+                    "short": ["buzz cut", "pixie"],
                     "chin-length": [],
                     "neck-length": [],
                     "shoulder-length": [],
@@ -341,14 +341,14 @@
                     "highlights": []
                 },
                 "api": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": ["pixie", "spike cut", "buzz cut", "mullet"],
+                    "chin-length": ["deathhawk", "chopped layer cut", "mullet"],
+                    "neck-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
+                    "shoulder-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
+                    "waist-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
+                    "extremely long": ["long layer cut", "locs"],
+                    "dyes": ["black"],
+                    "highlights": ["purple", "violet", "maroon", "dark red", "dark blue"]
                 },
                 "hispanic": {
                     "short": [],

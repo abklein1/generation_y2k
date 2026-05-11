@@ -8,6 +8,7 @@ import entity.CellPhone;
 import entity.Student;
 import entity.Town;
 import simulation.InteractionManager;
+import utility.AcademicProgressService;
 import utility.GameRandom;
 
 import java.util.ArrayList;
@@ -121,6 +122,9 @@ public class StudentBehaviorTreeBuilder {
      */
     private static BehaviorNode buildClassActivitySelector(Student student, PersonalityType type) {
         Selector activitySelector = new Selector("ClassActivities");
+
+        // Academic pressure gets first chance to compete with social relief.
+        activitySelector.addChild(buildAcademicPressureSequence());
         
         switch (type) {
             case STUDIOUS:
@@ -157,6 +161,18 @@ public class StudentBehaviorTreeBuilder {
         }
         
         return activitySelector;
+    }
+
+    private static BehaviorNode buildAcademicPressureSequence() {
+        Sequence academicPressure = new Sequence("AcademicPressure");
+        academicPressure.addChild(new HasAcademicPressureCondition());
+
+        RandomSelector academicChoice = new RandomSelector("AcademicPressureChoice");
+        academicChoice.addChild(new TakeNotesActionNode());
+        academicChoice.addChild(new PayAttentionActionNode());
+        academicPressure.addChild(academicChoice);
+
+        return academicPressure;
     }
     
     /**
@@ -354,6 +370,27 @@ public class StudentBehaviorTreeBuilder {
                 return false;
             }
             return !student.getEntityState().isInClass();
+        }
+    }
+
+    /**
+     * Condition for students who have coursework pressure in the current class.
+     */
+    private static class HasAcademicPressureCondition extends behavior.leaf.ConditionNode {
+        public HasAcademicPressureCondition() {
+            super("HasAcademicPressure");
+        }
+
+        @Override
+        public boolean check(BehaviorContext context) {
+            Student student = context.getStudent();
+            if (student == null || student.getEntityState() == null
+                    || !student.getEntityState().isInClass()) {
+                return false;
+            }
+
+            String className = AcademicProgressService.getCurrentClassName(student, context.getTime());
+            return AcademicProgressService.hasAcademicPressure(student, className);
         }
     }
     
@@ -748,17 +785,19 @@ public class StudentBehaviorTreeBuilder {
             }
             
             student.getEntityState().setCurrentActivity(entity.ActivityType.TAKING_NOTES);
+
+            double learning = AcademicProgressService.recordCurrentClassLearning(
+                    student, context.getTime(), 7, entity.ActivityType.TAKING_NOTES);
+            context.setVariable("learning_gained", learning);
             
             // Small entertainment drain (note-taking is tedious)
             student.getEntityState().setEntertainment(student.getEntityState().getEntertainment() - 1);
             
-            // Drain creativity and initiative from note-taking effort
+            // Drain creativity from note-taking effort; academic service drains
+            // initiative and responsibility for sustained class work.
             student.studentStatistics.drainSecondaryStat("creativity",
                     constants.SimConstants.STAT_DRAIN_TAKE_NOTES_CREATIVITY,
                     constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_CREATIVITY);
-            student.studentStatistics.drainSecondaryStat("initiative",
-                    constants.SimConstants.STAT_DRAIN_TAKE_NOTES_INITIATIVE,
-                    constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_INITIATIVE);
             
             return BehaviorStatus.SUCCESS;
         }

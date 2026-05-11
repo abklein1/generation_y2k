@@ -7,6 +7,10 @@ import entity.Items.WearableItem;
 import entity.Rooms.Classroom;
 import entity.*;
 import entity.Rooms.Room;
+import entity.academic.AcademicSkill;
+import entity.academic.CourseProgress;
+import entity.academic.HomeworkAssignment;
+import entity.academic.StudentAcademicRecord;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -502,6 +506,77 @@ public class Inspector {
     }
 
     /**
+     * Builds a readable academic progress report for the student inspector.
+     */
+    private static String buildAcademicProgressText(Student student) {
+        StringBuilder sb = new StringBuilder();
+        StudentAcademicRecord record = student.studentStatistics.getAcademicRecord();
+
+        sb.append(student.studentName.getFullName()).append("\n=====================================\n");
+
+        sb.append("Course Understanding\n-------------------------------------\n");
+        if (record.getCourseProgressByKey().isEmpty()) {
+            sb.append("No course understanding recorded yet.\n");
+        } else {
+            for (CourseProgress course : record.getCourseProgressByKey().values()) {
+                sb.append(String.format("%-28s %6s  attention: %d%n",
+                        course.getClassName(),
+                        formatPercent(course.getUnderstanding()),
+                        course.getAttentionPoints()));
+                sb.append(String.format("   homework assigned: %d, completed: %d, missing: %d%n",
+                        course.getAssignedHomework(),
+                        course.getCompletedHomework(),
+                        course.getMissingHomework()));
+            }
+        }
+
+        sb.append("\nSkill Mastery\n-------------------------------------\n");
+        for (Map.Entry<AcademicSkill, Double> entry : record.getSkillMastery().entrySet()) {
+            sb.append(String.format("%-18s %6s%n",
+                    formatSkillName(entry.getKey()),
+                    formatPercent(entry.getValue())));
+        }
+
+        sb.append("\nAssignments\n-------------------------------------\n");
+        if (record.getHomeworkAssignments().isEmpty()) {
+            sb.append("No homework assigned yet.\n");
+        } else {
+            for (HomeworkAssignment homework : record.getHomeworkAssignments()) {
+                sb.append(String.format("%-28s %s%n",
+                        homework.getClassName(),
+                        formatHomeworkStatus(homework)));
+                sb.append(String.format("   effort: %d, problems: %d, progress: %s, assigned day: %d, due day: %d%n",
+                        homework.getEffort(),
+                        homework.getProblemCount(),
+                        formatPercent(homework.getProgress()),
+                        homework.getAssignedDay(),
+                        homework.getDueDay()));
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private static String formatPercent(double value) {
+        return NEED_FORMAT.format(value) + "%";
+    }
+
+    private static String formatSkillName(AcademicSkill skill) {
+        String name = skill.name().toLowerCase().replace('_', ' ');
+        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    }
+
+    private static String formatHomeworkStatus(HomeworkAssignment homework) {
+        if (homework.isCompleted()) {
+            return "Completed";
+        }
+        if (homework.isMissing()) {
+            return "Missing";
+        }
+        return "Pending";
+    }
+
+    /**
      * Builds the schedule text organized by semester with periods in order.
      * Fall semester periods 1-4 are listed first, then Spring semester periods 1-4.
      *
@@ -601,6 +676,14 @@ public class Inspector {
      */
     public static JPanel buildStudentSchedulePanel(Student student) {
         return buildSchedulePanel(student);
+    }
+
+    public static JScrollPane buildStudentAcademicProgressPanel(Student student) {
+        JTextArea academicArea = new JTextArea(buildAcademicProgressText(student));
+        academicArea.setEditable(false);
+        academicArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        academicArea.setCaretPosition(0);
+        return new JScrollPane(academicArea);
     }
 
     /**
@@ -728,6 +811,15 @@ public class Inspector {
      */
     public static void updateStudentStatsArea(Student student, JTextArea area) {
         area.setText(buildStudentStatsText(student));
+        area.setCaretPosition(0);
+    }
+
+    /**
+     * Updates a JTextArea with the student's academic progress.
+     * Used by SchoolController's tabbed inspection window.
+     */
+    public static void updateStudentAcademicArea(Student student, JTextArea area) {
+        area.setText(buildAcademicProgressText(student));
         area.setCaretPosition(0);
     }
 
@@ -1031,6 +1123,14 @@ public class Inspector {
         // Schedule tab
         JPanel schedulePanel = buildSchedulePanel(student);
         tabbedPane.addTab("Schedule", schedulePanel);
+
+        // Academic tab
+        JTextArea academicArea = new JTextArea(buildAcademicProgressText(student));
+        academicArea.setEditable(false);
+        academicArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        academicArea.setCaretPosition(0);
+        JScrollPane academicScroll = new JScrollPane(academicArea);
+        tabbedPane.addTab("Academic", academicScroll);
 
         // Create the dialog
         JDialog dialog = new JDialog();

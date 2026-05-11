@@ -6,6 +6,7 @@ import behavior.leaf.ActionNode;
 import entity.ActivityType;
 import entity.EntityState;
 import entity.Student;
+import utility.AcademicProgressService;
 
 /**
  * Behavior tree action node for paying attention in class.
@@ -49,9 +50,12 @@ public class PayAttentionActionNode extends ActionNode {
         int intelligence = student.studentStatistics.getIntelligence();
         int learningBonus = (intelligence - 100) / 10;
         int totalLearning = LEARNING_GAIN + learningBonus;
-        
-        // Store learning in context for later processing
-        context.setVariable("learning_gained", totalLearning);
+
+        double appliedLearning = AcademicProgressService.recordCurrentClassLearning(
+                student, context.getTime(), totalLearning, ActivityType.ATTENDING_CLASS);
+
+        // Store learning in context for later logging/debugging.
+        context.setVariable("learning_gained", appliedLearning);
         
         // Decrease entertainment (paying attention is boring)
         state.setEntertainment(state.getEntertainment() - ENTERTAINMENT_DRAIN);

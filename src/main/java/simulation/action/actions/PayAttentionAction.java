@@ -7,6 +7,7 @@ import entity.Student;
 import simulation.action.Action;
 import simulation.action.ActionCategory;
 import simulation.action.ActionResult;
+import utility.AcademicProgressService;
 
 /**
  * Action for paying attention in class.
@@ -52,6 +53,8 @@ public class PayAttentionAction implements Action {
         int intelligence = student.studentStatistics.getIntelligence();
         int learningBonus = (intelligence - 100) / 10; // Bonus/penalty based on intelligence
         int totalLearning = LEARNING_GAIN + learningBonus;
+        double appliedLearning = AcademicProgressService.recordCurrentClassLearning(
+                student, context.getTime(), totalLearning, ActivityType.ATTENDING_CLASS);
         
         // Decrease entertainment (paying attention is tedious)
         state.setEntertainment(state.getEntertainment() - ENTERTAINMENT_DRAIN);
@@ -62,7 +65,7 @@ public class PayAttentionAction implements Action {
                 constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_CURIOSITY);
         
         return ActionResult.success("Paying attention to the lesson")
-                .withEffect("learning", totalLearning)
+                .withEffect("learning", appliedLearning)
                 .withEffect("entertainment_change", -ENTERTAINMENT_DRAIN);
     }
     

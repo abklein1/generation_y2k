@@ -5,6 +5,7 @@ import entity.AllostaticLoad;
 import entity.Student;
 import entity.StudentBlock;
 import entity.StudentSchedule;
+import entity.academic.StudentAcademicRecord;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class StudentStatistics implements PStatistics {
     private String neighborhoodWealthLevel;
     private final ArrayList<String> completedClasses;
     private final StudentSchedule studentSchedule;
+    private final StudentAcademicRecord academicRecord;
     private final ArrayList<Student> siblingsInSchool;
     private final ArrayList<Student> siblingsNotInSchool;
     private final ArrayList<Student> friendsInSchool;
@@ -154,6 +156,7 @@ public class StudentStatistics implements PStatistics {
         this.neighborhoodWealthLevel = null;
         this.completedClasses = new ArrayList<>();
         this.studentSchedule = new StudentSchedule();
+        this.academicRecord = new StudentAcademicRecord();
         this.siblingsInSchool = new ArrayList<>();
         this.siblingsNotInSchool = new ArrayList<>();
         this.friendsInSchool = new ArrayList<>();
@@ -728,6 +731,10 @@ public class StudentStatistics implements PStatistics {
 
     public StudentSchedule getStudentSchedule() {
         return studentSchedule;
+    }
+
+    public StudentAcademicRecord getAcademicRecord() {
+        return academicRecord;
     }
 
     public void addStudentSchedule(StudentBlock block) {

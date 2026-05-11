@@ -556,6 +556,12 @@ public class SchoolController {
                 activityArea.setWrapStyleWord(true);
                 activityArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
 
+                JTextArea academicArea = new JTextArea();
+                academicArea.setEditable(false);
+                academicArea.setLineWrap(true);
+                academicArea.setWrapStyleWord(true);
+                academicArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+
                 JTabbedPane studentTabs = new JTabbedPane();
                 studentTabs.addTab("Description", new JScrollPane(descArea));
                 studentTabs.addTab("Stats", new JScrollPane(statsArea));
@@ -563,6 +569,7 @@ public class SchoolController {
                 emptySchedule.add(new JLabel("Select a student to view their schedule",
                         SwingConstants.CENTER), java.awt.BorderLayout.CENTER);
                 studentTabs.addTab("Schedule", emptySchedule);
+                studentTabs.addTab("Academic", new JScrollPane(academicArea));
                 studentTabs.addTab("Cell Phone", new JScrollPane(phoneArea));
                 JScrollPane activityScroll = new JScrollPane(activityArea);
                 studentTabs.addTab("Activity", activityScroll);
@@ -576,6 +583,7 @@ public class SchoolController {
                             currentlySelectedStudent[0] = selectedStudent;
                             Inspector.updateStudentDescriptionArea(selectedStudent, descArea);
                             Inspector.updateStudentStatsArea(selectedStudent, statsArea);
+                            Inspector.updateStudentAcademicArea(selectedStudent, academicArea);
 
                             JPanel schedulePanel = Inspector.buildStudentSchedulePanel(selectedStudent);
                             studentTabs.setComponentAt(2, schedulePanel);
@@ -600,6 +608,7 @@ public class SchoolController {
                     if (currentlySelectedStudent[0] != null && simulationRunning) {
                         Inspector.updateActivityArea(currentlySelectedStudent[0], activityArea);
                         Inspector.updateStudentStatsArea(currentlySelectedStudent[0], statsArea);
+                        Inspector.updateStudentAcademicArea(currentlySelectedStudent[0], academicArea);
                         CellPhone polledPhone = town != null
                                 ? town.getStudentPhone(currentlySelectedStudent[0]) : null;
                         Inspector.updateCellPhoneArea(polledPhone,

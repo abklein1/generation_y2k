@@ -569,8 +569,11 @@ public final class SimConstants {
 
     // Secondary stat drain amounts per action type
     public static final int STAT_DRAIN_PAY_ATTENTION_CURIOSITY = 1;
+    public static final int STAT_DRAIN_PAY_ATTENTION_INITIATIVE = 1;
+    public static final int STAT_DRAIN_PAY_ATTENTION_RESPONSIBILITY = 1;
     public static final int STAT_DRAIN_TAKE_NOTES_CREATIVITY = 1;
     public static final int STAT_DRAIN_TAKE_NOTES_INITIATIVE = 1;
+    public static final int STAT_DRAIN_TAKE_NOTES_RESPONSIBILITY = 1;
     public static final int STAT_DRAIN_PASS_NOTE_EMPATHY = 2;
     public static final int STAT_DRAIN_PASS_NOTE_RESPONSIBILITY = 1;
     public static final int STAT_DRAIN_WHISPER_EMPATHY = 1;
@@ -594,6 +597,24 @@ public final class SimConstants {
     public static final double ALLOSTATIC_RELAXATION_RECOVERY_TEXTING = 1.0;
     public static final int TEXT_ENTERTAINMENT_BOOST_IN_CLASS = 3;
     public static final int TEXT_ENTERTAINMENT_BOOST_OUT_OF_CLASS = 5;
+
+    // Lightweight academic framework
+    public static final int ACADEMIC_HOMEWORK_ASSIGNMENT_INTERVAL_DAYS = 2;
+    public static final int ACADEMIC_HOMEWORK_DUE_DAYS = 1;
+    public static final int ACADEMIC_HOMEWORK_MIN_EFFORT = 12;
+    public static final int ACADEMIC_HOMEWORK_MAX_EFFORT = 28;
+    public static final int ACADEMIC_HOMEWORK_MIN_PROBLEMS = 5;
+    public static final int ACADEMIC_HOMEWORK_MAX_PROBLEMS = 18;
+    public static final int ACADEMIC_HOMEWORK_INITIATIVE_DRAIN = 2;
+    public static final int ACADEMIC_HOMEWORK_RESPONSIBILITY_DRAIN = 2;
+    public static final double ACADEMIC_ATTENTION_UNDERSTANDING_SCALE = 0.18;
+    public static final double ACADEMIC_HOMEWORK_UNDERSTANDING_GAIN = 2.5;
+    public static final double ACADEMIC_HOMEWORK_SKILL_GAIN = 1.5;
+    public static final double ACADEMIC_LOW_UNDERSTANDING_THRESHOLD = 35.0;
+    public static final int ACADEMIC_TEACHER_EXPERIENCE_CAP_YEARS = 20;
+    public static final double ACADEMIC_TEACHER_MAX_LEARNING_BONUS = 0.25;
+    public static final double ACADEMIC_TEACHER_MAX_STRESS_REDUCTION = 0.30;
+    public static final int ACADEMIC_TEACHER_CURRICULUM_RAMP_STEP = 3;
 
     // Secondary stat sleep replenishment: percentage of max to restore
     public static final double SECONDARY_STAT_SLEEP_REPLENISH_RATE = 1.0; // 100% restored on sleep
@@ -814,9 +835,10 @@ public final class SimConstants {
     public static final double NEED_HUNGER_REFILL_PER_TICK = 2.0;
     public static final double NEED_THIRST_REFILL_PER_TICK = 2.0;
 
-    // Entertainment and energy decay (per-tick, 0-100 scale)
-    public static final double NEED_ENTERTAINMENT_DECAY_PER_TICK = 1.0;
-    public static final double NEED_ENTERTAINMENT_DECAY_BORING_ACTIVITY = 2.0;
+    // Entertainment and energy decay (per-tick, 0-100 scale). Entertainment is
+    // a slow background need; individual boring actions apply their own drains.
+    public static final double NEED_ENTERTAINMENT_DECAY_PER_TICK = 0.20;
+    public static final double NEED_ENTERTAINMENT_DECAY_BORING_ACTIVITY = 0.50;
     public static final double NEED_ENERGY_DECAY_PER_TICK = 0.25;
     public static final double NEED_ENERGY_DECAY_WHEN_BORED = 0.75;
     public static final double NEED_ENERGY_ASLEEP_THRESHOLD = 0.0;
