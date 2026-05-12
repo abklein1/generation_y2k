@@ -35,6 +35,8 @@ public class GameView {
     private final JMenuItem visualizeItem;
     private final JMenuItem socialGraphItem;
     private final JMenuItem seedOptionsItem;
+    private final JMenuItem saveGameItem;
+    private final JMenuItem loadGameItem;
 
     // Debug menu items
     private final JMenu debugMenu;
@@ -108,12 +110,17 @@ public class GameView {
         JMenu gameMenu = new JMenu("Game");
         JMenuItem newSimMenuItem = new JMenuItem("New Simulation...");
         JMenuItem newGameMenuItem = new JMenuItem("New Game...");
+        saveGameItem = new JMenuItem("Save Game...");
+        loadGameItem = new JMenuItem("Load Game...");
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         newSimMenuItem.addActionListener(e -> showStartDialog(false));
         newGameMenuItem.addActionListener(e -> showStartDialog(true));
         exitMenuItem.addActionListener(e -> System.exit(0));
         gameMenu.add(newSimMenuItem);
         gameMenu.add(newGameMenuItem);
+        gameMenu.addSeparator();
+        gameMenu.add(saveGameItem);
+        gameMenu.add(loadGameItem);
         gameMenu.addSeparator();
         gameMenu.add(exitMenuItem);
         menuBar.add(gameMenu);
@@ -416,6 +423,14 @@ public class GameView {
                 listener.actionPerformed(e);
             });
         }
+    }
+
+    public void addSaveGameListener(ActionListener listener) {
+        saveGameItem.addActionListener(listener);
+    }
+
+    public void addLoadGameListener(ActionListener listener) {
+        loadGameItem.addActionListener(listener);
     }
 
     /**

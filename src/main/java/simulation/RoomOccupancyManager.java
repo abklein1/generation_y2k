@@ -159,6 +159,31 @@ public class RoomOccupancyManager {
         }
     }
 
+    /**
+     * Rebuilds transient room grids from persisted entity locations.
+     */
+    public void restoreCurrentOccupancy(HashMap<Integer, Student> students) {
+        initializeAllGrids();
+        clearAllGrids();
+        if (students == null) {
+            return;
+        }
+        for (Student student : students.values()) {
+            EntityState state = student.getEntityState();
+            if (state == null || state.getCurrentRoom() == null) {
+                continue;
+            }
+            Room room = state.getCurrentRoom();
+            OccupancyGrid grid = room.getFloorGrid();
+            int[] savedPosition = state.getFloorPosition();
+            if (grid != null && savedPosition != null
+                    && grid.place(student, savedPosition[0], savedPosition[1])) {
+                continue;
+            }
+            enterRoom(student, room);
+        }
+    }
+
     private Room getStudentRoomForPeriod(Student student, int period,
                                         String semester) {
         StudentSchedule schedule = student.studentStatistics.getStudentSchedule();

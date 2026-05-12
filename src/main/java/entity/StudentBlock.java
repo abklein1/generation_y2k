@@ -1,8 +1,11 @@
 package entity;
 
 import entity.Rooms.Room;
+import java.io.Serializable;
 
-public class StudentBlock {
+public class StudentBlock implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     int blockNumber;
     String className;
     Staff teacher;

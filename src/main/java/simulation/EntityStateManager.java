@@ -49,6 +49,29 @@ public class EntityStateManager {
     }
 
     /**
+     * Rebuilds transient runtime helpers after loading a save without changing
+     * persisted entity state such as locations, needs, lunch assignment, or transit.
+     */
+    public void rebuildTransientState() {
+        if (students != null) {
+            for (Student student : students.values()) {
+                if (student.getEntityState() == null) {
+                    student.setEntityState(new EntityState());
+                }
+                BehaviorTree tree = StudentBehaviorTreeBuilder.buildTree(student);
+                student.setBehaviorTree(tree);
+            }
+        }
+        if (staff != null) {
+            for (Staff staffMember : staff.values()) {
+                if (staffMember.getEntityState() == null) {
+                    staffMember.setEntityState(new EntityState());
+                }
+            }
+        }
+    }
+
+    /**
      * Initializes entity states for all students.
      */
     public void initializeStudentStates() {

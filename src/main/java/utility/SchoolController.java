@@ -5,6 +5,9 @@ import config.SchoolFundingModel;
 import config.TownDemographics;
 import entity.Rooms.*;
 import entity.*;
+import save.SaveGameData;
+import save.SaveGameService;
+import save.SimulationRuntimeSnapshot;
 import simulation.EntityStateManager;
 import simulation.SimulationEngine;
 import view.GameView;
@@ -13,6 +16,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,7 +42,7 @@ import static constants.SimConstants.*;
 
 public class SchoolController {
     private final GameView view;
-    private final Time time;
+    private Time time;
     HashMap<Integer, Staff> staffHashMap;
     HashMap<Integer, Student> studentHashMap;
     private RoomConnector roomConnector;
@@ -67,8 +72,125 @@ public class SchoolController {
         this.view.addPlayPauseListener(e -> toggleSimulation());
         this.view.addStepListener(e -> stepSimulation());
         this.view.addSpeedChangeListener(e -> updateSimulationSpeed());
+        this.view.addSaveGameListener(e -> saveGameFromDialog());
+        this.view.addLoadGameListener(e -> loadGameFromDialog());
 
         this.time = new Time();
+    }
+
+    private void saveGameFromDialog() {
+        if (standardSchool == null || studentHashMap == null || staffHashMap == null) {
+            view.appendOutput("No generated simulation is available to save.");
+            return;
+        }
+
+        boolean wasRunning = simulationRunning;
+        if (wasRunning) {
+            pauseSimulation();
+        }
+
+        JFileChooser chooser = new JFileChooser(SaveGameService.getDefaultSaveDirectory().toFile());
+        chooser.setDialogTitle("Save Game");
+        chooser.setSelectedFile(new File("save-game.dat"));
+        int result = chooser.showSaveDialog(view.getFrame());
+        if (result != JFileChooser.APPROVE_OPTION) {
+            if (wasRunning) {
+                startSimulation();
+            }
+            return;
+        }
+
+        try {
+            Path savePath = chooser.getSelectedFile().toPath();
+            SaveGameService.save(captureSaveGameData(), savePath);
+            view.appendOutput("Game saved to: " + savePath);
+        } catch (Exception ex) {
+            view.appendOutput("Unable to save game: " + ex.getMessage());
+            ex.printStackTrace();
+        } finally {
+            if (wasRunning) {
+                startSimulation();
+            }
+        }
+    }
+
+    private void loadGameFromDialog() {
+        JFileChooser chooser = new JFileChooser(SaveGameService.getDefaultSaveDirectory().toFile());
+        chooser.setDialogTitle("Load Game");
+        int result = chooser.showOpenDialog(view.getFrame());
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        try {
+            SaveGameData saveData = SaveGameService.load(chooser.getSelectedFile().toPath());
+            restoreSaveGameData(saveData);
+            view.appendOutput("Game loaded from: " + chooser.getSelectedFile().toPath());
+        } catch (Exception ex) {
+            view.appendOutput("Unable to load game: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    private SaveGameData captureSaveGameData() {
+        SimulationRuntimeSnapshot runtime = simulationEngine != null
+                ? simulationEngine.createRuntimeSnapshot()
+                : null;
+        return new SaveGameData(GameRandom.isInitialized() ? GameRandom.getSeed() : 0L,
+                GameRandom.captureState(), time, town, standardSchool,
+                studentHashMap, staffHashMap, roomConnector,
+                socialLinkConnector != null ? socialLinkConnector.createSnapshot() : null,
+                runtime);
+    }
+
+    private void restoreSaveGameData(SaveGameData saveData) {
+        stopSimulation();
+        GameRandom.restoreState(saveData.getRandomState());
+        view.updateCurrentSeed(saveData.getWorldSeed());
+
+        time = saveData.getTime();
+        town = saveData.getTown();
+        standardSchool = saveData.getStandardSchool();
+        studentHashMap = saveData.getStudents();
+        staffHashMap = saveData.getStaff();
+        roomConnector = saveData.getRoomConnector();
+
+        socialLinkConnector = new SocialLinkConnector();
+        socialLinkConnector.restoreFromSnapshot(studentHashMap, saveData.getSocialLinks());
+
+        entityStateManager = new EntityStateManager(studentHashMap, staffHashMap,
+                standardSchool, time);
+        entityStateManager.rebuildTransientState();
+
+        simulation.RoomOccupancyManager occupancyManager =
+                new simulation.RoomOccupancyManager(standardSchool);
+        occupancyManager.restoreCurrentOccupancy(studentHashMap);
+
+        if (roomConnector != null) {
+            traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
+        }
+
+        simulationEngine = new SimulationEngine(time, standardSchool, studentHashMap, staffHashMap);
+        simulationEngine.setSocialLinkConnector(socialLinkConnector);
+        if (town != null) {
+            simulationEngine.setTown(town);
+        }
+        simulationEngine.setRoomOccupancyManager(occupancyManager);
+        if (traversalStorage != null) {
+            simulationEngine.setTraversalStorage(traversalStorage);
+        }
+        simulationEngine.restoreRuntimeSnapshot(saveData.getRuntime());
+        attachSimulationUiRuntime();
+
+        view.setVisualizeButtonEnabled(true);
+        view.setSocialGraphButtonEnabled(true);
+        view.setInspectionMenuEnabled(true);
+        view.showSimulationControls();
+        view.updateSimulationStatus("Paused");
+        view.updatePlayPauseButton(false);
+        updateTimeLabel();
+        updatePeriodDisplay();
+        updateWeatherLabels();
     }
 
     // ==================== Town-based Population Management ====================
@@ -316,6 +438,75 @@ public class SchoolController {
             view.appendOutput("WARNING: No students loaded - simulation may not work correctly");
         }
         view.appendOutput("Use Play/Pause button or Simulation menu to control the simulation.");
+    }
+
+    private void attachSimulationUiRuntime() {
+        simulationEngine.addListener(new SimulationEngine.SimulationListener() {
+            @Override
+            public void onTick(int tickNumber, Time time) {
+                SwingUtilities.invokeLater(() -> {
+                    updateTimeLabel();
+                    updatePeriodDisplay();
+                    view.updateSimulationStatus(simulationRunning ? "Running" : "Paused");
+                });
+            }
+
+            @Override
+            public void onPeriodChange(int oldPeriod, int newPeriod) {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Period changed: " + oldPeriod + " -> " + newPeriod);
+                    updatePeriodDisplay();
+                });
+            }
+
+            @Override
+            public void onTransitionStart() {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Transition period started - students moving to next class");
+                    updatePeriodDisplay();
+                });
+            }
+
+            @Override
+            public void onTransitionEnd() {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Transition ended - classes resuming");
+                });
+            }
+
+            @Override
+            public void onLunchStart(String lunchPeriod) {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Lunch " + lunchPeriod + " has started");
+                });
+            }
+
+            @Override
+            public void onLunchEnd(String lunchPeriod) {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("Lunch " + lunchPeriod + " has ended");
+                });
+            }
+
+            @Override
+            public void onDayEnd() {
+                SwingUtilities.invokeLater(() -> {
+                    view.appendOutput("School day has ended!");
+                    pauseSimulation();
+                    updateTimeLabel();
+                    updateWeatherLabels();
+                    updatePeriodDisplay();
+                    view.appendOutput("Day " + time.getDayCounter() + " (" + time.getDayName()
+                            + ") ready — press Play to continue.");
+                });
+            }
+        });
+
+        simulationTimer = new Timer(1000, e -> {
+            if (simulationRunning && simulationEngine != null) {
+                simulationEngine.update();
+            }
+        });
     }
 
     /**
@@ -1158,11 +1349,11 @@ public class SchoolController {
             playerCharacter.setFamilyInfo(family);
 
             // Build the life history once, display it, and store it
-            storyOutput.append("\n═══════════ Life History ═══════════\n\n");
+            storyOutput.append("\n=========== Life History ===========\n\n");
             entity.LifeHistory lifeHistory = PlayerStoryGenerator.buildLifeHistory(playerCharacter);
             lifeHistory.appendToTextArea(storyOutput);
             playerCharacter.setLifeHistory(lifeHistory);
-            storyOutput.append("═══════════════════════════════════\n");
+            storyOutput.append("===================================\n");
 
             // Enable Start Game button after preview is complete
             startGameButton.setEnabled(true);

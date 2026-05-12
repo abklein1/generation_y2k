@@ -1,5 +1,6 @@
 package entity;
 
+import java.io.Serializable;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,7 +8,9 @@ import java.util.Date;
 
 import static constants.SimConstants.*;
 
-public class Time {
+public class Time implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final Calendar calendar;
     private final Format f;
     private final SimpleDateFormat simpleDateFormat;

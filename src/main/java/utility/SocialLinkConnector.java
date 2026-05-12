@@ -4,6 +4,8 @@ import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import save.SocialLinkSnapshot;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -431,6 +433,53 @@ public class SocialLinkConnector {
      */
     public HashMap<String, String> getAllCatalysts() {
         return new HashMap<>(catalystRecords);
+    }
+
+    public SocialLinkSnapshot createSnapshot() {
+        SocialLinkSnapshot snapshot = new SocialLinkSnapshot();
+        for (DefaultWeightedEdge edge : socialGraph.edgeSet()) {
+            Student source = socialGraph.getEdgeSource(edge);
+            Student target = socialGraph.getEdgeTarget(edge);
+            snapshot.addEdge(getStableStudentId(source), getStableStudentId(target),
+                    socialGraph.getEdgeWeight(edge));
+        }
+        snapshot.putCatalysts(catalystRecords);
+        return snapshot;
+    }
+
+    public void restoreFromSnapshot(HashMap<Integer, Student> studentHashMap,
+            SocialLinkSnapshot snapshot) {
+        registerStudentIds(studentHashMap);
+        socialGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+        catalystRecords.clear();
+        vertexToCellMap.clear();
+
+        if (studentHashMap != null) {
+            for (Student student : studentHashMap.values()) {
+                socialGraph.addVertex(student);
+            }
+        }
+        if (snapshot == null) {
+            return;
+        }
+        HashMap<Integer, Student> byId = new HashMap<>();
+        if (studentHashMap != null) {
+            byId.putAll(studentHashMap);
+        }
+        for (SocialLinkSnapshot.EdgeSnapshot edgeSnapshot : snapshot.getEdges()) {
+            Student source = byId.get(edgeSnapshot.getSourceStudentId());
+            Student target = byId.get(edgeSnapshot.getTargetStudentId());
+            if (source == null || target == null) {
+                continue;
+            }
+            socialGraph.addVertex(source);
+            socialGraph.addVertex(target);
+            DefaultWeightedEdge edge = socialGraph.addEdge(source, target);
+            if (edge != null) {
+                socialGraph.setEdgeWeight(edge, edgeSnapshot.getWeight());
+            }
+        }
+        catalystRecords.putAll(snapshot.getCatalysts());
     }
 
     // ---- Relationship Decay ----

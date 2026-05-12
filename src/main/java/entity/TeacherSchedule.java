@@ -1,10 +1,13 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Why am I doing this
-public class TeacherSchedule {
+public class TeacherSchedule implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     ArrayList<TeacherBlock> teacherSchedule;
 
     public TeacherSchedule() {

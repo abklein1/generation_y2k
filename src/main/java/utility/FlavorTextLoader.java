@@ -122,9 +122,9 @@ public class FlavorTextLoader {
      */
     public static void appendToTextArea(javax.swing.JTextArea textArea) {
         textArea.append("\n");
-        textArea.append("═".repeat(40) + "\n");
+        textArea.append("=".repeat(40) + "\n");
         textArea.append(getAllTextFormatted());
-        textArea.append("═".repeat(40) + "\n");
+        textArea.append("=".repeat(40) + "\n");
     }
 
     /**

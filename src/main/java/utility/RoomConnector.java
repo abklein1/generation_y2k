@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
@@ -31,7 +32,9 @@ import static utility.Randomizer.setRandom;
 // off that backbone. jgrapht connectivity inspector ensures no dangling vertexes
 // vertex is door
 // edge is room
-public class RoomConnector {
+public class RoomConnector implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final Room[][] roomPool = new Room[23][];
     private final StandardSchool standardSchool;
     Graph<Room, DefaultEdge> schoolConnect = new Multigraph<>(DefaultEdge.class);

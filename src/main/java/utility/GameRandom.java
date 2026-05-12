@@ -1,5 +1,11 @@
 package utility;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -21,6 +27,20 @@ public class GameRandom {
     private static Random random;
     private static long currentSeed;
     private static boolean initialized = false;
+
+    public static class RandomState implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final long seed;
+        private final boolean initialized;
+        private final byte[] randomBytes;
+
+        private RandomState(long seed, boolean initialized, byte[] randomBytes) {
+            this.seed = seed;
+            this.initialized = initialized;
+            this.randomBytes = randomBytes;
+        }
+    }
 
     /**
      * Initialize with a random seed (based on current time).
@@ -177,12 +197,58 @@ public class GameRandom {
     }
 
     /**
+     * Captures both the display seed and the current RNG stream position.
+     *
+     * @return serializable random state for save files
+     */
+    public static RandomState captureState() {
+        if (!initialized || random == null) {
+            return new RandomState(currentSeed, false, null);
+        }
+        return new RandomState(currentSeed, true, serializeRandom(random));
+    }
+
+    /**
+     * Restores the RNG stream position from a save file.
+     *
+     * @param state saved random state
+     */
+    public static void restoreState(RandomState state) {
+        if (state == null || !state.initialized || state.randomBytes == null) {
+            reset();
+            return;
+        }
+        currentSeed = state.seed;
+        random = deserializeRandom(state.randomBytes);
+        initialized = true;
+    }
+
+    /**
      * Ensure the generator is initialized before use.
      * Auto-initializes with a random seed if not already done.
      */
     private static void ensureInitialized() {
         if (!initialized) {
             initialize();
+        }
+    }
+
+    private static byte[] serializeRandom(Random randomToSerialize) {
+        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+             ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(randomToSerialize);
+            return bytes.toByteArray();
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to capture random state", e);
+        }
+    }
+
+    private static Random deserializeRandom(byte[] randomBytes) {
+        try (ByteArrayInputStream bytes = new ByteArrayInputStream(randomBytes);
+             ObjectInputStream in = new ObjectInputStream(bytes)) {
+            return (Random) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new IllegalStateException("Unable to restore random state", e);
         }
     }
 

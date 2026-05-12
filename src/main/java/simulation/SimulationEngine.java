@@ -6,6 +6,7 @@ import constants.SimConstants;
 import entity.*;
 import entity.Rooms.OffCampus;
 import entity.Rooms.Room;
+import save.SimulationRuntimeSnapshot;
 import utility.GameLogger;
 import utility.AcademicProgressService;
 import utility.PStatistics;
@@ -1596,6 +1597,28 @@ public class SimulationEngine {
 
     public BellScheduleManager getBellSchedule() {
         return bellSchedule;
+    }
+
+    public SimulationRuntimeSnapshot createRuntimeSnapshot() {
+        return new SimulationRuntimeSnapshot(isPaused, ticksPerUpdate,
+                minutesPerTick, currentTick, currentTransitionIndex,
+                lastProcessedMonth, lastHomeworkAssignmentDay, wasLunchA,
+                wasLunchB);
+    }
+
+    public void restoreRuntimeSnapshot(SimulationRuntimeSnapshot snapshot) {
+        if (snapshot == null) {
+            return;
+        }
+        this.isPaused = snapshot.isPaused();
+        this.ticksPerUpdate = snapshot.getTicksPerUpdate();
+        this.minutesPerTick = snapshot.getMinutesPerTick();
+        this.currentTick = snapshot.getCurrentTick();
+        this.currentTransitionIndex = snapshot.getCurrentTransitionIndex();
+        this.lastProcessedMonth = snapshot.getLastProcessedMonth();
+        this.lastHomeworkAssignmentDay = snapshot.getLastHomeworkAssignmentDay();
+        this.wasLunchA = snapshot.wasLunchA();
+        this.wasLunchB = snapshot.wasLunchB();
     }
 
     // Listener management
