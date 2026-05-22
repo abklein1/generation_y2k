@@ -708,6 +708,23 @@ public final class SimConstants {
     public static final int CLIQUE_HAIR_HIGHLIGHT_CHANCE = 25;
     public static final int CLIQUE_HAIR_HIGHLIGHT_ONLY_CHANCE = 35;
 
+    // Chance that one appearance modifier draws from the student's
+    // secondary clique instead of their main clique when data exists.
+    public static final double CLIQUE_SECONDARY_APPEARANCE_CHANCE = 0.15;
+
+    // Clique clothing probabilities (all values out of 100)
+    // Optional layers beyond the recipe's required set are rolled per
+    // layer. Outerwear/jacket optional layers add a coat or hoodie on
+    // top of the base outfit; accessories add hats, belts, jewelry,
+    // etc. and are gated more generously because most cliques wear
+    // some kind of accessory by default.
+    public static final int CLIQUE_CLOTHING_OPTIONAL_LAYER_CHANCE = 35;
+    public static final int CLIQUE_CLOTHING_OPTIONAL_ACCESSORY_CHANCE = 65;
+    // Pattern qualifier (plaid, striped, etc.) chance per garment when
+    // the clique defines a pattern palette. Plain solids are the more
+    // common default so this stays moderate.
+    public static final int CLIQUE_CLOTHING_PATTERN_CHANCE = 30;
+
     // Adult/Teacher Vision Constants
     // Older adults have higher rates of vision issues, especially hyperopia and astigmatism
     // Adults are much more likely to have corrective lenses if needed
@@ -924,6 +941,23 @@ public final class SimConstants {
             "%s is exhausted and barely functional.";
     public static final String NEED_FELL_ASLEEP_MESSAGE =
             "%s has run out of steam and fallen asleep.";
+
+    // RADIO STATIONS
+    // FM radio stations are procedurally generated per game using the
+    // Billboard Hot 100 dataset for song selection. Frequencies follow
+    // the U.S. FCC odd-tenths grid (88.1, 88.3, ..., 107.9).
+    public static final int RADIO_MIN_STATIONS = 3;
+    public static final int RADIO_MAX_STATIONS = 5;
+    public static final double RADIO_FREQ_MIN = 88.1;
+    public static final double RADIO_FREQ_MAX = 107.9;
+    public static final double RADIO_FREQ_STEP = 0.2;
+    // Sim-minutes between automatic song changes per station.
+    public static final int RADIO_SONG_MINUTES = 4;
+    // Top-N focus window used by TOP_40 selection weighting.
+    public static final int RADIO_TOPN_WEIGHTED = 40;
+    // Commute station-pick weights: car riders strongly avoid oldies stations.
+    public static final int RADIO_COMMUTE_STATION_WEIGHT = 10;
+    public static final int RADIO_COMMUTE_OLDIES_WEIGHT_CAR = 1;
 
     private SimConstants() {
     }

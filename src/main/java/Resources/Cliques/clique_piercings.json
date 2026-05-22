@@ -12,7 +12,8 @@
                     "small hoop",
                     "dangling star",
                     "dangling bat",
-                    "dangling razor blade"
+                    "dangling razor blade",
+                    "faux gauge"
                 ],
                 "right ear": [
                     "spiky studs",
@@ -24,7 +25,8 @@
                     "small hoop",
                     "dangling star",
                     "dangling bat",
-                    "dangling razor blade"
+                    "dangling razor blade",
+                    "faux gauge"
                 ],
                 "lips": [
                     "snakebites",
@@ -38,7 +40,9 @@
                 "navel": [
                     "stud",
                     "dangling star",
-                    "dangling skull"
+                    "dangling skull",
+                    "inverse stud",
+                    "floating stud"
                 ],
                 "eyebrow": [
                     "small hoop",
@@ -66,14 +70,16 @@
                     "12mm gauge",
                     "14mm gauge",
                     "industrial stud",
-                    "stud"
+                    "stud",
+                    "faux gauge"
                 ],
                 "right ear": [
                     "00g gauge",
                     "12mm gauge",
                     "14mm gauge",
                     "industrial stud",
-                    "stud"
+                    "stud",
+                    "faux gauge"
                 ],
                 "lips": [
                     "snakebites",
@@ -113,6 +119,9 @@
                 "left ear": [
                     "horseshoe",
                     "industrial stud",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
                     "small hoop",
                     "stud",
                     "safety pin",
@@ -121,6 +130,9 @@
                 "right ear": [
                     "horseshoe",
                     "industrial stud",
+                    "00g gauge",
+                    "12mm gauge",
+                    "14mm gauge",
                     "small hoop",
                     "stud",
                     "safety pin",
@@ -134,7 +146,9 @@
                     "septum"
                 ],
                 "navel": [
-                    "stud"
+                    "stud",
+                    "floating stud",
+                    "inverse stud"
                 ],
                 "eyebrow": [
                     "small hoop",
@@ -163,7 +177,8 @@
                     "industrial stud",
                     "stud",
                     "safety pin",
-                    "spike"
+                    "spike",
+                    "faux gauge"
                 ],
                 "right ear": [
                     "horseshoe",
@@ -173,7 +188,8 @@
                     "industrial stud",
                     "stud",
                     "safety pin",
-                    "spike"
+                    "spike",
+                    "faux gauge"
                 ],
                 "lips": [
                     "snakebites"
@@ -224,7 +240,9 @@
                     "septum"
                 ],
                 "navel": [
-                    "stud"
+                    "stud",
+                    "floating stud",
+                    "inverse stud"
                 ],
                 "eyebrow": [
                     "small hoop",
@@ -302,7 +320,9 @@
                     "horseshoe",
                     "dangling dragon",
                     "dangling knife",
-                    "dangling jack skelly"
+                    "dangling jack skelly",
+                    "dangling heart",
+                    "dangling bat"
                 ],
                 "right ear": [
                     "small hoop",
@@ -313,7 +333,9 @@
                     "horseshoe",
                     "dangling dragon",
                     "dangling knife",
-                    "dangling jack skelly"
+                    "dangling jack skelly",
+                    "dangling heart",
+                    "dangling bat"
                 ],
                 "lips": [
                     "small hoop",
@@ -325,7 +347,9 @@
                 "navel": [
                     "stud",
                     "dangling cross",
-                    "pendant"
+                    "pendant",
+                    "floating stud",
+                    "inverse stud"
                 ],
                 "eyebrow": [
                     "small hoop",
@@ -350,11 +374,13 @@
             "male": {
                 "left ear": [
                     "small hoop",
-                    "stud"
+                    "stud",
+                    "spike"
                 ],
                 "right ear": [
                     "small hoop",
-                    "stud"
+                    "stud",
+                    "spike"
                 ],
                 "lips": [
                     "small hoop",
@@ -492,19 +518,44 @@
             "female": {
                 "left ear": [
                     "small hoop",
-                    "stud"
+                    "medium hoop",
+                    "stud",
+                    "pendant"
                 ],
                 "right ear": [
                     "small hoop",
+                    "medium hoop",
+                    "stud",
+                    "pendant"
+                ],
+                "lips": [
+                    "small hoop",
                     "stud"
                 ],
-                "lips": [],
-                "nose": [],
+                "nose": [
+                    "small hoop",
+                    "stud"
+                ],
                 "navel": [],
-                "eyebrow": [],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
                 "tongue": [],
-                "colors": [],
-                "materials": []
+                "colors": [
+                    "black",
+                    "silver",
+                    "white",
+                    "red",
+                    "blue",
+                    "green"
+                ],
+                "materials": [
+                    "steel",
+                    "surgical steel",
+                    "titanium",
+                    "acrylic"
+                ]
             },
             "male": {
                 "left ear": [
@@ -515,13 +566,34 @@
                     "small hoop",
                     "stud"
                 ],
-                "lips": [],
-                "nose": [],
+                "lips": [
+                    "small hoop",
+                    "stud"
+                ],
+                "nose": [
+                    "small hoop",
+                    "stud"
+                ],
                 "navel": [],
-                "eyebrow": [],
+                "eyebrow": [
+                    "small hoop",
+                    "stud"
+                ],
                 "tongue": [],
-                "colors": [],
-                "materials": []
+                "colors": [
+                    "black",
+                    "silver",
+                    "white",
+                    "red",
+                    "blue",
+                    "green"
+                ],
+                "materials": [
+                    "steel",
+                    "surgical steel",
+                    "titanium",
+                    "acrylic"
+                ]
             }
         },
         "Metal": {
@@ -549,7 +621,9 @@
                     "septum"
                 ],
                 "navel": [
-                    "stud"
+                    "stud",
+                    "floating stud",
+                    "inverse stud"
                 ],
                 "eyebrow": [
                     "small hoop",
@@ -590,11 +664,13 @@
             "female": {
                 "left ear": [
                     "small hoop",
-                    "stud"
+                    "stud",
+                    "pendant"
                 ],
                 "right ear": [
                     "small hoop",
-                    "stud"
+                    "stud",
+                    "pendant"
                 ],
                 "lips": [],
                 "nose": [],
@@ -1368,7 +1444,8 @@
                     "industrial stud",
                     "stud",
                     "safety pin",
-                    "spike"
+                    "spike",
+                    "faux gauge"
                 ],
                 "right ear": [
                     "horseshoe",
@@ -1378,7 +1455,8 @@
                     "industrial stud",
                     "stud",
                     "safety pin",
-                    "spike"
+                    "spike",
+                    "faux gauge"
                 ],
                 "lips": [
                     "small hoop",

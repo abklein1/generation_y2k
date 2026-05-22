@@ -1,0 +1,62 @@
+{
+    "2004": {
+        "shirt_and_pants": {
+            "description": "Standard top-and-bottom combo: shirt, pants/jeans/shorts, and shoes.",
+            "required": ["tops", "bottoms", "shoes"],
+            "optional": ["outerwear", "accessories"],
+            "maxLayers": {
+                "outerwear": 1,
+                "tops": 1,
+                "bottoms": 1,
+                "shoes": 1,
+                "accessories": 3
+            }
+        },
+        "layered_top": {
+            "description": "Two stacked tops (e.g. shirt under a flannel or hoodie) with pants and shoes.",
+            "required": ["tops", "bottoms", "shoes"],
+            "optional": ["outerwear", "accessories"],
+            "maxLayers": {
+                "outerwear": 1,
+                "tops": 2,
+                "bottoms": 1,
+                "shoes": 1,
+                "accessories": 3
+            }
+        },
+        "jacket_outfit": {
+            "description": "Shirt and pants with an outer jacket layer.",
+            "required": ["tops", "bottoms", "shoes", "outerwear"],
+            "optional": ["accessories"],
+            "maxLayers": {
+                "outerwear": 1,
+                "tops": 1,
+                "bottoms": 1,
+                "shoes": 1,
+                "accessories": 3
+            }
+        },
+        "dress": {
+            "description": "Single one-piece garment (dress, jumpsuit) with shoes.",
+            "required": ["one_piece", "shoes"],
+            "optional": ["outerwear", "accessories"],
+            "maxLayers": {
+                "outerwear": 1,
+                "one_piece": 1,
+                "shoes": 1,
+                "accessories": 3
+            }
+        },
+        "dress_with_layers": {
+            "description": "One-piece garment with an outer layer (cardigan, jacket) and shoes.",
+            "required": ["one_piece", "shoes", "outerwear"],
+            "optional": ["accessories"],
+            "maxLayers": {
+                "outerwear": 1,
+                "one_piece": 1,
+                "shoes": 1,
+                "accessories": 3
+            }
+        }
+    }
+}

@@ -1,7 +1,9 @@
 package utility;
 
 import config.TownDemographics;
+import entity.Items.ClothingItem;
 import entity.Items.EquipmentSlot;
+import entity.Items.Outfit;
 import entity.Items.Piercing;
 import entity.Items.WearableItem;
 import entity.Student;
@@ -32,6 +34,22 @@ public class StudentPopGenerator {
 
     // School colors for braces band color selection (set before generation)
     private static String[] schoolColors = null;
+
+    static boolean hasSecondaryAppearanceClique(String mainClique,
+                                                String secondaryClique) {
+        return secondaryClique != null && !secondaryClique.equals(mainClique);
+    }
+
+    static String pickSecondaryAppearanceClique(String mainClique,
+                                                String secondaryClique,
+                                                boolean secondaryHasData) {
+        if (hasSecondaryAppearanceClique(mainClique, secondaryClique)
+                && secondaryHasData
+                && GameRandom.nextDouble() < CLIQUE_SECONDARY_APPEARANCE_CHANCE) {
+            return secondaryClique;
+        }
+        return mainClique;
+    }
 
     /**
      * Sets the school colors for use in braces band color selection.
@@ -258,21 +276,27 @@ public class StudentPopGenerator {
         String gender = student.studentStatistics.getGender();
         String gradeLevel = student.studentStatistics.getGradeLevel();
         String clique = student.studentStatistics.getMainClique();
+        String secondaryClique = student.studentStatistics.getSecondaryClique();
 
         boolean useCliqueData = clique != null
                 && CliquePiercingLoader.hasPiercingData(clique, gender);
+        boolean useSecondaryCliqueData = hasSecondaryAppearanceClique(
+                clique, secondaryClique)
+                && CliquePiercingLoader.hasPiercingData(secondaryClique, gender);
 
         // --- Ear piercings (use existing rate system) ---
         boolean hasEarPiercing = TraitSelection.determineEarPiercing(gender, gradeLevel);
         student.studentStatistics.setHasEarPiercing(hasEarPiercing);
 
         if (hasEarPiercing) {
-            applyEarPiercings(student, gender, gradeLevel, clique, useCliqueData);
+            applyEarPiercings(student, gender, gradeLevel, clique, secondaryClique,
+                    useCliqueData, useSecondaryCliqueData);
         }
 
         // --- Non-ear piercings (only when clique defines options for the slot) ---
-        if (useCliqueData) {
-            applyNonEarPiercings(student, gender, clique);
+        if (useCliqueData || useSecondaryCliqueData) {
+            applyNonEarPiercings(student, gender, clique, secondaryClique,
+                    useCliqueData, useSecondaryCliqueData);
         }
     }
 
@@ -281,7 +305,9 @@ public class StudentPopGenerator {
      */
     private static void applyEarPiercings(Student student, String gender,
                                           String gradeLevel, String clique,
-                                          boolean useCliqueData) {
+                                          String secondaryClique,
+                                          boolean useCliqueData,
+                                          boolean useSecondaryCliqueData) {
         boolean bothEars = TraitSelection.determineBothEarsPierced(gender);
 
         if (bothEars) {
@@ -290,23 +316,26 @@ public class StudentPopGenerator {
             student.studentStatistics.setEarPiercingLeftCount(leftCount);
             student.studentStatistics.setEarPiercingRightCount(rightCount);
             equipEarPiercings(student, EquipmentSlot.LEFT_EAR, leftCount,
-                    gender, clique, useCliqueData);
+                    gender, clique, secondaryClique, useCliqueData,
+                    useSecondaryCliqueData);
             List<WearableItem> leftPiercings = student.getStudentHead()
                     .getEquippedList(EquipmentSlot.LEFT_EAR);
             // A simple matched pair (one piercing per ear) almost always
             // wears identical earrings on each side; bump the match rate.
             boolean simplePair = (leftCount == 1 && rightCount == 1);
             equipMirroredEarPiercings(student, EquipmentSlot.RIGHT_EAR,
-                    rightCount, leftPiercings, gender, clique, useCliqueData,
-                    simplePair);
+                    rightCount, leftPiercings, gender, clique, secondaryClique,
+                    useCliqueData, useSecondaryCliqueData, simplePair);
         } else {
             boolean leftEar = TraitSelection.determineSingleEarIsLeft();
             int count = TraitSelection.determineEarPiercingCount(gradeLevel);
             student.studentStatistics.setEarPiercingLeftCount(leftEar ? count : 0);
             student.studentStatistics.setEarPiercingRightCount(leftEar ? 0 : count);
             EquipmentSlot slot = leftEar ? EquipmentSlot.LEFT_EAR : EquipmentSlot.RIGHT_EAR;
-            equipEarPiercings(student, slot, count, gender, clique, useCliqueData);
+            equipEarPiercings(student, slot, count, gender, clique, secondaryClique,
+                    useCliqueData, useSecondaryCliqueData);
         }
+        ensureGaugePairs(student);
 
         // Backward compat: mirror first piercing's details into stats fields
         Piercing first = (Piercing) student.getStudentHead().getEquipped(
@@ -338,13 +367,16 @@ public class StudentPopGenerator {
      * at least one option are considered.
      */
     private static void applyNonEarPiercings(Student student, String gender,
-                                             String clique) {
+                                             String clique,
+                                             String secondaryClique,
+                                             boolean useCliqueData,
+                                             boolean useSecondaryCliqueData) {
         boolean isFemale = gender.equalsIgnoreCase("Female");
 
         for (EquipmentSlot slot : NON_EAR_SLOTS) {
-            List<String> types = CliquePiercingLoader.getPiercingTypes(
-                    clique, gender, slot.getDisplayName());
-            if (types.isEmpty()) {
+            String sourceClique = pickPiercingCliqueForSlot(clique, secondaryClique,
+                    gender, slot, useCliqueData, useSecondaryCliqueData);
+            if (sourceClique == null) {
                 continue;
             }
 
@@ -353,7 +385,7 @@ public class StudentPopGenerator {
                 continue;
             }
 
-            Piercing p = createCliquePiercing(clique, gender, slot);
+            Piercing p = createCliquePiercing(sourceClique, gender, slot);
             if (p != null) {
                 student.getStudentHead().equip(p);
             }
@@ -382,11 +414,13 @@ public class StudentPopGenerator {
      */
     private static void equipEarPiercings(Student student, EquipmentSlot slot,
                                           int count, String gender,
-                                          String clique, boolean useCliqueData) {
+                                          String clique,
+                                          String secondaryClique,
+                                          boolean useCliqueData,
+                                          boolean useSecondaryCliqueData) {
         for (int i = 0; i < count; i++) {
-            Piercing p = useCliqueData
-                    ? createCliquePiercing(clique, gender, slot)
-                    : createGenericPiercing(gender, slot);
+            Piercing p = createPiercingWithCliqueInfluence(clique, secondaryClique,
+                    gender, slot, useCliqueData, useSecondaryCliqueData);
             if (p != null) {
                 p.setStatModifier("charisma", PIERCING_EARRING_CHARISMA_BOOST);
                 student.getStudentHead().equip(p);
@@ -415,7 +449,9 @@ public class StudentPopGenerator {
                                                   List<WearableItem> templates,
                                                   String gender,
                                                   String clique,
+                                                  String secondaryClique,
                                                   boolean useCliqueData,
+                                                  boolean useSecondaryCliqueData,
                                                   boolean simplePair) {
         double matchRate = simplePair
                 ? earPairMatchRate(gender)
@@ -432,9 +468,8 @@ public class StudentPopGenerator {
                 if (GameRandom.nextDouble() < PIERCING_GAUGE_MATCH_RATE) {
                     p = mirrorPiercing(source, slot);
                 } else {
-                    p = useCliqueData
-                            ? createCliquePiercing(clique, gender, slot)
-                            : createGenericPiercing(gender, slot);
+                    p = createPiercingWithCliqueInfluence(clique, secondaryClique,
+                            gender, slot, useCliqueData, useSecondaryCliqueData);
                     if (isGaugePiercing(p)) {
                         p = new Piercing(source.getName(), p.getMaterial(),
                                 p.getColor(), slot, source.getSize(),
@@ -445,9 +480,12 @@ public class StudentPopGenerator {
                     && GameRandom.nextDouble() < matchRate) {
                 p = mirrorPiercing(source, slot);
             } else {
-                p = useCliqueData
-                        ? createCliquePiercing(clique, gender, slot)
-                        : createGenericPiercing(gender, slot);
+                p = createPiercingWithCliqueInfluence(clique, secondaryClique,
+                        gender, slot, useCliqueData, useSecondaryCliqueData);
+                if (isGaugePiercing(p) && source != null
+                        && GameRandom.nextDouble() < PIERCING_GAUGE_MATCH_RATE) {
+                    p = mirrorPiercing(source, slot);
+                }
             }
 
             if (p != null) {
@@ -478,6 +516,69 @@ public class StudentPopGenerator {
                 source.getColor(), slot, source.getSize(), source.getJewel());
     }
 
+    static void ensureGaugePairs(Student student) {
+        List<WearableItem> left = student.getStudentHead()
+                .getEquippedList(EquipmentSlot.LEFT_EAR);
+        List<WearableItem> right = student.getStudentHead()
+                .getEquippedList(EquipmentSlot.RIGHT_EAR);
+
+        List<WearableItem> newLeft = new ArrayList<>(left);
+        List<WearableItem> newRight = new ArrayList<>(right);
+        int max = Math.max(newLeft.size(), newRight.size());
+
+        for (int i = 0; i < max; i++) {
+            Piercing leftPiercing = getPiercingAt(newLeft, i);
+            Piercing rightPiercing = getPiercingAt(newRight, i);
+            boolean leftGauge = isGaugePiercing(leftPiercing);
+            boolean rightGauge = isGaugePiercing(rightPiercing);
+            if (leftGauge == rightGauge || GameRandom.nextDouble() >= PIERCING_GAUGE_MATCH_RATE) {
+                continue;
+            }
+            if (leftGauge) {
+                putMirroredGauge(newRight, i, leftPiercing, EquipmentSlot.RIGHT_EAR);
+            } else {
+                putMirroredGauge(newLeft, i, rightPiercing, EquipmentSlot.LEFT_EAR);
+            }
+        }
+
+        replaceEarPiercings(student, EquipmentSlot.LEFT_EAR, newLeft);
+        replaceEarPiercings(student, EquipmentSlot.RIGHT_EAR, newRight);
+        student.studentStatistics.setEarPiercingLeftCount(newLeft.size());
+        student.studentStatistics.setEarPiercingRightCount(newRight.size());
+    }
+
+    private static Piercing getPiercingAt(List<WearableItem> items, int index) {
+        if (index < 0 || index >= items.size()) {
+            return null;
+        }
+        return items.get(index) instanceof Piercing piercing ? piercing : null;
+    }
+
+    private static void putMirroredGauge(List<WearableItem> items, int index,
+                                         Piercing source, EquipmentSlot slot) {
+        Piercing mirrored = mirrorPiercing(source, slot);
+        mirrored.setStatModifier("charisma", PIERCING_EARRING_CHARISMA_BOOST);
+        if (index < items.size() && isGaugePiercing(getPiercingAt(items, index))) {
+            items.set(index, mirrored);
+        } else if (items.size() < 3) {
+            items.add(Math.min(index, items.size()), mirrored);
+        } else if (index < items.size()) {
+            // Ear slots are capped at three piercings; replacing is the only
+            // way to avoid leaving an unpaired gauge when the slot is full.
+            items.set(index, mirrored);
+        } else {
+            items.add(mirrored);
+        }
+    }
+
+    private static void replaceEarPiercings(Student student, EquipmentSlot slot,
+                                            List<WearableItem> items) {
+        student.getStudentHead().unequipAll(slot);
+        for (WearableItem item : items) {
+            student.getStudentHead().equip(item);
+        }
+    }
+
     /**
      * Returns true if the given piercing is any flavor of gauge. Generic
      * gauges use the type name "gauges" (with a separate size descriptor),
@@ -489,6 +590,42 @@ public class StudentPopGenerator {
             return false;
         }
         return piercing.getName().toLowerCase().contains("gauge");
+    }
+
+    private static Piercing createPiercingWithCliqueInfluence(String clique,
+                                                             String secondaryClique,
+                                                             String gender,
+                                                             EquipmentSlot slot,
+                                                             boolean useCliqueData,
+                                                             boolean useSecondaryCliqueData) {
+        String sourceClique = pickPiercingCliqueForSlot(clique, secondaryClique,
+                gender, slot, useCliqueData, useSecondaryCliqueData);
+        return sourceClique == null
+                ? createGenericPiercing(gender, slot)
+                : createCliquePiercing(sourceClique, gender, slot);
+    }
+
+    private static String pickPiercingCliqueForSlot(String clique,
+                                                   String secondaryClique,
+                                                   String gender,
+                                                   EquipmentSlot slot,
+                                                   boolean useCliqueData,
+                                                   boolean useSecondaryCliqueData) {
+        boolean secondaryHasSlot = useSecondaryCliqueData
+                && !CliquePiercingLoader.getPiercingTypes(
+                        secondaryClique, gender, slot.getDisplayName()).isEmpty();
+        String selected = pickSecondaryAppearanceClique(clique, secondaryClique,
+                secondaryHasSlot);
+        if (secondaryClique != null && secondaryClique.equals(selected)) {
+            return secondaryClique;
+        }
+        if (!useCliqueData) {
+            return null;
+        }
+        return CliquePiercingLoader.getPiercingTypes(
+                clique, gender, slot.getDisplayName()).isEmpty()
+                ? null
+                : clique;
     }
 
     /**
@@ -564,6 +701,7 @@ public class StudentPopGenerator {
      */
     public static void applyHaircutAttributes(Student student) {
         String clique = student.studentStatistics.getMainClique();
+        String secondaryClique = student.studentStatistics.getSecondaryClique();
         String gender = student.studentStatistics.getGender();
         String race = student.studentStatistics.getRace();
         String hairLength = student.studentStatistics.getHairLength();
@@ -576,14 +714,22 @@ public class StudentPopGenerator {
             return;
         }
 
-        List<String> styles = CliqueHaircutLoader.getStyles(clique, gender, race, hairLength);
+        String styleClique = pickHairStyleClique(clique, secondaryClique, gender,
+                race, hairLength);
+        List<String> styles = CliqueHaircutLoader.getStyles(
+                styleClique, gender, race, hairLength);
         if (!styles.isEmpty()) {
             student.studentStatistics.setHairStyle(
                     styles.get(setRandom(0, styles.size() - 1)));
         }
 
-        List<String> dyes = CliqueHaircutLoader.getDyes(clique, gender, race);
-        List<String> highlights = CliqueHaircutLoader.getHighlights(clique, gender, race);
+        String dyeClique = pickHairPaletteClique(clique, secondaryClique, gender,
+                race, true);
+        String highlightClique = pickHairPaletteClique(clique, secondaryClique,
+                gender, race, false);
+        List<String> dyes = CliqueHaircutLoader.getDyes(dyeClique, gender, race);
+        List<String> highlights = CliqueHaircutLoader.getHighlights(
+                highlightClique, gender, race);
 
         boolean highlightOnly = !highlights.isEmpty()
                 && setRandom(0, 99) < CLIQUE_HAIR_HIGHLIGHT_ONLY_CHANCE;
@@ -611,6 +757,34 @@ public class StudentPopGenerator {
                 student.studentStatistics.setHairHighlights(chosenHighlight);
             }
         }
+    }
+
+    private static String pickHairStyleClique(String clique,
+                                              String secondaryClique,
+                                              String gender,
+                                              String race,
+                                              String hairLength) {
+        boolean secondaryHasStyles = hasSecondaryAppearanceClique(
+                clique, secondaryClique)
+                && !CliqueHaircutLoader.getStyles(
+                        secondaryClique, gender, race, hairLength).isEmpty();
+        return pickSecondaryAppearanceClique(clique, secondaryClique,
+                secondaryHasStyles);
+    }
+
+    private static String pickHairPaletteClique(String clique,
+                                                String secondaryClique,
+                                                String gender,
+                                                String race,
+                                                boolean dyes) {
+        boolean secondaryHasPalette = hasSecondaryAppearanceClique(
+                clique, secondaryClique)
+                && !(dyes
+                        ? CliqueHaircutLoader.getDyes(secondaryClique, gender, race)
+                        : CliqueHaircutLoader.getHighlights(
+                                secondaryClique, gender, race)).isEmpty();
+        return pickSecondaryAppearanceClique(clique, secondaryClique,
+                secondaryHasPalette);
     }
 
     /**
@@ -649,6 +823,183 @@ public class StudentPopGenerator {
             HashMap<Integer, Student> studentHashMap) {
         for (Student student : studentHashMap.values()) {
             applyHaircutAttributes(student);
+        }
+    }
+
+    /**
+     * Body slot hints used when materializing clothing items. The keys
+     * match the inventory categories used in {@code clique_clothing.json}
+     * (and the layer keys in {@code outfit_types.json}) so a category
+     * lookup yields a plausible body region without forcing a coupling
+     * to {@link EquipmentSlot}.
+     */
+    private static String bodySlotFor(String layer) {
+        return switch (layer) {
+            case "outerwear", "tops" -> "upper torso";
+            case "bottoms" -> "lower torso";
+            case "one_piece" -> "full body";
+            case "shoes" -> "feet";
+            case "accessories" -> "accessory";
+            default -> layer;
+        };
+    }
+
+    /**
+     * Applies clique-driven clothing to a single student based on their
+     * clique and gender. Picks a random outfit recipe from
+     * {@code outfit_types.json} and fills required (and probabilistically
+     * optional) layers from the clique's inventory in
+     * {@code clique_clothing.json}.
+     *
+     * <p>If the clique has no populated clothing data for the student's
+     * gender, or if no outfit recipes are loaded, the student is left
+     * with the default empty outfit. There is no generic fallback
+     * wardrobe in this first pass.</p>
+     */
+    public static void applyClothingAttributes(Student student) {
+        if (student == null || student.studentStatistics == null) {
+            return;
+        }
+        String clique = student.studentStatistics.getMainClique();
+        String secondaryClique = student.studentStatistics.getSecondaryClique();
+        String gender = student.studentStatistics.getGender();
+        if (clique == null || gender == null) {
+            return;
+        }
+        if (!CliqueClothingLoader.hasClothingData(clique, gender)) {
+            return;
+        }
+        if (!OutfitTypeLoader.hasOutfitTypes()) {
+            return;
+        }
+
+        OutfitTypeLoader.OutfitTypeData recipe = pickOutfitRecipe(clique, gender);
+        if (recipe == null) {
+            return;
+        }
+
+        Outfit outfit = new Outfit(recipe.getName());
+
+        for (String layer : recipe.getRequiredLayers()) {
+            addItemsForLayer(outfit, layer, recipe,
+                    pickClothingLayerClique(clique, secondaryClique, gender, layer),
+                    gender);
+        }
+
+        for (String layer : recipe.getOptionalLayers()) {
+            // Optional layers roll independently per layer. Accessories
+            // are gated more permissively so a clique's accessory
+            // palette has a real chance to show up.
+            int chance = "accessories".equals(layer)
+                    ? CLIQUE_CLOTHING_OPTIONAL_ACCESSORY_CHANCE
+                    : CLIQUE_CLOTHING_OPTIONAL_LAYER_CHANCE;
+            if (setRandom(0, 99) < chance) {
+                addItemsForLayer(outfit, layer, recipe,
+                        pickClothingLayerClique(clique, secondaryClique, gender, layer),
+                        gender);
+            }
+        }
+
+        student.studentStatistics.setCurrentOutfit(outfit);
+    }
+
+    private static String pickClothingLayerClique(String clique,
+                                                  String secondaryClique,
+                                                  String gender,
+                                                  String layer) {
+        boolean secondaryHasLayer = hasSecondaryAppearanceClique(
+                clique, secondaryClique)
+                && !CliqueClothingLoader.getItems(
+                        secondaryClique, gender, layer).isEmpty();
+        return pickSecondaryAppearanceClique(clique, secondaryClique,
+                secondaryHasLayer);
+    }
+
+    /**
+     * Picks an outfit recipe whose required layers can be fully
+     * satisfied by the clique/gender inventory. Recipes that demand
+     * layers the clique doesn't yet stock (e.g. a {@code dress} recipe
+     * for a clique with no {@code one_piece} entries) are skipped so
+     * generation never produces an outfit with missing required slots.
+     *
+     * @return a usable recipe, or {@code null} when none match
+     */
+    private static OutfitTypeLoader.OutfitTypeData pickOutfitRecipe(
+            String clique, String gender) {
+        List<OutfitTypeLoader.OutfitTypeData> all =
+                OutfitTypeLoader.getAllOutfitTypes();
+        List<OutfitTypeLoader.OutfitTypeData> viable = new ArrayList<>();
+        for (OutfitTypeLoader.OutfitTypeData recipe : all) {
+            boolean ok = true;
+            for (String layer : recipe.getRequiredLayers()) {
+                if (CliqueClothingLoader.getItems(clique, gender, layer).isEmpty()) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                viable.add(recipe);
+            }
+        }
+        if (viable.isEmpty()) {
+            return null;
+        }
+        return viable.get(setRandom(0, viable.size() - 1));
+    }
+
+    /**
+     * Materializes up to {@code maxLayers} clothing items for the given
+     * layer and appends them to {@code outfit}. Each item draws a name
+     * from the clique's category list and optional color/pattern/
+     * material qualifiers from the clique's shared palettes.
+     */
+    private static void addItemsForLayer(Outfit outfit, String layer,
+                                         OutfitTypeLoader.OutfitTypeData recipe,
+                                         String clique, String gender) {
+        List<String> names = CliqueClothingLoader.getItems(clique, gender, layer);
+        if (names.isEmpty()) {
+            return;
+        }
+        int max = Math.max(1, recipe.getMaxForLayer(layer));
+        int count = "accessories".equals(layer)
+                ? setRandom(1, max)
+                : 1;
+
+        List<String> colors = CliqueClothingLoader.getColors(clique, gender);
+        List<String> patterns = CliqueClothingLoader.getPatterns(clique, gender);
+        List<String> materials = CliqueClothingLoader.getMaterials(clique, gender);
+
+        String slot = bodySlotFor(layer);
+
+        for (int i = 0; i < count; i++) {
+            String name = names.get(setRandom(0, names.size() - 1));
+            String color = colors.isEmpty()
+                    ? null
+                    : colors.get(setRandom(0, colors.size() - 1));
+            String pattern = (patterns.isEmpty()
+                    || setRandom(0, 99) >= CLIQUE_CLOTHING_PATTERN_CHANCE)
+                    ? null
+                    : patterns.get(setRandom(0, patterns.size() - 1));
+            String material = materials.isEmpty()
+                    ? null
+                    : materials.get(setRandom(0, materials.size() - 1));
+
+            outfit.addItem(new ClothingItem(name, layer, layer, slot,
+                    material, color, pattern));
+        }
+    }
+
+    /**
+     * Applies clothing to all students. Intended to be called after
+     * clique assignment so each student can draw from their clique's
+     * inventory.
+     *
+     * @param studentHashMap the student population
+     */
+    public static void applyAllClothingAttributes(
+            HashMap<Integer, Student> studentHashMap) {
+        for (Student student : studentHashMap.values()) {
+            applyClothingAttributes(student);
         }
     }
 

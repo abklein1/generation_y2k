@@ -1,6 +1,7 @@
 package utility;
 
 import entity.AllostaticLoad;
+import entity.Items.Outfit;
 import entity.TeacherBlock;
 import entity.TeacherSchedule;
 
@@ -59,6 +60,9 @@ public class TeacherStatistics implements PStatistics {
     private boolean hasGlasses;
     private boolean hasContacts;
 
+    // Current outfit (clothing items organized by layer)
+    private Outfit currentOutfit;
+
     public TeacherStatistics() {
         this.height = 0;
         this.eyeColor = null;
@@ -101,6 +105,7 @@ public class TeacherStatistics implements PStatistics {
         this.hasAstigmatism = false;
         this.hasGlasses = false;
         this.hasContacts = false;
+        this.currentOutfit = new Outfit();
     }
 
     @Override
@@ -789,5 +794,32 @@ public class TeacherStatistics implements PStatistics {
         this.curiosity = this.maxCuriosity;
         this.responsibility = this.maxResponsibility;
         this.openmindedness = this.maxOpenmindedness;
+    }
+
+    // ---- Outfit ----
+
+    /**
+     * {@inheritDoc}
+     * Returns the teacher's current outfit. Never {@code null}; an empty
+     * {@link Outfit} is used as the default placeholder until a staff
+     * wardrobe source is wired in.
+     */
+    @Override
+    public Outfit getCurrentOutfit() {
+        if (currentOutfit == null) {
+            currentOutfit = new Outfit();
+        }
+        return currentOutfit;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Stores the given outfit on the teacher. A {@code null} argument is
+     * coerced to an empty {@link Outfit} so callers can rely on
+     * {@link #getCurrentOutfit()} never returning {@code null}.
+     */
+    @Override
+    public void setCurrentOutfit(Outfit outfit) {
+        this.currentOutfit = outfit == null ? new Outfit() : outfit;
     }
 }

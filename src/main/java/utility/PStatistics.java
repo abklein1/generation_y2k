@@ -1,6 +1,7 @@
 package utility;
 
 import entity.AllostaticLoad;
+import entity.Items.Outfit;
 
 import java.io.Serializable;
 
@@ -129,4 +130,24 @@ public interface PStatistics extends Serializable {
      * Called when a person sleeps at the end of the day.
      */
     void replenishAllSecondaryStats();
+
+    // --- Clothing / Outfit ---
+    // Every person carries a current outfit composed of clothing items
+    // across one or more layers (e.g. outerwear over a top over a base).
+    // Implementations may start with an empty outfit and have one
+    // assigned later by clique-aware generation.
+
+    /**
+     * Returns the current outfit. Implementations should never return
+     * {@code null}; an empty {@link Outfit} should be used as the
+     * default placeholder before generation runs.
+     */
+    Outfit getCurrentOutfit();
+
+    /**
+     * Sets the current outfit. A {@code null} value should be coerced
+     * to an empty {@link Outfit} by the implementation rather than
+     * being stored as {@code null}.
+     */
+    void setCurrentOutfit(Outfit outfit);
 }

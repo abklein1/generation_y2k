@@ -36,7 +36,8 @@ class SaveGameServiceTest {
                 new Time(), null, new StandardSchool(),
                 new HashMap<Integer, Student>(), new HashMap<Integer, Staff>(),
                 null, new SocialLinkSnapshot(),
-                new SimulationRuntimeSnapshot(true, 2, 1, 10, 1, 8, 3, false, true));
+                new SimulationRuntimeSnapshot(true, 2, 1, 10, 1, 8, 3, false, true),
+                null);
 
         Path savePath = tempDir.resolve("round-trip.dat");
         SaveGameService.save(data, savePath);
@@ -89,7 +90,8 @@ class SaveGameServiceTest {
         SimulationRuntimeSnapshot runtime = new SimulationRuntimeSnapshot(
                 true, 4, 1, 123, 2, 9, 44, true, false);
         SaveGameData data = new SaveGameData(13579L, randomState, time, null,
-                new StandardSchool(), students, staff, null, socialLinks, runtime);
+                new StandardSchool(), students, staff, null, socialLinks, runtime,
+                null);
 
         Path savePath = tempDir.resolve("checkpoint-state.dat");
         SaveGameService.save(data, savePath);
@@ -125,7 +127,8 @@ class SaveGameServiceTest {
                 new Time(), null, new StandardSchool(),
                 new HashMap<Integer, Student>(), new HashMap<Integer, Staff>(),
                 null, new SocialLinkSnapshot(),
-                new SimulationRuntimeSnapshot(true, 2, 1, 0, 0, 8, -1, false, false));
+                new SimulationRuntimeSnapshot(true, 2, 1, 0, 0, 8, -1, false, false),
+                null);
         Path savePath = tempDir.resolve("unsupported-format.dat");
         SaveGameService.save(data, savePath);
 

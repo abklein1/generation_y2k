@@ -44,7 +44,9 @@
         "casing":  [
             "The case is starting to become discolored.",
             "The case has a few light scratches.",
-            "Certain parts of the case have been noticeably replaced."
+            "Certain parts of the case have been noticeably replaced.",
+            "The case has a large scratch.",
+            "Part of the case is covered in something sticky."
         ],
         "overall": [
             "The keys are starting to show wear.",

@@ -1,5 +1,6 @@
 package save;
 
+import entity.Radio.Radio;
 import entity.Staff;
 import entity.StandardSchool;
 import entity.Student;
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class SaveGameData implements Serializable {
-    private static final long serialVersionUID = 1L;
-    public static final int FORMAT_VERSION = 1;
+    private static final long serialVersionUID = 2L;
+    public static final int FORMAT_VERSION = 2;
 
     private final int formatVersion;
     private final LocalDateTime savedAt;
@@ -28,12 +29,13 @@ public class SaveGameData implements Serializable {
     private final RoomConnector roomConnector;
     private final SocialLinkSnapshot socialLinks;
     private final SimulationRuntimeSnapshot runtime;
+    private final Radio radio;
 
     public SaveGameData(long worldSeed, GameRandom.RandomState randomState,
             Time time, Town town, StandardSchool standardSchool,
             HashMap<Integer, Student> students, HashMap<Integer, Staff> staff,
             RoomConnector roomConnector, SocialLinkSnapshot socialLinks,
-            SimulationRuntimeSnapshot runtime) {
+            SimulationRuntimeSnapshot runtime, Radio radio) {
         this.formatVersion = FORMAT_VERSION;
         this.savedAt = LocalDateTime.now();
         this.worldSeed = worldSeed;
@@ -46,6 +48,7 @@ public class SaveGameData implements Serializable {
         this.roomConnector = roomConnector;
         this.socialLinks = socialLinks;
         this.runtime = runtime;
+        this.radio = radio;
     }
 
     public int getFormatVersion() {
@@ -94,5 +97,13 @@ public class SaveGameData implements Serializable {
 
     public SimulationRuntimeSnapshot getRuntime() {
         return runtime;
+    }
+
+    /**
+     * @return the radio broadcast roster, or {@code null} for save files
+     *         created before format version 2.
+     */
+    public Radio getRadio() {
+        return radio;
     }
 }

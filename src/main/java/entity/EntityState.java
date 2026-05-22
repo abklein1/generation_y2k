@@ -73,6 +73,8 @@ public class EntityState implements Serializable {
     private boolean inTransit;               // Currently commuting to school
     private boolean arrivedAtSchool;         // Has arrived on campus today
     private transient List<Student> transitGroup; // Co-travelers for social interaction
+    // FM frequency the student is tuned to during a bus/car commute; unset when < 0.
+    private double commuteRadioFrequencyMhz = -1.0;
 
     // Day phase tracking (extensibility for after-school / weekend)
     private DayPhase currentPhase;
@@ -118,6 +120,7 @@ public class EntityState implements Serializable {
         this.inTransit = false;
         this.arrivedAtSchool = false;
         this.transitGroup = null;
+        this.commuteRadioFrequencyMhz = -1.0;
         this.currentPhase = DayPhase.PRE_SCHOOL;
     }
     
@@ -363,6 +366,25 @@ public class EntityState implements Serializable {
 
     public void setTransitGroup(List<Student> transitGroup) {
         this.transitGroup = transitGroup;
+    }
+
+    /**
+     * @return true if the student is tuned to an FM station during commute.
+     */
+    public boolean hasCommuteRadio() {
+        return commuteRadioFrequencyMhz >= 0.0;
+    }
+
+    public double getCommuteRadioFrequencyMhz() {
+        return commuteRadioFrequencyMhz;
+    }
+
+    public void setCommuteRadioFrequencyMhz(double frequencyMhz) {
+        this.commuteRadioFrequencyMhz = frequencyMhz;
+    }
+
+    public void clearCommuteRadio() {
+        this.commuteRadioFrequencyMhz = -1.0;
     }
 
     // Day phase
@@ -676,6 +698,7 @@ public class EntityState implements Serializable {
         this.transitTicksRemaining = 0;
         this.inTransit = false;
         this.arrivedAtSchool = false;
+        this.commuteRadioFrequencyMhz = -1.0;
         this.currentPhase = DayPhase.PRE_SCHOOL;
         resetNeeds();
     }

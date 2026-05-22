@@ -1,9 +1,14 @@
 package utility;
 
 import entity.Body.StudentHead;
+import entity.Items.ClothingItem;
 import entity.Items.Decoration;
 import entity.Items.EquipmentSlot;
+import entity.Items.Outfit;
 import entity.Items.WearableItem;
+import entity.Radio.Radio;
+import entity.Radio.RadioStation;
+import entity.Radio.Song;
 import entity.Rooms.Classroom;
 import entity.*;
 import entity.Rooms.Room;
@@ -155,6 +160,11 @@ public class Inspector {
         if (piercingDesc != null) {
             sb.append(" ").append(piercingDesc);
         }
+        String outfitDesc = buildOutfitDescription(
+                student.studentStatistics.getCurrentOutfit());
+        if (outfitDesc != null) {
+            sb.append(" ").append(outfitDesc);
+        }
         sb.append("\n");
 
         sb.append(firstName).append(" is a ").append(grade).append(".\n");
@@ -230,6 +240,60 @@ public class Inspector {
 
         return sb.length() > 0 ? sb.toString() : null;
     }
+
+    /**
+     * Builds a natural-language description of the outfit a person is
+     * currently wearing. Items are listed bottom-to-top
+     * (one_piece, tops, bottoms, outerwear, shoes, accessories) so the
+     * prose reads in a stable, intuitive order regardless of the order
+     * generation added them.
+     *
+     * @param outfit the outfit to describe; may be {@code null}
+     * @return description sentence (e.g. {@code "They are wearing a
+     *         black band t-shirt, denim jeans, and white sneakers."}),
+     *         or {@code null} when there is nothing to describe
+     */
+    private static String buildOutfitDescription(Outfit outfit) {
+        if (outfit == null || outfit.isEmpty()) {
+            return null;
+        }
+
+        List<ClothingItem> ordered = new java.util.ArrayList<>();
+        for (String layer : OUTFIT_LAYER_ORDER) {
+            ordered.addAll(outfit.getItemsByLayer(layer));
+        }
+        // Append any items in layers we don't know about, preserving
+        // insertion order so unexpected layers still appear in prose.
+        for (ClothingItem item : outfit.getItems()) {
+            if (!ordered.contains(item)) {
+                ordered.add(item);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder("They are wearing ");
+        for (int i = 0; i < ordered.size(); i++) {
+            String name = ordered.get(i).getDisplayName();
+            if (i == 0) {
+                sb.append(article(name).toLowerCase()).append(' ').append(name);
+            } else if (i == ordered.size() - 1) {
+                sb.append(ordered.size() > 2 ? ", and " : " and ").append(name);
+            } else {
+                sb.append(", ").append(name);
+            }
+        }
+        sb.append('.');
+        return sb.toString();
+    }
+
+    /**
+     * Canonical layer order used when serializing outfit prose. Mirrors
+     * the layer keys used in {@code outfit_types.json} and
+     * {@code clique_clothing.json}.
+     */
+    private static final String[] OUTFIT_LAYER_ORDER = {
+            "one_piece", "tops", "bottoms", "outerwear",
+            "shoes", "accessories"
+    };
 
     private static void appendEarDescription(StringBuilder sb,
                                              List<WearableItem> left,
@@ -323,7 +387,7 @@ public class Inspector {
                 sb.append(count).append(" ")
                         .append(pluralizeDisplayName(name));
             } else {
-                sb.append("a ").append(name);
+                sb.append("a ").append(singularizeDisplayName(name));
             }
             idx++;
         }
@@ -364,6 +428,30 @@ public class Inspector {
                     + name.substring(0, name.length() - 1);
         }
         return display;
+    }
+
+    private static String singularizeDisplayName(String displayName) {
+        if (displayName == null || displayName.isBlank()) {
+            return displayName;
+        }
+        String lower = displayName.toLowerCase();
+        if (lower.endsWith("gauges")) {
+            return displayName.substring(0, displayName.length() - "gauges".length())
+                    + "gauge";
+        }
+        if (lower.endsWith("hoops")) {
+            return displayName.substring(0, displayName.length() - "hoops".length())
+                    + "hoop";
+        }
+        if (lower.endsWith("dangling earrings")) {
+            return displayName.substring(0, displayName.length() - "earrings".length())
+                    + "earring";
+        }
+        if (lower.endsWith("studs")) {
+            return displayName.substring(0, displayName.length() - "studs".length())
+                    + "stud";
+        }
+        return displayName;
     }
 
     private static void appendItemName(StringBuilder sb, WearableItem item,
@@ -1178,6 +1266,11 @@ public class Inspector {
         if (staff.teacherStatistics.getHasGlasses() && !staff.teacherStatistics.getHasContacts()) {
             sb.append(" They wear glasses.");
         }
+        String staffOutfitDesc = buildOutfitDescription(
+                staff.teacherStatistics.getCurrentOutfit());
+        if (staffOutfitDesc != null) {
+            sb.append(" ").append(staffOutfitDesc);
+        }
         sb.append("\n");
 
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
@@ -1550,5 +1643,40 @@ public class Inspector {
         dialog.setSize(800, 600); // Initial size
         dialog.setLocationRelativeTo(null); // Center on screen
         dialog.setVisible(true);
+    }
+
+    /**
+     * Build a multi-line summary of the FM radio dial. Each station gets one
+     * line with its frequency, nickname, call sign, format, and the song it
+     * is currently broadcasting.
+     *
+     * @param radio the radio container; {@code null} or empty produces a
+     *              short fallback string
+     * @return inspection-friendly text
+     */
+    public static String radioInspection(Radio radio) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== FM Radio Dial ===\n");
+        if (radio == null) {
+            sb.append("No radio stations are broadcasting.\n");
+            return sb.toString();
+        }
+        List<RadioStation> stations = radio.getStations();
+        if (stations.isEmpty()) {
+            sb.append("No radio stations are broadcasting.\n");
+            return sb.toString();
+        }
+        for (RadioStation station : stations) {
+            sb.append(station.displayName());
+            sb.append(" [").append(station.getFormat().displayLabel()).append("]");
+            Song song = station.getCurrentSong();
+            if (song != null) {
+                sb.append("\n    Now playing: ").append(song);
+            } else {
+                sb.append("\n    Off air.");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

@@ -3,6 +3,7 @@ package utility;
 import config.DemographicsLoader;
 import config.SchoolFundingModel;
 import config.TownDemographics;
+import entity.Radio.Radio;
 import entity.Rooms.*;
 import entity.*;
 import save.SaveGameData;
@@ -59,6 +60,9 @@ public class SchoolController {
     private TraversalStorage traversalStorage;
     private Timer simulationTimer;
     private boolean simulationRunning = false;
+
+    // FM radio broadcast roster for the town
+    private Radio radio;
 
     public SchoolController(GameView view) {
         this.view = view;
@@ -140,7 +144,7 @@ public class SchoolController {
                 GameRandom.captureState(), time, town, standardSchool,
                 studentHashMap, staffHashMap, roomConnector,
                 socialLinkConnector != null ? socialLinkConnector.createSnapshot() : null,
-                runtime);
+                runtime, radio);
     }
 
     private void restoreSaveGameData(SaveGameData saveData) {
@@ -154,6 +158,11 @@ public class SchoolController {
         studentHashMap = saveData.getStudents();
         staffHashMap = saveData.getStaff();
         roomConnector = saveData.getRoomConnector();
+        radio = saveData.getRadio();
+        if (radio == null && standardSchool != null) {
+            radio = RadioStationGenerator.generate(standardSchool.getSchoolName(),
+                    new java.util.Random(GameRandom.getSeed()));
+        }
 
         socialLinkConnector = new SocialLinkConnector();
         socialLinkConnector.restoreFromSnapshot(studentHashMap, saveData.getSocialLinks());
@@ -178,6 +187,9 @@ public class SchoolController {
         simulationEngine.setRoomOccupancyManager(occupancyManager);
         if (traversalStorage != null) {
             simulationEngine.setTraversalStorage(traversalStorage);
+        }
+        if (radio != null) {
+            simulationEngine.setRadio(radio);
         }
         simulationEngine.restoreRuntimeSnapshot(saveData.getRuntime());
         attachSimulationUiRuntime();
@@ -333,6 +345,15 @@ public class SchoolController {
         // Provide town reference for phone lookups in behavior tree actions
         if (town != null) {
             simulationEngine.setTown(town);
+        }
+
+        // Generate FM radio stations for the town once a school exists.
+        if (radio == null && standardSchool != null) {
+            radio = RadioStationGenerator.generate(standardSchool.getSchoolName(),
+                    new java.util.Random(GameRandom.getSeed()));
+        }
+        if (radio != null) {
+            simulationEngine.setRadio(radio);
         }
 
         // Create entity state manager and initialize all entities
@@ -1777,6 +1798,9 @@ public class SchoolController {
             publish("Applying clique-aware haircuts...");
             StudentPopGenerator.applyAllHaircutAttributes(studentHashMap);
 
+            publish("Applying clique-aware clothing...");
+            StudentPopGenerator.applyAllClothingAttributes(studentHashMap);
+
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
@@ -1878,6 +1902,9 @@ public class SchoolController {
 
             publish("Applying clique-aware haircuts...");
             StudentPopGenerator.applyAllHaircutAttributes(studentHashMap);
+
+            publish("Applying clique-aware clothing...");
+            StudentPopGenerator.applyAllClothingAttributes(studentHashMap);
 
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);

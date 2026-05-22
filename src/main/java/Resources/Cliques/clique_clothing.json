@@ -1,0 +1,659 @@
+{
+    "2004": {
+        "Emo": {
+            "female": {
+                "outerwear": [
+                    "MCR hoodie",
+                    "The Used hoodie",
+                    "FOB hoodie",
+                    "AFI hoodie",
+                    "Taking Back Sunday hoodie",
+                    "Atreyu hoodie",
+                    "military jacket"
+                ],
+                "tops": [
+                    "MCR t-shirt",
+                    "The Used t-shirt",
+                    "FOB t-shirt",
+                    "AFI t-shirt",
+                    "Taking Back Sunday t-shirt",
+                    "Atreyu t-shirt",
+                    "graphic tee",
+                    "graphic tank top",
+                    "local band t-shirt",
+                    "tank top",
+                    "layered tank top"
+                ],
+                "bottoms": [
+                    "skinny jeans",
+                    "ripped skinny jeans"
+                ],
+                "one_piece": [],
+                "shoes": [
+                    "Converse hightop sneakers",
+                    "Vans slip-on sneakers"
+                ],
+                "accessories": [
+                    "studded belt",
+                    "studded leather wristband",
+                    "checkered bracelet"
+                ],
+                "colors": [
+                    "black",
+                    "charcoal",
+                    "navy",
+                    "gray",
+                    "slate"
+                ],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [
+                    "MCR hoodie",
+                    "The Used hoodie",
+                    "FOB hoodie",
+                    "Taking Back Sunday hoodie",
+                    "Atreyu hoodie",
+                    "military jacket"
+                ],
+                "tops": [
+                    "MCR t-shirt",
+                    "The Used t-shirt",
+                    "FOB t-shirt",
+                    "AFI t-shirt",
+                    "Taking Back Sunday t-shirt",
+                    "Atreyu t-shirt",
+                    "graphic tee",
+                    "local band t-shirt"
+                ],
+                "bottoms": [
+                    "skinny jeans",
+                    "ripped skinny jeans"
+                ],
+                "one_piece": [],
+                "shoes": [
+                    "Converse hightop sneakers",
+                    "Vans slip-on sneakers"
+                ],
+                "accessories": [
+                    "studded belt",
+                    "studded leather wristband",
+                    "checkered bracelet"
+                ],
+                "colors": [
+                    "black",
+                    "charcoal",
+                    "navy",
+                    "gray",
+                    "slate"
+                ],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Punk": {
+            "female": {
+                "outerwear": [
+                    "denim jacket",
+                    "denim Misfits jacket",
+                    "Green Day hoodie"
+                ],
+                "tops": [
+                    "Green Day t-shirt",
+                    "Green Day tank top",
+                    "Bad Religion t-shirt",
+                    "Sum 41 t-shirt",
+                    "The Offspring t-shirt",
+                    "Say Anything t-shirt"
+                ],
+                "bottoms": [
+                    "ripped straight leg jeans",
+                    "ripped skinny jeans",
+                    "skinny jeans",
+                    "leather pants",
+                    "tartan plaid skirt",
+                    "tartan plaid pants",
+                    "flare jeans"
+                ],
+                "one_piece": [],
+                "shoes": [
+                    "Doc Martens"
+                ],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": [
+                    "denim",
+                    "leather"
+                ]
+            },
+            "male": {
+                "outerwear": [
+                    "jacket",
+                    "Misfits jacket",
+                    "Green Day hoodie"
+                ],
+                "tops": [
+                    "Green Day t-shirt"
+                ],
+                "bottoms": [
+                    "skinny jeans"
+                ],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Skater": {
+            "female": {
+                "outerwear": [
+                    "Quicksilver hoodie",
+                    "DC hoodie",
+                    "Etnies hoodie",
+                    "Vans hoodie"
+                ],
+                "tops": [
+                    "Etnies t-shirt",
+                    "Vans t-shirt",
+                    "Quicksilver t-shirt",
+                    "DC t-shirt",
+                    "tank top"
+                ],
+                "bottoms": [
+                    "skinny jeans",
+                    "ripped skinny jeans",
+                    "cargo pants"
+                ],
+                "one_piece": [],
+                "shoes": [
+                    "Vans slip-on sneakers",
+                    "Converse hightop sneakers",
+                    "DC skate shoes",
+                    "Etnies skate shoes"
+                ],
+                "accessories": [],
+                "colors": [
+                    "navy",
+                    "black",
+                    "yellow",
+                    "red",
+                    "green",
+                    "blue"
+                ],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Goth": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Band": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Theater": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Anime": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Metal": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Geek": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "NoLife": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Latino": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Electronic": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Bling": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Trap": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Suit": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Beach": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Jock": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Prep": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Country": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Christian": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "ROTC": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        },
+        "Outcast": {
+            "female": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            },
+            "male": {
+                "outerwear": [],
+                "tops": [],
+                "bottoms": [],
+                "one_piece": [],
+                "shoes": [],
+                "accessories": [],
+                "colors": [],
+                "patterns": [],
+                "materials": []
+            }
+        }
+    }
+}

@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import utility.LocationSelector;
+
 import static utility.Randomizer.setRandom;
 
 public class Weather {
@@ -18,26 +20,15 @@ public class Weather {
     private static Map<String, String> weatherData;
 
     public Weather(String schoolName) {
-        String[] locations;
-        if (schoolName.contains("Forest") || schoolName.contains("Poplar") || schoolName.contains("Mountain") ||
-                schoolName.contains("Summit") || schoolName.contains("Peak")) {
-            locations = new String[]{"alaska", "spokane", "new_york"};
-            location = locations[setRandom(0, 2)];
-        } else if (schoolName.contains("Ocean") || schoolName.contains("Sea") || schoolName.contains("Bay") || schoolName.contains("Cape") ||
-                schoolName.contains("Shore") || schoolName.contains("Sound") || schoolName.contains("Port") || schoolName.contains("Palm") || schoolName.contains("Palmetto")) {
-            locations = new String[]{"alaska", "spokane", "los_angeles", "west_palm", "new_york"};
-            location = locations[setRandom(0, 4)];
-        } else if (schoolName.contains("Prairie") || schoolName.contains("Valley") || schoolName.contains("Grande") ||
-                schoolName.contains("Grand") || schoolName.contains("Lake")) {
-            locations = new String[]{"austin", "kansas"};
-            location = locations[setRandom(0, 1)];
-        } else if (schoolName.contains("Desert") || schoolName.contains("Canyon")) {
-            locations = new String[]{"phoenix", "los_angeles"};
-            location = locations[setRandom(0, 1)];
-        } else {
-            locations = new String[]{"alaska", "austin", "kansas", "los_angeles", "macon", "new_york", "phoenix", "spokane", "west_palm"};
-            location = locations[setRandom(0, 8)];
-        }
+        location = LocationSelector.pick(schoolName);
+    }
+
+    /**
+     * @return the most recently selected region key (e.g. {@code "new_york"}),
+     *         or {@code null} if no Weather instance has been constructed yet.
+     */
+    public static String getLocation() {
+        return location;
     }
 
     public static Map<String, String> parseCSV(Date date) {

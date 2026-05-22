@@ -137,12 +137,17 @@
             "They have a small chin.",
             "Their chin is large",
             "Their chin is slightly receded.",
-            "They have a cleft chin."
+            "They have a cleft chin.",
+            "They have freckles across the bridge of their nose.",
+            "Their eyebrows are arched.",
+            "Their eyebrows are thin.",
+            "They have thick eyebrows."
         ],
         "hair": [
             "Their hair is shiny.",
             "Their hair is flowing.",
-            "They have a widow's peak."
+            "They have a widow's peak.",
+            "They look like they just got out of bed."
         ],
         "skin": [
             "They are covered in freckles.",
@@ -241,7 +246,9 @@
             "Their scalp is dry and flaky.",
             "Their hair is patchy.",
             "Their hairline is uneven.",
-            "Their hair is full of dead ends."
+            "Their hair is full of dead ends.",
+            "Their hair is messy.",
+            "They have a bad haircut."
         ],
         "skin": [
             "Their skin is dry and flaky.",

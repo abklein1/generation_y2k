@@ -4,6 +4,9 @@ import behavior.BehaviorContext;
 import behavior.BehaviorTree;
 import constants.SimConstants;
 import entity.*;
+import entity.Radio.Radio;
+import entity.Radio.RadioStation;
+import entity.Radio.Song;
 import entity.Rooms.OffCampus;
 import entity.Rooms.Room;
 import save.SimulationRuntimeSnapshot;
@@ -19,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import utility.GameRandom;
@@ -50,6 +54,7 @@ public class SimulationEngine {
     private LunchDestinationSelector lunchDestinationSelector;
     private boolean wasLunchA = false;
     private boolean wasLunchB = false;
+    private Radio radio;
 
     // Simulation speed options (ticks per real-time second)
     public static final int SPEED_SLOW = 1; // 1 tick per second
@@ -165,6 +170,26 @@ public class SimulationEngine {
     }
 
     /**
+     * Wires the FM radio broadcast roster so the engine can advance the
+     * "now playing" song on each station once per simulated minute.
+     *
+     * @param radio the town's radio container, or {@code null} to disable
+     */
+    public void setRadio(Radio radio) {
+        this.radio = radio;
+        if (radio != null && time != null) {
+            radio.tick(time);
+        }
+    }
+
+    /**
+     * @return the currently wired radio container, or {@code null}.
+     */
+    public Radio getRadio() {
+        return radio;
+    }
+
+    /**
      * Initializes EntityState for all entities that don't have one.
      */
     private void initializeEntityStates() {
@@ -231,6 +256,11 @@ public class SimulationEngine {
         // 1.5. Update day phase on all entities
         DayPhase currentDayPhase = bellSchedule.getDayPhase(time);
         updateAllDayPhases(currentDayPhase);
+
+        // 1.6. Advance FM radio before commutes so "now playing" is current
+        if (radio != null) {
+            notifyCommuteRadioSongChanges(radio.tickAndCollectSongChanges(time));
+        }
 
         // 1.75. Process morning transit (commutes from neighborhoods)
         if (currentDayPhase == DayPhase.PRE_SCHOOL) {
@@ -357,6 +387,77 @@ public class SimulationEngine {
         state.setCurrentActivity(state.getCommutingActivity());
         state.setCurrentRoom(null);
         state.setExpectedRoom(null);
+        logCommuteRadio(student, state);
+    }
+
+    /**
+     * When a student starts a bus or car commute, pick a dial station and
+     * record whatever is currently playing in their activity log.
+     */
+    private void logCommuteRadio(Student student, EntityState state) {
+        if (radio == null || state == null || time == null) {
+            return;
+        }
+        TransitMode mode = state.getTransitMode();
+        if (!Radio.playsRadioDuringCommute(mode)) {
+            return;
+        }
+        RadioStation station = radio.pickStationForCommute(mode,
+                new Random(GameRandom.getSeed()
+                        ^ System.identityHashCode(student)
+                        ^ time.getDayCounter()
+                        ^ time.getMinutesFromMidnight()));
+        if (station == null) {
+            return;
+        }
+        Song song = station.getCurrentSong();
+        if (song == null) {
+            radio.tick(time);
+            song = station.getCurrentSong();
+        }
+        state.setCommuteRadioFrequencyMhz(station.getFrequencyMhz());
+        logCommuteRadioListening(state, station, song);
+    }
+
+    /**
+     * When a station rotates its song, log the new track for every student
+     * still commuting on bus or car who is tuned to that frequency.
+     */
+    private void notifyCommuteRadioSongChanges(List<RadioStation> rotatedStations) {
+        if (students == null || rotatedStations == null || rotatedStations.isEmpty()) {
+            return;
+        }
+        for (RadioStation station : rotatedStations) {
+            Song song = station.getCurrentSong();
+            if (song == null) {
+                continue;
+            }
+            for (Student student : students.values()) {
+                EntityState state = student.getEntityState();
+                if (state == null || !state.isInTransit()) {
+                    continue;
+                }
+                if (!Radio.playsRadioDuringCommute(state.getTransitMode())) {
+                    continue;
+                }
+                if (!state.hasCommuteRadio()) {
+                    continue;
+                }
+                if (Double.compare(state.getCommuteRadioFrequencyMhz(),
+                        station.getFrequencyMhz()) != 0) {
+                    continue;
+                }
+                logCommuteRadioListening(state, station, song);
+            }
+        }
+    }
+
+    private void logCommuteRadioListening(EntityState state,
+                                          RadioStation station, Song song) {
+        String message = Radio.formatCommuteListeningEntry(station, song);
+        if (message != null) {
+            addEntityStatusLogEntry(state, message);
+        }
     }
 
     /**
@@ -365,6 +466,7 @@ public class SimulationEngine {
     private void completeArrival(Student student, EntityState state) {
         state.setInTransit(false);
         state.setArrivedAtSchool(true);
+        state.clearCommuteRadio();
         state.setCurrentActivity(ActivityType.IDLE);
 
         // Place in first-period room or a common area

@@ -2,6 +2,7 @@ package utility;
 
 import constants.SimConstants;
 import entity.AllostaticLoad;
+import entity.Items.Outfit;
 import entity.Student;
 import entity.StudentBlock;
 import entity.StudentSchedule;
@@ -112,6 +113,9 @@ public class StudentStatistics implements PStatistics {
     // Charisma-driven unique physical/behavioral traits
     private List<String> uniqueTraits;
 
+    // Current outfit (clothing items organized by layer)
+    private Outfit currentOutfit;
+
     public StudentStatistics() {
         this.height = 0;
         this.eyeColor = null;
@@ -184,6 +188,7 @@ public class StudentStatistics implements PStatistics {
         this.hairHighlights = null;
         this.hairStyle = null;
         this.uniqueTraits = new ArrayList<>();
+        this.currentOutfit = new Outfit();
     }
 
     @Override
@@ -1441,6 +1446,33 @@ public class StudentStatistics implements PStatistics {
 
     public void setSecondaryClique(String secondaryClique) {
         this.secondaryClique = secondaryClique;
+    }
+
+    // ---- Outfit ----
+
+    /**
+     * {@inheritDoc}
+     * Returns the student's current outfit. Never {@code null}; an empty
+     * {@link Outfit} is used as the default placeholder before
+     * clique-aware clothing generation runs.
+     */
+    @Override
+    public Outfit getCurrentOutfit() {
+        if (currentOutfit == null) {
+            currentOutfit = new Outfit();
+        }
+        return currentOutfit;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Stores the given outfit on the student. A {@code null} argument is
+     * coerced to an empty {@link Outfit} so callers can rely on
+     * {@link #getCurrentOutfit()} never returning {@code null}.
+     */
+    @Override
+    public void setCurrentOutfit(Outfit outfit) {
+        this.currentOutfit = outfit == null ? new Outfit() : outfit;
     }
 
 }
