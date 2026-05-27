@@ -22,7 +22,7 @@
                     "graphic tank top",
                     "local band t-shirt",
                     "tank top",
-                    "layered tank top"
+                    "tank top with lace fringe"
                 ],
                 "bottoms": [
                     "skinny jeans",
@@ -31,12 +31,14 @@
                 "one_piece": [],
                 "shoes": [
                     "Converse hightop sneakers",
-                    "Vans slip-on sneakers"
+                    "Vans slip-on sneakers",
+                    "Converse sneakers"
                 ],
                 "accessories": [
                     "studded belt",
                     "studded leather wristband",
-                    "checkered bracelet"
+                    "checkered bracelet",
+                    "plastic bracelet"
                 ],
                 "colors": [
                     "black",
@@ -74,7 +76,8 @@
                 "one_piece": [],
                 "shoes": [
                     "Converse hightop sneakers",
-                    "Vans slip-on sneakers"
+                    "Vans slip-on sneakers",
+                    "Converse sneakers"
                 ],
                 "accessories": [
                     "studded belt",

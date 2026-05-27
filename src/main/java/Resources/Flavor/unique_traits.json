@@ -141,13 +141,15 @@
             "They have freckles across the bridge of their nose.",
             "Their eyebrows are arched.",
             "Their eyebrows are thin.",
-            "They have thick eyebrows."
+            "They have thick eyebrows.",
+            "Their eyebrows are flat."
         ],
         "hair": [
             "Their hair is shiny.",
             "Their hair is flowing.",
             "They have a widow's peak.",
-            "They look like they just got out of bed."
+            "They look like they just got out of bed.",
+            "They have a cowlick."
         ],
         "skin": [
             "They are covered in freckles.",
@@ -160,7 +162,9 @@
             "They have several acne scars.",
             "They have a small scar on their leg.",
             "Their kneecaps are scarred.",
-            "They have a few spots of hyper-pigmentation."
+            "They have a few spots of hyper-pigmentation.",
+            "They have a mole on their cheek.",
+            "They have a mole on their chin."
         ],
         "body": [
             "They have long limbs.",
@@ -170,7 +174,9 @@
             "Their shoulders are narrow.",
             "They have a narrow waist.",
             "Their body is pear-shaped.",
-            "Their limbs are short and stocky."
+            "Their limbs are short and stocky.",
+            "They have a long torso.",
+            "They have a short torso."
         ],
         "misc": [
             "They are constantly fidgeting.",
@@ -180,7 +186,10 @@
             "Their knees are slightly bowed.",
             "Their knees are knobbly.",
             "They walk with a slow saunter.",
-            "Their movements are slow and deliberate."
+            "Their movements are slow and deliberate.",
+            "They are constantly chewing their fingernails.",
+            "They seem like they can't sit still.",
+            "They walk very quickly."
         ]
     },
     "negative": {
@@ -195,7 +204,8 @@
             "Their eyes seem to be permanently squinted.",
             "The skin around their eyes is puffy.",
             "Their eyes always seem watery and irritated.",
-            "Their eyelashes are sparse and brittle."
+            "Their eyelashes are sparse and brittle.",
+            "Their eyebrows appear to be over-plucked."
         ],
         "nose": [
             "They have a crooked nose.",
@@ -227,7 +237,8 @@
             "They talk out of the corner of their mouth.",
             "Their lips are rubbery and protruding.",
             "Their mouth is slightly downturned.",
-            "Their mouth appears misshapen."
+            "Their mouth appears misshapen.",
+            "Their lips appear chapped."
         ],
         "face": [
             "Their face is crooked.",
@@ -255,14 +266,16 @@
             "Their skin appears clammy.",
             "Their skin seems slightly ashen.",
             "Their skin is dull.",
-            "Their skin seems irritated."
+            "Their skin seems irritated.",
+            "They seem to sweat profusely."
         ],
         "body": [
             "They have a thin neck.",
             "Their shoulders are rounded and hunched.",
             "Their arms are thin and scrawny.",
             "Their chest is uneven.",
-            "They seem to have almost no neck."
+            "They seem to have almost no neck.",
+            "Their limbs are disproportionate."
         ],
         "misc": [
             "They walk with an unsteady gait.",
@@ -274,7 +287,8 @@
             "They shuffle their feet as they walk.",
             "They appear frail and sickly.",
             "They walk on the tips of their toes.",
-            "They seem to stand off-balance."
+            "They seem to stand off-balance.",
+            "They like to rock back and forth."
         ]
     }
 }

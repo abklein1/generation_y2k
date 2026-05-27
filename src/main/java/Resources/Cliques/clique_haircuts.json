@@ -3,232 +3,888 @@
         "Emo": {
             "female": {
                 "white": {
-                    "short": ["pixie"],
-                    "chin-length": ["bob"],
-                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
-                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
-                    "waist-length": ["chopped layer cut"],
-                    "extremely long": ["long layer cut", "chopped layer cut"],
-                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
-                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                    "short": [
+                        "pixie"
+                    ],
+                    "chin-length": [
+                        "bob"
+                    ],
+                    "neck-length": [
+                        "shag",
+                        "bob",
+                        "swoop",
+                        "chopped layer cut"
+                    ],
+                    "shoulder-length": [
+                        "swoop",
+                        "shag",
+                        "chopped layer cut"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "deep red",
+                        "magenta",
+                        "purple",
+                        "dark brown"
+                    ],
+                    "highlights": [
+                        "bleach white",
+                        "silver",
+                        "ice blonde",
+                        "bleach blond",
+                        "red"
+                    ]
                 },
                 "black": {
-                    "short": ["pixie"],
-                    "chin-length": ["bob"],
-                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
-                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
-                    "waist-length": ["chopped layer cut"],
-                    "extremely long": ["long layer cut", "chopped layer cut"],
-                    "dyes": ["black", "deep red", "magenta", "purple"],
-                    "highlights": ["bleach white", "silver", "bleach blond", "red"]
+                    "short": [
+                        "pixie"
+                    ],
+                    "chin-length": [
+                        "bob"
+                    ],
+                    "neck-length": [
+                        "shag",
+                        "bob",
+                        "swoop",
+                        "chopped layer cut"
+                    ],
+                    "shoulder-length": [
+                        "swoop",
+                        "shag",
+                        "chopped layer cut"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "deep red",
+                        "magenta",
+                        "purple"
+                    ],
+                    "highlights": [
+                        "bleach white",
+                        "silver",
+                        "bleach blond",
+                        "red"
+                    ]
                 },
                 "api": {
-                    "short": ["pixie"],
-                    "chin-length": ["bob"],
-                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
-                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
-                    "waist-length": ["chopped layer cut"],
-                    "extremely long": ["long layer cut", "chopped layer cut"],
-                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
-                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                    "short": [
+                        "pixie"
+                    ],
+                    "chin-length": [
+                        "bob"
+                    ],
+                    "neck-length": [
+                        "shag",
+                        "bob",
+                        "swoop",
+                        "chopped layer cut"
+                    ],
+                    "shoulder-length": [
+                        "swoop",
+                        "shag",
+                        "chopped layer cut"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "deep red",
+                        "magenta",
+                        "purple",
+                        "dark brown"
+                    ],
+                    "highlights": [
+                        "bleach white",
+                        "silver",
+                        "ice blonde",
+                        "bleach blond",
+                        "red"
+                    ]
                 },
                 "hispanic": {
-                    "short": ["pixie"],
-                    "chin-length": ["bob"],
-                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
-                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
-                    "waist-length": ["chopped layer cut"],
-                    "extremely long": ["long layer cut", "chopped layer cut"],
-                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
-                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                    "short": [
+                        "pixie"
+                    ],
+                    "chin-length": [
+                        "bob"
+                    ],
+                    "neck-length": [
+                        "shag",
+                        "bob",
+                        "swoop",
+                        "chopped layer cut"
+                    ],
+                    "shoulder-length": [
+                        "swoop",
+                        "shag",
+                        "chopped layer cut"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "deep red",
+                        "magenta",
+                        "purple",
+                        "dark brown"
+                    ],
+                    "highlights": [
+                        "bleach white",
+                        "silver",
+                        "ice blonde",
+                        "bleach blond",
+                        "red"
+                    ]
                 },
                 "2prace": {
-                    "short": ["pixie"],
-                    "chin-length": ["bob"],
-                    "neck-length": ["shag", "bob", "swoop", "chopped layer cut"],
-                    "shoulder-length": ["swoop", "shag", "chopped layer cut"],
-                    "waist-length": ["chopped layer cut"],
-                    "extremely long": ["long layer cut", "chopped layer cut"],
-                    "dyes": ["black", "deep red", "magenta", "purple", "dark brown"],
-                    "highlights": ["bleach white", "silver", "ice blonde", "bleach blond", "red"]
+                    "short": [
+                        "pixie"
+                    ],
+                    "chin-length": [
+                        "bob"
+                    ],
+                    "neck-length": [
+                        "shag",
+                        "bob",
+                        "swoop",
+                        "chopped layer cut"
+                    ],
+                    "shoulder-length": [
+                        "swoop",
+                        "shag",
+                        "chopped layer cut"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "deep red",
+                        "magenta",
+                        "purple",
+                        "dark brown"
+                    ],
+                    "highlights": [
+                        "bleach white",
+                        "silver",
+                        "ice blonde",
+                        "bleach blond",
+                        "red"
+                    ]
                 }
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut"],
-                    "short": ["side sweep", "bob"],
-                    "chin-length": ["side sweep", "shag", "swoop", "bob"],
-                    "long": ["shag", "swoop", "side sweep"],
-                    "shoulder-length": ["shag"],
-                    "waist-length": ["chopped layer cut"],
-                    "dyes": ["black", "dark brown"],
-                    "highlights": ["bleach blond", "dark red"]
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "side sweep",
+                        "bob"
+                    ],
+                    "chin-length": [
+                        "side sweep",
+                        "shag",
+                        "swoop",
+                        "bob"
+                    ],
+                    "long": [
+                        "shag",
+                        "swoop",
+                        "side sweep"
+                    ],
+                    "shoulder-length": [
+                        "shag"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "dark brown"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "dark red"
+                    ]
                 },
                 "black": {
-                    "very short": ["buzz cut"],
-                    "short": ["swoop"],
-                    "chin-length": ["swoop"],
-                    "long": ["chopped layer cut"],
-                    "shoulder-length": ["chopped layer cut"],
-                    "waist-length": ["chopped layer cut"],
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "swoop"
+                    ],
+                    "chin-length": [
+                        "swoop"
+                    ],
+                    "long": [
+                        "chopped layer cut"
+                    ],
+                    "shoulder-length": [
+                        "chopped layer cut"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
                     "dyes": [],
-                    "highlights": ["dark red", "purple"]
+                    "highlights": [
+                        "dark red",
+                        "purple"
+                    ]
                 },
                 "api": {
-                    "very short": ["buzz cut"],
-                    "short": ["side sweep", "bob"],
-                    "chin-length": ["side sweep", "shag", "swoop", "bob"],
-                    "long": ["shag", "swoop", "side sweep"],
-                    "shoulder-length": ["shag"],
-                    "waist-length": ["chopped layer cut"],
-                    "dyes": ["black", "dark brown"],
-                    "highlights": ["bleach blond", "dark red"]
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "side sweep",
+                        "bob"
+                    ],
+                    "chin-length": [
+                        "side sweep",
+                        "shag",
+                        "swoop",
+                        "bob"
+                    ],
+                    "long": [
+                        "shag",
+                        "swoop",
+                        "side sweep"
+                    ],
+                    "shoulder-length": [
+                        "shag"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "dark brown"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "dark red"
+                    ]
                 },
                 "hispanic": {
-                    "very short": ["buzz cut"],
-                    "short": ["side sweep", "bob"],
-                    "chin-length": ["side sweep", "shag", "swoop", "bob"],
-                    "long": ["shag", "swoop", "side sweep"],
-                    "shoulder-length": ["shag"],
-                    "waist-length": ["chopped layer cut"],
-                    "dyes": ["black", "dark brown"],
-                    "highlights": ["bleach blond", "dark red"]
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "side sweep",
+                        "bob"
+                    ],
+                    "chin-length": [
+                        "side sweep",
+                        "shag",
+                        "swoop",
+                        "bob"
+                    ],
+                    "long": [
+                        "shag",
+                        "swoop",
+                        "side sweep"
+                    ],
+                    "shoulder-length": [
+                        "shag"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "dark brown"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "dark red"
+                    ]
                 },
                 "2prace": {
-                    "very short": ["buzz cut"],
-                    "short": ["side sweep", "bob"],
-                    "chin-length": ["side sweep", "shag", "swoop", "bob"],
-                    "long": ["shag", "swoop", "side sweep"],
-                    "shoulder-length": ["shag"],
-                    "waist-length": ["chopped layer cut"],
-                    "dyes": ["black", "dark brown"],
-                    "highlights": ["bleach blond", "dark red"]
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "side sweep",
+                        "bob"
+                    ],
+                    "chin-length": [
+                        "side sweep",
+                        "shag",
+                        "swoop",
+                        "bob"
+                    ],
+                    "long": [
+                        "shag",
+                        "swoop",
+                        "side sweep"
+                    ],
+                    "shoulder-length": [
+                        "shag"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "dyes": [
+                        "black",
+                        "dark brown"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "dark red"
+                    ]
                 }
             }
         },
         "Punk": {
             "female": {
                 "white": {
-                    "short": ["buzz cut", "pixie", "spike cut"],
-                    "chin-length": ["mohawk", "spike cut", "devil locks"],
-                    "neck-length": ["mohawk", "liberty spikes", "devil locks"],
-                    "shoulder-length": ["mohawk", "liberty spikes"],
-                    "waist-length": ["chopped layer cut"],
-                    "extremely long": ["long layer cut"],
-                    "dyes": ["bleach blond", "magenta", "pink", "black", "red", "florescent green"],
-                    "highlights": ["red", "pink", "purple", "bleach white", "blue"]
+                    "short": [
+                        "buzz cut",
+                        "pixie",
+                        "spike cut"
+                    ],
+                    "chin-length": [
+                        "mohawk",
+                        "spike cut",
+                        "devil locks"
+                    ],
+                    "neck-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks"
+                    ],
+                    "shoulder-length": [
+                        "mohawk",
+                        "liberty spikes"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "magenta",
+                        "pink",
+                        "black",
+                        "red",
+                        "florescent green"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple",
+                        "bleach white",
+                        "blue"
+                    ]
                 },
                 "black": {
-                    "short": ["locs", "buzz cut", "afro"],
-                    "chin-length": ["bantu knots", "locs", "braids", "twists", "afro blowout", "afro", "corkscrew coils"],
-                    "neck-length": ["bantu knots", "locs", "braids", "twists", "afro blowout", "afro", "corkscrew coils"],
-                    "shoulder-length": ["bantu knots", "locs", "braids", "twists", "corkscrew coils"],
-                    "waist-length": ["locs", "braids", "twists"],
-                    "extremely long": ["locs"],
-                    "dyes": ["purple", "maroon", "dark red", "dark blue"],
-                    "highlights": ["red", "pink", "purple"]
+                    "short": [
+                        "locs",
+                        "buzz cut",
+                        "afro"
+                    ],
+                    "chin-length": [
+                        "bantu knots",
+                        "locs",
+                        "braids",
+                        "twists",
+                        "afro blowout",
+                        "afro",
+                        "corkscrew coils"
+                    ],
+                    "neck-length": [
+                        "bantu knots",
+                        "locs",
+                        "braids",
+                        "twists",
+                        "afro blowout",
+                        "afro",
+                        "corkscrew coils"
+                    ],
+                    "shoulder-length": [
+                        "bantu knots",
+                        "locs",
+                        "braids",
+                        "twists",
+                        "corkscrew coils"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids",
+                        "twists"
+                    ],
+                    "extremely long": [
+                        "locs"
+                    ],
+                    "dyes": [
+                        "purple",
+                        "maroon",
+                        "dark red",
+                        "dark blue"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple"
+                    ]
                 },
                 "api": {
-                    "short": ["buzz cut", "pixie", "spike cut"],
-                    "chin-length": ["mohawk", "spike cut", "devil locks"],
-                    "neck-length": ["mohawk", "liberty spikes", "devil locks"],
-                    "shoulder-length": ["mohawk", "liberty spikes"],
-                    "waist-length": ["chopped layer cut"],
-                    "extremely long": ["long layer cut"],
-                    "dyes": ["purple", "maroon", "dark red", "dark blue", "bleach blond"],
-                    "highlights": ["red", "pink", "purple"]
+                    "short": [
+                        "buzz cut",
+                        "pixie",
+                        "spike cut"
+                    ],
+                    "chin-length": [
+                        "mohawk",
+                        "spike cut",
+                        "devil locks"
+                    ],
+                    "neck-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks"
+                    ],
+                    "shoulder-length": [
+                        "mohawk",
+                        "liberty spikes"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut"
+                    ],
+                    "dyes": [
+                        "purple",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple"
+                    ]
                 },
                 "hispanic": {
-                    "short": ["buzz cut", "pixie", "spike cut"],
-                    "chin-length": ["mohawk", "spike cut", "devil locks"],
-                    "neck-length": ["mohawk", "liberty spikes", "devil locks"],
-                    "shoulder-length": ["mohawk", "liberty spikes"],
-                    "waist-length": ["chopped layer cut"],
-                    "extremely long": ["long layer cut"],
-                    "dyes": ["purple", "maroon", "dark red", "dark blue", "bleach blond"],
-                    "highlights": ["red", "pink", "purple"]
+                    "short": [
+                        "buzz cut",
+                        "pixie",
+                        "spike cut"
+                    ],
+                    "chin-length": [
+                        "mohawk",
+                        "spike cut",
+                        "devil locks"
+                    ],
+                    "neck-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks"
+                    ],
+                    "shoulder-length": [
+                        "mohawk",
+                        "liberty spikes"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut"
+                    ],
+                    "dyes": [
+                        "purple",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple"
+                    ]
                 },
                 "2prace": {
-                    "short": ["locs", "buzz cut", "afro"],
-                    "chin-length": ["bantu knots", "locs", "braids", "twists", "afro blowout", "afro", "corkscrew coils"],
-                    "neck-length": ["bantu knots", "locs", "braids", "twists", "afro blowout", "afro", "corkscrew coils"],
-                    "shoulder-length": ["bantu knots", "locs", "braids", "twists", "corkscrew coils"],
-                    "waist-length": ["locs", "braids", "twists"],
-                    "extremely long": ["locs"],
-                    "dyes": ["purple", "maroon", "dark red", "dark blue", "violet"],
-                    "highlights": ["red", "pink", "purple"]
+                    "short": [
+                        "locs",
+                        "buzz cut",
+                        "afro"
+                    ],
+                    "chin-length": [
+                        "bantu knots",
+                        "locs",
+                        "braids",
+                        "twists",
+                        "afro blowout",
+                        "afro",
+                        "corkscrew coils"
+                    ],
+                    "neck-length": [
+                        "bantu knots",
+                        "locs",
+                        "braids",
+                        "twists",
+                        "afro blowout",
+                        "afro",
+                        "corkscrew coils"
+                    ],
+                    "shoulder-length": [
+                        "bantu knots",
+                        "locs",
+                        "braids",
+                        "twists",
+                        "corkscrew coils"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids",
+                        "twists"
+                    ],
+                    "extremely long": [
+                        "locs"
+                    ],
+                    "dyes": [
+                        "purple",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "violet"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple"
+                    ]
                 }
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut", "spike cut"],
-                    "short": ["spike cut", "faux hawk", "spike mohawk"],
-                    "chin-length": ["mohawk", "liberty spikes", "devil locks", "spike mohawk"],
-                    "long": ["mohawk", "liberty spikes", "devil locks"],
-                    "shoulder-length": ["mohawk", "liberty spikes", "punk mullet"],
-                    "waist-length": ["punk mullet"],
-                    "dyes": ["bleach blond", "green", "blue", "red", "black"],
-                    "highlights": ["bleach blond", "blond", "red", "orange"]
+                    "very short": [
+                        "buzz cut",
+                        "spike cut"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "faux hawk",
+                        "spike mohawk"
+                    ],
+                    "chin-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks",
+                        "spike mohawk"
+                    ],
+                    "long": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks"
+                    ],
+                    "shoulder-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "punk mullet"
+                    ],
+                    "waist-length": [
+                        "punk mullet"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "green",
+                        "blue",
+                        "red",
+                        "black"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "blond",
+                        "red",
+                        "orange"
+                    ]
                 },
                 "black": {
-                    "very short": ["buzz cut", "waves", "afro"],
-                    "short": ["liberty spikes afro", "afro", "afro blowout", "corkscrew coils", "locs"],
-                    "chin-length": ["liberty spikes afro", "afro", "afro blowout", "corkscrew coils", "locs"],
-                    "long": ["locs", "corkscrew coils", "braids"],
-                    "shoulder-length": ["locs", "braids"],
-                    "waist-length": ["locs", "braids"],
-                    "dyes": ["purple", "maroon", "dark red", "dark blue", "violet"],
-                    "highlights": ["red", "pink", "purple", "bleach blond", "orange"]
+                    "very short": [
+                        "buzz cut",
+                        "waves",
+                        "afro"
+                    ],
+                    "short": [
+                        "liberty spikes afro",
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs"
+                    ],
+                    "chin-length": [
+                        "liberty spikes afro",
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs"
+                    ],
+                    "long": [
+                        "locs",
+                        "corkscrew coils",
+                        "braids"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids"
+                    ],
+                    "dyes": [
+                        "purple",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "violet"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple",
+                        "bleach blond",
+                        "orange"
+                    ]
                 },
                 "api": {
-                    "very short": ["buzz cut", "spike cut"],
-                    "short": ["spike cut", "faux hawk", "spike mohawk"],
-                    "chin-length": ["mohawk", "liberty spikes", "devil locks", "spike mohawk"],
-                    "long": ["mohawk", "liberty spikes", "devil locks"],
-                    "shoulder-length": ["mohawk", "liberty spikes", "punk mullet"],
-                    "waist-length": ["punk mullet"],
-                    "dyes": ["bleach blond", "green", "blue", "red", "black"],
-                    "highlights": ["bleach blond", "blond"]
+                    "very short": [
+                        "buzz cut",
+                        "spike cut"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "faux hawk",
+                        "spike mohawk"
+                    ],
+                    "chin-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks",
+                        "spike mohawk"
+                    ],
+                    "long": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks"
+                    ],
+                    "shoulder-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "punk mullet"
+                    ],
+                    "waist-length": [
+                        "punk mullet"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "green",
+                        "blue",
+                        "red",
+                        "black"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "blond"
+                    ]
                 },
                 "hispanic": {
-                    "very short": ["buzz cut", "spike cut"],
-                    "short": ["spike cut", "faux hawk", "spike mohawk"],
-                    "chin-length": ["mohawk", "liberty spikes", "devil locks", "spike mohawk"],
-                    "long": ["mohawk", "liberty spikes", "devil locks"],
-                    "shoulder-length": ["mohawk", "liberty spikes", "punk mullet"],
-                    "waist-length": ["punk mullet"],
-                    "dyes": ["bleach blond", "green", "blue", "red", "black"],
-                    "highlights": ["bleach blond", "blond"]
+                    "very short": [
+                        "buzz cut",
+                        "spike cut"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "faux hawk",
+                        "spike mohawk"
+                    ],
+                    "chin-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks",
+                        "spike mohawk"
+                    ],
+                    "long": [
+                        "mohawk",
+                        "liberty spikes",
+                        "devil locks"
+                    ],
+                    "shoulder-length": [
+                        "mohawk",
+                        "liberty spikes",
+                        "punk mullet"
+                    ],
+                    "waist-length": [
+                        "punk mullet"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "green",
+                        "blue",
+                        "red",
+                        "black"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "blond"
+                    ]
                 },
                 "2prace": {
-                    "very short": ["buzz cut", "waves", "afro"],
-                    "short": ["liberty spikes afro", "afro", "afro blowout", "corkscrew coils", "locs"],
-                    "chin-length": ["liberty spikes afro", "afro", "afro blowout", "corkscrew coils", "locs"],
-                    "long": ["locs", "corkscrew coils", "braids"],
-                    "shoulder-length": ["locs", "braids"],
-                    "waist-length": ["locs", "braids"],
-                    "dyes": ["purple", "maroon", "dark red", "dark blue", "violet"],
-                    "highlights": ["red", "pink", "purple", "bleach blond", "orange"]
+                    "very short": [
+                        "buzz cut",
+                        "waves",
+                        "afro"
+                    ],
+                    "short": [
+                        "liberty spikes afro",
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs"
+                    ],
+                    "chin-length": [
+                        "liberty spikes afro",
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs"
+                    ],
+                    "long": [
+                        "locs",
+                        "corkscrew coils",
+                        "braids"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids"
+                    ],
+                    "dyes": [
+                        "purple",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "violet"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple",
+                        "bleach blond",
+                        "orange"
+                    ]
                 }
             }
         },
         "Skater": {
             "female": {
                 "white": {
-                    "short": ["pixie", "spike cut", "buzz cut"],
-                    "chin-length": ["faux hawk", "boy cut"],
-                    "neck-length": ["shag", "swoop", "bun", "braid"],
-                    "shoulder-length": ["shag", "swoop", "chopped layer cut", "bun", "braid"],
-                    "waist-length": ["chopped layer cut", "braid", "ponytail"],
-                    "extremely long": ["long layer cut", "braids"],
-                    "dyes": ["black", "amber", "dark red", "chestnut", "bleach blond"],
-                    "highlights": ["bleach blond", "blond"]
+                    "short": [
+                        "pixie",
+                        "spike cut",
+                        "buzz cut"
+                    ],
+                    "chin-length": [
+                        "faux hawk",
+                        "boy cut"
+                    ],
+                    "neck-length": [
+                        "shag",
+                        "swoop",
+                        "bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "shag",
+                        "swoop",
+                        "chopped layer cut",
+                        "bun",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "chopped layer cut",
+                        "braid",
+                        "ponytail"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "braids"
+                    ],
+                    "dyes": [
+                        "black",
+                        "amber",
+                        "dark red",
+                        "chestnut",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "blond"
+                    ]
                 },
                 "black": {
-                    "short": ["short afro", "pixie", "buzz cut"],
-                    "chin-length": ["afro", "afro blowout", "corkscrew coils", "locs", "braids"],
-                    "neck-length": ["afro", "afro blowout", "corkscrew coils", "locs", "braids"],
-                    "shoulder-length": ["locs", "braids"],
+                    "short": [
+                        "short afro",
+                        "pixie",
+                        "buzz cut"
+                    ],
+                    "chin-length": [
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs",
+                        "braids"
+                    ],
+                    "neck-length": [
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs",
+                        "braids"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids"
+                    ],
                     "waist-length": [],
                     "extremely long": [],
                     "dyes": [],
@@ -267,14 +923,34 @@
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut", "spike cut"],
-                    "short": ["spike cut", "swoop", "side sweep"],
-                    "chin-length": ["side sweep", "swoop"],
-                    "long": ["side sweep"],
+                    "very short": [
+                        "buzz cut",
+                        "spike cut"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "swoop",
+                        "side sweep"
+                    ],
+                    "chin-length": [
+                        "side sweep",
+                        "swoop"
+                    ],
+                    "long": [
+                        "side sweep"
+                    ],
                     "shoulder-length": [],
-                    "waist-length": ["ponytail", "locs"],
-                    "dyes": ["bleach blond"],
-                    "highlights": ["bleach blond", "blond"]
+                    "waist-length": [
+                        "ponytail",
+                        "locs"
+                    ],
+                    "dyes": [
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "blond"
+                    ]
                 },
                 "black": {
                     "very short": [],
@@ -321,59 +997,241 @@
         "Goth": {
             "female": {
                 "white": {
-                    "short": ["pixie", "spike cut", "buzz cut", "mullet"],
-                    "chin-length": ["deathhawk", "chopped layer cut", "mullet"],
-                    "neck-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut", "spiky buns"],
-                    "shoulder-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut", "spiky buns", "crimps"],
-                    "waist-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut", "spiky buns", "crimps"],
-                    "extremely long": ["long layer cut", "locs"],
-                    "dyes": ["black"],
-                    "highlights": ["purple", "violet", "maroon", "dark red", "dark blue", "plum"]
+                    "short": [
+                        "pixie",
+                        "spike cut",
+                        "buzz cut",
+                        "mullet"
+                    ],
+                    "chin-length": [
+                        "deathhawk",
+                        "chopped layer cut",
+                        "mullet"
+                    ],
+                    "neck-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut",
+                        "spiky buns"
+                    ],
+                    "shoulder-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut",
+                        "spiky buns",
+                        "crimps"
+                    ],
+                    "waist-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut",
+                        "spiky buns",
+                        "crimps"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "locs"
+                    ],
+                    "dyes": [
+                        "black"
+                    ],
+                    "highlights": [
+                        "purple",
+                        "violet",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "plum"
+                    ]
                 },
                 "black": {
-                    "short": ["buzz cut", "pixie"],
-                    "chin-length": ["bantu knots", "coils", "spiky buns"],
-                    "neck-length": ["bantu knots", "coils", "spiky buns", "deathhawk"],
-                    "shoulder-length": ["deathhawk", "spiky buns", "bantu knot out", "coils", "microbraids"],
-                    "waist-length": ["deathhawk", "microbraids", "spiky buns", "coils", "crimps"],
-                    "extremely long": ["microbraids", "crimps", "locs"],
-                    "dyes": ["black"],
-                    "highlights": ["purple", "violet", "maroon", "dark red", "dark blue", "plum"]
+                    "short": [
+                        "buzz cut",
+                        "pixie"
+                    ],
+                    "chin-length": [
+                        "bantu knots",
+                        "coils",
+                        "spiky buns"
+                    ],
+                    "neck-length": [
+                        "bantu knots",
+                        "coils",
+                        "spiky buns",
+                        "deathhawk"
+                    ],
+                    "shoulder-length": [
+                        "deathhawk",
+                        "spiky buns",
+                        "bantu knot out",
+                        "coils",
+                        "microbraids"
+                    ],
+                    "waist-length": [
+                        "deathhawk",
+                        "microbraids",
+                        "spiky buns",
+                        "coils",
+                        "crimps"
+                    ],
+                    "extremely long": [
+                        "microbraids",
+                        "crimps",
+                        "locs"
+                    ],
+                    "dyes": [
+                        "black"
+                    ],
+                    "highlights": [
+                        "purple",
+                        "violet",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "plum"
+                    ]
                 },
                 "api": {
-                    "short": ["pixie", "spike cut", "buzz cut", "mullet"],
-                    "chin-length": ["deathhawk", "chopped layer cut", "mullet"],
-                    "neck-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut", "mullet"],
-                    "shoulder-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
-                    "waist-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
-                    "extremely long": ["long layer cut", "locs"],
-                    "dyes": ["black"],
-                    "highlights": ["purple", "violet", "maroon", "dark red", "dark blue", "plum"]
+                    "short": [
+                        "pixie",
+                        "spike cut",
+                        "buzz cut",
+                        "mullet"
+                    ],
+                    "chin-length": [
+                        "deathhawk",
+                        "chopped layer cut",
+                        "mullet"
+                    ],
+                    "neck-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut",
+                        "mullet"
+                    ],
+                    "shoulder-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut"
+                    ],
+                    "waist-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "locs"
+                    ],
+                    "dyes": [
+                        "black"
+                    ],
+                    "highlights": [
+                        "purple",
+                        "violet",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "plum"
+                    ]
                 },
                 "hispanic": {
-                    "short": ["pixie", "spike cut", "buzz cut", "mullet"],
-                    "chin-length": ["deathhawk", "chopped layer cut", "mullet"],
-                    "neck-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut", "mullet"],
-                    "shoulder-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
-                    "waist-length": ["deathhawk", "heavy choppy fringe", "chopped layer cut"],
-                    "extremely long": ["long layer cut", "locs"],
-                    "dyes": ["black"],
-                    "highlights": ["purple", "violet", "maroon", "dark red", "dark blue"]
+                    "short": [
+                        "pixie",
+                        "spike cut",
+                        "buzz cut",
+                        "mullet"
+                    ],
+                    "chin-length": [
+                        "deathhawk",
+                        "chopped layer cut",
+                        "mullet"
+                    ],
+                    "neck-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut",
+                        "mullet"
+                    ],
+                    "shoulder-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut"
+                    ],
+                    "waist-length": [
+                        "deathhawk",
+                        "heavy choppy fringe",
+                        "chopped layer cut"
+                    ],
+                    "extremely long": [
+                        "long layer cut",
+                        "locs"
+                    ],
+                    "dyes": [
+                        "black"
+                    ],
+                    "highlights": [
+                        "purple",
+                        "violet",
+                        "maroon",
+                        "dark red",
+                        "dark blue"
+                    ]
                 },
                 "2prace": {
-                    "short": ["buzz cut", "pixie"],
-                    "chin-length": ["bantu knots", "coils", "spiky buns"],
-                    "neck-length": ["bantu knots", "coils", "spiky buns", "deathhawk"],
-                    "shoulder-length": ["deathhawk", "spiky buns", "bantu knot out", "coils", "microbraids"],
-                    "waist-length": ["deathhawk", "microbraids", "spiky buns", "coils", "crimps"],
-                    "extremely long": ["microbraids", "crimps", "locs"],
-                    "dyes": ["black"],
-                    "highlights": ["purple", "violet", "maroon", "dark red", "dark blue", "plum"]
+                    "short": [
+                        "buzz cut",
+                        "pixie"
+                    ],
+                    "chin-length": [
+                        "bantu knots",
+                        "coils",
+                        "spiky buns"
+                    ],
+                    "neck-length": [
+                        "bantu knots",
+                        "coils",
+                        "spiky buns",
+                        "deathhawk"
+                    ],
+                    "shoulder-length": [
+                        "deathhawk",
+                        "spiky buns",
+                        "bantu knot out",
+                        "coils",
+                        "microbraids"
+                    ],
+                    "waist-length": [
+                        "deathhawk",
+                        "microbraids",
+                        "spiky buns",
+                        "coils",
+                        "crimps"
+                    ],
+                    "extremely long": [
+                        "microbraids",
+                        "crimps",
+                        "locs"
+                    ],
+                    "dyes": [
+                        "black"
+                    ],
+                    "highlights": [
+                        "purple",
+                        "violet",
+                        "maroon",
+                        "dark red",
+                        "dark blue",
+                        "plum"
+                    ]
                 }
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut", "spike cut"],
+                    "very short": [
+                        "buzz cut",
+                        "spike cut"
+                    ],
                     "short": [],
                     "chin-length": [],
                     "long": [],
@@ -427,8 +1285,14 @@
         "Band": {
             "female": {
                 "white": {
-                    "short": ["pixie", "boy cut"],
-                    "chin-length": ["boy cut", "shag"],
+                    "short": [
+                        "pixie",
+                        "boy cut"
+                    ],
+                    "chin-length": [
+                        "boy cut",
+                        "shag"
+                    ],
                     "neck-length": [],
                     "shoulder-length": [],
                     "waist-length": [],
@@ -479,20 +1343,54 @@
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut", "spike cut", "front flip"],
-                    "short": ["spike cut", "front flip", "comb over", "long sideburns"],
-                    "chin-length": ["swoop", "side sweep","comb over", "long sideburns"],
-                    "long": ["ponytail"],
-                    "shoulder-length": ["ponytail"],
-                    "waist-length": ["ponytail"],
+                    "very short": [
+                        "buzz cut",
+                        "spike cut",
+                        "front flip"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "front flip",
+                        "comb over",
+                        "long sideburns"
+                    ],
+                    "chin-length": [
+                        "swoop",
+                        "side sweep",
+                        "comb over",
+                        "long sideburns"
+                    ],
+                    "long": [
+                        "ponytail"
+                    ],
+                    "shoulder-length": [
+                        "ponytail"
+                    ],
+                    "waist-length": [
+                        "ponytail"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "black": {
-                    "very short": ["buzz cut", "waves"],
-                    "short": ["afro", "bald fade"],
-                    "chin-length": ["afro", "braids", "cornrows"],
-                    "long": ["braids", "afro", "afro blowout"],
+                    "very short": [
+                        "buzz cut",
+                        "waves"
+                    ],
+                    "short": [
+                        "afro",
+                        "bald fade"
+                    ],
+                    "chin-length": [
+                        "afro",
+                        "braids",
+                        "cornrows"
+                    ],
+                    "long": [
+                        "braids",
+                        "afro",
+                        "afro blowout"
+                    ],
                     "shoulder-length": [],
                     "waist-length": [],
                     "dyes": [],
@@ -639,14 +1537,65 @@
         "Anime": {
             "female": {
                 "white": {
-                    "short": ["pixie", "boy cut"],
-                    "chin-length": ["shag", "bob", "messy bun", "tight bun", "braids"],
-                    "neck-length": ["shag", "bob", "messy bun", "tight bun", "braids", "braid", "low ponytail", "high ponytail", "side swept bangs"],
-                    "shoulder-length": ["messy bun", "tight bun", "braids", "braid", "low ponytail", "high ponytail", "side swept bangs", "side ponytails"],
-                    "waist-length": ["braids", "braid", "low ponytail", "high ponytail", "side ponytails"],
-                    "extremely long": ["ponytail", "braids", "braid"],
-                    "dyes": ["black", "blue", "magenta", "pink", "red", "green"],
-                    "highlights": ["red", "pink", "purple", "bleach blond", "orange"]
+                    "short": [
+                        "pixie",
+                        "boy cut"
+                    ],
+                    "chin-length": [
+                        "shag",
+                        "bob",
+                        "messy bun",
+                        "tight bun",
+                        "braids"
+                    ],
+                    "neck-length": [
+                        "shag",
+                        "bob",
+                        "messy bun",
+                        "tight bun",
+                        "braids",
+                        "braid",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs"
+                    ],
+                    "shoulder-length": [
+                        "messy bun",
+                        "tight bun",
+                        "braids",
+                        "braid",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "side ponytails"
+                    ],
+                    "waist-length": [
+                        "braids",
+                        "braid",
+                        "low ponytail",
+                        "high ponytail",
+                        "side ponytails"
+                    ],
+                    "extremely long": [
+                        "ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "dyes": [
+                        "black",
+                        "blue",
+                        "magenta",
+                        "pink",
+                        "red",
+                        "green"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple",
+                        "bleach blond",
+                        "orange"
+                    ]
                 },
                 "black": {
                     "short": [],
@@ -659,14 +1608,65 @@
                     "highlights": []
                 },
                 "api": {
-                    "short": ["pixie", "boy cut"],
-                    "chin-length": ["shag", "bob", "messy bun", "tight bun", "braids"],
-                    "neck-length": ["shag", "bob", "messy bun", "tight bun", "braids", "braid", "low ponytail", "high ponytail", "side swept bangs"],
-                    "shoulder-length": ["messy bun", "tight bun", "braids", "braid", "low ponytail", "high ponytail", "side swept bangs", "side ponytails"],
-                    "waist-length": ["braids", "braid", "low ponytail", "high ponytail", "side ponytails"],
-                    "extremely long": ["ponytail", "braids", "braid"],
-                    "dyes": ["black", "blue", "magenta", "pink", "red", "green"],
-                    "highlights": ["red", "pink", "purple", "bleach blond", "orange"]
+                    "short": [
+                        "pixie",
+                        "boy cut"
+                    ],
+                    "chin-length": [
+                        "shag",
+                        "bob",
+                        "messy bun",
+                        "tight bun",
+                        "braids"
+                    ],
+                    "neck-length": [
+                        "shag",
+                        "bob",
+                        "messy bun",
+                        "tight bun",
+                        "braids",
+                        "braid",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs"
+                    ],
+                    "shoulder-length": [
+                        "messy bun",
+                        "tight bun",
+                        "braids",
+                        "braid",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "side ponytails"
+                    ],
+                    "waist-length": [
+                        "braids",
+                        "braid",
+                        "low ponytail",
+                        "high ponytail",
+                        "side ponytails"
+                    ],
+                    "extremely long": [
+                        "ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "dyes": [
+                        "black",
+                        "blue",
+                        "magenta",
+                        "pink",
+                        "red",
+                        "green"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "purple",
+                        "bleach blond",
+                        "orange"
+                    ]
                 },
                 "hispanic": {
                     "short": [],
@@ -691,19 +1691,45 @@
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut"],
-                    "short": ["comb over", "side sweep", "long sideburns"],
-                    "chin-length": ["side sweep", "swoop", "bob", "long sideburns"],
-                    "long": ["ponytail", "swoop"],
-                    "shoulder-length": ["ponytail"],
-                    "waist-length": ["ponytail"],
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "comb over",
+                        "side sweep",
+                        "long sideburns"
+                    ],
+                    "chin-length": [
+                        "side sweep",
+                        "swoop",
+                        "bob",
+                        "long sideburns"
+                    ],
+                    "long": [
+                        "ponytail",
+                        "swoop"
+                    ],
+                    "shoulder-length": [
+                        "ponytail"
+                    ],
+                    "waist-length": [
+                        "ponytail"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "black": {
-                    "very short": ["buzz cut"],
-                    "short": ["afro", "afro blowout"],
-                    "chin-length": ["afro", "afro blowout"],
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "afro",
+                        "afro blowout"
+                    ],
+                    "chin-length": [
+                        "afro",
+                        "afro blowout"
+                    ],
                     "long": [],
                     "shoulder-length": [],
                     "waist-length": [],
@@ -903,12 +1929,28 @@
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut"],
-                    "short": ["comb over", "front flip", "high and tight", "spike cut"],
-                    "chin-length": ["bob", "long sideburns"],
-                    "long": ["ponytail"],
-                    "shoulder-length": ["ponytail"],
-                    "waist-length": ["ponytail"],
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "comb over",
+                        "front flip",
+                        "high and tight",
+                        "spike cut"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "long sideburns"
+                    ],
+                    "long": [
+                        "ponytail"
+                    ],
+                    "shoulder-length": [
+                        "ponytail"
+                    ],
+                    "waist-length": [
+                        "ponytail"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
@@ -1169,14 +2211,58 @@
         "Electronic": {
             "female": {
                 "white": {
-                    "short": ["buzz cut"],
-                    "chin-length": ["boy cut", "bob", "pixie", "mohawk", "flipped ends"],
-                    "neck-length": ["chopped layer cut", "mohawk", "braids"],
-                    "shoulder-length": ["braids", "crimped waves", "spiky bun", "space buns", "pigtails"],
-                    "waist-length": ["braids", "crimped waves", "spiky bun", "pigtails"],
-                    "extremely long": ["braids"],
-                    "dyes": ["magenta", "violet", "black", "maroon", "blond", "bleach blond", "red", "orange", "bubblegum pink", "neon green", "blue"],
-                    "highlights": ["bleach blond", "red", "silver", "green", "blue", "pink"]
+                    "short": [
+                        "buzz cut"
+                    ],
+                    "chin-length": [
+                        "boy cut",
+                        "bob",
+                        "pixie",
+                        "mohawk",
+                        "flipped ends"
+                    ],
+                    "neck-length": [
+                        "chopped layer cut",
+                        "mohawk",
+                        "braids"
+                    ],
+                    "shoulder-length": [
+                        "braids",
+                        "crimped waves",
+                        "spiky bun",
+                        "space buns",
+                        "pigtails"
+                    ],
+                    "waist-length": [
+                        "braids",
+                        "crimped waves",
+                        "spiky bun",
+                        "pigtails"
+                    ],
+                    "extremely long": [
+                        "braids"
+                    ],
+                    "dyes": [
+                        "magenta",
+                        "violet",
+                        "black",
+                        "maroon",
+                        "blond",
+                        "bleach blond",
+                        "red",
+                        "orange",
+                        "bubblegum pink",
+                        "neon green",
+                        "blue"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "red",
+                        "silver",
+                        "green",
+                        "blue",
+                        "pink"
+                    ]
                 },
                 "black": {
                     "short": [],
@@ -1275,104 +2361,530 @@
         "Bling": {
             "female": {
                 "white": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "pixie",
+                        "boy cut",
+                        "spiky curls",
+                        "swept bangs"
+                    ],
+                    "chin-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "spiky ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "spiky ponytail",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "crimps",
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "dyes": [
+                        "black",
+                        "blond",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 },
                 "black": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "buzz cut",
+                        "afro",
+                        "bumped ends",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "swept bangs",
+                        "bumped ends",
+                        "spiky ponytail",
+                        "afro"
+                    ],
+                    "neck-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "nubian twists",
+                        "spiky ponytail"
+                    ],
+                    "shoulder-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "nubian twists"
+                    ],
+                    "waist-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "crochet braids",
+                        "nubian twists"
+                    ],
+                    "extremely long": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "crochet braids",
+                        "nubian twists"
+                    ],
+                    "dyes": [
+                        "plum",
+                        "cherry red",
+                        "violet",
+                        "magenta",
+                        "maroon",
+                        "caramel",
+                        "pink"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 },
                 "api": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "pixie",
+                        "boy cut",
+                        "spiky curls",
+                        "swept bangs"
+                    ],
+                    "chin-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "spiky ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "spiky ponytail",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "crimps",
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "dyes": [
+                        "black",
+                        "blond",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 },
                 "hispanic": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "pixie",
+                        "boy cut",
+                        "spiky curls",
+                        "swept bangs"
+                    ],
+                    "chin-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "spiky ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "spiky ponytail",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "crimps",
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "dyes": [
+                        "black",
+                        "blond",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 },
                 "2prace": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "buzz cut",
+                        "afro",
+                        "bumped ends",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "swept bangs",
+                        "bumped ends",
+                        "spiky ponytail"
+                    ],
+                    "neck-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "nubian twists",
+                        "spiky ponytail"
+                    ],
+                    "shoulder-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "nubian twists"
+                    ],
+                    "waist-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "crochet braids",
+                        "nubian twists"
+                    ],
+                    "extremely long": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "crochet braids",
+                        "nubian twists"
+                    ],
+                    "dyes": [
+                        "plum",
+                        "cherry red",
+                        "violet",
+                        "magenta",
+                        "maroon",
+                        "caramel",
+                        "pink"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 }
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut", "bald fade", "fade"],
-                    "short": ["buzz cut", "tapered fade", "bald fade"],
-                    "chin-length": ["tapered fade", "cornrows", "locs"],
-                    "long": ["locs"],
-                    "shoulder-length": ["locs"],
-                    "waist-length": ["locs"],
-                    "dyes": ["bleach blond", "blond"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "tapered fade",
+                        "bald fade"
+                    ],
+                    "chin-length": [
+                        "tapered fade",
+                        "cornrows",
+                        "locs"
+                    ],
+                    "long": [
+                        "locs"
+                    ],
+                    "shoulder-length": [
+                        "locs"
+                    ],
+                    "waist-length": [
+                        "locs"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "blond"
+                    ],
                     "highlights": []
                 },
                 "black": {
-                    "very short": ["buzz cut", "bald fade", "caesar", "360 waves"],
-                    "short": ["buzz cut", "bald fade", "fade", "caesar", "cornrows", "locs", "waves", "perm", "tapered afro", "afro", "360 waves"],
-                    "chin-length": ["perm", "cornrows", "locs", "2 strand twist", "tapered afro", "afro"],
-                    "long": ["cornrows", "locs", "braids", "2 strand twist", "puffs"],
-                    "shoulder-length": ["locs", "braids", "puffs"],
-                    "waist-length": ["locs", "braids"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "caesar",
+                        "360 waves"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade",
+                        "caesar",
+                        "cornrows",
+                        "locs",
+                        "waves",
+                        "perm",
+                        "tapered afro",
+                        "afro",
+                        "360 waves"
+                    ],
+                    "chin-length": [
+                        "perm",
+                        "cornrows",
+                        "locs",
+                        "2 strand twist",
+                        "tapered afro",
+                        "afro"
+                    ],
+                    "long": [
+                        "cornrows",
+                        "locs",
+                        "braids",
+                        "2 strand twist",
+                        "puffs"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids",
+                        "puffs"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "api": {
-                    "very short": ["buzz cut", "bald fade", "fade"],
-                    "short": ["buzz cut", "tapered fade", "bald fade"],
-                    "chin-length": ["tapered fade", "cornrows", "locs"],
-                    "long": ["locs"],
-                    "shoulder-length": ["locs"],
-                    "waist-length": ["locs"],
-                    "dyes": ["bleach blond", "blond"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "tapered fade",
+                        "bald fade"
+                    ],
+                    "chin-length": [
+                        "tapered fade",
+                        "cornrows",
+                        "locs"
+                    ],
+                    "long": [
+                        "locs"
+                    ],
+                    "shoulder-length": [
+                        "locs"
+                    ],
+                    "waist-length": [
+                        "locs"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "blond"
+                    ],
                     "highlights": []
                 },
                 "hispanic": {
-                    "very short": ["buzz cut", "bald fade", "tapered fade", "caesar"],
-                    "short": ["buzz cut", "bald fade", "fade", "caeser", "waves", "cornrows", "mullet"],
-                    "chin-length": ["cornrows", "tapered", "2 strand twist", "mullet"],
-                    "long": ["2 strand twist", "puffs", "cornrows"],
-                    "shoulder-length": ["puffs", "cornrows"],
-                    "waist-length": ["locs"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "tapered fade",
+                        "caesar"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade",
+                        "caesar",
+                        "waves",
+                        "cornrows",
+                        "mullet"
+                    ],
+                    "chin-length": [
+                        "cornrows",
+                        "tapered",
+                        "2 strand twist",
+                        "mullet"
+                    ],
+                    "long": [
+                        "2 strand twist",
+                        "puffs",
+                        "cornrows"
+                    ],
+                    "shoulder-length": [
+                        "puffs",
+                        "cornrows"
+                    ],
+                    "waist-length": [
+                        "locs"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "2prace": {
-                    "very short": ["buzz cut", "bald fade", "caesar", "360 waves"],
-                    "short": ["buzz cut", "bald fade", "fade", "caesar", "cornrows", "locs", "waves", "perm", "tapered afro", "afro", "360 waves"],
-                    "chin-length": ["perm", "cornrows", "locs", "2 strand twist", "tapered afro", "afro"],
-                    "long": ["cornrows", "locs", "braids", "2 strand twist", "puffs"],
-                    "shoulder-length": ["locs", "braids", "puffs"],
-                    "waist-length": ["locs", "braids"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "caesar",
+                        "360 waves"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade",
+                        "caesar",
+                        "cornrows",
+                        "locs",
+                        "waves",
+                        "perm",
+                        "tapered afro",
+                        "afro",
+                        "360 waves"
+                    ],
+                    "chin-length": [
+                        "perm",
+                        "cornrows",
+                        "locs",
+                        "2 strand twist",
+                        "tapered afro",
+                        "afro"
+                    ],
+                    "long": [
+                        "cornrows",
+                        "locs",
+                        "braids",
+                        "2 strand twist",
+                        "puffs"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids",
+                        "puffs"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids"
+                    ],
                     "dyes": [],
                     "highlights": []
                 }
@@ -1381,104 +2893,533 @@
         "Trap": {
             "female": {
                 "white": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "pixie",
+                        "boy cut",
+                        "spiky curls",
+                        "swept bangs"
+                    ],
+                    "chin-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "spiky ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "spiky ponytail",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "crimps",
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "dyes": [
+                        "black",
+                        "blond",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 },
                 "black": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "buzz cut",
+                        "afro",
+                        "bumped ends",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "swept bangs",
+                        "bumped ends",
+                        "spiky ponytail",
+                        "afro",
+                        "puffs"
+                    ],
+                    "neck-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "nubian twists",
+                        "spiky ponytail"
+                    ],
+                    "shoulder-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "nubian twists"
+                    ],
+                    "waist-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "crochet braids",
+                        "nubian twists"
+                    ],
+                    "extremely long": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "crochet braids",
+                        "nubian twists"
+                    ],
+                    "dyes": [
+                        "plum",
+                        "cherry red",
+                        "violet",
+                        "magenta",
+                        "maroon",
+                        "caramel",
+                        "pink"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 },
                 "api": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "pixie",
+                        "boy cut",
+                        "spiky curls",
+                        "swept bangs"
+                    ],
+                    "chin-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "spiky ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "spiky ponytail",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "crimps",
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "dyes": [
+                        "black",
+                        "blond",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 },
                 "hispanic": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "pixie",
+                        "boy cut",
+                        "spiky curls",
+                        "swept bangs"
+                    ],
+                    "chin-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "spiky ponytail",
+                        "braids",
+                        "braid",
+                        "puffs"
+                    ],
+                    "neck-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "spiky ponytail",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "bumped ends",
+                        "fulani braids",
+                        "crimps",
+                        "high ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "crimps",
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "low ponytail",
+                        "braids",
+                        "braid"
+                    ],
+                    "dyes": [
+                        "black",
+                        "blond",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 },
                 "2prace": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "buzz cut",
+                        "afro",
+                        "bumped ends",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "swept bangs",
+                        "bumped ends",
+                        "spiky ponytail"
+                    ],
+                    "neck-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "nubian twists",
+                        "spiky ponytail",
+                        "puffs"
+                    ],
+                    "shoulder-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "bantu knots",
+                        "bantu knot out",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "high ponytail",
+                        "nubian twists"
+                    ],
+                    "waist-length": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "crochet braids",
+                        "nubian twists"
+                    ],
+                    "extremely long": [
+                        "fulani braids",
+                        "micro braids",
+                        "cornrows",
+                        "freestyle braids",
+                        "ghana braids",
+                        "marley twists",
+                        "crochet braids",
+                        "nubian twists"
+                    ],
+                    "dyes": [
+                        "plum",
+                        "cherry red",
+                        "violet",
+                        "magenta",
+                        "maroon",
+                        "caramel",
+                        "pink"
+                    ],
+                    "highlights": [
+                        "red",
+                        "pink",
+                        "violet",
+                        "bleach blond"
+                    ]
                 }
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut", "bald fade", "fade"],
-                    "short": ["buzz cut", "tapered fade", "bald fade"],
-                    "chin-length": ["tapered fade", "cornrows", "locs"],
-                    "long": ["locs"],
-                    "shoulder-length": ["locs"],
-                    "waist-length": ["locs"],
-                    "dyes": ["bleach blond", "blond"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "tapered fade",
+                        "bald fade"
+                    ],
+                    "chin-length": [
+                        "tapered fade",
+                        "cornrows",
+                        "locs"
+                    ],
+                    "long": [
+                        "locs"
+                    ],
+                    "shoulder-length": [
+                        "locs"
+                    ],
+                    "waist-length": [
+                        "locs"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "blond"
+                    ],
                     "highlights": []
                 },
                 "black": {
-                    "very short": ["buzz cut", "bald fade", "caesar"],
-                    "short": ["buzz cut", "bald fade", "fade", "caesar", "cornrows", "locs", "waves", "perm", "tapered afro", "afro"],
-                    "chin-length": ["perm", "cornrows", "locs", "2 strand twist", "tapered afro", "afro"],
-                    "long": ["cornrows", "locs", "braids", "2 strand twist", "puffs"],
-                    "shoulder-length": ["locs", "braids", "puffs"],
-                    "waist-length": ["locs", "braids"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "caesar"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade",
+                        "caesar",
+                        "cornrows",
+                        "locs",
+                        "waves",
+                        "perm",
+                        "tapered afro",
+                        "afro"
+                    ],
+                    "chin-length": [
+                        "perm",
+                        "cornrows",
+                        "locs",
+                        "2 strand twist",
+                        "tapered afro",
+                        "afro"
+                    ],
+                    "long": [
+                        "cornrows",
+                        "locs",
+                        "braids",
+                        "2 strand twist",
+                        "puffs"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids",
+                        "puffs"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "api": {
-                    "very short": ["buzz cut", "bald fade", "tapered fade", "caesar"],
-                    "short": ["buzz cut", "bald fade", "fade", "caeser", "waves", "cornrows"],
-                    "chin-length": ["cornrows", "tapered", "2 strand twist"],
-                    "long": ["2 strand twist", "puffs", "cornrows"],
-                    "shoulder-length": ["puffs", "cornrows"],
-                    "waist-length": ["locs"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "tapered fade",
+                        "caesar"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade",
+                        "caeser",
+                        "waves",
+                        "cornrows"
+                    ],
+                    "chin-length": [
+                        "cornrows",
+                        "tapered",
+                        "2 strand twist"
+                    ],
+                    "long": [
+                        "2 strand twist",
+                        "puffs",
+                        "cornrows"
+                    ],
+                    "shoulder-length": [
+                        "puffs",
+                        "cornrows"
+                    ],
+                    "waist-length": [
+                        "locs"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "hispanic": {
-                    "very short": ["buzz cut", "bald fade", "tapered fade", "caesar"],
-                    "short": ["buzz cut", "bald fade", "fade", "caeser", "waves", "cornrows", "mullet", "slick back"],
-                    "chin-length": ["cornrows", "tapered", "2 strand twist", "mullet", "slick back"],
-                    "long": ["2 strand twist", "puffs", "cornrows"],
-                    "shoulder-length": ["puffs", "cornrows"],
-                    "waist-length": ["locs"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "tapered fade",
+                        "caesar"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade",
+                        "caeser",
+                        "waves",
+                        "cornrows",
+                        "mullet",
+                        "slick back"
+                    ],
+                    "chin-length": [
+                        "cornrows",
+                        "tapered",
+                        "2 strand twist",
+                        "mullet",
+                        "slick back"
+                    ],
+                    "long": [
+                        "2 strand twist",
+                        "puffs",
+                        "cornrows"
+                    ],
+                    "shoulder-length": [
+                        "puffs",
+                        "cornrows"
+                    ],
+                    "waist-length": [
+                        "locs"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "2prace": {
-                    "very short": ["buzz cut", "bald fade", "caesar"],
-                    "short": ["buzz cut", "bald fade", "fade", "caesar", "cornrows", "locs", "waves", "perm", "tapered afro", "afro"],
-                    "chin-length": ["perm", "cornrows", "locs", "2 strand twist", "tapered afro", "afro"],
-                    "long": ["cornrows", "locs", "braids", "2 strand twist"],
-                    "shoulder-length": ["locs", "braids"],
-                    "waist-length": ["locs", "braids"],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "caesar"
+                    ],
+                    "short": [
+                        "buzz cut",
+                        "bald fade",
+                        "fade",
+                        "caesar",
+                        "cornrows",
+                        "locs",
+                        "waves",
+                        "perm",
+                        "tapered afro",
+                        "afro"
+                    ],
+                    "chin-length": [
+                        "perm",
+                        "cornrows",
+                        "locs",
+                        "2 strand twist",
+                        "tapered afro",
+                        "afro"
+                    ],
+                    "long": [
+                        "cornrows",
+                        "locs",
+                        "braids",
+                        "2 strand twist"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids"
+                    ],
                     "dyes": [],
                     "highlights": []
                 }
@@ -1488,8 +3429,19 @@
             "female": {
                 "white": {
                     "short": [],
-                    "chin-length": ["bob", "tight bun", "high ponytail", "side swept bangs"],
-                    "neck-length": ["bob", "tight bun", "high ponytail", "low ponytail", "side swept bangs"],
+                    "chin-length": [
+                        "bob",
+                        "tight bun",
+                        "high ponytail",
+                        "side swept bangs"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "tight bun",
+                        "high ponytail",
+                        "low ponytail",
+                        "side swept bangs"
+                    ],
                     "shoulder-length": [],
                     "waist-length": [],
                     "extremely long": [],
@@ -1539,12 +3491,32 @@
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut"],
-                    "short": ["comb over", "taper cut", "textured cut", "pompadour", "front flip"],
-                    "chin-length": ["comb over", "taper cut", "textured cut", "pompadour", "front flip"],
-                    "long": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
+                    "very short": [
+                        "buzz cut"
+                    ],
+                    "short": [
+                        "comb over",
+                        "taper cut",
+                        "textured cut",
+                        "pompadour",
+                        "front flip"
+                    ],
+                    "chin-length": [
+                        "comb over",
+                        "taper cut",
+                        "textured cut",
+                        "pompadour",
+                        "front flip"
+                    ],
+                    "long": [
+                        "ponytail"
+                    ],
+                    "shoulder-length": [
+                        "ponytail"
+                    ],
+                    "waist-length": [
+                        "ponytail"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
@@ -1593,14 +3565,54 @@
         "Beach": {
             "female": {
                 "white": {
-                    "short": ["pixie", "boy cut", "spiky curls"],
-                    "chin-length": ["textured layers", "crimps", "chopped layer cut", "poof", "side swept bangs", "framed layers with bangs", "crimps and curls"],
-                    "neck-length": ["textured layers", "crimps", "chopped layer cut", "poof", "side swept bangs", "framed layers with bangs", "crimps and curls"],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
-                    "dyes": [],
-                    "highlights": []
+                    "short": [
+                        "pixie",
+                        "boy cut",
+                        "spiky curls"
+                    ],
+                    "chin-length": [
+                        "textured layers",
+                        "crimps",
+                        "chopped layer cut",
+                        "poof",
+                        "side swept bangs",
+                        "framed layers with bangs",
+                        "crimps and curls"
+                    ],
+                    "neck-length": [
+                        "textured layers",
+                        "crimps",
+                        "chopped layer cut",
+                        "poof",
+                        "side swept bangs",
+                        "framed layers with bangs",
+                        "crimps and curls"
+                    ],
+                    "shoulder-length": [
+                        "textured layers",
+                        "crimps",
+                        "chopped layer cut",
+                        "poof",
+                        "side swept bangs",
+                        "framed layers with bangs",
+                        "crimps and curls"
+                    ],
+                    "waist-length": [
+                        "braids",
+                        "braid",
+                        "ponytail"
+                    ],
+                    "extremely long": [
+                        "ponytail"
+                    ],
+                    "dyes": [
+                        "blond",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "blond",
+                        "bleach blond"
+                    ]
                 },
                 "black": {
                     "short": [],
@@ -1645,14 +3657,26 @@
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut", "spike cut"],
-                    "short": ["spike cut", "faux hawk"],
+                    "very short": [
+                        "buzz cut",
+                        "spike cut"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "faux hawk"
+                    ],
                     "chin-length": [],
                     "long": [],
                     "shoulder-length": [],
                     "waist-length": [],
-                    "dyes": ["blond", "bleach blond"],
-                    "highlights": ["blond", "bleach blond"]
+                    "dyes": [
+                        "blond",
+                        "bleach blond"
+                    ],
+                    "highlights": [
+                        "blond",
+                        "bleach blond"
+                    ]
                 },
                 "black": {
                     "very short": [],
@@ -1816,9 +3840,18 @@
                 },
                 "black": {
                     "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
+                    "chin-length": [
+                        "micro braids",
+                        "fulani braids"
+                    ],
+                    "neck-length": [
+                        "micro braids",
+                        "fulani braids"
+                    ],
+                    "shoulder-length": [
+                        "micro braids",
+                        "fulani braids"
+                    ],
                     "waist-length": [],
                     "extremely long": [],
                     "dyes": [],
@@ -1911,8 +3944,14 @@
         "Country": {
             "female": {
                 "white": {
-                    "short": ["boy cut"],
-                    "chin-length": ["boy cut", "bob", "middle part"],
+                    "short": [
+                        "boy cut"
+                    ],
+                    "chin-length": [
+                        "boy cut",
+                        "bob",
+                        "middle part"
+                    ],
                     "neck-length": [],
                     "shoulder-length": [],
                     "waist-length": [],
@@ -2017,52 +4056,199 @@
         "Christian": {
             "female": {
                 "white": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid",
+                        "middle part"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid",
+                        "middle part"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "braid"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "black": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "braid"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "api": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "braid"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "hispanic": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "braid"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
                 "2prace": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "braid"
+                    ],
                     "dyes": [],
                     "highlights": []
                 }
@@ -2123,51 +4309,186 @@
         "ROTC": {
             "female": {
                 "white": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
                     "extremely long": [],
                     "dyes": [],
                     "highlights": []
                 },
                 "black": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
                     "extremely long": [],
                     "dyes": [],
                     "highlights": []
                 },
                 "api": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
                     "extremely long": [],
                     "dyes": [],
                     "highlights": []
                 },
                 "hispanic": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
                     "extremely long": [],
                     "dyes": [],
                     "highlights": []
                 },
                 "2prace": {
-                    "short": [],
-                    "chin-length": [],
-                    "neck-length": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
+                    "short": [
+                        "boy cut",
+                        "pixie",
+                        "spiked pixie"
+                    ],
+                    "chin-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "neck-length": [
+                        "bob",
+                        "low ponytail",
+                        "high ponytail",
+                        "side swept bangs",
+                        "layered cut",
+                        "tight bun",
+                        "braid"
+                    ],
+                    "shoulder-length": [
+                        "low ponytail",
+                        "high ponytail",
+                        "layered cut",
+                        "braid"
+                    ],
+                    "waist-length": [
+                        "layered cut",
+                        "braid"
+                    ],
                     "extremely long": [],
                     "dyes": [],
                     "highlights": []
@@ -2175,9 +4496,22 @@
             },
             "male": {
                 "white": {
-                    "very short": ["buzz cut", "bald fade"],
-                    "short": ["high and tight", "bald fade", "tapered fade", "crew cut", "comb over"],
-                    "chin-length": [],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade"
+                    ],
+                    "short": [
+                        "high and tight",
+                        "bald fade",
+                        "tapered fade",
+                        "crew cut",
+                        "comb over"
+                    ],
+                    "chin-length": [
+                        "comb over",
+                        "taper cut",
+                        "textured cut"
+                    ],
                     "long": [],
                     "shoulder-length": [],
                     "waist-length": [],
@@ -2185,9 +4519,25 @@
                     "highlights": []
                 },
                 "black": {
-                    "very short": [],
-                    "short": [],
-                    "chin-length": [],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "tapered fade",
+                        "afro",
+                        "caesar"
+                    ],
+                    "short": [
+                        "tapered fade",
+                        "locs",
+                        "braids",
+                        "afro",
+                        "cornrows"
+                    ],
+                    "chin-length": [
+                        "locs",
+                        "braids",
+                        "cornrows"
+                    ],
                     "long": [],
                     "shoulder-length": [],
                     "waist-length": [],
@@ -2281,54 +4631,277 @@
             },
             "male": {
                 "white": {
-                    "very short": [],
-                    "short": [],
-                    "chin-length": [],
-                    "long": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "dyes": [],
-                    "highlights": []
+                    "very short": [
+                        "front flip",
+                        "buzz cut",
+                        "spike cut",
+                        "comb over"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "long sideburns",
+                        "swoop"
+                    ],
+                    "chin-length": [
+                        "mullet",
+                        "ponytail",
+                        "pompadour"
+                    ],
+                    "long": [
+                        "ponytail",
+                        "mullet"
+                    ],
+                    "shoulder-length": [
+                        "ponytail"
+                    ],
+                    "waist-length": [
+                        "ponytail"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "black",
+                        "Cherry Bomb",
+                        "Atomic Pink"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink"
+                    ]
                 },
                 "black": {
-                    "very short": [],
-                    "short": [],
-                    "chin-length": [],
-                    "long": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "dyes": [],
-                    "highlights": []
+                    "very short": [
+                        "buzz cut",
+                        "afro"
+                    ],
+                    "short": [
+                        "liberty spikes afro",
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs"
+                    ],
+                    "chin-length": [
+                        "liberty spikes afro",
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs"
+                    ],
+                    "long": [
+                        "locs",
+                        "corkscrew coils",
+                        "braids"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids"
+                    ],
+                    "dyes": [
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple"
+                    ],
+                    "highlights": [
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple"
+                    ]
                 },
                 "api": {
-                    "very short": [],
-                    "short": [],
-                    "chin-length": [],
-                    "long": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "dyes": [],
-                    "highlights": []
+                    "very short": [
+                        "front flip",
+                        "buzz cut",
+                        "spike cut",
+                        "comb over"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "long sideburns",
+                        "swoop"
+                    ],
+                    "chin-length": [
+                        "mullet",
+                        "ponytail",
+                        "pompadour"
+                    ],
+                    "long": [
+                        "ponytail",
+                        "mullet"
+                    ],
+                    "shoulder-length": [
+                        "ponytail"
+                    ],
+                    "waist-length": [
+                        "ponytail"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "black",
+                        "Cherry Bomb",
+                        "Atomic Pink"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink"
+                    ]
                 },
                 "hispanic": {
-                    "very short": [],
-                    "short": [],
-                    "chin-length": [],
-                    "long": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "dyes": [],
-                    "highlights": []
+                    "very short": [
+                        "front flip",
+                        "buzz cut",
+                        "spike cut",
+                        "comb over"
+                    ],
+                    "short": [
+                        "spike cut",
+                        "long sideburns",
+                        "swoop"
+                    ],
+                    "chin-length": [
+                        "mullet",
+                        "ponytail",
+                        "pompadour"
+                    ],
+                    "long": [
+                        "ponytail",
+                        "mullet"
+                    ],
+                    "shoulder-length": [
+                        "ponytail"
+                    ],
+                    "waist-length": [
+                        "ponytail"
+                    ],
+                    "dyes": [
+                        "bleach blond",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "black",
+                        "Cherry Bomb",
+                        "Atomic Pink"
+                    ],
+                    "highlights": [
+                        "bleach blond",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink"
+                    ]
                 },
                 "2prace": {
-                    "very short": [],
-                    "short": [],
-                    "chin-length": [],
-                    "long": [],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "dyes": [],
-                    "highlights": []
+                    "very short": [
+                        "buzz cut",
+                        "afro",
+                        "spike cut",
+                        "front flip"
+                    ],
+                    "short": [
+                        "liberty spikes afro",
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs",
+                        "long sideburns",
+                        "swoop"
+                    ],
+                    "chin-length": [
+                        "liberty spikes afro",
+                        "afro",
+                        "afro blowout",
+                        "corkscrew coils",
+                        "locs"
+                    ],
+                    "long": [
+                        "locs",
+                        "corkscrew coils",
+                        "braids"
+                    ],
+                    "shoulder-length": [
+                        "locs",
+                        "braids",
+                        "ponytail"
+                    ],
+                    "waist-length": [
+                        "locs",
+                        "braids",
+                        "ponytail"
+                    ],
+                    "dyes": [
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple"
+                    ],
+                    "highlights": [
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple"
+                    ]
                 }
             }
         }
