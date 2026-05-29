@@ -38,6 +38,20 @@ distributions {
     }
 }
 
+tasks.register('fatJar', Jar) {
+    archiveClassifier = 'all'
+    manifest {
+        attributes 'Main-Class': 'game.Main'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.output
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }
+                .collect { zipTree(it) }
+    }
+    with tasks.jar
+}
+
 // Set Java version compatibility using toolchains
 java {
     toolchain {
