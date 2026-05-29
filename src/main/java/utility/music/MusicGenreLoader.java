@@ -4,13 +4,11 @@ import entity.Radio.MusicGenre;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import utility.io.ResourceAccess;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -42,7 +40,7 @@ public final class MusicGenreLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String DIR = "src/main/java/Resources/Music/";
+    private static final String DIR = "/Resources/Music/";
     private static final String ARTIST_GENRES = DIR + "artist_genres.tsv";
     private static final String SONG_GENRES = DIR + "song_genres.tsv";
     private static final String OVERRIDES =
@@ -109,12 +107,10 @@ public final class MusicGenreLoader implements Serializable {
     private static void loadTsv(String path,
                                 Map<String, Set<MusicGenre>> target,
                                 int genreCol) {
-        File f = new File(path);
-        if (!f.exists()) {
+        if (!ResourceAccess.exists(path)) {
             return;
         }
-        try (BufferedReader br = new BufferedReader(
-                new FileReader(f, StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(ResourceAccess.reader(path))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.isEmpty() || line.charAt(0) == '#') {
@@ -143,11 +139,10 @@ public final class MusicGenreLoader implements Serializable {
      * artist genres.
      */
     private static void loadOverrides() {
-        File f = new File(OVERRIDES);
-        if (!f.exists()) {
+        if (!ResourceAccess.exists(OVERRIDES)) {
             return;
         }
-        try (FileReader fr = new FileReader(f, StandardCharsets.UTF_8)) {
+        try (var fr = ResourceAccess.reader(OVERRIDES)) {
             Object parsed = new JSONParser().parse(fr);
             if (!(parsed instanceof JSONObject root)) {
                 return;

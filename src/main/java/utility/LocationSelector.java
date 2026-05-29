@@ -8,8 +8,8 @@ import java.util.Set;
  * the {@code Weather} constructor so that other systems (e.g. the radio
  * generator) can share the same E/W classification.
  *
- * <p>Region keys correspond to the CSV files under
- * {@code src/main/java/Resources/Weather/}.</p>
+ * <p>Region keys correspond to the classpath CSV files under
+ * {@code /Resources/Weather/}.</p>
  */
 public final class LocationSelector {
 

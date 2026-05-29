@@ -4,10 +4,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -33,9 +32,9 @@ public final class TraitDatasetLoader {
 
     /**
      * Loads (or returns the cached) {@link TraitDataset} for the JSON
-     * file at the given path.
+     * file at the given classpath path.
      *
-     * @param path filesystem path to a trait JSON file
+     * @param path classpath path to a trait JSON file
      * @return the parsed dataset (never null)
      * @throws RuntimeException if the file cannot be read or parsed
      */
@@ -58,8 +57,10 @@ public final class TraitDatasetLoader {
 
     private static TraitDataset parse(String path) {
         try {
-            JSONObject root = (JSONObject) new JSONParser().parse(
-                    new FileReader(path, StandardCharsets.UTF_8));
+            JSONObject root;
+            try (var reader = ResourceAccess.reader(toResourcePath(path))) {
+                root = (JSONObject) new JSONParser().parse(reader);
+            }
 
             List<String> categories = new ArrayList<>();
             // LinkedHashSet preserves first-seen order while deduping
@@ -92,6 +93,18 @@ public final class TraitDatasetLoader {
             throw new RuntimeException(
                     "Failed to load trait dataset: " + path, e);
         }
+    }
+
+    private static String toResourcePath(String path) {
+        String normalized = path.replace('\\', '/');
+        if (normalized.startsWith("src/main/java/")) {
+            normalized = normalized.substring("src/main/java".length());
+        } else if (normalized.startsWith("src/main/resources/")) {
+            normalized = normalized.substring("src/main/resources".length());
+        } else if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+        return normalized;
     }
 
     private static List<String> readStringList(Object value) {

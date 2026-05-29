@@ -1,9 +1,8 @@
 package utility;
 
+import utility.io.ResourceAccess;
+
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +34,13 @@ public class NameLoader {
 
     // TODO: this is some nasty code to refactor, but for performance
     public static void readCSVFirst(String birth) {
-        String basePath = "src/main/java/Resources.People/";
+        String basePath = "/Resources.People/";
         String csvFirst = basePath + "yob" + birth + ".txt";
         BufferedReader fr = null;
         int iterator = 0;
 
         try {
-            File firstFile = new File(csvFirst);
-            fr = new BufferedReader(new FileReader(firstFile, StandardCharsets.UTF_8));
+            fr = new BufferedReader(ResourceAccess.reader(csvFirst));
             String f_line;
 
             while ((f_line = fr.readLine()) != null) {
@@ -225,13 +223,12 @@ public class NameLoader {
     }
 
     public static HashMap<Integer, String> readCSVLast() {
-        String csvLast = "src/main/java/Resources.People/surname_2.txt";
+        String csvLast = "/Resources.People/surname_2.txt";
         HashMap<Integer, String> lastNames = new HashMap<Integer, String>();
         BufferedReader lr = null;
 
         try {
-            File lastFile = new File(csvLast);
-            lr = new BufferedReader(new FileReader(lastFile, StandardCharsets.UTF_8));
+            lr = new BufferedReader(ResourceAccess.reader(csvLast));
             String l_line = null;
             Integer iterator = 0;
 
@@ -257,12 +254,12 @@ public class NameLoader {
     }
 
     public static void readCSVLastStudent() {
-        String csvLast = "src/main/java/Resources.People/app_c.csv";
+        String csvLast = "/Resources.People/app_c.csv";
 
         BufferedReader lr = null;
 
         try {
-            lr = new BufferedReader(new FileReader(new File(csvLast), StandardCharsets.UTF_8));
+            lr = new BufferedReader(ResourceAccess.reader(csvLast));
             String l_line;
             lr.readLine();
 

@@ -3,10 +3,9 @@ package utility;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -414,8 +413,9 @@ public class TraitSelection {
     private static JSONObject loadHairTypeData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources.People/hair_type.json", StandardCharsets.UTF_8);
-            return (JSONObject) parser.parse(reader);
+            try (var reader = ResourceAccess.reader("/Resources.People/hair_type.json")) {
+                return (JSONObject) parser.parse(reader);
+            }
         } catch (IOException | ParseException e) {
             throw new RuntimeException("Failed to load hair type data", e);
         }
@@ -452,9 +452,9 @@ public class TraitSelection {
     private static JSONObject loadHairColorData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources.People/hair_color.json",
-                    StandardCharsets.UTF_8);
-            return (JSONObject) parser.parse(reader);
+            try (var reader = ResourceAccess.reader("/Resources.People/hair_color.json")) {
+                return (JSONObject) parser.parse(reader);
+            }
         } catch (IOException | ParseException e) {
             throw new RuntimeException("Failed to load hair color data", e);
         }
@@ -522,8 +522,9 @@ public class TraitSelection {
     private static JSONObject loadEyeColorData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources.People/eye_color.json", StandardCharsets.UTF_8);
-            return (JSONObject) parser.parse(reader);
+            try (var reader = ResourceAccess.reader("/Resources.People/eye_color.json")) {
+                return (JSONObject) parser.parse(reader);
+            }
         } catch (IOException | org.json.simple.parser.ParseException e) {
             throw new RuntimeException("Failed to load eye color data", e);
         }
@@ -574,9 +575,9 @@ public class TraitSelection {
     private static JSONObject loadSkinColorData() {
         try {
             JSONParser parser = new JSONParser();
-            FileReader reader = new FileReader("src/main/java/Resources.People/skin_distribution.json",
-                    StandardCharsets.UTF_8);
-            return (JSONObject) parser.parse(reader);
+            try (var reader = ResourceAccess.reader("/Resources.People/skin_distribution.json")) {
+                return (JSONObject) parser.parse(reader);
+            }
         } catch (IOException | ParseException e) {
             throw new RuntimeException("Failed to load skin color data", e);
         }

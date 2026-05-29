@@ -3,11 +3,10 @@ package utility;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +19,7 @@ import java.util.Set;
  */
 public final class NeighborhoodNameLoader implements Serializable {
 
-    private static final String RESOURCE_PATH = "src/main/java/Resources/Town/neighborhoods.json";
+    private static final String RESOURCE_PATH = "/Resources/Town/neighborhoods.json";
     private static final double UNIQUE_NAME_PROBABILITY = 0.15;
     private static final int MAX_NAME_ATTEMPTS = 500;
     private static boolean loaded = false;
@@ -94,7 +93,10 @@ public final class NeighborhoodNameLoader implements Serializable {
         }
 
         try {
-            Object parsed = new JSONParser().parse(new FileReader(RESOURCE_PATH, StandardCharsets.UTF_8));
+            Object parsed;
+            try (var reader = ResourceAccess.reader(RESOURCE_PATH)) {
+                parsed = new JSONParser().parse(reader);
+            }
             JSONObject root = (JSONObject) parsed;
             loadTier(root, "affluent");
             loadTier(root, "middle_class");

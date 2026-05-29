@@ -32,12 +32,12 @@ import static constants.SimConstants.*;
 public class CellPhoneAssignmentService {
 
     /**
-     * Filesystem path to the phone condition / trait dataset.  Loaded
+     * Classpath path to the phone condition / trait dataset.  Loaded
      * lazily by {@link TraitDatasetLoader} on first use; subsequent
      * loads are cached so the per-phone selection cost is negligible.
      */
     private static final String CELLPHONE_TRAITS_PATH =
-            "src/main/java/Resources/Flavor/cellphone_traits.json";
+            "/Resources/Flavor/cellphone_traits.json";
 
     /** Inclusive lower bound on the number of flavor descriptors per phone. */
     private static final int CELLPHONE_TRAIT_MIN_COUNT = 2;

@@ -4,11 +4,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +23,7 @@ public final class RadioNicknameLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String NICKNAMES_PATH =
-            "src/main/java/Resources/Radio/station_nicknames.json";
+            "/Resources/Radio/station_nicknames.json";
 
     private static boolean loaded = false;
     private static final List<String> nicknames = new ArrayList<>();
@@ -77,7 +76,7 @@ public final class RadioNicknameLoader implements Serializable {
     }
 
     private static void loadNicknames() throws IOException, ParseException {
-        try (FileReader reader = new FileReader(NICKNAMES_PATH, StandardCharsets.UTF_8)) {
+        try (var reader = ResourceAccess.reader(NICKNAMES_PATH)) {
             JSONObject root = (JSONObject) new JSONParser().parse(reader);
             JSONArray array = (JSONArray) root.get("nicknames");
             if (array == null) {

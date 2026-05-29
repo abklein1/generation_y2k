@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  *
  * <p>This is <strong>not</strong> part of the game runtime. It reads dataset
  * dumps from {@code tools/musicgenre/data/} (git-ignored) and writes committed
- * assets into {@code src/main/java/Resources/Music/}. Run it with:</p>
+ * assets into {@code src/main/resources/Resources/Music/}. Run it with:</p>
  *
  * <pre>./gradlew generateGenreAssets</pre>
  *
@@ -42,9 +42,9 @@ public final class GenreAssetGenerator {
     private static final String ARTISTS_TSV = MUSICOSET_DIR + "artists.csv";
     private static final String SONGS_TSV = MUSICOSET_DIR + "songs.csv";
     private static final String BILLBOARD_CSV =
-            "src/main/java/Resources/Music/song_popularity.csv";
+            "src/main/resources/Resources/Music/song_popularity.csv";
 
-    private static final String OUT_DIR = "src/main/java/Resources/Music/";
+    private static final String OUT_DIR = "src/main/resources/Resources/Music/";
     private static final String ARTIST_GENRES_OUT = OUT_DIR + "artist_genres.tsv";
     private static final String SONG_GENRES_OUT = OUT_DIR + "song_genres.tsv";
     private static final String REPORT_OUT =

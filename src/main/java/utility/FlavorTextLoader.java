@@ -4,10 +4,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import java.util.List;
  */
 public class FlavorTextLoader {
 
-    private static final String FLAVOR_TEXT_PATH = "src/main/java/Resources.People/player_character_background.json";
+    private static final String FLAVOR_TEXT_PATH = "/Resources.People/player_character_background.json";
 
     private static JSONObject flavorData = null;
 
@@ -31,7 +30,9 @@ public class FlavorTextLoader {
 
         try {
             JSONParser parser = new JSONParser();
-            flavorData = (JSONObject) parser.parse(new FileReader(FLAVOR_TEXT_PATH, StandardCharsets.UTF_8));
+            try (var reader = ResourceAccess.reader(FLAVOR_TEXT_PATH)) {
+                flavorData = (JSONObject) parser.parse(reader);
+            }
         } catch (IOException | ParseException e) {
             GameLogger.logDebug("Error loading flavor text: " + e.getMessage());
             flavorData = new JSONObject();

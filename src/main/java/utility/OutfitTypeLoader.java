@@ -4,11 +4,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public final class OutfitTypeLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String OUTFIT_TYPES_PATH =
-            "src/main/java/Resources/Cliques/outfit_types.json";
+            "/Resources/Cliques/outfit_types.json";
     private static final String YEAR = "2004";
 
     private static boolean loaded = false;
@@ -158,8 +157,10 @@ public final class OutfitTypeLoader implements Serializable {
     }
 
     private static void loadOutfitTypes() throws IOException, ParseException {
-        JSONObject root = (JSONObject) new JSONParser().parse(
-                new FileReader(OUTFIT_TYPES_PATH, StandardCharsets.UTF_8));
+        JSONObject root;
+        try (var reader = ResourceAccess.reader(OUTFIT_TYPES_PATH)) {
+            root = (JSONObject) new JSONParser().parse(reader);
+        }
         JSONObject yearData = (JSONObject) root.get(YEAR);
         if (yearData == null) {
             return;

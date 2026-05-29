@@ -1,6 +1,7 @@
 package view;
 
 import utility.GameLogger;
+import utility.io.ResourceAccess;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -1017,17 +1018,15 @@ public class GameView {
 
     public void updateWeatherIcons(String amIconPath, String pmIconPath, String amName, String pmName) {
         try {
-            // Convert resource path to file path (remove leading slash and prepend
-            // src/main/java)
-            String basePath = "src/main/java";
-            String amFilePath = basePath + amIconPath;
-            String pmFilePath = basePath + pmIconPath;
+            if (!ResourceAccess.exists(amIconPath) || !ResourceAccess.exists(pmIconPath)) {
+                GameLogger.logDebug("Missing weather icon resource: "
+                        + amIconPath + " or " + pmIconPath);
+                return;
+            }
 
-            // Load and set AM icon using file-based loading
-            java.io.File amFile = new java.io.File(amFilePath);
-            BufferedImage amImage = ImageIO.read(amFile);
+            BufferedImage amImage = ImageIO.read(ResourceAccess.stream(amIconPath));
             if (amImage == null) {
-                GameLogger.logDebug("Failed to load AM weather icon: " + amFilePath);
+                GameLogger.logDebug("Failed to load AM weather icon: " + amIconPath);
                 return;
             }
             Image scaledAmImage = amImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
@@ -1037,11 +1036,9 @@ public class GameView {
             weatherAMIconLabel.setVisible(true);
             weatherAMTempLabel.setVisible(true);
 
-            // Load and set PM icon using file-based loading
-            java.io.File pmFile = new java.io.File(pmFilePath);
-            BufferedImage pmImage = ImageIO.read(pmFile);
+            BufferedImage pmImage = ImageIO.read(ResourceAccess.stream(pmIconPath));
             if (pmImage == null) {
-                GameLogger.logDebug("Failed to load PM weather icon: " + pmFilePath);
+                GameLogger.logDebug("Failed to load PM weather icon: " + pmIconPath);
                 return;
             }
             Image scaledPmImage = pmImage.getScaledInstance(48, 48, Image.SCALE_SMOOTH);

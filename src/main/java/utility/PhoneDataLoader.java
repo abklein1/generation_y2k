@@ -4,11 +4,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
  */
 public class PhoneDataLoader {
 
-    private static final String PHONES_PATH = "src/main/java/Resources/Items/phones.json";
+    private static final String PHONES_PATH = "/Resources/Items/phones.json";
 
     private static List<PhoneSpec> allPhones = null;
     private static List<PhoneSpec> budgetPhones = null;
@@ -166,8 +165,10 @@ public class PhoneDataLoader {
 
         try {
             JSONParser parser = new JSONParser();
-            JSONObject root = (JSONObject) parser.parse(
-                    new FileReader(PHONES_PATH, StandardCharsets.UTF_8));
+            JSONObject root;
+            try (var reader = ResourceAccess.reader(PHONES_PATH)) {
+                root = (JSONObject) parser.parse(reader);
+            }
 
             for (Object yearKey : root.keySet()) {
                 JSONObject makesObj = (JSONObject) root.get(yearKey);

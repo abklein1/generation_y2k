@@ -2,13 +2,12 @@ package utility;
 
 import entity.Radio.MusicGenre;
 import entity.Radio.Song;
+import utility.io.ResourceAccess;
 import utility.music.MusicGenreLoader;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public final class BillboardSongLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String CSV_PATH =
-            "src/main/java/Resources/Music/song_popularity.csv";
+            "/Resources/Music/song_popularity.csv";
     private static final DateTimeFormatter DATE_FORMAT =
             DateTimeFormatter.ofPattern("M/d/yyyy");
 
@@ -147,7 +146,7 @@ public final class BillboardSongLoader implements Serializable {
     private static void loadCsv() throws IOException {
         Map<LocalDate, List<Song>> tempByWeek = new HashMap<>();
         try (BufferedReader br = new BufferedReader(
-                new FileReader(CSV_PATH, StandardCharsets.UTF_8))) {
+                ResourceAccess.reader(CSV_PATH))) {
             // Skip header
             br.readLine();
             String line;

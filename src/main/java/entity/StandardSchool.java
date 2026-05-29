@@ -17,12 +17,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 import view.GameView;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -399,8 +398,9 @@ public class StandardSchool implements SchoolPlan {
         int selection = setRandom(SCHOOL_NAME_SELECTION_LOWER_LIMIT, SCHOOL_NAME_SELECTION_UPPER_LIMIT);
         Object object;
         try {
-            object = new JSONParser()
-                    .parse(new FileReader("src/main/java/Resources/School/highschool_gen.json", StandardCharsets.UTF_8));
+            try (var reader = ResourceAccess.reader("/Resources/School/highschool_gen.json")) {
+                object = new JSONParser().parse(reader);
+            }
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
@@ -445,7 +445,7 @@ public class StandardSchool implements SchoolPlan {
 
     // Weighted chance of random mascot
     private String schoolMascotLoader() {
-        String pathCSVMascots = "src/main/java/Resources/Town/mascots.csv";
+        String pathCSVMascots = "/Resources/Town/mascots.csv";
         List<String> mascots = new ArrayList<>();
         List<Integer> counts = new ArrayList<>();
         List<Integer> cumulativeCounts = new ArrayList<>();
@@ -453,7 +453,7 @@ public class StandardSchool implements SchoolPlan {
         int randomIdx;
         int insertPoint;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(pathCSVMascots, StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(ResourceAccess.reader(pathCSVMascots))) {
             String line;
             br.readLine();
 
@@ -1743,10 +1743,10 @@ public class StandardSchool implements SchoolPlan {
     }
 
     public void schoolColorsLoader() {
-        String pathColors = "src/main/java/Resources/Town/colors.txt";
+        String pathColors = "/Resources/Town/colors.txt";
         Map<String, String> colorMap = new HashMap<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(pathColors, StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(ResourceAccess.reader(pathColors))) {
             String line;
             br.readLine();
 

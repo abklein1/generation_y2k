@@ -5,10 +5,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,10 @@ public class ClassDetailsLoader {
         HashMap<String, ClassDetail> classDetailsMap = new HashMap<>();
 
         try {
-            Object object = new JSONParser().parse(new FileReader(filePath, StandardCharsets.UTF_8));
+            Object object;
+            try (var reader = ResourceAccess.reader(toResourcePath(filePath))) {
+                object = new JSONParser().parse(reader);
+            }
             JSONObject jsonObject = (JSONObject) object;
 
             for (Object key : jsonObject.keySet()) {
@@ -70,5 +72,17 @@ public class ClassDetailsLoader {
         }
 
         return classDetailsMap;
+    }
+
+    private static String toResourcePath(String filePath) {
+        String normalized = filePath.replace('\\', '/');
+        if (normalized.startsWith("src/main/java/")) {
+            normalized = normalized.substring("src/main/java".length());
+        } else if (normalized.startsWith("src/main/resources/")) {
+            normalized = normalized.substring("src/main/resources".length());
+        } else if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+        return normalized;
     }
 }

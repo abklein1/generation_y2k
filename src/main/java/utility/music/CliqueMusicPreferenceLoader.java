@@ -4,11 +4,10 @@ import entity.Radio.MusicGenre;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +27,7 @@ public final class CliqueMusicPreferenceLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String PATH =
-            "src/main/java/Resources/Cliques/clique_music_preferences.json";
+            "/Resources/Cliques/clique_music_preferences.json";
     private static final String YEAR = "2004";
 
     private static boolean loaded = false;
@@ -78,7 +77,7 @@ public final class CliqueMusicPreferenceLoader implements Serializable {
     }
 
     private static void load() throws IOException, ParseException {
-        try (FileReader reader = new FileReader(PATH, StandardCharsets.UTF_8)) {
+        try (var reader = ResourceAccess.reader(PATH)) {
             JSONObject root = (JSONObject) new JSONParser().parse(reader);
             JSONObject yearData = (JSONObject) root.get(YEAR);
             if (yearData == null) {

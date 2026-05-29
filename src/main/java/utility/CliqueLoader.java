@@ -3,11 +3,10 @@ package utility;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,9 +24,9 @@ public final class CliqueLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String CLIQUES_PATH =
-            "src/main/java/Resources/Cliques/cliques.json";
+            "/Resources/Cliques/cliques.json";
     private static final String POPULARITY_PATH =
-            "src/main/java/Resources/Cliques/clique_popularity.json";
+            "/Resources/Cliques/clique_popularity.json";
     private static final String YEAR = "2004";
 
     private static boolean loaded = false;
@@ -147,8 +146,10 @@ public final class CliqueLoader implements Serializable {
     }
 
     private static void loadPopularity() throws IOException, ParseException {
-        JSONObject root = (JSONObject) new JSONParser().parse(
-                new FileReader(POPULARITY_PATH, StandardCharsets.UTF_8));
+        JSONObject root;
+        try (var reader = ResourceAccess.reader(POPULARITY_PATH)) {
+            root = (JSONObject) new JSONParser().parse(reader);
+        }
         JSONObject yearData = (JSONObject) root.get(YEAR);
 
         allCliques.addAll(readStringList(yearData.get("cliques")));
@@ -162,8 +163,10 @@ public final class CliqueLoader implements Serializable {
     }
 
     private static void loadCliques() throws IOException, ParseException {
-        JSONObject root = (JSONObject) new JSONParser().parse(
-                new FileReader(CLIQUES_PATH, StandardCharsets.UTF_8));
+        JSONObject root;
+        try (var reader = ResourceAccess.reader(CLIQUES_PATH)) {
+            root = (JSONObject) new JSONParser().parse(reader);
+        }
         JSONObject yearData = (JSONObject) root.get(YEAR);
 
         String[] categories =

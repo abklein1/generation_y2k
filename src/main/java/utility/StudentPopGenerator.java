@@ -28,7 +28,7 @@ public class StudentPopGenerator {
     // and count window are local because they are student-specific;
     // other domains (cell phones, etc.) will declare their own.
     private static final String UNIQUE_TRAITS_PATH =
-            "src/main/java/Resources/Flavor/unique_traits.json";
+            "/Resources/Flavor/unique_traits.json";
     private static final int UNIQUE_TRAIT_MIN_COUNT = 3;
     private static final int UNIQUE_TRAIT_MAX_COUNT = 5;
 

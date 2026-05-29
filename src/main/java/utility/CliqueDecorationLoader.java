@@ -4,11 +4,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public final class CliqueDecorationLoader implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final String DECORATIONS_PATH =
-            "src/main/java/Resources/Cliques/clique_decorations.json";
+            "/Resources/Cliques/clique_decorations.json";
     private static final String YEAR = "2004";
     private static final String COLORS_KEY = "colors";
 
@@ -223,8 +222,10 @@ public final class CliqueDecorationLoader implements Serializable {
     }
 
     private static void loadDecorations() throws IOException, ParseException {
-        JSONObject root = (JSONObject) new JSONParser().parse(
-                new FileReader(DECORATIONS_PATH, StandardCharsets.UTF_8));
+        JSONObject root;
+        try (var reader = ResourceAccess.reader(DECORATIONS_PATH)) {
+            root = (JSONObject) new JSONParser().parse(reader);
+        }
         JSONObject yearData = (JSONObject) root.get(YEAR);
         if (yearData == null) {
             return;

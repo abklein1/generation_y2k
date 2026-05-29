@@ -5,10 +5,9 @@ import utility.GameLogger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import utility.io.ResourceAccess;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -19,7 +18,7 @@ import java.util.*;
  */
 public class BellScheduleManager {
 
-    private static final String SCHEDULE_PATH = "src/main/java/Resources/School/bell_schedule.json";
+    private static final String SCHEDULE_PATH = "/Resources/School/bell_schedule.json";
 
     private final List<ScheduleBlock> blocks;
     private final List<ScheduleBlock> transitions;
@@ -181,7 +180,10 @@ public class BellScheduleManager {
 
         try {
             JSONParser parser = new JSONParser();
-            JSONObject schedule = (JSONObject) parser.parse(new FileReader(SCHEDULE_PATH, StandardCharsets.UTF_8));
+            JSONObject schedule;
+            try (var reader = ResourceAccess.reader(SCHEDULE_PATH)) {
+                schedule = (JSONObject) parser.parse(reader);
+            }
 
             // Parse regular blocks
             for (int i = 1; i <= 4; i++) {
