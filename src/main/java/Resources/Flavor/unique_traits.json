@@ -75,7 +75,8 @@
             "Their eyes are slightly hooded.",
             "Their eyes appear to twinkle with mischief.",
             "Their eyes appear heavy and tired.",
-            "Their eyes are glassy and distant."
+            "Their eyes are glassy and distant.",
+            "Their eyes are constantly scanning the room."
         ],
         "nose": [
             "They have a long, narrow nose.",
@@ -164,7 +165,8 @@
             "Their kneecaps are scarred.",
             "They have a few spots of hyper-pigmentation.",
             "They have a mole on their cheek.",
-            "They have a mole on their chin."
+            "They have a mole on their chin.",
+            "Their skin has slight sun damage."
         ],
         "body": [
             "They have long limbs.",
@@ -189,7 +191,8 @@
             "Their movements are slow and deliberate.",
             "They are constantly chewing their fingernails.",
             "They seem like they can't sit still.",
-            "They walk very quickly."
+            "They walk very quickly.",
+            "They walk with determination."
         ]
     },
     "negative": {
@@ -205,7 +208,8 @@
             "The skin around their eyes is puffy.",
             "Their eyes always seem watery and irritated.",
             "Their eyelashes are sparse and brittle.",
-            "Their eyebrows appear to be over-plucked."
+            "Their eyebrows appear to be over-plucked.",
+            "Their eyes seem lifeless."
         ],
         "nose": [
             "They have a crooked nose.",
@@ -216,7 +220,8 @@
             "Their nose is deviated to the right.",
             "Their nose has large pores.",
             "They have a noticeable scar on their nose.",
-            "Their nose appears pig-like."
+            "Their nose appears pig-like.",
+            "Their nose is constantly running."
         ],
         "ears": [
             "Their ears are protruding and large.",
@@ -249,7 +254,7 @@
             "They have a double chin.",
             "Their facial features appear squashed together.",
             "Their skull is bumpy and uneven.",
-            "They have a large forehead",
+            "They have a large forehead.",
             "They have a protruding brow."
         ],
         "hair": [

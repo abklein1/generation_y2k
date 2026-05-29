@@ -1668,7 +1668,8 @@ public class Inspector {
         }
         for (RadioStation station : stations) {
             sb.append(station.displayName());
-            sb.append(" [").append(station.getFormat().displayLabel()).append("]");
+            sb.append(" [").append(station.getStationType().getLabel())
+                    .append("]");
             Song song = station.getCurrentSong();
             if (song != null) {
                 sb.append("\n    Now playing: ").append(song);

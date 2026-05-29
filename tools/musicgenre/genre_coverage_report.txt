@@ -1,0 +1,113 @@
+MusicOSet -> Billboard genre coverage report
+=============================================
+
+Unique Billboard performers: 10237
+  whole-performer matches:   4834 (47.2%)
+  collaboration-part matches:3279 (32.0%)
+  unmatched:                 2124 (20.7%)
+
+Chart rows with >=1 genre (performer match): 301543 / 330800 (91.2%)
+
+Top unmatched performers by chart frequency:
+     540  Daryl Hall John Oates
+     250  Pat Boone
+     232  The 4 Seasons
+     193  Bobby Bland
+     187  Rick Nelson
+     174  Olivia Rodrigo
+     173  Ke$ha
+     172  'N Sync
+     159  M.C. Hammer
+     151  The 4 Seasons Featuring the "Sound of Frankie Valli"
+     150  Martha & The Vandellas
+     150  Cat Stevens
+     140  DaBaby
+     138  Jack Scott
+     135  98 Degrees
+     129  Janet
+     128  Tommy Edwards
+     123  John Cougar
+     118  Reba
+     115  Megan Thee Stallion
+     114  Dinah Washington
+     112  Duane Eddy His Twangy Guitar And The Rebels
+     112  Dee Clark
+     109  Hank Ballard And The Midnighters
+     106  Nilsson
+     106  Lewis Capaldi
+     104  Thirty Eight Special
+     101  Mike + The Mechanics
+     101  Rod Wave
+     101  Doja Cat
+     101  Musiq
+      97  Jimmy Clanton
+      94  Fabian
+      93  D.J. Jazzy Jeff & The Fresh Prince
+      91  Marv Johnson
+      90  Johnny Horton
+      90  Pop Smoke
+      88  Grand Funk
+      88  The Crests
+      88  The B-52s
+
+Raw genre tags that collapse to OTHER (need a rule?), by frequency:
+     164  stomp and holler
+     143  christian music
+     131  ccm
+     130  worship
+      81  gospel
+      77  lo-fi
+      77  comic
+      75  tropical
+      74  anthem worship
+      70  karaoke
+      61  freestyle
+      59  dreamo
+      58  world worship
+      52  melancholia
+      45  reggae fusion
+      42  slow core
+      42  comedy
+      42  grupera
+      40  pixie
+      39  red dirt
+      39  contemporary post-bop
+      34  escape room
+      32  reggae
+      31  experimental
+      29  roots worship
+      27  minneapolis sound
+      27  zolo
+      27  roots reggae
+      27  hard bop
+      25  brostep
+      24  hi-nrg
+      22  miami bass
+      20  new age
+      20  preverb
+      20  wrestling
+      19  rare groove
+      18  boom bap
+      18  contemporary gospel
+      18  celtic
+      18  gbvfi
+      18  talent show
+      16  industrial
+      16  deep ccm
+      16  praise
+      16  deep talent show
+      16  world
+      16  cosmic american
+      15  a cappella
+      15  deathgrind
+      15  banjo
+      15  duranguense
+      15  dub
+      15  madchester
+      14  beach music
+      13  neo-progressive
+      13  mambo
+      13  epicore
+      12  easycore
+      12  vocal harmony group
+      12  southern gospel

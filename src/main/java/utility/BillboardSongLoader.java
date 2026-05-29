@@ -1,6 +1,8 @@
 package utility;
 
+import entity.Radio.MusicGenre;
 import entity.Radio.Song;
+import utility.music.MusicGenreLoader;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -109,6 +112,30 @@ public final class BillboardSongLoader implements Serializable {
     }
 
     /**
+     * Collect every charted song whose chart-week year falls within the
+     * inclusive range {@code [startYear, endYear]}. Used by decade-format
+     * radio stations to build a year-bounded candidate pool.
+     *
+     * @param startYear first calendar year to include (inclusive)
+     * @param endYear   last calendar year to include (inclusive)
+     * @return all songs from chart weeks in that year range; empty if none
+     */
+    public static List<Song> getSongsInYears(int startYear, int endYear) {
+        ensureLoaded();
+        List<Song> out = new ArrayList<>();
+        for (LocalDate week : allChartWeeks) {
+            int year = week.getYear();
+            if (year >= startYear && year <= endYear) {
+                List<Song> chart = chartByWeek.get(week);
+                if (chart != null) {
+                    out.addAll(chart);
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
      * Reset the cache. Visible for tests.
      */
     static synchronized void resetForTests() {
@@ -139,8 +166,10 @@ public final class BillboardSongLoader implements Serializable {
                     String performer = fields[3];
                     int peakPos = Integer.parseInt(fields[5].trim());
                     int weeksOnChart = Integer.parseInt(fields[6].trim());
+                    Set<MusicGenre> genres =
+                            MusicGenreLoader.genresFor(title, performer);
                     Song song = new Song(week, position, title, performer,
-                            peakPos, weeksOnChart);
+                            peakPos, weeksOnChart, genres);
                     tempByWeek.computeIfAbsent(week, k -> new ArrayList<>(100))
                             .add(song);
                 } catch (RuntimeException ignore) {

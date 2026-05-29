@@ -4,6 +4,7 @@ import constants.SimConstants;
 import entity.Radio.Radio;
 import entity.Radio.RadioStation;
 import entity.Radio.StationFormat;
+import entity.Radio.StationType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,8 +26,10 @@ import java.util.Set;
  *   <li>Allocate non-overlapping odd-tenths frequencies on the
  *       U.S. FM grid.</li>
  *   <li>Assign exactly one {@link StationFormat#OLDIES_RANDOM}
- *       station; remaining slots draw from the remaining formats
- *       without repeats, with {@code TOP_40} prioritized.</li>
+ *       station and (for {@code n >= 2}) one {@code TOP_40} station, then
+ *       fill the remaining slots with a random mix drawn from the
+ *       {@link StationType#catalog()} (broad formats and genre stations)
+ *       without repeats.</li>
  *   <li>Pull a unique nickname per station from
  *       {@link RadioNicknameLoader}.</li>
  * </ul>
@@ -53,7 +56,7 @@ public final class RadioStationGenerator {
         int stationCount = minStations + random.nextInt(maxStations - minStations + 1);
 
         List<Double> frequencies = pickFrequencies(stationCount, random);
-        List<StationFormat> formats = pickFormats(stationCount, random);
+        List<StationType> types = pickStationTypes(stationCount, random);
         Set<String> usedCallSigns = new HashSet<>();
         Set<String> usedNicknames = new HashSet<>();
 
@@ -63,11 +66,11 @@ public final class RadioStationGenerator {
             String nickname =
                     RadioNicknameLoader.pickRandomNickname(random, usedNicknames);
             if (nickname == null) {
-                nickname = formats.get(i).displayLabel();
+                nickname = types.get(i).getLabel();
             }
             usedNicknames.add(nickname);
             stations.add(new RadioStation(callSign, nickname,
-                    frequencies.get(i), formats.get(i)));
+                    frequencies.get(i), types.get(i)));
         }
         return new Radio(stations);
     }
@@ -91,30 +94,41 @@ public final class RadioStationGenerator {
     }
 
     /**
-     * Choose formats for {@code n} stations. Always includes one
-     * {@link StationFormat#OLDIES_RANDOM}; if {@code n >= 2} also
-     * always includes {@link StationFormat#TOP_40}. Remaining slots
-     * draw without replacement from the remaining formats.
+     * Choose station types for {@code n} stations. Always includes exactly one
+     * {@link StationFormat#OLDIES_RANDOM} station; if {@code n >= 2} also
+     * always includes a {@code TOP_40} station. Remaining slots draw without
+     * replacement from the rest of the {@link StationType#catalog()} (other
+     * broad formats and genre stations), giving each game a varied dial.
+     *
+     * @param n      number of stations to fill
+     * @param random RNG for selection
+     * @return a shuffled list of exactly {@code n} station types
      */
-    static List<StationFormat> pickFormats(int n, Random random) {
-        List<StationFormat> chosen = new ArrayList<>(n);
-        chosen.add(StationFormat.OLDIES_RANDOM);
+    static List<StationType> pickStationTypes(int n, Random random) {
+        List<StationType> chosen = new ArrayList<>(n);
+        chosen.add(StationType.oldies());
         if (n >= 2) {
-            chosen.add(StationFormat.TOP_40);
+            chosen.add(StationType.top40());
         }
-        List<StationFormat> remaining = new ArrayList<>();
-        for (StationFormat f : StationFormat.values()) {
-            if (!chosen.contains(f)) {
-                remaining.add(f);
+
+        // Everything else in the catalog is fair game for the remaining slots.
+        List<StationType> remaining = new ArrayList<>();
+        for (StationType t : StationType.catalog()) {
+            StationFormat f = t.getFormat();
+            if (f == StationFormat.OLDIES_RANDOM || f == StationFormat.TOP_40) {
+                continue; // already guaranteed above; avoid duplicates
             }
+            remaining.add(t);
         }
         Collections.shuffle(remaining, random);
-        while (chosen.size() < n && !remaining.isEmpty()) {
-            chosen.add(remaining.remove(0));
+
+        int idx = 0;
+        while (chosen.size() < n && idx < remaining.size()) {
+            chosen.add(remaining.get(idx++));
         }
-        // If we still need more (n > total formats), repeat the pool.
+        // Defensive: if the catalog is ever smaller than n, pad with Mix.
         while (chosen.size() < n) {
-            chosen.add(StationFormat.MIX);
+            chosen.add(StationType.broad("Mix", StationFormat.MIX));
         }
         Collections.shuffle(chosen, random);
         return chosen;

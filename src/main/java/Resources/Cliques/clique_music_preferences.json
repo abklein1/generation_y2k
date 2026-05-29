@@ -1,0 +1,278 @@
+{
+    "2004": {
+        "_comment": "Per-clique music taste. genres maps a canonical MusicGenre name to a signed weight: positive = likes (toward +1.0), negative = dislikes (toward -1.0). Unlisted genres are treated as 0.0 (neutral). 'openness' (0.0-1.0) scales how much an unfamiliar/disliked genre is tolerated; higher = more open. Keys starting with '_' are ignored except '_default', which is the fallback for any clique not listed here. Valid genres: POP, ROCK, HIP_HOP, RNB, COUNTRY, ELECTRONIC, PUNK, EMO, METAL, JAZZ, LATIN, FOLK, CLASSICAL, SOUNDTRACK.",
+        "_default": {
+            "openness": 0.7,
+            "genres": {
+                "POP": 0.4,
+                "ROCK": 0.3,
+                "HIP_HOP": 0.3,
+                "RNB": 0.3,
+                "COUNTRY": 0.2,
+                "ELECTRONIC": 0.2
+            }
+        },
+        "Emo": {
+            "openness": 0.5,
+            "genres": {
+                "EMO": 1.0,
+                "PUNK": 0.7,
+                "ROCK": 0.6,
+                "POP": -0.2,
+                "HIP_HOP": -0.3,
+                "COUNTRY": -0.6
+            }
+        },
+        "Punk": {
+            "openness": 0.4,
+            "genres": {
+                "PUNK": 1.0,
+                "ROCK": 0.7,
+                "METAL": 0.5,
+                "EMO": 0.4,
+                "POP": -0.5,
+                "HIP_HOP": -0.3,
+                "COUNTRY": -0.5
+            }
+        },
+        "Skater": {
+            "openness": 0.6,
+            "genres": {
+                "PUNK": 0.7,
+                "ROCK": 0.7,
+                "HIP_HOP": 0.6,
+                "METAL": 0.4,
+                "ELECTRONIC": 0.3,
+                "COUNTRY": -0.4,
+                "CLASSICAL": -0.3
+            }
+        },
+        "Goth": {
+            "openness": 0.5,
+            "genres": {
+                "METAL": 0.7,
+                "EMO": 0.6,
+                "ROCK": 0.6,
+                "ELECTRONIC": 0.6,
+                "PUNK": 0.5,
+                "POP": -0.4,
+                "COUNTRY": -0.6
+            }
+        },
+        "Band": {
+            "openness": 0.6,
+            "genres": {
+                "JAZZ": 0.7,
+                "CLASSICAL": 0.7,
+                "SOUNDTRACK": 0.5,
+                "ROCK": 0.4,
+                "HIP_HOP": -0.3
+            }
+        },
+        "Theater": {
+            "openness": 0.6,
+            "genres": {
+                "SOUNDTRACK": 1.0,
+                "CLASSICAL": 0.6,
+                "POP": 0.6,
+                "JAZZ": 0.4,
+                "METAL": -0.4,
+                "PUNK": -0.4
+            }
+        },
+        "Anime": {
+            "openness": 0.6,
+            "genres": {
+                "ELECTRONIC": 0.6,
+                "SOUNDTRACK": 0.6,
+                "POP": 0.5,
+                "ROCK": 0.4,
+                "METAL": 0.4,
+                "COUNTRY": -0.4
+            }
+        },
+        "Metal": {
+            "openness": 0.3,
+            "genres": {
+                "METAL": 1.0,
+                "ROCK": 0.7,
+                "PUNK": 0.5,
+                "POP": -0.6,
+                "HIP_HOP": -0.5,
+                "COUNTRY": -0.4,
+                "ELECTRONIC": -0.3
+            }
+        },
+        "Geek": {
+            "openness": 0.7,
+            "genres": {
+                "ELECTRONIC": 0.5,
+                "SOUNDTRACK": 0.5,
+                "ROCK": 0.4,
+                "CLASSICAL": 0.4,
+                "POP": 0.3
+            }
+        },
+        "NoLife": {
+            "openness": 0.8,
+            "genres": {
+                "POP": 0.3,
+                "ROCK": 0.3,
+                "HIP_HOP": 0.3,
+                "RNB": 0.2,
+                "ELECTRONIC": 0.2,
+                "COUNTRY": 0.2,
+                "METAL": 0.2
+            }
+        },
+        "Latino": {
+            "openness": 0.6,
+            "genres": {
+                "LATIN": 1.0,
+                "HIP_HOP": 0.6,
+                "RNB": 0.5,
+                "POP": 0.5,
+                "ELECTRONIC": 0.4,
+                "METAL": -0.3,
+                "COUNTRY": -0.2
+            }
+        },
+        "Electronic": {
+            "openness": 0.5,
+            "genres": {
+                "ELECTRONIC": 1.0,
+                "POP": 0.5,
+                "ROCK": 0.4,
+                "METAL": -0.4,
+                "COUNTRY": -0.5
+            }
+        },
+        "Bling": {
+            "openness": 0.4,
+            "genres": {
+                "HIP_HOP": 1.0,
+                "RNB": 0.8,
+                "POP": 0.5,
+                "ROCK": -0.4,
+                "PUNK": -0.4,
+                "EMO": -0.4,
+                "METAL": -0.5,
+                "COUNTRY": -0.4
+            }
+        },
+        "Trap": {
+            "openness": 0.4,
+            "genres": {
+                "HIP_HOP": 1.0,
+                "RNB": 0.6,
+                "ELECTRONIC": 0.4,
+                "POP": 0.4,
+                "COUNTRY": -0.4,
+                "EMO": -0.4,
+                "METAL": -0.3
+            }
+        },
+        "Suit": {
+            "openness": 0.4,
+            "genres": {
+                "CLASSICAL": 0.6,
+                "JAZZ": 0.6,
+                "ROCK": 0.4,
+                "COUNTRY": 0.4,
+                "POP": 0.4,
+                "HIP_HOP": -0.4,
+                "PUNK": -0.5,
+                "EMO": -0.5,
+                "METAL": -0.5
+            }
+        },
+        "Beach": {
+            "openness": 0.6,
+            "genres": {
+                "POP": 0.7,
+                "RNB": 0.5,
+                "ROCK": 0.4,
+                "COUNTRY": 0.4,
+                "LATIN": 0.4,
+                "METAL": -0.4,
+                "EMO": -0.4
+            }
+        },
+        "Jock": {
+            "openness": 0.5,
+            "genres": {
+                "HIP_HOP": 0.8,
+                "POP": 0.6,
+                "COUNTRY": 0.6,
+                "RNB": 0.5,
+                "ROCK": 0.5,
+                "METAL": 0.4,
+                "EMO": -0.5,
+                "ELECTRONIC": -0.3
+            }
+        },
+        "Prep": {
+            "openness": 0.5,
+            "genres": {
+                "POP": 0.8,
+                "RNB": 0.5,
+                "COUNTRY": 0.5,
+                "HIP_HOP": 0.4,
+                "METAL": -0.5,
+                "PUNK": -0.5,
+                "EMO": -0.5
+            }
+        },
+        "Country": {
+            "openness": 0.3,
+            "genres": {
+                "COUNTRY": 1.0,
+                "ROCK": 0.5,
+                "POP": 0.3,
+                "HIP_HOP": -0.5,
+                "METAL": -0.4,
+                "ELECTRONIC": -0.5,
+                "EMO": -0.4,
+                "PUNK": -0.4
+            }
+        },
+        "Christian": {
+            "openness": 0.4,
+            "genres": {
+                "POP": 0.6,
+                "ROCK": 0.5,
+                "COUNTRY": 0.5,
+                "RNB": 0.4,
+                "HIP_HOP": -0.3,
+                "METAL": -0.5,
+                "PUNK": -0.5,
+                "EMO": -0.5
+            }
+        },
+        "ROTC": {
+            "openness": 0.5,
+            "genres": {
+                "COUNTRY": 0.6,
+                "ROCK": 0.5,
+                "METAL": 0.4,
+                "POP": 0.4,
+                "HIP_HOP": 0.4,
+                "EMO": -0.4,
+                "ELECTRONIC": -0.3
+            }
+        },
+        "Outcast": {
+            "openness": 0.7,
+            "genres": {
+                "ROCK": 0.5,
+                "METAL": 0.5,
+                "EMO": 0.5,
+                "ELECTRONIC": 0.5,
+                "PUNK": 0.5,
+                "SOUNDTRACK": 0.4,
+                "POP": -0.3,
+                "COUNTRY": -0.3
+            }
+        }
+    }
+}

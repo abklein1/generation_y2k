@@ -946,8 +946,10 @@ public final class SimConstants {
     // FM radio stations are procedurally generated per game using the
     // Billboard Hot 100 dataset for song selection. Frequencies follow
     // the U.S. FCC odd-tenths grid (88.1, 88.3, ..., 107.9).
-    public static final int RADIO_MIN_STATIONS = 3;
-    public static final int RADIO_MAX_STATIONS = 5;
+    // With a genre system in place we run a wider dial of 5-8 stations,
+    // mixing broad formats with genre-targeted stations.
+    public static final int RADIO_MIN_STATIONS = 7;
+    public static final int RADIO_MAX_STATIONS = 10;
     public static final double RADIO_FREQ_MIN = 88.1;
     public static final double RADIO_FREQ_MAX = 107.9;
     public static final double RADIO_FREQ_STEP = 0.2;
@@ -955,6 +957,26 @@ public final class SimConstants {
     public static final int RADIO_SONG_MINUTES = 4;
     // Top-N focus window used by TOP_40 selection weighting.
     public static final int RADIO_TOPN_WEIGHTED = 40;
+    // Chart weeks back a GENRE_ROTATION station samples to build its
+    // genre-filtered candidate pool (~2 years of charts).
+    public static final int RADIO_GENRE_WEEKS = 104;
+    // Minimum age (in years) for a song to qualify as "oldies". The
+    // OLDIES_RANDOM format only samples chart weeks older than
+    // (now - this many years), so the format never plays recent hits just
+    // because they predate the sim date. At the 2004 start this floors the
+    // format at pre-1979 material (classic 60s/70s oldies).
+    public static final int RADIO_OLDIES_MIN_AGE_YEARS = 25;
+    // No-repeat recency window: a station will not replay a song (matched by
+    // title + performer) that it has played within this many of its most
+    // recent selections. Songs rotate every RADIO_SONG_MINUTES, so the
+    // default of 15 is roughly the last hour of programming.
+    public static final int RADIO_NO_REPEAT_WINDOW = 15;
+    // Top 40's small, high-rotation library leans on a short window so its
+    // most popular hits can legitimately recur several times across a day.
+    public static final int RADIO_NO_REPEAT_WINDOW_TOP_40 = 5;
+    // Oldies draws on decades of charts, so it keeps a long memory to stay
+    // fresh and avoid replaying the same track within a single commute day.
+    public static final int RADIO_NO_REPEAT_WINDOW_OLDIES = 60;
     // Commute station-pick weights: car riders strongly avoid oldies stations.
     public static final int RADIO_COMMUTE_STATION_WEIGHT = 10;
     public static final int RADIO_COMMUTE_OLDIES_WEIGHT_CAR = 1;

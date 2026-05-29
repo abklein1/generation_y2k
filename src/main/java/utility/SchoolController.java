@@ -4,6 +4,7 @@ import config.DemographicsLoader;
 import config.SchoolFundingModel;
 import config.TownDemographics;
 import entity.Radio.Radio;
+import entity.Radio.RadioStation;
 import entity.Rooms.*;
 import entity.*;
 import save.SaveGameData;
@@ -331,6 +332,23 @@ public class SchoolController {
     }
 
     /**
+     * Prints the freshly generated FM dial to the main window output so the
+     * player can see which stations (and genre formats) were created.
+     */
+    private void logRadioGeneration(Radio radio) {
+        if (radio == null) {
+            return;
+        }
+        java.util.List<RadioStation> stations = radio.getStations();
+        view.appendOutput("Generated " + stations.size()
+                + " FM radio stations:");
+        for (RadioStation station : stations) {
+            view.appendOutput("  " + station.displayName()
+                    + " [" + station.getStationType().getLabel() + "]");
+        }
+    }
+
+    /**
      * Initializes the simulation engine after world generation.
      */
     private void initializeSimulation() {
@@ -351,6 +369,7 @@ public class SchoolController {
         if (radio == null && standardSchool != null) {
             radio = RadioStationGenerator.generate(standardSchool.getSchoolName(),
                     new java.util.Random(GameRandom.getSeed()));
+            logRadioGeneration(radio);
         }
         if (radio != null) {
             simulationEngine.setRadio(radio);

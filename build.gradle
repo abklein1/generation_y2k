@@ -19,6 +19,16 @@ dependencies {
     implementation fileTree(dir: 'lib', include: ['*.jar'])
 }
 
+// Offline one-shot tool: regenerate trimmed music-genre assets from the
+// locally-downloaded MusicOSet dump under tools/musicgenre/data/.
+// Not part of the game runtime. Usage: ./gradlew generateGenreAssets
+tasks.register('generateGenreAssets', JavaExec) {
+    group = 'tools'
+    description = 'Generate trimmed artist/song genre assets from MusicOSet'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'utility.music.GenreAssetGenerator'
+}
+
 // Handle duplicates in distribution
 distributions {
     main {
@@ -33,6 +43,12 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+// Compile sources as UTF-8 so non-ASCII string literals (e.g. accented
+// artist names) are not corrupted by the platform default charset.
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 test {

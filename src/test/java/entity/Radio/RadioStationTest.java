@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -23,11 +24,19 @@ class RadioStationTest {
     private static final LocalDate SIM_DATE = LocalDate.of(2004, 7, 24);
 
     @Test
-    @DisplayName("displayName has the form '<freq> <nickname> - <callsign>-FM'")
-    void testDisplayName() {
+    @DisplayName("'The ...' nicknames lead with the frequency")
+    void testDisplayNameTheStyle() {
         RadioStation s = new RadioStation("WKRP", "The Mix", 94.3,
                 StationFormat.TOP_40);
         assertEquals("94.3 The Mix - WKRP-FM", s.displayName());
+    }
+
+    @Test
+    @DisplayName("Plain-name nicknames lead with the name, then frequency")
+    void testDisplayNamePlainStyle() {
+        RadioStation s = new RadioStation("KSTM", "Storm", 101.5,
+                StationFormat.TOP_40);
+        assertEquals("Storm 101.5 - KSTM-FM", s.displayName());
     }
 
     @Test
@@ -100,6 +109,27 @@ class RadioStationTest {
     }
 
     @Test
+    @DisplayName("OLDIES_RANDOM never plays songs newer than the age floor")
+    void testOldiesRespectsMinimumAge() {
+        RadioStation s = new RadioStation("KOLD", "Classic", 100.7,
+                StationFormat.OLDIES_RANDOM);
+        Random rng = new Random(2024L);
+        LocalDate newest =
+                SIM_DATE.minusYears(SimConstants.RADIO_OLDIES_MIN_AGE_YEARS);
+        for (int i = 0; i < 200; i++) {
+            s.resetSong();
+            s.tick(SIM_DATE, rng);
+            Song song = s.getCurrentSong();
+            assertNotNull(song);
+            assertTrue(song.getChartWeek().isBefore(newest),
+                    "Oldies song chart week " + song.getChartWeek()
+                            + " is newer than the " 
+                            + SimConstants.RADIO_OLDIES_MIN_AGE_YEARS
+                            + "-year floor (" + newest + ")");
+        }
+    }
+
+    @Test
     @DisplayName("TOP_40 weighting biases selection toward low chart positions")
     void testTop40Weighting() {
         RadioStation s = new RadioStation("WTOP", "Hot", 92.3,
@@ -126,6 +156,31 @@ class RadioStationTest {
         assertTrue(topTen > bottomTen,
                 "Top 10 should be picked more often than positions 31-40 "
                         + "(top10=" + topTen + ", bottom10=" + bottomTen + ")");
+    }
+
+    @Test
+    @DisplayName("A station never replays a song within its no-repeat window")
+    void testNoRepeatWithinWindow() {
+        RadioStation s = new RadioStation("WTOP", "Hot", 92.3,
+                StationFormat.TOP_40);
+        Random rng = new Random(99L);
+        int window = s.getStationType().noRepeatWindow();
+        java.util.List<String> sequence = new java.util.ArrayList<>();
+        for (int i = 0; i < 50; i++) {
+            s.resetSong();
+            s.tick(SIM_DATE, rng);
+            Song song = s.getCurrentSong();
+            assertNotNull(song);
+            sequence.add(song.getTitle() + "|" + song.getPerformer());
+        }
+        for (int i = 0; i < sequence.size(); i++) {
+            for (int j = Math.max(0, i - window); j < i; j++) {
+                assertNotEquals(sequence.get(j), sequence.get(i),
+                        "Song at index " + i + " (" + sequence.get(i)
+                                + ") repeats within the last " + window
+                                + " selections");
+            }
+        }
     }
 
     @Test

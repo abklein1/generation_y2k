@@ -34,3 +34,6 @@ $RECYCLE.BIN/
 # IntelliJ specific
 *.iml
 bin
+
+# Offline music genre dataset inputs (MusicOSet / MGD) - never commit raw dumps
+tools/musicgenre/data/
