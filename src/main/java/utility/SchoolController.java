@@ -83,6 +83,16 @@ public class SchoolController {
         this.time = new Time();
     }
 
+    /**
+     * The current sim date as a {@link java.time.LocalDate}, used as the "now"
+     * reference for date-aware generation (e.g. tastemaker favorite bands).
+     */
+    private java.time.LocalDate currentSimDate() {
+        return time.getCurrentDate().toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
     private void saveGameFromDialog() {
         if (standardSchool == null || studentHashMap == null || staffHashMap == null) {
             view.appendOutput("No generated simulation is available to save.");
@@ -793,6 +803,12 @@ public class SchoolController {
                 academicArea.setWrapStyleWord(true);
                 academicArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
 
+                JTextArea likesArea = new JTextArea();
+                likesArea.setEditable(false);
+                likesArea.setLineWrap(true);
+                likesArea.setWrapStyleWord(true);
+                likesArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+
                 JTabbedPane studentTabs = new JTabbedPane();
                 studentTabs.addTab("Description", new JScrollPane(descArea));
                 studentTabs.addTab("Stats", new JScrollPane(statsArea));
@@ -801,6 +817,7 @@ public class SchoolController {
                         SwingConstants.CENTER), java.awt.BorderLayout.CENTER);
                 studentTabs.addTab("Schedule", emptySchedule);
                 studentTabs.addTab("Academic", new JScrollPane(academicArea));
+                studentTabs.addTab("Likes/Dislikes", new JScrollPane(likesArea));
                 studentTabs.addTab("Cell Phone", new JScrollPane(phoneArea));
                 JScrollPane activityScroll = new JScrollPane(activityArea);
                 studentTabs.addTab("Activity", activityScroll);
@@ -815,6 +832,7 @@ public class SchoolController {
                             Inspector.updateStudentDescriptionArea(selectedStudent, descArea);
                             Inspector.updateStudentStatsArea(selectedStudent, statsArea);
                             Inspector.updateStudentAcademicArea(selectedStudent, academicArea);
+                            Inspector.updateStudentLikesDislikesArea(selectedStudent, likesArea);
 
                             JPanel schedulePanel = Inspector.buildStudentSchedulePanel(selectedStudent);
                             studentTabs.setComponentAt(2, schedulePanel);
@@ -1817,6 +1835,10 @@ public class SchoolController {
             publish("Applying clique-aware haircuts...");
             StudentPopGenerator.applyAllHaircutAttributes(studentHashMap);
 
+            publish("Assigning favorite bands...");
+            StudentPopGenerator.applyAllFavoriteBands(studentHashMap,
+                    currentSimDate());
+
             publish("Applying clique-aware clothing...");
             StudentPopGenerator.applyAllClothingAttributes(studentHashMap);
 
@@ -1921,6 +1943,10 @@ public class SchoolController {
 
             publish("Applying clique-aware haircuts...");
             StudentPopGenerator.applyAllHaircutAttributes(studentHashMap);
+
+            publish("Assigning favorite bands...");
+            StudentPopGenerator.applyAllFavoriteBands(studentHashMap,
+                    currentSimDate());
 
             publish("Applying clique-aware clothing...");
             StudentPopGenerator.applyAllClothingAttributes(studentHashMap);

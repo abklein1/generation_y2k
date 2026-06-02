@@ -25,6 +25,7 @@ public enum MusicGenre {
     FOLK,
     CLASSICAL,
     SOUNDTRACK,
+    CHRISTIAN,
     OTHER;
 
     /**

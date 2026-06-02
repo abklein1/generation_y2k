@@ -1,8 +1,8 @@
 # normalized_key	display_name	genres
-10 000 maniacs	10,000 Maniacs	POP,ELECTRONIC,FOLK
-10 years	10 Years	ROCK,HIP_HOP,METAL
+10 000 maniacs	10,000 Maniacs	POP,ROCK,FOLK
+10 years	10 Years	ROCK,HIP_HOP,METAL,CHRISTIAN
 100 proof aged in soul	100 Proof Aged In Soul	OTHER
-10cc	10cc	POP,ROCK,ELECTRONIC,FOLK
+10cc	10cc	POP,ROCK,FOLK
 112	112	POP,HIP_HOP,RNB
 1927	1927	POP,ROCK
 1975	The 1975	POP,ROCK
@@ -33,7 +33,7 @@
 44	44	PUNK,EMO
 5 seconds of summer	5 Seconds of Summer	POP
 50 cent	50 Cent	HIP_HOP
-5000 volts	5000 Volts	POP,ELECTRONIC
+5000 volts	5000 Volts	POP
 504 boyz	504 Boyz	HIP_HOP
 5th dimension	The 5th Dimension	POP,RNB,FOLK
 69 boyz	69 Boyz	OTHER
@@ -51,15 +51,15 @@ a ap rocky	A$AP Rocky	POP,HIP_HOP
 a boogie wit da hoodie	A Boogie Wit da Hoodie	HIP_HOP
 a day to remember	A Day To Remember	PUNK,EMO,METAL
 a few good men	A Few Good Men	RNB
-a flock of seagulls	A Flock Of Seagulls	POP,ROCK,ELECTRONIC
+a flock of seagulls	A Flock Of Seagulls	POP,ROCK
 a great big world	A Great Big World	POP,ROCK
-a ha	a-ha	POP,ROCK,ELECTRONIC
+a ha	a-ha	POP,ROCK
 a l t and the lost civilization	A.L.T. And The Lost Civilization	OTHER
 a perfect circle	A Perfect Circle	ROCK,HIP_HOP,METAL
 a r rahman	A.R. Rahman	POP
 a rocket to the moon	A Rocket To The Moon	POP,PUNK,EMO
-a taste of honey	A Taste Of Honey	ELECTRONIC
-a teens	A*Teens	POP,ELECTRONIC
+a taste of honey	A Taste Of Honey	OTHER
+a teens	A*Teens	POP
 a thousand horses	A Thousand Horses	COUNTRY
 a trak	A-Trak	HIP_HOP,ELECTRONIC
 a tribe called quest	A Tribe Called Quest	HIP_HOP,PUNK
@@ -72,7 +72,7 @@ aaron neville	Aaron Neville	OTHER
 aaron tippin	Aaron Tippin	COUNTRY
 abaco dream	Abaco Dream	OTHER
 abba	ABBA	POP
-abc	ABC	POP,ROCK,ELECTRONIC
+abc	ABC	POP,ROCK
 abra moore	Abra Moore	POP,FOLK
 ac dc	AC/DC	ROCK
 ace	Ace	POP
@@ -83,7 +83,7 @@ ace of base	Ace of Base	POP,ELECTRONIC
 ace spectrum	Ace Spectrum	RNB
 action bronson	Action Bronson	HIP_HOP
 ad libs	The Ad Libs	POP
-adam ant	Adam Ant	POP,ROCK,ELECTRONIC
+adam ant	Adam Ant	POP,ROCK
 adam faith	Adam Faith	POP,ROCK
 adam gontier	Adam Gontier	OTHER
 adam lambert	Adam Lambert	POP
@@ -103,7 +103,7 @@ afrojack	Afrojack	POP,ELECTRONIC
 afroman	Afroman	HIP_HOP
 after 7	After 7	RNB
 after the fire	After The Fire	ROCK
-afters	The Afters	POP,ROCK
+afters	The Afters	CHRISTIAN
 agatha lee monn	Agatha Lee Monn	OTHER
 agnetha faltskog	Agnetha Fältskog	POP
 aimee mann	Aimee Mann	POP,ROCK,FOLK
@@ -129,7 +129,7 @@ alan walker	Alan Walker	ELECTRONIC
 alana davis	Alana Davis	POP,FOLK
 alanis morissette	Alanis Morissette	POP,ROCK,FOLK
 alannah myles	Alannah Myles	POP,ROCK
-alarm	The Alarm	POP,ROCK,ELECTRONIC
+alarm	The Alarm	POP,ROCK
 albert hammond	Albert Hammond	POP
 albert king	Albert King	ROCK,RNB
 alchemist	The Alchemist	HIP_HOP,PUNK
@@ -138,7 +138,7 @@ alejandro sanz	Alejandro Sanz	ROCK,LATIN
 alessia cara	Alessia Cara	POP,RNB
 alesso	Alesso	POP,ELECTRONIC
 alex clare	Alex Clare	ROCK
-alexander o neal	Alexander O'Neal	RNB,ELECTRONIC
+alexander o neal	Alexander O'Neal	RNB
 alexandra stan	Alexandra Stan	POP
 alexis jordan	Alexis Jordan	POP
 alfonzo hunter	Alfonzo Hunter	RNB
@@ -150,17 +150,17 @@ alice cooper	Alice Cooper	ROCK,RNB,PUNK,METAL
 alice deejay	Alice Deejay	POP,ELECTRONIC
 alice in chains	Alice In Chains	ROCK,METAL
 alice merton	Alice Merton	ROCK
-alicia bridges	Alicia Bridges	ELECTRONIC
+alicia bridges	Alicia Bridges	OTHER
 alicia keys	Alicia Keys	POP,RNB
 alien ant farm	Alien Ant Farm	POP,ROCK,HIP_HOP,PUNK,METAL
 alisha	Alisha	OTHER
 alison krauss	Alison Krauss	POP,COUNTRY,FOLK
-alison moyet	Alison Moyet	POP,ROCK,ELECTRONIC
+alison moyet	Alison Moyet	POP,ROCK
 alissa violet	Alissa Violet	OTHER
 alive and kicking	Alive and Kicking	OTHER
 all 4 one	All-4-One	POP,RNB
 all american rejects	The All-American Rejects	POP,ROCK,PUNK
-all saints	All Saints	POP,RNB,ELECTRONIC
+all saints	All Saints	POP,RNB
 all star tribute	All Star Tribute	OTHER
 all time low	All Time Low	POP,PUNK
 allan clarke	Allan Clarke	OTHER
@@ -170,7 +170,7 @@ allure	Allure	OTHER
 aloe blacc	Aloe Blacc	RNB
 alpha rev	Alpha Rev	OTHER
 alpha team	Alpha Team	OTHER
-alphaville	Alphaville	POP,ROCK,ELECTRONIC
+alphaville	Alphaville	POP,ROCK
 alt j	alt-J	ROCK
 alton mcclain and destiny	Alton McClain & Destiny	OTHER
 alunageorge	AlunaGeorge	POP,ROCK,ELECTRONIC
@@ -195,11 +195,11 @@ american flyer	American Flyer	OTHER
 american hi fi	American Hi-Fi	POP,PUNK
 american idol finalists season 4	American Idol Finalists - Season 4	POP
 amerie	Amerie	POP,HIP_HOP,RNB
-amii stewart	Amii Stewart	ELECTRONIC
+amii stewart	Amii Stewart	OTHER
 amil	Amil	POP
 amina	Amina	OTHER
 amine	Aminé	POP,HIP_HOP
-amy grant	Amy Grant	ROCK
+amy grant	Amy Grant	CHRISTIAN
 amy holland	Amy Holland	POP
 amy lee	Amy Lee	OTHER
 amy winehouse	Amy Winehouse	RNB
@@ -210,14 +210,14 @@ andre previn	André Previn	CLASSICAL
 andre williams	Andre Williams	ROCK,PUNK
 andrea bocelli	Andrea Bocelli	CLASSICAL
 andrea martin	Andrea Martin	OTHER
-andrea true connection	Andrea True Connection	ELECTRONIC
+andrea true connection	Andrea True Connection	OTHER
 andrew gold	Andrew Gold	POP
 andrew mcmahon in the wilderness	Andrew McMahon in the Wilderness	POP,ROCK
 andrews sisters	The Andrews Sisters	POP,JAZZ
 andru donalds	Andru Donalds	OTHER
 andy and david williams	Andy & David Williams	POP
 andy fairweather low	Andy Fairweather-Low	OTHER
-andy gibb	Andy Gibb	POP,RNB,COUNTRY,ELECTRONIC
+andy gibb	Andy Gibb	POP,RNB,COUNTRY
 andy grammer	Andy Grammer	POP
 andy griggs	Andy Griggs	COUNTRY
 andy kim	Andy Kim	POP
@@ -226,19 +226,19 @@ andy taylor	Andy Taylor	OTHER
 andy williams	Andy Williams	POP,JAZZ,CLASSICAL
 angel	Angel	OTHER
 angel city	Angel City	OTHER
-angela winbush	Angela Winbush	RNB,ELECTRONIC
-angelica	Angelica	METAL
+angela winbush	Angela Winbush	RNB
+angelica	Angelica	CHRISTIAN
 angelina	Angelina	OTHER
 angels	The Angels	ROCK
 angels and airwaves	Angels & Airwaves	POP,PUNK,EMO
 angie martinez	Angie Martinez	POP
 angie stone	Angie Stone	RNB
 animals	The Animals	OTHER
-animotion	Animotion	POP,ROCK,ELECTRONIC
+animotion	Animotion	POP,ROCK
 anita baker	Anita Baker	RNB,JAZZ
 anita bryant	Anita Bryant	POP
 anita cochran	Anita Cochran	COUNTRY
-anita ward	Anita Ward	ELECTRONIC
+anita ward	Anita Ward	OTHER
 anitta	Anitta	POP,RNB
 ann peebles	Ann Peebles	RNB
 ann wilson	Ann Wilson	OTHER
@@ -263,8 +263,8 @@ april wine	April Wine	POP,ROCK,COUNTRY
 aqua	Aqua	POP,ELECTRONIC
 arbors	The Arbors	OTHER
 arcade fire	Arcade Fire	POP,ROCK,ELECTRONIC,PUNK,FOLK,CLASSICAL
-arcadia	Arcadia	POP,ROCK,ELECTRONIC
-archie bell and the drells	Archie Bell & The Drells	POP,RNB,ELECTRONIC
+arcadia	Arcadia	POP,ROCK
+archie bell and the drells	Archie Bell & The Drells	POP,RNB
 archies	The Archies	POP,ROCK,FOLK
 arctic monkeys	Arctic Monkeys	ROCK
 aretha franklin	Aretha Franklin	RNB
@@ -287,7 +287,7 @@ artists for haiti	Artists for Haiti	OTHER
 artists stand up to cancer	Artists Stand Up To Cancer	OTHER
 ashanti	Ashanti	POP,HIP_HOP,RNB
 asher roth	Asher Roth	HIP_HOP
-ashford and simpson	Ashford & Simpson	RNB,ELECTRONIC
+ashford and simpson	Ashford & Simpson	RNB
 ashlee simpson	Ashlee Simpson	POP
 ashley mcbryde	Ashley McBryde	COUNTRY
 ashley monroe	Ashley Monroe	COUNTRY
@@ -304,7 +304,7 @@ ataris	The Ataris	PUNK,EMO
 athena cage	Athena Cage	OTHER
 athenaeum	Athenaeum	POP
 atlanta rhythm section	Atlanta Rhythm Section	POP,ROCK,RNB,COUNTRY,FOLK
-atlantic starr	Atlantic Starr	RNB,ELECTRONIC
+atlantic starr	Atlantic Starr	RNB
 attitudes	Attitudes	OTHER
 audience	Audience	OTHER
 audioslave	Audioslave	ROCK,METAL
@@ -312,7 +312,7 @@ august alsina	August Alsina	POP,HIP_HOP,RNB
 augustana	Augustana	POP,ROCK
 auli i cravalho	Auli'i Cravalho	SOUNDTRACK
 aurora	AURORA	POP
-aurra	Aurra	RNB,ELECTRONIC
+aurra	Aurra	RNB
 austin mahone	Austin Mahone	POP
 austin roberts	Austin Roberts	OTHER
 autograph	Autograph	ROCK,METAL
@@ -321,7 +321,7 @@ ava max	Ava Max	POP
 avant	Avant	POP,HIP_HOP,RNB
 avenged sevenfold	Avenged Sevenfold	ROCK,METAL
 aventura	Aventura	HIP_HOP,LATIN
-average white band	Average White Band	RNB,ELECTRONIC,JAZZ
+average white band	Average White Band	RNB,JAZZ
 avery storm	Avery Storm	OTHER
 avicii	Avicii	POP,ELECTRONIC
 avril lavigne	Avril Lavigne	POP
@@ -341,9 +341,9 @@ b g the prince of rap	B.G. The Prince Of Rap	ELECTRONIC
 b j thomas	B.J. Thomas	POP,FOLK
 b o b	B.o.B	POP,HIP_HOP
 b rich	B Rich	OTHER
-b t express	B.T. Express	RNB,ELECTRONIC
+b t express	B.T. Express	RNB
 b w stevenson	B.W. Stevenson	OTHER
-b witched	B*Witched	POP,ELECTRONIC
+b witched	B*Witched	POP
 b2k	B2K	POP,HIP_HOP,RNB
 baauer	Baauer	HIP_HOP,ELECTRONIC
 baby	Baby	OTHER
@@ -371,8 +371,8 @@ baja marimba band	The Baja Marimba Band	OTHER
 balance	Balance	OTHER
 ballin jack	Ballin' Jack	OTHER
 balloon farm	Balloon Farm	ROCK
-baltimora	Baltimora	ELECTRONIC
-bananarama	Bananarama	POP,ROCK,ELECTRONIC
+baltimora	Baltimora	OTHER
+bananarama	Bananarama	POP,ROCK
 band	The Band	POP,ROCK,RNB,COUNTRY,FOLK
 band aid	Band Aid	OTHER
 band aid 30	Band Aid 30	OTHER
@@ -380,20 +380,20 @@ band of the black watch	Band of the Black Watch	OTHER
 band perry	The Band Perry	COUNTRY
 bandit	Bandit	OTHER
 bang	Bang	RNB
-bangles	The Bangles	POP,ROCK,ELECTRONIC
+bangles	The Bangles	POP,ROCK
 banzaii	Banzaii	OTHER
 bar kays	The Bar-Kays	POP,RNB,ELECTRONIC
 barbara acklin	Barbara Acklin	RNB
 barbara and the browns	Barbara & The Browns	RNB
-barbara fairchild	Barbara Fairchild	COUNTRY
+barbara fairchild	Barbara Fairchild	COUNTRY,CHRISTIAN
 barbara greene	Barbara Greene	OTHER
 barbara lewis	Barbara Lewis	POP,RNB
 barbara lynn	Barbara Lynn	POP,RNB
-barbara mandrell	Barbara Mandrell	COUNTRY
+barbara mandrell	Barbara Mandrell	COUNTRY,CHRISTIAN
 barbara mason	Barbara Mason	RNB
 barbara mitchell	Barbara Mitchell	RNB
 barbarians	The Barbarians	ROCK,PUNK
-barbra streisand	Barbra Streisand	POP,ELECTRONIC,SOUNDTRACK
+barbra streisand	Barbra Streisand	POP,SOUNDTRACK
 barbra streisand and barry gibb	Barbra Streisand & Barry Gibb	OTHER
 barden bellas	The Barden Bellas	POP,SOUNDTRACK
 bardeux	Bardeux	OTHER
@@ -402,11 +402,11 @@ barrington levy	Barrington Levy	ROCK
 barron knights	The Barron Knights	ROCK
 barry devorzon	Barry DeVorzon	OTHER
 barry gibb	Barry Gibb	OTHER
-barry manilow	Barry Manilow	POP,RNB,ELECTRONIC
+barry manilow	Barry Manilow	POP,RNB
 barry mann	Barry Mann	RNB
 barry mcguire	Barry McGuire	POP,FOLK
 barry ryan	Barry Ryan	POP
-barry white	Barry White	POP,RNB,ELECTRONIC
+barry white	Barry White	POP,RNB
 barry young	Barry Young	OTHER
 bas	Bas	HIP_HOP
 basia	Basia	JAZZ
@@ -426,13 +426,13 @@ beats international	Beats International	ELECTRONIC
 beau brummels	The Beau Brummels	POP,ROCK,COUNTRY,FOLK
 beau coup	Beau Coup	OTHER
 bebe rexha	Bebe Rexha	POP
-bebe winans	Bebe Winans	OTHER
+bebe winans	Bebe Winans	CHRISTIAN
 beck	Beck	POP,ROCK,FOLK
 becky g	Becky G	POP,HIP_HOP,LATIN
-bee gees	Bee Gees	POP,ELECTRONIC
-beenie man	Beenie Man	ELECTRONIC
+bee gees	Bee Gees	POP
+beenie man	Beenie Man	OTHER
 before dark	Before Dark	OTHER
-belinda carlisle	Belinda Carlisle	POP,ROCK,ELECTRONIC
+belinda carlisle	Belinda Carlisle	POP,ROCK
 bell	Bell	OTHER
 bell biv devoe	Bell Biv DeVoe	POP,HIP_HOP,RNB
 bella thorne	Bella Thorne	POP
@@ -442,7 +442,7 @@ belle stars	The Belle Stars	OTHER
 bells	The Bells	ROCK
 belly	Belly	HIP_HOP
 belmonts	The Belmonts	RNB
-belouis some	Belouis Some	POP,ROCK,ELECTRONIC
+belouis some	Belouis Some	POP,ROCK
 ben colder	Ben Colder	OTHER
 ben e king	Ben E. King	POP,ROCK,RNB
 ben folds	Ben Folds	POP,ROCK
@@ -452,7 +452,7 @@ benny benassi	Benny Benassi	ELECTRONIC
 benny blanco	benny blanco	POP,ELECTRONIC
 benny mardones	Benny Mardones	POP
 benzino	Benzino	OTHER
-berlin	Berlin	POP,ROCK,ELECTRONIC
+berlin	Berlin	POP,ROCK
 bermudas	The Bermudas	OTHER
 bernadette carroll	Bernadette Carroll	OTHER
 bernadette peters	Bernadette Peters	SOUNDTRACK
@@ -473,7 +473,7 @@ biddu orchestra	Biddu Orchestra	OTHER
 big and rich	Big & Rich	COUNTRY
 big boi	Big Boi	HIP_HOP
 big brother and the holding company	Big Brother & The Holding Company	ROCK,RNB
-big country	Big Country	POP,ROCK,ELECTRONIC
+big country	Big Country	POP,ROCK
 big daddy kane	Big Daddy Kane	HIP_HOP,ELECTRONIC,PUNK
 big k r i t	Big K.R.I.T.	HIP_HOP
 big kap	Big Kap	OTHER
@@ -491,7 +491,7 @@ big tigger	Big Tigger	OTHER
 big time rush	Big Time Rush	POP
 big tymers	Big Tymers	HIP_HOP
 bilal	Bilal	RNB
-bill anderson	Bill Anderson	COUNTRY
+bill anderson	Bill Anderson	COUNTRY,CHRISTIAN
 bill black s combo	Bill Black's Combo	OTHER
 bill brandon	BILL BRANDON	RNB
 bill champlin	Bill Champlin	POP
@@ -507,7 +507,7 @@ bill quateman	Bill Quateman	POP
 bill withers	Bill Withers	RNB
 bill wyman	Bill Wyman	OTHER
 billie eilish	Billie Eilish	POP
-billie jo spears	Billie Jo Spears	COUNTRY
+billie jo spears	Billie Jo Spears	COUNTRY,CHRISTIAN
 billie myers	Billie Myers	OTHER
 billie ray martin	Billie Ray Martin	ELECTRONIC
 billie sans	Billie Sans	OTHER
@@ -518,13 +518,13 @@ billy edd wheeler	Billy Edd Wheeler	OTHER
 billy falcon	Billy Falcon	OTHER
 billy gibbons	Billy Gibbons	OTHER
 billy gilman	Billy Gilman	COUNTRY
-billy idol	Billy Idol	POP,ROCK,ELECTRONIC
+billy idol	Billy Idol	POP,ROCK
 billy j kramer	Billy J. Kramer	POP,ROCK,FOLK
 billy joe royal	Billy Joe Royal	POP,ROCK,FOLK
 billy joel	Billy Joel	POP,ROCK,FOLK
 billy lawrence	Billy Lawrence	OTHER
-billy ocean	Billy Ocean	POP,ROCK,RNB,ELECTRONIC
-billy paul	Billy Paul	RNB,ELECTRONIC
+billy ocean	Billy Ocean	POP,ROCK,RNB
+billy paul	Billy Paul	RNB
 billy preston	Billy Preston	RNB
 billy ray cyrus	Billy Ray Cyrus	COUNTRY
 billy satellite	Billy Satellite	OTHER
@@ -554,7 +554,7 @@ black rob	Black Rob	POP,PUNK
 black sabbath	Black Sabbath	ROCK,METAL
 black sheep	Black Sheep	HIP_HOP,PUNK
 blackbear	blackbear	POP
-blackbyrds	The Blackbyrds	RNB,ELECTRONIC
+blackbyrds	The Blackbyrds	RNB
 blackfoot	Blackfoot	ROCK,RNB,COUNTRY
 blackhawk	BlackHawk	COUNTRY
 blackout allstars	The Blackout Allstars	OTHER
@@ -572,19 +572,19 @@ blind melon	Blind Melon	POP,ROCK,METAL
 blink 182	blink-182	PUNK
 blinky	Blinky	OTHER
 blocboy jb	BlocBoy JB	HIP_HOP
-blondie	Blondie	POP,ROCK,ELECTRONIC
+blondie	Blondie	POP,ROCK
 blood sweat and tears	Blood, Sweat & Tears	POP,ROCK,RNB,COUNTRY,FOLK
 bloodhound gang	Bloodhound Gang	RNB,PUNK,METAL
 bloodpop	BloodPop®	POP
 bloodrock	Bloodrock	RNB
 bloodstone	Bloodstone	RNB
-blow monkeys	The Blow Monkeys	POP,ROCK,ELECTRONIC
+blow monkeys	The Blow Monkeys	POP,ROCK
 blu cantrell	Blu Cantrell	POP,RNB
 blue	Blue	OTHER
 blue cheer	Blue Cheer	ROCK,RNB,PUNK
 blue county	Blue County	COUNTRY
 blue haze	Blue Haze	OTHER
-blue magic	Blue Magic	RNB,ELECTRONIC
+blue magic	Blue Magic	RNB
 blue mercedes	Blue Mercedes	OTHER
 blue mink	Blue Mink	POP
 blue october	Blue October	POP,ROCK,METAL
@@ -613,7 +613,7 @@ bob weir	Bob Weir	ROCK,RNB,COUNTRY,FOLK
 bob welch	Bob Welch	POP,ROCK,COUNTRY,FOLK
 bobbi martin	Bobbi Martin	OTHER
 bobbie gentry	Bobbie Gentry	POP,COUNTRY,FOLK
-bobby bare	Bobby Bare	COUNTRY
+bobby bare	Bobby Bare	COUNTRY,CHRISTIAN
 bobby bloom	Bobby Bloom	POP
 bobby blue bland	Bobby "Blue" Bland	RNB
 bobby boris pickett and the crypt kickers	Bobby "Boris" Pickett & The Crypt-Kickers	OTHER
@@ -642,38 +642,38 @@ bobby taylor and the vancouvers	Bobby Taylor & The Vancouvers	OTHER
 bobby v	Bobby V.	POP,HIP_HOP,RNB
 bobby vee	Bobby Vee	POP,ROCK,RNB,FOLK
 bobby vinton	Bobby Vinton	POP,ROCK,RNB
-bobby womack	Bobby Womack	RNB,ELECTRONIC
+bobby womack	Bobby Womack	RNB
 bobby wood	Bobby Wood	OTHER
 bodeans	Bodeans	POP,ROCK
 bon iver	Bon Iver	POP,ROCK,FOLK,CLASSICAL
 bon jovi	Bon Jovi	ROCK,METAL
 bone crusher	Bone Crusher	HIP_HOP
 bone thugs n harmony	Bone Thugs-N-Harmony	HIP_HOP
-boney m	Boney M.	POP,ELECTRONIC
+boney m	Boney M.	POP
 bonham	Bonham	OTHER
 bonnie and the treasures	Bonnie and the Treasures	OTHER
 bonnie guitar	Bonnie Guitar	OTHER
 bonnie mckee	Bonnie McKee	POP
-bonnie pointer	Bonnie Pointer	ELECTRONIC
+bonnie pointer	Bonnie Pointer	OTHER
 bonnie raitt	Bonnie Raitt	POP,ROCK,RNB,FOLK
-bonnie tyler	Bonnie Tyler	POP,ELECTRONIC
+bonnie tyler	Bonnie Tyler	POP
 boo	Boo	OTHER
 booboo stewart	Booboo Stewart	OTHER
-book of love	Book Of Love	POP,ROCK,ELECTRONIC
+book of love	Book Of Love	POP,ROCK
 booker t	Booker-T	OTHER
 boomkat	Boomkat	POP
-boomtown rats	The Boomtown Rats	POP,ROCK,ELECTRONIC,PUNK
+boomtown rats	The Boomtown Rats	POP,ROCK,PUNK
 boots randolph	Boots Randolph	OTHER
 bootsy collins	Bootsy Collins	RNB
 born jamericans	Born Jamericans	OTHER
 boss	Boss	OTHER
 boston	Boston	POP,ROCK
-bounty killer	Bounty Killer	ROCK,ELECTRONIC
+bounty killer	Bounty Killer	ROCK
 bow wow	Bow Wow	POP,HIP_HOP,RNB
-bow wow wow	Bow Wow Wow	POP,ROCK,ELECTRONIC
+bow wow wow	Bow Wow Wow	POP,ROCK
 bowling for soup	Bowling For Soup	POP,ROCK,PUNK
 box tops	The Box Tops	POP,ROCK,FOLK
-boy george	Boy George	POP,ROCK,ELECTRONIC
+boy george	Boy George	POP,ROCK
 boy krazy	Boy Krazy	OTHER
 boy meets girl	Boy Meets Girl	POP
 boys	The Boys	RNB
@@ -694,7 +694,7 @@ brandon casey	Brandon Casey	OTHER
 brandy	Brandy	POP,HIP_HOP,RNB
 brandy ms b hambrick	Brandy "Ms. B" Hambrick	OTHER
 brantley gilbert	Brantley Gilbert	COUNTRY
-brass construction	Brass Construction	RNB,ELECTRONIC
+brass construction	Brass Construction	RNB
 brat pack	The Brat Pack	OTHER
 bravehearts	Bravehearts	HIP_HOP
 bravery	The Bravery	ROCK,ELECTRONIC,PUNK
@@ -706,7 +706,7 @@ breathe	Breathe	OTHER
 breathe carolina	Breathe Carolina	POP,ELECTRONIC,PUNK,EMO
 breathless	Breathless	OTHER
 brecker brothers	The Brecker Brothers	RNB,JAZZ
-breeders	The Breeders	POP,ROCK,ELECTRONIC,PUNK
+breeders	The Breeders	POP,ROCK,PUNK
 brenda and the tabulations	Brenda And The Tabulations	RNB
 brenda holloway	Brenda Holloway	POP,RNB
 brenda k starr	Brenda K. Starr	OTHER
@@ -724,16 +724,16 @@ brian poole and the tremeloes	Brian Poole & The Tremeloes	ROCK
 brian protheroe	Brian Protheroe	OTHER
 brian setzer orchestra	The Brian Setzer Orchestra	ROCK,JAZZ
 brian wilson	Brian Wilson	POP,CLASSICAL
-brick	Brick	RNB,ELECTRONIC
+brick	Brick	RNB
 bridgit mendler	Bridgit Mendler	POP
 british lions	British Lions	OTHER
 britney spears	Britney Spears	POP
 britny fox	Britny Fox	ROCK,METAL
-britt nicole	Britt Nicole	POP,ROCK,ELECTRONIC
+britt nicole	Britt Nicole	ELECTRONIC,CHRISTIAN
 bro smith	Bro Smith	OTHER
 broadway for orlando	Broadway for Orlando	OTHER
 brockhampton	BROCKHAMPTON	POP,HIP_HOP
-bronski beat	Bronski Beat	POP,ROCK,ELECTRONIC
+bronski beat	Bronski Beat	POP,ROCK
 brook benton	Brook Benton	POP,ROCK,RNB
 brooke hogan	Brooke Hogan	POP
 brooke valentine	Brooke Valentine	POP,RNB
@@ -748,7 +748,7 @@ brother beyond	Brother Beyond	POP
 brotherhood creed	Brotherhood Creed	OTHER
 brotherhood of man	Brotherhood of Man	POP
 brothers four	The Brothers Four	POP,FOLK
-brothers johnson	The Brothers Johnson	RNB,ELECTRONIC
+brothers johnson	The Brothers Johnson	RNB
 brothers osborne	Brothers Osborne	ROCK,COUNTRY
 brown boy	Brown Boy	HIP_HOP
 brownstone	Brownstone	POP,RNB
@@ -762,7 +762,7 @@ bruce springsteen	Bruce Springsteen	POP,ROCK,FOLK
 bruce willis	Bruce Willis	SOUNDTRACK
 bruno mars	Bruno Mars	POP
 bryan adams	Bryan Adams	POP,ROCK,FOLK
-bryan ferry	Bryan Ferry	POP,ROCK,ELECTRONIC
+bryan ferry	Bryan Ferry	POP,ROCK
 bryce vine	Bryce Vine	POP,HIP_HOP
 bryson tiller	Bryson Tiller	POP,HIP_HOP
 bt	BT	ELECTRONIC
@@ -772,7 +772,7 @@ bubba sparxxx	Bubba Sparxxx	HIP_HOP,COUNTRY
 bubble puppy	The Bubble Puppy	OTHER
 buchanan brothers	Buchanan Brothers	OTHER
 buck 22	Buck 22	OTHER
-buck owens	Buck Owens	COUNTRY,FOLK
+buck owens	Buck Owens	COUNTRY,FOLK,CHRISTIAN
 buck owens and the buckaroos	Buck Owens & The Buckaroos	OTHER
 buckcherry	Buckcherry	ROCK,METAL
 bucketheads	The Bucketheads	ELECTRONIC
@@ -788,7 +788,7 @@ buddy starcher	Buddy Starcher	OTHER
 buffalo springfield	Buffalo Springfield	POP,ROCK,RNB,COUNTRY,FOLK
 buffy	Buffy	OTHER
 buffy sainte marie	Buffy Sainte-Marie	FOLK
-buggles	The Buggles	POP,ROCK,ELECTRONIC
+buggles	The Buggles	POP,ROCK
 bull and the matadors	Bull & The Matadors	OTHER
 bulldog	Bulldog	ROCK,PUNK
 bulletboys	Bulletboys	ROCK,METAL
@@ -813,7 +813,7 @@ caboose	The Caboose	OTHER
 caesars	Caesars	ROCK
 cage the elephant	Cage The Elephant	POP,ROCK,PUNK
 cake	Cake	POP,ROCK
-cal smith	Cal Smith	COUNTRY
+cal smith	Cal Smith	COUNTRY,CHRISTIAN
 cal tjader	Cal Tjader	POP,HIP_HOP,RNB,JAZZ,LATIN
 calboy	Calboy	HIP_HOP
 cali swag district	Cali Swag District	HIP_HOP
@@ -825,13 +825,13 @@ calum scott	Calum Scott	POP
 calvin harris	Calvin Harris	POP,ELECTRONIC
 cam	Cam	COUNTRY
 cam ron	Cam’ron	POP,HIP_HOP,PUNK
-cameo	Cameo	POP,RNB,ELECTRONIC
+cameo	Cameo	POP,RNB
 cameron boyce	Cameron Boyce	OTHER
 camila cabello	Camila Cabello	POP
 camouflage	Camouflage	POP,ROCK
 camp lo	Camp Lo	HIP_HOP,PUNK
 canaan smith	Canaan Smith	COUNTRY
-candi staton	Candi Staton	RNB,ELECTRONIC
+candi staton	Candi Staton	RNB
 candice glover	Candice Glover	OTHER
 candlebox	Candlebox	POP,ROCK,METAL
 candy and the kisses	Candy & The Kisses	RNB
@@ -842,17 +842,17 @@ canibus	Canibus	HIP_HOP,PUNK
 canned heat	Canned Heat	POP,ROCK,RNB,FOLK
 cannibal and the headhunters	Cannibal & The Headhunters	OTHER
 cannonball adderley	Cannonball Adderley	RNB,JAZZ
-capital cities	Capital Cities	POP,ROCK,ELECTRONIC
+capital cities	Capital Cities	POP,ROCK
 capitols	The Capitols	RNB
-capleton	Capleton	ROCK,ELECTRONIC
+capleton	Capleton	ROCK
 cappadonna	Cappadonna	HIP_HOP,PUNK
-captain and tennille	Captain & Tennille	POP,ELECTRONIC,FOLK
+captain and tennille	Captain & Tennille	POP,FOLK
 captain hollywood project	Captain Hollywood Project	POP,ELECTRONIC
 caravelles	The Caravelles	POP
 cardi b	Cardi B	POP,HIP_HOP
 carl anderson	Carl Anderson	OTHER
-carl carlton	Carl Carlton	ELECTRONIC
-carl douglas	Carl Douglas	ELECTRONIC
+carl carlton	Carl Carlton	OTHER
+carl douglas	Carl Douglas	OTHER
 carl thomas	Carl Thomas	POP,RNB
 carl wilson	Carl Wilson	OTHER
 carla thomas	Carla Thomas	RNB
@@ -862,7 +862,7 @@ carlos vives	Carlos Vives	POP,LATIN
 carly pearce	Carly Pearce	COUNTRY
 carly rae jepsen	Carly Rae Jepsen	POP
 carly simon	Carly Simon	POP,FOLK
-carol douglas	Carol Douglas	ELECTRONIC
+carol douglas	Carol Douglas	OTHER
 carole bayer sager	Carole Bayer Sager	POP
 carole king	Carole King	POP,ROCK,FOLK
 carolina liar	Carolina Liar	POP,ROCK
@@ -870,9 +870,9 @@ carolyn dawn johnson	Carolyn Dawn Johnson	COUNTRY
 carolyne mas	Carolyne Mas	OTHER
 caron wheeler	Caron Wheeler	RNB
 carpenters	Carpenters	POP,FOLK
-carrie lucas	Carrie Lucas	ELECTRONIC
+carrie lucas	Carrie Lucas	OTHER
 carrie underwood	Carrie Underwood	POP,COUNTRY
-cars	The Cars	POP,ROCK,ELECTRONIC,FOLK
+cars	The Cars	POP,ROCK,FOLK
 cartel	Cartel	POP,PUNK,EMO
 carters	The Carters	POP,RNB
 cartouche	Cartouche	ELECTRONIC
@@ -896,11 +896,11 @@ catherine dunn	Catherine Dunn	OTHER
 cathy dennis	Cathy Dennis	POP,ELECTRONIC
 cause and effect	Cause & Effect	POP
 cece peniston	CeCe Peniston	ELECTRONIC
-cece winans	CeCe Winans	OTHER
+cece winans	CeCe Winans	CHRISTIAN
 ceelo green	CeeLo Green	HIP_HOP
-celi bee and the buzzy bunch	Celi Bee & The Buzzy Bunch	ELECTRONIC
+celi bee and the buzzy bunch	Celi Bee & The Buzzy Bunch	OTHER
 celine dion	Céline Dion	POP
-central line	Central Line	RNB,ELECTRONIC
+central line	Central Line	RNB
 cerrone	Cerrone	ELECTRONIC
 chad and jeremy	Chad & Jeremy	POP,ROCK,FOLK
 chad brock	Chad Brock	COUNTRY
@@ -908,14 +908,14 @@ chad kroeger	Chad Kroeger	ROCK,METAL
 chad mitchell trio	Chad Mitchell Trio	FOLK
 chainsmokers	The Chainsmokers	POP,ELECTRONIC
 chaka demus and pliers	Chaka Demus & Pliers	ROCK
-chaka khan	Chaka Khan	POP,RNB,ELECTRONIC
+chaka khan	Chaka Khan	POP,RNB
 chakachas	The Chakachas	OTHER
-cham	Cham	ELECTRONIC
+cham	Cham	OTHER
 chambers brothers	The Chambers Brothers	ROCK
 chamillionaire	Chamillionaire	HIP_HOP
 champaign	Champaign	OTHER
 chance the rapper	Chance the Rapper	HIP_HOP
-change	Change	RNB,ELECTRONIC
+change	Change	RNB
 changing faces	Changing Faces	POP,RNB
 channel live	Channel Live	HIP_HOP,PUNK
 chanson	Chanson	OTHER
@@ -928,7 +928,7 @@ charles and eddie	Charles & Eddie	RNB
 charles fox	Charles Fox	OTHER
 charles randolph grean sounde	Charles Randolph Grean Sounde	OTHER
 charles wright and the watts 103rd street rhythm band	Charles Wright & The Watts 103rd Street Rhythm Band	RNB
-charley pride	Charley Pride	COUNTRY
+charley pride	Charley Pride	COUNTRY,CHRISTIAN
 charli baltimore	Charli Baltimore	POP
 charli xcx	Charli XCX	POP,ELECTRONIC
 charlie	Charlie	OTHER
@@ -939,7 +939,7 @@ charlie dore	Charlie Dore	OTHER
 charlie foxx	Charlie Foxx	OTHER
 charlie mccoy	Charlie McCoy	RNB
 charlie puth	Charlie Puth	POP
-charlie rich	Charlie Rich	ROCK,COUNTRY
+charlie rich	Charlie Rich	ROCK,COUNTRY,CHRISTIAN
 charlie sexton	Charlie Sexton	OTHER
 charlie wilson	Charlie Wilson	RNB
 charlie worsham	Charlie Worsham	COUNTRY
@@ -948,14 +948,14 @@ chartbusters	The Chartbusters	OTHER
 chase	Chase	OTHER
 chase bryant	Chase Bryant	COUNTRY
 chase rice	Chase Rice	COUNTRY
-cheap trick	Cheap Trick	POP,ROCK,ELECTRONIC,METAL
+cheap trick	Cheap Trick	POP,ROCK,METAL
 cheat codes	Cheat Codes	POP,ELECTRONIC
 checkmates ltd	The Checkmates Ltd.	OTHER
 chedda da connect	Chedda Da Connect	HIP_HOP
 cheech and chong	Cheech & Chong	OTHER
 cheetah girls	The Cheetah Girls	POP,SOUNDTRACK
 chely wright	Chely Wright	COUNTRY
-chemical brothers	The Chemical Brothers	ELECTRONIC
+chemical brothers	The Chemical Brothers	ROCK,ELECTRONIC
 cher	Cher	POP,SOUNDTRACK
 cher lloyd	Cher Lloyd	POP
 cherie	Cherie	POP
@@ -964,15 +964,15 @@ cherish	Cherish	POP,HIP_HOP,RNB
 cherrelle	Cherrelle	RNB,ELECTRONIC
 cherry people	The Cherry People	OTHER
 cheryl ladd	Cheryl Ladd	OTHER
-cheryl lynn	Cheryl Lynn	RNB,ELECTRONIC
+cheryl lynn	Cheryl Lynn	RNB
 cheryl pepsii riley	Cheryl 'Pepsii' Riley	OTHER
 chesney hawkes	Chesney Hawkes	POP
 chet atkins	Chet Atkins	COUNTRY
-chevelle	Chevelle	ROCK,HIP_HOP,METAL
+chevelle	Chevelle	ROCK,HIP_HOP,METAL,CHRISTIAN
 cheyenne kimball	Cheyenne Kimball	POP
 chi coltrane	Chi Coltrane	POP
-chi lites	The Chi-Lites	RNB,ELECTRONIC
-chic	CHIC	RNB,ELECTRONIC
+chi lites	The Chi-Lites	RNB
+chic	CHIC	RNB
 chicago	Chicago	POP,ROCK,FOLK
 chico	Chico	OTHER
 chico debarge	Chico DeBarge	RNB
@@ -985,7 +985,7 @@ chimes	The Chimes	OTHER
 china anne mcclain	China Anne McClain	POP,SOUNDTRACK
 chingy	Chingy	POP,HIP_HOP,RNB
 chloe x halle	Chloe x Halle	POP,RNB
-chocolate milk	Chocolate Milk	RNB,ELECTRONIC
+chocolate milk	Chocolate Milk	RNB
 choir	The Choir	OTHER
 choirboys	Choirboys	ROCK
 choppa	Choppa	OTHER
@@ -1010,7 +1010,7 @@ chris norman	Chris Norman	POP
 chris rea	Chris Rea	POP,ROCK,RNB
 chris stapleton	Chris Stapleton	COUNTRY
 chris thompson	Chris Thompson	ROCK
-chris tomlin	Chris Tomlin	ROCK
+chris tomlin	Chris Tomlin	CHRISTIAN
 chris walker	Chris Walker	OTHER
 chris willis	Chris Willis	OTHER
 chris young	Chris Young	COUNTRY
@@ -1023,7 +1023,7 @@ christina milian	Christina Milian	POP,RNB
 christina perri	Christina Perri	POP
 christine mcvie	Christine McVie	POP
 christion	Christión	OTHER
-christopher cross	Christopher Cross	POP,ROCK,RNB,ELECTRONIC,FOLK
+christopher cross	Christopher Cross	POP,ROCK,RNB,FOLK
 christopher wilde	Christopher Wilde	POP
 christopher williams	Christopher Williams	RNB
 chubb rock	Chubb Rock	HIP_HOP,ELECTRONIC,PUNK
@@ -1035,7 +1035,7 @@ chuck mangione	Chuck Mangione	JAZZ
 chuck wicks	Chuck Wicks	COUNTRY
 chuckii booker	Chuckii Booker	RNB
 chumbawamba	Chumbawamba	PUNK
-church	The Church	POP,ROCK,ELECTRONIC,PUNK
+church	The Church	POP,ROCK,PUNK
 chvrches	CHVRCHES	POP,ROCK
 chyna whyte	Chyna Whyte	OTHER
 ciara	Ciara	POP,HIP_HOP,RNB
@@ -1056,7 +1056,7 @@ clarence carter	Clarence Carter	RNB
 clarence clemons	Clarence Clemons	OTHER
 clarence reid	Clarence Reid	RNB
 clark family experience	Clark Family Experience	OTHER
-clash	The Clash	ROCK,ELECTRONIC,PUNK
+clash	The Clash	ROCK,PUNK
 classics iv	Classics IV	POP,ROCK,FOLK
 classics iv featuring dennis yost	Classics IV - Featuring Dennis Yost	OTHER
 claudette ortiz	Claudette Ortiz	OTHER
@@ -1064,10 +1064,10 @@ claudia leitte	Claudia Leitte	POP,RNB
 claudine longet	Claudine Longet	OTHER
 clay aiken	Clay Aiken	POP
 clay davidson	Clay Davidson	OTHER
-clay walker	Clay Walker	COUNTRY
+clay walker	Clay Walker	COUNTRY,CHRISTIAN
 clean bandit	Clean Bandit	POP,RNB,ELECTRONIC
 clefs of lavender hill	The Clefs Of Lavender Hill	ROCK
-cleopatra	Cleopatra	POP,ELECTRONIC
+cleopatra	Cleopatra	POP
 click	The Click	HIP_HOP
 click five	The Click Five	POP,PUNK,EMO
 cliff nobles	Cliff Nobles	OTHER
@@ -1076,8 +1076,8 @@ cliff richard and the shadows	Cliff Richard & The Shadows	POP,ROCK
 clifford curry	Clifford Curry	RNB
 climax	Climax	OTHER
 climax blues band	Climax Blues Band	POP,ROCK,RNB,COUNTRY
-climie fisher	Climie Fisher	POP,ROCK,ELECTRONIC
-clint black	Clint Black	COUNTRY
+climie fisher	Climie Fisher	POP,ROCK
+clint black	Clint Black	COUNTRY,CHRISTIAN
 clint holmes	Clint Holmes	OTHER
 clipse	Clipse	HIP_HOP,PUNK
 clique	The Clique	ROCK
@@ -1091,9 +1091,9 @@ co	Co	OTHER
 coasters	The Coasters	POP,ROCK,RNB
 cobra starship	Cobra Starship	POP,HIP_HOP,PUNK,EMO
 cochise	Cochise	OTHER
-cock robin	Cock Robin	POP,ROCK,ELECTRONIC
+cock robin	Cock Robin	POP,ROCK
 cody johnson	Cody Johnson	COUNTRY
-coko	Coko	OTHER
+coko	Coko	CHRISTIAN
 colbie caillat	Colbie Caillat	POP
 colby o donis	Colby O'Donis	OTHER
 cold	Cold	ROCK,HIP_HOP,METAL
@@ -1103,13 +1103,13 @@ cole swindell	Cole Swindell	COUNTRY
 collage	Collage	OTHER
 collective soul	Collective Soul	POP,ROCK,METAL
 college boyz	College Boyz	OTHER
-collin raye	Collin Raye	COUNTRY
+collin raye	Collin Raye	COUNTRY,CHRISTIAN
 color me badd	Color Me Badd	POP,RNB
 commander cody and his lost planet airmen	Commander Cody and His Lost Planet Airmen	COUNTRY
 commitments	The Commitments	OTHER
-commodores	Commodores	POP,RNB,ELECTRONIC
+commodores	Commodores	POP,RNB
 common	Common	HIP_HOP,RNB,PUNK
-communards	The Communards	POP,ROCK,ELECTRONIC
+communards	The Communards	POP,ROCK
 company b	Company B	OTHER
 concrete blonde	Concrete Blonde	POP
 connie francis	Connie Francis	POP,ROCK,RNB
@@ -1117,7 +1117,7 @@ connie stevens	Connie Stevens	POP
 conscious daughters	The Conscious Daughters	HIP_HOP,RNB
 consequence	Consequence	HIP_HOP
 contours	The Contours	POP,RNB
-conway twitty	Conway Twitty	COUNTRY
+conway twitty	Conway Twitty	COUNTRY,CHRISTIAN
 coo coo cal	Coo Coo Cal	HIP_HOP
 cooker	Cooker	OTHER
 cookies	The Cookies	POP
@@ -1125,7 +1125,7 @@ cookin on 3 burners	Cookin' On 3 Burners	RNB
 cool breeze	Cool Breeze	OTHER
 coolio	Coolio	HIP_HOP,RNB
 corbin bleu	Corbin Bleu	POP
-corey hart	Corey Hart	POP,ROCK,ELECTRONIC
+corey hart	Corey Hart	POP,ROCK
 corina	Corina	OTHER
 corinne bailey rae	Corinne Bailey Rae	POP,RNB
 cornelius brothers and sister rose	Cornelius Brothers & Sister Rose	RNB
@@ -1172,8 +1172,8 @@ crosby stills nash and young	Crosby, Stills, Nash & Young	POP,ROCK,RNB,FOLK
 cross country	Cross Country	OTHER
 crossfade	Crossfade	ROCK,HIP_HOP,METAL
 crow	Crow	PUNK
-crowded house	Crowded House	POP,ROCK,ELECTRONIC
-crown heights affair	Crown Heights Affair	ELECTRONIC
+crowded house	Crowded House	POP,ROCK
+crown heights affair	Crown Heights Affair	OTHER
 cru	Cru	OTHER
 crucial conflict	Crucial Conflict	HIP_HOP
 crusaders	The Crusaders	RNB,JAZZ
@@ -1181,38 +1181,38 @@ crush	Crush	OTHER
 cryan shames	Cryan' Shames	POP
 crystal bernard	Crystal Bernard	COUNTRY
 crystal bowersox	Crystal Bowersox	POP
-crystal gayle	Crystal Gayle	POP,COUNTRY
-crystal lewis	Crystal Lewis	OTHER
+crystal gayle	Crystal Gayle	POP,COUNTRY,CHRISTIAN
+crystal lewis	Crystal Lewis	CHRISTIAN
 crystal waters	Crystal Waters	ELECTRONIC
 crystals	The Crystals	POP,ROCK,RNB,FOLK
 css	CSS	ROCK,ELECTRONIC,PUNK
-cult	The Cult	ROCK,ELECTRONIC,METAL
+cult	The Cult	ROCK,METAL
 cult jam	Cult Jam	OTHER
 cults	Cults	POP,ROCK,ELECTRONIC
 culture beat	Culture Beat	POP,ELECTRONIC
-culture club	Culture Club	POP,ROCK,ELECTRONIC
-cupid	Cupid	ELECTRONIC
-cure	The Cure	ROCK,ELECTRONIC
-curiosity killed the cat	Curiosity Killed The Cat	POP,ROCK,ELECTRONIC
+culture club	Culture Club	POP,ROCK
+cupid	Cupid	OTHER
+cure	The Cure	ROCK
+curiosity killed the cat	Curiosity Killed The Cat	POP,ROCK
 curren y	Curren$y	HIP_HOP
-curtis mayfield	Curtis Mayfield	RNB,ELECTRONIC
+curtis mayfield	Curtis Mayfield	RNB
 curtis stigers	Curtis Stigers	JAZZ
 cut n move	Cut 'N' Move	OTHER
-cutting crew	Cutting Crew	POP,ROCK,ELECTRONIC
+cutting crew	Cutting Crew	POP,ROCK
 cutty	Cutty	OTHER
-cutty ranks	Cutty Ranks	ELECTRONIC
+cutty ranks	Cutty Ranks	OTHER
 cymande	Cymande	POP,RNB,JAZZ
 cyndi grecco	Cyndi Grecco	OTHER
-cyndi lauper	Cyndi Lauper	POP,ROCK,ELECTRONIC
+cyndi lauper	Cyndi Lauper	POP,ROCK
 cyndi thomson	Cyndi Thomson	COUNTRY
 cynthia	Cynthia	OTHER
 cynthia and johnny o	Cynthia & Johnny O.	OTHER
 cypress hill	Cypress Hill	HIP_HOP,PUNK
 cyrkle	The Cyrkle	POP,ROCK,FOLK
 d angelo	D'Angelo	HIP_HOP,RNB
-d c larue	D.C. LaRue	ELECTRONIC
+d c larue	D.C. LaRue	OTHER
 d j rogers	D.J. Rogers	OTHER
-d train	D-Train	POP,RNB,ELECTRONIC
+d train	D-Train	POP,RNB
 d12	D12	HIP_HOP,PUNK
 d4l	D4L	HIP_HOP
 da brat	Da Brat	POP,HIP_HOP,RNB
@@ -1231,11 +1231,11 @@ damian lemar hudson	Damian Lemar Hudson	OTHER
 damita jo	Damita Jo	OTHER
 damn yankees	Damn Yankees	ROCK,METAL
 dan fogelberg	Dan Fogelberg	POP,ROCK,COUNTRY,FOLK
-dan hartman	Dan Hartman	ELECTRONIC
+dan hartman	Dan Hartman	OTHER
 dan hill	Dan Hill	POP
 dan peek	Dan Peek	POP
 dan reed network	Dan Reed Network	RNB
-dan seals	Dan Seals	COUNTRY
+dan seals	Dan Seals	COUNTRY,CHRISTIAN
 dan shay	Dan + Shay	COUNTRY
 dana rollin	Dana Rollin	OTHER
 danger danger	Danger Danger	ROCK,METAL
@@ -1246,7 +1246,7 @@ daniel powter	Daniel Powter	POP
 daniel rodriguez	Daniel Rodriguez	OTHER
 danielle bradbery	Danielle Bradbery	COUNTRY
 danity kane	Danity Kane	POP,RNB
-danny gokey	Danny Gokey	POP
+danny gokey	Danny Gokey	POP,CHRISTIAN
 danny holien	Danny Holien	OTHER
 danny hutton	Danny Hutton	OTHER
 danny o keefe	Danny O'Keefe	FOLK
@@ -1265,7 +1265,7 @@ darryl worley	Darryl Worley	COUNTRY
 darude	Darude	POP,ELECTRONIC
 daryl braithwaite	Daryl Braithwaite	POP,ROCK
 daryl hall	Daryl Hall	POP
-daryle singletary	Daryle Singletary	COUNTRY
+daryle singletary	Daryle Singletary	COUNTRY,CHRISTIAN
 das efx	Das EFX	HIP_HOP,PUNK
 dashboard confessional	Dashboard Confessional	POP,ROCK,PUNK,EMO
 daughtry	Daughtry	POP,ROCK,METAL
@@ -1284,7 +1284,7 @@ david archuleta	David Archuleta	POP
 david ball	David Ball	COUNTRY
 david banner	David Banner	HIP_HOP
 david blue	David Blue	FOLK
-david bowie	David Bowie	ROCK,ELECTRONIC,PUNK
+david bowie	David Bowie	ROCK,PUNK
 david cassidy	David Cassidy	POP
 david cook	David Cook	POP
 david crosby	David Crosby	POP,ROCK,COUNTRY,FOLK
@@ -1296,7 +1296,7 @@ david geddes	David Geddes	OTHER
 david gilmour	David Gilmour	ROCK
 david gray	David Gray	POP,ROCK
 david guetta	David Guetta	POP,ELECTRONIC
-david houston	David Houston	COUNTRY
+david houston	David Houston	COUNTRY,CHRISTIAN
 david hudson	David Hudson	OTHER
 david jones	David Jones	OTHER
 david kersh	David Kersh	COUNTRY
@@ -1308,7 +1308,7 @@ david nail	David Nail	COUNTRY
 david naughton	David Naughton	OTHER
 david pack	David Pack	POP
 david porter	David Porter	RNB
-david ruffin	David Ruffin	RNB,ELECTRONIC
+david ruffin	David Ruffin	RNB
 david sanborn	David Sanborn	RNB,JAZZ
 david seville	David Seville	OTHER
 david soul	David Soul	POP
@@ -1320,13 +1320,13 @@ dawn	Dawn	OTHER
 dawn penn	Dawn Penn	ROCK
 day26	DAY26	POP,RNB
 daya	Daya	POP,ELECTRONIC
-dayton	Dayton	RNB,ELECTRONIC
+dayton	Dayton	RNB
 daze	Daze	POP,ELECTRONIC
 dazz band	Dazz Band	RNB,ELECTRONIC
-dc talk	DC Talk	ROCK
+dc talk	DC Talk	CHRISTIAN
 dcup	DCup	OTHER
 de la soul	De La Soul	HIP_HOP,PUNK
-dead or alive	Dead Or Alive	POP,ROCK,ELECTRONIC
+dead or alive	Dead Or Alive	POP,ROCK
 deadmau5	deadmau5	ELECTRONIC
 dean and jean	Dean & Jean	OTHER
 dean friedman	Dean Friedman	POP
@@ -1334,7 +1334,7 @@ dean lewis	Dean Lewis	POP
 dean martin	Dean Martin	POP,JAZZ
 deana carter	Deana Carter	COUNTRY
 death cab for cutie	Death Cab for Cutie	POP,ROCK,FOLK
-debarge	DeBarge	RNB,ELECTRONIC
+debarge	DeBarge	RNB
 debbie gibson	Debbie Gibson	POP
 debbie harry	Debbie Harry	POP
 debbie taylor	Debbie Taylor	RNB
@@ -1347,7 +1347,7 @@ dee dee sharp	Dee Dee Sharp	POP,RNB
 dee dee warwick	Dee Dee Warwick	POP
 dee jay and the runaways	Dee Jay & The Runaways	OTHER
 deee lite	Deee-Lite	ELECTRONIC
-deele	The Deele	RNB,ELECTRONIC
+deele	The Deele	RNB
 deep blue something	Deep Blue Something	POP
 deep forest	Deep Forest	OTHER
 deep purple	Deep Purple	ROCK,RNB,METAL
@@ -1359,22 +1359,22 @@ degrees of motion	Degrees Of Motion	ELECTRONIC
 dej loaf	DeJ Loaf	POP,HIP_HOP,RNB
 deja vu	Déjà Vu	OTHER
 del amitri	Del Amitri	POP,ROCK
-del reeves	Del Reeves	COUNTRY
+del reeves	Del Reeves	COUNTRY,CHRISTIAN
 del shannon	Del Shannon	POP,ROCK,RNB,FOLK
 delaney and bonnie	Delaney & Bonnie	ROCK,RNB,COUNTRY
 delbert mcclinton	Delbert McClinton	ROCK,RNB,COUNTRY
 delegates	The Delegates	PUNK
-delegation	Delegation	RNB,ELECTRONIC
-delfonics	The Delfonics	RNB,ELECTRONIC
+delegation	Delegation	RNB
+delfonics	The Delfonics	RNB
 delinquent habits	Delinquent Habits	HIP_HOP,PUNK
 della humphrey	Della Humphrey	OTHER
 della reese	Della Reese	JAZZ
-dells	The Dells	RNB,ELECTRONIC
+dells	The Dells	RNB
 delrons	The Delrons	OTHER
 dem franchize boyz	Dem Franchize Boyz	POP,HIP_HOP
 demi lovato	Demi Lovato	POP
 demis roussos	Demis Roussos	POP
-deniece williams	Deniece Williams	RNB,ELECTRONIC
+deniece williams	Deniece Williams	RNB
 denise lasalle	Denise LaSalle	RNB
 dennis coffey and the detroit guitar band	Dennis Coffey & The Detroit Guitar Band	OTHER
 dennis deyoung	Dennis DeYoung	POP,ROCK
@@ -1384,7 +1384,7 @@ dennis yost	Dennis Yost	OTHER
 deodato	Deodato	RNB,JAZZ,LATIN
 deon estus	Deon Estus	OTHER
 deon jackson	Deon Jackson	OTHER
-depeche mode	Depeche Mode	POP,ROCK,ELECTRONIC
+depeche mode	Depeche Mode	POP,ROCK
 derek	Derek	OTHER
 derek and the dominos	Derek & The Dominos	POP,ROCK,RNB,COUNTRY,FOLK
 derek martin	Derek Martin	OTHER
@@ -1403,14 +1403,14 @@ detroit emeralds	The Detroit Emeralds	RNB
 dev	DEV	POP
 device	Device	OTHER
 devin dawson	Devin Dawson	COUNTRY
-devo	DEVO	POP,ROCK,ELECTRONIC,PUNK
+devo	DEVO	POP,ROCK,PUNK
 devotions	The Devotions	OTHER
-dexys midnight runners	Dexys Midnight Runners	POP,ELECTRONIC
+dexys midnight runners	Dexys Midnight Runners	POP,ROCK
 dey	The DEY	OTHER
 dia frampton	Dia Frampton	OTHER
-diamond rio	Diamond Rio	COUNTRY
+diamond rio	Diamond Rio	COUNTRY,CHRISTIAN
 diana king	Diana King	OTHER
-diana ross	Diana Ross	POP,RNB,ELECTRONIC
+diana ross	Diana Ross	POP,RNB
 diana ross and the supremes	Diana Ross & The Supremes	POP,RNB
 diane renay	Diane Renay	POP
 dick feller	Dick Feller	OTHER
@@ -1434,7 +1434,7 @@ dino	Dino	OTHER
 dino desi and billy	Dino, Desi & Billy	POP
 dion	Dion	POP,ROCK,RNB
 dionne farris	Dionne Farris	RNB
-dionne warwick	Dionne Warwick	POP,RNB,ELECTRONIC
+dionne warwick	Dionne Warwick	POP,RNB
 diplo	Diplo	POP,ELECTRONIC
 diplomats	The Diplomats	HIP_HOP,PUNK
 dire straits	Dire Straits	POP,ROCK
@@ -1445,7 +1445,7 @@ disclosure	Disclosure	POP,ELECTRONIC
 dishwalla	Dishwalla	POP,ROCK
 disturbed	Disturbed	ROCK,METAL
 divine	Divine	OTHER
-divinyls	Divinyls	POP,ROCK,ELECTRONIC
+divinyls	Divinyls	POP,ROCK
 dixie chicks	Dixie Chicks	COUNTRY
 dixie cups	The Dixie Cups	POP
 dixie drifter	The Dixie Drifter	OTHER
@@ -1476,7 +1476,7 @@ doctor and the medics	Doctor & The Medics	OTHER
 dog s eye view	Dog's Eye View	POP,ROCK
 dokken	Dokken	ROCK,METAL
 dolla	Dolla	HIP_HOP
-dollar	Dollar	POP,ROCK,ELECTRONIC
+dollar	Dollar	POP,ROCK
 dolly parton	Dolly Parton	COUNTRY
 dolphins	The Dolphins	OTHER
 dom kennedy	Dom Kennedy	HIP_HOP
@@ -1492,16 +1492,16 @@ don johnson	Don Johnson	OTHER
 don mclean	Don McLean	POP,ROCK,FOLK
 don nix	Don Nix	RNB
 don omar	Don Omar	HIP_HOP,LATIN
-don williams	Don Williams	COUNTRY
+don williams	Don Williams	COUNTRY,CHRISTIAN
 donald byrd	Donald Byrd	RNB,JAZZ
 donald fagen	Donald Fagen	POP,ROCK,JAZZ,FOLK
 donell jones	Donell Jones	POP,HIP_HOP,RNB
 donna allen	Donna Allen	OTHER
-donna fargo	Donna Fargo	COUNTRY
+donna fargo	Donna Fargo	COUNTRY,CHRISTIAN
 donna lewis	Donna Lewis	POP
 donna lynn	Donna Lynn	OTHER
 donna mcdaniel	Donna McDaniel	OTHER
-donna summer	Donna Summer	POP,RNB,ELECTRONIC
+donna summer	Donna Summer	POP,RNB
 donnie elbert	Donnie Elbert	RNB
 donnie iris	Donnie Iris	ROCK
 donny and marie osmond	Donny & Marie Osmond	POP
@@ -1515,17 +1515,17 @@ doris day	Doris Day	POP,JAZZ
 doris duke	Doris Duke	RNB
 doris troy	Doris Troy	POP,RNB
 dorothy moore	Dorothy Moore	RNB
-dorothy norwood	Dorothy Norwood	OTHER
+dorothy norwood	Dorothy Norwood	CHRISTIAN
 dorsey burnette	Dorsey Burnette	ROCK
-dottie west	Dottie West	COUNTRY
+dottie west	Dottie West	COUNTRY,CHRISTIAN
 double	Double	OTHER
-double exposure	Double Exposure	RNB,ELECTRONIC
+double exposure	Double Exposure	RNB
 doucette	Doucette	ROCK
-doug stone	Doug Stone	COUNTRY
+doug stone	Doug Stone	COUNTRY,CHRISTIAN
 dove cameron	Dove Cameron	POP
 down a k a kilo	Down A.K.A Kilo	OTHER
 dr alban	Dr. Alban	POP,ELECTRONIC
-dr buzzard s original savannah band	Dr. Buzzard's Original Savannah Band	ELECTRONIC
+dr buzzard s original savannah band	Dr. Buzzard's Original Savannah Band	OTHER
 dr dre	Dr. Dre	HIP_HOP,RNB
 dr hook	Dr. Hook	POP,ROCK,COUNTRY,FOLK
 dr john	Dr. John	ROCK,RNB,FOLK
@@ -1535,10 +1535,10 @@ dragonforce	DragonForce	METAL
 drake	Drake	POP,HIP_HOP
 drake bell	Drake Bell	POP
 drama	Drama	OTHER
-dramatics	The Dramatics	RNB,ELECTRONIC
+dramatics	The Dramatics	RNB
 dre	Dre	OTHER
 dream	The-Dream	POP,HIP_HOP,RNB
-dream academy	The Dream Academy	POP,ROCK,ELECTRONIC,CLASSICAL
+dream academy	The Dream Academy	POP,ROCK,CLASSICAL
 dreezy	Dreezy	POP,HIP_HOP,RNB
 drew vels	The Drew-Vels	OTHER
 drifters	The Drifters	POP,ROCK,RNB,FOLK
@@ -1558,7 +1558,7 @@ duke jupiter	Duke Jupiter	OTHER
 duncan laurence	Duncan Laurence	POP
 duncan sheik	Duncan Sheik	POP
 duprees	The Duprees	POP,RNB
-duran duran	Duran Duran	POP,ROCK,ELECTRONIC
+duran duran	Duran Duran	POP,ROCK
 dustin lynch	Dustin Lynch	COUNTRY
 dusty springfield	Dusty Springfield	POP,ROCK,RNB,FOLK
 dvsn	dvsn	POP,HIP_HOP,RNB
@@ -1579,14 +1579,14 @@ eagles	Eagles	POP,ROCK,FOLK
 eamon	Eamon	RNB
 earl grant	Earl Grant	POP
 earnest jackson	Earnest Jackson	OTHER
-earth wind and fire	Earth, Wind & Fire	RNB,ELECTRONIC
+earth wind and fire	Earth, Wind & Fire	RNB
 easton corbin	Easton Corbin	COUNTRY
 easy street	Easy Street	OTHER
 easybeats	The Easybeats	POP,ROCK,PUNK,FOLK
 eazy e	Eazy-E	HIP_HOP,RNB,PUNK
 ebonys	The Ebonys	RNB
 echosmith	Echosmith	POP
-ecstasy passion and pain	Ecstasy, Passion & Pain	ELECTRONIC
+ecstasy passion and pain	Ecstasy, Passion & Pain	OTHER
 ed ames	Ed Ames	POP
 ed sheeran	Ed Sheeran	POP
 eddie fisher	Eddie Fisher	POP
@@ -1595,15 +1595,15 @@ eddie harris	Eddie Harris	RNB,JAZZ
 eddie hodges	Eddie Hodges	OTHER
 eddie holland	Eddie Holland	RNB
 eddie holman	Eddie Holman	RNB
-eddie kendricks	Eddie Kendricks	RNB,ELECTRONIC
+eddie kendricks	Eddie Kendricks	RNB
 eddie levert	Eddie Levert	OTHER
 eddie lovette	Eddie Lovette	POP,ROCK
 eddie money	Eddie Money	POP,ROCK,COUNTRY,FOLK
 eddie murphy	Eddie Murphy	OTHER
-eddie rabbitt	Eddie Rabbitt	POP,COUNTRY
+eddie rabbitt	Eddie Rabbitt	POP,COUNTRY,CHRISTIAN
 eddie rambeau	Eddie Rambeau	OTHER
 eddie vedder	Eddie Vedder	ROCK
-eddy arnold	Eddy Arnold	COUNTRY
+eddy arnold	Eddy Arnold	COUNTRY,CHRISTIAN
 edens edge	Edens Edge	COUNTRY
 edgar winter	Edgar Winter	ROCK,RNB
 edgar winter group	The Edgar Winter Group	POP,ROCK,RNB,COUNTRY
@@ -1621,7 +1621,7 @@ eiffel 65	Eiffel 65	POP,ELECTRONIC
 eight seconds	Eight Seconds	ROCK
 eighth wonder	Eighth Wonder	POP
 el chicano	El Chicano	RNB
-el coco	El Coco	ELECTRONIC
+el coco	El Coco	OTHER
 el debarge	El DeBarge	RNB
 elastica	Elastica	POP,ROCK
 electric boys	Electric Boys	ROCK,RNB,METAL
@@ -1629,7 +1629,7 @@ electric indian	The Electric Indian	OTHER
 electric light orchestra	Electric Light Orchestra	POP,ROCK,FOLK
 electric prunes	The Electric Prunes	POP,ROCK,PUNK,FOLK
 electronic	Electronic	POP,ROCK,ELECTRONIC
-elephant man	Elephant Man	ELECTRONIC
+elephant man	Elephant Man	OTHER
 elgins	The Elgins	POP,RNB
 eli young band	Eli Young Band	ROCK,COUNTRY
 elisa fiorillo	Elisa Fiorillo	OTHER
@@ -1647,8 +1647,8 @@ elmo and patsy	Elmo & Patsy	OTHER
 eloise laws	Eloise Laws	RNB
 elton john	Elton John	POP,ROCK
 elvin bishop	Elvin Bishop	ROCK,RNB,COUNTRY
-elvis costello	Elvis Costello	POP,ROCK,ELECTRONIC,FOLK
-elvis costello and the attractions	Elvis Costello & The Attractions	POP,ROCK,ELECTRONIC,FOLK
+elvis costello	Elvis Costello	POP,ROCK,FOLK
+elvis costello and the attractions	Elvis Costello & The Attractions	POP,ROCK,FOLK
 elvis crespo	Elvis Crespo	LATIN
 elvis presley	Elvis Presley	ROCK
 emblem3	Emblem3	POP
@@ -1662,7 +1662,7 @@ emily warren	Emily Warren	POP
 eminem	Eminem	HIP_HOP,RNB
 emitt rhodes	Emitt Rhodes	POP,ROCK,COUNTRY,FOLK
 emmylou harris	Emmylou Harris	POP,ROCK,COUNTRY,FOLK
-emotions	The Emotions	POP,RNB,ELECTRONIC
+emotions	The Emotions	POP,RNB
 empire cast	Empire Cast	RNB
 empire of the sun	Empire of the Sun	POP,ROCK,ELECTRONIC,PUNK
 empress of	Empress Of	POP,ROCK,RNB,ELECTRONIC
@@ -1679,13 +1679,13 @@ enya	Enya	OTHER
 ephraim lewis	Ephraim Lewis	OTHER
 epmd	EPMD	HIP_HOP,PUNK
 equals	The Equals	POP,ROCK
-erasure	Erasure	POP,ROCK,ELECTRONIC
+erasure	Erasure	POP,ROCK
 eria fachin	Eria Fachin	OTHER
 eric b and rakim	Eric B. & Rakim	HIP_HOP,PUNK
 eric benet	Eric Benét	RNB
 eric burdon	Eric Burdon	ROCK,RNB
 eric burdon and the animals	Eric Burdon & the Animals	ROCK,FOLK
-eric carmen	Eric Carmen	POP,ROCK,ELECTRONIC,FOLK
+eric carmen	Eric Carmen	POP,ROCK,FOLK
 eric church	Eric Church	COUNTRY
 eric clapton	Eric Clapton	POP,ROCK,RNB
 eric heatherly	Eric Heatherly	COUNTRY
@@ -1696,7 +1696,7 @@ eric turner	Eric Turner	OTHER
 eric weissberg	Eric Weissberg	OTHER
 erick sermon	Erick Sermon	HIP_HOP,PUNK
 erma franklin	Erma Franklin	RNB
-eruption	Eruption	POP,ELECTRONIC
+eruption	Eruption	POP
 erykah badu	Erykah Badu	POP,HIP_HOP,RNB
 escape club	The Escape Club	OTHER
 esquires	The Esquires	RNB
@@ -1704,20 +1704,20 @@ estelle	Estelle	RNB
 ester dean	Ester Dean	OTHER
 esther phillips	Esther Phillips	RNB
 esthero	Esthero	ELECTRONIC
-eternal	Eternal	POP,ELECTRONIC
+eternal	Eternal	POP
 eternity s children	Eternity's Children	POP
 etta james	Etta James	POP,RNB,JAZZ
 euclid beach band	The Euclid Beach Band	OTHER
-eugene wilde	Eugene Wilde	RNB,ELECTRONIC
+eugene wilde	Eugene Wilde	RNB
 eurogliders	Eurogliders	ROCK
 europe	Europe	ROCK,METAL
-eurythmics	Eurythmics	POP,ROCK,ELECTRONIC
+eurythmics	Eurythmics	POP,ROCK
 eva simons	Eva Simons	POP
 evan and jaron	Evan And Jaron	POP
 evanescence	Evanescence	ROCK,METAL
 eve	Eve	POP,HIP_HOP,RNB
 eve 6	Eve 6	POP,ROCK,PUNK,METAL
-evelyn champagne king	Evelyn "Champagne" King	RNB,ELECTRONIC
+evelyn champagne king	Evelyn "Champagne" King	RNB
 evelyn thomas	Evelyn Thomas	ELECTRONIC
 everclear	Everclear	POP,ROCK,PUNK,METAL
 everlast	Everlast	HIP_HOP
@@ -1733,7 +1733,7 @@ extreme	Extreme	ROCK,METAL
 eydie gorme	Eydie Gormé	POP
 eye to eye	Eye To Eye	POP
 f l y fast life yungstaz	F.L.Y. (Fast Life Yungstaz)	OTHER
-f r david	F.R. David	ELECTRONIC
+f r david	F.R. David	OTHER
 fabolous	Fabolous	POP,HIP_HOP,RNB,PUNK
 fabulous poodles	The Fabulous Poodles	OTHER
 fabulous thunderbirds	The Fabulous Thunderbirds	ROCK,RNB,COUNTRY
@@ -1743,7 +1743,7 @@ fairground attraction	Fairground Attraction	POP
 faith band	Faith Band	OTHER
 faith evans	Faith Evans	POP,HIP_HOP,RNB
 faith hill	Faith Hill	POP,COUNTRY
-faith hope and charity	Faith, Hope & Charity	ELECTRONIC
+faith hope and charity	Faith, Hope & Charity	OTHER
 faith no more	Faith No More	ROCK,HIP_HOP,RNB,METAL
 faithless	Faithless	ELECTRONIC
 falco	Falco	POP,ROCK
@@ -1759,7 +1759,7 @@ fantastics	The Fantastics	OTHER
 far corporation	Far Corporation	OTHER
 far east movement	Far East Movement	POP,HIP_HOP,ELECTRONIC
 farm	The Farm	POP
-faron young	Faron Young	COUNTRY
+faron young	Faron Young	COUNTRY,CHRISTIAN
 farruko	Farruko	HIP_HOP,LATIN
 fastball	Fastball	POP,ROCK
 faster pussycat	Faster Pussycat	ROCK,METAL
@@ -1788,7 +1788,7 @@ fifth harmony	Fifth Harmony	POP
 figures on a beach	Figures On A Beach	POP
 filter	Filter	POP,ROCK,HIP_HOP,METAL
 finatticz	Finatticz	OTHER
-fine young cannibals	Fine Young Cannibals	POP,ROCK,ELECTRONIC
+fine young cannibals	Fine Young Cannibals	POP,ROCK
 finger eleven	Finger Eleven	ROCK,HIP_HOP,METAL
 fiona	Fiona	OTHER
 fiona apple	Fiona Apple	POP,ROCK,FOLK,CLASSICAL
@@ -1802,17 +1802,17 @@ first class	The First Class	OTHER
 first edition	The First Edition	OTHER
 first national band	The First National Band	OTHER
 fitz and the tantrums	Fitz and The Tantrums	POP,ROCK
-five	Five	POP,ELECTRONIC
+five	Five	POP
 five americans	The Five Americans	POP,ROCK
 five finger death punch	Five Finger Death Punch	ROCK,METAL
 five flights up	Five Flights Up	OTHER
 five for fighting	Five For Fighting	POP,ROCK
 five man electrical band	Five Man Electrical Band	ROCK
 five satins	The Five Satins	POP,ROCK,RNB
-five special	Five Special	ELECTRONIC
+five special	Five Special	OTHER
 five stairsteps	The Five Stairsteps	RNB
 five star	Five Star	POP
-fixx	The Fixx	POP,ROCK,ELECTRONIC
+fixx	The Fixx	POP,ROCK
 flame	The Flame	OTHER
 flaming ember	Flaming Ember	OTHER
 flaming lips	The Flaming Lips	POP,ROCK,FOLK
@@ -1836,9 +1836,9 @@ florence welch	Florence Welch	POP
 florida georgia line	Florida Georgia Line	COUNTRY
 floyd cramer	Floyd Cramer	POP,COUNTRY
 flume	Flume	POP,ROCK,ELECTRONIC
-flying lizards	The Flying Lizards	ELECTRONIC,PUNK
+flying lizards	The Flying Lizards	ROCK,PUNK
 flying machine	Flying Machine	OTHER
-flyleaf	Flyleaf	ROCK,HIP_HOP,EMO,METAL
+flyleaf	Flyleaf	ROCK,HIP_HOP,EMO,METAL,CHRISTIAN
 fmob	Fmob	OTHER
 focus	Focus	POP,ROCK,JAZZ
 foghat	Foghat	POP,ROCK,RNB,COUNTRY
@@ -1846,9 +1846,9 @@ fontane sisters	The Fontane Sisters	POP
 fontella bass	Fontella Bass	POP,RNB
 foo fighters	Foo Fighters	ROCK,METAL
 fools	The Fools	OTHER
-for king and country	for KING & COUNTRY	ROCK
+for king and country	for KING & COUNTRY	CHRISTIAN
 for real	For Real	RNB
-force m d s	Force M.D.'s	RNB,ELECTRONIC
+force m d s	Force M.D.'s	RNB
 foreigner	Foreigner	POP,ROCK
 forest rangers	The Forest Rangers	ROCK
 formations	The Formations	OTHER
@@ -1864,15 +1864,15 @@ four aces	The Four Aces	POP
 four jacks and a jill	Four Jacks And a Jill	OTHER
 four lads	The Four Lads	POP
 four preps	The Four Preps	POP,RNB
-four tops	Four Tops	POP,RNB,ELECTRONIC,FOLK
+four tops	Four Tops	POP,RNB,FOLK
 fox	Fox	OTHER
 foxes	Foxes	POP,ELECTRONIC
 foxx	Foxx	HIP_HOP
-foxy	Foxy	RNB,ELECTRONIC
+foxy	Foxy	RNB
 foxy brown	Foxy Brown	POP,HIP_HOP,RNB,PUNK
-framing hanley	Framing Hanley	ROCK,HIP_HOP,EMO,METAL
-france joli	France Joli	ELECTRONIC
-francesca battistelli	Francesca Battistelli	ROCK
+framing hanley	Framing Hanley	ROCK,HIP_HOP,EMO,METAL,CHRISTIAN
+france joli	France Joli	OTHER
+francesca battistelli	Francesca Battistelli	CHRISTIAN
 francis lai	Francis Lai	POP,ELECTRONIC,SOUNDTRACK
 frank devol	Frank DeVol	POP
 frank gallop	Frank Gallop	OTHER
@@ -1887,30 +1887,30 @@ frankee	Frankee	OTHER
 frankie avalon	Frankie Avalon	POP,ROCK,RNB
 frankie ballard	Frankie Ballard	COUNTRY
 frankie beverly	Frankie Beverly	RNB
-frankie goes to hollywood	Frankie Goes To Hollywood	POP,ROCK,ELECTRONIC
+frankie goes to hollywood	Frankie Goes To Hollywood	POP,ROCK
 frankie j	Frankie J	POP,RNB
 frankie karl and the dreams	Frankie Karl & The Dreams	OTHER
 frankie miller	Frankie Miller	OTHER
-frankie smith	Frankie Smith	RNB,ELECTRONIC
+frankie smith	Frankie Smith	RNB
 frankie valli	Frankie Valli	POP,FOLK
 frannie golde	Frannie Golde	OTHER
 franz ferdinand	Franz Ferdinand	ROCK,ELECTRONIC,PUNK
 fratellis	The Fratellis	ROCK,PUNK
 fray	The Fray	POP,ROCK
 freak nasty	Freak Nasty	HIP_HOP
-fred hammond	Fred Hammond	OTHER
+fred hammond	Fred Hammond	CHRISTIAN
 fred hughes	Fred Hughes	RNB
 fred schneider	Fred Schneider	OTHER
 fred wesley and the j b s	Fred Wesley & The J.B.'s	RNB
 freda payne	Freda Payne	RNB
 freddie and the dreamers	Freddie & The Dreamers	POP,ROCK
 freddie hart	Freddie Hart	COUNTRY
-freddie jackson	Freddie Jackson	RNB,ELECTRONIC
+freddie jackson	Freddie Jackson	RNB
 freddie mercury	Freddie Mercury	ROCK
 freddie north	Freddie North	RNB
 freddie scott	Freddie Scott	RNB
 freddy cannon	Freddy Cannon	POP,ROCK,RNB
-freddy fender	Freddy Fender	POP,COUNTRY
+freddy fender	Freddy Fender	POP,COUNTRY,CHRISTIAN
 frederick knight	Frederick Knight	RNB
 free	Free	POP,ROCK,RNB,FOLK
 freedom williams	Freedom Williams	ELECTRONIC
@@ -1937,13 +1937,13 @@ funkadelic	Funkadelic	ROCK,RNB
 funkdoobiest	Funkdoobiest	HIP_HOP,PUNK
 funkmaster flex	Funkmaster Flex	HIP_HOP,PUNK
 funky kings	Funky Kings	OTHER
-fuse odg	Fuse ODG	POP,ELECTRONIC
+fuse odg	Fuse ODG	POP
 future	Future	POP,HIP_HOP
 futuristic	Futuristic	HIP_HOP
 fuzz	The Fuzz	RNB
 g eazy	G-Eazy	POP,HIP_HOP
 g herbo	G Herbo	HIP_HOP
-g q	G.Q.	RNB,ELECTRONIC
+g q	G.Q.	RNB
 g unit	G-Unit	HIP_HOP,PUNK
 g wiz	G-Wiz	OTHER
 gabrielle	Gabrielle	POP,RNB
@@ -1955,7 +1955,7 @@ game	The Game	HIP_HOP
 gamma	Gamma	OTHER
 gang starr	Gang Starr	HIP_HOP,PUNK
 gants	The Gants	ROCK
-gap band	The Gap Band	RNB,ELECTRONIC
+gap band	The Gap Band	RNB
 garbage	Garbage	POP,ROCK,ELECTRONIC
 gardner cole	Gardner Cole	OTHER
 garland green	Garland Green	RNB
@@ -1964,14 +1964,14 @@ garnet mimms	Garnet Mimms	RNB
 garnet mimms and the enchanters	Garnet Mimms & The Enchanters	RNB
 gary allan	Gary Allan	COUNTRY
 gary barlow	Gary Barlow	POP
-gary criss	Gary Criss	ELECTRONIC
+gary criss	Gary Criss	OTHER
 gary glitter	Gary Glitter	OTHER
 gary lewis and the playboys	Gary Lewis & The Playboys	POP,ROCK,FOLK
 gary moore	Gary Moore	ROCK,RNB
-gary numan	Gary Numan	POP,ROCK,ELECTRONIC,PUNK
+gary numan	Gary Numan	POP,ROCK,PUNK
 gary puckett	Gary Puckett	OTHER
 gary puckett and the union gap	Gary Puckett & The Union Gap	POP,ROCK,FOLK
-gary s gang	Gary's Gang	ELECTRONIC
+gary s gang	Gary's Gang	OTHER
 gary toms empire	Gary Toms Empire	OTHER
 gary u s bonds	Gary U.S. Bonds	RNB
 gary wright	Gary Wright	POP,ROCK,COUNTRY
@@ -1982,7 +1982,7 @@ gene and debbe	Gene & Debbe	OTHER
 gene autry	Gene Autry	POP,COUNTRY
 gene chandler	Gene Chandler	POP,RNB
 gene cotton	Gene Cotton	OTHER
-gene loves jezebel	Gene Loves Jezebel	POP,ROCK,ELECTRONIC
+gene loves jezebel	Gene Loves Jezebel	POP,ROCK
 gene mcdaniels	Gene McDaniels	OTHER
 gene pitney	Gene Pitney	POP,ROCK,FOLK
 gene redding	Gene Redding	OTHER
@@ -1994,17 +1994,17 @@ gente de zona	Gente De Zona	POP,HIP_HOP,LATIN
 gentrys	The Gentrys	POP
 genya ravan	Genya Ravan	OTHER
 george baker selection	George Baker Selection	POP
-george benson	George Benson	POP,RNB,ELECTRONIC,JAZZ
+george benson	George Benson	POP,RNB,JAZZ
 george burns	George Burns	OTHER
 george clinton	George Clinton	RNB
 george duke	George Duke	RNB,JAZZ
 george ezra	George Ezra	POP,FOLK
 george harrison	George Harrison	POP,ROCK,FOLK
-george jones	George Jones	COUNTRY
+george jones	George Jones	COUNTRY,CHRISTIAN
 george lamond	George Lamond	OTHER
 george martin	George Martin	OTHER
-george mccrae	George McCrae	RNB,ELECTRONIC
-george michael	George Michael	POP,ELECTRONIC
+george mccrae	George McCrae	RNB
+george michael	George Michael	POP,ROCK
 george strait	George Strait	COUNTRY
 george thorogood and the destroyers	George Thorogood & The Destroyers	POP,ROCK,RNB
 georgia satellites	The Georgia Satellites	ROCK,RNB,COUNTRY
@@ -2024,21 +2024,21 @@ gibson brothers	The Gibson Brothers	ELECTRONIC
 gidea park	Gidea Park	OTHER
 giggles	Giggles	OTHER
 giggs	Giggs	HIP_HOP
-gilbert o sullivan	Gilbert O'Sullivan	POP,ELECTRONIC,FOLK
+gilbert o sullivan	Gilbert O'Sullivan	POP,FOLK
 gillette	Gillette	OTHER
 gin blossoms	Gin Blossoms	POP,ROCK
 gina g	Gina G	POP,ELECTRONIC
 gina thompson	Gina Thompson	POP
 ginger baker s air force	Ginger Baker's Air Force	JAZZ
 ginny arnell	Ginny Arnell	OTHER
-gino soccio	Gino Soccio	ELECTRONIC
+gino soccio	Gino Soccio	OTHER
 gino vannelli	Gino Vannelli	POP,ROCK
 ginuwine	Ginuwine	POP,HIP_HOP,RNB
-giorgio moroder	Giorgio Moroder	ELECTRONIC
+giorgio moroder	Giorgio Moroder	OTHER
 girlfriends	The Girlfriends	OTHER
 giuffria	Giuffria	OTHER
 gladys knight	Gladys Knight	RNB
-gladys knight and the pips	Gladys Knight & The Pips	POP,RNB,ELECTRONIC
+gladys knight and the pips	Gladys Knight & The Pips	POP,RNB
 glass animals	Glass Animals	POP,ROCK
 glass bottle	The Glass Bottle	OTHER
 glass house	Glass House	OTHER
@@ -2054,14 +2054,14 @@ glenn yarbrough	Glenn Yarbrough	FOLK
 glitter band	The Glitter Band	OTHER
 gloria estefan	Gloria Estefan	POP,LATIN
 gloria estefan and miami sound machine	Gloria Estefan And Miami Sound Machine	OTHER
-gloria gaynor	Gloria Gaynor	ELECTRONIC
+gloria gaynor	Gloria Gaynor	OTHER
 gloria loring	Gloria Loring	OTHER
 gloria lynne	Gloria Lynne	OTHER
 gloriana	Gloriana	COUNTRY
 gnarls barkley	Gnarls Barkley	HIP_HOP,RNB
 gnash	gnash	POP
-go go s	The Go-Go's	POP,ROCK,ELECTRONIC
-go west	Go West	POP,ROCK,ELECTRONIC
+go go s	The Go-Go's	POP,ROCK
+go west	Go West	POP,ROCK
 goanna	Goanna	ROCK
 godley and creme	Godley & Creme	POP
 godsmack	Godsmack	ROCK,HIP_HOP,METAL
@@ -2074,7 +2074,7 @@ goodees	The Goodees	OTHER
 goodie mob	Goodie Mob	HIP_HOP,PUNK
 goodies	The Goodies	OTHER
 goodmen	The Goodmen	OTHER
-goody goody	Goody Goody	ELECTRONIC
+goody goody	Goody Goody	OTHER
 goonrock	GoonRock	OTHER
 goose creek symphony	Goose Creek Symphony	OTHER
 gordon lightfoot	Gordon Lightfoot	POP,ROCK,COUNTRY,FOLK
@@ -2085,7 +2085,7 @@ gotti	Gotti	OTHER
 gotye	Gotye	POP
 gq	GQ	OTHER
 grace	Grace	RNB
-grace jones	Grace Jones	POP,ROCK,ELECTRONIC
+grace jones	Grace Jones	POP,ROCK
 grace phipps	Grace Phipps	OTHER
 grace potter	Grace Potter	OTHER
 grace potter and the nocturnals	Grace Potter & The Nocturnals	POP,RNB
@@ -2098,7 +2098,7 @@ graham parker and the rumour	Graham Parker & The Rumour	POP,ROCK
 grand funk railroad	Grand Funk Railroad	POP,ROCK,RNB,FOLK
 grand puba	Grand Puba	HIP_HOP,PUNK
 grandmaster flash	Grandmaster Flash	HIP_HOP,ELECTRONIC
-grandmaster slice	Grandmaster Slice	ELECTRONIC
+grandmaster slice	Grandmaster Slice	OTHER
 granger smith	Granger Smith	COUNTRY
 grapefruit	Grapefruit	ROCK
 grass roots	The Grass Roots	POP,ROCK,RNB,COUNTRY,FOLK
@@ -2137,11 +2137,11 @@ guy	Guy	POP,HIP_HOP,RNB
 guy marks	Guy Marks	OTHER
 guy sebastian	Guy Sebastian	POP
 gwen guthrie	Gwen Guthrie	RNB,ELECTRONIC
-gwen mccrae	Gwen McCrae	RNB,ELECTRONIC
+gwen mccrae	Gwen McCrae	RNB
 gwen stefani	Gwen Stefani	POP
 gwyneth paltrow	Gwyneth Paltrow	OTHER
 gym class heroes	Gym Class Heroes	POP,HIP_HOP,PUNK,EMO
-gyptian	Gyptian	HIP_HOP,ELECTRONIC
+gyptian	Gyptian	HIP_HOP
 gza	GZA	HIP_HOP,PUNK
 h e r	H.E.R.	POP
 h town	H-Town	POP,RNB
@@ -2168,13 +2168,13 @@ harlem community choir	The Harlem Community Choir	OTHER
 harlow wilcox	Harlow Wilcox	OTHER
 harold faltermeyer	Harold Faltermeyer	POP,SOUNDTRACK
 harold melvin	Harold Melvin	RNB
-harold melvin and the blue notes	Harold Melvin & The Blue Notes	RNB,ELECTRONIC
+harold melvin and the blue notes	Harold Melvin & The Blue Notes	RNB
 harpers bizarre	Harpers Bizarre	POP,FOLK
 harry chapin	Harry Chapin	POP,FOLK
 harry connick jr	Harry Connick, Jr.	POP,JAZZ
 harry styles	Harry Styles	POP
 harvey scales	Harvey Scales	OTHER
-havana brown	Havana Brown	POP,ELECTRONIC
+havana brown	Havana Brown	POP
 hawks	The Hawks	OTHER
 hayley kiyoko	Hayley Kiyoko	POP
 hayley williams	Hayley Williams	OTHER
@@ -2187,8 +2187,8 @@ heartland	Heartland	OTHER
 heartsfield	Heartsfield	ROCK
 heather b	Heather B	HIP_HOP,PUNK
 heather headley	Heather Headley	RNB
-heatwave	Heatwave	RNB,ELECTRONIC
-heaven 17	Heaven 17	POP,ROCK,ELECTRONIC
+heatwave	Heatwave	RNB
+heaven 17	Heaven 17	POP,ROCK
 heavy d	Heavy D	RNB
 heavy d and the boyz	Heavy D & The Boyz	POP,HIP_HOP,RNB,ELECTRONIC,PUNK
 hedgehoppers anonymous	Hedgehoppers Anonymous	ROCK
@@ -2201,14 +2201,14 @@ henry gross	Henry Gross	OTHER
 henry lee summer	Henry Lee Summer	ROCK
 henry mancini	Henry Mancini	POP,SOUNDTRACK
 henry paul band	Henry Paul Band	ROCK
-henson cargill	Henson Cargill	COUNTRY
+henson cargill	Henson Cargill	COUNTRY,CHRISTIAN
 herb alpert	Herb Alpert	POP,JAZZ
 herb alpert and the tijuana brass	Herb Alpert & The Tijuana Brass	POP
 herbie hancock	Herbie Hancock	RNB,JAZZ
 herbie mann	Herbie Mann	RNB,JAZZ,LATIN
 herman s hermits	Herman's Hermits	POP,ROCK,FOLK
 hey violet	Hey Violet	POP
-hezekiah walker	Hezekiah Walker	OTHER
+hezekiah walker	Hezekiah Walker	CHRISTIAN
 hi c	Hi-C	HIP_HOP,RNB
 hi five	Hi-Five	POP,RNB
 hi tek 3	Hi Tek 3	OTHER
@@ -2216,10 +2216,10 @@ high inergy	High Inergy	RNB
 high school musical cast	High School Musical Cast	POP,SOUNDTRACK
 high valley	High Valley	COUNTRY
 hilary duff	Hilary Duff	POP
-hillsong united	Hillsong UNITED	OTHER
+hillsong united	Hillsong UNITED	CHRISTIAN
 him	HIM	METAL
 hinder	Hinder	POP,ROCK,HIP_HOP,METAL
-hipsway	Hipsway	ROCK,ELECTRONIC
+hipsway	Hipsway	ROCK
 hit masters	Hit Masters	OTHER
 hitman sammy sam	Hitman Sammy Sam	OTHER
 hives	The Hives	ROCK,ELECTRONIC,PUNK
@@ -2250,7 +2250,7 @@ horst jankowski	Horst Jankowski	POP
 hot boys	Hot Boys	HIP_HOP
 hot butter	Hot Butter	OTHER
 hot chelle rae	Hot Chelle Rae	POP,HIP_HOP,PUNK
-hot chocolate	Hot Chocolate	POP,RNB,ELECTRONIC
+hot chocolate	Hot Chocolate	POP,RNB
 hot stylz	Hot Stylz	OTHER
 hotel	Hôtel	OTHER
 hotlegs	Hotlegs	POP
@@ -2258,16 +2258,16 @@ house of lords	House Of Lords	ROCK,METAL
 house of pain	House Of Pain	HIP_HOP,PUNK
 houston	Houston	OTHER
 how i became the bomb	How I Became the Bomb	POP
-howard hewett	Howard Hewett	RNB,ELECTRONIC
-howard jones	Howard Jones	POP,ROCK,ELECTRONIC
+howard hewett	Howard Hewett	RNB
+howard jones	Howard Jones	POP,ROCK
 howard tate	Howard Tate	RNB
 howie day	Howie Day	POP
 hoyt axton	Hoyt Axton	COUNTRY
 hozier	Hozier	POP,FOLK
 hudson and landry	Hudson & Landry	OTHER
-hues corporation	Hues Corporation	ELECTRONIC
+hues corporation	Hues Corporation	OTHER
 huey	Huey	HIP_HOP
-huey lewis and the news	Huey Lewis & The News	POP,ROCK,ELECTRONIC,FOLK
+huey lewis and the news	Huey Lewis & The News	POP,ROCK,FOLK
 hugh jackman	Hugh Jackman	SOUNDTRACK
 hugh laurie	Hugh Laurie	OTHER
 hugh masekela	Hugh Masekela	POP,JAZZ
@@ -2275,7 +2275,7 @@ hughes thrall	Hughes/Thrall	OTHER
 hugo montenegro	Hugo Montenegro	POP,SOUNDTRACK
 hullaballoos	The Hullaballoos	ROCK
 human beinz	The Human Beinz	ROCK
-human league	The Human League	POP,ROCK,ELECTRONIC
+human league	The Human League	POP,ROCK
 humble pie	Humble Pie	ROCK,RNB,COUNTRY,FOLK
 huncho jack	Huncho Jack	POP,HIP_HOP
 hunter hayes	Hunter Hayes	POP,COUNTRY
@@ -2295,8 +2295,8 @@ ian whitcomb	Ian Whitcomb	ROCK
 ian whitcomb and bluesville	Ian Whitcomb & Bluesville	OTHER
 ice cube	Ice Cube	HIP_HOP,RNB,PUNK
 ice t	Ice-T	HIP_HOP,ELECTRONIC,PUNK
-icehouse	ICEHOUSE	POP,ROCK,ELECTRONIC
-icicle works	The Icicle Works	POP,ROCK,ELECTRONIC
+icehouse	ICEHOUSE	POP,ROCK
+icicle works	The Icicle Works	POP,ROCK
 icona pop	Icona Pop	POP
 iconz	Iconz	OTHER
 ideal	Ideal	OTHER
@@ -2304,7 +2304,7 @@ ides of march	The Ides Of March	OTHER
 idina menzel	Idina Menzel	SOUNDTRACK
 idris muhammad	Idris Muhammad	RNB
 iggy azalea	Iggy Azalea	POP,HIP_HOP
-iggy pop	Iggy Pop	ROCK,ELECTRONIC,PUNK
+iggy pop	Iggy Pop	ROCK,PUNK
 ii d extreme	II D'Extreme	OTHER
 ike and tina turner	Ike & Tina Turner	POP,RNB
 ikettes	The Ikettes	POP
@@ -2326,7 +2326,7 @@ indigo girls	Indigo Girls	POP,FOLK
 inez	Inez	OTHER
 inez foxx	Inez Foxx	OTHER
 infared	InfaRed	OTHER
-information society	Information Society	POP,ROCK,ELECTRONIC
+information society	Information Society	POP,ROCK
 ingrid michaelson	Ingrid Michaelson	POP,ROCK,FOLK
 inmates	The Inmates	POP,ROCK
 inner circle	Inner Circle	OTHER
@@ -2334,21 +2334,21 @@ inner city	Inner City	ELECTRONIC,PUNK
 innocence	The Innocence	OTHER
 inoj	INOJ	POP
 insane clown posse	Insane Clown Posse	HIP_HOP
-instant funk	Instant Funk	RNB,ELECTRONIC
+instant funk	Instant Funk	RNB
 intonation featuring joee	Intonation Featuring Joee	OTHER
 intrigues	The Intrigues	OTHER
 intro	Intro	RNB
-intruders	The Intruders	RNB,ELECTRONIC
+intruders	The Intruders	RNB
 invisible man s band	Invisible Man's Band	OTHER
-inxs	INXS	POP,ROCK,RNB,ELECTRONIC
-irene cara	Irene Cara	POP,ELECTRONIC
+inxs	INXS	POP,ROCK,RNB
+irene cara	Irene Cara	POP,ROCK
 irish rovers	The Irish Rovers	FOLK
 irma thomas	Irma Thomas	RNB
 iron butterfly	Iron Butterfly	ROCK,RNB,FOLK
 ironhorse	Ironhorse	OTHER
-isaac hayes	Isaac Hayes	RNB,ELECTRONIC
+isaac hayes	Isaac Hayes	RNB
 isaiah rashad	Isaiah Rashad	HIP_HOP
-isley brothers	The Isley Brothers	RNB,ELECTRONIC
+isley brothers	The Isley Brothers	RNB
 isley jasper isley	Isley, Jasper, Isley	RNB
 isyss	Isyss	POP
 ivan neville	Ivan Neville	OTHER
@@ -2374,7 +2374,7 @@ ja rule	Ja Rule	POP,HIP_HOP,RNB
 jacci mcghee	Jacci McGhee	OTHER
 jack and jack	Jack & Jack	POP
 jack blanchard and misty morgan	Jack Blanchard & Misty Morgan	OTHER
-jack greene	Jack Greene	COUNTRY
+jack greene	Jack Greene	COUNTRY,CHRISTIAN
 jack ingram	Jack Ingram	COUNTRY
 jack johnson	Jack Johnson	POP
 jack jones	Jack Jones	POP,JAZZ
@@ -2382,13 +2382,13 @@ jack wagner	Jack Wagner	OTHER
 jack white	Jack White	ROCK,RNB,PUNK
 jackie deshannon	Jackie DeShannon	POP,ROCK,FOLK
 jackie lee	Jackie Lee	OTHER
-jackie moore	Jackie Moore	RNB,ELECTRONIC
+jackie moore	Jackie Moore	RNB
 jackie ross	Jackie Ross	RNB
 jackie wilson	Jackie Wilson	POP,ROCK,RNB
 jackie wilson and lavern baker	Jackie Wilson & LaVern Baker	OTHER
 jackson 5	The Jackson 5	RNB
 jackson browne	Jackson Browne	POP,ROCK,COUNTRY,FOLK
-jacksons	The Jacksons	RNB,ELECTRONIC
+jacksons	The Jacksons	RNB
 jacob sartorius	Jacob Sartorius	POP
 jacquees	Jacquees	POP,HIP_HOP,RNB
 jadakiss	Jadakiss	POP,HIP_HOP,PUNK
@@ -2399,7 +2399,7 @@ jaheim	Jaheim	POP,RNB
 jake holmes	Jake Holmes	OTHER
 jake owen	Jake Owen	COUNTRY
 jake paul	Jake Paul	OTHER
-james	James	POP,ROCK,ELECTRONIC
+james	James	POP,ROCK
 james and bobby purify	James & Bobby Purify	RNB
 james arthur	James Arthur	POP
 james bay	James Bay	POP
@@ -2439,7 +2439,7 @@ janis ian	Janis Ian	POP,FOLK
 janis joplin	Janis Joplin	ROCK,RNB,FOLK
 jarmels	The Jarmels	RNB
 jaron and the long road to love	Jaron And The Long Road To Love	COUNTRY
-jars of clay	Jars Of Clay	ROCK
+jars of clay	Jars Of Clay	CHRISTIAN
 jason aldean	Jason Aldean	COUNTRY
 jason derulo	Jason Derulo	POP,HIP_HOP
 jason evigan	Jason Evigan	OTHER
@@ -2460,12 +2460,12 @@ jazz crusaders	The Jazz Crusaders	OTHER
 jc chasez	JC Chasez	OTHER
 jean beauvoir	Jean Beauvoir	OTHER
 jean knight	Jean Knight	RNB
-jean shepard	Jean Shepard	COUNTRY
+jean shepard	Jean Shepard	COUNTRY,CHRISTIAN
 jeanette baby washington	Jeanette Baby Washington	OTHER
-jeanne pruett	Jeanne Pruett	COUNTRY
-jeannie c riley	Jeannie C. Riley	COUNTRY
+jeanne pruett	Jeanne Pruett	COUNTRY,CHRISTIAN
+jeannie c riley	Jeannie C. Riley	COUNTRY,CHRISTIAN
 jeannie ortega	Jeannie Ortega	POP
-jeannie seely	Jeannie Seely	COUNTRY
+jeannie seely	Jeannie Seely	COUNTRY,CHRISTIAN
 jeezy	Jeezy	HIP_HOP
 jeff bates	Jeff Bates	COUNTRY
 jeff beck	Jeff Beck	ROCK,RNB,JAZZ
@@ -2478,7 +2478,7 @@ jefferson	Jefferson	OTHER
 jefferson airplane	Jefferson Airplane	ROCK,RNB,FOLK
 jefferson starship	Jefferson Starship	POP,ROCK,COUNTRY,FOLK
 jeffrey daniels	Jeffrey Daniels	OTHER
-jeffrey osborne	Jeffrey Osborne	RNB,ELECTRONIC
+jeffrey osborne	Jeffrey Osborne	RNB
 jelly beans	The Jelly Beans	POP
 jellybean	Jellybean	OTHER
 jellyfish	Jellyfish	POP
@@ -2495,18 +2495,18 @@ jenny burton	Jenny Burton	OTHER
 jeremih	Jeremih	POP,HIP_HOP,RNB
 jeremy jordan	Jeremy Jordan	SOUNDTRACK
 jermaine dupri	Jermaine Dupri	POP,HIP_HOP
-jermaine jackson	Jermaine Jackson	RNB,ELECTRONIC
+jermaine jackson	Jermaine Jackson	RNB
 jermaine jd dupri	Jermaine "JD" Dupri	OTHER
 jermaine paul	Jermaine Paul	OTHER
 jermaine stewart	Jermaine Stewart	OTHER
 jerrod niemann	Jerrod Niemann	COUNTRY
-jerry butler	Jerry Butler	POP,RNB,ELECTRONIC
+jerry butler	Jerry Butler	POP,RNB
 jerry garcia	Jerry Garcia	POP,ROCK,RNB,COUNTRY,FOLK
 jerry jaye	Jerry Jaye	OTHER
 jerry jeff walker	Jerry Jeff Walker	ROCK,COUNTRY,FOLK
 jerry lee lewis	Jerry Lee Lewis	POP,ROCK,COUNTRY
 jerry naylor	Jerry Naylor	OTHER
-jerry reed	Jerry Reed	COUNTRY
+jerry reed	Jerry Reed	COUNTRY,CHRISTIAN
 jerry vale	Jerry Vale	POP,JAZZ,CLASSICAL
 jerry wallace	Jerry Wallace	POP
 jeru the damaja	Jeru The Damaja	HIP_HOP,PUNK
@@ -2514,12 +2514,12 @@ jess glynne	Jess Glynne	POP,ELECTRONIC
 jesse mccartney	Jesse McCartney	POP
 jesse powell	Jesse Powell	RNB
 jesse winchester	Jesse Winchester	ROCK,COUNTRY,FOLK
-jessi colter	Jessi Colter	COUNTRY
+jessi colter	Jessi Colter	COUNTRY,CHRISTIAN
 jessica andrews	Jessica Andrews	COUNTRY
 jessica simpson	Jessica Simpson	POP
 jessie j	Jessie J	POP,HIP_HOP
 jessie reyez	Jessie Reyez	POP,RNB
-jesus and mary chain	The Jesus and Mary Chain	POP,ROCK,ELECTRONIC,PUNK
+jesus and mary chain	The Jesus and Mary Chain	POP,ROCK,PUNK
 jesus jones	Jesus Jones	POP
 jet	Jet	ROCK
 jethro tull	Jethro Tull	ROCK,RNB,FOLK
@@ -2536,11 +2536,11 @@ jim and jean	Jim & Jean	OTHER
 jim brickman	Jim Brickman	OTHER
 jim capaldi	Jim Capaldi	RNB
 jim croce	Jim Croce	POP,ROCK,FOLK
-jim ed brown	Jim Ed Brown	COUNTRY
+jim ed brown	Jim Ed Brown	COUNTRY,CHRISTIAN
 jim jones	Jim Jones	HIP_HOP,PUNK
 jim messina	Jim Messina	POP
 jim photoglo	Jim Photoglo	OTHER
-jim reeves	Jim Reeves	POP,ROCK,COUNTRY
+jim reeves	Jim Reeves	POP,ROCK,COUNTRY,CHRISTIAN
 jim stafford	Jim Stafford	POP
 jim steinman	Jim Steinman	OTHER
 jim weatherly	Jim Weatherly	OTHER
@@ -2548,7 +2548,7 @@ jimi hendrix	Jimi Hendrix	ROCK,RNB
 jimmie allen	Jimmie Allen	COUNTRY
 jimmie rodgers	Jimmie Rodgers	POP
 jimmy barnes	Jimmy Barnes	POP,ROCK
-jimmy bo horne	Jimmy "Bo" Horne	ELECTRONIC
+jimmy bo horne	Jimmy "Bo" Horne	OTHER
 jimmy buffett	Jimmy Buffett	POP,FOLK
 jimmy castor	Jimmy Castor	OTHER
 jimmy castor bunch	The Jimmy Castor Bunch	RNB
@@ -2556,7 +2556,7 @@ jimmy cliff	Jimmy Cliff	OTHER
 jimmy cozier	Jimmy Cozier	OTHER
 jimmy cross	Jimmy Cross	OTHER
 jimmy davis	Jimmy Davis	OTHER
-jimmy dean	Jimmy Dean	COUNTRY
+jimmy dean	Jimmy Dean	COUNTRY,CHRISTIAN
 jimmy durante	Jimmy Durante	POP,JAZZ
 jimmy eat world	Jimmy Eat World	POP,ROCK,PUNK
 jimmy fallon	Jimmy Fallon	OTHER
@@ -2572,7 +2572,7 @@ jimmy roselli	Jimmy Roselli	OTHER
 jimmy ruffin	Jimmy Ruffin	POP,RNB
 jimmy ryser	Jimmy Ryser	OTHER
 jimmy smith	Jimmy Smith	RNB,JAZZ
-jimmy somerville	Jimmy Somerville	POP,ROCK,ELECTRONIC
+jimmy somerville	Jimmy Somerville	POP,ROCK
 jimmy velvet	Jimmy Velvet	OTHER
 jimmy wayne	Jimmy Wayne	COUNTRY
 jimmy witherspoon	Jimmy Witherspoon	RNB
@@ -2588,19 +2588,19 @@ joan osborne	Joan Osborne	POP,FOLK
 jocelyn brown	Jocelyn Brown	ELECTRONIC
 jocelyn enriquez	Jocelyn Enriquez	OTHER
 jodeci	Jodeci	POP,HIP_HOP,RNB
-jody miller	Jody Miller	COUNTRY
+jody miller	Jody Miller	COUNTRY,CHRISTIAN
 jody watley	Jody Watley	POP,RNB,ELECTRONIC
 joe	Joe	POP,RNB
 joe bean esposito	Joe "Bean" Esposito	OTHER
 joe budden	Joe Budden	HIP_HOP,PUNK
 joe cocker	Joe Cocker	POP,ROCK,RNB,FOLK
 joe cuba sextet	Joe Cuba Sextet	LATIN
-joe diffie	Joe Diffie	COUNTRY
+joe diffie	Joe Diffie	COUNTRY,CHRISTIAN
 joe dolce	Joe Dolce	OTHER
 joe fagin	Joe Fagin	OTHER
 joe frank	Joe Frank	OTHER
 joe hinton	Joe Hinton	OTHER
-joe jackson	Joe Jackson	POP,ROCK,ELECTRONIC,FOLK
+joe jackson	Joe Jackson	POP,ROCK,FOLK
 joe jeffrey group	Joe Jeffrey Group	OTHER
 joe jonas	Joe Jonas	POP
 joe nichols	Joe Nichols	COUNTRY
@@ -2617,13 +2617,13 @@ joey kid	Joey Kid	OTHER
 joey mcintyre	Joey McIntyre	OTHER
 joey powers	Joey Powers	POP
 joey scarbury	Joey Scarbury	POP
-john anderson	John Anderson	COUNTRY
+john anderson	John Anderson	COUNTRY,CHRISTIAN
 john baldry	John Baldry	OTHER
 john barry	John Barry	SOUNDTRACK
 john belushi	John Belushi	OTHER
 john cafferty	John Cafferty	ROCK
 john cafferty and the beaver brown band	John Cafferty & the Beaver Brown Band	ROCK
-john davis and the monster orchestra	John Davis & The Monster Orchestra	ELECTRONIC
+john davis and the monster orchestra	John Davis & The Monster Orchestra	OTHER
 john denver	John Denver	POP,FOLK
 john eddie	John Eddie	ROCK
 john farnham	John Farnham	POP,ROCK
@@ -2643,12 +2643,12 @@ john mayall	John Mayall	ROCK,RNB
 john mayer	John Mayer	POP,FOLK
 john mayer trio	John Mayer Trio	RNB
 john mellencamp	John Mellencamp	POP,ROCK,FOLK
-john michael montgomery	John Michael Montgomery	COUNTRY
+john michael montgomery	John Michael Montgomery	COUNTRY,CHRISTIAN
 john miles	John Miles	POP
 john newman	John Newman	POP,ELECTRONIC
 john o banion	John O'Banion	OTHER
 john parr	John Parr	POP,ROCK
-john paul young	John Paul Young	POP,ROCK,ELECTRONIC
+john paul young	John Paul Young	POP,ROCK
 john phillips	John Phillips	COUNTRY,FOLK
 john rich	John Rich	COUNTRY
 john rowles	John Rowles	POP
@@ -2664,15 +2664,15 @@ johnnie taylor	Johnnie Taylor	RNB
 johnny adams	Johnny Adams	RNB
 johnny and the expressions	Johnny and the Expressions	OTHER
 johnny average band	The Johnny Average Band	OTHER
-johnny bond	Johnny Bond	COUNTRY
-johnny bristol	Johnny Bristol	RNB,ELECTRONIC
+johnny bond	Johnny Bond	COUNTRY,CHRISTIAN
+johnny bristol	Johnny Bristol	RNB
 johnny cash	Johnny Cash	COUNTRY
 johnny crawford	Johnny Crawford	OTHER
 johnny gill	Johnny Gill	RNB
 johnny guitar watson	Johnny "Guitar" Watson	RNB
-johnny hates jazz	Johnny Hates Jazz	POP,ROCK,ELECTRONIC
+johnny hates jazz	Johnny Hates Jazz	POP,ROCK
 johnny kemp	Johnny Kemp	RNB
-johnny lee	Johnny Lee	COUNTRY
+johnny lee	Johnny Lee	COUNTRY,CHRISTIAN
 johnny lytle	Johnny Lytle	HIP_HOP,RNB
 johnny maestro	Johnny Maestro	POP,ROCK,RNB
 johnny mann singers	The Johnny Mann Singers	OTHER
@@ -2680,9 +2680,9 @@ johnny mathis	Johnny Mathis	POP,JAZZ
 johnny nash	Johnny Nash	POP
 johnny o	Johnny O.	OTHER
 johnny p	Johnny P	OTHER
-johnny paycheck	Johnny Paycheck	COUNTRY
+johnny paycheck	Johnny Paycheck	COUNTRY,CHRISTIAN
 johnny rivers	Johnny Rivers	POP,ROCK,FOLK
-johnny rodriguez	Johnny Rodriguez	COUNTRY
+johnny rodriguez	Johnny Rodriguez	COUNTRY,CHRISTIAN
 johnny sea	Johnny Sea	OTHER
 johnny thunder	Johnny Thunder	OTHER
 johnny tillotson	Johnny Tillotson	POP,ROCK,RNB
@@ -2707,14 +2707,14 @@ jonathan butler	Jonathan Butler	JAZZ
 jonathan edwards	Jonathan Edwards	POP,COUNTRY,FOLK
 jonathan king	Jonathan King	POP,ROCK
 jonell	Jonell	OTHER
-jones girls	The Jones Girls	RNB,ELECTRONIC
+jones girls	The Jones Girls	RNB
 joni mitchell	Joni Mitchell	POP,ROCK,FOLK
 jonn hart	Jonn Hart	RNB
 jordan davis	Jordan Davis	COUNTRY
 jordan hill	Jordan Hill	OTHER
 jordan knight	Jordan Knight	OTHER
 jordan smith	Jordan Smith	POP
-jordanaires	The Jordanaires	COUNTRY
+jordanaires	The Jordanaires	CHRISTIAN
 jordin sparks	Jordin Sparks	POP,HIP_HOP,RNB
 jorja smith	Jorja Smith	POP,RNB
 jose feliciano	José Feliciano	LATIN
@@ -2744,7 +2744,7 @@ juice wrld	Juice WRLD	HIP_HOP
 juicy j	Juicy J	HIP_HOP
 jules shear	Jules Shear	OTHER
 julia michaels	Julia Michaels	POP
-julian cope	Julian Cope	POP,ROCK,ELECTRONIC,PUNK,CLASSICAL
+julian cope	Julian Cope	POP,ROCK,PUNK,CLASSICAL
 julian lennon	Julian Lennon	POP
 juliana hatfield	Juliana Hatfield	POP,ROCK
 julianne hough	Julianne Hough	COUNTRY,SOUNDTRACK
@@ -2759,7 +2759,7 @@ junction	Junction	OTHER
 jung tru	Jung Tru	OTHER
 junior	Junior	POP
 junior m a f i a	Junior M.A.F.I.A.	POP,HIP_HOP,PUNK
-junior reid	Junior Reid	ROCK,ELECTRONIC
+junior reid	Junior Reid	ROCK
 just us	Just Us!	OTHER
 justin bieber	Justin Bieber	POP
 justin hayward	Justin Hayward	POP,ROCK
@@ -2783,7 +2783,7 @@ k5	K5	OTHER
 k7	K7	ELECTRONIC
 kacey musgraves	Kacey Musgraves	POP,COUNTRY
 kai	Kai	OTHER
-kajagoogoo	Kajagoogoo	POP,ROCK,ELECTRONIC
+kajagoogoo	Kajagoogoo	POP,ROCK
 kaleo	KALEO	ROCK
 kali uchis	Kali Uchis	POP
 kamaiyah	Kamaiyah	HIP_HOP
@@ -2792,24 +2792,24 @@ kandi girl	Kandi Girl	OTHER
 kane brown	Kane Brown	COUNTRY
 kane gang	The Kane Gang	OTHER
 kane roberts	Kane Roberts	ROCK,METAL
-kano	Kano	ELECTRONIC
+kano	Kano	OTHER
 kansas	Kansas	POP,ROCK
 kanye west	Kanye West	HIP_HOP
 kaoma	Kaoma	OTHER
 kardinal offishall	Kardinal Offishall	HIP_HOP
 karen fairchild	Karen Fairchild	OTHER
 karen o	Karen O	POP,ROCK,ELECTRONIC
-karen young	Karen Young	ELECTRONIC
+karen young	Karen Young	OTHER
 karla bonoff	Karla Bonoff	POP,FOLK
 karmin	Karmin	POP
 karol g	KAROL G	LATIN
 karyn white	Karyn White	RNB
 kasenetz katz singing orchestral circus	Kasenetz-Katz Singing Orchestral Circus	OTHER
-kashif	Kashif	RNB,ELECTRONIC
+kashif	Kashif	RNB
 kaskade	Kaskade	POP,ELECTRONIC
 kat deluna	Kat Deluna	POP
 katalina	Katalina	OTHER
-kate bush	Kate Bush	POP,ROCK,ELECTRONIC,FOLK,CLASSICAL
+kate bush	Kate Bush	POP,ROCK,FOLK,CLASSICAL
 kate taylor	Kate Taylor	OTHER
 kate voegele	Kate Voegele	POP
 katharine mcphee	Katharine McPhee	POP
@@ -2822,7 +2822,7 @@ katy perry	Katy Perry	POP
 katy tiz	Katy Tiz	OTHER
 kayak	Kayak	POP,ROCK
 kbc band	KBC Band	OTHER
-kc and the sunshine band	KC & The Sunshine Band	POP,RNB,ELECTRONIC
+kc and the sunshine band	KC & The Sunshine Band	POP,RNB
 keak da sneak	Keak Da Sneak	HIP_HOP
 keala settle	Keala Settle	SOUNDTRACK
 keane	Keane	POP,ROCK
@@ -2833,7 +2833,7 @@ keith anderson	Keith Anderson	COUNTRY
 keith barbour	Keith Barbour	OTHER
 keith carradine	Keith Carradine	OTHER
 keith hampshire	Keith Hampshire	OTHER
-keith martin	Keith Martin	OTHER
+keith martin	Keith Martin	CHRISTIAN
 keith murray	Keith Murray	HIP_HOP,PUNK
 keith sweat	Keith Sweat	POP,RNB
 keith urban	Keith Urban	COUNTRY
@@ -2849,7 +2849,7 @@ kelly rowland	Kelly Rowland	POP,HIP_HOP,RNB
 kelsea ballerini	Kelsea Ballerini	POP,COUNTRY
 kem	Kem	RNB
 ken y	Ken-Y	HIP_HOP,LATIN
-kendalls	The Kendalls	COUNTRY
+kendalls	The Kendalls	COUNTRY,CHRISTIAN
 kendrick lamar	Kendrick Lamar	HIP_HOP
 kenny burrell	Kenny Burrell	RNB,JAZZ
 kenny chesney	Kenny Chesney	COUNTRY
@@ -2892,7 +2892,7 @@ killers	The Killers	ROCK
 kim carnes	Kim Carnes	POP
 kim mitchell	Kim Mitchell	ROCK
 kim weston	Kim Weston	RNB
-kim wilde	Kim Wilde	POP,ROCK,ELECTRONIC
+kim wilde	Kim Wilde	POP,ROCK
 kimberley locke	Kimberley Locke	POP
 kimberly scott	Kimberly Scott	OTHER
 kimbra	Kimbra	POP,ROCK
@@ -2910,18 +2910,18 @@ kings of leon	Kings of Leon	ROCK
 kings of the sun	Kings Of The Sun	OTHER
 kingsmen	The Kingsmen	ROCK
 kingston trio	The Kingston Trio	FOLK
-kinks	The Kinks	POP,ROCK,ELECTRONIC,PUNK,FOLK
+kinks	The Kinks	POP,ROCK,PUNK,FOLK
 kinleys	The Kinleys	COUNTRY
 kinsu	Kinsu	OTHER
 kip moore	Kip Moore	COUNTRY
-kirk franklin	Kirk Franklin	RNB
+kirk franklin	Kirk Franklin	CHRISTIAN
 kirko bangz	Kirko Bangz	HIP_HOP,RNB
 kiss	KISS	ROCK,METAL
 kissing the pink	Kissing The Pink	POP,ROCK
 kix	Kix	ROCK,METAL
 klaatu	Klaatu	ROCK
 klf	The KLF	ELECTRONIC
-klymaxx	Klymaxx	RNB,ELECTRONIC
+klymaxx	Klymaxx	RNB
 knack	The Knack	POP,ROCK
 knickerbockers	The Knickerbockers	POP,ROCK
 knoc turn al	Knoc-Turn'al	HIP_HOP,RNB
@@ -2931,7 +2931,7 @@ kodie shane	Kodie Shane	HIP_HOP
 koffee brown	Koffee Brown	RNB
 kon kan	Kon Kan	POP,ROCK
 kongos	KONGOS	ROCK,RNB
-kool and the gang	Kool & The Gang	RNB,ELECTRONIC
+kool and the gang	Kool & The Gang	RNB
 kool g rap	Kool G Rap	HIP_HOP,PUNK
 kool mo dee	Kool Mo Dee	OTHER
 kool moe dee	Kool Moe Dee	HIP_HOP,RNB,ELECTRONIC,PUNK
@@ -2968,14 +2968,14 @@ kyper	Kyper	OTHER
 l a d	L.a.d.	OTHER
 l a guns	L.A. Guns	ROCK,METAL
 l a style	L.A. Style	ELECTRONIC
-l t d	L.T.D.	RNB,ELECTRONIC
+l t d	L.T.D.	RNB
 l trimm	L'Trimm	HIP_HOP
 l v	L.V.	OTHER
 la bouche	La Bouche	POP,ELECTRONIC
 la roux	La Roux	POP,ROCK,ELECTRONIC
 la s	The La's	POP
-laban	Laban	POP,ELECTRONIC
-labelle	LaBelle	RNB,ELECTRONIC
+laban	Laban	POP
+labelle	LaBelle	RNB
 labrinth	Labrinth	POP
 lady antebellum	Lady Antebellum	POP,COUNTRY
 lady gaga	Lady Gaga	POP
@@ -2998,7 +2998,7 @@ larks	The Larks	OTHER
 larry carlton	Larry Carlton	RNB,JAZZ
 larry elgart and his manhattan swing orchestra	Larry Elgart And His Manhattan Swing Orchestra	OTHER
 larry gatlin	Larry Gatlin	COUNTRY
-larry graham	Larry Graham	RNB,ELECTRONIC
+larry graham	Larry Graham	RNB
 larry groce	Larry Groce	SOUNDTRACK
 larry john mcnally	Larry John McNally	POP
 larry lee	Larry Lee	POP
@@ -3010,13 +3010,13 @@ last goodnight	The Last Goodnight	POP
 latimore	Latimore	RNB
 latocha scott	LaTocha Scott	OTHER
 latoya jackson	Latoya Jackson	OTHER
-laura branigan	Laura Branigan	POP,ROCK,ELECTRONIC
+laura branigan	Laura Branigan	POP,ROCK
 laura enea	Laura Enea	OTHER
 laura lee	Laura Lee	RNB
 laura nyro	Laura Nyro	POP,FOLK
 lauren alaina	Lauren Alaina	COUNTRY
 lauren bennett	Lauren Bennett	OTHER
-lauren daigle	Lauren Daigle	OTHER
+lauren daigle	Lauren Daigle	CHRISTIAN
 lauren jauregui	Lauren Jauregui	RNB
 lauren wood	Lauren Wood	POP
 lauv	Lauv	POP
@@ -3046,7 +3046,7 @@ lee morgan	Lee Morgan	RNB,JAZZ
 lee oskar	Lee Oskar	OTHER
 lee ritenour	Lee Ritenour	POP,RNB,JAZZ
 left banke	The Left Banke	POP,ROCK,FOLK,CLASSICAL
-lefty frizzell	Lefty Frizzell	COUNTRY,FOLK
+lefty frizzell	Lefty Frizzell	COUNTRY,FOLK,CHRISTIAN
 legacy of sound	Legacy Of Sound	OTHER
 leif garrett	Leif Garrett	POP
 leighton meester	Leighton Meester	POP
@@ -3058,10 +3058,10 @@ lena horne	Lena Horne	POP,JAZZ
 lena zavaroni	Lena Zavaroni	OTHER
 lenny kravitz	Lenny Kravitz	POP,ROCK
 lenny welch	Lenny Welch	OTHER
-leo sayer	Leo Sayer	POP,ELECTRONIC,FOLK
+leo sayer	Leo Sayer	POP,FOLK
 leon and mary russell	Leon & Mary Russell	OTHER
 leon bridges	Leon Bridges	RNB
-leon haywood	Leon Haywood	RNB,ELECTRONIC
+leon haywood	Leon Haywood	RNB
 leon redbone	Leon Redbone	JAZZ,FOLK
 leon russell	Leon Russell	POP,ROCK,RNB,COUNTRY,FOLK
 leona lewis	Leona Lewis	POP,RNB
@@ -3077,7 +3077,7 @@ leslie pearl	Leslie Pearl	OTHER
 letoya	LeToya	POP,RNB
 lettermen	The Lettermen	POP
 letters to cleo	Letters To Cleo	POP,ROCK
-level 42	Level 42	POP,ROCK,RNB,ELECTRONIC
+level 42	Level 42	POP,ROCK,RNB
 levert	Levert	RNB
 lfo	LFO	POP
 liam payne	Liam Payne	POP,ELECTRONIC
@@ -3085,7 +3085,7 @@ lidell townsell	Lidell Townsell	ELECTRONIC
 lifehouse	Lifehouse	POP,ROCK,METAL
 lighter shade of brown	Lighter Shade Of Brown	HIP_HOP
 lighthouse	lighthouse	ROCK
-lightning seeds	The Lightning Seeds	POP,ROCK,ELECTRONIC
+lightning seeds	The Lightning Seeds	POP,ROCK
 lil baby	Lil Baby	HIP_HOP
 lil dicky	Lil Dicky	HIP_HOP
 lil durk	Lil Durk	HIP_HOP
@@ -3119,7 +3119,7 @@ limeliters	The Limeliters	FOLK
 limp bizkit	Limp Bizkit	ROCK,HIP_HOP,METAL
 lin manuel miranda	Lin-Manuel Miranda	SOUNDTRACK
 lina santiago	Lina Santiago	OTHER
-linda clifford	Linda Clifford	ELECTRONIC
+linda clifford	Linda Clifford	OTHER
 linda jones	Linda Jones	RNB
 linda mccartney	Linda McCartney	POP
 linda ronstadt	Linda Ronstadt	POP,ROCK,COUNTRY,FOLK
@@ -3134,8 +3134,8 @@ linear	Linear	OTHER
 link	Link	OTHER
 link wray	Link Wray	ROCK,PUNK
 linkin park	Linkin Park	ROCK,METAL
-lionel richie	Lionel Richie	POP,RNB,ELECTRONIC
-lipps inc	Lipps Inc.	ELECTRONIC
+lionel richie	Lionel Richie	POP,RNB
+lipps inc	Lipps Inc.	OTHER
 liquid gold	Liquid Gold	OTHER
 liquid smoke	Liquid Smoke	OTHER
 lisa fischer	Lisa Fischer	RNB
@@ -3143,14 +3143,14 @@ lisa keith	Lisa Keith	OTHER
 lisa lisa and cult jam	Lisa Lisa & Cult Jam	RNB,ELECTRONIC
 lisa loeb	Lisa Loeb	POP,FOLK
 lisa loeb and nine stories	Lisa Loeb & Nine Stories	POP
-lisa stansfield	Lisa Stansfield	POP,RNB,ELECTRONIC
+lisa stansfield	Lisa Stansfield	POP,RNB
 lisette melendez	Lisette Melendez	OTHER
 lit	Lit	POP,ROCK,PUNK
 lita ford	Lita Ford	ROCK,METAL
 little anthony and the imperials	Little Anthony & The Imperials	POP,ROCK,RNB
 little big town	Little Big Town	COUNTRY
 little caesar	Little Caesar	ROCK,METAL
-little jimmy dickens	Little Jimmy Dickens	COUNTRY
+little jimmy dickens	Little Jimmy Dickens	COUNTRY,CHRISTIAN
 little johnny taylor	Little Johnny Taylor	RNB
 little junior parker	Little Junior Parker	OTHER
 little milton	Little Milton	RNB
@@ -3159,12 +3159,12 @@ little richard	Little Richard	POP,ROCK,RNB
 little river band	Little River Band	POP,ROCK,COUNTRY,FOLK
 little sister	Little Sister	OTHER
 little steven	Little Steven	ROCK
-little texas	Little Texas	COUNTRY
+little texas	Little Texas	COUNTRY,CHRISTIAN
 live	Live	POP,ROCK,METAL
 liverpool five	Liverpool Five	OTHER
 livin joy	Livin' Joy	POP,ELECTRONIC
 living colour	Living Colour	ROCK,HIP_HOP,RNB,METAL
-living in a box	Living In A Box	POP,ROCK,ELECTRONIC
+living in a box	Living In A Box	POP,ROCK
 livingston taylor	Livingston Taylor	OTHER
 liz damon s orient express	Liz Damon's Orient Express	OTHER
 liz phair	Liz Phair	POP,ROCK,FOLK
@@ -3197,10 +3197,10 @@ lorde	Lorde	POP
 lords of the underground	Lords Of The Underground	HIP_HOP,PUNK
 loreena mckennitt	Loreena McKennitt	FOLK
 loren allred	Loren Allred	SOUNDTRACK
-loretta lynn	Loretta Lynn	COUNTRY,FOLK
-lorne greene	Lorne Greene	COUNTRY
+loretta lynn	Loretta Lynn	COUNTRY,FOLK,CHRISTIAN
+lorne greene	Lorne Greene	COUNTRY,CHRISTIAN
 lorraine ellison	Lorraine Ellison	OTHER
-lorrie morgan	Lorrie Morgan	COUNTRY
+lorrie morgan	Lorrie Morgan	COUNTRY,CHRISTIAN
 los bravos	Los Bravos	POP,FOLK
 los del mar	Los Del Mar	OTHER
 los del rio	Los Del Rio	OTHER
@@ -3217,8 +3217,8 @@ lou christie	Lou Christie	POP,ROCK,FOLK
 lou donaldson	Lou Donaldson	RNB,JAZZ
 lou gramm	Lou Gramm	POP,ROCK
 lou johnson	Lou Johnson	RNB
-lou rawls	Lou Rawls	POP,RNB,ELECTRONIC,JAZZ
-lou reed	Lou Reed	ROCK,ELECTRONIC,PUNK,FOLK
+lou rawls	Lou Rawls	POP,RNB,JAZZ
+lou reed	Lou Reed	ROCK,PUNK,FOLK
 loudon wainwright iii	Loudon Wainwright III	ROCK,COUNTRY,FOLK
 louis armstrong	Louis Armstrong	POP,JAZZ
 louis prima	Louis Prima	POP,RNB,JAZZ
@@ -3226,13 +3226,13 @@ louis tomlinson	Louis Tomlinson	POP
 louis williams	Louis Williams	RNB
 louise goffin	Louise Goffin	OTHER
 louise tucker	Louise Tucker	OTHER
-love	Love	POP,ROCK,COUNTRY,ELECTRONIC,FOLK
+love	Love	POP,ROCK,COUNTRY,FOLK
 love and money	Love & Money	ROCK
-love and rockets	Love and Rockets	POP,ROCK,ELECTRONIC,PUNK
+love and rockets	Love and Rockets	POP,ROCK,PUNK
 love and theft	Love and Theft	COUNTRY
 love generation	The Love Generation	POP
-love unlimited	Love Unlimited	RNB,ELECTRONIC
-love unlimited orchestra	The Love Unlimited Orchestra	RNB,ELECTRONIC
+love unlimited	Love Unlimited	RNB
+love unlimited orchestra	The Love Unlimited Orchestra	RNB
 lovelites	Lovelites	RNB
 lovelytheband	lovelytheband	POP,ROCK
 loverboy	Loverboy	POP,ROCK,METAL
@@ -3262,7 +3262,7 @@ luther vandross	Luther Vandross	RNB
 lutricia mcneal	Lutricia McNeal	OTHER
 lyfe jennings	Lyfe Jennings	POP,HIP_HOP,RNB
 lyn collins	Lyn Collins	RNB
-lynn anderson	Lynn Anderson	COUNTRY
+lynn anderson	Lynn Anderson	COUNTRY,CHRISTIAN
 lynyrd skynyrd	Lynyrd Skynyrd	POP,ROCK,RNB,COUNTRY
 m	MØ	POP,ELECTRONIC
 m a r r s	M/A/R/R/S	ELECTRONIC
@@ -3283,7 +3283,7 @@ mack 10	Mack 10	HIP_HOP,RNB,PUNK
 mack maine	Mack Maine	OTHER
 macklemore	Macklemore	HIP_HOP
 macy gray	Macy Gray	RNB
-mad cobra	Mad Cobra	ELECTRONIC
+mad cobra	Mad Cobra	OTHER
 mad lads	The Mad Lads	RNB
 mad lion	Mad Lion	OTHER
 mad stuntman	The Mad Stuntman	OTHER
@@ -3293,17 +3293,17 @@ madeintyo	MadeinTYO	HIP_HOP
 madeline bell	Madeline Bell	OTHER
 madi davis	Madi Davis	OTHER
 madison avenue	Madison Avenue	ELECTRONIC
-madleen kane	Madleen Kane	ELECTRONIC
-madness	Madness	ELECTRONIC,PUNK
+madleen kane	Madleen Kane	OTHER
+madness	Madness	ROCK,PUNK
 madonna	Madonna	POP
 madsonik	Madsonik	OTHER
-magazine 60	Magazine 60	ELECTRONIC
+magazine 60	Magazine 60	OTHER
 maggie bell	Maggie Bell	OTHER
 magic	MAGIC!	POP
 magic lanterns	Magic Lanterns	OTHER
 magnificent men	The Magnificent Men	OTHER
 mai tai	Mai Tai	OTHER
-main ingredient	The Main Ingredient	RNB,ELECTRONIC
+main ingredient	The Main Ingredient	RNB
 maino	Maino	HIP_HOP
 majid jordan	Majid Jordan	POP,HIP_HOP,RNB
 major harris	Major Harris	RNB
@@ -3319,14 +3319,14 @@ mandy moore	Mandy Moore	POP,SOUNDTRACK
 manfred mann	Manfred Mann	POP,ROCK,RNB,FOLK
 manfred mann s earth band	Manfred Mann's Earth Band	ROCK,RNB
 manhattan transfer	The Manhattan Transfer	POP,JAZZ
-manhattans	The Manhattans	RNB,ELECTRONIC
+manhattans	The Manhattans	RNB
 mann	Mann	OTHER
 mannie fresh	Mannie Fresh	HIP_HOP
 mantovani	Mantovani	POP,CLASSICAL
 mantronix	Mantronix	HIP_HOP,ELECTRONIC
 manu dibango	Manu Dibango	POP
 mar keys	The Mar-Keys	RNB
-marc almond	Marc Almond	POP,ROCK,ELECTRONIC
+marc almond	Marc Almond	POP,ROCK
 marc anthony	Marc Anthony	LATIN
 marc cohn	Marc Cohn	POP,FOLK
 marc e bassy	Marc E. Bassy	POP,HIP_HOP
@@ -3352,7 +3352,7 @@ marilyn sellars	Marilyn Sellars	OTHER
 mario	Mario	POP,HIP_HOP,RNB
 mario vazquez	Mario Vazquez	RNB
 mario winans	Mario Winans	RNB
-mark chesnutt	Mark Chesnutt	COUNTRY
+mark chesnutt	Mark Chesnutt	COUNTRY,CHRISTIAN
 mark curry	Mark Curry	OTHER
 mark lindsay	Mark Lindsay	POP
 mark mcguinn	Mark McGuinn	OTHER
@@ -3375,7 +3375,7 @@ marshall tucker band	The Marshall Tucker Band	POP,ROCK,RNB,COUNTRY,FOLK
 marshmello	Marshmello	ELECTRONIC
 martha davis	Martha Davis	OTHER
 martha reeves	Martha Reeves	OTHER
-martha reeves and the vandellas	Martha Reeves & The Vandellas	POP,ROCK,RNB,ELECTRONIC
+martha reeves and the vandellas	Martha Reeves & The Vandellas	POP,ROCK,RNB
 martha wainwright	Martha Wainwright	POP,FOLK
 martha wash	Martha Wash	ELECTRONIC
 martika	Martika	POP,ROCK
@@ -3383,21 +3383,21 @@ martin briley	Martin Briley	OTHER
 martin garrix	Martin Garrix	POP,ELECTRONIC
 martina mcbride	Martina McBride	COUNTRY
 marty balin	Marty Balin	POP
-marty robbins	Marty Robbins	COUNTRY
+marty robbins	Marty Robbins	COUNTRY,CHRISTIAN
 marva whitney	Marva Whitney	RNB
 marvelettes	The Marvelettes	POP,RNB
 marvelows	The Marvelows	RNB
 marvin gaye	Marvin Gaye	RNB
 marvin gaye and mary wells	Marvin Gaye and Mary Wells	OTHER
 marvin hamlisch	Marvin Hamlisch	SOUNDTRACK
-marvin sapp	Marvin Sapp	OTHER
+marvin sapp	Marvin Sapp	CHRISTIAN
 mary chapin carpenter	Mary Chapin Carpenter	POP,COUNTRY,FOLK
 mary hopkin	Mary Hopkin	POP,ROCK,FOLK
 mary j blige	Mary J. Blige	POP,HIP_HOP,RNB
-mary jane girls	Mary Jane Girls	RNB,ELECTRONIC
+mary jane girls	Mary Jane Girls	RNB
 mary lambert	Mary Lambert	OTHER
 mary macgregor	Mary MacGregor	POP
-mary mary	Mary Mary	RNB
+mary mary	Mary Mary	RNB,CHRISTIAN
 mary travers	Mary Travers	OTHER
 mary wells	Mary Wells	POP,RNB
 mase	Mase	POP,HIP_HOP,RNB,PUNK
@@ -3405,7 +3405,7 @@ mashmakhan	Mashmakhan	OTHER
 mashonda	Mashonda	POP,RNB
 mason ramsey	Mason Ramsey	COUNTRY
 mason williams	Mason Williams	OTHER
-mass production	Mass Production	RNB,ELECTRONIC
+mass production	Mass Production	RNB
 masta ace incorporated	Masta Ace Incorporated	HIP_HOP,PUNK
 master p	Master P	HIP_HOP
 mat kearney	Mat Kearney	POP,ROCK
@@ -3434,7 +3434,7 @@ maxine brown	Maxine Brown	POP,RNB
 maxine nightingale	Maxine Nightingale	POP
 maxwell	Maxwell	POP,RNB
 maynard ferguson	Maynard Ferguson	JAZZ
-maze	Maze	RNB,ELECTRONIC
+maze	Maze	RNB
 mazzy star	Mazzy Star	POP,ROCK
 mc eiht	MC Eiht	HIP_HOP,RNB
 mc lyte	MC Lyte	POP,HIP_HOP,RNB,ELECTRONIC,PUNK
@@ -3445,7 +3445,7 @@ mc5	MC5	ROCK,RNB,PUNK
 mcauley schenker group	McAuley Schenker Group	ROCK,METAL
 mccoys	The McCoys	POP,ROCK,FOLK
 mccrarys	The McCrarys	RNB
-mcfadden and whitehead	McFadden & Whitehead	RNB,ELECTRONIC
+mcfadden and whitehead	McFadden & Whitehead	RNB
 mcguffey lane	McGuffey Lane	OTHER
 mcguinn clark and hillman	McGuinn, Clark & Hillman	OTHER
 mcguinness flint	McGuinness Flint	POP
@@ -3466,8 +3466,8 @@ melanie	Melanie	POP,FOLK
 melanie fiona	Melanie Fiona	POP,RNB
 melanie martinez	Melanie Martinez	POP
 melba montgomery	Melba Montgomery	COUNTRY
-melba moore	Melba Moore	RNB,ELECTRONIC
-meli sa morgan	Meli'sa Morgan	RNB,ELECTRONIC
+melba moore	Melba Moore	RNB
+meli sa morgan	Meli'sa Morgan	RNB
 melissa etheridge	Melissa Etheridge	POP,ROCK,FOLK
 melissa lawson	Melissa Lawson	OTHER
 melissa manchester	Melissa Manchester	POP
@@ -3475,16 +3475,16 @@ melissa manchester and peabo bryson	Melissa Manchester & Peabo Bryson	OTHER
 mellow man ace	Mellow Man Ace	HIP_HOP
 memphis bleek	Memphis Bleek	POP,HIP_HOP,PUNK
 men at large	Men At Large	RNB
-men at work	Men At Work	POP,ROCK,ELECTRONIC
+men at work	Men At Work	POP,ROCK
 men of vizion	Men of Vizion	RNB
-men without hats	Men Without Hats	POP,ROCK,ELECTRONIC
+men without hats	Men Without Hats	POP,ROCK
 menudo	Menudo	LATIN
 mercedes	Mercedes	OTHER
 mercy	Mercy	OTHER
-mercyme	MercyMe	ROCK
+mercyme	MercyMe	CHRISTIAN
 meredith brooks	Meredith Brooks	POP
 meri wilson	Meri Wilson	OTHER
-merle haggard	Merle Haggard	COUNTRY
+merle haggard	Merle Haggard	COUNTRY,CHRISTIAN
 merle haggard and the strangers	Merle Haggard & The Strangers	COUNTRY
 merril bainbridge	Merril Bainbridge	OTHER
 merrilee rush	Merrilee Rush	POP
@@ -3500,8 +3500,8 @@ method man	Method Man	HIP_HOP,PUNK
 metro boomin	Metro Boomin	POP,HIP_HOP
 metro station	Metro Station	POP,PUNK,EMO
 metros	The Metros	ROCK
-mfsb	MFSB	RNB,ELECTRONIC
-mgmt	MGMT	POP,ROCK,ELECTRONIC
+mfsb	MFSB	RNB
+mgmt	MGMT	POP,ROCK
 mia x	Mia X	POP,HIP_HOP
 miami sound machine	Miami Sound Machine	POP
 mic geronimo	Mic Geronimo	HIP_HOP,PUNK
@@ -3512,7 +3512,7 @@ michael cera	Michael Cera	FOLK
 michael cooper	Michael Cooper	RNB
 michael damian	Michael Damian	OTHER
 michael franks	Michael Franks	POP,RNB,JAZZ
-michael henderson	Michael Henderson	RNB,ELECTRONIC
+michael henderson	Michael Henderson	RNB
 michael holm	Michael Holm	ROCK
 michael jackson	Michael Jackson	POP
 michael johnson	Michael Johnson	POP
@@ -3526,8 +3526,8 @@ michael peterson	Michael Peterson	COUNTRY
 michael ray	Michael Ray	COUNTRY
 michael sembello	Michael Sembello	OTHER
 michael stanley band	Michael Stanley Band	POP,ROCK
-michael w smith	Michael W. Smith	ROCK
-michael zager band	The Michael Zager Band	ELECTRONIC
+michael w smith	Michael W. Smith	CHRISTIAN
+michael zager band	The Michael Zager Band	OTHER
 michel le	Michel'le	RNB
 michel legrand	Michel Legrand	JAZZ,SOUNDTRACK
 michel polnareff	Michel Polnareff	ROCK
@@ -3536,16 +3536,16 @@ michele lee	Michele Lee	OTHER
 michelle branch	Michelle Branch	POP
 michelle visage	Michelle Visage	OTHER
 mick jagger	Mick Jagger	ROCK
-mickey gilley	Mickey Gilley	COUNTRY
+mickey gilley	Mickey Gilley	COUNTRY,CHRISTIAN
 mickey lee lane	Mickey Lee Lane	OTHER
 mickey murray	Mickey Murray	OTHER
 mickey newbury	Mickey Newbury	COUNTRY,FOLK
-midge ure	Midge Ure	POP,ROCK,ELECTRONIC
+midge ure	Midge Ure	POP,ROCK
 midi maxi and efti	Midi, Maxi & Efti	OTHER
 midland	Midland	COUNTRY
-midnight oil	Midnight Oil	ROCK,ELECTRONIC
+midnight oil	Midnight Oil	ROCK
 midnight star	Midnight Star	RNB,ELECTRONIC
-mighty clouds of joy	Mighty Clouds Of Joy	OTHER
+mighty clouds of joy	Mighty Clouds Of Joy	CHRISTIAN
 mighty dub katz	Mighty Dub Katz	OTHER
 migos	Migos	POP,HIP_HOP
 miguel	Miguel	POP,HIP_HOP,RNB
@@ -3561,7 +3561,7 @@ mike post	Mike Post	OTHER
 mike reno	Mike Reno	OTHER
 mike shorey	Mike Shorey	OTHER
 mike will made it	Mike WiLL Made-It	POP,HIP_HOP
-miki howard	Miki Howard	RNB,ELECTRONIC
+miki howard	Miki Howard	RNB
 mikky ekko	Mikky Ekko	COUNTRY
 miley cyrus	Miley Cyrus	POP
 milky chance	Milky Chance	POP
@@ -3574,15 +3574,15 @@ mims	MiMS	HIP_HOP
 mindbenders	The Mindbenders	POP,ROCK,FOLK
 mindless behavior	Mindless Behavior	RNB
 mindy mccready	Mindy McCready	COUNTRY
-minnie riperton	Minnie Riperton	RNB,ELECTRONIC
+minnie riperton	Minnie Riperton	RNB
 minor detail	Minor Detail	ROCK
 mint condition	Mint Condition	POP,RNB
-miracles	The Miracles	POP,RNB,ELECTRONIC
+miracles	The Miracles	POP,RNB
 miranda cosgrove	Miranda Cosgrove	POP
 miranda lambert	Miranda Lambert	COUNTRY
 miriam makeba	Miriam Makeba	POP,JAZZ
-mis teeq	Mis-Teeq	POP,ROCK,ELECTRONIC
-missing persons	Missing Persons	POP,ROCK,ELECTRONIC
+mis teeq	Mis-Teeq	POP,ROCK
+missing persons	Missing Persons	POP,ROCK
 missy elliott	Missy Elliott	POP,HIP_HOP,RNB
 mista	Mista	OTHER
 mista grimm	Mista Grimm	RNB
@@ -3607,13 +3607,13 @@ moby grape	Moby Grape	ROCK,COUNTRY,FOLK
 mocedades	Mocedades	POP,LATIN
 mocha	Mocha	OTHER
 models	Models	ROCK
-modern english	Modern English	POP,ROCK,ELECTRONIC
+modern english	Modern English	POP,ROCK
 modest mouse	Modest Mouse	POP,ROCK,FOLK
 modjo	Modjo	ELECTRONIC
 mohombi	Mohombi	POP
 mojo men	The Mojo Men	ROCK
 molly hatchet	Molly Hatchet	POP,ROCK,RNB,COUNTRY
-moments	The Moments	RNB,ELECTRONIC
+moments	The Moments	RNB
 moms mabley	Moms Mabley	OTHER
 mona lisa	Mona Lisa	OTHER
 monchy and alexandra	Monchy & Alexandra	LATIN
@@ -3636,10 +3636,10 @@ morgan evans	Morgan Evans	POP,COUNTRY
 morgan wallen	Morgan Wallen	COUNTRY
 mormon tabernacle choir	Mormon Tabernacle Choir	OTHER
 morris albert	Morris Albert	OTHER
-morris day	Morris Day	RNB,ELECTRONIC
-morrissey	Morrissey	ROCK,ELECTRONIC
+morris day	Morris Day	RNB
+morrissey	Morrissey	ROCK
 mos def	Mos Def	HIP_HOP,PUNK
-motels	The Motels	POP,ROCK,ELECTRONIC
+motels	The Motels	POP,ROCK
 mother s finest	Mother's Finest	RNB
 motherlode	Motherlode	OTHER
 motley crue	Mötley Crüe	ROCK,METAL
@@ -3654,11 +3654,11 @@ mozzy	Mozzy	HIP_HOP
 mr big	Mr. Big	ROCK,METAL
 mr cheeks	Mr. Cheeks	POP
 mr collipark	Mr. Collipark	HIP_HOP
-mr mister	Mr. Mister	POP,ROCK,ELECTRONIC
+mr mister	Mr. Mister	POP,ROCK
 mr president	Mr. President	POP,ELECTRONIC
 mr probz	Mr. Probz	ELECTRONIC
 mr short khop	Mr. Short Khop	OTHER
-mr vegas	Mr. Vegas	POP,ELECTRONIC
+mr vegas	Mr. Vegas	POP
 mrs miller	Mrs. Miller	POP
 ms jade	Ms. Jade	POP
 ms thing	Ms. Thing	OTHER
@@ -3678,10 +3678,10 @@ music explosion	Music Explosion	OTHER
 music machine	The Music Machine	ROCK
 musical youth	Musical Youth	OTHER
 musiq soulchild	Musiq Soulchild	POP,HIP_HOP,RNB
-musique	Musique	ELECTRONIC
+musique	Musique	OTHER
 mustard	Mustard	POP,HIP_HOP
 my chemical romance	My Chemical Romance	PUNK,EMO
-my darkest days	My Darkest Days	ROCK,HIP_HOP,METAL
+my darkest days	My Darkest Days	ROCK,HIP_HOP,METAL,CHRISTIAN
 mya	Mýa	POP,HIP_HOP,RNB
 mynt	Mynt	ELECTRONIC
 mystic	Mystic	OTHER
@@ -3692,22 +3692,22 @@ n o r e	N.O.R.E.	POP,HIP_HOP,PUNK
 n trance	N-Trance	POP,ELECTRONIC,PUNK
 n w a	N.W.A.	HIP_HOP,PUNK
 n2deep	N2DEEP	HIP_HOP
-nadine sutherland	Nadine Sutherland	ROCK,ELECTRONIC
-naked eyes	Naked Eyes	POP,ROCK,ELECTRONIC
+nadine sutherland	Nadine Sutherland	ROCK
+naked eyes	Naked Eyes	POP,ROCK
 nancy ames	Nancy Ames	OTHER
 nancy martinez	Nancy Martinez	OTHER
 nancy sinatra	Nancy Sinatra	POP,FOLK
 nancy wilson	Nancy Wilson	POP,RNB,JAZZ
 napoleon xiv	Napoleon XIV	OTHER
 nappy roots	Nappy Roots	HIP_HOP
-narada michael walden	Narada Michael Walden	ELECTRONIC
+narada michael walden	Narada Michael Walden	OTHER
 narvel felts	Narvel Felts	COUNTRY
 nas	Nas	HIP_HOP,PUNK
 nashville teens	The Nashville Teens	ROCK
 nat king cole	Nat King Cole	POP,JAZZ
 natalia jimenez	Natalia Jiménez	LATIN
 natalie	Natalie	OTHER
-natalie cole	Natalie Cole	POP,RNB,ELECTRONIC,JAZZ
+natalie cole	Natalie Cole	POP,RNB,JAZZ
 natalie imbruglia	Natalie Imbruglia	POP
 natalie merchant	Natalie Merchant	POP,FOLK
 natasha bedingfield	Natasha Bedingfield	POP
@@ -3729,9 +3729,9 @@ nazz	Nazz	ROCK
 nb ridaz	NB Ridaz	HIP_HOP
 ne yo	Ne-Yo	POP,HIP_HOP,RNB
 neal hefti	Neal Hefti	POP,SOUNDTRACK
-neal mccoy	Neal McCoy	COUNTRY
-ned miller	Ned Miller	COUNTRY
-needtobreathe	NEEDTOBREATHE	POP,ROCK
+neal mccoy	Neal McCoy	COUNTRY,CHRISTIAN
+ned miller	Ned Miller	COUNTRY,CHRISTIAN
+needtobreathe	NEEDTOBREATHE	POP,ROCK,CHRISTIAN
 neighbourhood	The Neighbourhood	POP,ROCK
 neil diamond	Neil Diamond	POP,ROCK,FOLK
 neil sedaka	Neil Sedaka	POP,ROCK,RNB,FOLK
@@ -3746,7 +3746,7 @@ neon hitch	Neon Hitch	POP
 neon philharmonic	The Neon Philharmonic	POP
 neon trees	Neon Trees	POP,ROCK,PUNK
 nero	NERO	ELECTRONIC
-new birth	The New Birth	RNB,ELECTRONIC
+new birth	The New Birth	RNB
 new boyz	New Boyz	POP,HIP_HOP
 new christy minstrels	The New Christy Minstrels	FOLK
 new colony six	The New Colony Six	POP,ROCK
@@ -3764,7 +3764,7 @@ newbeats	The Newbeats	RNB
 newcity rockers	Newcity Rockers	OTHER
 newcleus	Newcleus	HIP_HOP,RNB,ELECTRONIC
 newcomers	The Newcomers	RNB
-newsong	Newsong	POP,ROCK
+newsong	Newsong	CHRISTIAN
 next	Next	POP,HIP_HOP,RNB
 nf	NF	HIP_HOP
 nia peeples	Nia Peeples	OTHER
@@ -3791,8 +3791,8 @@ night	Night	OTHER
 night ranger	Night Ranger	POP,ROCK,METAL
 nightcrawlers	The Nightcrawlers	OTHER
 niia	Niia	OTHER
-nik kershaw	Nik Kershaw	POP,ROCK,ELECTRONIC
-nile rodgers	Nile Rodgers	ELECTRONIC
+nik kershaw	Nik Kershaw	POP,ROCK
+nile rodgers	Nile Rodgers	OTHER
 nina simone	Nina Simone	RNB,JAZZ
 nina sky	Nina Sky	POP,RNB
 nina sky featuring jabba	Nina Sky featuring Jabba	OTHER
@@ -3820,7 +3820,7 @@ nona hendryx	Nona Hendryx	OTHER
 nonchalant	Nonchalant	POP
 norah jones	Norah Jones	POP
 norma tanega	Norma Tanega	OTHER
-norman connors	Norman Connors	RNB,ELECTRONIC
+norman connors	Norman Connors	RNB
 norman greenbaum	Norman Greenbaum	ROCK,FOLK
 normani	Normani	POP,RNB
 northern pikes	The Northern Pikes	ROCK
@@ -3837,27 +3837,27 @@ nylons	The Nylons	OTHER
 o a r	O.A.R.	POP
 o c	O.C.	HIP_HOP,PUNK
 o c smith	O.C. Smith	OTHER
-o jays	The O'Jays	RNB,ELECTRONIC
+o jays	The O'Jays	RNB
 o kaysions	The O'Kaysions	OTHER
 o t genasis	O.T. Genasis	HIP_HOP
 o town	O-Town	POP
 o v wright	O.V. Wright	RNB
 oak	OAK	OTHER
-oak ridge boys	The Oak Ridge Boys	COUNTRY
+oak ridge boys	The Oak Ridge Boys	COUNTRY,CHRISTIAN
 oaktown s 3 5 7	Oaktown's 3.5.7	OTHER
 oasis	Oasis	POP,ROCK
 obie trice	Obie Trice	HIP_HOP,PUNK
 ocean	Ocean	OTHER
 odds and ends	Odds & Ends	OTHER
 odia coates	Odia Coates	OTHER
-odyssey	Odyssey	POP,ELECTRONIC
+odyssey	Odyssey	POP
 of monsters and men	Of Monsters and Men	POP,ROCK,FOLK
 offset	Offset	POP,HIP_HOP
 offspring	The Offspring	ROCK,PUNK,METAL
 og maco	OG Maco	HIP_HOP
 ohio express	Ohio Express	POP,FOLK
-ohio players	Ohio Players	RNB,ELECTRONIC
-oingo boingo	Oingo Boingo	POP,ROCK,ELECTRONIC
+ohio players	Ohio Players	RNB
+oingo boingo	Oingo Boingo	POP,ROCK
 ok go	OK Go	POP,ROCK,PUNK
 ol dirty bastard	Ol' Dirty Bastard	HIP_HOP,PUNK
 ola and the janglers	Ola & The Janglers	OTHER
@@ -3866,7 +3866,7 @@ oleta adams	Oleta Adams	RNB
 olive	Olive	ELECTRONIC
 oliver	Oliver	ELECTRONIC
 olivia	Olivia	OTHER
-olivia newton john	Olivia Newton-John	POP,ELECTRONIC,SOUNDTRACK
+olivia newton john	Olivia Newton-John	POP,SOUNDTRACK
 olivia o brien	Olivia O'Brien	POP
 ollie and jerry	Ollie & Jerry	OTHER
 olly murs	Olly Murs	POP,ELECTRONIC
@@ -3883,7 +3883,7 @@ opus	Opus	POP
 or n more	Or-N-More	OTHER
 oran juice jones	Oran Juice Jones	OTHER
 orchestra	Orchestra	OTHER
-orchestral manoeuvres in the dark	Orchestral Manoeuvres In The Dark	POP,ROCK,ELECTRONIC
+orchestral manoeuvres in the dark	Orchestral Manoeuvres In The Dark	POP,ROCK
 orgy	Orgy	ROCK,HIP_HOP,ELECTRONIC,METAL
 orianthi	Orianthi	POP
 original	The Original	ELECTRONIC
@@ -3940,7 +3940,7 @@ paramore	Paramore	POP,PUNK,EMO
 pardison fontaine	Pardison Fontaine	HIP_HOP
 paris hilton	Paris Hilton	POP
 parker mcgee	Parker McGee	OTHER
-parliament	Parliament	RNB,ELECTRONIC
+parliament	Parliament	RNB
 parliament funkadelic	Parliament Funkadelic	OTHER
 parliaments	The Parliaments	OTHER
 parmalee	Parmalee	COUNTRY
@@ -3950,26 +3950,26 @@ partynextdoor	PARTYNEXTDOOR	POP,HIP_HOP,RNB
 pasadenas	The Pasadenas	RNB
 passenger	Passenger	POP
 passion	Passion	OTHER
-passion pit	Passion Pit	POP,ROCK,ELECTRONIC
+passion pit	Passion Pit	POP,ROCK
 pastor troy	Pastor Troy	HIP_HOP
-pat benatar	Pat Benatar	POP,ROCK,ELECTRONIC
+pat benatar	Pat Benatar	POP,ROCK
 pat green	Pat Green	COUNTRY
 pat metheny group	Pat Metheny Group	RNB,JAZZ
 pat travers	Pat Travers	ROCK,RNB
 pat travers band	Pat Travers Band	OTHER
 patra	Patra	OTHER
-patrice rushen	Patrice Rushen	RNB,ELECTRONIC
-patrick hernandez	Patrick Hernandez	ELECTRONIC
+patrice rushen	Patrice Rushen	RNB
+patrick hernandez	Patrick Hernandez	OTHER
 patrick simmons	Patrick Simmons	POP
 patrick stump	Patrick Stump	PUNK
 patrick swayze	Patrick Swayze	POP
 patti austin	Patti Austin	POP,RNB,JAZZ
 patti drew	Patti Drew	RNB
-patti labelle	Patti LaBelle	RNB,ELECTRONIC
+patti labelle	Patti LaBelle	RNB
 patti page	Patti Page	POP,COUNTRY
 patty and the emblems	Patty & The Emblems	RNB
 patty duke	Patty Duke	POP
-patty loveless	Patty Loveless	COUNTRY
+patty loveless	Patty Loveless	COUNTRY,CHRISTIAN
 patty smyth	Patty Smyth	POP
 paul anka	Paul Anka	POP,ROCK
 paul carrack	Paul Carrack	POP
@@ -3989,14 +3989,14 @@ paul stanley	Paul Stanley	ROCK,METAL
 paul vance	Paul Vance	OTHER
 paul wall	Paul Wall	HIP_HOP
 paul williams	Paul Williams	OTHER
-paul young	Paul Young	POP,ROCK,ELECTRONIC
+paul young	Paul Young	POP,ROCK
 paula abdul	Paula Abdul	POP
 paula cole	Paula Cole	POP,FOLK
 paula deanda	Paula DeAnda	POP,RNB
 paulina rubio	Paulina Rubio	POP,LATIN
 peabo bryson	Peabo Bryson	POP,RNB
 peach union	Peach Union	OTHER
-peaches and herb	Peaches & Herb	RNB,ELECTRONIC
+peaches and herb	Peaches & Herb	RNB
 peanut butter conspiracy	The Peanut Butter Conspiracy	ROCK
 pearl jam	Pearl Jam	ROCK
 pebbles	Pebbles	RNB
@@ -4007,7 +4007,7 @@ peggy scott adams	Peggy Scott-Adams	RNB
 peggy scott and jo jo benson	Peggy Scott & Jo Jo Benson	OTHER
 penny mclean	Penny McLean	OTHER
 pentatonix	Pentatonix	OTHER
-people s choice	People's Choice	RNB,ELECTRONIC
+people s choice	People's Choice	RNB
 peppermint rainbow	Peppermint Rainbow	POP
 peppers	The Peppers	OTHER
 percy faith and his orchestra	Percy Faith & His Orchestra	POP
@@ -4016,7 +4016,7 @@ perfect gentlemen	Perfect Gentlemen	OTHER
 perfect stranger	Perfect Stranger	ROCK,ELECTRONIC
 perry como	Perry Como	POP,JAZZ
 persuaders	The Persuaders	RNB
-pet shop boys	Pet Shop Boys	POP,ROCK,ELECTRONIC
+pet shop boys	Pet Shop Boys	POP,ROCK
 pete rock and c l smooth	Pete Rock & C.L. Smooth	HIP_HOP,PUNK
 pete seeger	Pete Seeger	FOLK
 pete townshend	Pete Townshend	POP,ROCK,PUNK,FOLK
@@ -4028,7 +4028,7 @@ peter frampton	Peter Frampton	POP,ROCK,RNB,COUNTRY,FOLK
 peter gabriel	Peter Gabriel	POP,ROCK
 peter gunz	Peter Gunz	OTHER
 peter mccann	Peter McCann	OTHER
-peter murphy	Peter Murphy	ROCK,ELECTRONIC
+peter murphy	Peter Murphy	ROCK
 peter nero	Peter Nero	POP
 peter paul and mary	Peter, Paul and Mary	POP,FOLK
 peter sarstedt	Peter Sarstedt	FOLK
@@ -4086,7 +4086,7 @@ play n skillz	Play-N-Skillz	HIP_HOP
 playa	Playa	OTHER
 playboi carti	Playboi Carti	POP,HIP_HOP
 player	Player	POP
-pleasure	Pleasure	RNB,ELECTRONIC
+pleasure	Pleasure	RNB
 pleasure p	Pleasure P	POP,HIP_HOP,RNB
 plies	Plies	HIP_HOP
 plimsouls	The Plimsouls	POP
@@ -4096,16 +4096,16 @@ pockets	Pockets 	OTHER
 poco	Poco	POP,ROCK,COUNTRY,FOLK
 poets	The Poets	ROCK,RNB
 point blank	Point Blank	OTHER
-pointer sisters	The Pointer Sisters	POP,RNB,ELECTRONIC
+pointer sisters	The Pointer Sisters	POP,ROCK,RNB
 poison	Poison	ROCK,METAL
-police	The Police	POP,ROCK,ELECTRONIC
+police	The Police	POP,ROCK
 polly brown	Polly Brown	OTHER
 polow da don	Polow Da Don	OTHER
 pop tops	Pop Tops	LATIN
 poppies	The Poppies	OTHER
 poppy family	The Poppy Family	POP,ROCK,FOLK
 porno for pyros	Porno for Pyros	ROCK,METAL
-porter wagoner	Porter Wagoner	COUNTRY
+porter wagoner	Porter Wagoner	COUNTRY,CHRISTIAN
 portishead	Portishead	POP,ELECTRONIC
 portrait	Portrait	RNB
 portugal the man	Portugal. The Man	POP,ROCK
@@ -4113,7 +4113,7 @@ positive k	Positive K	HIP_HOP
 post malone	Post Malone	POP,HIP_HOP
 postal service	The Postal Service	POP,ROCK,FOLK
 potliquor	Potliquor	OTHER
-power station	The Power Station	POP,ROCK,ELECTRONIC
+power station	The Power Station	POP,ROCK
 pozo seco singers	Pozo Seco Singers	FOLK
 pras	Pras	HIP_HOP
 pratt and mcclain	Pratt & McClain	OTHER
@@ -4123,7 +4123,7 @@ premiers	The Premiers	ROCK
 presidents	The Presidents	OTHER
 presidents of the united states of america	The Presidents Of The United States Of America	POP,ROCK,METAL
 pressha	Pressha	OTHER
-pretenders	Pretenders	POP,ROCK,ELECTRONIC,FOLK
+pretenders	Pretenders	POP,ROCK,FOLK
 pretty poison	Pretty Poison	OTHER
 pretty ricky	Pretty Ricky	POP,HIP_HOP,RNB
 prince	Prince	RNB
@@ -4136,9 +4136,9 @@ proclaimers	The Proclaimers	ROCK
 procol harum	Procol Harum	POP,ROCK,RNB,FOLK
 prodigy	The Prodigy	ELECTRONIC,PUNK
 project pat	Project Pat	HIP_HOP
-pseudo echo	Pseudo Echo	POP,ROCK,ELECTRONIC
+pseudo echo	Pseudo Echo	POP,ROCK
 psy	PSY	POP
-psychedelic furs	The Psychedelic Furs	POP,ROCK,ELECTRONIC,PUNK
+psychedelic furs	The Psychedelic Furs	POP,ROCK,PUNK
 public announcement	Public Announcement	RNB
 public enemy	Public Enemy	HIP_HOP,PUNK
 puddle of mudd	Puddle Of Mudd	POP,ROCK,HIP_HOP,PUNK,METAL
@@ -4167,7 +4167,7 @@ queens of the stone age	Queens of the Stone Age	ROCK,RNB,METAL
 queensryche	Queensrÿche	ROCK,METAL
 quicksilver messenger service	Quicksilver Messenger Service	ROCK,RNB,COUNTRY,FOLK
 quiet riot	Quiet Riot	ROCK,METAL
-quincy jones	Quincy Jones	RNB,ELECTRONIC
+quincy jones	Quincy Jones	RNB
 r b greaves	R.B. Greaves	OTHER
 r city	R. City	OTHER
 r dean taylor	R. Dean Taylor	POP,RNB
@@ -4198,12 +4198,12 @@ ramones	Ramones	ROCK,PUNK
 rampage	Rampage	OTHER
 ramsey lewis	Ramsey Lewis	RNB,JAZZ
 ramsey lewis trio	Ramsey Lewis Trio	RNB
-randy crawford	Randy Crawford	POP,RNB,ELECTRONIC
+randy crawford	Randy Crawford	POP,RNB
 randy houser	Randy Houser	COUNTRY
 randy jackson	Randy Jackson	OTHER
 randy meisner	Randy Meisner	POP
 randy newman	Randy Newman	FOLK,SOUNDTRACK
-randy travis	Randy Travis	COUNTRY
+randy travis	Randy Travis	COUNTRY,CHRISTIAN
 randy vanwarmer	Randy VanWarmer	POP
 range	The Range	POP
 raphael saadiq	Raphael Saadiq	RNB
@@ -4212,7 +4212,7 @@ rare earth	Rare Earth	ROCK,RNB
 rascal flatts	Rascal Flatts	COUNTRY
 rascals	The Rascals	POP
 raspberries	Raspberries	POP,ROCK
-ratatat	Ratatat	ELECTRONIC
+ratatat	Ratatat	ROCK,ELECTRONIC
 rationals	The Rationals	ROCK
 ratt	Ratt	ROCK,METAL
 rattles	The Rattles	POP,ROCK
@@ -4228,19 +4228,19 @@ ray goodman and brown	Ray, Goodman & Brown	RNB
 ray j	Ray J	RNB
 ray kennedy	Ray Kennedy	POP
 ray lamontagne	Ray LaMontagne	POP,FOLK
-ray parker jr	Ray Parker, Jr.	RNB,ELECTRONIC
+ray parker jr	Ray Parker, Jr.	RNB
 ray peterson	Ray Peterson	POP,ROCK,RNB
-ray price	Ray Price	COUNTRY
+ray price	Ray Price	COUNTRY,CHRISTIAN
 ray stevens	Ray Stevens	POP,COUNTRY
 raydio	Raydio	POP
 rayvon	Rayvon	OTHER
 rbd	RBD	OTHER
 re flex	Re-Flex	POP
-ready for the world	Ready For The World	POP,RNB,ELECTRONIC
+ready for the world	Ready For The World	POP,RNB
 ready set	The Ready Set	POP,PUNK,EMO
-real life	Real Life	POP,ROCK,ELECTRONIC
+real life	Real Life	POP,ROCK
 real mccoy	Real McCoy	POP,ELECTRONIC
-real thing	The Real Thing	RNB,ELECTRONIC
+real thing	The Real Thing	RNB
 reality	Reality	OTHER
 reba mcentire	Reba McEntire	COUNTRY
 rebbie jackson	Rebbie Jackson	RNB
@@ -4253,9 +4253,9 @@ red hot chili peppers	Red Hot Chili Peppers	ROCK,RNB,METAL
 red jumpsuit apparatus	The Red Jumpsuit Apparatus	POP,ROCK,PUNK,EMO
 red rider	Red Rider	ROCK
 red rockers	Red Rockers	POP
-red sovine	Red Sovine	COUNTRY
+red sovine	Red Sovine	COUNTRY,CHRISTIAN
 redbone	Redbone	OTHER
-reddings	The Reddings	RNB,ELECTRONIC
+reddings	The Reddings	RNB
 redhead kingpin	Redhead Kingpin	OTHER
 redman	Redman	HIP_HOP,PUNK
 rednex	Rednex	POP,ELECTRONIC
@@ -4264,14 +4264,14 @@ reel tight	Reel Tight	OTHER
 reeve carney	Reeve Carney	SOUNDTRACK
 reflections	Reflections	OTHER
 regina	Regina	OTHER
-regina belle	Regina Belle	RNB,ELECTRONIC
+regina belle	Regina Belle	RNB
 regina spektor	Regina Spektor	POP,ROCK,FOLK,CLASSICAL
 rehab	Rehab	HIP_HOP,COUNTRY
 reik	Reik	POP,LATIN
 reina	Reina	ELECTRONIC
 rej3ctz	Rej3ctz	OTHER
 rejoice	Rejoice!	OTHER
-relient k	Relient K	POP,ROCK,PUNK
+relient k	Relient K	POP,PUNK,CHRISTIAN
 rell	Rell	OTHER
 rembrandts	The Rembrandts	POP
 remedy	Remedy	OTHER
@@ -4279,14 +4279,14 @@ remo	Remo	OTHER
 remy boyz	Remy Boyz	OTHER
 remy ma	Remy Ma	POP,HIP_HOP,RNB
 remy shand	Remy Shand	POP,RNB
-rene and angela	Rene & Angela	RNB,ELECTRONIC
+rene and angela	Rene & Angela	RNB
 rene and rene	Rene & Rene	OTHER
 rentals	The Rentals	POP,ROCK
 reo speedwagon	REO Speedwagon	POP,ROCK,FOLK
 reparata	Reparata	OTHER
-replacements	The Replacements	POP,ROCK,COUNTRY,ELECTRONIC,PUNK,FOLK
+replacements	The Replacements	POP,ROCK,COUNTRY,PUNK,FOLK
 republica	Republica	POP
-restless heart	Restless Heart	COUNTRY
+restless heart	Restless Heart	COUNTRY,CHRISTIAN
 reunion	Reunion	OTHER
 revivalists	The Revivalists	ROCK
 rex smith	Rex Smith	POP
@@ -4313,11 +4313,11 @@ richie furay	Richie Furay	OTHER
 richie havens	Richie Havens	ROCK,FOLK
 richie rich	Richie Rich	HIP_HOP,RNB
 richie sambora	Richie Sambora	ROCK,METAL
-rick astley	Rick Astley	POP,ROCK,ELECTRONIC
+rick astley	Rick Astley	POP,ROCK
 rick derringer	Rick Derringer	ROCK,RNB
-rick james	Rick James	RNB,ELECTRONIC
+rick james	Rick James	RNB
 rick ross	Rick Ross	HIP_HOP
-rick springfield	Rick Springfield	POP,ROCK,ELECTRONIC
+rick springfield	Rick Springfield	POP,ROCK
 rickie lee jones	Rickie Lee Jones	POP,ROCK,COUNTRY,FOLK
 ricky martin	Ricky Martin	POP,LATIN
 ricky nelson	Ricky Nelson	POP,ROCK,RNB,COUNTRY,FOLK
@@ -4334,7 +4334,7 @@ rise against	Rise Against	ROCK,HIP_HOP,PUNK,METAL
 rita coolidge	Rita Coolidge	POP,FOLK
 rita ora	Rita Ora	POP,ELECTRONIC
 rita pavone	Rita Pavone	POP
-ritchie family	The Ritchie Family	RNB,ELECTRONIC
+ritchie family	The Ritchie Family	RNB
 ritchie valens	Ritchie Valens	POP,ROCK,RNB
 rivers cuomo	Rivers Cuomo	ROCK
 rivieras	The Rivieras	ROCK,RNB
@@ -4355,11 +4355,11 @@ robert goulet	Robert Goulet	POP
 robert john	Robert John	POP
 robert knight	Robert Knight	OTHER
 robert miles	Robert Miles	ELECTRONIC
-robert palmer	Robert Palmer	POP,ROCK,ELECTRONIC,FOLK
+robert palmer	Robert Palmer	POP,ROCK,FOLK
 robert parker	Robert Parker	OTHER
 robert plant	Robert Plant	POP,ROCK,RNB,FOLK
 robert tepper	Robert Tepper	ROCK
-roberta flack	Roberta Flack	POP,RNB,ELECTRONIC,JAZZ,FOLK
+roberta flack	Roberta Flack	POP,RNB,JAZZ,FOLK
 roberta flack and donny hathaway	Roberta Flack & Donny Hathaway	OTHER
 roberta flack with maxi priest	Roberta Flack with Maxi Priest	OTHER
 robey	Robey	OTHER
@@ -4392,21 +4392,21 @@ rodney atkins	Rodney Atkins	COUNTRY
 rodney crowell	Rodney Crowell	ROCK,COUNTRY,FOLK
 rodney o and joe cooley	Rodney-O & Joe Cooley	ELECTRONIC
 rodway	Rodway	OTHER
-roger	Roger	RNB,ELECTRONIC
+roger	Roger	RNB
 roger daltrey	Roger Daltrey	ROCK
 roger hodgson	Roger Hodgson	ROCK
-roger miller	Roger Miller	COUNTRY,FOLK
+roger miller	Roger Miller	COUNTRY,FOLK,CHRISTIAN
 roger voudouris	Roger Voudouris	POP
 roger whittaker	Roger Whittaker	POP
 roger williams	Roger Williams	POP
 rolling stones	The Rolling Stones	ROCK,PUNK
 roman gianarthur	Roman GianArthur	OTHER
 roman holliday	Roman Holliday	ROCK
-romantics	The Romantics	POP,ROCK,ELECTRONIC
+romantics	The Romantics	POP,ROCK
 rome	Rome	OTHER
 romeo s daughter	Romeo's Daughter	ROCK
 romeo santos	Romeo Santos	LATIN
-romeo void	Romeo Void	POP,ROCK,ELECTRONIC
+romeo void	Romeo Void	POP,ROCK
 romeos	The Romeos	OTHER
 ron browz	Ron Browz	HIP_HOP
 ronald isley	Ronald Isley	RNB
@@ -4416,15 +4416,15 @@ ronnie dunn	Ronnie Dunn	COUNTRY
 ronnie dyson	Ronnie Dyson	RNB
 ronnie hawkins	Ronnie Hawkins	ROCK,RNB
 ronnie laws	Ronnie Laws	RNB,JAZZ
-ronnie mcdowell	Ronnie McDowell	POP,COUNTRY
-ronnie milsap	Ronnie Milsap	COUNTRY
+ronnie mcdowell	Ronnie McDowell	POP,COUNTRY,CHRISTIAN
+ronnie milsap	Ronnie Milsap	COUNTRY,CHRISTIAN
 ronnie spector	Ronnie Spector	POP
 ronny and the daytonas	Ronny & The Daytonas	POP,ROCK
 roots	The Roots	HIP_HOP,RNB,PUNK
 rosanne cash	Rosanne Cash	POP,ROCK,COUNTRY,FOLK
 roscoe dash	Roscoe Dash	HIP_HOP
 rose garden	The Rose Garden	OTHER
-rose royce	Rose Royce	RNB,ELECTRONIC
+rose royce	Rose Royce	RNB
 rosemary clooney	Rosemary Clooney	POP,JAZZ
 ross lynch	Ross Lynch	POP,SOUNDTRACK
 rossington collins band	Rossington Collins Band	ROCK
@@ -4434,8 +4434,8 @@ roula	Roula	OTHER
 rowans	The Rowans	OTHER
 roxanne	Roxanne	OTHER
 roxette	Roxette	POP
-roxy music	Roxy Music	POP,ROCK,ELECTRONIC,PUNK
-roy clark	Roy Clark	COUNTRY
+roxy music	Roxy Music	POP,ROCK,PUNK
+roy clark	Roy Clark	COUNTRY,CHRISTIAN
 roy head	Roy Head	OTHER
 roy head and the traits	Roy Head & The Traits	OTHER
 roy orbison	Roy Orbison	POP,ROCK,FOLK
@@ -4445,7 +4445,7 @@ royce da 5 9	Royce Da 5'9"	HIP_HOP,PUNK
 rozalla	Rozalla	ELECTRONIC
 rozetta johnson	Rozetta Johnson	OTHER
 rtz	Rtz	OTHER
-ruben studdard	Ruben Studdard	RNB
+ruben studdard	Ruben Studdard	RNB,CHRISTIAN
 rubettes	The Rubettes	POP,ROCK
 rubicon	Rubicon	OTHER
 rubinoos	The Rubinoos	POP,ROCK
@@ -4456,14 +4456,14 @@ rude boys	The Rude Boys	OTHER
 rudimental	Rudimental	POP,RNB,ELECTRONIC
 ruff endz	Ruff Endz	RNB
 ruffneck	Ruffneck	PUNK
-rufus	Rufus	RNB,ELECTRONIC
+rufus	Rufus	RNB
 rufus and chaka khan	Rufus & Chaka Khan	RNB
 rufus blaq	Rufus Blaq	OTHER
 rufus thomas	Rufus Thomas	RNB
 rugbys	The Rugbys	OTHER
 run d m c	Run–D.M.C.	HIP_HOP,PUNK
 rupaul	RuPaul	POP,ELECTRONIC
-rupee	Rupee	ELECTRONIC
+rupee	Rupee	OTHER
 rupert holmes	Rupert Holmes	POP
 rush	Rush	ROCK,METAL
 russ	Russ	POP,HIP_HOP
@@ -4477,9 +4477,9 @@ rvssian	Rvssian	HIP_HOP,LATIN
 ryan cabrera	Ryan Cabrera	POP
 ryan leslie	Ryan Leslie	RNB
 rza	RZA	HIP_HOP,PUNK
-s club 7	S Club 7	POP,ELECTRONIC,SOUNDTRACK
+s club 7	S Club 7	POP,SOUNDTRACK
 s express	S'Express	ELECTRONIC
-s o a p	S.O.A.P.	ELECTRONIC
+s o a p	S.O.A.P.	OTHER
 s o s band	The S.O.S Band	RNB,ELECTRONIC
 s o u l s y s t e m	S.O.U.L. S.Y.S.T.E.M.	OTHER
 s s o	S.S.O	OTHER
@@ -4498,7 +4498,7 @@ saigon kick	Saigon Kick	ROCK,METAL
 sailcat	Sailcat	OTHER
 saliva	Saliva	ROCK,HIP_HOP,METAL
 sally field	Sally Field	OTHER
-salsoul orchestra	The Salsoul Orchestra	RNB,ELECTRONIC
+salsoul orchestra	The Salsoul Orchestra	RNB
 salt n pepa	Salt-N-Pepa	POP,HIP_HOP,ELECTRONIC
 sam and bill	Sam and Bill	RNB
 sam and dave	Sam & Dave	POP,RNB
@@ -4512,16 +4512,16 @@ sam smith	Sam Smith	POP
 sam the sham and the pharaohs	Sam The Sham & The Pharaohs	POP,ROCK,PUNK,FOLK
 samantha barks	Samantha Barks	SOUNDTRACK
 samantha cole	Samantha Cole	OTHER
-samantha fox	Samantha Fox	POP,ELECTRONIC
-samantha mumba	Samantha Mumba	POP,ELECTRONIC
+samantha fox	Samantha Fox	POP
+samantha mumba	Samantha Mumba	POP
 samantha sang	Samantha Sang	OTHER
-sammi smith	Sammi Smith	COUNTRY
+sammi smith	Sammi Smith	COUNTRY,CHRISTIAN
 sammie	Sammie	POP,RNB
 sammy adams	Sammy Adams	HIP_HOP
 sammy davis jr	Sammy Davis Jr.	POP,JAZZ
 sammy hagar	Sammy Hagar	POP,ROCK,METAL
 sammy johns	Sammy Johns	OTHER
-sammy kershaw	Sammy Kershaw	COUNTRY
+sammy kershaw	Sammy Kershaw	COUNTRY,CHRISTIAN
 sampha	Sampha	RNB
 san remo golden strings	The San Remo Golden Strings	OTHER
 sandee	Sandee	OTHER
@@ -4530,31 +4530,31 @@ sandpipers	The Sandpipers	POP
 sandy nelson	Sandy Nelson	POP,ROCK
 sandy posey	Sandy Posey	POP,ROCK
 sanford townsend band	Sanford Townsend Band	POP
-santa esmeralda	Santa Esmeralda	ELECTRONIC
+santa esmeralda	Santa Esmeralda	OTHER
 santana	Santana	ROCK,RNB
 santino fontana	Santino Fontana	SOUNDTRACK
 santo and johnny	Santo & Johnny	POP
 sapphires	The Sapphires	RNB
 sara bareilles	Sara Bareilles	POP
-sara evans	Sara Evans	COUNTRY
+sara evans	Sara Evans	COUNTRY,CHRISTIAN
 sara ramirez	Sara Ramirez	SOUNDTRACK
 sarah buxton	Sarah Buxton	COUNTRY
 sarah connor	Sarah Connor	POP
-sarah dash	Sarah Dash	ELECTRONIC
+sarah dash	Sarah Dash	OTHER
 sarah mclachlan	Sarah McLachlan	POP,ROCK,FOLK
 sarah vaughan	Sarah Vaughan	POP,RNB,JAZZ,LATIN
 saraya	Saraya	METAL
-sarina paris	Sarina Paris	ELECTRONIC
+sarina paris	Sarina Paris	OTHER
 sasha	Sasha	OTHER
 sass jordan	Sass Jordan	ROCK
 satisfactions	The Satisfactions	OTHER
 saudi	Saudi	OTHER
-savage	Savage	HIP_HOP,ELECTRONIC
+savage	Savage	HIP_HOP
 savage garden	Savage Garden	POP
 saving abel	Saving Abel	ROCK,HIP_HOP,METAL
 saving jane	Saving Jane	POP
 savoy brown	Savoy Brown	ROCK,RNB,COUNTRY,FOLK
-sawyer brown	Sawyer Brown	COUNTRY
+sawyer brown	Sawyer Brown	COUNTRY,CHRISTIAN
 sawyer fredericks	Sawyer Fredericks	OTHER
 scaffold	The Scaffold	POP,ROCK
 scandal	Scandal	POP
@@ -4568,13 +4568,13 @@ scott english	Scott English	OTHER
 scott mckenzie	Scott McKenzie	POP,FOLK
 scotty mccreery	Scotty McCreery	COUNTRY
 script	The Script	POP,ROCK
-scritti politti	Scritti Politti	POP,ROCK,ELECTRONIC
+scritti politti	Scritti Politti	POP,ROCK
 sea level	Sea Level	POP,ROCK
 seal	Seal	POP,RNB
 seals and crofts	Seals and Crofts	POP,ROCK,COUNTRY,FOLK
 sean garrett	Sean Garrett	OTHER
 sean kingston	Sean Kingston	POP,HIP_HOP,RNB
-sean paul	Sean Paul	POP,ELECTRONIC
+sean paul	Sean Paul	POP
 searchers	The Searchers	POP,ROCK,FOLK
 seatrain	Seatrain	OTHER
 secondhand serenade	Secondhand Serenade	POP,ROCK,PUNK
@@ -4596,7 +4596,7 @@ seven mary three	Seven Mary Three	POP,ROCK,METAL
 sevyn streeter	Sevyn Streeter	POP,HIP_HOP,RNB
 sf spanish fly	Sf Spanish Fly	OTHER
 sha na na	Sha Na Na	SOUNDTRACK
-shabba ranks	Shabba Ranks	ROCK,ELECTRONIC
+shabba ranks	Shabba Ranks	ROCK
 shades of blue	Shades Of Blue	OTHER
 shadows of knight	The Shadows Of Knight	POP,ROCK,PUNK
 shaggy	Shaggy	POP,HIP_HOP
@@ -4604,7 +4604,7 @@ shaggy featuring marsha	Shaggy Featuring Marsha	OTHER
 shai	Shai	POP,RNB
 shakin stevens	Shakin' Stevens	POP,ROCK
 shakira	Shakira	POP,LATIN
-shalamar	Shalamar	RNB,ELECTRONIC
+shalamar	Shalamar	RNB
 shamen	The Shamen	ELECTRONIC,PUNK
 shana	Shana	OTHER
 shangri las	The Shangri-Las	POP
@@ -4641,9 +4641,9 @@ shiny toy guns	Shiny Toy Guns	POP,ROCK,ELECTRONIC,PUNK
 shirelles	The Shirelles	POP,ROCK,RNB
 shirley bassey	Shirley Bassey	POP,JAZZ
 shirley brown	Shirley Brown	RNB
-shirley caesar	Shirley Caesar	OTHER
+shirley caesar	Shirley Caesar	CHRISTIAN
 shirley ellis	Shirley Ellis	RNB
-shirley murdock	Shirley Murdock	RNB
+shirley murdock	Shirley Murdock	RNB,CHRISTIAN
 shocking blue	Shocking Blue	POP,ROCK,FOLK
 shoes	Shoes	POP,ROCK
 shontelle	Shontelle	POP
@@ -4656,8 +4656,8 @@ shwayze	Shwayze	HIP_HOP
 shy glizzy	Shy Glizzy	HIP_HOP
 shyheim	Shyheim	PUNK
 shyne	Shyne	POP,HIP_HOP,PUNK
-sia	Sia	POP,ELECTRONIC
-sick puppies	Sick Puppies	ROCK,HIP_HOP,PUNK,METAL
+sia	Sia	POP
+sick puppies	Sick Puppies	ROCK,HIP_HOP,PUNK,METAL,CHRISTIAN
 sidekicks	The Sidekicks	OTHER
 siedah garrett	Siedah Garrett	OTHER
 silencers	The Silencers	ROCK
@@ -4667,31 +4667,31 @@ silkie	The Silkie	ROCK
 silkk the shocker	Silkk The Shocker	HIP_HOP
 silver	Silver	COUNTRY
 silver condor	Silver Condor	OTHER
-silver convention	Silver Convention	ELECTRONIC
+silver convention	Silver Convention	OTHER
 silversun pickups	Silversun Pickups	POP,ROCK,PUNK,METAL
 silvetti	Silvetti	OTHER
 simon and garfunkel	Simon & Garfunkel	POP,ROCK,FOLK
-simple minds	Simple Minds	POP,ROCK,ELECTRONIC
+simple minds	Simple Minds	POP,ROCK
 simple plan	Simple Plan	POP,ROCK,PUNK
-simply red	Simply Red	POP,ROCK,RNB,ELECTRONIC
+simply red	Simply Red	POP,ROCK,RNB
 simpsons	The Simpsons	OTHER
 sinead o connor	Sinéad O'Connor	POP,FOLK
 sinitta	Sinitta	POP
-siouxsie and the banshees	Siouxsie and the Banshees	POP,ROCK,ELECTRONIC,PUNK
+siouxsie and the banshees	Siouxsie and the Banshees	POP,ROCK,PUNK
 sir douglas quintet	Sir Douglas Quintet	POP,ROCK,COUNTRY
 sir mix a lot	Sir Mix-A-Lot	HIP_HOP,ELECTRONIC
 sirah	Sirah	OTHER
 sisqo	Sisqo	POP,HIP_HOP,RNB
 sister hazel	Sister Hazel	POP,ROCK
 sister janet mead	Sister Janet Mead	OTHER
-sister sledge	Sister Sledge	POP,RNB,ELECTRONIC
+sister sledge	Sister Sledge	POP,RNB
 sixpence none the richer	Sixpence None The Richer	POP
 skee lo	Skee-Lo	HIP_HOP
-skeeter davis	Skeeter Davis	POP,COUNTRY
+skeeter davis	Skeeter Davis	POP,COUNTRY,CHRISTIAN
 skepta	Skepta	HIP_HOP
 ski mask the slump god	Ski Mask The Slump God	HIP_HOP
 skid row	Skid Row	ROCK,METAL
-skillet	Skillet	ROCK,METAL
+skillet	Skillet	ROCK,METAL,CHRISTIAN
 skip	Skip	OTHER
 skip marley	Skip Marley	OTHER
 skrillex	Skrillex	ELECTRONIC
@@ -4702,14 +4702,14 @@ slade	Slade	POP,ROCK,RNB
 slash	Slash	ROCK
 slaughter	Slaughter	ROCK,METAL
 slaughterhouse	Slaughterhouse	HIP_HOP,PUNK
-slave	Slave	RNB,ELECTRONIC
+slave	Slave	RNB
 sleepy brown	Sleepy Brown	HIP_HOP,RNB
 slick rick	Slick Rick	HIP_HOP,PUNK
 slim harpo	Slim Harpo	RNB
 slim jxmmi	Slim Jxmmi	HIP_HOP
 slim thug	Slim Thug	HIP_HOP
 slum village	Slum Village	HIP_HOP,RNB
-sly and the family stone	Sly & The Family Stone	POP,ROCK,RNB,ELECTRONIC,FOLK
+sly and the family stone	Sly & The Family Stone	POP,ROCK,RNB,FOLK
 sly fox	Sly Fox	OTHER
 sly stone	Sly Stone	RNB
 small faces	Small Faces	POP,ROCK,RNB,PUNK,FOLK
@@ -4719,12 +4719,12 @@ smashing pumpkins	The Smashing Pumpkins	POP,ROCK,METAL
 smif n wessun	Smif-N-Wessun	HIP_HOP,PUNK
 smilez and southstar	Smilez and Southstar	OTHER
 smith	Smith	OTHER
-smithereens	The Smithereens	POP,ROCK,ELECTRONIC
+smithereens	The Smithereens	POP,ROCK
 smokepurpp	Smokepurpp	HIP_HOP
-smokey robinson	Smokey Robinson	RNB,ELECTRONIC
+smokey robinson	Smokey Robinson	RNB
 smokey robinson and the miracles	Smokey Robinson & The Miracles	POP,ROCK,RNB
 smokie	Smokie	POP
-smokie norful	Smokie Norful	RNB
+smokie norful	Smokie Norful	CHRISTIAN
 smooth	Smooth	OTHER
 smothers brothers	The Smothers Brothers	OTHER
 snail	Snail	OTHER
@@ -4738,18 +4738,18 @@ so	So	OTHER
 sob x rbe	SOB X RBE	HIP_HOP
 sofi tukker	Sofi Tukker	ROCK
 sofia carson	Sofia Carson	POP
-soft cell	Soft Cell	POP,ROCK,ELECTRONIC,PUNK
+soft cell	Soft Cell	POP,ROCK,PUNK
 soho	Soho	OTHER
 soko	Soko	OTHER
 solange	Solange	POP,RNB
 solomon burke	Solomon Burke	RNB,JAZZ
 somethin for the people	Somethin' For The People	RNB
 somo	SoMo	POP,RNB
-son by four	Son By Four	LATIN
+son by four	Son By Four	LATIN,CHRISTIAN
 sonique	Sonique	OTHER
 sonny and cher	Sonny & Cher	POP,ROCK,FOLK
 sonny charles and the checkmates ltd	Sonny Charles And The Checkmates Ltd	OTHER
-sonny james	Sonny James	POP,COUNTRY
+sonny james	Sonny James	POP,COUNTRY,CHRISTIAN
 sonny knight	Sonny Knight	OTHER
 sons of champlin	The Sons Of Champlin	OTHER
 sons of funk	Sons Of Funk	OTHER
@@ -4773,7 +4773,7 @@ soulja slim	Soulja Slim	HIP_HOP
 souls of mischief	Souls Of Mischief	HIP_HOP,PUNK
 soulsister	Soulsister	POP,ROCK
 soundgarden	Soundgarden	ROCK,METAL
-sounds of blackness	Sounds Of Blackness	RNB
+sounds of blackness	Sounds Of Blackness	RNB,CHRISTIAN
 sounds orchestral	Sounds Orchestral	OTHER
 soup dragons	The Soup Dragons	ROCK
 south shore commission	South Shore Commission	OTHER
@@ -4782,9 +4782,9 @@ southside johnny and the asbury jukes	Southside Johnny And The Asbury Jukes	ROCK
 southwest f o b	Southwest F.O.B.	OTHER
 space	Space	ELECTRONIC
 spacehog	Spacehog	POP,ROCK
-spandau ballet	Spandau Ballet	POP,ROCK,ELECTRONIC
+spandau ballet	Spandau Ballet	POP,ROCK
 spanky and our gang	Spanky & Our Gang	POP,ROCK,FOLK
-sparks	Sparks	POP,ROCK,ELECTRONIC,PUNK
+sparks	Sparks	POP,ROCK,PUNK
 spats	The Spats	OTHER
 special generation	Special Generation	RNB
 spellbinders	The Spellbinders	RNB
@@ -4792,7 +4792,7 @@ spencer davis group	The Spencer Davis Group	POP,ROCK,RNB,PUNK,FOLK
 spice girls	Spice Girls	POP
 spider	Spider	OTHER
 spin doctors	Spin Doctors	POP,ROCK
-spinners	The Spinners	RNB,ELECTRONIC
+spinners	The Spinners	RNB
 spiral starecase	Spiral Starecase	OTHER
 spirit	Spirit	OTHER
 splender	Splender	POP
@@ -4807,14 +4807,14 @@ spyder turner	Spyder Turner	RNB
 spyro gyra	Spyro Gyra	RNB,JAZZ
 spys	Spys	OTHER
 squeak e clean	Squeak E. Clean	OTHER
-squeeze	Squeeze	POP,ROCK,ELECTRONIC
+squeeze	Squeeze	POP,ROCK
 st charles borromeo choir	The St. Charles Borromeo Choir	OTHER
 st lunatics	St. Lunatics	HIP_HOP
 stacey q	Stacey Q	OTHER
 stacie orrico	Stacie Orrico	POP
 stacy barthe	Stacy Barthe	OTHER
 stacy earl	Stacy Earl	OTHER
-stacy lattisaw	Stacy Lattisaw	RNB,ELECTRONIC
+stacy lattisaw	Stacy Lattisaw	RNB
 stage dolls	Stage Dolls	POP,ROCK
 staind	Staind	ROCK,HIP_HOP,METAL
 stampeders	Stampeders	ROCK
@@ -4824,15 +4824,15 @@ stanley clarke	Stanley Clarke	RNB,JAZZ
 staple singers	The Staple Singers	RNB
 starbuck	Starbuck	POP
 stardust	Stardust	OTHER
-stargard	Stargard	ELECTRONIC
+stargard	Stargard	OTHER
 starland vocal band	Starland Vocal Band	POP
 starley	Starley	OTHER
-starpoint	Starpoint	RNB,ELECTRONIC
-stars on 45	Stars On 45	ELECTRONIC
-starship	Starship	POP,ROCK,ELECTRONIC
+starpoint	Starpoint	RNB
+stars on 45	Stars On 45	OTHER
+starship	Starship	POP,ROCK
 starz	Starz	OTHER
 static major	Static Major	RNB
-statler brothers	The Statler Brothers	COUNTRY
+statler brothers	The Statler Brothers	COUNTRY,CHRISTIAN
 status quo	Status Quo	POP,ROCK,RNB
 stealers wheel	Stealers Wheel	POP,ROCK,FOLK
 steam	Steam	OTHER
@@ -4840,7 +4840,7 @@ steel breeze	Steel Breeze	OTHER
 steel magnolia	Steel Magnolia	COUNTRY
 steelheart	STEELHEART	ROCK,METAL
 steely dan	Steely Dan	POP,ROCK,RNB,FOLK
-stephanie mills	Stephanie Mills	RNB,ELECTRONIC
+stephanie mills	Stephanie Mills	RNB
 stephen bishop	Stephen Bishop	POP,COUNTRY,FOLK
 stephen stills	Stephen Stills	POP,ROCK,RNB,COUNTRY,FOLK
 steppenwolf	Steppenwolf	POP,ROCK,RNB,FOLK
@@ -4848,7 +4848,7 @@ stereo mc s	Stereo MC's	ELECTRONIC,JAZZ
 stereos	The Stereos	OTHER
 steve alaimo	Steve Alaimo	OTHER
 steve aoki	Steve Aoki	POP,ELECTRONIC
-steve arrington	Steve Arrington	RNB,ELECTRONIC
+steve arrington	Steve Arrington	RNB
 steve azar	Steve Azar	COUNTRY
 steve forbert	Steve Forbert	POP,ROCK,COUNTRY,FOLK
 steve greenberg	Steve Greenberg	OTHER
@@ -4861,8 +4861,8 @@ steve martin	Steve Martin	COUNTRY
 steve martin and the toot uncommons	Steve Martin and The Toot Uncommons	OTHER
 steve miller band	Steve Miller Band	POP,ROCK,RNB,FOLK
 steve perry	Steve Perry	POP,ROCK
-steve wariner	Steve Wariner	COUNTRY
-steve winwood	Steve Winwood	POP,ROCK,ELECTRONIC,FOLK
+steve wariner	Steve Wariner	COUNTRY,CHRISTIAN
+steve winwood	Steve Winwood	POP,ROCK,FOLK
 steven tyler	Steven Tyler	COUNTRY
 stevie b	Stevie B	OTHER
 stevie nicks	Stevie Nicks	POP,ROCK
@@ -4880,12 +4880,12 @@ stray cats	Stray Cats	ROCK
 street people	Street People	OTHER
 streets	Streets	OTHER
 strokes	The Strokes	ROCK
-stryper	Stryper	ROCK,METAL
-style council	The Style Council	POP,ROCK,ELECTRONIC,PUNK
+stryper	Stryper	ROCK,METAL,CHRISTIAN
+style council	The Style Council	POP,ROCK,PUNK
 styles	The Styles	OTHER
 styles of beyond	Styles Of Beyond	HIP_HOP
 styles p	Styles P	HIP_HOP,PUNK
-stylistics	The Stylistics	POP,RNB,ELECTRONIC
+stylistics	The Stylistics	POP,RNB
 styx	Styx	POP,ROCK
 sublime	Sublime	PUNK
 sue thompson	Sue Thompson	POP,ROCK
@@ -4907,11 +4907,11 @@ sunrays	The Sunrays	POP
 sunscreem	Sunscreem	ELECTRONIC,PUNK
 sunshine anderson	Sunshine Anderson	POP,RNB
 sunshine company	The Sunshine Company	POP
-super cat	Super Cat	ROCK,ELECTRONIC
+super cat	Super Cat	ROCK
 superbs	The Superbs	RNB
 superpower	Superpower	OTHER
 supertramp	Supertramp	POP,ROCK,FOLK
-supremes	The Supremes	POP,RNB,ELECTRONIC,FOLK
+supremes	The Supremes	POP,RNB,FOLK
 surface	Surface	POP,RNB
 surfaris	The Surfaris	ROCK
 survivor	Survivor	POP,ROCK
@@ -4939,7 +4939,7 @@ swingin medallions	Swingin' Medallions	ROCK
 swinging blue jeans	The Swinging Blue Jeans	POP,ROCK,FOLK
 swirl 360	Swirl 360	OTHER
 switch	Switch	OTHER
-switchfoot	Switchfoot	POP,ROCK
+switchfoot	Switchfoot	POP,ROCK,CHRISTIAN
 swizz beatz	Swizz Beatz	HIP_HOP
 swon brothers	The Swon Brothers	COUNTRY
 swv	SWV	POP,HIP_HOP,RNB
@@ -4948,27 +4948,27 @@ syd	Syd	HIP_HOP,RNB
 sydney youngblood	Sydney Youngblood	OTHER
 syl johnson	Syl Johnson	RNB
 syleena johnson	Syleena Johnson	POP,RNB
-sylvers	The Sylvers	RNB,ELECTRONIC
-sylvester	Sylvester	ELECTRONIC
+sylvers	The Sylvers	RNB
+sylvester	Sylvester	OTHER
 sylvia	Sylvia	OTHER
 sylvie vartan	Sylvie Vartan	OTHER
 syndicate of sound	Syndicate Of Sound	ROCK
 syreeta	Syreeta	RNB
-system	The System	RNB,ELECTRONIC
+system	The System	RNB
 system of a down	System Of A Down	ROCK,METAL
 sza	SZA	POP,HIP_HOP
 t a t u	t.A.T.u.	POP
 t bones	The T-Bones	OTHER
 t boz	T-Boz	OTHER
-t connection	T-Connection	RNB,ELECTRONIC
-t g sheppard	T.G. Sheppard	COUNTRY
+t connection	T-Connection	RNB
+t g sheppard	T.G. Sheppard	COUNTRY,CHRISTIAN
 t i	T.I.	POP,HIP_HOP
-t o k	T.O.K.	ELECTRONIC
+t o k	T.O.K.	OTHER
 t p e	T.P.E.	OTHER
 t pain	T-Pain	POP,HIP_HOP,RNB
-t pau	T'Pau	POP,ROCK,ELECTRONIC
-t rex	T. Rex	ROCK,RNB,ELECTRONIC,PUNK,FOLK
-t s monk	T.S. Monk	ELECTRONIC
+t pau	T'Pau	POP,ROCK
+t rex	T. Rex	ROCK,RNB,PUNK,FOLK
+t s monk	T.S. Monk	OTHER
 t w d y	T.W.D.Y.	OTHER
 t wayne	T-Wayne	HIP_HOP
 taco	Taco	OTHER
@@ -4981,46 +4981,46 @@ takeoff	Takeoff	HIP_HOP
 taking back sunday	Taking Back Sunday	POP,ROCK,PUNK,EMO
 tal bachman	Tal Bachman	POP
 talib kweli	Talib Kweli	HIP_HOP,PUNK
-talk talk	Talk Talk	POP,ROCK,ELECTRONIC
-talking heads	Talking Heads	ROCK,RNB,ELECTRONIC,PUNK
+talk talk	Talk Talk	POP,ROCK
+talking heads	Talking Heads	ROCK,RNB,PUNK
 tamar braxton	Tamar Braxton	POP,RNB
 tami davis	Tami Davis	OTHER
 tamia	Tamia	POP,RNB
 tamiko jones	Tamiko Jones	OTHER
 tammi terrell	Tammi Terrell	RNB
 tammy cochran	Tammy Cochran	COUNTRY
-tammy wynette	Tammy Wynette	COUNTRY
+tammy wynette	Tammy Wynette	COUNTRY,CHRISTIAN
 tams	The Tams	RNB
 tane cain	Tane Cain	OTHER
 tangier	Tangier	ROCK,METAL
 tank	Tank	OTHER
-tanto metro and devonte	Tanto Metro & Devonte	ELECTRONIC
-tanya tucker	Tanya Tucker	COUNTRY
+tanto metro and devonte	Tanto Metro & Devonte	OTHER
+tanya tucker	Tanya Tucker	COUNTRY,CHRISTIAN
 tara kemp	Tara Kemp	OTHER
-tarrus riley	Tarrus Riley	ROCK,ELECTRONIC
-tasha thomas	Tasha Thomas	ELECTRONIC
+tarrus riley	Tarrus Riley	ROCK
+tasha thomas	Tasha Thomas	OTHER
 tasmin archer	Tasmin Archer	POP
 tateeze	Tateeze	OTHER
 tatyana ali	Tatyana Ali	OTHER
-tavares	Tavares	RNB,ELECTRONIC
+tavares	Tavares	RNB
 tay dizm	Tay Dizm	HIP_HOP
 tay k	Tay-K	HIP_HOP
-taylor dayne	Taylor Dayne	POP,ELECTRONIC
+taylor dayne	Taylor Dayne	POP
 taylor hicks	Taylor Hicks	POP
 taylor swift	Taylor Swift	POP
 teairra mari	Teairra Marí	POP,RNB
 team 10	Team 10	OTHER
-tears for fears	Tears For Fears	POP,ROCK,ELECTRONIC
+tears for fears	Tears For Fears	POP,ROCK
 tech n9ne	Tech N9ne	HIP_HOP
 technotronic	Technotronic	POP,ELECTRONIC
 ted nugent	Ted Nugent	ROCK,RNB,METAL
 ted taylor	Ted Taylor	RNB
 teddy geiger	Teddy Geiger	POP
-teddy pendergrass	Teddy Pendergrass	RNB,ELECTRONIC
+teddy pendergrass	Teddy Pendergrass	RNB
 teddy riley	Teddy Riley	RNB
 tee grizzley	Tee Grizzley	HIP_HOP
 tee set	Tee-Set	POP
-teena marie	Teena Marie	RNB,ELECTRONIC
+teena marie	Teena Marie	RNB
 tegan and sara	Tegan and Sara	POP,ROCK
 tela	Tela	HIP_HOP
 telepopmusik	Télépopmusik	ELECTRONIC,JAZZ
@@ -5029,11 +5029,11 @@ temptations	The Temptations	RNB
 ten years after	Ten Years After	ROCK,RNB,FOLK
 tenacious d	Tenacious D	ROCK,METAL
 tennessee three	Tennessee Three	OTHER
-terence trent d arby	Terence Trent D'Arby	POP,ROCK,ELECTRONIC
+terence trent d arby	Terence Trent D'Arby	POP,ROCK
 terri	Terri	OTHER
 terri clark	Terri Clark	COUNTRY
 terri gibbs	Terri Gibbs	OTHER
-terror fabulous	Terror Fabulous	ROCK,ELECTRONIC
+terror fabulous	Terror Fabulous	ROCK
 terror squad	Terror Squad	PUNK
 terry black	Terry Black	OTHER
 terry dexter	Terry Dexter	OTHER
@@ -5046,8 +5046,8 @@ terry stafford	Terry Stafford	OTHER
 tesla	Tesla	ROCK,METAL
 tessanne chin	Tessanne Chin	OTHER
 tevin campbell	Tevin Campbell	POP,RNB
-tex ritter	Tex Ritter	COUNTRY
-texas	Texas	POP,ROCK,RNB,ELECTRONIC
+tex ritter	Tex Ritter	COUNTRY,CHRISTIAN
+texas	Texas	POP,ROCK,RNB
 teyana taylor	Teyana Taylor	POP,HIP_HOP,RNB
 tha alkaholiks	Tha Alkaholiks	HIP_HOP,PUNK
 tha dogg pound	Tha Dogg Pound	HIP_HOP,RNB,PUNK
@@ -5064,13 +5064,13 @@ third eye blind	Third Eye Blind	POP,ROCK,PUNK
 third rail	The Third Rail	OTHER
 third world	Third World	ROCK
 thirty seconds to mars	Thirty Seconds To Mars	ROCK,PUNK
-thomas dolby	Thomas Dolby	POP,ROCK,ELECTRONIC,PUNK
+thomas dolby	Thomas Dolby	POP,ROCK,PUNK
 thomas rhett	Thomas Rhett	COUNTRY
 thompson square	Thompson Square	COUNTRY
-thompson twins	Thompson Twins	POP,ROCK,ELECTRONIC
+thompson twins	Thompson Twins	POP,ROCK
 three 6 mafia	Three 6 Mafia	HIP_HOP
 three days grace	Three Days Grace	ROCK,PUNK,METAL
-three degrees	The Three Degrees	POP,RNB,ELECTRONIC
+three degrees	The Three Degrees	POP,RNB
 three dog night	Three Dog Night	POP,ROCK,RNB,COUNTRY,FOLK
 thriving ivory	Thriving Ivory	POP,ROCK
 thunder	Thunder	ROCK,METAL
@@ -5081,7 +5081,7 @@ tiana	Tiana	OTHER
 tierra	Tierra	RNB
 tiesto	Tiësto	POP,ELECTRONIC
 tiffany	Tiffany	POP
-til tuesday	'Til Tuesday	POP,ROCK,ELECTRONIC
+til tuesday	'Til Tuesday	POP,ROCK
 tim curry	Tim Curry	SOUNDTRACK
 tim davis	Tim Davis	OTHER
 tim hardin	Tim Hardin	POP,COUNTRY,FOLK
@@ -5097,10 +5097,10 @@ timi yuro	Timi Yuro	POP
 timmy t	Timmy T	OTHER
 timmy thomas	Timmy Thomas	RNB
 timothy b schmit	Timothy B. Schmit	POP
-tina arena	Tina Arena	POP,ELECTRONIC
-tina turner	Tina Turner	POP,ELECTRONIC
+tina arena	Tina Arena	POP
+tina turner	Tina Turner	POP
 tinashe	Tinashe	POP,HIP_HOP,RNB
-ting tings	The Ting Tings	POP,ELECTRONIC,PUNK
+ting tings	The Ting Tings	POP,ROCK,ELECTRONIC,PUNK
 tinie tempah	Tinie Tempah	POP,HIP_HOP,ELECTRONIC
 tiny tim	Tiny Tim	OTHER
 titiyo	Titiyo	POP,RNB
@@ -5121,8 +5121,8 @@ tom northcott	Tom Northcott	POP
 tom petty	Tom Petty	POP,ROCK,FOLK
 tom petty and the heartbreakers	Tom Petty and the Heartbreakers	POP,ROCK,FOLK
 tom scott	Tom Scott	RNB,JAZZ
-tom t hall	Tom T. Hall	COUNTRY,FOLK
-tom tom club	Tom Tom Club	POP,ROCK,ELECTRONIC,PUNK
+tom t hall	Tom T. Hall	COUNTRY,FOLK,CHRISTIAN
+tom tom club	Tom Tom Club	POP,ROCK,PUNK
 tommy boyce	Tommy Boyce	POP
 tommy cash	Tommy Cash	COUNTRY
 tommy james	Tommy James	POP
@@ -5179,13 +5179,13 @@ tracie spencer	Tracie Spencer	RNB
 tractors	The Tractors	COUNTRY
 tracy byrd	Tracy Byrd	COUNTRY
 tracy chapman	Tracy Chapman	POP,FOLK
-tracy lawrence	Tracy Lawrence	COUNTRY
+tracy lawrence	Tracy Lawrence	COUNTRY,CHRISTIAN
 trade martin	Trade Martin	OTHER
 tradewinds	The Tradewinds	POP
 traffic	Traffic	POP,ROCK,RNB,COUNTRY,FOLK
 train	Train	POP
-trammps	The Trammps	RNB,ELECTRONIC
-trans x	Trans-X	ELECTRONIC
+trammps	The Trammps	RNB
+trans x	Trans-X	OTHER
 transvision vamp	Transvision Vamp	POP
 trapt	Trapt	ROCK,HIP_HOP,METAL
 trashmen	The Trashmen	ROCK,PUNK
@@ -5228,7 +5228,7 @@ true image	True Image	OTHER
 trustcompany	TRUSTcompany	ROCK,HIP_HOP,METAL
 truth	The Truth	ROCK
 truth hurts	Truth Hurts	POP,RNB
-tubes	The Tubes	POP,ROCK,ELECTRONIC
+tubes	The Tubes	POP,ROCK
 tufano and giammarese	Tufano & Giammarese	OTHER
 tujamo	Tujamo	POP,ELECTRONIC
 turk	Turk	HIP_HOP
@@ -5258,12 +5258,12 @@ ugly god	Ugly God	HIP_HOP
 ugly kid joe	Ugly Kid Joe	ROCK,RNB,METAL
 ultimate	Ultimate	OTHER
 ultra nate	Ultra Nate	ELECTRONIC
-ultravox	Ultravox	POP,ROCK,ELECTRONIC
+ultravox	Ultravox	POP,ROCK
 uncle charlie wilson	Uncle Charlie Wilson	OTHER
 uncle kracker	Uncle Kracker	POP,ROCK,COUNTRY
 uncle sam	Uncle Sam	ELECTRONIC
-underworld	Underworld	ELECTRONIC
-undisputed truth	The Undisputed Truth	RNB,ELECTRONIC
+underworld	Underworld	ROCK,ELECTRONIC
+undisputed truth	The Undisputed Truth	RNB
 uniques	The Uniques	OTHER
 universal robot band	Universal Robot Band	OTHER
 unk	Unk	POP,HIP_HOP
@@ -5285,8 +5285,8 @@ valerie carter	Valerie Carter	POP
 valerie simpson	Valerie Simpson	OTHER
 van dykes	The Van Dykes	OTHER
 van halen	Van Halen	ROCK,METAL
-van mccoy	Van McCoy	ELECTRONIC
-van mccoy and the soul city symphony	Van McCoy & The Soul City Symphony	ELECTRONIC
+van mccoy	Van McCoy	OTHER
+van mccoy and the soul city symphony	Van McCoy & The Soul City Symphony	OTHER
 van morrison	Van Morrison	POP,ROCK,FOLK
 van zant	Van Zant	ROCK,COUNTRY
 vance joy	Vance Joy	POP,ROCK,FOLK
@@ -5299,7 +5299,7 @@ vanilla fudge	Vanilla Fudge	ROCK,RNB
 vanilla ice	Vanilla Ice	HIP_HOP,ELECTRONIC
 vanity	Vanity	OTHER
 vanity fare	Vanity Fare	POP,ROCK
-vapors	The Vapors	POP,ROCK,ELECTRONIC
+vapors	The Vapors	POP,ROCK
 various artists	Various Artists	OTHER
 vaughan brothers	The Vaughan Brothers	RNB
 vejtables	The Vejtables	OTHER
@@ -5319,13 +5319,13 @@ vicci martinez	Vicci Martinez	OTHER
 vicious	Vicious	OTHER
 vicki anderson	Vicki Anderson	OTHER
 vicki lawrence	Vicki Lawrence	OTHER
-vicki sue robinson	Vicki Sue Robinson	ELECTRONIC
+vicki sue robinson	Vicki Sue Robinson	OTHER
 victor lundberg	Victor Lundberg	OTHER
 vika jigulina	Vika Jigulina	LATIN
 vikki carr	Vikki Carr	POP
-village people	Village People	ELECTRONIC
+village people	Village People	OTHER
 village stompers	The Village Stompers	OTHER
-vince gill	Vince Gill	COUNTRY
+vince gill	Vince Gill	COUNTRY,CHRISTIAN
 viscounts	The Viscounts	OTHER
 vita	Vita	OTHER
 vitamin c	Vitamin C	POP
@@ -5337,7 +5337,7 @@ voice of the beehive	Voice Of The Beehive	POP
 voices	The Voices	ROCK
 voices of theory	Voices of Theory	POP
 vonda shepard	Vonda Shepard	OTHER
-voyage	Voyage	ELECTRONIC
+voyage	Voyage	OTHER
 voyce	Voyce	OTHER
 wa wa nee	Wa Wa Nee	ROCK
 wackers	The Wackers	OTHER
@@ -5345,21 +5345,21 @@ wade hayes	Wade Hayes	COUNTRY
 wadsworth mansion	Wadsworth Mansion	OTHER
 waikikis	The Waikikis	OTHER
 wailers	The Wailers	PUNK
-waitresses	The Waitresses	POP,ELECTRONIC
+waitresses	The Waitresses	POP,ROCK
 waka flocka flame	Waka Flocka Flame	HIP_HOP
 waldo de los rios	Waldo De Los Ríos	POP
 wale	Wale	POP,HIP_HOP,RNB
 walk the moon	WALK THE MOON	POP,ROCK
 walker hayes	Walker Hayes	COUNTRY
-wall of voodoo	Wall Of Voodoo	POP,ROCK,ELECTRONIC,PUNK
+wall of voodoo	Wall Of Voodoo	POP,ROCK,PUNK
 wallace brothers	Wallace Brothers	OTHER
 wallflowers	The Wallflowers	POP,ROCK
 walter egan	Walter Egan	POP
 walter jackson	Walter Jackson	RNB
-walter murphy	Walter Murphy	ELECTRONIC
+walter murphy	Walter Murphy	OTHER
 walter wanderley	Walter Wanderley	POP,JAZZ,LATIN
 wanda jackson	Wanda Jackson	ROCK
-wang chung	Wang Chung	POP,ROCK,ELECTRONIC
+wang chung	Wang Chung	POP,ROCK
 wanted	The Wanted	POP
 wanz	Wanz	OTHER
 war	War	RNB
@@ -5372,12 +5372,12 @@ wax	Wax	OTHER
 waylon jennings	Waylon Jennings	COUNTRY
 wayne fontana and the mindbenders	Wayne Fontana & The Mindbenders	POP,ROCK
 wayne newton	Wayne Newton	POP
-wayne wonder	Wayne Wonder	ROCK,ELECTRONIC
+wayne wonder	Wayne Wonder	ROCK
 wc	WC	HIP_HOP
 wc and the maad circle	Wc And The Maad Circle	HIP_HOP,RNB
 we five	We Five	POP,FOLK
 we the kings	We The Kings	POP,ROCK,PUNK,EMO
-weather girls	The Weather Girls	ELECTRONIC
+weather girls	The Weather Girls	OTHER
 webbie	Webbie	HIP_HOP
 webstar	Webstar	OTHER
 wednesday	Wednesday	OTHER
@@ -5392,14 +5392,14 @@ wes montgomery	Wes Montgomery	RNB,JAZZ
 west street mob	West Street Mob	HIP_HOP,ELECTRONIC
 westlife	Westlife	POP
 westside connection	Westside Connection	HIP_HOP,RNB,PUNK
-wet wet wet	Wet Wet Wet	POP,ROCK,ELECTRONIC
+wet wet wet	Wet Wet Wet	POP,ROCK
 wet willie	Wet Willie	ROCK,COUNTRY
-wham	Wham!	POP,ROCK,RNB,ELECTRONIC
+wham	Wham!	POP,ROCK,RNB
 what is this	What Is This	OTHER
 whatnauts	The Whatnauts	RNB
-when in rome	When In Rome	POP,ROCK,ELECTRONIC
+when in rome	When In Rome	POP,ROCK
 whirlwind	Whirlwind	ROCK
-whispers	The Whispers	ROCK,RNB,ELECTRONIC
+whispers	The Whispers	ROCK,RNB
 whistle	Whistle	HIP_HOP,ELECTRONIC
 white buffalo	The White Buffalo	FOLK
 white lion	White Lion	ROCK,METAL
@@ -5415,7 +5415,7 @@ whodini	Whodini	HIP_HOP,RNB,ELECTRONIC
 why don t we	Why Don't We	POP
 wilbert harrison	Wilbert Harrison	ROCK,RNB
 wild blue	Wild Blue	OTHER
-wild cherry	Wild Cherry	RNB,ELECTRONIC
+wild cherry	Wild Cherry	RNB
 wild orchid	Wild Orchid	OTHER
 wildweeds	The Wildweeds	OTHER
 wilkinsons	The Wilkinsons	COUNTRY
@@ -5428,7 +5428,7 @@ william bell	William Bell	RNB
 william devaughn	William DeVaughn	RNB
 william michael morgan	William Michael Morgan	COUNTRY
 william orbit	William Orbit	ELECTRONIC
-williams brothers	The Williams Brothers	OTHER
+williams brothers	The Williams Brothers	CHRISTIAN
 willie henderson	Willie Henderson	OTHER
 willie henderson and the soul explosions	Willie Henderson And The Soul Explosions	OTHER
 willie hutch	Willie Hutch	RNB
@@ -5439,7 +5439,7 @@ willow	WILLOW	POP
 willy william	Willy William	OTHER
 wilmer and the dukes	Wilmer & The Dukes	JAZZ
 wilson phillips	Wilson Phillips	POP
-wilson pickett	Wilson Pickett	POP,ROCK,RNB,ELECTRONIC,FOLK
+wilson pickett	Wilson Pickett	POP,ROCK,RNB,FOLK
 wind	Wind	OTHER
 wing	Wing	OTHER
 winger	Winger	ROCK,METAL
@@ -5451,7 +5451,7 @@ wisin and yandel	Wisin & Yandel	HIP_HOP,LATIN
 witch queen	Witch Queen	OTHER
 witchdoctor	Witchdoctor	OTHER
 wiz khalifa	Wiz Khalifa	POP,HIP_HOP
-wizkid	WizKid	POP,HIP_HOP,ELECTRONIC
+wizkid	WizKid	POP,HIP_HOP
 wonder girls	Wonder Girls	POP
 wonder who	The Wonder Who	OTHER
 woolies	The Woolies	ROCK
@@ -5467,7 +5467,7 @@ x ambassadors	X Ambassadors	POP,ROCK
 x ecutioners	X-Ecutioners	HIP_HOP
 xenia	Xenia	OTHER
 xscape	Xscape	POP,HIP_HOP,RNB
-xtc	XTC	POP,ROCK,ELECTRONIC,PUNK,FOLK
+xtc	XTC	POP,ROCK,PUNK,FOLK
 xxxtentacion	XXXTENTACION	HIP_HOP,EMO
 xzibit	Xzibit	HIP_HOP,RNB,PUNK
 y and t	Y&T	ROCK,METAL
@@ -5476,11 +5476,11 @@ yael naim	Yael Naim	OTHER
 yaki da	Yaki-Da	OTHER
 yankee grey	Yankee Grey	OTHER
 yanou	Yanou	POP
-yarbrough and peoples	Yarbrough & Peoples	RNB,ELECTRONIC
+yarbrough and peoples	Yarbrough & Peoples	RNB
 yardbirds	The Yardbirds	ROCK,RNB,FOLK
 yasmin	Yasmin	OTHER
 yavahn	Yavahn	OTHER
-yaz	Yaz	POP,ROCK,ELECTRONIC
+yaz	Yaz	POP,ROCK
 ybn nahmir	YBN Nahmir	HIP_HOP
 yeah yeah yeahs	Yeah Yeah Yeahs	POP,ROCK,ELECTRONIC,PUNK
 yella beezy	Yella Beezy	HIP_HOP
@@ -5496,7 +5496,7 @@ ylvis	Ylvis	OTHER
 yo gotti	Yo Gotti	POP,HIP_HOP
 yo yo	Yo-Yo	OTHER
 yoko ono	Yoko Ono	POP
-yolanda adams	Yolanda Adams	RNB
+yolanda adams	Yolanda Adams	CHRISTIAN
 yolanda be cool	Yolanda Be Cool	ELECTRONIC
 young and restless	Young & Restless	OTHER
 young b	Young B.	OTHER
@@ -5527,7 +5527,7 @@ yung l a	Yung L.A.	HIP_HOP
 yung wun	Yung Wun	HIP_HOP
 yvette michele	Yvette Michele	OTHER
 yvonne	Yvonne	OTHER
-yvonne elliman	Yvonne Elliman	ELECTRONIC
+yvonne elliman	Yvonne Elliman	OTHER
 yvonne fair	Yvonne Fair	RNB
 z z hill	Z.Z. Hill	RNB
 zac brown band	Zac Brown Band	COUNTRY
@@ -5535,7 +5535,7 @@ zac efron	Zac Efron	POP,SOUNDTRACK
 zach sobiech	Zach Sobiech	OTHER
 zager and evans	Zager & Evans	POP,FOLK
 zakk wylde	Zakk Wylde	METAL
-zapp	Zapp	POP,HIP_HOP,RNB,ELECTRONIC
+zapp	Zapp	POP,HIP_HOP,RNB
 zara larsson	Zara Larsson	POP,ELECTRONIC
 zay hilfigerrr	Zay Hilfigerrr	OTHER
 zayion mccall	Zayion McCall	OTHER

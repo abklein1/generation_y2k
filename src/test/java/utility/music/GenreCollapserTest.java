@@ -55,6 +55,30 @@ class GenreCollapserTest {
     }
 
     @Test
+    @DisplayName("Faith-based tags collapse to CHRISTIAN over their secular base")
+    void testChristianTags() {
+        assertEquals(MusicGenre.CHRISTIAN, GenreCollapser.collapse("gospel"));
+        assertEquals(MusicGenre.CHRISTIAN, GenreCollapser.collapse("worship"));
+        assertEquals(MusicGenre.CHRISTIAN, GenreCollapser.collapse("ccm"));
+        assertEquals(MusicGenre.CHRISTIAN,
+                GenreCollapser.collapse("christian music"));
+        assertEquals(MusicGenre.CHRISTIAN,
+                GenreCollapser.collapse("christian rock"));
+    }
+
+    @Test
+    @DisplayName("Disco/bare-dance no longer dilute ELECTRONIC")
+    void testDiscoDanceDropped() {
+        assertEquals(MusicGenre.OTHER, GenreCollapser.collapse("disco"));
+        assertEquals(MusicGenre.OTHER, GenreCollapser.collapse("post-disco"));
+        // Real club/EDM markers still resolve to ELECTRONIC.
+        assertEquals(MusicGenre.ELECTRONIC, GenreCollapser.collapse("deep house"));
+        assertEquals(MusicGenre.ELECTRONIC, GenreCollapser.collapse("trance"));
+        // Dance-pop still routes to POP via its "pop" marker.
+        assertEquals(MusicGenre.POP, GenreCollapser.collapse("dance pop"));
+    }
+
+    @Test
     @DisplayName("Unrecognized and blank tags fall through to OTHER")
     void testOtherFallback() {
         assertEquals(MusicGenre.OTHER, GenreCollapser.collapse("escape room"));

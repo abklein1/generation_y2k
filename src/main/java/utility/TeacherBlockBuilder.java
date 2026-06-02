@@ -484,6 +484,13 @@ public class TeacherBlockBuilder {
         // periods
         Map<String, int[]> classSlotsUsed = new HashMap<>();
 
+        // Global usage of each (period, semester) slot across ALL classes. Indexed
+        // [period 0-3][semester 0=Fall,1=Spring]. Spreading sections by global usage
+        // prevents every class from piling into the lowest-numbered periods, which at
+        // low populations (few sections per class) would otherwise leave periods 3-4
+        // empty and force student block conflicts.
+        int[][] globalSlotUsage = new int[4][2];
+
         List<Map.Entry<String, Integer>> sortedClasses = new ArrayList<>(sectionsNeeded.entrySet());
         sortedClasses.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
 
@@ -517,49 +524,84 @@ public class TeacherBlockBuilder {
                 }
             }
 
+            // Language sequence classes carry an implicit semester: level I is taught
+            // in Fall and level II in Spring, so a freshman can take "X I" (Fall) then
+            // "X II" (Spring) in the same year. Pin their sections to the correct
+            // semester so the language-sequence assigner can find usable Fall/Spring
+            // blocks (otherwise the generic spreader places them in either semester and
+            // the strict Fall->Spring pairing fails).
+            String requiredSemester = null;
+            if (staffType == StaffType.LANGUAGES) {
+                if (className.endsWith(" II")) {
+                    requiredSemester = "Spring";
+                } else if (className.endsWith(" I")) {
+                    requiredSemester = "Fall";
+                }
+            }
+
             int sectionsCreated = 0;
-            int maxRounds = qualifiedTeachers.size() * 8;
-            int round = 0;
+            // Per-class usage of each (period, semester) slot, so a single class also
+            // spreads its own sections across distinct slots before doubling up.
+            int[][] classSlotUsage = new int[4][2];
+            String[] semesters = { "Fall", "Spring" };
 
-            while (sectionsCreated < sectionsRequired && round < maxRounds) {
-                round++;
-                boolean madeProgress = false;
-
-                // Try all 4 slots, starting from the least-used, to avoid getting
-                // stuck when the "best" slot has no available teachers.
-                int[] slotOrder = getSlotsOrderedByUsage(classSlots);
-
-                for (int slotIdx : slotOrder) {
-                    if (sectionsCreated >= sectionsRequired)
-                        break;
-                    String[] semesters = { "Fall", "Spring" };
-
-                    for (String semester : semesters) {
-                        if (sectionsCreated >= sectionsRequired)
-                            break;
-                        Staff availableTeacher = findAvailableTeacher(qualifiedTeachers, slotIdx + 1, semester,
-                                standardSchool);
-                        if (availableTeacher != null) {
-                            Room teacherRoom = getTeacherRoom(availableTeacher, standardSchool);
-                            if (teacherRoom != null) {
-                                TeacherBlock block = new TeacherBlock();
-                                block.setClassName(className);
-                                block.setBlockNumber(slotIdx + 1);
-                                block.setSemester(semester);
-                                block.setRoom(teacherRoom);
-                                block.addClassPopulationBlock(teacherRoom.getStudentCapacity());
-                                availableTeacher.teacherStatistics.addTeacherSchedule(block);
-                                classSlots[slotIdx]++;
-                                sectionsCreated++;
-                                madeProgress = true;
-                            }
-                        }
+            while (sectionsCreated < sectionsRequired) {
+                // Order all 8 (period, semester) slots so we fill the slot this class
+                // uses least first, breaking ties by the globally least-used slot. This
+                // distributes every class across all 4 periods and both semesters
+                // instead of concentrating them in periods 1-2.
+                List<int[]> slotOrder = new ArrayList<>();
+                for (int p = 0; p < 4; p++) {
+                    for (int s = 0; s < 2; s++) {
+                        slotOrder.add(new int[] { p, s });
                     }
                 }
+                final int[][] cls = classSlotUsage;
+                final int[][] glb = globalSlotUsage;
+                slotOrder.sort((a, b) -> {
+                    int byClass = Integer.compare(cls[a[0]][a[1]], cls[b[0]][b[1]]);
+                    if (byClass != 0) {
+                        return byClass;
+                    }
+                    return Integer.compare(glb[a[0]][a[1]], glb[b[0]][b[1]]);
+                });
 
-                // If a full pass over all slots made no progress, stop early
-                if (!madeProgress)
+                boolean placed = false;
+                for (int[] slot : slotOrder) {
+                    int slotIdx = slot[0];
+                    int semIdx = slot[1];
+                    String semester = semesters[semIdx];
+                    if (requiredSemester != null && !semester.equals(requiredSemester)) {
+                        continue;
+                    }
+                    Staff availableTeacher = findAvailableTeacher(qualifiedTeachers, slotIdx + 1, semester,
+                            standardSchool);
+                    if (availableTeacher == null) {
+                        continue;
+                    }
+                    Room teacherRoom = getTeacherRoom(availableTeacher, standardSchool);
+                    if (teacherRoom == null) {
+                        continue;
+                    }
+                    TeacherBlock block = new TeacherBlock();
+                    block.setClassName(className);
+                    block.setBlockNumber(slotIdx + 1);
+                    block.setSemester(semester);
+                    block.setRoom(teacherRoom);
+                    block.addClassPopulationBlock(teacherRoom.getStudentCapacity());
+                    availableTeacher.teacherStatistics.addTeacherSchedule(block);
+                    classSlots[slotIdx]++;
+                    classSlotUsage[slotIdx][semIdx]++;
+                    globalSlotUsage[slotIdx][semIdx]++;
+                    sectionsCreated++;
+                    placed = true;
                     break;
+                }
+
+                // No teacher/room available in any slot; stop to avoid infinite loop.
+                if (!placed) {
+                    break;
+                }
             }
 
             if (sectionsCreated < sectionsRequired) {
@@ -622,20 +664,6 @@ public class TeacherBlockBuilder {
             }
         }
         return null;
-    }
-
-    /**
-     * Returns all slot indices sorted by ascending usage count (least-used first).
-     */
-    private static int[] getSlotsOrderedByUsage(int[] classSlots) {
-        Integer[] indices = new Integer[classSlots.length];
-        for (int i = 0; i < indices.length; i++)
-            indices[i] = i;
-        Arrays.sort(indices, Comparator.comparingInt(i -> classSlots[i]));
-        int[] result = new int[indices.length];
-        for (int i = 0; i < indices.length; i++)
-            result[i] = indices[i];
-        return result;
     }
 
     private static Room takeOverflowRoom(List<Room> availableLibraries,

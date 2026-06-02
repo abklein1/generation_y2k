@@ -29,6 +29,28 @@ public final class ClothingItem implements Serializable {
     private final String material;
     private final String color;
     private final String pattern;
+    private final String brand;
+
+    /**
+     * Convenience constructor for garments without a brand descriptor.
+     * Delegates to the full constructor with {@code brand} set to
+     * {@code null}.
+     *
+     * @param name         display name of the garment
+     * @param clothingType the inventory category key
+     * @param layer        the outfit layer this garment occupies
+     * @param bodySlot     coarse body region
+     * @param material     optional fabric/material descriptor; may be
+     *                     {@code null}
+     * @param color        optional color; may be {@code null}
+     * @param pattern      optional pattern descriptor; may be {@code null}
+     */
+    public ClothingItem(String name, String clothingType, String layer,
+                        String bodySlot, String material, String color,
+                        String pattern) {
+        this(name, clothingType, layer, bodySlot, material, color, pattern,
+                null);
+    }
 
     /**
      * @param name         display name of the garment (e.g. "band t-shirt",
@@ -49,10 +71,12 @@ public final class ClothingItem implements Serializable {
      * @param color        optional color; may be {@code null}
      * @param pattern      optional pattern descriptor
      *                     (e.g. "plaid", "striped"); may be {@code null}
+     * @param brand        optional clothing brand descriptor
+     *                     (e.g. "Vans", "DC"); may be {@code null}
      */
     public ClothingItem(String name, String clothingType, String layer,
                         String bodySlot, String material, String color,
-                        String pattern) {
+                        String pattern, String brand) {
         this.name = name;
         this.clothingType = clothingType;
         this.layer = layer;
@@ -60,6 +84,7 @@ public final class ClothingItem implements Serializable {
         this.material = material;
         this.color = color;
         this.pattern = pattern;
+        this.brand = brand;
     }
 
     public String getName() {
@@ -90,18 +115,24 @@ public final class ClothingItem implements Serializable {
         return pattern;
     }
 
+    public String getBrand() {
+        return brand;
+    }
+
     /**
      * Builds a human-readable display string for this garment.
-     * Prepends color, pattern, and material qualifiers when set, skipping
-     * any qualifier that already appears (case-insensitive) inside the
-     * garment name so we don't produce phrases like
-     * "black black band t-shirt".
+     * Prepends color, pattern, material, and brand qualifiers when set,
+     * skipping any qualifier that already appears (case-insensitive)
+     * inside the garment name so we don't produce phrases like
+     * "black black band t-shirt". The brand sits closest to the noun so
+     * the prose reads naturally (e.g. "navy Vans hoodie").
      *
      * <p>Examples:</p>
      * <ul>
      *   <li>"black band t-shirt"</li>
      *   <li>"blue plaid flannel shirt"</li>
      *   <li>"denim jeans"</li>
+     *   <li>"navy Vans hoodie"</li>
      * </ul>
      */
     public String getDisplayName() {
@@ -114,6 +145,9 @@ public final class ClothingItem implements Serializable {
         }
         if (!isBlank(material) && !nameContains(material)) {
             sb.append(material).append(" ");
+        }
+        if (!isBlank(brand) && !nameContains(brand)) {
+            sb.append(brand).append(" ");
         }
         sb.append(name);
         return sb.toString().trim();
@@ -142,13 +176,14 @@ public final class ClothingItem implements Serializable {
                 && Objects.equals(bodySlot, other.bodySlot)
                 && Objects.equals(material, other.material)
                 && Objects.equals(color, other.color)
-                && Objects.equals(pattern, other.pattern);
+                && Objects.equals(pattern, other.pattern)
+                && Objects.equals(brand, other.brand);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name, clothingType, layer, bodySlot,
-                material, color, pattern);
+                material, color, pattern, brand);
     }
 
     @Override

@@ -135,6 +135,32 @@ public final class BillboardSongLoader implements Serializable {
     }
 
     /**
+     * Collect every charted song whose chart week falls within the inclusive
+     * date range {@code [start, end]}. Unlike {@link #getSongsInYears} this is
+     * month-precise, which the favorite-band picker uses to reach a few months
+     * into the sim's future for tastemaker students.
+     *
+     * @param start first chart date to include (inclusive)
+     * @param end   last chart date to include (inclusive)
+     * @return all songs charting in that date range; empty if none or if the
+     *         range is null/inverted
+     */
+    public static List<Song> getSongsInDateRange(LocalDate start, LocalDate end) {
+        ensureLoaded();
+        List<Song> out = new ArrayList<>();
+        if (start == null || end == null || start.isAfter(end)) {
+            return out;
+        }
+        for (LocalDate week : allChartWeeks.subSet(start, true, end, true)) {
+            List<Song> chart = chartByWeek.get(week);
+            if (chart != null) {
+                out.addAll(chart);
+            }
+        }
+        return out;
+    }
+
+    /**
      * Reset the cache. Visible for tests.
      */
     static synchronized void resetForTests() {

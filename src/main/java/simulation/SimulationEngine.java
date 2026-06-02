@@ -4,6 +4,7 @@ import behavior.BehaviorContext;
 import behavior.BehaviorTree;
 import constants.SimConstants;
 import entity.*;
+import entity.Radio.MusicGenre;
 import entity.Radio.Radio;
 import entity.Radio.RadioStation;
 import entity.Radio.Song;
@@ -13,8 +14,11 @@ import save.SimulationRuntimeSnapshot;
 import utility.GameLogger;
 import utility.AcademicProgressService;
 import utility.PStatistics;
+import utility.RadioReactionMessageLoader;
 import utility.SocialLinkConnector;
 import utility.TraversalStorage;
+import utility.music.MusicPreference;
+import utility.music.MusicTaste;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -416,7 +420,7 @@ public class SimulationEngine {
             song = station.getCurrentSong();
         }
         state.setCommuteRadioFrequencyMhz(station.getFrequencyMhz());
-        logCommuteRadioListening(state, station, song);
+        logCommuteRadioListening(student, state, station, song);
     }
 
     /**
@@ -447,17 +451,74 @@ public class SimulationEngine {
                         station.getFrequencyMhz()) != 0) {
                     continue;
                 }
-                logCommuteRadioListening(state, station, song);
+                logCommuteRadioListening(student, state, station, song);
             }
         }
     }
 
-    private void logCommuteRadioListening(EntityState state,
+    private void logCommuteRadioListening(Student student, EntityState state,
                                           RadioStation station, Song song) {
         String message = Radio.formatCommuteListeningEntry(station, song);
         if (message != null) {
             addEntityStatusLogEntry(state, message);
         }
+        reactToCommuteSong(student, state, song);
+    }
+
+    /**
+     * Nudges a commuting student's mood based on how their clique music taste
+     * scores the song now playing, and logs a single flavor line. Liked songs
+     * lift entertainment (with a little stress relief); disliked songs dip it,
+     * damped by the listener's openness.
+     */
+    private void reactToCommuteSong(Student student, EntityState state,
+                                    Song song) {
+        if (student == null || state == null || song == null
+                || student.studentStatistics == null) {
+            return;
+        }
+        Set<MusicGenre> genres = song.getGenres();
+        if (genres == null || genres.isEmpty()) {
+            return;
+        }
+        MusicPreference taste = MusicTaste.forStudent(student);
+        double best = -Double.MAX_VALUE;
+        for (MusicGenre genre : genres) {
+            best = Math.max(best, taste.weightFor(genre));
+        }
+
+        String name = student.studentName.getFirstName();
+        if (best >= SimConstants.RADIO_REACTION_LIKE_THRESHOLD) {
+            state.setEntertainment(state.getEntertainment()
+                    + SimConstants.RADIO_REACTION_ENTERTAINMENT_BOOST);
+            student.studentStatistics.getAllostaticLoad()
+                    .applyRelaxationRecovery(
+                            SimConstants.RADIO_REACTION_RELAXATION_RECOVERY);
+            String template = RadioReactionMessageLoader.pickLikeMessage(
+                    radioReactionRandom(student, song));
+            addEntityStatusLogEntry(state, String.format(
+                    template, name));
+        } else if (best <= SimConstants.RADIO_REACTION_DISLIKE_THRESHOLD) {
+            // Higher openness softens the sting of a disliked song.
+            double penalty = SimConstants.RADIO_REACTION_ENTERTAINMENT_PENALTY
+                    * (1.0 - taste.getOpenness());
+            state.setEntertainment(state.getEntertainment() - penalty);
+            String template = RadioReactionMessageLoader.pickDislikeMessage(
+                    radioReactionRandom(student, song));
+            addEntityStatusLogEntry(state, String.format(
+                    template, name));
+        }
+    }
+
+    private Random radioReactionRandom(Student student, Song song) {
+        long seed = GameRandom.getSeed()
+                ^ System.identityHashCode(student)
+                ^ song.hashCode();
+        if (time != null) {
+            seed ^= ((long) time.getDayCounter() << 32);
+            seed ^= time.getMinutesFromMidnight();
+        }
+        return new Random(seed);
     }
 
     /**

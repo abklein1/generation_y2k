@@ -1,6 +1,7 @@
 package utility;
 
 import constants.SimConstants;
+import entity.Radio.MusicGenre;
 import entity.Radio.Radio;
 import entity.Radio.RadioStation;
 import entity.Radio.StationFormat;
@@ -110,6 +111,11 @@ public final class RadioStationGenerator {
         if (n >= 2) {
             chosen.add(StationType.top40());
         }
+        // A Christian station is always on the dial (room is guaranteed since
+        // RADIO_MIN_STATIONS comfortably exceeds the fixed slots above).
+        if (chosen.size() < n) {
+            chosen.add(StationType.christian());
+        }
 
         // Everything else in the catalog is fair game for the remaining slots.
         List<StationType> remaining = new ArrayList<>();
@@ -117,6 +123,9 @@ public final class RadioStationGenerator {
             StationFormat f = t.getFormat();
             if (f == StationFormat.OLDIES_RANDOM || f == StationFormat.TOP_40) {
                 continue; // already guaranteed above; avoid duplicates
+            }
+            if (t.getTargetGenres().contains(MusicGenre.CHRISTIAN)) {
+                continue; // Christian is guaranteed above; avoid duplicates
             }
             remaining.add(t);
         }

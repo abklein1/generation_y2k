@@ -1,6 +1,7 @@
 package utility;
 
 import constants.SimConstants;
+import entity.Radio.MusicGenre;
 import entity.Radio.RadioStation;
 import entity.Radio.StationFormat;
 import entity.Radio.StationType;
@@ -35,6 +36,22 @@ class RadioStationGenreTest {
             boolean hasTop40 = types.stream()
                     .anyMatch(t -> t.getFormat() == StationFormat.TOP_40);
             assertTrue(hasTop40, "expected a Top 40 station for n=" + n);
+        }
+    }
+
+    @Test
+    @DisplayName("Every dial includes exactly one Christian station")
+    void testChristianStationGuaranteed() {
+        for (int n = SimConstants.RADIO_MIN_STATIONS;
+                n <= SimConstants.RADIO_MAX_STATIONS; n++) {
+            List<StationType> types =
+                    RadioStationGenerator.pickStationTypes(n, new Random(n));
+            long christian = types.stream()
+                    .filter(t -> t.getTargetGenres()
+                            .contains(MusicGenre.CHRISTIAN))
+                    .count();
+            assertEquals(1, christian,
+                    "expected exactly one Christian station for n=" + n);
         }
     }
 

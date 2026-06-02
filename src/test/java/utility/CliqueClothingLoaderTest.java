@@ -3,6 +3,8 @@ package utility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -67,5 +69,47 @@ class CliqueClothingLoaderTest {
         assertNotNull(CliqueClothingLoader.getData(UNPOPULATED_CLIQUE_A, "FEMALE"));
         assertNotNull(CliqueClothingLoader.getData(UNPOPULATED_CLIQUE_A, "Male"));
         assertNotNull(CliqueClothingLoader.getData(UNPOPULATED_CLIQUE_A, "male"));
+    }
+
+    @Test
+    @DisplayName("Per-item materials attach only to the garments that list them")
+    void testPerItemMaterialsAreScopedToTheGarment() {
+        // Emo jeans should carry denim; Emo tops must NOT, so we never
+        // produce "denim t-shirt".
+        List<CliqueClothingLoader.ClothingOption> bottoms =
+                CliqueClothingLoader.getOptions("Emo", "Female", "bottoms");
+        assertFalse(bottoms.isEmpty());
+        boolean anyDenimBottom = bottoms.stream()
+                .anyMatch(o -> o.getMaterials().contains("denim"));
+        assertTrue(anyDenimBottom, "Emo jeans should list denim as a material");
+
+        List<CliqueClothingLoader.ClothingOption> tops =
+                CliqueClothingLoader.getOptions("Emo", "Female", "tops");
+        assertFalse(tops.isEmpty());
+        boolean anyTopMaterial = tops.stream()
+                .anyMatch(o -> !o.getMaterials().isEmpty());
+        assertFalse(anyTopMaterial, "Emo tops must not carry fabric materials");
+    }
+
+    @Test
+    @DisplayName("Plain-string entries parse into option names with empty descriptors")
+    void testPlainStringEntriesParse() {
+        List<CliqueClothingLoader.ClothingOption> tops =
+                CliqueClothingLoader.getOptions("Emo", "Female", "tops");
+        assertFalse(tops.isEmpty());
+        CliqueClothingLoader.ClothingOption first = tops.get(0);
+        assertNotNull(first.getName());
+        assertNotNull(first.getBrands());
+        assertNotNull(first.getMaterials());
+        assertNotNull(first.getPatterns());
+    }
+
+    @Test
+    @DisplayName("getItems still returns garment names for populated cliques")
+    void testGetItemsReturnsNames() {
+        List<String> names =
+                CliqueClothingLoader.getItems("Emo", "Female", "bottoms");
+        assertFalse(names.isEmpty());
+        assertTrue(names.contains("skinny jeans"));
     }
 }

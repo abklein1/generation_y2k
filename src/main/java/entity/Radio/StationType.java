@@ -133,6 +133,11 @@ public final class StationType implements Serializable {
         return broad("Top 40", StationFormat.TOP_40);
     }
 
+    /** Convenience for the always-present Christian station. */
+    public static StationType christian() {
+        return genre("Christian", MusicGenre.CHRISTIAN);
+    }
+
     /**
      * The full set of station types a game can choose from: broad formats
      * plus one station per general genre.
@@ -151,6 +156,7 @@ public final class StationType implements Serializable {
         all.add(genre("Hip-Hop", MusicGenre.HIP_HOP));
         all.add(genre("R&B", MusicGenre.RNB));
         all.add(genre("Country", MusicGenre.COUNTRY));
+        all.add(genre("Christian", MusicGenre.CHRISTIAN));
         all.add(genre("Dance", MusicGenre.ELECTRONIC));
         all.add(genre("Latin", MusicGenre.LATIN));
         all.add(genre("Metal", MusicGenre.METAL));

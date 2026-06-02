@@ -1,0 +1,16 @@
+{
+    "likes": [
+        "%s bobs their head to the music.",
+        "%s quietly sings along with the chorus.",
+        "%s taps their foot to the beat.",
+        "%s perks up when the song comes on.",
+        "%s smiles at the radio."
+    ],
+    "dislikes": [
+        "%s tunes out the music.",
+        "%s winces when they recognize the song.",
+        "%s groans at the song.",
+        "%s sighs through the chorus.",
+        "%s waits for the next song."
+    ]
+}

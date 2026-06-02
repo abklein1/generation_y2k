@@ -53,26 +53,83 @@ public final class CliqueClothingLoader implements Serializable {
     }
 
     /**
+     * A single garment option drawn from a clique inventory category.
+     * Carries the garment name plus the per-item brand, material, and
+     * pattern descriptors that may legitimately attach to it. Keeping
+     * these per-item (rather than in a clique-wide palette) avoids
+     * nonsense pairings like "denim t-shirt" or "denim wristband".
+     */
+    public static class ClothingOption implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private final String name;
+        private final List<String> brands;
+        private final List<String> materials;
+        private final List<String> patterns;
+
+        ClothingOption(String name, List<String> brands,
+                       List<String> materials, List<String> patterns) {
+            this.name = name;
+            this.brands = brands;
+            this.materials = materials;
+            this.patterns = patterns;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<String> getBrands() {
+            return Collections.unmodifiableList(brands);
+        }
+
+        public List<String> getMaterials() {
+            return Collections.unmodifiableList(materials);
+        }
+
+        public List<String> getPatterns() {
+            return Collections.unmodifiableList(patterns);
+        }
+    }
+
+    /**
      * Holds the clothing catalog for one clique+gender combination.
      */
     public static class CliqueClothingData implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final Map<String, List<String>> itemsByCategory;
+        private final Map<String, List<ClothingOption>> optionsByCategory;
         private final List<String> colors;
         private final List<String> patterns;
         private final List<String> materials;
 
-        CliqueClothingData(Map<String, List<String>> itemsByCategory,
+        CliqueClothingData(Map<String, List<ClothingOption>> optionsByCategory,
                            List<String> colors, List<String> patterns,
                            List<String> materials) {
-            this.itemsByCategory = itemsByCategory;
+            this.optionsByCategory = optionsByCategory;
             this.colors = colors;
             this.patterns = patterns;
             this.materials = materials;
         }
 
+        /**
+         * Returns a map from category to the list of garment names.
+         * Retained for callers (and tests) that only need names; the
+         * per-item descriptors are available via {@link #getOptionsByCategory()}.
+         */
         public Map<String, List<String>> getItemsByCategory() {
-            return Collections.unmodifiableMap(itemsByCategory);
+            Map<String, List<String>> names = new HashMap<>();
+            for (Map.Entry<String, List<ClothingOption>> entry
+                    : optionsByCategory.entrySet()) {
+                List<String> categoryNames = new ArrayList<>();
+                for (ClothingOption option : entry.getValue()) {
+                    categoryNames.add(option.getName());
+                }
+                names.put(entry.getKey(), categoryNames);
+            }
+            return Collections.unmodifiableMap(names);
+        }
+
+        public Map<String, List<ClothingOption>> getOptionsByCategory() {
+            return Collections.unmodifiableMap(optionsByCategory);
         }
 
         public List<String> getColors() {
@@ -91,7 +148,7 @@ public final class CliqueClothingLoader implements Serializable {
          * Returns true if any inventory category has at least one item.
          */
         public boolean hasAnyItems() {
-            for (List<String> items : itemsByCategory.values()) {
+            for (List<ClothingOption> items : optionsByCategory.values()) {
                 if (!items.isEmpty()) {
                     return true;
                 }
@@ -112,11 +169,33 @@ public final class CliqueClothingLoader implements Serializable {
      */
     public static List<String> getItems(String clique, String gender,
                                         String category) {
+        List<ClothingOption> options = getOptions(clique, gender, category);
+        if (options.isEmpty()) {
+            return List.of();
+        }
+        List<String> names = new ArrayList<>(options.size());
+        for (ClothingOption option : options) {
+            names.add(option.getName());
+        }
+        return names;
+    }
+
+    /**
+     * Returns the garment options (name plus per-item brand/material/
+     * pattern descriptors) for a clique/gender/category.
+     *
+     * @param clique   the clique name
+     * @param gender   "Female" or "Male" (case-insensitive)
+     * @param category the inventory category (e.g. "tops", "bottoms")
+     * @return list of garment options, or empty list when missing
+     */
+    public static List<ClothingOption> getOptions(String clique, String gender,
+                                                  String category) {
         CliqueClothingData data = resolve(clique, gender);
         if (data == null) {
             return List.of();
         }
-        return data.itemsByCategory.getOrDefault(category, List.of());
+        return data.optionsByCategory.getOrDefault(category, List.of());
     }
 
     /**
@@ -250,9 +329,9 @@ public final class CliqueClothingLoader implements Serializable {
     }
 
     private static CliqueClothingData parseCategoryData(JSONObject obj) {
-        Map<String, List<String>> categories = new HashMap<>();
+        Map<String, List<ClothingOption>> categories = new HashMap<>();
         for (String categoryKey : CATEGORY_KEYS) {
-            categories.put(categoryKey, readStringList(obj.get(categoryKey)));
+            categories.put(categoryKey, readOptionList(obj.get(categoryKey)));
         }
 
         List<String> colors = readStringList(obj.get("colors"));
@@ -260,6 +339,44 @@ public final class CliqueClothingLoader implements Serializable {
         List<String> materials = readStringList(obj.get("materials"));
 
         return new CliqueClothingData(categories, colors, patterns, materials);
+    }
+
+    /**
+     * Reads a category array whose entries may be either plain strings
+     * (a bare garment name with no descriptors) or JSON objects with a
+     * {@code name} plus optional {@code brands}/{@code materials}/
+     * {@code patterns} arrays.
+     */
+    private static List<ClothingOption> readOptionList(Object value) {
+        List<ClothingOption> result = new ArrayList<>();
+        if (!(value instanceof JSONArray array)) {
+            return result;
+        }
+        for (Object entry : array) {
+            ClothingOption option = parseOption(entry);
+            if (option != null) {
+                result.add(option);
+            }
+        }
+        return result;
+    }
+
+    private static ClothingOption parseOption(Object entry) {
+        if (entry == null) {
+            return null;
+        }
+        if (entry instanceof JSONObject obj) {
+            Object nameValue = obj.get("name");
+            if (nameValue == null) {
+                return null;
+            }
+            return new ClothingOption(nameValue.toString(),
+                    readStringList(obj.get("brands")),
+                    readStringList(obj.get("materials")),
+                    readStringList(obj.get("patterns")));
+        }
+        return new ClothingOption(entry.toString(),
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     private static List<String> readStringList(Object value) {

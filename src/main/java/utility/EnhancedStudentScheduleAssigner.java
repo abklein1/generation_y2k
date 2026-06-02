@@ -462,19 +462,23 @@ public class EnhancedStudentScheduleAssigner {
      */
     static SectionManager.ClassSection findOptimalSection(Student student, String className) {
         List<SectionManager.ClassSection> sections = SectionManager.getClassSections().get(className);
-        if (sections == null || sections.isEmpty())
+        if (sections == null || sections.isEmpty()) {
             return null;
+        }
 
         SectionManager.ClassSection bestSection = null;
         int minEnrollment = Integer.MAX_VALUE;
 
         for (SectionManager.ClassSection section : sections) {
-            if (hasBlockConflict(student, section.getTeacherBlock()))
+            if (hasBlockConflict(student, section.getTeacherBlock())) {
                 continue;
-            if (hasSubjectAreaConflict(student, className, section.getTeacherBlock().getSemester()))
+            }
+            if (hasSubjectAreaConflict(student, className, section.getTeacherBlock().getSemester())) {
                 continue;
-            if (section.isFull())
+            }
+            if (section.isFull()) {
                 continue;
+            }
 
             int currentEnrollment = section.getEnrolledStudents().size();
             if (currentEnrollment < minEnrollment) {

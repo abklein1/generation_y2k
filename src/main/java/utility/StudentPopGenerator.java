@@ -7,6 +7,7 @@ import entity.Items.Outfit;
 import entity.Items.Piercing;
 import entity.Items.WearableItem;
 import entity.Student;
+import utility.music.FavoriteBandAssigner;
 import utility.traits.StudentCharismaWeightFunction;
 import utility.traits.TraitDataset;
 import utility.traits.TraitDatasetLoader;
@@ -879,11 +880,17 @@ public class StudentPopGenerator {
         }
 
         Outfit outfit = new Outfit(recipe.getName());
+        List<String> favoriteBands =
+                student.studentStatistics.getFavoriteBands();
+        // Pick a single coordinated color scheme for the whole outfit so
+        // every garment draws from one cohesive palette rather than each
+        // item getting an independent (potentially garish) random color.
+        List<String> schemeColors = pickSchemeColors(clique);
 
         for (String layer : recipe.getRequiredLayers()) {
             addItemsForLayer(outfit, layer, recipe,
                     pickClothingLayerClique(clique, secondaryClique, gender, layer),
-                    gender);
+                    gender, favoriteBands, schemeColors);
         }
 
         for (String layer : recipe.getOptionalLayers()) {
@@ -896,11 +903,30 @@ public class StudentPopGenerator {
             if (setRandom(0, 99) < chance) {
                 addItemsForLayer(outfit, layer, recipe,
                         pickClothingLayerClique(clique, secondaryClique, gender, layer),
-                        gender);
+                        gender, favoriteBands, schemeColors);
             }
         }
 
         student.studentStatistics.setCurrentOutfit(outfit);
+    }
+
+    /**
+     * Picks one coordinated color scheme for an outfit and returns its
+     * color list. The scheme is chosen from the clique's allowed schemes
+     * (falling back to the default scheme set) so e.g. Emo/Goth outfits
+     * stay in the dark, mostly-black palette. Returns an empty list when
+     * no schemes are loaded so callers leave colors unset.
+     */
+    private static List<String> pickSchemeColors(String clique) {
+        if (!ColorSchemeLoader.hasSchemes()) {
+            return List.of();
+        }
+        List<String> schemeNames = ColorSchemeLoader.getSchemesForClique(clique);
+        if (schemeNames.isEmpty()) {
+            return List.of();
+        }
+        String scheme = schemeNames.get(setRandom(0, schemeNames.size() - 1));
+        return ColorSchemeLoader.getSchemeColors(scheme);
     }
 
     private static String pickClothingLayerClique(String clique,
@@ -950,14 +976,19 @@ public class StudentPopGenerator {
     /**
      * Materializes up to {@code maxLayers} clothing items for the given
      * layer and appends them to {@code outfit}. Each item draws a name
-     * from the clique's category list and optional color/pattern/
-     * material qualifiers from the clique's shared palettes.
+     * from the clique's category list, its brand/material/pattern
+     * qualifiers from that specific garment's own descriptor lists (so a
+     * denim material never lands on a t-shirt), and its color from the
+     * outfit's chosen color scheme.
      */
     private static void addItemsForLayer(Outfit outfit, String layer,
                                          OutfitTypeLoader.OutfitTypeData recipe,
-                                         String clique, String gender) {
-        List<String> names = CliqueClothingLoader.getItems(clique, gender, layer);
-        if (names.isEmpty()) {
+                                         String clique, String gender,
+                                         List<String> favoriteBands,
+                                         List<String> schemeColors) {
+        List<CliqueClothingLoader.ClothingOption> options =
+                CliqueClothingLoader.getOptions(clique, gender, layer);
+        if (options.isEmpty()) {
             return;
         }
         int max = Math.max(1, recipe.getMaxForLayer(layer));
@@ -965,28 +996,57 @@ public class StudentPopGenerator {
                 ? setRandom(1, max)
                 : 1;
 
-        List<String> colors = CliqueClothingLoader.getColors(clique, gender);
-        List<String> patterns = CliqueClothingLoader.getPatterns(clique, gender);
-        List<String> materials = CliqueClothingLoader.getMaterials(clique, gender);
-
         String slot = bodySlotFor(layer);
 
         for (int i = 0; i < count; i++) {
-            String name = names.get(setRandom(0, names.size() - 1));
-            String color = colors.isEmpty()
+            CliqueClothingLoader.ClothingOption option =
+                    options.get(setRandom(0, options.size() - 1));
+            String name = substituteBand(option.getName(), favoriteBands);
+
+            String color = schemeColors.isEmpty()
                     ? null
-                    : colors.get(setRandom(0, colors.size() - 1));
+                    : schemeColors.get(setRandom(0, schemeColors.size() - 1));
+
+            List<String> patterns = option.getPatterns();
             String pattern = (patterns.isEmpty()
                     || setRandom(0, 99) >= CLIQUE_CLOTHING_PATTERN_CHANCE)
                     ? null
                     : patterns.get(setRandom(0, patterns.size() - 1));
+
+            List<String> materials = option.getMaterials();
             String material = materials.isEmpty()
                     ? null
                     : materials.get(setRandom(0, materials.size() - 1));
 
+            List<String> brands = option.getBrands();
+            String brand = (brands.isEmpty()
+                    || setRandom(0, 99) >= CLIQUE_CLOTHING_BRAND_CHANCE)
+                    ? null
+                    : brands.get(setRandom(0, brands.size() - 1));
+
             outfit.addItem(new ClothingItem(name, layer, layer, slot,
-                    material, color, pattern));
+                    material, color, pattern, brand));
         }
+    }
+
+    /**
+     * Replaces the {@code {band}} placeholder in a clothing name with one of
+     * the student's favorite bands (e.g. {@code "{band} hoodie"} ->
+     * {@code "Green Day hoodie"}). Names without the token are returned
+     * unchanged; if the student has no favorite bands a generic
+     * {@code "local band"} stand-in is used so merch never reads literally
+     * as {@code "{band} hoodie"}.
+     */
+    private static String substituteBand(String name,
+                                         List<String> favoriteBands) {
+        if (name == null || !name.contains("{band}")) {
+            return name;
+        }
+        String band = FavoriteBandAssigner.FALLBACK_BAND;
+        if (favoriteBands != null && !favoriteBands.isEmpty()) {
+            band = favoriteBands.get(setRandom(0, favoriteBands.size() - 1));
+        }
+        return name.replace("{band}", band);
     }
 
     /**
@@ -1000,6 +1060,45 @@ public class StudentPopGenerator {
             HashMap<Integer, Student> studentHashMap) {
         for (Student student : studentHashMap.values()) {
             applyClothingAttributes(student);
+        }
+    }
+
+    /**
+     * Assigns favorite bands to a single student based on their clique's
+     * music taste. Must run after clique assignment and before clothing
+     * generation, since band merch is built from these bands.
+     *
+     * @param student the student to assign bands to
+     */
+    public static void applyFavoriteBands(Student student) {
+        FavoriteBandAssigner.assign(student);
+    }
+
+    /**
+     * Assigns favorite bands to every student. Intended to be called after
+     * clique assignment and before {@link #applyAllClothingAttributes}.
+     *
+     * @param studentHashMap the student population
+     */
+    public static void applyAllFavoriteBands(
+            HashMap<Integer, Student> studentHashMap) {
+        for (Student student : studentHashMap.values()) {
+            applyFavoriteBands(student);
+        }
+    }
+
+    /**
+     * Assigns favorite bands to every student relative to a reference date,
+     * which lets tastemaker students pull picks from the sim's near future.
+     *
+     * @param studentHashMap the student population
+     * @param referenceDate  the current sim date ("now")
+     */
+    public static void applyAllFavoriteBands(
+            HashMap<Integer, Student> studentHashMap,
+            java.time.LocalDate referenceDate) {
+        for (Student student : studentHashMap.values()) {
+            FavoriteBandAssigner.assign(student, referenceDate);
         }
     }
 

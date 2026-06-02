@@ -37,6 +37,11 @@ public final class GenreCollapser {
      * (lowercased) raw tag wins, so order encodes priority.
      */
     private static final Rule[] RULES = {
+            // Faith-based tags take priority so "christian rock", "gospel",
+            // and "worship" land in CHRISTIAN rather than their secular base
+            // genre (rock/pop/r&b).
+            new Rule(MusicGenre.CHRISTIAN, "christian", "gospel", "worship",
+                    "ccm", "praise"),
             new Rule(MusicGenre.EMO, "emo", "screamo"),
             new Rule(MusicGenre.METAL, "metal", "metalcore", "deathcore",
                     "grindcore", "djent", "thrash", "mathcore", "doom"),
@@ -67,10 +72,14 @@ public final class GenreCollapser {
                     // music, not the hard/classic rock a ROCK station wants;
                     // route it to POP before the bare "rock" rule below.
                     "soft rock", "yacht rock", "mellow"),
+            // Note: bare "dance" and "disco" are intentionally excluded - they
+            // swept in a flood of disco-era and dance-pop chart hits that
+            // drowned out genuine club/EDM acts. Dance-pop tags still carry a
+            // "pop" marker and route to POP; disco-only acts fall to OTHER.
             new Rule(MusicGenre.ELECTRONIC, "house", "techno", "edm", "electro",
                     "trance", "dubstep", "drum and bass", "dnb", "ambient",
                     "idm", "big room", "future bass", "electronica", "synth",
-                    "downtempo", "breakbeat", "trip hop", "dance", "disco",
+                    "downtempo", "breakbeat", "trip hop",
                     "eurodance", "hardstyle", "big beat", "glitch", "vaporwave",
                     "chillwave", "rave"),
             new Rule(MusicGenre.FOLK, "folk", "singer-songwriter", "americana",

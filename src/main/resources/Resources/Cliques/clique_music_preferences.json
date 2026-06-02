@@ -1,6 +1,6 @@
 {
     "2004": {
-        "_comment": "Per-clique music taste. genres maps a canonical MusicGenre name to a signed weight: positive = likes (toward +1.0), negative = dislikes (toward -1.0). Unlisted genres are treated as 0.0 (neutral). 'openness' (0.0-1.0) scales how much an unfamiliar/disliked genre is tolerated; higher = more open. Keys starting with '_' are ignored except '_default', which is the fallback for any clique not listed here. Valid genres: POP, ROCK, HIP_HOP, RNB, COUNTRY, ELECTRONIC, PUNK, EMO, METAL, JAZZ, LATIN, FOLK, CLASSICAL, SOUNDTRACK.",
+        "_comment": "Per-clique music taste. genres maps a canonical MusicGenre name to a signed weight: positive = likes (toward +1.0), negative = dislikes (toward -1.0). Unlisted genres are treated as 0.0 (neutral). 'openness' (0.0-1.0) scales how much an unfamiliar/disliked genre is tolerated; higher = more open. Keys starting with '_' are ignored except '_default', which is the fallback for any clique not listed here. Valid genres: POP, ROCK, HIP_HOP, RNB, COUNTRY, ELECTRONIC, PUNK, EMO, METAL, JAZZ, LATIN, FOLK, CLASSICAL, SOUNDTRACK, CHRISTIAN.",
         "_default": {
             "openness": 0.7,
             "genres": {
@@ -17,7 +17,7 @@
             "genres": {
                 "EMO": 1.0,
                 "PUNK": 0.7,
-                "ROCK": 0.6,
+                "ROCK": 0.35,
                 "POP": -0.2,
                 "HIP_HOP": -0.3,
                 "COUNTRY": -0.6
@@ -27,7 +27,7 @@
             "openness": 0.4,
             "genres": {
                 "PUNK": 1.0,
-                "ROCK": 0.7,
+                "ROCK": 0.45,
                 "METAL": 0.5,
                 "EMO": 0.4,
                 "POP": -0.5,
@@ -239,10 +239,11 @@
         "Christian": {
             "openness": 0.4,
             "genres": {
-                "POP": 0.6,
-                "ROCK": 0.5,
-                "COUNTRY": 0.5,
-                "RNB": 0.4,
+                "CHRISTIAN": 1.0,
+                "POP": 0.5,
+                "ROCK": 0.4,
+                "COUNTRY": 0.4,
+                "RNB": 0.3,
                 "HIP_HOP": -0.3,
                 "METAL": -0.5,
                 "PUNK": -0.5,

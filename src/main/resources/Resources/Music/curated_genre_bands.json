@@ -1,0 +1,19 @@
+{
+    "_comment": "Curated supplemental bands folded into a genre's favorite-band roster regardless of Billboard charting. Used for scene-defining acts that under-charted on the Hot 100 or whose breakout post-dates the 2004 game cutoff (e.g. the 2004 emo wave broke on albums/MTV2, not the singles chart). Each curated band is weighted on par with the genre's top charting act, so they surface regularly alongside the real chart acts. Keys are canonical MusicGenre names; values are arrays of band display names. Keys starting with '_' are ignored.",
+    "EMO": [
+        "My Chemical Romance",
+        "Taking Back Sunday",
+        "The Used",
+        "Jimmy Eat World",
+        "Underoath",
+        "Hawthorne Heights",
+        "From First to Last",
+        "Dashboard Confessional",
+        "Brand New",
+        "Thursday",
+        "Senses Fail",
+        "Story of the Year",
+        "Funeral for a Friend",
+        "Saves the Day"
+    ]
+}

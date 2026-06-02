@@ -6,6 +6,7 @@ import entity.Items.Decoration;
 import entity.Items.EquipmentSlot;
 import entity.Items.Outfit;
 import entity.Items.WearableItem;
+import entity.Radio.MusicGenre;
 import entity.Radio.Radio;
 import entity.Radio.RadioStation;
 import entity.Radio.Song;
@@ -16,6 +17,8 @@ import entity.academic.AcademicSkill;
 import entity.academic.CourseProgress;
 import entity.academic.HomeworkAssignment;
 import entity.academic.StudentAcademicRecord;
+import utility.music.MusicPreference;
+import utility.music.MusicTaste;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -912,6 +915,15 @@ public class Inspector {
     }
 
     /**
+     * Updates a JTextArea with the student's favorite bands and music taste.
+     * Used by SchoolController's tabbed inspection window.
+     */
+    public static void updateStudentLikesDislikesArea(Student student, JTextArea area) {
+        area.setText(buildLikesDislikesText(student));
+        area.setCaretPosition(0);
+    }
+
+    /**
      * Updates a JTextArea with the staff member's physical description.
      * Used by SchoolController's tabbed inspection window.
      */
@@ -1186,6 +1198,8 @@ public class Inspector {
      * Tab 1 (Description): Physical appearance, grade, birthday, family, history.
      * Tab 2 (Stats): Base stats, secondary stats, and status effects.
      * Tab 3 (Schedule): Class schedule organized by Fall/Spring semesters.
+     * Tab 4 (Academic): Course progress and academic record.
+     * Tab 5 (Likes/Dislikes): Favorite bands and clique-driven music taste.
      *
      * @param student the student to inspect
      */
@@ -1220,6 +1234,14 @@ public class Inspector {
         JScrollPane academicScroll = new JScrollPane(academicArea);
         tabbedPane.addTab("Academic", academicScroll);
 
+        // Likes/Dislikes tab
+        JTextArea likesArea = new JTextArea(buildLikesDislikesText(student));
+        likesArea.setEditable(false);
+        likesArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        likesArea.setCaretPosition(0);
+        JScrollPane likesScroll = new JScrollPane(likesArea);
+        tabbedPane.addTab("Likes/Dislikes", likesScroll);
+
         // Create the dialog
         JDialog dialog = new JDialog();
         dialog.setTitle("Student: " + student.studentName.getFullName());
@@ -1228,6 +1250,95 @@ public class Inspector {
         dialog.setSize(800, 600);
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
+    }
+
+    /**
+     * Builds the Likes/Dislikes text for a student: their favorite bands and
+     * the genres their clique taste likes and dislikes.
+     *
+     * @param student the student to summarize
+     * @return the formatted likes/dislikes text
+     */
+    private static String buildLikesDislikesText(Student student) {
+        StringBuilder sb = new StringBuilder();
+        String firstName = student.studentName.getFirstName();
+        sb.append(student.studentName.getFullName())
+                .append("\n=====================================\n\n");
+
+        // Favorite bands
+        sb.append("Favorite Bands:\n");
+        List<String> bands = student.studentStatistics.getFavoriteBands();
+        if (bands == null || bands.isEmpty()) {
+            sb.append("   (none listed)\n");
+        } else {
+            for (String band : bands) {
+                sb.append("   - ").append(band).append("\n");
+            }
+        }
+
+        // Music taste by genre (blended primary + secondary clique)
+        MusicPreference taste = MusicTaste.forStudent(student);
+        List<Map.Entry<MusicGenre, Double>> liked = new java.util.ArrayList<>();
+        List<Map.Entry<MusicGenre, Double>> disliked = new java.util.ArrayList<>();
+        for (Map.Entry<MusicGenre, Double> entry
+                : taste.getGenreWeights().entrySet()) {
+            if (entry.getValue() == null) {
+                continue;
+            }
+            if (entry.getValue() > 0.0) {
+                liked.add(entry);
+            } else if (entry.getValue() < 0.0) {
+                disliked.add(entry);
+            }
+        }
+        liked.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
+        disliked.sort((a, b) -> Double.compare(a.getValue(), b.getValue()));
+
+        sb.append("\nMusic They Like:\n");
+        if (liked.isEmpty()) {
+            sb.append("   (no strong preferences)\n");
+        } else {
+            for (Map.Entry<MusicGenre, Double> entry : liked) {
+                sb.append("   + ").append(formatGenreName(entry.getKey()))
+                        .append("\n");
+            }
+        }
+
+        sb.append("\nMusic They Dislike:\n");
+        if (disliked.isEmpty()) {
+            sb.append("   (nothing in particular)\n");
+        } else {
+            for (Map.Entry<MusicGenre, Double> entry : disliked) {
+                sb.append("   - ").append(formatGenreName(entry.getKey()))
+                        .append("\n");
+            }
+        }
+
+        sb.append("\n").append(firstName)
+                .append(bands != null && !bands.isEmpty()
+                        ? " proudly reps their favorite bands.\n"
+                        : "\n");
+        return sb.toString();
+    }
+
+    /**
+     * Formats a canonical genre enum into a human-readable label
+     * (e.g. {@code HIP_HOP} -> {@code "Hip Hop"}).
+     */
+    private static String formatGenreName(MusicGenre genre) {
+        String[] words = genre.name().toLowerCase().split("_");
+        StringBuilder out = new StringBuilder();
+        for (String word : words) {
+            if (word.isEmpty()) {
+                continue;
+            }
+            if (out.length() > 0) {
+                out.append(" ");
+            }
+            out.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1));
+        }
+        return out.toString();
     }
 
     /**

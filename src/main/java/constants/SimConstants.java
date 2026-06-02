@@ -724,6 +724,10 @@ public final class SimConstants {
     // the clique defines a pattern palette. Plain solids are the more
     // common default so this stays moderate.
     public static final int CLIQUE_CLOTHING_PATTERN_CHANCE = 30;
+    // Brand qualifier (Vans, DC, etc.) chance per garment when that
+    // specific garment lists allowed brands. Generous because branded
+    // merch is a defining feature of many cliques' looks.
+    public static final int CLIQUE_CLOTHING_BRAND_CHANCE = 60;
 
     // Adult/Teacher Vision Constants
     // Older adults have higher rates of vision issues, especially hyperopia and astigmatism
@@ -980,6 +984,20 @@ public final class SimConstants {
     // Commute station-pick weights: car riders strongly avoid oldies stations.
     public static final int RADIO_COMMUTE_STATION_WEIGHT = 10;
     public static final int RADIO_COMMUTE_OLDIES_WEIGHT_CAR = 1;
+
+    // ==================== Commute radio music reactions ====================
+    // When a commuting student hears a song, its genre(s) are scored against
+    // the student's (blended primary + secondary clique) music taste on the
+    // [-1.0, 1.0] weight scale. A score at/above the like threshold is a small
+    // mood lift; at/below the dislike threshold is a small mood dip. Dislike is
+    // damped by the listener's openness so open-minded students mind less.
+    public static final double RADIO_REACTION_LIKE_THRESHOLD = 0.3;
+    public static final double RADIO_REACTION_DISLIKE_THRESHOLD = -0.3;
+    public static final double RADIO_REACTION_ENTERTAINMENT_BOOST = 5.0;
+    public static final double RADIO_REACTION_ENTERTAINMENT_PENALTY = 4.0;
+    // A liked song is a small relaxing moment on the way to school.
+    public static final double RADIO_REACTION_RELAXATION_RECOVERY = 0.5;
+    // Reaction flavor templates live in Resources/Radio/reaction_messages.json.
 
     private SimConstants() {
     }

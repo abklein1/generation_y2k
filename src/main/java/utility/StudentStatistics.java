@@ -113,6 +113,10 @@ public class StudentStatistics implements PStatistics {
     // Charisma-driven unique physical/behavioral traits
     private List<String> uniqueTraits;
 
+    // Favorite bands drawn from the genres this student's clique likes most.
+    // Drives band merch generation and flavor text.
+    private List<String> favoriteBands;
+
     // Current outfit (clothing items organized by layer)
     private Outfit currentOutfit;
 
@@ -188,6 +192,7 @@ public class StudentStatistics implements PStatistics {
         this.hairHighlights = null;
         this.hairStyle = null;
         this.uniqueTraits = new ArrayList<>();
+        this.favoriteBands = new ArrayList<>();
         this.currentOutfit = new Outfit();
     }
 
@@ -644,6 +649,19 @@ public class StudentStatistics implements PStatistics {
 
     public void setUniqueTraits(List<String> traits) {
         this.uniqueTraits = new ArrayList<>(traits);
+    }
+
+    public List<String> getFavoriteBands() {
+        if (this.favoriteBands == null) {
+            this.favoriteBands = new ArrayList<>();
+        }
+        return Collections.unmodifiableList(this.favoriteBands);
+    }
+
+    public void setFavoriteBands(List<String> bands) {
+        this.favoriteBands = (bands == null)
+                ? new ArrayList<>()
+                : new ArrayList<>(bands);
     }
 
     public String getRace() {

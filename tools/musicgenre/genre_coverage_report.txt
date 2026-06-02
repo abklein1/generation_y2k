@@ -51,19 +51,15 @@ Top unmatched performers by chart frequency:
       88  The B-52s
 
 Raw genre tags that collapse to OTHER (need a rule?), by frequency:
+     232  disco
      164  stomp and holler
-     143  christian music
-     131  ccm
-     130  worship
-      81  gospel
+     148  post-disco
       77  lo-fi
       77  comic
       75  tropical
-      74  anthem worship
       70  karaoke
       61  freestyle
       59  dreamo
-      58  world worship
       52  melancholia
       45  reggae fusion
       42  slow core
@@ -72,29 +68,29 @@ Raw genre tags that collapse to OTHER (need a rule?), by frequency:
       40  pixie
       39  red dirt
       39  contemporary post-bop
+      37  bubblegum dance
       34  escape room
       32  reggae
+      32  deep disco
       31  experimental
-      29  roots worship
       27  minneapolis sound
       27  zolo
       27  roots reggae
       27  hard bop
       25  brostep
       24  hi-nrg
+      23  dancehall
       22  miami bass
       20  new age
       20  preverb
       20  wrestling
       19  rare groove
       18  boom bap
-      18  contemporary gospel
       18  celtic
       18  gbvfi
       18  talent show
+      17  old school dancehall
       16  industrial
-      16  deep ccm
-      16  praise
       16  deep talent show
       16  world
       16  cosmic american
@@ -105,9 +101,13 @@ Raw genre tags that collapse to OTHER (need a rule?), by frequency:
       15  dub
       15  madchester
       14  beach music
+      14  australian dance
       13  neo-progressive
       13  mambo
       13  epicore
       12  easycore
       12  vocal harmony group
-      12  southern gospel
+      12  smooth saxophone
+      12  slayer
+      12  old-time
+      11  sertanejo universitario

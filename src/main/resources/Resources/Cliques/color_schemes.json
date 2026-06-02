@@ -1,0 +1,18 @@
+{
+    "2004": {
+        "schemes": {
+            "dark": ["black", "black", "black", "charcoal", "slate", "gray"],
+            "neutral": ["white", "gray", "navy", "tan", "brown", "cream"],
+            "primary": ["navy", "red", "blue", "green", "black"],
+            "earth": ["olive", "brown", "tan", "rust", "cream"],
+            "bright": ["red", "yellow", "blue", "green", "orange", "pink"]
+        },
+        "cliqueSchemes": {
+            "Emo": ["dark"],
+            "Goth": ["dark"],
+            "Punk": ["dark", "primary"],
+            "Skater": ["primary", "neutral"]
+        },
+        "default": ["neutral"]
+    }
+}

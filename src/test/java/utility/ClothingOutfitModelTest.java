@@ -25,6 +25,24 @@ class ClothingOutfitModelTest {
     }
 
     @Test
+    @DisplayName("ClothingItem display name appends brand closest to the noun")
+    void testDisplayNameAppendsBrand() {
+        ClothingItem hoodie = new ClothingItem("hoodie", "outerwear",
+                "outerwear", "upper torso", null, "navy", null, "Vans");
+
+        assertEquals("navy Vans hoodie", hoodie.getDisplayName());
+    }
+
+    @Test
+    @DisplayName("ClothingItem display name skips a brand already in the name")
+    void testDisplayNameSkipsRedundantBrand() {
+        ClothingItem shoes = new ClothingItem("DC skate shoes", "shoes",
+                "shoes", "feet", null, "black", null, "DC");
+
+        assertEquals("black DC skate shoes", shoes.getDisplayName());
+    }
+
+    @Test
     @DisplayName("ClothingItem display name skips qualifiers already in the name")
     void testDisplayNameSkipsRedundantQualifiers() {
         ClothingItem tee = new ClothingItem("black band t-shirt", "tops", "tops",

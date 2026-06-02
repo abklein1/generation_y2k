@@ -3,30 +3,22 @@
         "Emo": {
             "female": {
                 "outerwear": [
-                    "MCR hoodie",
-                    "The Used hoodie",
-                    "FOB hoodie",
-                    "AFI hoodie",
-                    "Taking Back Sunday hoodie",
-                    "Atreyu hoodie",
+                    "{band} hoodie",
                     "military jacket"
                 ],
                 "tops": [
-                    "MCR t-shirt",
-                    "The Used t-shirt",
-                    "FOB t-shirt",
-                    "AFI t-shirt",
-                    "Taking Back Sunday t-shirt",
-                    "Atreyu t-shirt",
+                    "{band} t-shirt",
                     "graphic tee",
                     "graphic tank top",
                     "local band t-shirt",
+                    "{band} tank top",
                     "tank top",
                     "tank top with lace fringe"
                 ],
                 "bottoms": [
-                    "skinny jeans",
-                    "ripped skinny jeans"
+                    { "name": "skinny jeans", "materials": ["denim"] },
+                    { "name": "ripped skinny jeans", "materials": ["denim"] },
+                    { "name": "straight leg jeans", "materials": ["denim"] }
                 ],
                 "one_piece": [],
                 "shoes": [
@@ -40,38 +32,24 @@
                     "checkered bracelet",
                     "plastic bracelet"
                 ],
-                "colors": [
-                    "black",
-                    "charcoal",
-                    "navy",
-                    "gray",
-                    "slate"
-                ],
+                "colors": [],
                 "patterns": [],
                 "materials": []
             },
             "male": {
                 "outerwear": [
-                    "MCR hoodie",
-                    "The Used hoodie",
-                    "FOB hoodie",
-                    "Taking Back Sunday hoodie",
-                    "Atreyu hoodie",
+                    "{band} hoodie",
                     "military jacket"
                 ],
                 "tops": [
-                    "MCR t-shirt",
-                    "The Used t-shirt",
-                    "FOB t-shirt",
-                    "AFI t-shirt",
-                    "Taking Back Sunday t-shirt",
-                    "Atreyu t-shirt",
+                    "{band} t-shirt",
                     "graphic tee",
                     "local band t-shirt"
                 ],
                 "bottoms": [
-                    "skinny jeans",
-                    "ripped skinny jeans"
+                    { "name": "skinny jeans", "materials": ["denim"] },
+                    { "name": "ripped skinny jeans", "materials": ["denim"] },
+                    { "name": "straight leg jeans", "materials": ["denim"] }
                 ],
                 "one_piece": [],
                 "shoes": [
@@ -84,13 +62,7 @@
                     "studded leather wristband",
                     "checkered bracelet"
                 ],
-                "colors": [
-                    "black",
-                    "charcoal",
-                    "navy",
-                    "gray",
-                    "slate"
-                ],
+                "colors": [],
                 "patterns": [],
                 "materials": []
             }
@@ -98,26 +70,22 @@
         "Punk": {
             "female": {
                 "outerwear": [
-                    "denim jacket",
-                    "denim Misfits jacket",
-                    "Green Day hoodie"
+                    { "name": "denim jacket", "materials": ["denim"] },
+                    { "name": "denim {band} jacket", "materials": ["denim"] },
+                    "{band} hoodie"
                 ],
                 "tops": [
-                    "Green Day t-shirt",
-                    "Green Day tank top",
-                    "Bad Religion t-shirt",
-                    "Sum 41 t-shirt",
-                    "The Offspring t-shirt",
-                    "Say Anything t-shirt"
+                    "{band} t-shirt",
+                    "{band} tank top"
                 ],
                 "bottoms": [
-                    "ripped straight leg jeans",
-                    "ripped skinny jeans",
-                    "skinny jeans",
-                    "leather pants",
-                    "tartan plaid skirt",
-                    "tartan plaid pants",
-                    "flare jeans"
+                    { "name": "ripped straight leg jeans", "materials": ["denim"] },
+                    { "name": "ripped skinny jeans", "materials": ["denim"] },
+                    { "name": "skinny jeans", "materials": ["denim"] },
+                    { "name": "leather pants", "materials": ["leather"] },
+                    { "name": "tartan skirt", "patterns": ["tartan plaid"] },
+                    { "name": "tartan pants", "patterns": ["tartan plaid"] },
+                    { "name": "flare jeans", "materials": ["denim"] }
                 ],
                 "one_piece": [],
                 "shoes": [
@@ -126,22 +94,19 @@
                 "accessories": [],
                 "colors": [],
                 "patterns": [],
-                "materials": [
-                    "denim",
-                    "leather"
-                ]
+                "materials": []
             },
             "male": {
                 "outerwear": [
-                    "jacket",
-                    "Misfits jacket",
-                    "Green Day hoodie"
+                    { "name": "jacket", "materials": ["leather", "denim"] },
+                    "{band} jacket",
+                    "{band} hoodie"
                 ],
                 "tops": [
-                    "Green Day t-shirt"
+                    "{band} t-shirt"
                 ],
                 "bottoms": [
-                    "skinny jeans"
+                    { "name": "skinny jeans", "materials": ["denim"] }
                 ],
                 "one_piece": [],
                 "shoes": [],
@@ -154,44 +119,32 @@
         "Skater": {
             "female": {
                 "outerwear": [
-                    "Quicksilver hoodie",
-                    "DC hoodie",
-                    "Etnies hoodie",
-                    "Vans hoodie"
+                    { "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans"] }
                 ],
                 "tops": [
-                    "Etnies t-shirt",
-                    "Vans t-shirt",
-                    "Quicksilver t-shirt",
-                    "DC t-shirt",
-                    "tank top"
+                    { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] },
+                    { "name": "tank top", "materials": ["cotton"] }
                 ],
                 "bottoms": [
-                    "skinny jeans",
-                    "ripped skinny jeans",
-                    "cargo pants"
+                    { "name": "skinny jeans", "materials": ["denim"] },
+                    { "name": "ripped skinny jeans", "materials": ["denim"] },
+                    { "name": "cargo pants", "materials": ["cotton"] }
                 ],
                 "one_piece": [],
                 "shoes": [
                     "Vans slip-on sneakers",
                     "Converse hightop sneakers",
                     "DC skate shoes",
-                    "Etnies skate shoes"
+                    "Etnies skate shoes",
+                    "Osiris skate shoes"
                 ],
                 "accessories": [],
-                "colors": [
-                    "navy",
-                    "black",
-                    "yellow",
-                    "red",
-                    "green",
-                    "blue"
-                ],
+                "colors": [],
                 "patterns": [],
                 "materials": []
             },
             "male": {
-                "outerwear": [],
+                "outerwear": [{ "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans"] }],
                 "tops": [],
                 "bottoms": [],
                 "one_piece": [],
