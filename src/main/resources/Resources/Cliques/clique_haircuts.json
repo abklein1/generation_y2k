@@ -4,16 +4,25 @@
             "female": {
                 "white": {
                     "short": [
-                        "pixie"
+                        "pixie",
+                        "swoop",
+                        "swept bangs",
+                        "side fringe"
                     ],
                     "chin-length": [
-                        "bob"
+                        "bob",
+                        "swoop",
+                        "chopped layer cut",
+                        "swept bangs",
+                        "side fringe"
                     ],
                     "neck-length": [
                         "shag",
                         "bob",
                         "swoop",
-                        "chopped layer cut"
+                        "chopped layer cut",
+                        "swept bangs",
+                        "side fringe"
                     ],
                     "shoulder-length": [
                         "swoop",
@@ -28,18 +37,21 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "deep red",
-                        "magenta",
-                        "purple",
-                        "dark brown"
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach white",
-                        "silver",
-                        "ice blonde",
-                        "bleach blond",
-                        "red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 },
                 "black": {
@@ -68,16 +80,22 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "deep red",
-                        "magenta",
-                        "purple"
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach white",
-                        "silver",
-                        "bleach blond",
-                        "red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 },
                 "api": {
@@ -106,18 +124,22 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "deep red",
-                        "magenta",
-                        "purple",
-                        "dark brown"
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach white",
-                        "silver",
-                        "ice blonde",
-                        "bleach blond",
-                        "red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 },
                 "hispanic": {
@@ -146,18 +168,23 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "deep red",
-                        "magenta",
-                        "purple",
-                        "dark brown"
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach white",
-                        "silver",
-                        "ice blonde",
-                        "bleach blond",
-                        "red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 },
                 "2prace": {
@@ -186,35 +213,42 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "deep red",
-                        "magenta",
-                        "purple",
-                        "dark brown"
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach white",
-                        "silver",
-                        "ice blonde",
-                        "bleach blond",
-                        "red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 }
             },
             "male": {
                 "white": {
                     "very short": [
-                        "buzz cut"
+                        "buzz cut",
+                        "side fringe"
                     ],
                     "short": [
                         "side sweep",
-                        "bob"
+                        "bob",
+                        "side fringe"
                     ],
                     "chin-length": [
                         "side sweep",
                         "shag",
                         "swoop",
-                        "bob"
+                        "bob",
+                        "side fringe"
                     ],
                     "long": [
                         "shag",
@@ -228,12 +262,22 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "dark brown"
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach blond",
-                        "dark red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 },
                 "black": {
@@ -255,10 +299,23 @@
                     "waist-length": [
                         "chopped layer cut"
                     ],
-                    "dyes": [],
+                    "dyes": [
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
+                    ],
                     "highlights": [
-                        "dark red",
-                        "purple"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 },
                 "api": {
@@ -287,12 +344,22 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "dark brown"
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach blond",
-                        "dark red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 },
                 "hispanic": {
@@ -321,12 +388,22 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "dark brown"
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach blond",
-                        "dark red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 },
                 "2prace": {
@@ -355,12 +432,22 @@
                         "chopped layer cut"
                     ],
                     "dyes": [
-                        "black",
-                        "dark brown"
+                        "Pitch Black",
+                        "Raven",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ],
                     "highlights": [
-                        "bleach blond",
-                        "dark red"
+                        "Feria Extra Bleach Blonde",
+                        "Pitch Black",
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Blood Red",
+                        "Deep Purple",
+                        "Burgandy Wine"
                     ]
                 }
             }
@@ -394,19 +481,32 @@
                         "long layer cut"
                     ],
                     "dyes": [
-                        "bleach blond",
-                        "magenta",
-                        "pink",
-                        "black",
-                        "red",
-                        "florescent green"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "red",
-                        "pink",
-                        "purple",
-                        "bleach white",
-                        "blue"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 },
                 "black": {
@@ -449,15 +549,32 @@
                         "locs"
                     ],
                     "dyes": [
-                        "purple",
-                        "maroon",
-                        "dark red",
-                        "dark blue"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "red",
-                        "pink",
-                        "purple"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 },
                 "api": {
@@ -487,16 +604,32 @@
                         "long layer cut"
                     ],
                     "dyes": [
-                        "purple",
-                        "maroon",
-                        "dark red",
-                        "dark blue",
-                        "bleach blond"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "red",
-                        "pink",
-                        "purple"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 },
                 "hispanic": {
@@ -526,16 +659,32 @@
                         "long layer cut"
                     ],
                     "dyes": [
-                        "purple",
-                        "maroon",
-                        "dark red",
-                        "dark blue",
-                        "bleach blond"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "red",
-                        "pink",
-                        "purple"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 },
                 "2prace": {
@@ -578,16 +727,32 @@
                         "locs"
                     ],
                     "dyes": [
-                        "purple",
-                        "maroon",
-                        "dark red",
-                        "dark blue",
-                        "violet"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "red",
-                        "pink",
-                        "purple"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 }
             },
@@ -622,17 +787,32 @@
                         "punk mullet"
                     ],
                     "dyes": [
-                        "bleach blond",
-                        "green",
-                        "blue",
-                        "red",
-                        "black"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "bleach blond",
-                        "blond",
-                        "red",
-                        "orange"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 },
                 "black": {
@@ -669,18 +849,32 @@
                         "braids"
                     ],
                     "dyes": [
-                        "purple",
-                        "maroon",
-                        "dark red",
-                        "dark blue",
-                        "violet"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "red",
-                        "pink",
-                        "purple",
-                        "bleach blond",
-                        "orange"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 },
                 "api": {
@@ -713,15 +907,32 @@
                         "punk mullet"
                     ],
                     "dyes": [
-                        "bleach blond",
-                        "green",
-                        "blue",
-                        "red",
-                        "black"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "bleach blond",
-                        "blond"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 },
                 "hispanic": {
@@ -754,15 +965,32 @@
                         "punk mullet"
                     ],
                     "dyes": [
-                        "bleach blond",
-                        "green",
-                        "blue",
-                        "red",
-                        "black"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "bleach blond",
-                        "blond"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 },
                 "2prace": {
@@ -799,18 +1027,32 @@
                         "braids"
                     ],
                     "dyes": [
-                        "purple",
-                        "maroon",
-                        "dark red",
-                        "dark blue",
-                        "violet"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ],
                     "highlights": [
-                        "red",
-                        "pink",
-                        "purple",
-                        "bleach blond",
-                        "orange"
+                        "Vampire Red",
+                        "Pillarbox Red",
+                        "Hot Hot Pink",
+                        "Atomic Turquoise",
+                        "Purple Haze",
+                        "Shocking Blue",
+                        "Cherry Bomb",
+                        "Atomic Pink",
+                        "Napalm Orange",
+                        "Deep Purple",
+                        "Electric Lizard",
+                        "Inferno"
                     ]
                 }
             }
@@ -883,10 +1125,19 @@
                     ],
                     "shoulder-length": [
                         "locs",
-                        "braids"
+                        "braids",
+                        "braid"
                     ],
-                    "waist-length": [],
-                    "extremely long": [],
+                    "waist-length": [
+                        "locs",
+                        "braids",
+                        "braid"
+                    ],
+                    "extremely long": [
+                        "locs",
+                        "braids",
+                        "braid"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
@@ -2724,7 +2975,9 @@
                         "bleach blond",
                         "blond"
                     ],
-                    "highlights": []
+                    "highlights": [
+                        "bleach blond"
+                    ]
                 },
                 "black": {
                     "very short": [
@@ -3428,12 +3681,18 @@
         "Suit": {
             "female": {
                 "white": {
-                    "short": [],
+                    "short": [
+                        "bob",
+                        "graduated bob",
+                        "side part"
+                    ],
                     "chin-length": [
                         "bob",
                         "tight bun",
                         "high ponytail",
-                        "side swept bangs"
+                        "side swept bangs",
+                        "graduated bob",
+                        "side part"
                     ],
                     "neck-length": [
                         "bob",
@@ -3442,9 +3701,21 @@
                         "low ponytail",
                         "side swept bangs"
                     ],
-                    "shoulder-length": [],
-                    "waist-length": [],
-                    "extremely long": [],
+                    "shoulder-length": [
+                        "high ponytail",
+                        "low ponytail",
+                        "tight braid",
+                        "tight bun"
+                    ],
+                    "waist-length": [
+                        "tight bun",
+                        "low ponytail",
+                        "tight braid"
+                    ],
+                    "extremely long": [
+                        "tight bun",
+                        "tight braid"
+                    ],
                     "dyes": [],
                     "highlights": []
                 },
@@ -3521,8 +3792,15 @@
                     "highlights": []
                 },
                 "black": {
-                    "very short": [],
-                    "short": [],
+                    "very short": [
+                        "buzz cut",
+                        "bald fade",
+                        "tapered fade"
+                    ],
+                    "short": [
+                        "bald fade",
+                        "tapered fade"
+                    ],
                     "chin-length": [],
                     "long": [],
                     "shoulder-length": [],

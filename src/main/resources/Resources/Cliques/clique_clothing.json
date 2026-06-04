@@ -4,7 +4,9 @@
             "female": {
                 "outerwear": [
                     "{band} hoodie",
-                    "military jacket"
+                    "military jacket",
+                    "zip up faux fur jacket",
+                    { "name": "zip up jacket", "brands": ["Hot Topic"], "materials": ["cotton"] }
                 ],
                 "tops": [
                     "{band} t-shirt",
@@ -27,10 +29,12 @@
                     "Converse sneakers"
                 ],
                 "accessories": [
-                    "studded belt",
-                    "studded leather wristband",
-                    "checkered bracelet",
-                    "plastic bracelet"
+                    {"name": "studded belt", "materials": ["leather", "canvas"] },
+                    {"name": "studded wristband", "materials": ["leather", "plastic"] },
+                    {"name": "checkered bracelet", "materials": ["plastic"] },
+                    {"name": "bracelet", "materials": ["plastic"] },
+                    {"name": "slap bracelet", "materials": ["plastic"] },
+                    {"name": "choker", "materials": ["plastic", "lace", "ribbon"] }
                 ],
                 "colors": [],
                 "patterns": [],
@@ -70,8 +74,8 @@
         "Punk": {
             "female": {
                 "outerwear": [
-                    { "name": "denim jacket", "materials": ["denim"] },
-                    { "name": "denim {band} jacket", "materials": ["denim"] },
+                    { "name": "jacket", "materials": ["denim", "leather"] },
+                    { "name": "{band} jacket", "materials": ["denim", "leather"] },
                     "{band} hoodie"
                 ],
                 "tops": [
@@ -82,14 +86,16 @@
                     { "name": "ripped straight leg jeans", "materials": ["denim"] },
                     { "name": "ripped skinny jeans", "materials": ["denim"] },
                     { "name": "skinny jeans", "materials": ["denim"] },
-                    { "name": "leather pants", "materials": ["leather"] },
-                    { "name": "tartan skirt", "patterns": ["tartan plaid"] },
-                    { "name": "tartan pants", "patterns": ["tartan plaid"] },
-                    { "name": "flare jeans", "materials": ["denim"] }
+                    { "name": "pants", "materials": ["leather", "denim"] },
+                    { "name": "skirt", "patterns": ["tartan plaid"] },
+                    { "name": "pants", "patterns": ["tartan plaid"] },
+                    { "name": "bootcut jeans", "materials": ["denim"] }
                 ],
                 "one_piece": [],
                 "shoes": [
-                    "Doc Martens"
+                    "Doc Martens",
+                    "Platform boots",
+                    "Military surplus boots"
                 ],
                 "accessories": [],
                 "colors": [],
@@ -119,7 +125,7 @@
         "Skater": {
             "female": {
                 "outerwear": [
-                    { "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans"] }
+                    { "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans", "Element"] }
                 ],
                 "tops": [
                     { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] },
@@ -128,25 +134,38 @@
                 "bottoms": [
                     { "name": "skinny jeans", "materials": ["denim"] },
                     { "name": "ripped skinny jeans", "materials": ["denim"] },
-                    { "name": "cargo pants", "materials": ["cotton"] }
+                    { "name": "straight leg jeans", "materials": ["denim"] },
+                    { "name": "cargo pants", "materials": ["cotton"] },
+                    { "name": "cargo shorts", "materials": ["cotton"] },
+                    { "name": "corduroy pants", "materials": ["cotton"] }
                 ],
                 "one_piece": [],
                 "shoes": [
                     "Vans slip-on sneakers",
                     "Converse hightop sneakers",
-                    "DC skate shoes",
-                    "Etnies skate shoes",
-                    "Osiris skate shoes"
+                    { "name": "skate shoes", "brands": ["Etnies", "Osiris", "DC", "Adidas", "Nike", "Converse"] }
                 ],
-                "accessories": [],
+                "accessories": [
+                    { "name": "D-ring belt", "materials": ["canvas"] },
+                    { "name": "belt", "materials": ["leather"] },
+                    { "name": "grommet belt", "materials": ["leather", "canvas"] }
+                ],
                 "colors": [],
                 "patterns": [],
                 "materials": []
             },
             "male": {
                 "outerwear": [{ "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans"] }],
-                "tops": [],
-                "bottoms": [],
+                "tops": [
+                    { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] }
+                ],
+                "bottoms": [
+                    { "name": "skinny jeans", "materials": ["denim"] },
+                    { "name": "ripped skinny jeans", "materials": ["denim"] },
+                    { "name": "cargo pants", "materials": ["cotton"] },
+                    { "name": "cargo shorts", "materials": ["cotton"] },
+                    { "name": "corduroy pants", "materials": ["cotton"] }
+                ],
                 "one_piece": [],
                 "shoes": [],
                 "accessories": [],

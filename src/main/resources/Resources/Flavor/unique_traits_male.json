@@ -1,0 +1,235 @@
+{
+    "positive": {
+        "eyes": [
+            "Their eyes seem to sparkle.",
+            "Their eyes are almond-shaped.",
+            "Their eyes hint at something mysterious.",
+            "Their eyes are piercing.",
+            "Their eyes appear luminous.",
+            "Their eyes dance with an inner fire."
+        ],
+        "nose": [
+            "Their nose is symmetrical.",
+            "They have a strong nose.",
+            "Their nose balances their face well.",
+            "They have a broad nose."
+        ],
+        "ears": [
+            "Their ears are perfectly symmetrical.",
+            "Their ears balance their face well.",
+            "Their ears sit neatly against their head."
+        ],
+        "mouth": [
+            "They have a wide smile.",
+            "They have a gleaming smile.",
+            "They have a winning smile.",
+            "They have a charming smile.",
+            "Their smile looks easy and self-assured."
+        ],
+        "face": [
+            "They have high cheekbones.",
+            "They have sculpted features.",
+            "Their face is perfectly symmetrical.",
+            "Their jawline is strong and well-defined.",
+            "Their features look rugged and defined.",
+            "Their chin gives their face a balanced shape.",
+            "Their brow gives them a confident look."
+        ],
+        "hair": [
+            "Their hair carries a luster in the sunlight.",
+            "Their hair is perfectly maintained.",
+            "Their haircut seems stylish and fresh.",
+            "Their hair looks thick and healthy.",
+            "Their hair is neatly trimmed.",
+            "Their sideburns are carefully kept.",
+            "Their hairstyle suits their face well."
+        ],
+        "skin": [
+            "Their skin appears to be smooth and clear.",
+            "Their skin seems to glow.",
+            "Their skin is without blemishes.",
+            "Their skin appears healthy."
+        ],
+        "body": [
+            "Their arms are toned and muscular.",
+            "Their legs are toned and muscular.",
+            "Their shoulders look broad and athletic.",
+            "Their stance looks steady and grounded.",
+            "Their frame looks strong and balanced."
+        ],
+        "misc": [
+            "They move with confident, fluid motions.",
+            "They walk with a confident stride.",
+            "They carry themselves with poise.",
+            "They stand tall and straight.",
+            "They have a steady, grounded walk."
+        ]
+    },
+    "neutral": {
+        "eyes": [
+            "Their eyes are wide-set.",
+            "Their eyes are expressive.",
+            "They have heavy lidded eyes.",
+            "They have wide, round eyes.",
+            "Their eyes seem to look through you.",
+            "Their eyes are deep-set.",
+            "Their eyes are slightly hooded.",
+            "Their eyes are constantly scanning the room."
+        ],
+        "nose": [
+            "They have a long, narrow nose.",
+            "They have a short, wide nose.",
+            "They have a flat nose.",
+            "Their nose has a small bump on the bridge.",
+            "They have a hooked nose.",
+            "They have an aquiline nose.",
+            "Their nostrils are slightly flared.",
+            "They have a prominent nose."
+        ],
+        "ears": [
+            "Their ears are slightly pointed.",
+            "They have large earlobes.",
+            "Their ears have many ridges and creases.",
+            "Their ears are slightly outward-facing.",
+            "They have attached earlobes.",
+            "They have detached earlobes."
+        ],
+        "mouth": [
+            "They have a wide mouth.",
+            "They have thin lips.",
+            "Their front teeth are prominent.",
+            "They have a gap between their front teeth.",
+            "They have a narrow mouth.",
+            "They have a slight underbite.",
+            "They have a toothy smile.",
+            "They have a lopsided grin."
+        ],
+        "face": [
+            "Their face is slightly angular.",
+            "They have a wide face.",
+            "They have a large forehead.",
+            "Their chin juts out slightly.",
+            "They have a long, narrow face.",
+            "They have thick eyebrows.",
+            "They have wide cheekbones.",
+            "Their chin is large.",
+            "They have a cleft chin.",
+            "They have a square jaw.",
+            "They have a prominent brow ridge.",
+            "They have faint stubble along their jaw."
+        ],
+        "hair": [
+            "Their hair is shiny.",
+            "They have a widow's peak.",
+            "They look like they just got out of bed.",
+            "They have a cowlick.",
+            "Their hair sticks up slightly at the crown.",
+            "Their facial hair is just starting to come in."
+        ],
+        "skin": [
+            "They are covered in freckles.",
+            "They have several prominent moles.",
+            "They have a large birthmark.",
+            "They have several silvery scars.",
+            "They have large pores.",
+            "They have a large scar on their arm.",
+            "They have several acne scars.",
+            "Their skin has slight sun damage."
+        ],
+        "body": [
+            "They have long limbs.",
+            "They have wide shoulders.",
+            "They have a thick neck.",
+            "They have a long neck.",
+            "Their limbs are short and stocky.",
+            "They have a long torso.",
+            "Their build is lanky.",
+            "Their frame is broad."
+        ],
+        "misc": [
+            "They are constantly fidgeting.",
+            "They have a heavy footed gait.",
+            "Their knees are slightly bowed.",
+            "Their knees are knobbly.",
+            "They walk with a slow saunter.",
+            "Their movements are slow and deliberate.",
+            "They walk very quickly.",
+            "They have a loose, slouching stance."
+        ]
+    },
+    "negative": {
+        "eyes": [
+            "Their eyes appear heavy and tired.",
+            "They have deep, discolored bags under their eyes.",
+            "They have dark circles under their eyes.",
+            "They have a lazy eye.",
+            "Their eyes appear to be slightly crossed.",
+            "Their eyes seem lifeless."
+        ],
+        "nose": [
+            "They have a crooked nose.",
+            "They have a bulbous nose.",
+            "Their nose is misshapen.",
+            "Their nose appears to have been broken several times.",
+            "Their nose has large pores.",
+            "Their nose is constantly running."
+        ],
+        "ears": [
+            "Their ears are protruding and large.",
+            "Their ears seem too small for their head.",
+            "Their ears are misshapen.",
+            "The skin on their ears appears flaky and dry.",
+            "Their ears are very oily."
+        ],
+        "mouth": [
+            "Their mouth hangs slightly open.",
+            "Their lips are pale and colorless.",
+            "Their lips are cracked and dry.",
+            "They talk out of the corner of their mouth.",
+            "Their mouth is slightly downturned.",
+            "Their lips appear chapped."
+        ],
+        "face": [
+            "Their face is crooked.",
+            "Their jaw disappears into their neck.",
+            "Their face seems misshapen.",
+            "Their face is narrow and sharp.",
+            "Their head seems to be too large for their body.",
+            "Their skull is bumpy and uneven.",
+            "They have a protruding brow."
+        ],
+        "hair": [
+            "Their hair is greasy and oily.",
+            "Their scalp is dry and flaky.",
+            "Their hair is patchy.",
+            "Their hairline is uneven.",
+            "Their hair is messy.",
+            "They have a bad haircut.",
+            "Their facial hair looks patchy and uneven."
+        ],
+        "skin": [
+            "Their skin is dry and flaky.",
+            "Their skin appears clammy.",
+            "Their skin seems slightly ashen.",
+            "Their skin is dull.",
+            "Their skin seems irritated.",
+            "They have rough shaving irritation along their jaw."
+        ],
+        "body": [
+            "They have a thin neck.",
+            "Their shoulders are rounded and hunched.",
+            "Their arms are thin and scrawny.",
+            "Their chest is uneven.",
+            "They seem to have almost no neck.",
+            "Their limbs are disproportionate."
+        ],
+        "misc": [
+            "They walk with an unsteady gait.",
+            "Their body moves in an awkward manner.",
+            "They appear hunched over.",
+            "They move in quick, jerky movements.",
+            "They shuffle their feet as they walk.",
+            "They appear frail and sickly."
+        ]
+    }
+}

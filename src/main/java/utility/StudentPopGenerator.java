@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import static constants.SimConstants.*;
 import static utility.Randomizer.setRandom;
@@ -25,11 +26,15 @@ import static utility.Randomizer.setRandom;
 // TODO: improve performance. It is horrible
 public class StudentPopGenerator {
 
-    // Trait-selection knobs for the unique-traits pipeline.  The path
+    // Trait-selection knobs for the unique-traits pipeline.  The paths
     // and count window are local because they are student-specific;
     // other domains (cell phones, etc.) will declare their own.
-    private static final String UNIQUE_TRAITS_PATH =
+    private static final String UNIQUE_TRAITS_DEFAULT_PATH =
             "/Resources/Flavor/unique_traits.json";
+    private static final String UNIQUE_TRAITS_FEMALE_PATH =
+            "/Resources/Flavor/unique_traits_female.json";
+    private static final String UNIQUE_TRAITS_MALE_PATH =
+            "/Resources/Flavor/unique_traits_male.json";
     private static final int UNIQUE_TRAIT_MIN_COUNT = 3;
     private static final int UNIQUE_TRAIT_MAX_COUNT = 5;
 
@@ -255,7 +260,8 @@ public class StudentPopGenerator {
      * @param student the student to assign unique traits to
      */
     public static void applyUniqueTraits(Student student) {
-        TraitDataset dataset = TraitDatasetLoader.load(UNIQUE_TRAITS_PATH);
+        TraitDataset dataset = TraitDatasetLoader.load(
+                uniqueTraitsPathForGender(student.studentStatistics.getGender()));
         List<String> selectedTraits = TraitSelector.selectTraits(
                 dataset,
                 student,
@@ -263,6 +269,17 @@ public class StudentPopGenerator {
                 UNIQUE_TRAIT_MIN_COUNT,
                 UNIQUE_TRAIT_MAX_COUNT);
         student.studentStatistics.setUniqueTraits(selectedTraits);
+    }
+
+    static String uniqueTraitsPathForGender(String gender) {
+        if (gender == null) {
+            return UNIQUE_TRAITS_DEFAULT_PATH;
+        }
+        return switch (gender.toLowerCase(Locale.ROOT)) {
+            case "female" -> UNIQUE_TRAITS_FEMALE_PATH;
+            case "male" -> UNIQUE_TRAITS_MALE_PATH;
+            default -> UNIQUE_TRAITS_DEFAULT_PATH;
+        };
     }
 
     /**
