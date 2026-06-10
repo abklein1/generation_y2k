@@ -853,6 +853,33 @@ public class Inspector {
         table.getTableHeader().setReorderingAllowed(false);
         table.setFillsViewportHeight(true);
 
+        // Clicking a Teacher or Room cell navigates to that entity's inspection.
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int col = table.columnAtPoint(e.getPoint());
+                if (row < 0 || col < 0) {
+                    return;
+                }
+                int period = row + 1;
+                String semester = (col >= 1 && col <= 3) ? "Fall"
+                        : (col >= 4 && col <= 6) ? "Spring" : null;
+                if (semester == null) {
+                    return;
+                }
+                StudentBlock block = blockIndex.get(semester + "-" + period);
+                if (block == null) {
+                    return;
+                }
+                if (col == 2 || col == 5) {
+                    LinkSupport.navigate(block.getTeacher());
+                } else if (col == 3 || col == 6) {
+                    LinkSupport.navigate(block.getRoom());
+                }
+            }
+        });
+
         // Set column widths
         table.getColumnModel().getColumn(0).setPreferredWidth(60); // Period
         table.getColumnModel().getColumn(1).setPreferredWidth(160); // Fall Class
@@ -865,10 +892,20 @@ public class Inspector {
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Also include the formatted text view below the table
-        JTextArea scheduleText = new JTextArea(buildScheduleText(student));
-        scheduleText.setEditable(false);
-        scheduleText.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        // Also include the formatted text view below the table, with the
+        // referenced teachers and rooms rendered as clickable links.
+        Map<String, Object> scheduleLinks = new LinkedHashMap<>();
+        for (StudentBlock block : schedule) {
+            if (block.getTeacher() != null && block.getTeacher().teacherName != null) {
+                scheduleLinks.put(block.getTeacher().teacherName.getFirstName() + " "
+                        + block.getTeacher().teacherName.getLastName(), block.getTeacher());
+            }
+            if (block.getRoom() != null) {
+                scheduleLinks.put(block.getRoom().getRoomName(), block.getRoom());
+            }
+        }
+        JEditorPane scheduleText = LinkSupport.htmlPane();
+        LinkSupport.setLinkedText(scheduleText, buildScheduleText(student), scheduleLinks);
         JScrollPane textScroll = new JScrollPane(scheduleText);
         textScroll.setPreferredSize(new Dimension(600, 180));
         panel.add(textScroll, BorderLayout.SOUTH);
@@ -891,9 +928,28 @@ public class Inspector {
      * Updates a JTextArea with the student's physical description.
      * Used by SchoolController's tabbed inspection window.
      */
-    public static void updateStudentDescriptionArea(Student student, JTextArea area) {
-        area.setText(buildStudentDescriptionText(student));
-        area.setCaretPosition(0);
+    public static void updateStudentDescriptionArea(Student student, JEditorPane area) {
+        Map<String, Object> links = new LinkedHashMap<>();
+        if (student != null && student.studentStatistics != null) {
+            addStudentLinks(links, student.studentStatistics.getSiblingsInSchool());
+        }
+        LinkSupport.setLinkedTextWrapped(area, buildStudentDescriptionText(student), links);
+    }
+
+    /**
+     * Adds the given students to a name-to-entity link map keyed by full name.
+     * Only in-school/enrollable students should be passed, since links resolve
+     * to the grade inspection windows.
+     */
+    private static void addStudentLinks(Map<String, Object> links, List<Student> students) {
+        if (students == null) {
+            return;
+        }
+        for (Student student : students) {
+            if (student != null && student.studentName != null) {
+                links.put(student.studentName.getFullName(), student);
+            }
+        }
     }
 
     /**
@@ -959,9 +1015,10 @@ public class Inspector {
      * @param ownerName the display name of the owner
      * @param area      the JTextArea to update
      */
-    public static void updateCellPhoneArea(CellPhone phone, String ownerName, JTextArea area) {
+    public static void updateCellPhoneArea(CellPhone phone, String ownerName,
+            Map<String, Object> contactLinks, JEditorPane area) {
         if (phone == null) {
-            area.setText(ownerName + " does not own a cell phone.");
+            LinkSupport.setLinkedText(area, ownerName + " does not own a cell phone.", null);
         } else {
             StringBuilder sb = new StringBuilder();
             String makeModel = joinMakeModel(phone.getMake(), phone.getModel());
@@ -991,9 +1048,8 @@ public class Inspector {
             appendDecorationsSection(sb, phone);
             appendContactsSection(sb, phone);
 
-            area.setText(sb.toString());
+            LinkSupport.setLinkedText(area, sb.toString(), contactLinks);
         }
-        area.setCaretPosition(0);
     }
 
     /**
@@ -1175,21 +1231,30 @@ public class Inspector {
      * @param student the student whose log to display
      * @param area    the JTextArea to update
      */
-    public static void updateActivityArea(Student student, JTextArea area) {
+    public static void updateActivityArea(Student student, JEditorPane area) {
         if (student == null || student.getEntityState() == null) {
-            area.setText("No activity data available.");
+            area.setText(LinkSupport.wrapBody("No activity data available."));
             return;
         }
-        java.util.List<String> log = student.getEntityState().getActionLog();
+        java.util.List<EntityState.ActionLogEntry> log = student.getEntityState().getActionLog();
         if (log.isEmpty()) {
-            area.setText("No activity recorded yet.");
+            area.setText(LinkSupport.wrapBody("No activity recorded yet."));
             return;
         }
-        StringBuilder sb = new StringBuilder();
-        for (String entry : log) {
-            sb.append(entry).append("\n");
+        StringBuilder body = new StringBuilder();
+        for (EntityState.ActionLogEntry entry : log) {
+            Map<String, Object> names = new LinkedHashMap<>();
+            Student partner = entry.getPartner();
+            if (partner != null && partner.studentName != null) {
+                names.put(partner.studentName.getFirstName() + " "
+                        + partner.studentName.getLastName(), partner);
+            }
+            if (entry.getRoom() != null) {
+                names.put(entry.getRoom().getRoomName(), entry.getRoom());
+            }
+            body.append(LinkSupport.linkifyEscaped(entry.getText(), names)).append("\n");
         }
-        area.setText(sb.toString());
+        area.setText(LinkSupport.wrapBodyWrapping(body.toString()));
         area.setCaretPosition(area.getDocument().getLength());
     }
 
@@ -1206,11 +1271,9 @@ public class Inspector {
     public static void inspectStudent(Student student) {
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Description tab
-        JTextArea descArea = new JTextArea(buildStudentDescriptionText(student));
-        descArea.setEditable(false);
-        descArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        descArea.setCaretPosition(0);
+        // Description tab (siblings rendered as clickable links)
+        JEditorPane descArea = LinkSupport.htmlPane();
+        updateStudentDescriptionArea(student, descArea);
         JScrollPane descScroll = new JScrollPane(descArea);
         tabbedPane.addTab("Description", descScroll);
 
@@ -1246,7 +1309,7 @@ public class Inspector {
         JDialog dialog = new JDialog();
         dialog.setTitle("Student: " + student.studentName.getFullName());
         dialog.setContentPane(tabbedPane);
-        dialog.setModal(true);
+        dialog.setModal(false);
         dialog.setSize(800, 600);
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
@@ -1583,7 +1646,7 @@ public class Inspector {
         JDialog dialog = new JDialog();
         dialog.setTitle("Staff: " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
         dialog.setContentPane(tabbedPane);
-        dialog.setModal(true);
+        dialog.setModal(false);
         dialog.setSize(800, 600);
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
@@ -1638,13 +1701,24 @@ public class Inspector {
             roomDetails.append("It is a ").append(room.getRoomName()).append("\n");
         }
 
-        JTextArea roomInfoArea = new JTextArea(roomDetails.toString());
-        roomInfoArea.setEditable(false);
+        Map<String, Object> roomStaffLinks = new LinkedHashMap<>();
+        for (Staff value : staff) {
+            if (value != null && value.teacherName != null) {
+                roomStaffLinks.put(value.teacherName.getFirstName() + " "
+                        + value.teacherName.getLastName(), value);
+            }
+        }
+        JEditorPane roomInfoArea = LinkSupport.htmlPane();
+        LinkSupport.setLinkedText(roomInfoArea, roomDetails.toString(), roomStaffLinks);
 
         // Create a panel for block buttons
         JPanel blockButtonPanel = new JPanel();
         blockButtonPanel.setLayout(new GridLayout(1, 8));
         JButton[] blockButtons = new JButton[8];
+
+        // Tracks which block's seating is currently displayed so a seat click
+        // resolves to the right student.
+        final int[] activeBlock = { 1 };
 
         Student[][] firstArrangement = seatingArrangements.values().iterator().next();
         String[] columnNames = new String[firstArrangement[0].length];
@@ -1661,11 +1735,11 @@ public class Inspector {
                 int row = studentTable.rowAtPoint(e.getPoint());
                 int col = studentTable.columnAtPoint(e.getPoint());
                 if (!"Empty".equals(tableModel.getValueAt(row, col))) {
-                    // Determine which block is currently displayed to find the right student
-                    Student[][] currentSeats = seatingArrangements.get(1);
+                    // Use the currently displayed block to find the right student
+                    Student[][] currentSeats = seatingArrangements.get(activeBlock[0]);
                     if (currentSeats != null && row < currentSeats.length
                             && col < currentSeats[0].length && currentSeats[row][col] != null) {
-                        inspectStudent(currentSeats[row][col]);
+                        LinkSupport.navigate(currentSeats[row][col]);
                     }
                 }
             }
@@ -1674,6 +1748,7 @@ public class Inspector {
         // ActionListener for the buttons to update the seating arrangement
         ActionListener blockButtonListener = e -> {
             int blockNumber = Integer.parseInt(e.getActionCommand());
+            activeBlock[0] = blockNumber;
             Student[][] seats = seatingArrangements.get(blockNumber);
             if (seats != null) {
                 for (int row = 0; row < seats.length; row++) {
@@ -1710,30 +1785,30 @@ public class Inspector {
         JScrollPane studentScrollPane = new JScrollPane(studentTable);
         studentScrollPane.setPreferredSize(new Dimension(400, 200));
 
-        JTextArea studentListArea = new JTextArea();
-        studentListArea.setEditable(false);
+        StringBuilder rosterText = new StringBuilder();
+        Map<String, Object> rosterLinks = new LinkedHashMap<>();
         if (teacherBlocks != null && !teacherBlocks.isEmpty()) {
             for (TeacherBlock block : teacherBlocks) {
-                studentListArea.append("Block: ");
-                studentListArea.append(String.valueOf(block.getBlockNumber()));
-                studentListArea.append("\n");
-                studentListArea.append(block.getClassName());
-                studentListArea.append("\n");
-                studentListArea.append(block.getSemester());
-                studentListArea.append("\n");
+                rosterText.append("Block: ").append(block.getBlockNumber()).append("\n");
+                rosterText.append(block.getClassName()).append("\n");
+                rosterText.append(block.getSemester()).append("\n");
                 List<Student> students = block.getClassPopulation();
                 if (students != null) {
                     for (Student student : students) {
-                        studentListArea.append(student.studentName.getFullName());
-                        studentListArea.append("\n");
+                        rosterText.append(student.studentName.getFullName()).append("\n");
+                        if (student.studentName != null) {
+                            rosterLinks.put(student.studentName.getFullName(), student);
+                        }
                     }
                 } else {
-                    studentListArea.append("Students are null!\n");
+                    rosterText.append("Students are null!\n");
                 }
             }
         } else {
-            studentListArea.append("No teacher blocks or students assigned to this room.\n");
+            rosterText.append("No teacher blocks or students assigned to this room.\n");
         }
+        JEditorPane studentListArea = LinkSupport.htmlPane();
+        LinkSupport.setLinkedText(studentListArea, rosterText.toString(), rosterLinks);
         JScrollPane studentListScrollPane = new JScrollPane(studentListArea);
         studentListScrollPane.setPreferredSize(new Dimension(200, 200));
 
@@ -1749,7 +1824,7 @@ public class Inspector {
         JDialog dialog = new JDialog();
         dialog.setTitle("Room Details");
         dialog.setContentPane(panel);
-        dialog.setModal(true);
+        dialog.setModal(false);
         dialog.pack();
         dialog.setSize(800, 600); // Initial size
         dialog.setLocationRelativeTo(null); // Center on screen

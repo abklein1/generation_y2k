@@ -123,8 +123,7 @@
             "Their hair is flowing.",
             "They have a widow's peak.",
             "They look like they just got out of bed.",
-            "They have a cowlick.",
-            "Their part is slightly uneven."
+            "They have a cowlick."
         ],
         "skin": [
             "They are covered in freckles.",
@@ -204,7 +203,8 @@
             "Their hairline is uneven.",
             "Their hair is full of dead ends.",
             "Their hair is messy.",
-            "They have a bad haircut."
+            "They have a bad haircut.",
+            "It looks like their parent cuts their hair."
         ],
         "skin": [
             "Their skin is dry and flaky.",
@@ -220,7 +220,8 @@
             "Their arms are thin and scrawny.",
             "They seem to have almost no neck.",
             "Their limbs are disproportionate.",
-            "Their posture folds inward."
+            "Their posture folds inward.",
+            "Their neck is craned forward."
         ],
         "misc": [
             "They walk with an unsteady gait.",
@@ -228,7 +229,10 @@
             "They appear hunched over.",
             "They move in quick, jerky movements.",
             "They appear to shrink in on themselves.",
-            "They shuffle their feet as they walk."
+            "They shuffle their feet as they walk.",
+            "They walk extremely fast.",
+            "They run nearly everywhere.",
+            "They are constantly staring at the ground."
         ]
     }
 }

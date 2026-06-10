@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.text.DefaultCaret;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -42,9 +44,24 @@ import java.util.Properties;
 import static utility.Randomizer.setRandom;
 import static constants.SimConstants.*;
 
-public class SchoolController {
+public class SchoolController implements InspectionNavigator {
     private final GameView view;
     private Time time;
+
+    // Currently open inspection windows keyed by type ("Freshman", "Staff", ...)
+    // so links can reuse/focus an existing window instead of opening duplicates.
+    private final Map<String, OpenInspector> openInspectors = new HashMap<>();
+
+    /** Tracks an open inspection window and its selectable entity list. */
+    private static class OpenInspector {
+        final JFrame frame;
+        final JList<?> list;
+
+        OpenInspector(JFrame frame, JList<?> list) {
+            this.frame = frame;
+            this.list = list;
+        }
+    }
     HashMap<Integer, Staff> staffHashMap;
     HashMap<Integer, Student> studentHashMap;
     private RoomConnector roomConnector;
@@ -72,6 +89,9 @@ public class SchoolController {
         this.view.addSocialGraphButtonListener(new SocialGraphButtonListener());
         this.view.addInspectionMenuListener(new InspectionMenuListener());
         this.view.addCreateCharacterButtonListener(new CreateCharacterButtonListener());
+
+        // Allow inspection links anywhere in the UI to route back to this controller.
+        LinkSupport.setNavigator(this);
 
         // Wire up simulation controls
         this.view.addPlayPauseListener(e -> toggleSimulation());
@@ -685,8 +705,19 @@ public class SchoolController {
             return;
         }
 
+        // Reuse an already-open window for this type instead of duplicating it.
+        OpenInspector alreadyOpen = openInspectors.get(type);
+        if (alreadyOpen != null) {
+            alreadyOpen.frame.setVisible(true);
+            alreadyOpen.frame.setState(Frame.NORMAL);
+            alreadyOpen.frame.toFront();
+            alreadyOpen.frame.requestFocus();
+            return;
+        }
+
         JFrame inspectionFrame = new JFrame(type + " Inspection");
         inspectionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JList<?> trackedList = null;
 
         if (type.equals("Staff")) {
             inspectionFrame.setSize(850, 550);
@@ -717,11 +748,7 @@ public class SchoolController {
             schedArea.setWrapStyleWord(true);
             schedArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
 
-            JTextArea phoneArea = new JTextArea();
-            phoneArea.setEditable(false);
-            phoneArea.setLineWrap(true);
-            phoneArea.setWrapStyleWord(true);
-            phoneArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+            JEditorPane phoneArea = LinkSupport.htmlPane();
 
             JTabbedPane staffTabs = new JTabbedPane();
             staffTabs.addTab("Description", new JScrollPane(descArea));
@@ -744,11 +771,12 @@ public class SchoolController {
                         CellPhone staffPhone = town != null
                                 ? town.getStaffPhone(selectedStaff) : null;
                         Inspector.updateCellPhoneArea(staffPhone,
-                                selectedStaff.toString(), phoneArea);
+                                selectedStaff.toString(), buildContactNameLinks(), phoneArea);
                     }
                 }
             });
 
+            trackedList = staffJList;
             inspectionFrame.setLayout(new java.awt.BorderLayout());
             inspectionFrame.add(new JScrollPane(staffJList), java.awt.BorderLayout.WEST);
             inspectionFrame.add(staffTabs, java.awt.BorderLayout.CENTER);
@@ -774,28 +802,16 @@ public class SchoolController {
                 showSocialLinksButton.setToolTipText("Select a student to view their social links");
                 buttonPanel.add(showSocialLinksButton);
 
-                JTextArea descArea = new JTextArea();
-                descArea.setEditable(false);
-                descArea.setLineWrap(true);
-                descArea.setWrapStyleWord(true);
-                descArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+                JEditorPane descArea = LinkSupport.htmlPane();
                 JTextArea statsArea = new JTextArea();
                 statsArea.setEditable(false);
                 statsArea.setLineWrap(true);
                 statsArea.setWrapStyleWord(true);
                 statsArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
 
-                JTextArea phoneArea = new JTextArea();
-                phoneArea.setEditable(false);
-                phoneArea.setLineWrap(true);
-                phoneArea.setWrapStyleWord(true);
-                phoneArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+                JEditorPane phoneArea = LinkSupport.htmlPane();
 
-                JTextArea activityArea = new JTextArea();
-                activityArea.setEditable(false);
-                activityArea.setLineWrap(true);
-                activityArea.setWrapStyleWord(true);
-                activityArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+                JEditorPane activityArea = LinkSupport.htmlPane();
 
                 JTextArea academicArea = new JTextArea();
                 academicArea.setEditable(false);
@@ -840,7 +856,7 @@ public class SchoolController {
                             CellPhone studentPhone = town != null
                                     ? town.getStudentPhone(selectedStudent) : null;
                             Inspector.updateCellPhoneArea(studentPhone,
-                                    selectedStudent.toString(), phoneArea);
+                                    selectedStudent.toString(), buildContactNameLinks(), phoneArea);
 
                             Inspector.updateActivityArea(selectedStudent, activityArea);
 
@@ -861,7 +877,7 @@ public class SchoolController {
                         CellPhone polledPhone = town != null
                                 ? town.getStudentPhone(currentlySelectedStudent[0]) : null;
                         Inspector.updateCellPhoneArea(polledPhone,
-                                currentlySelectedStudent[0].toString(), phoneArea);
+                                currentlySelectedStudent[0].toString(), buildContactNameLinks(), phoneArea);
                     }
                 });
                 activityPollTimer.start();
@@ -878,6 +894,7 @@ public class SchoolController {
                     }
                 });
 
+                trackedList = studentListComponent;
                 inspectionFrame.setLayout(new java.awt.BorderLayout());
                 inspectionFrame.add(new JScrollPane(studentListComponent), java.awt.BorderLayout.WEST);
                 inspectionFrame.add(studentTabs, java.awt.BorderLayout.CENTER);
@@ -885,7 +902,89 @@ public class SchoolController {
             }
         }
 
+        if (trackedList != null) {
+            openInspectors.put(type, new OpenInspector(inspectionFrame, trackedList));
+            final String trackedType = type;
+            inspectionFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent e) {
+                    openInspectors.remove(trackedType);
+                }
+            });
+        }
+
         inspectionFrame.setVisible(true);
+    }
+
+    /**
+     * Builds a name-to-entity map of every enrolled student and staff member so
+     * free-text references (e.g. phone contacts) can be rendered as links.
+     *
+     * @return a map of display name to {@link Student}/{@link Staff}
+     */
+    private Map<String, Object> buildContactNameLinks() {
+        Map<String, Object> links = new LinkedHashMap<>();
+        if (studentHashMap != null) {
+            for (Student student : studentHashMap.values()) {
+                if (student != null && student.studentName != null) {
+                    links.put(student.studentName.getFullName(), student);
+                }
+            }
+        }
+        if (staffHashMap != null) {
+            for (Staff staffMember : staffHashMap.values()) {
+                if (staffMember != null && staffMember.teacherName != null) {
+                    links.put(staffMember.teacherName.getFirstName() + " "
+                            + staffMember.teacherName.getLastName(), staffMember);
+                }
+            }
+        }
+        return links;
+    }
+
+    @Override
+    public void navigateToStudent(Student student) {
+        if (student == null || student.studentStatistics == null) {
+            return;
+        }
+        String grade = student.studentStatistics.getGradeLevel();
+        if (grade == null) {
+            return;
+        }
+        showInspectionWindow(grade);
+        OpenInspector inspector = openInspectors.get(grade);
+        if (inspector != null) {
+            @SuppressWarnings("unchecked")
+            JList<Student> list = (JList<Student>) inspector.list;
+            list.setSelectedValue(student, true);
+            inspector.frame.setState(Frame.NORMAL);
+            inspector.frame.toFront();
+            inspector.frame.requestFocus();
+        }
+    }
+
+    @Override
+    public void navigateToStaff(Staff staff) {
+        if (staff == null) {
+            return;
+        }
+        showInspectionWindow("Staff");
+        OpenInspector inspector = openInspectors.get("Staff");
+        if (inspector != null) {
+            @SuppressWarnings("unchecked")
+            JList<Staff> list = (JList<Staff>) inspector.list;
+            list.setSelectedValue(staff, true);
+            inspector.frame.setState(Frame.NORMAL);
+            inspector.frame.toFront();
+            inspector.frame.requestFocus();
+        }
+    }
+
+    @Override
+    public void navigateToRoom(Room room) {
+        if (room != null) {
+            Inspector.inspectRoom(room);
+        }
     }
 
     private void showNeighborhoodWindow() {
@@ -953,6 +1052,9 @@ public class SchoolController {
             }
         };
 
+        // Entity per model row so a clicked row can navigate to its inspection.
+        List<Object> rowEntities = new ArrayList<>();
+
         List<Student> inSchoolStudents = new ArrayList<>(neighborhood.getStudentsInSchool());
         inSchoolStudents.sort(Comparator.comparing(student -> student.studentName.getLastName()));
         for (Student student : inSchoolStudents) {
@@ -963,6 +1065,7 @@ public class SchoolController {
                     student.studentStatistics.getGradeLevel(),
                     capitalizeLabel(student.studentStatistics.getIncomeLevel())
             });
+            rowEntities.add(student);
         }
 
         List<Student> outOfSchoolSiblings = new ArrayList<>(neighborhood.getSiblingsNotInSchool());
@@ -975,6 +1078,7 @@ public class SchoolController {
                     sibling.studentStatistics.getGradeLevel(),
                     capitalizeLabel(sibling.studentStatistics.getIncomeLevel())
             });
+            rowEntities.add(sibling);
         }
 
         List<Staff> staffMembers = new ArrayList<>(neighborhood.getStaff());
@@ -988,11 +1092,25 @@ public class SchoolController {
                     staffType != null ? staffType.toString() : "Unassigned",
                     "-"
             });
+            rowEntities.add(staff);
         }
 
         JTable table = new JTable(model);
         table.setAutoCreateRowSorter(true);
         table.setFillsViewportHeight(true);
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int viewRow = table.rowAtPoint(e.getPoint());
+                if (viewRow < 0) {
+                    return;
+                }
+                int modelRow = table.convertRowIndexToModel(viewRow);
+                if (modelRow >= 0 && modelRow < rowEntities.size()) {
+                    LinkSupport.navigate(rowEntities.get(modelRow));
+                }
+            }
+        });
         return table;
     }
 

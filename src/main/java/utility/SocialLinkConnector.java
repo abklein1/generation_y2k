@@ -1013,6 +1013,18 @@ public class SocialLinkConnector {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(800, 600);
         mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
+        graphComponent.getGraphControl().addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                Object cell = graphComponent.getCellAt(e.getX(), e.getY());
+                if (cell != null) {
+                    Object vertex = graphAdapter.getCellToVertexMap().get(cell);
+                    if (vertex instanceof Student clicked) {
+                        LinkSupport.navigate(clicked);
+                    }
+                }
+            }
+        });
         frame.add(graphComponent);
         mxFastOrganicLayout layout = new mxFastOrganicLayout(graphAdapter);
         layout.execute(graphAdapter.getDefaultParent());

@@ -88,6 +88,7 @@
                     { "name": "skinny jeans", "materials": ["denim"] },
                     { "name": "pants", "materials": ["leather", "denim"] },
                     { "name": "skirt", "patterns": ["tartan plaid"] },
+                    { "name": "skirt", "materials": ["leather", "denim"]},
                     { "name": "pants", "patterns": ["tartan plaid"] },
                     { "name": "bootcut jeans", "materials": ["denim"] }
                 ],
@@ -109,14 +110,18 @@
                     "{band} hoodie"
                 ],
                 "tops": [
-                    "{band} t-shirt"
+                    "{band} t-shirt",
+                    "local band t-shirt"
                 ],
                 "bottoms": [
                     { "name": "skinny jeans", "materials": ["denim"] }
                 ],
                 "one_piece": [],
                 "shoes": [],
-                "accessories": [],
+                "accessories": [
+                    { "name": "wallet chain", "materials": ["steel"]},
+                    { "name": "studded belt", "materials": ["leather"]}
+                ],
                 "colors": [],
                 "patterns": [],
                 "materials": []
@@ -129,7 +134,9 @@
                 ],
                 "tops": [
                     { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] },
-                    { "name": "tank top", "materials": ["cotton"] }
+                    { "name": "tank top", "materials": ["cotton"] },
+                    { "name": "oversized t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"]},
+                    { "name": "local skate shop t-shirt", "materials": ["cotton"]}
                 ],
                 "bottoms": [
                     { "name": "skinny jeans", "materials": ["denim"] },
@@ -157,7 +164,9 @@
             "male": {
                 "outerwear": [{ "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans"] }],
                 "tops": [
-                    { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] }
+                    { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] },
+                    { "name": "oversized t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"]},
+                    { "name": "local skate shop t-shirt", "materials": ["cotton"]}
                 ],
                 "bottoms": [
                     { "name": "skinny jeans", "materials": ["denim"] },
@@ -167,8 +176,16 @@
                     { "name": "corduroy pants", "materials": ["cotton"] }
                 ],
                 "one_piece": [],
-                "shoes": [],
-                "accessories": [],
+                "shoes": [
+                    "Vans slip-on sneakers",
+                    "Converse hightop sneakers",
+                    { "name": "skate shoes", "brands": ["Etnies", "Osiris", "DC", "Adidas", "Nike", "Converse"] }
+                ],
+                "accessories": [
+                    { "name": "D-ring belt", "materials": ["canvas"] },
+                    { "name": "belt", "materials": ["leather"] },
+                    { "name": "grommet belt", "materials": ["leather", "canvas"] }
+                ],
                 "colors": [],
                 "patterns": [],
                 "materials": []
@@ -523,12 +540,27 @@
                 "materials": []
             },
             "male": {
-                "outerwear": [],
-                "tops": [],
-                "bottoms": [],
+                "outerwear": [
+                    { "name": "sweater", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["cotton"]}
+                ],
+                "tops": [
+                    { "name": "polo shirt", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["cotton"] },
+                    { "name": "rugby shirt", "brands": ["A&F", "Ralph Lauren"], "materials": ["cotton"]},
+                    { "name": "collared button up shirt", "brands": ["A&F", "Hollister", "Aeropostale"], "materials": ["cotton"]}
+                ],
+                "bottoms": [
+                    { "name": "cargo shorts", "brands": ["A&F", "Aeropostale", "Hollister"]},
+                    { "name": "straight leg jeans", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["denim"]}
+                ],
                 "one_piece": [],
-                "shoes": [],
-                "accessories": [],
+                "shoes": [
+                    { "name": "flip flops", "materials": ["rubber"]}
+                ],
+                "accessories": [
+                    { "name": "braided belt", "materials": ["leather"]},
+                    { "name": "d-ring belt", "materials": ["canvas"]},
+                    { "name": "belt", "materials": ["leather"]}
+                ],
                 "colors": [],
                 "patterns": [],
                 "materials": []

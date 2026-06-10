@@ -1240,8 +1240,10 @@ public class SimulationEngine {
             appendRoomContext(entry, state, activity);
         }
 
+        Student partner = null;
         Object target = context.getVariable("interaction_target");
         if (target instanceof Student targetStudent) {
+            partner = targetStudent;
             entry.append(" with ").append(targetStudent.studentName.getFirstName())
                     .append(" ").append(targetStudent.studentName.getLastName());
         }
@@ -1267,7 +1269,7 @@ public class SimulationEngine {
                     .append("]");
         }
 
-        state.addLogEntry(entry.toString());
+        state.addLogEntry(entry.toString(), partner, state.getCurrentRoom());
 
         // Clear ephemeral context variables to avoid stale data
         context.removeVariable("was_caught");

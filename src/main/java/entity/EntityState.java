@@ -80,7 +80,38 @@ public class EntityState implements Serializable {
     private DayPhase currentPhase;
 
     private static final int MAX_ACTION_LOG_SIZE = 50;
-    private final transient LinkedList<String> actionLog = new LinkedList<>();
+    private final transient LinkedList<ActionLogEntry> actionLog = new LinkedList<>();
+
+    /**
+     * A single activity-log line plus optional references to the entities it
+     * mentions, so the inspection UI can render them as clickable links. The
+     * references are transient runtime links and are never serialized.
+     */
+    public static class ActionLogEntry {
+        private final String text;
+        private final transient Student partner;
+        private final transient Room room;
+
+        public ActionLogEntry(String text, Student partner, Room room) {
+            this.text = text;
+            this.partner = partner;
+            this.room = room;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        /** @return the student this entry interacted with, or {@code null} */
+        public Student getPartner() {
+            return partner;
+        }
+
+        /** @return the room this entry took place in, or {@code null} */
+        public Room getRoom() {
+            return room;
+        }
+    }
     
     /**
      * Creates a new entity state with default values.
@@ -710,10 +741,22 @@ public class EntityState implements Serializable {
      * @param entry the human-readable log line
      */
     public void addLogEntry(String entry) {
+        addLogEntry(entry, null, null);
+    }
+
+    /**
+     * Appends a timestamped entry that references the entities it mentions so
+     * the inspection UI can render them as clickable links.
+     *
+     * @param entry   the human-readable log line
+     * @param partner the student this action interacted with, or {@code null}
+     * @param room    the room this action took place in, or {@code null}
+     */
+    public void addLogEntry(String entry, Student partner, Room room) {
         if (entry == null) {
             return;
         }
-        actionLog.addLast(entry);
+        actionLog.addLast(new ActionLogEntry(entry, partner, room));
         while (actionLog.size() > MAX_ACTION_LOG_SIZE) {
             actionLog.removeFirst();
         }
@@ -724,7 +767,7 @@ public class EntityState implements Serializable {
      *
      * @return the action log entries, oldest first
      */
-    public List<String> getActionLog() {
+    public List<ActionLogEntry> getActionLog() {
         return Collections.unmodifiableList(new ArrayList<>(actionLog));
     }
     
