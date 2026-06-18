@@ -530,11 +530,22 @@
         "Prep": {
             "female": {
                 "outerwear": [],
-                "tops": [],
-                "bottoms": [],
+                "tops": [
+                    { "name": "polo shirt", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["cotton"] },
+                    { "name": "tank top", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["cotton"]}
+                ],
+                "bottoms": [
+                    { "name": "mini skirt", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["demim"]},
+                    { "name": "pleated skirt", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["demim", "khaki"]}
+                ],
                 "one_piece": [],
-                "shoes": [],
-                "accessories": [],
+                "shoes": [
+                    { "name": "flip flops", "materials": ["rubber"]},
+                    { "name": "boots", "brands": ["Ugg"]}
+                ],
+                "accessories": [
+                    { "name": "oversize belt", "materials": ["leather"]}
+                ],
                 "colors": [],
                 "patterns": [],
                 "materials": []
