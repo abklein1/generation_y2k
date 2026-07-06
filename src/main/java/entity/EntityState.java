@@ -1,7 +1,9 @@
 package entity;
 
+import constants.SimConstants;
 import entity.Rooms.Room;
 import simulation.DayPhase;
+import utility.GameRandom;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class EntityState implements Serializable {
      * critical-notified flag set.
      */
     public enum NeedType {
-        HUNGER, THIRST, BLADDER, ENTERTAINMENT, ENERGY
+        HUNGER, THIRST, BLADDER, ENTERTAINMENT, ENERGY, TEMPERATURE
     }
 
     
@@ -44,7 +46,10 @@ public class EntityState implements Serializable {
     // Physiological needs (0-100 scale, higher is better)
     private double hunger;              // 100 = full, 0 = starving
     private double thirst;              // 100 = hydrated, 0 = dehydrated
+    private double thirstDecayMultiplier; // Per-person hydration variance
     private double bladder;             // 100 = empty, 0 = full/urgent
+    private double bladderDecayMultiplier; // Per-person bladder capacity/urgency variance
+    private double bladderReliefTarget;  // Per-person post-restroom relief level
     private double temperature;         // 100 = too hot, 0 = freezing, 50 = ideal
     private int postMealBladderTicks;   // Ticks remaining of accelerated bladder decay after eating
     private double entertainment;       // 100 = entertained, 0 = completely bored
@@ -59,6 +64,7 @@ public class EntityState implements Serializable {
     private boolean bladderCriticalNotified;
     private boolean entertainmentCriticalNotified;
     private boolean energyCriticalNotified;
+    private boolean temperatureCriticalNotified;
 
     // Lunch state tracking
     private boolean atLunch;            // Currently dispatched to lunch destination
@@ -129,8 +135,14 @@ public class EntityState implements Serializable {
         this.hasPermissionToLeave = false;
         this.lunchPeriod = "A"; // Default to A lunch
         this.hunger = 100.0;
-        this.thirst = 100.0;
-        this.bladder = 100.0;
+        initializeThirstProfile();
+        this.thirst = randomNeedLevel(
+                SimConstants.NEED_THIRST_START_MIN,
+                SimConstants.NEED_THIRST_START_MAX);
+        initializeBladderProfile();
+        this.bladder = randomNeedLevel(
+                SimConstants.NEED_BLADDER_START_MIN,
+                SimConstants.NEED_BLADDER_START_MAX);
         this.temperature = 50.0;
         this.postMealBladderTicks = 0;
         this.entertainment = 100.0;
@@ -141,6 +153,7 @@ public class EntityState implements Serializable {
         this.bladderCriticalNotified = false;
         this.entertainmentCriticalNotified = false;
         this.energyCriticalNotified = false;
+        this.temperatureCriticalNotified = false;
         this.atLunch = false;
         this.preLunchRoom = null;
         this.canAffordOffCampus = false;
@@ -565,6 +578,15 @@ public class EntityState implements Serializable {
         this.bladder = Math.max(0, Math.min(100, bladder));
     }
 
+    /**
+     * Restores bladder after a bathroom trip using this entity's personal
+     * relief level instead of synchronizing everyone to a universal maximum.
+     */
+    public void relieveBladder() {
+        ensureBladderProfile();
+        setBladder(bladderReliefTarget);
+    }
+
     public double getTemperature() {
         return temperature;
     }
@@ -611,6 +633,7 @@ public class EntityState implements Serializable {
             case BLADDER -> bladderCriticalNotified;
             case ENTERTAINMENT -> entertainmentCriticalNotified;
             case ENERGY -> energyCriticalNotified;
+            case TEMPERATURE -> temperatureCriticalNotified;
         };
     }
 
@@ -629,6 +652,7 @@ public class EntityState implements Serializable {
             case BLADDER -> this.bladderCriticalNotified = notified;
             case ENTERTAINMENT -> this.entertainmentCriticalNotified = notified;
             case ENERGY -> this.energyCriticalNotified = notified;
+            case TEMPERATURE -> this.temperatureCriticalNotified = notified;
         }
     }
 
@@ -660,20 +684,62 @@ public class EntityState implements Serializable {
                           double bladderDecay, double bladderPostMealDecay,
                           double entertainmentDecay, double energyDecay,
                           double energyDecayWhenBored) {
+        ensureThirstProfile();
+        ensureBladderProfile();
         this.hunger = Math.max(0, this.hunger - hungerDecay);
-        this.thirst = Math.max(0, this.thirst - thirstDecay);
+        this.thirst = Math.max(0, this.thirst - thirstDecay * thirstDecayMultiplier);
 
         if (postMealBladderTicks > 0) {
-            this.bladder = Math.max(0, this.bladder - bladderPostMealDecay);
+            this.bladder = Math.max(0,
+                    this.bladder - bladderPostMealDecay * bladderDecayMultiplier);
             postMealBladderTicks--;
         } else {
-            this.bladder = Math.max(0, this.bladder - bladderDecay);
+            this.bladder = Math.max(0,
+                    this.bladder - bladderDecay * bladderDecayMultiplier);
         }
 
         this.entertainment = Math.max(0, this.entertainment - entertainmentDecay);
 
         double actualEnergyDecay = (this.entertainment <= 0) ? energyDecayWhenBored : energyDecay;
         this.energy = Math.max(0, this.energy - actualEnergyDecay);
+    }
+
+    /**
+     * Drifts body temperature based on how mismatched the worn outfit is
+     * against the day's weather. A positive mismatch means the entity is
+     * overdressed and heats toward 100 (too hot); a negative mismatch
+     * means underdressed, cooling toward 0 (freezing). A perfectly
+     * matched outfit (mismatch 0) holds temperature steady at the
+     * comfortable midpoint of 50.
+     *
+     * @param warmthMismatch outfit warmth minus the day's ideal warmth
+     * @param driftPerUnit   temperature change per tick per unit of mismatch
+     */
+    public void tickTemperature(double warmthMismatch, double driftPerUnit) {
+        if (warmthMismatch == 0) {
+            return;
+        }
+        setTemperature(this.temperature + warmthMismatch * driftPerUnit);
+    }
+
+    /**
+     * @param coldThreshold the meter value below which the entity is
+     *                      considered too cold (e.g. 20)
+     * @return true when the body temperature meter has dropped below
+     *         the comfort band
+     */
+    public boolean isTooCold(double coldThreshold) {
+        return temperature < coldThreshold;
+    }
+
+    /**
+     * @param hotThreshold the meter value above which the entity is
+     *                     considered too hot (e.g. 80)
+     * @return true when the body temperature meter has risen above
+     *         the comfort band
+     */
+    public boolean isTooHot(double hotThreshold) {
+        return temperature > hotThreshold;
     }
 
     /**
@@ -692,9 +758,15 @@ public class EntityState implements Serializable {
      * Called when the person sleeps / at the end of each day.
      */
     public void resetNeeds() {
+        ensureThirstProfile();
+        ensureBladderProfile();
         this.hunger = 100.0;
-        this.thirst = 100.0;
-        this.bladder = 100.0;
+        this.thirst = randomNeedLevel(
+                SimConstants.NEED_THIRST_START_MIN,
+                SimConstants.NEED_THIRST_START_MAX);
+        this.bladder = randomNeedLevel(
+                SimConstants.NEED_BLADDER_START_MIN,
+                SimConstants.NEED_BLADDER_START_MAX);
         this.temperature = 50.0;
         this.postMealBladderTicks = 0;
         this.entertainment = 100.0;
@@ -705,6 +777,38 @@ public class EntityState implements Serializable {
         this.bladderCriticalNotified = false;
         this.entertainmentCriticalNotified = false;
         this.energyCriticalNotified = false;
+        this.temperatureCriticalNotified = false;
+    }
+
+    private void initializeThirstProfile() {
+        this.thirstDecayMultiplier = randomNeedLevel(
+                SimConstants.NEED_THIRST_DECAY_MULTIPLIER_MIN,
+                SimConstants.NEED_THIRST_DECAY_MULTIPLIER_MAX);
+    }
+
+    private void ensureThirstProfile() {
+        if (thirstDecayMultiplier <= 0) {
+            initializeThirstProfile();
+        }
+    }
+
+    private void initializeBladderProfile() {
+        this.bladderDecayMultiplier = randomNeedLevel(
+                SimConstants.NEED_BLADDER_DECAY_MULTIPLIER_MIN,
+                SimConstants.NEED_BLADDER_DECAY_MULTIPLIER_MAX);
+        this.bladderReliefTarget = randomNeedLevel(
+                SimConstants.NEED_BLADDER_RELIEF_MIN,
+                SimConstants.NEED_BLADDER_RELIEF_MAX);
+    }
+
+    private void ensureBladderProfile() {
+        if (bladderDecayMultiplier <= 0 || bladderReliefTarget <= 0) {
+            initializeBladderProfile();
+        }
+    }
+
+    private static double randomNeedLevel(double min, double max) {
+        return min + GameRandom.nextDouble(max - min);
     }
 
     /**

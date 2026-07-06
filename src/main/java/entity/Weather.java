@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import constants.SimConstants;
 import utility.LocationSelector;
 import utility.io.ResourceAccess;
 
@@ -729,6 +730,23 @@ public class Weather {
         double celsius = Double.parseDouble(weatherData.get(temp)) / 10.0;
         int fahrenheit = (int) (celsius * (9.0 / 5.0)) + 32;
         return String.valueOf(fahrenheit);
+    }
+
+    /**
+     * Returns the given temperature reading ("TMAX"/"TMIN") in whole
+     * degrees Fahrenheit. Requires {@link #parseCSV(Date)} to have been
+     * called for the desired date; falls back to a mild default when no
+     * weather data is available (e.g. a date missing from the CSV).
+     *
+     * @param temp the CSV key, "TMAX" or "TMIN"
+     * @return the temperature in Fahrenheit
+     */
+    public int getTempFahrenheit(String temp) {
+        if (weatherData == null || !weatherData.containsKey(temp)) {
+            return SimConstants.CLOTHING_DEFAULT_TEMP_F;
+        }
+        double celsius = Double.parseDouble(weatherData.get(temp)) / 10.0;
+        return (int) (celsius * (9.0 / 5.0)) + 32;
     }
 
 }

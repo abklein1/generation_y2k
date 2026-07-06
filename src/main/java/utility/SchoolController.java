@@ -219,6 +219,9 @@ public class SchoolController implements InspectionNavigator {
         if (traversalStorage != null) {
             simulationEngine.setTraversalStorage(traversalStorage);
         }
+        if (roomConnector != null) {
+            simulationEngine.setRoomConnector(roomConnector);
+        }
         if (radio != null) {
             simulationEngine.setRadio(radio);
         }
@@ -426,6 +429,12 @@ public class SchoolController implements InspectionNavigator {
         // Provide pre-computed traversal paths for room-to-room movement
         if (traversalStorage != null) {
             simulationEngine.setTraversalStorage(traversalStorage);
+        }
+
+        // Wire the room graph so the central HVAC system can compute
+        // indoor temperatures for every room
+        if (roomConnector != null) {
+            simulationEngine.setRoomConnector(roomConnector);
         }
 
         // Add simulation listener to update UI

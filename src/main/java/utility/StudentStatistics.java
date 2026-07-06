@@ -3,6 +3,7 @@ package utility;
 import constants.SimConstants;
 import entity.AllostaticLoad;
 import entity.Items.Outfit;
+import entity.Items.Wardrobe;
 import entity.Student;
 import entity.StudentBlock;
 import entity.StudentSchedule;
@@ -119,6 +120,10 @@ public class StudentStatistics implements PStatistics {
 
     // Current outfit (clothing items organized by layer)
     private Outfit currentOutfit;
+
+    // Owned clothing: the pre-generated outfits worn through the first
+    // week, then recombined into new daily outfits.
+    private Wardrobe wardrobe;
 
     public StudentStatistics() {
         this.height = 0;
@@ -1491,6 +1496,19 @@ public class StudentStatistics implements PStatistics {
     @Override
     public void setCurrentOutfit(Outfit outfit) {
         this.currentOutfit = outfit == null ? new Outfit() : outfit;
+    }
+
+    /**
+     * Returns the student's wardrobe of owned outfits, or {@code null}
+     * when clique clothing generation has not run (or produced nothing)
+     * for this student.
+     */
+    public Wardrobe getWardrobe() {
+        return wardrobe;
+    }
+
+    public void setWardrobe(Wardrobe wardrobe) {
+        this.wardrobe = wardrobe;
     }
 
 }

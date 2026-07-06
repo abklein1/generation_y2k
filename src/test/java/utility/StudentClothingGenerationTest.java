@@ -2,6 +2,7 @@ package utility;
 
 import entity.Items.ClothingItem;
 import entity.Items.Outfit;
+import entity.Items.Wardrobe;
 import entity.Student;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -89,11 +90,97 @@ class StudentClothingGenerationTest {
             Outfit outfit = student.studentStatistics.getCurrentOutfit();
 
             for (ClothingItem item : outfit.getItems()) {
-                if (!"bottoms".equals(item.getLayer())) {
+                // Other layers (outerwear, accessories) legitimately list
+                // their own per-item materials; Emo tops define none, so
+                // any material on a top means descriptors leaked across
+                // garments.
+                if ("tops".equals(item.getLayer())) {
                     assertTrue(item.getMaterial() == null
                                     || item.getMaterial().isBlank(),
-                            "Non-bottom garment should carry no fabric: "
+                            "Emo top should carry no fabric: "
                                     + item.getDisplayName());
+                }
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Recipe picks are restricted to the clique's outfit_types list")
+    void testRecipePicksRespectCliqueList() {
+        // Emo references shirt_and_pants, layered_top, and jacket_outfit;
+        // dress recipes must never appear even across many rolls.
+        for (int i = 0; i < 100; i++) {
+            Student student = new Student();
+            student.studentStatistics.setMainClique("Emo");
+            student.studentStatistics.setGender("Female");
+
+            StudentPopGenerator.applyClothingAttributes(student);
+            Outfit outfit = student.studentStatistics.getCurrentOutfit();
+            assertFalse(outfit.isEmpty());
+
+            String recipe = outfit.getOutfitType();
+            assertTrue("shirt_and_pants".equals(recipe)
+                            || "layered_top".equals(recipe)
+                            || "jacket_outfit".equals(recipe),
+                    "Emo outfit used a recipe outside its list: " + recipe);
+        }
+    }
+
+    @Test
+    @DisplayName("Generation pre-fills a 7-outfit wardrobe and wears the first")
+    void testWardrobeGeneration() {
+        Student student = new Student();
+        student.studentStatistics.setMainClique("Emo");
+        student.studentStatistics.setGender("Female");
+
+        StudentPopGenerator.applyClothingAttributes(student);
+
+        Wardrobe wardrobe = student.studentStatistics.getWardrobe();
+        assertNotNull(wardrobe, "Populated cliques should get a wardrobe");
+        assertEquals(7, wardrobe.size());
+        assertEquals(1, wardrobe.getNextUnwornIndex(),
+                "Exactly the first outfit should be marked worn on day 1");
+
+        // Reference equality intended: day 1 wears wardrobe outfit #1.
+        assertTrue(wardrobe.getOutfits().get(0)
+                        == student.studentStatistics.getCurrentOutfit(),
+                "Day-1 outfit should be the first wardrobe outfit");
+    }
+
+    @Test
+    @DisplayName("No wardrobe is created when the clique has no inventory")
+    void testNoWardrobeForUnpopulatedClique() {
+        Student student = new Student();
+        student.studentStatistics.setMainClique(UNPOPULATED_CLIQUE);
+        student.studentStatistics.setGender("Female");
+
+        StudentPopGenerator.applyClothingAttributes(student);
+
+        assertTrue(student.studentStatistics.getWardrobe() == null);
+    }
+
+    @Test
+    @DisplayName("Generated garments carry category-default or overridden warmth")
+    void testGeneratedItemsCarryWarmth() {
+        for (int i = 0; i < 50; i++) {
+            Student student = new Student();
+            student.studentStatistics.setMainClique("Emo");
+            student.studentStatistics.setGender("Female");
+
+            StudentPopGenerator.applyClothingAttributes(student);
+            Outfit outfit = student.studentStatistics.getCurrentOutfit();
+            assertFalse(outfit.isEmpty());
+            assertTrue(outfit.getTotalWarmth() > 0,
+                    "A full outfit should have positive total warmth");
+
+            for (ClothingItem item : outfit.getItems()) {
+                switch (item.getLayer()) {
+                    case "bottoms" -> assertEquals(2, item.getWarmth());
+                    case "outerwear" -> assertEquals(3, item.getWarmth());
+                    case "tops" -> assertTrue(item.getWarmth() == 1
+                                    || item.getWarmth() == 2,
+                            "Tops are warmth 2 by default, 1 for tank tops");
+                    default -> assertEquals(0, item.getWarmth());
                 }
             }
         }

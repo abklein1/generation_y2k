@@ -10,11 +10,14 @@ import entity.Radio.RadioStation;
 import entity.Radio.Song;
 import entity.Rooms.OffCampus;
 import entity.Rooms.Room;
+import entity.Items.Outfit;
 import save.SimulationRuntimeSnapshot;
+import utility.DailyOutfitAssigner;
 import utility.GameLogger;
 import utility.AcademicProgressService;
 import utility.PStatistics;
 import utility.RadioReactionMessageLoader;
+import utility.RoomConnector;
 import utility.SocialLinkConnector;
 import utility.TraversalStorage;
 import utility.music.MusicPreference;
@@ -59,6 +62,19 @@ public class SimulationEngine {
     private boolean wasLunchA = false;
     private boolean wasLunchB = false;
     private Radio radio;
+
+    // Day's forecast and the outfit warmth that matches it, refreshed
+    // each morning. Drives daily outfit assignment and the body
+    // temperature drift of over/underdressed students.
+    private int dailyTempHighF = SimConstants.CLOTHING_DEFAULT_TEMP_F;
+    private int dailyTempLowF = SimConstants.CLOTHING_DEFAULT_TEMP_F;
+    private int dailyIdealOutfitWarmth = SimConstants.CLOTHING_IDEAL_WARMTH_MILD;
+
+    // Central HVAC: per-room indoor temperatures spread from utility
+    // rooms over the room graph. Recomputed each morning against the
+    // day's low and again at noon against the day's high.
+    private RoomTemperatureManager roomTemperatureManager;
+    private boolean roomTempsAfternoon;
 
     // Simulation speed options (ticks per real-time second)
     public static final int SPEED_SLOW = 1; // 1 tick per second
@@ -143,6 +159,51 @@ public class SimulationEngine {
 
         // Initialize entity states if needed
         initializeEntityStates();
+
+        refreshDailyOutfitWeather();
+    }
+
+    /**
+     * Refreshes the cached forecast (high/low) and the matching ideal
+     * outfit warmth for the current sim date. Falls back to a mild
+     * default when weather data is unavailable (e.g. the date is missing
+     * from the region CSV or no school is wired up in tests).
+     */
+    private void refreshDailyOutfitWeather() {
+        int high = SimConstants.CLOTHING_DEFAULT_TEMP_F;
+        int low = SimConstants.CLOTHING_DEFAULT_TEMP_F;
+        if (school != null && time != null) {
+            try {
+                Weather weather = new Weather(school.getSchoolName());
+                Weather.parseCSV(time.getCurrentDate());
+                high = weather.getTempFahrenheit("TMAX");
+                low = weather.getTempFahrenheit("TMIN");
+            } catch (Exception e) {
+                GameLogger.logDebug("Weather unavailable for outfit "
+                        + "assignment, using mild defaults: " + e.getMessage());
+            }
+        }
+        this.dailyTempHighF = high;
+        this.dailyTempLowF = low;
+        this.dailyIdealOutfitWarmth =
+                DailyOutfitAssigner.idealWarmthForTemps(high, low);
+        recomputeRoomTemperatures();
+    }
+
+    /**
+     * Recomputes indoor room temperatures against the current half of
+     * the day: mornings track the day's low (TMIN), afternoons the
+     * day's high (TMAX). Each recompute re-rolls the duct spread, so
+     * rooms far from a utility room wobble slightly between refreshes.
+     */
+    private void recomputeRoomTemperatures() {
+        if (roomTemperatureManager == null || time == null) {
+            return;
+        }
+        boolean afternoon = time.getHour() >= SimConstants.HVAC_PM_SWITCH_HOUR;
+        roomTemperatureManager.recompute(
+                afternoon ? dailyTempHighF : dailyTempLowF);
+        this.roomTempsAfternoon = afternoon;
     }
 
     /**
@@ -171,6 +232,34 @@ public class SimulationEngine {
 
     public void setTraversalStorage(TraversalStorage storage) {
         this.traversalStorage = storage;
+    }
+
+    /**
+     * Wires the room-connection graph so the engine can simulate the
+     * school's central heating/cooling. Immediately refreshes the
+     * forecast and computes every room's temperature so values exist
+     * from the first tick (covers both fresh generation and loading a
+     * save, where {@link #initialize} is never called).
+     *
+     * @param roomConnector the school's room connector, or {@code null}
+     *                      to disable indoor temperatures
+     */
+    public void setRoomConnector(RoomConnector roomConnector) {
+        if (roomConnector == null) {
+            this.roomTemperatureManager = null;
+            return;
+        }
+        this.roomTemperatureManager =
+                new RoomTemperatureManager(roomConnector.getSchoolConnect());
+        refreshDailyOutfitWeather();
+    }
+
+    /**
+     * @return the room temperature manager, or {@code null} when no
+     *         room graph has been wired up.
+     */
+    public RoomTemperatureManager getRoomTemperatureManager() {
+        return roomTemperatureManager;
     }
 
     /**
@@ -260,6 +349,13 @@ public class SimulationEngine {
         // 1.5. Update day phase on all entities
         DayPhase currentDayPhase = bellSchedule.getDayPhase(time);
         updateAllDayPhases(currentDayPhase);
+
+        // 1.55. Switch room temperatures from the day's low to the
+        // day's high once the clock crosses into the afternoon.
+        if (roomTemperatureManager != null && !roomTempsAfternoon
+                && time.getHour() >= SimConstants.HVAC_PM_SWITCH_HOUR) {
+            recomputeRoomTemperatures();
+        }
 
         // 1.6. Advance FM radio before commutes so "now playing" is current
         if (radio != null) {
@@ -897,6 +993,16 @@ public class SimulationEngine {
             energyDecayBored *= SimConstants.NEED_ENERGY_DECAY_SOCIAL_MULTIPLIER;
         }
 
+        // Temperature distress debuff: entities outside the comfort
+        // band tire out faster (shivering or sweating through class).
+        boolean temperatureDistress =
+                state.isTooCold(SimConstants.NEED_TEMPERATURE_COLD_THRESHOLD)
+                || state.isTooHot(SimConstants.NEED_TEMPERATURE_HOT_THRESHOLD);
+        if (temperatureDistress) {
+            energyDecay *= SimConstants.NEED_TEMPERATURE_ENERGY_DECAY_MULTIPLIER;
+            energyDecayBored *= SimConstants.NEED_TEMPERATURE_ENERGY_DECAY_MULTIPLIER;
+        }
+
         double hungerDecay = eating ? 0 : SimConstants.NEED_HUNGER_DECAY_PER_TICK;
         double thirstDecay = eating ? 0 : SimConstants.NEED_THIRST_DECAY_PER_TICK;
         double bladderDecay = SimConstants.NEED_BLADDER_DECAY_PER_TICK;
@@ -922,6 +1028,20 @@ public class SimulationEngine {
                 energyDecay,
                 energyDecayBored);
 
+        // Entities heat up or cool down over the day when what they wear
+        // doesn't match their surroundings: the room's HVAC temperature
+        // while indoors, the day's forecast otherwise. Students use
+        // their generated outfit (those without one, from unpopulated
+        // cliques, are exempt); staff have no wardrobe and are modeled
+        // as dressed for a comfortable indoor day, so they only drift
+        // in rooms the central air fails to keep comfortable.
+        Integer wornWarmth = wornWarmthFor(stats, isStaff);
+        if (wornWarmth != null) {
+            state.tickTemperature(
+                    wornWarmth - idealWarmthFor(state),
+                    SimConstants.NEED_TEMPERATURE_DRIFT_PER_WARMTH_UNIT);
+        }
+
         // Staff-only off-screen self-care: applied AFTER the normal decay
         // tick so the refill is visible as a slight regen against the
         // baseline drain. Net effect is roughly steady-state during
@@ -937,6 +1057,44 @@ public class SimulationEngine {
         applyNeedStress(state, stats.getAllostaticLoad());
         fireCriticalNeedMessages(state, displayName);
         runExhaustionCascade(state, stats, displayName);
+    }
+
+    /**
+     * The outfit warmth that would keep this entity comfortable where
+     * they currently are: derived from the room's HVAC temperature when
+     * they are in a room the system tracks (a heated classroom in
+     * winter wants lighter clothes than the outdoor forecast suggests),
+     * falling back to the day's outdoor ideal while commuting or
+     * off-campus.
+     */
+    private int idealWarmthFor(EntityState state) {
+        if (roomTemperatureManager != null) {
+            Double roomTempF = roomTemperatureManager
+                    .getRoomTemperatureF(state.getCurrentRoom());
+            if (roomTempF != null) {
+                return DailyOutfitAssigner.idealWarmthForTemp(
+                        (int) Math.round(roomTempF));
+            }
+        }
+        return dailyIdealOutfitWarmth;
+    }
+
+    /**
+     * The warmth of what this entity is effectively wearing, or
+     * {@code null} when they are exempt from temperature drift.
+     * Students report their generated outfit's total warmth; staff,
+     * who have no wardrobe, are assumed to dress for a comfortable
+     * indoor day.
+     */
+    private Integer wornWarmthFor(PStatistics stats, boolean isStaff) {
+        if (isStaff) {
+            return SimConstants.STAFF_ASSUMED_OUTFIT_WARMTH;
+        }
+        Outfit outfit = stats.getCurrentOutfit();
+        if (outfit == null || outfit.isEmpty()) {
+            return null;
+        }
+        return outfit.getTotalWarmth();
     }
 
     /**
@@ -1016,6 +1174,10 @@ public class SimulationEngine {
         if (state.getEntertainment() < SimConstants.NEED_CRITICAL_THRESHOLD) {
             allostaticLoad.increaseLoad(SimConstants.NEED_ENTERTAINMENT_ALLOSTATIC_STRESS);
         }
+        if (state.isTooCold(SimConstants.NEED_TEMPERATURE_COLD_THRESHOLD)
+                || state.isTooHot(SimConstants.NEED_TEMPERATURE_HOT_THRESHOLD)) {
+            allostaticLoad.increaseLoad(SimConstants.NEED_TEMPERATURE_ALLOSTATIC_STRESS);
+        }
     }
 
     /**
@@ -1041,6 +1203,31 @@ public class SimulationEngine {
         checkCriticalEdge(state, displayName, EntityState.NeedType.ENERGY,
                 state.getEnergy(),
                 SimConstants.NEED_ENERGY_CRITICAL_MESSAGE);
+        checkTemperatureEdge(state, displayName);
+    }
+
+    /**
+     * Edge-triggered status message for temperature distress. Unlike
+     * the other needs, the temperature meter is bidirectional (50 is
+     * ideal), so distress means leaving the comfort band in either
+     * direction; the message names the direction. Re-fires only after
+     * the meter recovers back inside the band.
+     */
+    private void checkTemperatureEdge(EntityState state, String displayName) {
+        boolean tooHot = state.isTooHot(SimConstants.NEED_TEMPERATURE_HOT_THRESHOLD);
+        boolean tooCold = state.isTooCold(SimConstants.NEED_TEMPERATURE_COLD_THRESHOLD);
+        boolean distressed = tooHot || tooCold;
+        boolean alreadyNotified =
+                state.isCriticalNotified(EntityState.NeedType.TEMPERATURE);
+        if (distressed && !alreadyNotified) {
+            String format = tooHot
+                    ? SimConstants.NEED_TEMPERATURE_HOT_CRITICAL_MESSAGE
+                    : SimConstants.NEED_TEMPERATURE_COLD_CRITICAL_MESSAGE;
+            addEntityStatusLogEntry(state, String.format(format, displayName));
+            state.setCriticalNotified(EntityState.NeedType.TEMPERATURE, true);
+        } else if (!distressed && alreadyNotified) {
+            state.setCriticalNotified(EntityState.NeedType.TEMPERATURE, false);
+        }
     }
 
     private void checkCriticalEdge(EntityState state, String displayName,
@@ -1459,6 +1646,13 @@ public class SimulationEngine {
         // Advance clock to next school day morning so unpausing doesn't
         // re-trigger end-of-day immediately.
         time.advanceToNextSchoolDay();
+
+        // Dress students for the new day: first-week outfits come from
+        // the pre-generated wardrobe, later days recombine owned pieces,
+        // both biased toward the day's forecast.
+        refreshDailyOutfitWeather();
+        DailyOutfitAssigner.assignDailyOutfits(students, dailyTempHighF,
+                dailyTempLowF);
 
         // Re-place all entities in their first-period rooms for the new day
         placeEntitiesForNewDay();

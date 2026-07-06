@@ -346,7 +346,7 @@ public class StudentBehaviorTreeBuilder {
             }
             
             // Done — bladder relieved, clear flags
-            state.setBladder(100);
+            state.relieveBladder();
             state.setNeedsBathroom(false);
             state.setHasPermissionToLeave(false);
             state.setCurrentActivity(entity.ActivityType.IDLE);

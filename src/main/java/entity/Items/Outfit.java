@@ -103,6 +103,19 @@ public final class Outfit implements Serializable {
     }
 
     /**
+     * Returns the total warmth of this outfit: the sum of every item's
+     * warmth value. Used to match outfits against the day's weather and
+     * to drive the wearer's body-temperature drift.
+     */
+    public int getTotalWarmth() {
+        int total = 0;
+        for (ClothingItem item : items) {
+            total += item.getWarmth();
+        }
+        return total;
+    }
+
+    /**
      * Returns true when this outfit has no clothing items.
      */
     public boolean isEmpty() {

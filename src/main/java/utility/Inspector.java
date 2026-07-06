@@ -38,6 +38,41 @@ public class Inspector {
     private static final DecimalFormat NEED_FORMAT = new DecimalFormat("#.#");
 
     /**
+     * Appends the HVAC temperature of the room the entity currently
+     * occupies, when the simulation is tracking one for that room.
+     */
+    private static void appendRoomTemperature(StringBuilder sb, Room currentRoom) {
+        Double roomTempF = simulation.RoomTemperatureManager
+                .lookupTemperatureF(currentRoom);
+        if (roomTempF != null) {
+            sb.append("   Room Temp:      ")
+                    .append(Math.round(roomTempF)).append(" F\n");
+        }
+    }
+
+    /**
+     * Formats the body temperature meter, which unlike the other needs
+     * is bidirectional: 50 is ideal, 0 is freezing, 100 is overheating.
+     * Distress labels line up with the comfort band the simulation uses
+     * for temperature debuffs.
+     */
+    private static String formatTemperature(double value) {
+        String label;
+        if (value > constants.SimConstants.NEED_TEMPERATURE_HOT_THRESHOLD) {
+            label = "Too Hot";
+        } else if (value < constants.SimConstants.NEED_TEMPERATURE_COLD_THRESHOLD) {
+            label = "Too Cold";
+        } else if (value >= 65) {
+            label = "Warm";
+        } else if (value <= 35) {
+            label = "Chilly";
+        } else {
+            label = "Comfortable";
+        }
+        return NEED_FORMAT.format(value) + " (" + label + ")";
+    }
+
+    /**
      * Formats a physiological need value as a readable string with its
      * numeric value and a short status label.
      */
@@ -555,7 +590,8 @@ public class Inspector {
             sb.append("   Hunger:         ").append(formatNeed(entityState.getHunger())).append("\n");
             sb.append("   Thirst:         ").append(formatNeed(entityState.getThirst())).append("\n");
             sb.append("   Bladder:        ").append(formatNeed(entityState.getBladder())).append("\n");
-            sb.append("   Temperature:    ").append(formatNeed(entityState.getTemperature())).append("\n");
+            sb.append("   Temperature:    ").append(formatTemperature(entityState.getTemperature())).append("\n");
+            appendRoomTemperature(sb, entityState.getCurrentRoom());
             sb.append("   Entertainment:  ").append(formatNeed(entityState.getEntertainment())).append("\n");
             sb.append("   Energy:         ").append(formatNeed(entityState.getEnergy())).append("\n");
             if (entityState.isAsleep()) {
@@ -1496,7 +1532,8 @@ public class Inspector {
             sb.append("   Hunger:         ").append(formatNeed(entityState.getHunger())).append("\n");
             sb.append("   Thirst:         ").append(formatNeed(entityState.getThirst())).append("\n");
             sb.append("   Bladder:        ").append(formatNeed(entityState.getBladder())).append("\n");
-            sb.append("   Temperature:    ").append(formatNeed(entityState.getTemperature())).append("\n");
+            sb.append("   Temperature:    ").append(formatTemperature(entityState.getTemperature())).append("\n");
+            appendRoomTemperature(sb, entityState.getCurrentRoom());
             sb.append("   Entertainment:  ").append(formatNeed(entityState.getEntertainment())).append("\n");
             sb.append("   Energy:         ").append(formatNeed(entityState.getEnergy())).append("\n");
             if (entityState.isAsleep()) {
@@ -1694,6 +1731,11 @@ public class Inspector {
                     .append("\n");
         }
         roomDetails.append("It has a student capacity of ").append(studentCap).append("\n");
+        Double roomTempF = simulation.RoomTemperatureManager.lookupTemperatureF(room);
+        if (roomTempF != null) {
+            roomDetails.append("Room temperature: ")
+                    .append(Math.round(roomTempF)).append(" F\n");
+        }
         if (room instanceof Classroom) {
             String abbrev = ((Classroom) room).getClassRoomType();
             roomDetails.append("It is a classroom of type: ").append(abbrev).append("\n");

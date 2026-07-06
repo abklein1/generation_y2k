@@ -30,6 +30,7 @@ public final class ClothingItem implements Serializable {
     private final String color;
     private final String pattern;
     private final String brand;
+    private final int warmth;
 
     /**
      * Convenience constructor for garments without a brand descriptor.
@@ -49,7 +50,7 @@ public final class ClothingItem implements Serializable {
                         String bodySlot, String material, String color,
                         String pattern) {
         this(name, clothingType, layer, bodySlot, material, color, pattern,
-                null);
+                null, 0);
     }
 
     /**
@@ -77,6 +78,28 @@ public final class ClothingItem implements Serializable {
     public ClothingItem(String name, String clothingType, String layer,
                         String bodySlot, String material, String color,
                         String pattern, String brand) {
+        this(name, clothingType, layer, bodySlot, material, color, pattern,
+                brand, 0);
+    }
+
+    /**
+     * @param name         display name of the garment
+     * @param clothingType the inventory category key
+     * @param layer        the outfit layer this garment occupies
+     * @param bodySlot     coarse body region
+     * @param material     optional fabric/material descriptor; may be
+     *                     {@code null}
+     * @param color        optional color; may be {@code null}
+     * @param pattern      optional pattern descriptor; may be {@code null}
+     * @param brand        optional clothing brand descriptor; may be
+     *                     {@code null}
+     * @param warmth       how much this garment insulates the wearer
+     *                     (0 = negligible, e.g. shoes; 3 = heavy layer,
+     *                     e.g. a jacket)
+     */
+    public ClothingItem(String name, String clothingType, String layer,
+                        String bodySlot, String material, String color,
+                        String pattern, String brand, int warmth) {
         this.name = name;
         this.clothingType = clothingType;
         this.layer = layer;
@@ -85,6 +108,7 @@ public final class ClothingItem implements Serializable {
         this.color = color;
         this.pattern = pattern;
         this.brand = brand;
+        this.warmth = warmth;
     }
 
     public String getName() {
@@ -117,6 +141,10 @@ public final class ClothingItem implements Serializable {
 
     public String getBrand() {
         return brand;
+    }
+
+    public int getWarmth() {
+        return warmth;
     }
 
     /**

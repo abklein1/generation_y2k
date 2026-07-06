@@ -5,6 +5,7 @@ import entity.Items.ClothingItem;
 import entity.Items.EquipmentSlot;
 import entity.Items.Outfit;
 import entity.Items.Piercing;
+import entity.Items.Wardrobe;
 import entity.Items.WearableItem;
 import entity.Student;
 import utility.music.FavoriteBandAssigner;
@@ -864,22 +865,24 @@ public class StudentPopGenerator {
 
     /**
      * Applies clique-driven clothing to a single student based on their
-     * clique and gender. Picks a random outfit recipe from
-     * {@code outfit_types.json} and fills required (and probabilistically
+     * clique and gender. Pre-generates a full wardrobe of
+     * {@code WARDROBE_INITIAL_OUTFITS} outfits (one per day of the first
+     * school week), stores it on the student, and dresses them in the
+     * first one for day 1. Each outfit picks a recipe from the clique's
+     * {@code outfit_types} list and fills required (and probabilistically
      * optional) layers from the clique's inventory in
      * {@code clique_clothing.json}.
      *
      * <p>If the clique has no populated clothing data for the student's
      * gender, or if no outfit recipes are loaded, the student is left
-     * with the default empty outfit. There is no generic fallback
-     * wardrobe in this first pass.</p>
+     * with the default empty outfit and no wardrobe. There is no generic
+     * fallback wardrobe in this first pass.</p>
      */
     public static void applyClothingAttributes(Student student) {
         if (student == null || student.studentStatistics == null) {
             return;
         }
         String clique = student.studentStatistics.getMainClique();
-        String secondaryClique = student.studentStatistics.getSecondaryClique();
         String gender = student.studentStatistics.getGender();
         if (clique == null || gender == null) {
             return;
@@ -891,9 +894,36 @@ public class StudentPopGenerator {
             return;
         }
 
+        Wardrobe wardrobe = new Wardrobe();
+        for (int i = 0; i < WARDROBE_INITIAL_OUTFITS; i++) {
+            Outfit outfit = generateOutfit(student);
+            if (outfit != null && !outfit.isEmpty()) {
+                wardrobe.addOutfit(outfit);
+            }
+        }
+        if (wardrobe.isEmpty()) {
+            return;
+        }
+
+        student.studentStatistics.setWardrobe(wardrobe);
+        // Day 1 wears the first pre-generated outfit; DailyOutfitAssigner
+        // consumes the rest of the wardrobe on subsequent mornings.
+        student.studentStatistics.setCurrentOutfit(wardrobe.wearNext());
+    }
+
+    /**
+     * Generates a single outfit for the student from their clique's
+     * recipes and inventory. Returns {@code null} when no recipe's
+     * required layers can be satisfied.
+     */
+    private static Outfit generateOutfit(Student student) {
+        String clique = student.studentStatistics.getMainClique();
+        String secondaryClique = student.studentStatistics.getSecondaryClique();
+        String gender = student.studentStatistics.getGender();
+
         OutfitTypeLoader.OutfitTypeData recipe = pickOutfitRecipe(clique, gender);
         if (recipe == null) {
-            return;
+            return null;
         }
 
         Outfit outfit = new Outfit(recipe.getName());
@@ -924,7 +954,7 @@ public class StudentPopGenerator {
             }
         }
 
-        student.studentStatistics.setCurrentOutfit(outfit);
+        return outfit;
     }
 
     /**
@@ -960,27 +990,52 @@ public class StudentPopGenerator {
 
     /**
      * Picks an outfit recipe whose required layers can be fully
-     * satisfied by the clique/gender inventory. Recipes that demand
-     * layers the clique doesn't yet stock (e.g. a {@code dress} recipe
-     * for a clique with no {@code one_piece} entries) are skipped so
-     * generation never produces an outfit with missing required slots.
+     * satisfied by the clique/gender inventory. When the clique defines
+     * an {@code outfit_types} list in {@code clique_clothing.json}, the
+     * pick is weighted among those referenced recipes (so e.g. Emo
+     * favors layered looks while Prep leans on shirt-and-pants); cliques
+     * without a list fall back to a uniform pick over every loaded
+     * recipe. Recipes that demand layers the clique doesn't stock (e.g.
+     * a {@code dress} recipe for a clique with no {@code one_piece}
+     * entries) are skipped so generation never produces an outfit with
+     * missing required slots.
      *
      * @return a usable recipe, or {@code null} when none match
      */
     private static OutfitTypeLoader.OutfitTypeData pickOutfitRecipe(
             String clique, String gender) {
-        List<OutfitTypeLoader.OutfitTypeData> all =
-                OutfitTypeLoader.getAllOutfitTypes();
-        List<OutfitTypeLoader.OutfitTypeData> viable = new ArrayList<>();
-        for (OutfitTypeLoader.OutfitTypeData recipe : all) {
-            boolean ok = true;
-            for (String layer : recipe.getRequiredLayers()) {
-                if (CliqueClothingLoader.getItems(clique, gender, layer).isEmpty()) {
-                    ok = false;
-                    break;
+        List<CliqueClothingLoader.OutfitTypeRef> refs =
+                CliqueClothingLoader.getOutfitTypeRefs(clique, gender);
+        if (!refs.isEmpty()) {
+            List<OutfitTypeLoader.OutfitTypeData> viable = new ArrayList<>();
+            List<Integer> weights = new ArrayList<>();
+            int totalWeight = 0;
+            for (CliqueClothingLoader.OutfitTypeRef ref : refs) {
+                OutfitTypeLoader.OutfitTypeData recipe =
+                        OutfitTypeLoader.getOutfitType(ref.getName());
+                if (recipe != null
+                        && canSatisfyRequiredLayers(recipe, clique, gender)) {
+                    viable.add(recipe);
+                    weights.add(ref.getWeight());
+                    totalWeight += ref.getWeight();
                 }
             }
-            if (ok) {
+            if (!viable.isEmpty()) {
+                int roll = setRandom(0, totalWeight - 1);
+                for (int i = 0; i < viable.size(); i++) {
+                    roll -= weights.get(i);
+                    if (roll < 0) {
+                        return viable.get(i);
+                    }
+                }
+                return viable.get(viable.size() - 1);
+            }
+        }
+
+        List<OutfitTypeLoader.OutfitTypeData> viable = new ArrayList<>();
+        for (OutfitTypeLoader.OutfitTypeData recipe
+                : OutfitTypeLoader.getAllOutfitTypes()) {
+            if (canSatisfyRequiredLayers(recipe, clique, gender)) {
                 viable.add(recipe);
             }
         }
@@ -988,6 +1043,21 @@ public class StudentPopGenerator {
             return null;
         }
         return viable.get(setRandom(0, viable.size() - 1));
+    }
+
+    /**
+     * Returns true when the clique/gender inventory stocks at least one
+     * item for every layer the recipe requires.
+     */
+    private static boolean canSatisfyRequiredLayers(
+            OutfitTypeLoader.OutfitTypeData recipe,
+            String clique, String gender) {
+        for (String layer : recipe.getRequiredLayers()) {
+            if (CliqueClothingLoader.getItems(clique, gender, layer).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -1041,9 +1111,29 @@ public class StudentPopGenerator {
                     ? null
                     : brands.get(setRandom(0, brands.size() - 1));
 
+            int warmth = option.getWarmth() != null
+                    ? option.getWarmth()
+                    : defaultWarmthFor(layer);
+
             outfit.addItem(new ClothingItem(name, layer, layer, slot,
-                    material, color, pattern, brand));
+                    material, color, pattern, brand, warmth));
         }
+    }
+
+    /**
+     * Returns the default warmth contribution for a clothing category,
+     * used when a garment defines no explicit {@code "warmth"} in
+     * {@code clique_clothing.json}.
+     */
+    private static int defaultWarmthFor(String layer) {
+        return switch (layer) {
+            case "outerwear" -> CLOTHING_WARMTH_OUTERWEAR;
+            case "tops" -> CLOTHING_WARMTH_TOPS;
+            case "bottoms" -> CLOTHING_WARMTH_BOTTOMS;
+            case "one_piece" -> CLOTHING_WARMTH_ONE_PIECE;
+            case "shoes" -> CLOTHING_WARMTH_SHOES;
+            default -> CLOTHING_WARMTH_ACCESSORIES;
+        };
     }
 
     /**

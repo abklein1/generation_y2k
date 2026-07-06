@@ -2,6 +2,11 @@
     "2004": {
         "Emo": {
             "female": {
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 2 },
+                    { "name": "layered_top", "weight": 3 },
+                    { "name": "jacket_outfit", "weight": 2 }
+                ],
                 "outerwear": [
                     "{band} hoodie",
                     "military jacket",
@@ -11,11 +16,11 @@
                 "tops": [
                     "{band} t-shirt",
                     "graphic tee",
-                    "graphic tank top",
+                    { "name": "graphic tank top", "warmth": 1 },
                     "local band t-shirt",
-                    "{band} tank top",
-                    "tank top",
-                    "tank top with lace fringe"
+                    { "name": "{band} tank top", "warmth": 1 },
+                    { "name": "tank top", "warmth": 1 },
+                    { "name": "tank top with lace fringe", "warmth": 1 }
                 ],
                 "bottoms": [
                     { "name": "skinny jeans", "materials": ["denim"] },
@@ -41,6 +46,11 @@
                 "materials": []
             },
             "male": {
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 2 },
+                    { "name": "layered_top", "weight": 3 },
+                    { "name": "jacket_outfit", "weight": 2 }
+                ],
                 "outerwear": [
                     "{band} hoodie",
                     "military jacket"
@@ -73,6 +83,11 @@
         },
         "Punk": {
             "female": {
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 2 },
+                    { "name": "layered_top", "weight": 1 },
+                    { "name": "jacket_outfit", "weight": 3 }
+                ],
                 "outerwear": [
                     { "name": "jacket", "materials": ["denim", "leather"] },
                     { "name": "{band} jacket", "materials": ["denim", "leather"] },
@@ -87,8 +102,8 @@
                     { "name": "ripped skinny jeans", "materials": ["denim"] },
                     { "name": "skinny jeans", "materials": ["denim"] },
                     { "name": "pants", "materials": ["leather", "denim"] },
-                    { "name": "skirt", "patterns": ["tartan plaid"] },
-                    { "name": "skirt", "materials": ["leather", "denim"]},
+                    { "name": "skirt", "patterns": ["tartan plaid"], "warmth": 1 },
+                    { "name": "skirt", "materials": ["leather", "denim"], "warmth": 1 },
                     { "name": "pants", "patterns": ["tartan plaid"] },
                     { "name": "bootcut jeans", "materials": ["denim"] }
                 ],
@@ -104,6 +119,11 @@
                 "materials": []
             },
             "male": {
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 2 },
+                    { "name": "layered_top", "weight": 1 },
+                    { "name": "jacket_outfit", "weight": 3 }
+                ],
                 "outerwear": [
                     { "name": "jacket", "materials": ["leather", "denim"] },
                     "{band} jacket",
@@ -117,7 +137,11 @@
                     { "name": "skinny jeans", "materials": ["denim"] }
                 ],
                 "one_piece": [],
-                "shoes": [],
+                "shoes": [
+                    "Doc Martens",
+                    "Converse sneakers",
+                    "Military surplus boots"
+                ],
                 "accessories": [
                     { "name": "wallet chain", "materials": ["steel"]},
                     { "name": "studded belt", "materials": ["leather"]}
@@ -129,12 +153,17 @@
         },
         "Skater": {
             "female": {
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 3 },
+                    { "name": "layered_top", "weight": 2 },
+                    { "name": "jacket_outfit", "weight": 1 }
+                ],
                 "outerwear": [
                     { "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans", "Element"] }
                 ],
                 "tops": [
                     { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] },
-                    { "name": "tank top", "materials": ["cotton"] },
+                    { "name": "tank top", "materials": ["cotton"], "warmth": 1 },
                     { "name": "oversized t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"]},
                     { "name": "local skate shop t-shirt", "materials": ["cotton"]}
                 ],
@@ -143,7 +172,7 @@
                     { "name": "ripped skinny jeans", "materials": ["denim"] },
                     { "name": "straight leg jeans", "materials": ["denim"] },
                     { "name": "cargo pants", "materials": ["cotton"] },
-                    { "name": "cargo shorts", "materials": ["cotton"] },
+                    { "name": "cargo shorts", "materials": ["cotton"], "warmth": 1 },
                     { "name": "corduroy pants", "materials": ["cotton"] }
                 ],
                 "one_piece": [],
@@ -162,6 +191,11 @@
                 "materials": []
             },
             "male": {
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 3 },
+                    { "name": "layered_top", "weight": 2 },
+                    { "name": "jacket_outfit", "weight": 1 }
+                ],
                 "outerwear": [{ "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans"] }],
                 "tops": [
                     { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] },
@@ -172,7 +206,7 @@
                     { "name": "skinny jeans", "materials": ["denim"] },
                     { "name": "ripped skinny jeans", "materials": ["denim"] },
                     { "name": "cargo pants", "materials": ["cotton"] },
-                    { "name": "cargo shorts", "materials": ["cotton"] },
+                    { "name": "cargo shorts", "materials": ["cotton"], "warmth": 1 },
                     { "name": "corduroy pants", "materials": ["cotton"] }
                 ],
                 "one_piece": [],
@@ -551,6 +585,11 @@
                 "materials": []
             },
             "male": {
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 4 },
+                    { "name": "layered_top", "weight": 1 },
+                    { "name": "jacket_outfit", "weight": 1 }
+                ],
                 "outerwear": [
                     { "name": "sweater", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["cotton"]}
                 ],
@@ -560,7 +599,7 @@
                     { "name": "collared button up shirt", "brands": ["A&F", "Hollister", "Aeropostale"], "materials": ["cotton"]}
                 ],
                 "bottoms": [
-                    { "name": "cargo shorts", "brands": ["A&F", "Aeropostale", "Hollister"]},
+                    { "name": "cargo shorts", "brands": ["A&F", "Aeropostale", "Hollister"], "warmth": 1 },
                     { "name": "straight leg jeans", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["denim"]}
                 ],
                 "one_piece": [],

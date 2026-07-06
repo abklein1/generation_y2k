@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("CliqueClothingLoader")
@@ -111,5 +113,55 @@ class CliqueClothingLoaderTest {
                 CliqueClothingLoader.getItems("Emo", "Female", "bottoms");
         assertFalse(names.isEmpty());
         assertTrue(names.contains("skinny jeans"));
+    }
+
+    @Test
+    @DisplayName("Populated cliques expose their weighted outfit type list")
+    void testOutfitTypeRefsParse() {
+        List<CliqueClothingLoader.OutfitTypeRef> refs =
+                CliqueClothingLoader.getOutfitTypeRefs("Emo", "Female");
+        assertFalse(refs.isEmpty());
+
+        CliqueClothingLoader.OutfitTypeRef layered = refs.stream()
+                .filter(r -> "layered_top".equals(r.getName()))
+                .findFirst().orElse(null);
+        assertNotNull(layered, "Emo should reference the layered_top recipe");
+        assertEquals(3, layered.getWeight());
+
+        boolean hasDress = refs.stream()
+                .anyMatch(r -> "dress".equals(r.getName()));
+        assertFalse(hasDress, "Emo should not reference dress recipes");
+    }
+
+    @Test
+    @DisplayName("Cliques without an outfit_types list return an empty list")
+    void testOutfitTypeRefsEmptyForUnpopulatedClique() {
+        assertTrue(CliqueClothingLoader.getOutfitTypeRefs(
+                UNPOPULATED_CLIQUE_A, "Female").isEmpty());
+        assertTrue(CliqueClothingLoader.getOutfitTypeRefs(
+                "NotARealClique", "Male").isEmpty());
+    }
+
+    @Test
+    @DisplayName("Explicit warmth overrides parse; unset warmth stays null")
+    void testWarmthParsing() {
+        List<CliqueClothingLoader.ClothingOption> bottoms =
+                CliqueClothingLoader.getOptions("Skater", "Female", "bottoms");
+        assertFalse(bottoms.isEmpty());
+
+        CliqueClothingLoader.ClothingOption shorts = bottoms.stream()
+                .filter(o -> "cargo shorts".equals(o.getName()))
+                .findFirst().orElse(null);
+        assertNotNull(shorts);
+        assertEquals(1, shorts.getWarmth(),
+                "cargo shorts should override warmth to 1");
+
+        CliqueClothingLoader.ClothingOption jeans = bottoms.stream()
+                .filter(o -> "skinny jeans".equals(o.getName()))
+                .findFirst().orElse(null);
+        assertNotNull(jeans);
+        assertNull(jeans.getWarmth(),
+                "garments without a warmth key should report null so the "
+                        + "per-category default applies");
     }
 }

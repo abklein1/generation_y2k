@@ -729,6 +729,92 @@ public final class SimConstants {
     // merch is a defining feature of many cliques' looks.
     public static final int CLIQUE_CLOTHING_BRAND_CHANCE = 60;
 
+    // Default warmth contribution per clothing category. Individual
+    // garments may override via "warmth" in clique_clothing.json (e.g.
+    // shorts and tank tops drop to 1). A typical top+bottom+shoes outfit
+    // totals 4; adding outerwear reaches 7.
+    public static final int CLOTHING_WARMTH_OUTERWEAR = 3;
+    public static final int CLOTHING_WARMTH_TOPS = 2;
+    public static final int CLOTHING_WARMTH_BOTTOMS = 2;
+    public static final int CLOTHING_WARMTH_ONE_PIECE = 2;
+    public static final int CLOTHING_WARMTH_SHOES = 0;
+    public static final int CLOTHING_WARMTH_ACCESSORIES = 0;
+
+    // Outdoor temperature bands (F, based on the day's TMAX/TMIN average)
+    // mapped to the total outfit warmth that keeps a student comfortable.
+    public static final int CLOTHING_TEMP_COLD_MAX_F = 40;
+    public static final int CLOTHING_TEMP_COOL_MAX_F = 55;
+    public static final int CLOTHING_TEMP_MILD_MAX_F = 70;
+    public static final int CLOTHING_TEMP_WARM_MAX_F = 80;
+    public static final int CLOTHING_IDEAL_WARMTH_COLD = 7;
+    public static final int CLOTHING_IDEAL_WARMTH_COOL = 6;
+    public static final int CLOTHING_IDEAL_WARMTH_MILD = 5;
+    public static final int CLOTHING_IDEAL_WARMTH_WARM = 4;
+    public static final int CLOTHING_IDEAL_WARMTH_HOT = 3;
+    // Mild fallback used when weather data is unavailable for a date.
+    public static final int CLOTHING_DEFAULT_TEMP_F = 65;
+
+    // Number of distinct outfits pre-generated into each student's
+    // wardrobe at school generation (one per day of the first week).
+    public static final int WARDROBE_INITIAL_OUTFITS = 7;
+    // After the pre-generated outfits run out, daily outfits are
+    // recombined from owned pieces: this many random candidates are
+    // built and the one whose warmth best fits the weather is worn.
+    public static final int OUTFIT_RECOMBINATION_CANDIDATES = 4;
+
+    // Body temperature drift (per tick, per unit of outfit warmth
+    // mismatch). EntityState.temperature sits at 50 = comfortable;
+    // overdressed students drift toward 100 (too hot), underdressed
+    // toward 0 (freezing).
+    public static final double NEED_TEMPERATURE_DRIFT_PER_WARMTH_UNIT = 0.05;
+
+    // Comfort band on the body temperature meter. Outside of it the
+    // entity is in temperature distress and debuffs apply: energy
+    // drains faster and allostatic load builds each tick.
+    public static final double NEED_TEMPERATURE_COLD_THRESHOLD = 20.0;
+    public static final double NEED_TEMPERATURE_HOT_THRESHOLD = 80.0;
+    // Staff have no generated wardrobe, so for body-temperature drift
+    // they are modeled as dressed for a comfortable indoor day (the
+    // mild band). They only drift hot or cold when the room they
+    // occupy strays from that -- freezing portables, sweltering upper
+    // floors -- rather than from the outdoor forecast.
+    public static final int STAFF_ASSUMED_OUTFIT_WARMTH =
+            CLOTHING_IDEAL_WARMTH_MILD;
+    public static final double NEED_TEMPERATURE_ENERGY_DECAY_MULTIPLIER = 1.5;
+    public static final double NEED_TEMPERATURE_ALLOSTATIC_STRESS = 0.10;
+    // Edge-triggered status messages (same pattern as the critical-need
+    // messages below): fired once when the meter leaves the comfort
+    // band, re-fires only after recovering back inside it.
+    public static final String NEED_TEMPERATURE_HOT_CRITICAL_MESSAGE =
+            "%s is overheating and can't concentrate!";
+    public static final String NEED_TEMPERATURE_COLD_CRITICAL_MESSAGE =
+            "%s is shivering from the cold!";
+
+    // Central HVAC (indoor room temperature) constants. Conditioned air
+    // originates in utility rooms and spreads through the room graph;
+    // rooms drift toward the outdoor temperature the farther they are
+    // from a utility room.
+    // Setpoints: heat toward 70F when it's colder outside, cool toward
+    // 74F when it's hotter. Between the two, the system idles and rooms
+    // simply track the outdoor temperature.
+    public static final int HVAC_HEAT_SETPOINT_F = 70;
+    public static final int HVAC_COOL_SETPOINT_F = 74;
+    // Fraction of the setpoint-to-outdoor gap lost per hop away from
+    // the nearest utility room (a room 3 hops out is ~64% conditioned).
+    public static final double HVAC_DECAY_PER_HOP = 0.12;
+    // Chance per edge that conditioned air spreads cleanly to the next
+    // room on each recompute; a failed roll costs one extra hop.
+    public static final double HVAC_SPREAD_CHANCE = 0.9;
+    // Portables and rooms cut off from the central system have limited
+    // insulation: they only close this fraction of the gap between the
+    // outdoor temperature and the comfort setpoint.
+    public static final double HVAC_PORTABLE_INSULATION = 0.2;
+    // Heat rises: degrees F added per floor above the first.
+    public static final int HVAC_UPPER_FLOOR_HEAT_F = 3;
+    // Hour (24h clock) when room temperatures switch from tracking the
+    // day's low (TMIN, morning) to the day's high (TMAX, afternoon).
+    public static final int HVAC_PM_SWITCH_HOUR = 12;
+
     // Adult/Teacher Vision Constants
     // Older adults have higher rates of vision issues, especially hyperopia and astigmatism
     // Adults are much more likely to have corrective lenses if needed
@@ -840,9 +926,19 @@ public final class SimConstants {
     // 100 - 280 minutes * 0.25/min = 30. Block 1 ends at ~77, Lunch A starts
     // at ~50 -- mild hunger pressure that lunch meaningfully relieves.
     public static final double NEED_HUNGER_DECAY_PER_TICK = 0.25;
-    public static final double NEED_THIRST_DECAY_PER_TICK = 0.75;
-    public static final double NEED_BLADDER_DECAY_PER_TICK = 1.0;
-    public static final double NEED_BLADDER_POST_MEAL_DECAY_PER_TICK = 3.0;
+    public static final double NEED_THIRST_DECAY_PER_TICK = 0.10;
+    public static final double NEED_THIRST_START_MIN = 70.0;
+    public static final double NEED_THIRST_START_MAX = 100.0;
+    public static final double NEED_THIRST_DECAY_MULTIPLIER_MIN = 0.65;
+    public static final double NEED_THIRST_DECAY_MULTIPLIER_MAX = 1.65;
+    public static final double NEED_BLADDER_DECAY_PER_TICK = 0.08;
+    public static final double NEED_BLADDER_POST_MEAL_DECAY_PER_TICK = 0.35;
+    public static final double NEED_BLADDER_START_MIN = 70.0;
+    public static final double NEED_BLADDER_START_MAX = 100.0;
+    public static final double NEED_BLADDER_RELIEF_MIN = 88.0;
+    public static final double NEED_BLADDER_RELIEF_MAX = 100.0;
+    public static final double NEED_BLADDER_DECAY_MULTIPLIER_MIN = 0.60;
+    public static final double NEED_BLADDER_DECAY_MULTIPLIER_MAX = 1.60;
     public static final double NEED_CRITICAL_THRESHOLD = 30.0;
 
     // Allostatic load increase per tick while a need is below the critical threshold.

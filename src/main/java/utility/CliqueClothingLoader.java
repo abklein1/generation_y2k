@@ -65,13 +65,16 @@ public final class CliqueClothingLoader implements Serializable {
         private final List<String> brands;
         private final List<String> materials;
         private final List<String> patterns;
+        private final Integer warmth;
 
         ClothingOption(String name, List<String> brands,
-                       List<String> materials, List<String> patterns) {
+                       List<String> materials, List<String> patterns,
+                       Integer warmth) {
             this.name = name;
             this.brands = brands;
             this.materials = materials;
             this.patterns = patterns;
+            this.warmth = warmth;
         }
 
         public String getName() {
@@ -89,6 +92,39 @@ public final class CliqueClothingLoader implements Serializable {
         public List<String> getPatterns() {
             return Collections.unmodifiableList(patterns);
         }
+
+        /**
+         * Returns the explicit warmth override for this garment, or
+         * {@code null} when the JSON leaves it unset and the per-category
+         * default should apply.
+         */
+        public Integer getWarmth() {
+            return warmth;
+        }
+    }
+
+    /**
+     * A weighted reference to an outfit recipe in {@code outfit_types.json}.
+     * Cliques list these under {@code "outfit_types"} to restrict (and
+     * bias) which recipes their members wear.
+     */
+    public static class OutfitTypeRef implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private final String name;
+        private final int weight;
+
+        OutfitTypeRef(String name, int weight) {
+            this.name = name;
+            this.weight = weight;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getWeight() {
+            return weight;
+        }
     }
 
     /**
@@ -100,14 +136,17 @@ public final class CliqueClothingLoader implements Serializable {
         private final List<String> colors;
         private final List<String> patterns;
         private final List<String> materials;
+        private final List<OutfitTypeRef> outfitTypes;
 
         CliqueClothingData(Map<String, List<ClothingOption>> optionsByCategory,
                            List<String> colors, List<String> patterns,
-                           List<String> materials) {
+                           List<String> materials,
+                           List<OutfitTypeRef> outfitTypes) {
             this.optionsByCategory = optionsByCategory;
             this.colors = colors;
             this.patterns = patterns;
             this.materials = materials;
+            this.outfitTypes = outfitTypes;
         }
 
         /**
@@ -142,6 +181,15 @@ public final class CliqueClothingLoader implements Serializable {
 
         public List<String> getMaterials() {
             return Collections.unmodifiableList(materials);
+        }
+
+        /**
+         * Returns the weighted outfit recipe references this clique/gender
+         * draws from. Empty when the JSON defines no {@code "outfit_types"}
+         * list, in which case generation falls back to any viable recipe.
+         */
+        public List<OutfitTypeRef> getOutfitTypes() {
+            return Collections.unmodifiableList(outfitTypes);
         }
 
         /**
@@ -227,6 +275,16 @@ public final class CliqueClothingLoader implements Serializable {
      */
     public static CliqueClothingData getData(String clique, String gender) {
         return resolve(clique, gender);
+    }
+
+    /**
+     * Returns the weighted outfit recipe references for a clique/gender.
+     * Empty when the clique defines no {@code "outfit_types"} list.
+     */
+    public static List<OutfitTypeRef> getOutfitTypeRefs(String clique,
+                                                        String gender) {
+        CliqueClothingData data = resolve(clique, gender);
+        return data == null ? List.of() : data.getOutfitTypes();
     }
 
     /**
@@ -337,8 +395,40 @@ public final class CliqueClothingLoader implements Serializable {
         List<String> colors = readStringList(obj.get("colors"));
         List<String> patterns = readStringList(obj.get("patterns"));
         List<String> materials = readStringList(obj.get("materials"));
+        List<OutfitTypeRef> outfitTypes =
+                readOutfitTypeRefs(obj.get("outfit_types"));
 
-        return new CliqueClothingData(categories, colors, patterns, materials);
+        return new CliqueClothingData(categories, colors, patterns, materials,
+                outfitTypes);
+    }
+
+    /**
+     * Reads the {@code "outfit_types"} array whose entries may be either
+     * plain recipe-name strings (weight 1) or objects with a {@code name}
+     * plus optional integer {@code weight}.
+     */
+    private static List<OutfitTypeRef> readOutfitTypeRefs(Object value) {
+        List<OutfitTypeRef> result = new ArrayList<>();
+        if (!(value instanceof JSONArray array)) {
+            return result;
+        }
+        for (Object entry : array) {
+            if (entry instanceof JSONObject obj) {
+                Object nameValue = obj.get("name");
+                if (nameValue == null) {
+                    continue;
+                }
+                int weight = 1;
+                Object weightValue = obj.get("weight");
+                if (weightValue instanceof Number number) {
+                    weight = Math.max(1, number.intValue());
+                }
+                result.add(new OutfitTypeRef(nameValue.toString(), weight));
+            } else if (entry != null) {
+                result.add(new OutfitTypeRef(entry.toString(), 1));
+            }
+        }
+        return result;
     }
 
     /**
@@ -370,13 +460,19 @@ public final class CliqueClothingLoader implements Serializable {
             if (nameValue == null) {
                 return null;
             }
+            Integer warmth = null;
+            Object warmthValue = obj.get("warmth");
+            if (warmthValue instanceof Number number) {
+                warmth = number.intValue();
+            }
             return new ClothingOption(nameValue.toString(),
                     readStringList(obj.get("brands")),
                     readStringList(obj.get("materials")),
-                    readStringList(obj.get("patterns")));
+                    readStringList(obj.get("patterns")),
+                    warmth);
         }
         return new ClothingOption(entry.toString(),
-                new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), null);
     }
 
     private static List<String> readStringList(Object value) {
