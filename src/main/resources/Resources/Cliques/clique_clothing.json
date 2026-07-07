@@ -162,18 +162,18 @@
                     { "name": "hoodie", "brands": ["Quicksilver", "DC", "Etnies", "Vans", "Element"] }
                 ],
                 "tops": [
-                    { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"] },
+                    { "name": "t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"], "warmth": 1},
                     { "name": "tank top", "materials": ["cotton"], "warmth": 1 },
-                    { "name": "oversized t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"]},
+                    { "name": "oversized t-shirt", "brands": ["Etnies", "Vans", "Quicksilver", "DC", "World Industries", "Girl", "Element", "Toy Machine"], "materials": ["cotton"], "warmth": 1},
                     { "name": "local skate shop t-shirt", "materials": ["cotton"]}
                 ],
                 "bottoms": [
-                    { "name": "skinny jeans", "materials": ["denim"] },
-                    { "name": "ripped skinny jeans", "materials": ["denim"] },
-                    { "name": "straight leg jeans", "materials": ["denim"] },
-                    { "name": "cargo pants", "materials": ["cotton"] },
+                    { "name": "skinny jeans", "materials": ["denim"], "warmth": 1 },
+                    { "name": "ripped skinny jeans", "materials": ["denim"], "warmth": 1 },
+                    { "name": "straight leg jeans", "materials": ["denim"], "warmth": 2 },
+                    { "name": "cargo pants", "materials": ["cotton"], "warmth": 2 },
                     { "name": "cargo shorts", "materials": ["cotton"], "warmth": 1 },
-                    { "name": "corduroy pants", "materials": ["cotton"] }
+                    { "name": "corduroy pants", "materials": ["cotton"], "warmth": 2 }
                 ],
                 "one_piece": [],
                 "shoes": [
