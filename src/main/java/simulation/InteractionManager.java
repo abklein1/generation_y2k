@@ -33,9 +33,10 @@ import static constants.SimConstants.*;
  * into the same social activity (e.g. both end up TALKING), the target's
  * behavior context is updated so its action log entry references the
  * initiator, and both students' decision cooldowns are reset so neither party
- * immediately drops back out of the interaction. If the initiator was caught
- * by a teacher, the caught flag is propagated to the target as well — both
- * participants are part of the same incident.
+ * immediately drops back out of the interaction. Getting caught is handled
+ * afterwards by the {@link ClassroomDisciplineService}: the supervising
+ * teacher's behavior tree perceives reported misbehavior and pulls both
+ * confirmed participants into the incident.
  * </p>
  *
  * <p>
@@ -66,9 +67,10 @@ public class InteractionManager {
     /**
      * Activities that intrinsically can't be interrupted by a peer initiating
      * a social action — physically separate (off-campus lunch), in motion
-     * (commuting/transitioning), or private (in the bathroom). Targets in
-     * these states stay in their current activity even if an interaction is
-     * granted.
+     * (commuting/transitioning), private (in the bathroom), or mid-meal
+     * (eating lunch, which must not be cut short or hunger never refills).
+     * Targets in these states stay in their current activity even if an
+     * interaction is granted.
      */
     private static final Set<ActivityType> NON_INTERRUPTIBLE_ACTIVITIES = Collections.unmodifiableSet(new HashSet<>(List.of(
             ActivityType.IN_BATHROOM,
@@ -77,6 +79,7 @@ public class InteractionManager {
             ActivityType.COMMUTING_BUS,
             ActivityType.COMMUTING_DRIVE,
             ActivityType.COMMUTING_CARPOOL,
+            ActivityType.EATING_LUNCH,
             ActivityType.EATING_LUNCH_OFF_CAMPUS)));
 
     /**
@@ -207,9 +210,6 @@ public class InteractionManager {
      *       (bathroom, transitioning, off-campus) keep their current activity.</li>
      *   <li>Sets {@code interaction_target} on the target's
      *       {@link BehaviorContext} so its log line reads "with &lt;initiator&gt;".</li>
-     *   <li>Propagates the {@code was_caught}/{@code catch_type} flags from
-     *       the initiator to the target — both students are part of the same
-     *       incident, so if one is caught, both get the [CAUGHT] tag.</li>
      *   <li>Resets the target's decision cooldown so they remain engaged for
      *       the same duration as the initiator instead of immediately
      *       picking a new action.</li>
@@ -260,21 +260,12 @@ public class InteractionManager {
         targetState.resetDecisionCooldown(TARGET_COOLDOWN_TICKS);
 
         // Surface the interaction in the target's behavior context so the
-        // logger picks up the "with <initiator>" suffix, and propagate any
-        // caught state so both students share the [CAUGHT] tag.
+        // logger picks up the "with <initiator>" suffix. Caught state is no
+        // longer propagated here: the ClassroomDisciplineService runs after
+        // resolution and flags both confirmed participants itself.
         BehaviorContext targetContext = target.getBehaviorContext();
         if (initiator != null) {
             targetContext.setVariable("interaction_target", initiator);
-
-            BehaviorContext initiatorContext = initiator.getBehaviorContext();
-            if (initiatorContext != null
-                    && initiatorContext.getBoolVariable("was_caught", false)) {
-                targetContext.setVariable("was_caught", true);
-                Object catchType = initiatorContext.getVariable("catch_type");
-                if (catchType != null) {
-                    targetContext.setVariable("catch_type", catchType);
-                }
-            }
         }
 
         // Apply social score gains for the confirmed interaction.
@@ -315,8 +306,9 @@ public class InteractionManager {
      * Denies an interaction because the target (or initiator) is already occupied.
      * The initiator is reverted to IDLE since their intended social action
      * cannot proceed, and the stale interaction-related context variables are
-     * cleared so the logger does not show a partner or caught tag for an
-     * action that effectively did not happen.
+     * cleared so the logger does not show a partner for an action that
+     * effectively did not happen. (The discipline service also skips
+     * misbehavior reports whose action fizzled like this.)
      *
      * @param interaction the denied interaction
      */
@@ -331,8 +323,6 @@ public class InteractionManager {
         BehaviorContext context = initiator.getBehaviorContext();
         if (context != null) {
             context.removeVariable("interaction_target");
-            context.removeVariable("was_caught");
-            context.removeVariable("catch_type");
             context.removeVariable("friendship_gained");
         }
     }

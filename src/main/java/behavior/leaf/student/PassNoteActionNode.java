@@ -8,8 +8,8 @@ import entity.ActivityType;
 import entity.EntityState;
 import entity.Rooms.Room;
 import entity.Student;
+import simulation.ClassroomDisciplineService;
 import simulation.InteractionManager;
-import utility.GameRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,6 @@ public class PassNoteActionNode extends ActionNode {
     
     private static final int FRIENDSHIP_GAIN = 5;
     private static final int ENTERTAINMENT_BOOST = 5;
-    private static final int BASE_CATCH_CHANCE = 25;
     
     public PassNoteActionNode() {
         super("PassNote", 1);
@@ -45,6 +44,12 @@ public class PassNoteActionNode extends ActionNode {
         
         EntityState state = student.getEntityState();
         if (state == null || !state.isInClass()) {
+            return false;
+        }
+        
+        // Nobody dares pass notes right after the teacher settled the class.
+        ClassroomDisciplineService discipline = context.getDisciplineService();
+        if (discipline != null && discipline.isRoomCalmed(state.getCurrentRoom())) {
             return false;
         }
         
@@ -97,24 +102,15 @@ public class PassNoteActionNode extends ActionNode {
                     constants.SimConstants.STAT_DRAIN_PASS_NOTE_RESPONSIBILITY,
                     constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
 
-            // Calculate catch chance
-            int agility = student.studentStatistics.getAgility();
-            int charisma = student.studentStatistics.getCharisma();
-            int catchChance = BASE_CATCH_CHANCE - (agility / 10) - (charisma / 20);
-            catchChance = Math.max(5, catchChance);
-
-            if (GameRandom.nextDouble(100) < catchChance) {
-                context.setVariable("was_caught", true);
-                context.setVariable("catch_type", "passing_note");
-                student.studentStatistics.drainSecondaryStat("resilience",
-                        constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
-                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
-                student.studentStatistics.drainSecondaryStat("adaptability",
-                        constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
-                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
-                // Treat being caught as a completed outcome so the selector
-                // does not immediately fall through into a different action.
-                return BehaviorStatus.SUCCESS;
+            // Report the covert misbehavior to the supervising teacher, whose
+            // stats decide whether it gets noticed. Concealment: agile hands
+            // pass unseen, charisma keeps a straight face.
+            ClassroomDisciplineService discipline = context.getDisciplineService();
+            if (discipline != null) {
+                int concealment = student.studentStatistics.getAgility() / 10
+                        + student.studentStatistics.getCharisma() / 20;
+                discipline.reportMisbehavior(student, state.getCurrentRoom(),
+                        ActivityType.PASSING_NOTE, concealment);
             }
         }
 

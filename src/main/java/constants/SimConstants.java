@@ -581,6 +581,67 @@ public final class SimConstants {
     public static final int STAT_DRAIN_TALK_RESPONSIBILITY = 2;
     public static final int STAT_DRAIN_CAUGHT_RESILIENCE = 3;
     public static final int STAT_DRAIN_CAUGHT_ADAPTABILITY = 2;
+    // Smaller penalty when the whole class is told to settle down (vs. an
+    // individual reprimand): shared blame stings less.
+    public static final int STAT_DRAIN_SETTLED_RESILIENCE = 1;
+
+    // ==================== Teacher-Driven Classroom Discipline ====================
+    // Detection is a contest between teacher stats (perception, experience)
+    // and the misbehaving student's concealment stats. Base notice chance
+    // per misbehavior type (percent):
+    public static final int DISCIPLINE_BASE_NOTICE_TALKING = 40;
+    public static final int DISCIPLINE_BASE_NOTICE_PASSING_NOTE = 25;
+    public static final int DISCIPLINE_BASE_NOTICE_TEXTING = 20;
+    public static final int DISCIPLINE_BASE_NOTICE_WHISPERING = 12;
+    public static final int DISCIPLINE_BASE_NOTICE_DAYDREAMING = 15;
+
+    // Teacher awareness: perception / divisor is added to the notice chance
+    // (scaled by the experience multiplier).
+    public static final int DISCIPLINE_TEACHER_PERCEPTION_DIVISOR = 10;
+
+    // Experienced teachers are better at every action they choose:
+    // multiplier = 1.0 + min(years, cap) * bonusPerYear  (up to 1.3x at 20 years)
+    public static final int DISCIPLINE_EXPERIENCE_CAP_YEARS = 20;
+    public static final double DISCIPLINE_EXPERIENCE_BONUS_PER_YEAR = 0.015;
+
+    // Notice chance clamps so no roll is ever a certainty or an impossibility
+    public static final int DISCIPLINE_DETECTION_FLOOR = 5;
+    public static final int DISCIPLINE_DETECTION_CEILING = 95;
+
+    // Covert acts (notes, texting, whispering) are easier to hide while the
+    // class is loud: subtracted from the notice chance when the room is LOUD.
+    public static final int DISCIPLINE_NOISE_COVER_MODIFIER = 10;
+
+    // A busy teacher notices less. Subtracted from the notice chance based on
+    // the teacher's activity during the previous tick. The grading penalty is
+    // divided by the experience multiplier (veterans grade while still
+    // watching the room).
+    public static final int DISCIPLINE_BUSY_PENALTY_GRADING = 15;
+    public static final int DISCIPLINE_BUSY_PENALTY_SETTLING = 8;
+
+    // Room noise assessment: the room is LOUD when at least
+    // max(MIN_TALKERS, ceil(occupants * FRACTION)) students are talking.
+    public static final int CLASS_NOISE_LOUD_MIN_TALKERS = 3;
+    public static final double CLASS_NOISE_LOUD_FRACTION = 0.25;
+
+    // A student is individually reprimanded once the teacher has noticed them
+    // talking this many times in the same period (first notice is a warning).
+    public static final int REPRIMAND_REPEAT_THRESHOLD = 2;
+    // Reprimanded students stay on-task for this many ticks (scaled up by the
+    // teacher's experience multiplier: veteran reprimands stick).
+    public static final int REPRIMAND_COOLDOWN_BASE_TICKS = 8;
+
+    // Settling the class suppresses new in-class misbehavior for a calm
+    // window: base ticks plus a bonus scaled by the teacher's charisma,
+    // determination, and experience.
+    public static final int SETTLE_CALM_BASE_TICKS = 5;
+    public static final int SETTLE_CALM_MAX_BONUS_TICKS = 10;
+
+    // Chance divisor for a teacher choosing to grade during a well-behaved
+    // class: chance% = (responsibility + determination) / divisor per decision.
+    public static final int GRADING_CHOICE_STAT_DIVISOR = 8;
+    // Once a teacher starts grading they stick with it for this many ticks.
+    public static final int GRADING_SESSION_TICKS = 10;
 
     // Talk in-class catch chance: talking is louder and more obvious than whispering
     public static final int TALK_IN_CLASS_BASE_CATCH_CHANCE = 40;
@@ -951,6 +1012,10 @@ public final class SimConstants {
     // Lunch lasts 40 minutes; these rates restore ~80 points over that window.
     public static final double NEED_HUNGER_REFILL_PER_TICK = 2.0;
     public static final double NEED_THIRST_REFILL_PER_TICK = 2.0;
+
+    // A need at or above this level counts as fully satisfied. Students stop
+    // eating lunch (and go socialize) once hunger reaches this level.
+    public static final double NEED_FULL_LEVEL = 100.0;
 
     // Entertainment and energy decay (per-tick, 0-100 scale). Entertainment is
     // a slow background need; individual boring actions apply their own drains.

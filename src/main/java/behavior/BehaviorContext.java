@@ -7,6 +7,7 @@ import entity.StandardSchool;
 import entity.Student;
 import entity.Time;
 import entity.Town;
+import simulation.ClassroomDisciplineService;
 import simulation.DayPhase;
 import simulation.InteractionManager;
 
@@ -29,6 +30,7 @@ public class BehaviorContext {
     private final HashMap<String, Object> variables;
     private boolean isPlayer;
     private InteractionManager interactionManager;
+    private ClassroomDisciplineService disciplineService;
     
     /**
      * Creates a new behavior context.
@@ -147,6 +149,26 @@ public class BehaviorContext {
      */
     public void setInteractionManager(InteractionManager interactionManager) {
         this.interactionManager = interactionManager;
+    }
+
+    /**
+     * Gets the classroom discipline service. Student misbehavior nodes use
+     * it to report visible misbehavior; teacher nodes use it to assess the
+     * room and react.
+     *
+     * @return the discipline service, or null if not set
+     */
+    public ClassroomDisciplineService getDisciplineService() {
+        return disciplineService;
+    }
+
+    /**
+     * Sets the classroom discipline service.
+     *
+     * @param disciplineService the discipline service
+     */
+    public void setDisciplineService(ClassroomDisciplineService disciplineService) {
+        this.disciplineService = disciplineService;
     }
     
     // Transit group access

@@ -2,6 +2,7 @@ package simulation;
 
 import behavior.BehaviorTree;
 import behavior.StudentBehaviorTreeBuilder;
+import behavior.TeacherBehaviorTreeBuilder;
 import entity.*;
 import entity.Rooms.Room;
 import utility.GameRandom;
@@ -67,6 +68,8 @@ public class EntityStateManager {
                 if (staffMember.getEntityState() == null) {
                     staffMember.setEntityState(new EntityState());
                 }
+                BehaviorTree tree = TeacherBehaviorTreeBuilder.buildTree(staffMember);
+                staffMember.setBehaviorTree(tree);
             }
         }
     }
@@ -120,6 +123,10 @@ public class EntityStateManager {
                 staffMember.getEntityState().setCurrentRoom(assignedRoom);
                 staffMember.getEntityState().setExpectedRoom(assignedRoom);
             }
+
+            // Build and assign the teacher decision tree
+            BehaviorTree tree = TeacherBehaviorTreeBuilder.buildTree(staffMember);
+            staffMember.setBehaviorTree(tree);
         }
     }
 

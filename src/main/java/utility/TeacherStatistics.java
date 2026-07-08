@@ -555,6 +555,21 @@ public class TeacherStatistics implements PStatistics {
         this.yearsOfExperience = yearsOfExperience;
     }
 
+    /**
+     * Returns the effectiveness multiplier granted by classroom experience.
+     * Experienced teachers are better at every action they choose: noticing
+     * misbehavior, settling a rowdy class, making reprimands stick, and
+     * keeping an eye on the room while grading.
+     *
+     * @return {@code 1.0 + min(years, cap) * bonusPerYear} (e.g. 1.3 at 20+ years)
+     */
+    public double getExperienceMultiplier() {
+        int cappedYears = Math.min(yearsOfExperience,
+                constants.SimConstants.DISCIPLINE_EXPERIENCE_CAP_YEARS);
+        return 1.0 + Math.max(0, cappedYears)
+                * constants.SimConstants.DISCIPLINE_EXPERIENCE_BONUS_PER_YEAR;
+    }
+
     public String getNeighborhoodName() {
         return neighborhoodName;
     }

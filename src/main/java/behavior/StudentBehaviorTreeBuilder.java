@@ -9,7 +9,6 @@ import entity.Student;
 import entity.Town;
 import simulation.InteractionManager;
 import utility.AcademicProgressService;
-import utility.GameRandom;
 
 import java.util.ArrayList;
 
@@ -159,6 +158,15 @@ public class StudentBehaviorTreeBuilder {
                 activitySelector.addChild(buildBoredSequence());
                 break;
         }
+        
+        // Final fallback: a student with nothing else to do in class sits and
+        // pays attention instead of idling. Without this, a student whose
+        // social options are blocked (e.g. the teacher just settled the class,
+        // or they lost an interaction conflict) and who isn't determined or
+        // bored enough for the other branches would fall through to the root
+        // Idle node and re-tick every single minute, spamming "Idle in
+        // classroom" log lines for the rest of the period.
+        activitySelector.addChild(new PayAttentionActionNode());
         
         return activitySelector;
     }
@@ -398,7 +406,8 @@ public class StudentBehaviorTreeBuilder {
      * Talk action node: context-aware social action.
      * <ul>
      *   <li><b>In class:</b> Can reach anyone in the room (voice carries).
-     *       High risk of being caught (louder than whispering or passing notes).
+     *       Loud and obvious — the misbehavior is reported to the supervising
+     *       teacher, whose stats decide whether the student gets noticed.
      *       Drains empathy and responsibility. Prefers friends.</li>
      *   <li><b>Outside class</b> (hallways, lunchrooms): Normal expected behavior.
      *       No risk of being caught. Provides strong allostatic recovery and
@@ -418,6 +427,10 @@ public class StudentBehaviorTreeBuilder {
         public boolean canExecute(BehaviorContext context) {
             Student student = context.getStudent();
             if (student == null || student.getEntityState() == null) {
+                return false;
+            }
+            // Nobody dares talk right after the teacher settled the class.
+            if (isClassCalmed(context, student.getEntityState())) {
                 return false;
             }
             // Only succeed if there is at least one co-located peer to talk to.
@@ -461,28 +474,16 @@ public class StudentBehaviorTreeBuilder {
                         constants.SimConstants.STAT_DRAIN_TALK_RESPONSIBILITY,
                         constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
                 
-                // High catch chance - talking is loud and obvious
-                int charisma = student.studentStatistics.getCharisma();
-                int perception = student.studentStatistics.getPerception();
-                int catchChance = constants.SimConstants.TALK_IN_CLASS_BASE_CATCH_CHANCE
-                        - (charisma / 15) - (perception / 20);
-                catchChance = Math.max(10, catchChance);
+                // Report the (loud, obvious) misbehavior to the supervising
+                // teacher. Charisma masks the chatting as participation and
+                // perception times it to the teacher's back being turned.
+                reportMisbehavior(context, student, state,
+                        entity.ActivityType.TALKING,
+                        student.studentStatistics.getCharisma() / 15
+                                + student.studentStatistics.getPerception() / 20);
                 
-                if (GameRandom.nextDouble(100) < catchChance) {
-                    context.setVariable("was_caught", true);
-                    context.setVariable("catch_type", "talking");
-                    student.studentStatistics.drainSecondaryStat("resilience",
-                            constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
-                            constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
-                    student.studentStatistics.drainSecondaryStat("adaptability",
-                            constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
-                            constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
-                    // Treat being caught as a completed outcome so the selector
-                    // does not immediately replace this with another action.
-                    return BehaviorStatus.SUCCESS;
-                }
-                
-                // Success in class - entertainment boost and slight recovery
+                // Entertainment boost and slight recovery (the teacher may
+                // still interrupt this later in the tick)
                 state.setEntertainment(state.getEntertainment() + ENTERTAINMENT_BOOST_IN_CLASS);
                 student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                         constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_SOCIALIZING);
@@ -530,6 +531,8 @@ public class StudentBehaviorTreeBuilder {
     /**
      * Whisper action node that requires the target to be in an adjacent seat.
      * Prefers adjacent friends, but can whisper to any adjacent student.
+     * Quiet, but still reported to the supervising teacher — a perceptive
+     * veteran can spot the leaning heads.
      */
     private static class WhisperActionNode extends behavior.leaf.ActionNode {
         public WhisperActionNode() {
@@ -540,6 +543,10 @@ public class StudentBehaviorTreeBuilder {
         public boolean canExecute(BehaviorContext context) {
             Student student = context.getStudent();
             if (student == null || student.getEntityState() == null) {
+                return false;
+            }
+            // Nobody dares whisper right after the teacher settled the class.
+            if (isClassCalmed(context, student.getEntityState())) {
                 return false;
             }
             
@@ -577,6 +584,15 @@ public class StudentBehaviorTreeBuilder {
             
             // Store target in context
             context.setVariable("interaction_target", target);
+            
+            entity.EntityState state = student.getEntityState();
+            if (state.isInClass() && hasTeacherPresent(state.getCurrentRoom())) {
+                // Report the covert misbehavior to the supervising teacher.
+                // Perceptive students pick their moment better.
+                reportMisbehavior(context, student, state,
+                        entity.ActivityType.WHISPERING,
+                        student.studentStatistics.getPerception() / 15);
+            }
             
             // Drain empathy slightly from social interaction
             student.studentStatistics.drainSecondaryStat("empathy",
@@ -627,6 +643,10 @@ public class StudentBehaviorTreeBuilder {
         public boolean canExecute(BehaviorContext context) {
             Student student = context.getStudent();
             if (student == null || student.getEntityState() == null) {
+                return false;
+            }
+            // Nobody dares text right after the teacher settled the class.
+            if (isClassCalmed(context, student.getEntityState())) {
                 return false;
             }
             Town town = context.getTown();
@@ -691,21 +711,12 @@ public class StudentBehaviorTreeBuilder {
                         constants.SimConstants.STAT_DRAIN_TEXT_RESPONSIBILITY,
                         constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESPONSIBILITY);
                 
-                int catchChance = computeCatchChance(phone, student);
-                
-                if (GameRandom.nextDouble(100) < catchChance) {
-                    context.setVariable("was_caught", true);
-                    context.setVariable("catch_type", "texting");
-                    student.studentStatistics.drainSecondaryStat("resilience",
-                            constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
-                            constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
-                    student.studentStatistics.drainSecondaryStat("adaptability",
-                            constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
-                            constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
-                    // Treat being caught as a completed outcome so the selector
-                    // does not immediately replace this with another action.
-                    return BehaviorStatus.SUCCESS;
-                }
+                // Report the covert misbehavior to the supervising teacher.
+                // Concealment: small phones hide better, physical keyboards
+                // are faster, perceptive students pick their moment.
+                reportMisbehavior(context, student, state,
+                        entity.ActivityType.TEXTING,
+                        computeConcealment(phone, student));
                 
                 state.setEntertainment(state.getEntertainment()
                         + constants.SimConstants.TEXT_ENTERTAINMENT_BOOST_IN_CLASS);
@@ -724,24 +735,29 @@ public class StudentBehaviorTreeBuilder {
             return BehaviorStatus.SUCCESS;
         }
         
-        private int computeCatchChance(CellPhone phone, Student student) {
-            int catchChance = constants.SimConstants.TEXT_IN_CLASS_BASE_CATCH_CHANCE;
+        /**
+         * The student's concealment score for texting: percentage points
+         * shaved off the teacher's notice chance. Phone hardware modifiers
+         * (small = easier to hide, large = harder, keyboard = faster) are
+         * inverted from their old catch-chance sign, plus a perception bonus.
+         */
+        private int computeConcealment(CellPhone phone, Student student) {
+            int concealment = student.studentStatistics.getPerception() / 20;
             
             String size = phone.getSize();
             if (size != null) {
                 switch (size.toLowerCase()) {
-                    case "small" -> catchChance += constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_SMALL;
-                    case "large" -> catchChance += constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_LARGE;
-                    default -> catchChance += constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_MEDIUM;
+                    case "small" -> concealment -= constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_SMALL;
+                    case "large" -> concealment -= constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_LARGE;
+                    default -> concealment -= constants.SimConstants.TEXT_PHONE_SIZE_MODIFIER_MEDIUM;
                 }
             }
             
             if (phone.hasKeyboard()) {
-                catchChance += constants.SimConstants.TEXT_KEYBOARD_SPEED_MODIFIER;
+                concealment -= constants.SimConstants.TEXT_KEYBOARD_SPEED_MODIFIER;
             }
             
-            catchChance -= student.studentStatistics.getPerception() / 20;
-            return Math.max(5, catchChance);
+            return concealment;
         }
         
         /**
@@ -884,6 +900,32 @@ public class StudentBehaviorTreeBuilder {
         return room != null
                 && room.getAssignedStaff() != null
                 && !room.getAssignedStaff().isEmpty();
+    }
+
+    /**
+     * Whether the student's classroom is inside the calm window after the
+     * teacher settled the class. Students do not dare start new in-class
+     * misbehavior while it lasts (out of class this is never true).
+     */
+    private static boolean isClassCalmed(BehaviorContext context, entity.EntityState state) {
+        if (state == null || !state.isInClass()) {
+            return false;
+        }
+        simulation.ClassroomDisciplineService discipline = context.getDisciplineService();
+        return discipline != null && discipline.isRoomCalmed(state.getCurrentRoom());
+    }
+
+    /**
+     * Reports an in-class misbehavior attempt to the discipline service so
+     * the supervising teacher can (potentially) notice it this tick. The
+     * concealment score is the student's side of the detection contest.
+     */
+    private static void reportMisbehavior(BehaviorContext context, Student student,
+            entity.EntityState state, entity.ActivityType type, int concealment) {
+        simulation.ClassroomDisciplineService discipline = context.getDisciplineService();
+        if (discipline != null) {
+            discipline.reportMisbehavior(student, state.getCurrentRoom(), type, concealment);
+        }
     }
 
     /**

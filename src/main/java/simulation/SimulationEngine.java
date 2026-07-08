@@ -52,6 +52,7 @@ public class SimulationEngine {
     private int currentTick;
     private final List<SimulationListener> listeners;
     private final InteractionManager interactionManager;
+    private final ClassroomDisciplineService disciplineService;
     private SocialLinkConnector socialLinkConnector;
     private RoomOccupancyManager roomOccupancyManager;
     private TraversalStorage traversalStorage;
@@ -118,6 +119,7 @@ public class SimulationEngine {
         this.listeners = new ArrayList<>();
         this.bellSchedule = new BellScheduleManager();
         this.interactionManager = new InteractionManager();
+        this.disciplineService = new ClassroomDisciplineService();
     }
 
     /**
@@ -382,6 +384,9 @@ public class SimulationEngine {
 
         // Fire period change event
         if (previousPeriod != currentPeriod && currentPeriod > 0) {
+            // A new class files in: reset per-period discipline tracking
+            // (talking-notice counters and settle calm windows).
+            disciplineService.onPeriodChange();
             notifyPeriodChange(previousPeriod, currentPeriod);
         }
 
@@ -402,10 +407,17 @@ public class SimulationEngine {
         // 3.75. Tick physiological needs for all entities
         tickAllNeeds();
 
-        // 4. Process NPC behavior trees
-        // During pre-school, only run trees for students who have arrived
-        processStudentBehaviors();
+        // 4. Process NPC behavior trees.
+        // Order matters: student trees tick and interactions resolve first,
+        // then teacher trees tick (perceiving and disciplining this tick's
+        // misbehavior), and only then are student actions logged — so a
+        // teacher's reaction always overrides the student's action within
+        // the same tick and the [CAUGHT]/[SETTLED] tags land on the correct
+        // log lines.
+        // During pre-school, only run trees for students who have arrived.
+        Set<Student> studentsToLog = processStudentBehaviors();
         processStaffBehaviors();
+        finalizeStudentBehaviors(studentsToLog);
 
         // 5. Check for end of day
         if (bellSchedule.isAfterSchool(time)) {
@@ -566,6 +578,15 @@ public class SimulationEngine {
      * scores the song now playing, and logs a single flavor line. Liked songs
      * lift entertainment (with a little stress relief); disliked songs dip it,
      * damped by the listener's openness.
+     *
+     * <p>
+     * A song is scored on both its best-liked and worst-disliked genre tag.
+     * If any tag clears the like threshold the listener enjoys the song (they
+     * focus on the part they like); otherwise the most-hated tag drives the
+     * reaction. Taking only the maximum would let a neutral tag mask a hated
+     * one — e.g. a song tagged COUNTRY + CHRISTIAN would leave a
+     * country-hating emo student unaffected because CHRISTIAN scores 0.0.
+     * </p>
      */
     private void reactToCommuteSong(Student student, EntityState state,
                                     Song song) {
@@ -579,8 +600,11 @@ public class SimulationEngine {
         }
         MusicPreference taste = MusicTaste.forStudent(student);
         double best = -Double.MAX_VALUE;
+        double worst = Double.MAX_VALUE;
         for (MusicGenre genre : genres) {
-            best = Math.max(best, taste.weightFor(genre));
+            double weight = taste.weightFor(genre);
+            best = Math.max(best, weight);
+            worst = Math.min(worst, weight);
         }
 
         String name = student.studentName.getFirstName();
@@ -594,7 +618,7 @@ public class SimulationEngine {
                     radioReactionRandom(student, song));
             addEntityStatusLogEntry(state, String.format(
                     template, name));
-        } else if (best <= SimConstants.RADIO_REACTION_DISLIKE_THRESHOLD) {
+        } else if (worst <= SimConstants.RADIO_REACTION_DISLIKE_THRESHOLD) {
             // Higher openness softens the sting of a disliked song.
             double penalty = SimConstants.RADIO_REACTION_ENTERTAINMENT_PENALTY
                     * (1.0 - taste.getOpenness());
@@ -790,6 +814,18 @@ public class SimulationEngine {
         state.setAtLunch(true);
         state.resetDecisionCooldown(0);
         state.onAte();
+
+        // Log the meal directly: while eating, the behavior tree is gated
+        // off, so the normal per-tick action logger never runs for them.
+        String timeStamp = String.format("[%02d:%02d]",
+                time.getHour(), time.getMinute());
+        StringBuilder entry = new StringBuilder(timeStamp)
+                .append(" ")
+                .append(state.getCurrentActivity().getDisplayName());
+        if (!offCampus) {
+            entry.append(" in ").append(destination.getRoomName());
+        }
+        state.addLogEntry(entry.toString(), null, state.getCurrentRoom());
     }
 
     /**
@@ -1147,6 +1183,25 @@ public class SimulationEngine {
                 || activity == ActivityType.EATING_LUNCH_OFF_CAMPUS;
     }
 
+    /**
+     * Whether a student at lunch should stay in their eating activity
+     * instead of re-evaluating their behavior tree. On-campus eaters keep
+     * eating until their hunger is topped off, then are free to socialize
+     * for the rest of the window. Off-campus eaters are away at a
+     * restaurant and stay eating for the whole window.
+     */
+    private static boolean shouldKeepEatingLunch(EntityState state) {
+        if (!state.isAtLunch()) {
+            return false;
+        }
+        ActivityType activity = state.getCurrentActivity();
+        if (activity == ActivityType.EATING_LUNCH_OFF_CAMPUS) {
+            return true;
+        }
+        return activity == ActivityType.EATING_LUNCH
+                && state.getHunger() < SimConstants.NEED_FULL_LEVEL;
+    }
+
     private static boolean isSocializing(EntityState state) {
         ActivityType activity = state.getCurrentActivity();
         return activity == ActivityType.SOCIALIZING
@@ -1286,42 +1341,45 @@ public class SimulationEngine {
     }
 
     /**
-     * Processes behavior trees for all students.
+     * Processes behavior trees for all students (tick and resolve phases).
      *
      * <p>
-     * Runs in three phases so that social interactions are captured for
-     * <i>both</i> participants in the action log:
+     * Logging is deferred to {@link #finalizeStudentBehaviors} so that the
+     * teacher behavior trees (which run in between) can perceive and react
+     * to this tick's misbehavior first — teacher actions always override
+     * student actions:
      * </p>
      * <ol>
      *   <li><b>Tick</b> — every eligible student's behavior tree is ticked.
-     *       Action nodes register pending interactions and tentatively set
-     *       their own activity, but no log entries are written yet.</li>
+     *       Action nodes register pending interactions, report in-class
+     *       misbehavior to the {@link ClassroomDisciplineService}, and
+     *       tentatively set their own activity, but no log entries are
+     *       written yet.</li>
      *   <li><b>Resolve</b> — {@link InteractionManager#resolveInteractions()}
-     *       picks winners by DET + CHR, mirrors the social activity onto the
-     *       target, and propagates the {@code interaction_target} /
-     *       {@code was_caught} flags to the target's behavior context. The
-     *       set of confirmed targets is returned.</li>
-     *   <li><b>Log</b> — every student that either ticked their tree or was
-     *       drawn into someone else's confirmed interaction gets an action
-     *       log entry, using the post-resolution state. This guarantees that
-     *       when Danielle starts talking with Baby Carey, Baby's log line for
-     *       that minute reads "Talking with Danielle Beddoe" — even if
-     *       Baby's own behavior tree was on cooldown and never ticked.</li>
+     *       picks winners by DET + CHR and mirrors the social activity onto
+     *       the target. The set of confirmed targets is returned.</li>
      * </ol>
+     *
+     * @return the students that must receive an action-log entry this tick
+     *         (those that ticked their tree plus confirmed interaction
+     *         targets); passed to {@link #finalizeStudentBehaviors} after
+     *         the staff behavior pass
      */
-    private void processStudentBehaviors() {
+    private Set<Student> processStudentBehaviors() {
+        Set<Student> studentsToLog = new HashSet<>();
         if (students == null) {
-            return;
+            return studentsToLog;
         }
 
         interactionManager.clearTick();
+        disciplineService.clearTick();
 
         Set<Student> tickedStudents = new HashSet<>();
 
         // Phase 1: Tick all behavior trees. Defer logging until after social
-        // interaction conflicts are resolved so that targets get their log
-        // entries written with the bilateral state, not the stale pre-resolution
-        // state.
+        // interaction conflicts are resolved AND teachers have reacted, so
+        // that targets get their log entries written with the bilateral
+        // post-discipline state, not the stale pre-resolution state.
         for (Student student : students.values()) {
             EntityState preCheckState = student.getEntityState();
 
@@ -1336,18 +1394,25 @@ public class SimulationEngine {
                 BehaviorContext context = student.getBehaviorContext();
                 if (context == null) {
                     context = new BehaviorContext(student, time, school);
-                    context.setInteractionManager(interactionManager);
-                    context.setTown(town);
                     student.setBehaviorContext(context);
                 } else {
                     context.setTime(time);
-                    context.setInteractionManager(interactionManager);
-                    context.setTown(town);
                 }
+                context.setInteractionManager(interactionManager);
+                context.setDisciplineService(disciplineService);
+                context.setTown(town);
 
                 EntityState state = student.getEntityState();
                 boolean shouldDecide = true;
                 if (state != null) {
+                    // A student who is still eating lunch keeps eating until
+                    // full (or, off campus, for the whole window). Without
+                    // this gate the tree would immediately replace
+                    // EATING_LUNCH with an out-of-class activity and the
+                    // hunger refill would never happen.
+                    if (shouldKeepEatingLunch(state)) {
+                        shouldDecide = false;
+                    }
                     ActivityType current = state.getCurrentActivity();
                     boolean isActiveAction = current != ActivityType.IDLE
                             && current != ActivityType.TRANSITIONING
@@ -1370,12 +1435,28 @@ public class SimulationEngine {
         // of targets that were drawn into an interaction this tick.
         Set<Student> confirmedTargets = interactionManager.resolveInteractions();
 
-        // Phase 3: Log every student whose state changed this tick — those that
-        // ticked their tree, plus the confirmed interaction targets (whose tree
-        // may have been on cooldown and never ran, but who are now genuinely
-        // engaged with another student).
-        Set<Student> studentsToLog = new HashSet<>(tickedStudents);
+        studentsToLog.addAll(tickedStudents);
         studentsToLog.addAll(confirmedTargets);
+        return studentsToLog;
+    }
+
+    /**
+     * Logging and bookkeeping for student behaviors, run AFTER the teacher
+     * behavior trees have reacted to this tick's misbehavior. Students that
+     * were disciplined (caught, reprimanded, or settled) are logged even if
+     * their own tree did not tick, so the [CAUGHT]/[SETTLED] tag lands on
+     * this tick's log line.
+     *
+     * @param studentsToLog students that ticked their tree or were drawn
+     *                      into a confirmed interaction this tick
+     */
+    private void finalizeStudentBehaviors(Set<Student> studentsToLog) {
+        if (students == null || studentsToLog == null) {
+            return;
+        }
+
+        studentsToLog.addAll(disciplineService.getDisciplinedStudents());
+
         for (Student student : studentsToLog) {
             BehaviorContext context = student.getBehaviorContext();
             if (context != null) {
@@ -1383,11 +1464,15 @@ public class SimulationEngine {
             }
             EntityState state = student.getEntityState();
             if (state != null) {
-                state.resetDecisionCooldown(ACTION_DURATION_TICKS);
+                // The discipline service may have set a longer cooldown
+                // (e.g. a veteran's reprimand keeps a student on-task
+                // longer) — never shorten it here.
+                state.resetDecisionCooldown(
+                        Math.max(state.getDecisionCooldown(), ACTION_DURATION_TICKS));
             }
         }
 
-        // Phase 4: Tick down cooldowns and increment activity ticks for every
+        // Tick down cooldowns and increment activity ticks for every
         // student that's on campus / in transit.
         for (Student student : students.values()) {
             EntityState state = student.getEntityState();
@@ -1437,12 +1522,18 @@ public class SimulationEngine {
 
         boolean wasCaught = context.getBoolVariable("was_caught", false);
         if (wasCaught) {
-            String catchType = context.getVariable("catch_type", "");
-            entry.append(" [CAUGHT");
-            if (!catchType.isEmpty()) {
-                entry.append(": ").append(catchType);
+            String severity = context.getVariable("caught_severity", "individual");
+            if ("settled".equals(severity)) {
+                // Class-wide call-out: lighter, shared consequence
+                entry.append(" [SETTLED: told to quiet down]");
+            } else {
+                String catchType = context.getVariable("catch_type", "");
+                entry.append(" [CAUGHT");
+                if (!catchType.isEmpty()) {
+                    entry.append(": ").append(catchType);
+                }
+                entry.append("]");
             }
-            entry.append("]");
         }
 
         Object learning = context.getVariable("learning_gained");
@@ -1461,6 +1552,7 @@ public class SimulationEngine {
         // Clear ephemeral context variables to avoid stale data
         context.removeVariable("was_caught");
         context.removeVariable("catch_type");
+        context.removeVariable("caught_severity");
         context.removeVariable("interaction_target");
         context.removeVariable("friendship_gained");
         context.removeVariable("learning_gained");
@@ -1558,7 +1650,12 @@ public class SimulationEngine {
     }
 
     /**
-     * Processes behavior trees for all staff.
+     * Processes behavior trees for all staff. Runs after the student trees
+     * have ticked and interactions have resolved, but BEFORE student actions
+     * are logged: teachers perceive this tick's reported misbehavior, assess
+     * their room's noise level, and react (settle the class, reprimand a
+     * repeat talker, catch covert acts) — overriding the offending students'
+     * actions within the same tick.
      */
     private void processStaffBehaviors() {
         if (staff == null) {
@@ -1575,8 +1672,10 @@ public class SimulationEngine {
                 } else {
                     context.setTime(time);
                 }
+                context.setDisciplineService(disciplineService);
 
                 tree.tick(context);
+                logStaffAction(staffMember, context);
             }
 
             // Increment activity ticks
@@ -1585,6 +1684,42 @@ public class SimulationEngine {
                 state.incrementTicksInActivity();
             }
         }
+    }
+
+    /**
+     * Appends an action-log entry for a staff member. To keep the capped log
+     * useful, an entry is only written when something notable happened: the
+     * teacher took a discipline action this tick (settle / reprimand /
+     * catch), or their activity changed since the last logged entry.
+     */
+    private void logStaffAction(Staff staffMember, BehaviorContext context) {
+        EntityState state = staffMember.getEntityState();
+        if (state == null) {
+            return;
+        }
+
+        ActivityType activity = state.getCurrentActivity();
+        String detail = context.getVariable("discipline_detail", "");
+        String lastLogged = context.getVariable("last_logged_activity", "");
+
+        if (detail.isEmpty() && activity.name().equals(lastLogged)) {
+            return;
+        }
+
+        StringBuilder entry = new StringBuilder(String.format("[%02d:%02d]",
+                time.getHour(), time.getMinute()));
+        entry.append(" ").append(activity.getDisplayName());
+        Room room = state.getCurrentRoom();
+        if (room != null) {
+            entry.append(" in ").append(room.getRoomName());
+        }
+        if (!detail.isEmpty()) {
+            entry.append(" — ").append(detail);
+        }
+
+        state.addLogEntry(entry.toString(), null, room);
+        context.setVariable("last_logged_activity", activity.name());
+        context.removeVariable("discipline_detail");
     }
 
     /**

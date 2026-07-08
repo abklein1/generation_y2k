@@ -104,6 +104,22 @@ public enum ActivityType {
     SUPERVISING("Supervising", false, false),
 
     /**
+     * Entity is grading papers at their desk (staff only).
+     * Reduced vigilance: covert student misbehavior is harder to notice.
+     */
+    GRADING("Grading Papers", false, false),
+
+    /**
+     * Entity is telling the whole class to quiet down (staff only).
+     */
+    SETTLING_CLASS("Settling the Class", true, false),
+
+    /**
+     * Entity is reprimanding an individual student (staff only).
+     */
+    REPRIMANDING("Reprimanding", true, false),
+
+    /**
      * Entity is walking to school from their neighborhood.
      */
     COMMUTING_WALK("Walking to School", false, true),

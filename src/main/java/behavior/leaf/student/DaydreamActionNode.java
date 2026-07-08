@@ -6,7 +6,7 @@ import behavior.leaf.ActionNode;
 import entity.ActivityType;
 import entity.EntityState;
 import entity.Student;
-import utility.GameRandom;
+import simulation.ClassroomDisciplineService;
 
 /**
  * Behavior tree action node for daydreaming in class.
@@ -14,7 +14,6 @@ import utility.GameRandom;
 public class DaydreamActionNode extends ActionNode {
     
     private static final int ENTERTAINMENT_BOOST = 8;
-    private static final int BASE_CATCH_CHANCE = 15;
     
     public DaydreamActionNode() {
         super("Daydream", 1);
@@ -53,20 +52,15 @@ public class DaydreamActionNode extends ActionNode {
         student.studentStatistics.getAllostaticLoad().applyRelaxationRecovery(
                 constants.SimConstants.ALLOSTATIC_RELAXATION_RECOVERY_DAYDREAMING);
         
-        // Only risk being caught if a teacher is present and class is in session
+        // Only risk being noticed if a teacher is present and class is in
+        // session: report to the supervising teacher, whose stats decide.
+        // Perceptive students snap back before the teacher looks their way.
         if (hasTeacherPresent(state.getCurrentRoom())) {
-            int perception = student.studentStatistics.getPerception();
-            int catchChance = BASE_CATCH_CHANCE - (perception / 10);
-
-            if (GameRandom.nextDouble(100) < catchChance) {
-                context.setVariable("was_caught", true);
-                context.setVariable("catch_type", "daydreaming");
-                student.studentStatistics.drainSecondaryStat("resilience",
-                        constants.SimConstants.STAT_DRAIN_CAUGHT_RESILIENCE,
-                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_RESILIENCE);
-                student.studentStatistics.drainSecondaryStat("adaptability",
-                        constants.SimConstants.STAT_DRAIN_CAUGHT_ADAPTABILITY,
-                        constants.SimConstants.ALLOSTATIC_STRESS_FACTOR_ADAPTABILITY);
+            ClassroomDisciplineService discipline = context.getDisciplineService();
+            if (discipline != null) {
+                int concealment = student.studentStatistics.getPerception() / 10;
+                discipline.reportMisbehavior(student, state.getCurrentRoom(),
+                        ActivityType.DAYDREAMING, concealment);
             }
         }
         
