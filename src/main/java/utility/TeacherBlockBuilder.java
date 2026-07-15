@@ -376,6 +376,21 @@ public class TeacherBlockBuilder {
                     break;
             }
 
+            // All room pools exhausted: expand the school with a new classroom so
+            // the teacher is not left roomless (roomless teachers get no schedule
+            // and are stuck without a location at simulation start).
+            if (assignedRoom == null) {
+                int before = standardSchool.getClassrooms().length;
+                standardSchool.addClassrooms(1, view);
+                Classroom[] expanded = standardSchool.getClassrooms();
+                if (expanded.length > before) {
+                    assignedRoom = expanded[before];
+                    GameLogger.logScheduling("  EXPANSION: Added " + assignedRoom.getRoomName() +
+                            " for roomless teacher " + staff.teacherName.getFirstName() + " " +
+                            staff.teacherName.getLastName() + " (" + type + ")");
+                }
+            }
+
             if (assignedRoom != null) {
                 RoomAssignment.assignTeacherToRoom(staff, assignedRoom);
                 roomsAssigned++;

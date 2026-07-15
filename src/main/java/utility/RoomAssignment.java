@@ -66,6 +66,82 @@ public class RoomAssignment {
         return false;
     }
 
+    /**
+     * Support staff types that need a workspace but whose primary room may be
+     * taken (offices are generated with fixed names, and libraries/lunchrooms
+     * can be claimed as overflow teaching space).
+     */
+    private static boolean isSupportStaffType(StaffType type) {
+        if (type == null) {
+            return false;
+        }
+        return switch (type) {
+            case PRINCIPAL, VICE_PRINCIPAL, GUIDANCE, NURSE, OFFICE, LIBRARY, LUNCH -> true;
+            default -> false;
+        };
+    }
+
+    /**
+     * Fallback room assignment for support staff whose dedicated room is
+     * unavailable. Tries, in order: the type's primary rooms with spare staff
+     * capacity (shared), any completely free office, any office with spare
+     * staff capacity, and finally the least-occupied office. Guarantees a
+     * workspace whenever the school has at least one office, so support staff
+     * are never left without a location.
+     */
+    private static boolean tryAssignSupportFallbackRoom(Staff staff, StaffType type, StandardSchool school) {
+        // Librarians and lunch staff can share their primary rooms up to capacity.
+        if (type == StaffType.LIBRARY) {
+            for (LibraryR library : school.getLibraries()) {
+                if (library.getAssignedStaff().size() < library.getStaffCapacity()) {
+                    assignSupportStaffToRoom(staff, library, "shared library");
+                    return true;
+                }
+            }
+        }
+        if (type == StaffType.LUNCH) {
+            for (Lunchroom lunchroom : school.getLunchrooms()) {
+                if (lunchroom.getAssignedStaff().size() < lunchroom.getStaffCapacity()) {
+                    assignSupportStaffToRoom(staff, lunchroom, "shared lunchroom");
+                    return true;
+                }
+            }
+        }
+
+        Office[] offices = school.getOffices();
+        for (Office office : offices) {
+            if (office.getAssignedStaff().isEmpty()) {
+                assignSupportStaffToRoom(staff, office, "free office");
+                return true;
+            }
+        }
+        for (Office office : offices) {
+            if (office.getAssignedStaff().size() < office.getStaffCapacity()) {
+                assignSupportStaffToRoom(staff, office, "office with spare capacity");
+                return true;
+            }
+        }
+
+        Office leastOccupied = null;
+        for (Office office : offices) {
+            if (leastOccupied == null
+                    || office.getAssignedStaff().size() < leastOccupied.getAssignedStaff().size()) {
+                leastOccupied = office;
+            }
+        }
+        if (leastOccupied != null) {
+            assignSupportStaffToRoom(staff, leastOccupied, "least-occupied office");
+            return true;
+        }
+        return false;
+    }
+
+    private static void assignSupportStaffToRoom(Staff staff, Room room, String reason) {
+        assignTeacherToRoom(staff, room);
+        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
+                + staff.teacherName.getLastName() + " to " + room.getRoomName() + " (" + reason + ")");
+    }
+
     private static void initialRoomAssignmentHelper(Staff staff, StandardSchool school) {
         StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
         Office[] offices = school.getOffices();
@@ -309,6 +385,10 @@ public class RoomAssignment {
 
         if (!teacherAssigned && canUseOverflowTeachingRoom(type)) {
             teacherAssigned = tryAssignOverflowTeachingRoom(staff, school);
+        }
+
+        if (!teacherAssigned && isSupportStaffType(type)) {
+            teacherAssigned = tryAssignSupportFallbackRoom(staff, type, school);
         }
 
         if (!teacherAssigned) {

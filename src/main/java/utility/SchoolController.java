@@ -1907,6 +1907,12 @@ public class SchoolController implements InspectionNavigator {
             publish("Checking if school expansion is needed...");
             SchoolAssignmentService.ExpansionReport expansionReport = SchoolAssignmentService
                     .expandSchoolToMeetDemand(town, standardSchool, roomConnector, view);
+
+            // Rooms may also have been added during population itself (e.g.
+            // classrooms created for roomless teachers), so integrate any rooms
+            // not yet in the graph even when no expansion iteration ran.
+            roomConnector.integrateNewRooms(standardSchool, view);
+
             if (expansionReport.expansionOccurred) {
                 publish("Expansion complete: +" + expansionReport.classroomsAdded + " classrooms, +"
                         + expansionReport.portablesAdded + " portables, +"
