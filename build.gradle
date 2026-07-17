@@ -39,7 +39,9 @@ distributions {
 }
 
 tasks.register('fatJar', Jar) {
-    archiveClassifier = 'all'
+    archiveFileName = 'SER316-Indvidual-Project-abklein1.jar'
+    destinationDirectory = layout.projectDirectory.dir(
+        'out/artifacts/SER316_Indvidual_Project_abklein1_jar')
     manifest {
         attributes 'Main-Class': 'game.Main'
     }
