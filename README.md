@@ -96,10 +96,10 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 
 *Coming soon*
 
-- School schedules/ bell schedule
+- Varying school schedules / bell schedules (Block/period scheduling)
 - More status effects for people
-- Items
-- Moods / Allostatic load 
+- Items (Partially implemented)
+- Moods / Allostatic load (partially implemented)
 - Nicknames
 - Rival schools
 - Household and personal traits
@@ -323,6 +323,8 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Initial staff assignment is not efficient and sometimes runs out of available teachers. This happens less frequently now
 - Classroom distribution is not ideal for students. Some students are still missing required classes
 - Grid system runs out of space at times (especially on stairs)
+- People wear multiple belts due to how accessories are set up
+- Room temperatures can be extremely cold
 
 ## Release 0.0.17
 
