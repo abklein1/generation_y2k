@@ -84,7 +84,7 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 
 ### Example of School Room Map
 
-![](src/main/java/Resources.Screencaps/gen_example.JPG)
+![](docs/screencaps/gen_example.JPG)
 
 *Coming soon*
 
@@ -123,13 +123,19 @@ normalized distribution based on age and gender.
 
 ### Example Student Generation
 
-An example of a student generated and displayed in the inspector:
-![](src/main/java/Resources.Screencaps/proto_inspect.JPG)
+An example of a student generated and displayed in the inspector (Gen 1):
+![](docs/screencaps/proto_inspect.JPG)
+
+An example of a student generated and displayed in the inspector (Release 0.0.17):
+![](docs/screencaps/r17-2.png)
 
 ### Example Staff Generation
 
-An example of a staff generated and displayed in the inspector:
-![](src/main/java/Resources.Screencaps/staff_proto1.JPG)
+An example of a staff generated and displayed in the inspector (Gen 1):
+![](docs/screencaps/staff_proto1.JPG)
+
+An example of a staff generated and displayed in the inspector (Release 0.0.17):
+![](docs/screencaps/r17-3.png)
 
 ## Datasets and References
 s
@@ -166,6 +172,7 @@ s
 - Rates of vision issues : https://pmc.ncbi.nlm.nih.gov/articles/PMC2772054/
 - Piercing trends : https://bodyartforms.com/blog/trends-in-body-piercings-from-1990-to-2014?srsltid=AfmBOopIwKrrYHlCyQZGnKT7WzcRR2LHeNrJ_B6cIj-77KWf8jvokjfG
 - Rates of cellphone ownership 2004 : https://www.pewresearch.org/internet/2009/08/19/teens-and-mobile-phones-over-the-past-five-years-pew-internet-looks-back/
+- Rates of sexual orientation among adults 2003 : https://web.archive.org/web/20061219090954/http://norc.uchicago.edu/issues/American_Sexual_Behavior_2003.pdf
 
 ## Gameplay Mechanics
 
@@ -343,10 +350,10 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Unique trait system: Students can be described with random unique traits to provide more flavor to their appearance. The trait system was later made generic so that it can be applied to items as well. Traits can be used to describe things in various conditions. Right now traits are applied to student appearance but the framework has been set for cellphones
 - Sim for needs: Students and staff now have pools that track hunger, thirst, temperature, bladder, entertainment, and energy. People will now eat and go to the bathroom and attempt to keep their various pools from falling to 0. Pools falling to 0 will start to drain their secondary stat pools. I will still need to work out how this interacts with allostatic load
 
-![](src/main/java/Resources.Screencaps/r16-1.png)
-![](src/main/java/Resources.Screencaps/r16-2.png)
-![](src/main/java/Resources.Screencaps/r16-3.png)
-![](src/main/java/Resources.Screencaps/r16-4.png)
+![](docs/screencaps/r16-1.png)
+![](docs/screencaps/r16-2.png)
+![](docs/screencaps/r16-3.png)
+![](docs/screencaps/r16-4.png)
 
 ### Bugfixes
 
@@ -382,9 +389,9 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Basic seed system to track school/student/staff generation, although this needs some additional work
 - Minor UI feature additions and reworks to make it more organized
 
-![](src/main/java/Resources.Screencaps/r15_1.png)
-![](src/main/java/Resources.Screencaps/r15_2.png)
-![](src/main/java/Resources.Screencaps/r15_3.png)
+![](docs/screencaps/r15_1.png)
+![](docs/screencaps/r15_2.png)
+![](docs/screencaps/r15_3.png)
 
 ### Bugfixes
 
@@ -431,7 +438,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
   bracket in the future
 - Clean up formatting and minor bugfixes
 
-![](src/main/java/Resources.Screencaps/proto7.JPG)
+![](docs/screencaps/proto7.JPG)
 
 ## Release 0.0.11
 
@@ -446,7 +453,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
   This forms the foundation for future social links feature
 - Various bugfixes
 
-![](src/main/java/Resources.Screencaps/proto6.JPG)
+![](docs/screencaps/proto6.JPG)
 
 ## Release 0.0.10
 
@@ -460,7 +467,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Math class assignment revisions for students
 - Minor bugfixes on student and teacher assignments
 
-![](src/main/java/Resources.Screencaps/proto5.JPG)
+![](docs/screencaps/proto5.JPG)
 
 ## Release 0.0.9
 
@@ -472,7 +479,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Revised student cap and staff cap calculations
 - Various bugfixes
 
-![](src/main/java/Resources.Screencaps/proto4.JPG)
+![](docs/screencaps/proto4.JPG)
 
 ## Release 0.0.8
 
@@ -485,7 +492,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Fix temperature display bug
 - Student cap bug fix where student cap was 0 for specific rooms
 
-![](src/main/java/Resources.Screencaps/proto3.JPG)
+![](docs/screencaps/proto3.JPG)
 
 ## Release 0.0.7
 
@@ -506,7 +513,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - GUI updates in realtime as school is generated
 - Java project SDK upgraded from 11 to 17
 
-![](src/main/java/Resources.Screencaps/proto2.JPG)
+![](docs/screencaps/proto2.JPG)
 
 ## Release 0.0.5
 
