@@ -88,11 +88,11 @@ community) or a randomly concatenated place name (Place1 + Place2) where, genera
 
 ### Example of School Room Map (0.0.17)
 
-![](docs\screencaps\r17_1.png)
+![](docs\screencaps\r17-1.png)
 
 ### Example of Inside a Classroom (0.0.17)
 
-![](docs\screencaps\r17_4.png)
+![](docs\screencaps\r17-4.png)
 
 *Coming soon*
 
