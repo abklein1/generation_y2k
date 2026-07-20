@@ -82,16 +82,24 @@ The school mascot is generated from a weighted list based on the most frequently
 high schools. The high school name is either a randomly generated person (presumably important in the fictionalized
 community) or a randomly concatenated place name (Place1 + Place2) where, generally, most combinations make sense.
 
-### Example of School Room Map
+### Example of School Room Map (Gen 1)
 
 ![](docs/screencaps/gen_example.JPG)
+
+### Example of School Room Map (0.0.17)
+
+![](docs\screencaps\r17_1.png)
+
+### Example of Inside a Classroom (0.0.17)
+
+![](docs\screencaps\r17_4.png)
 
 *Coming soon*
 
 - School schedules/ bell schedule
 - More status effects for people
 - Items
-- Moods / Allostatic load
+- Moods / Allostatic load 
 - Nicknames
 - Rival schools
 - Household and personal traits
