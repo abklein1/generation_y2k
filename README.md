@@ -146,7 +146,7 @@ An example of a staff generated and displayed in the inspector (Release 0.0.17):
 ![](docs/screencaps/r17-3.png)
 
 ## Datasets and References
-s
+
 - US Census Data for Surnames (Use File B) :  https://www.census.gov/topics/population/genealogy/data/2000_surnames.html
 - US Census Data for First Names : https://www.ssa.gov/oact/babynames/limits.html (Use the National Data folder)
 - US Mascot Frequency Database : https://masseyratings.com/mascots
