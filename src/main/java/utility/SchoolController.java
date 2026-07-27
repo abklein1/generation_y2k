@@ -1962,6 +1962,9 @@ public class SchoolController implements InspectionNavigator {
             publish("Assigning student cliques...");
             CliqueAssigner.assignCliques(studentHashMap, view);
 
+            publish("Assigning orientation demographics...");
+            OrientationAssigner.assignOrientations(studentHashMap);
+
             publish("Applying clique-aware piercings...");
             StudentPopGenerator.applyAllPiercingAttributes(studentHashMap);
 
@@ -1979,7 +1982,7 @@ public class SchoolController implements InspectionNavigator {
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
 
             publish("Populating phone contacts...");
-            CellPhoneAssignmentService.populatePhoneContacts(town);
+            CellPhoneAssignmentService.populatePhoneContacts(town, socialLinkConnector);
 
             traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
 
@@ -2070,6 +2073,9 @@ public class SchoolController implements InspectionNavigator {
 
             publish("Assigning student cliques...");
             CliqueAssigner.assignCliques(studentHashMap, view);
+
+            publish("Assigning orientation demographics...");
+            OrientationAssigner.assignOrientations(studentHashMap);
 
             publish("Applying clique-aware piercings...");
             StudentPopGenerator.applyAllPiercingAttributes(studentHashMap);

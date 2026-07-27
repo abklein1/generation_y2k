@@ -4,6 +4,8 @@ import constants.SimConstants;
 import entity.AllostaticLoad;
 import entity.Items.Outfit;
 import entity.Items.Wardrobe;
+import entity.OrientationDisclosure;
+import entity.SexualOrientation;
 import entity.Student;
 import entity.StudentBlock;
 import entity.StudentSchedule;
@@ -38,6 +40,11 @@ public class StudentStatistics implements PStatistics {
     private int experience;
     private int grade_average;
     private String gender;
+    // Orientation demographics (assigned by OrientationAssigner after clique
+    // assignment). Null on older serialized saves; getters default to
+    // STRAIGHT / OPEN so legacy students behave like the majority cohort.
+    private SexualOrientation sexualOrientation;
+    private OrientationDisclosure orientationDisclosure;
     private LocalDate birthday;
     private int creativity;
     private int empathy;
@@ -70,6 +77,10 @@ public class StudentStatistics implements PStatistics {
     private final ArrayList<Student> siblingsNotInSchool;
     private final ArrayList<Student> friendsInSchool;
     private int maxBestFriends;
+    // Overall directed-connection capacity (close friends + casual links +
+    // acquaintances + rivals). Derived from maxBestFriends; 0 on legacy
+    // saves, in which case the getter derives it on the fly.
+    private int maxSocialConnections;
     private boolean hasBraces;
     private String bracesBandColor;
     private String bracesSecondBandColor; // For alternating band colors
@@ -146,6 +157,8 @@ public class StudentStatistics implements PStatistics {
         this.grades = new ArrayList<>();
         this.gradeLevel = null;
         this.gender = null;
+        this.sexualOrientation = null;
+        this.orientationDisclosure = null;
         this.birthday = null;
         this.creativity = 0;
         this.empathy = 0;
@@ -174,6 +187,7 @@ public class StudentStatistics implements PStatistics {
         this.siblingsNotInSchool = new ArrayList<>();
         this.friendsInSchool = new ArrayList<>();
         this.maxBestFriends = 0;
+        this.maxSocialConnections = 0;
         this.hasBraces = false;
         this.bracesBandColor = null;
         this.bracesSecondBandColor = null;
@@ -342,6 +356,31 @@ public class StudentStatistics implements PStatistics {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    /**
+     * Returns the student's sexual orientation, defaulting to
+     * {@link SexualOrientation#STRAIGHT} when unassigned (e.g. students
+     * deserialized from saves created before orientation existed).
+     */
+    public SexualOrientation getSexualOrientation() {
+        return sexualOrientation != null ? sexualOrientation : SexualOrientation.STRAIGHT;
+    }
+
+    public void setSexualOrientation(SexualOrientation sexualOrientation) {
+        this.sexualOrientation = sexualOrientation;
+    }
+
+    /**
+     * Returns how publicly the student lives their orientation, defaulting
+     * to {@link OrientationDisclosure#OPEN} when unassigned.
+     */
+    public OrientationDisclosure getOrientationDisclosure() {
+        return orientationDisclosure != null ? orientationDisclosure : OrientationDisclosure.OPEN;
+    }
+
+    public void setOrientationDisclosure(OrientationDisclosure orientationDisclosure) {
+        this.orientationDisclosure = orientationDisclosure;
     }
 
     public LocalDate getBirthday() {
@@ -813,8 +852,23 @@ public class StudentStatistics implements PStatistics {
         return friendsInSchool;
     }
 
+    /**
+     * Adds a friend to the in-school friend list.
+     * Duplicate-safe: the friend is only added if not already present, so
+     * cache-resync passes can never create double entries.
+     */
     public void addFriendInSchool(Student friend) {
-        this.friendsInSchool.add(friend);
+        if (friend != null && !this.friendsInSchool.contains(friend)) {
+            this.friendsInSchool.add(friend);
+        }
+    }
+
+    /**
+     * Removes a friend from the in-school friend list (e.g. when the
+     * relationship score decays below the friend tier threshold).
+     */
+    public void removeFriendInSchool(Student friend) {
+        this.friendsInSchool.remove(friend);
     }
 
     public int getMaxBestFriends() {
@@ -823,6 +877,32 @@ public class StudentStatistics implements PStatistics {
 
     public void setMaxBestFriends(int maxBestFriends) {
         this.maxBestFriends = maxBestFriends;
+    }
+
+    /**
+     * Returns the overall directed social-connection capacity. Falls back to
+     * deriving it from {@code maxBestFriends} when unset (legacy saves).
+     */
+    public int getMaxSocialConnections() {
+        if (maxSocialConnections > 0) {
+            return maxSocialConnections;
+        }
+        return deriveMaxSocialConnections(maxBestFriends);
+    }
+
+    public void setMaxSocialConnections(int maxSocialConnections) {
+        this.maxSocialConnections = maxSocialConnections;
+    }
+
+    /**
+     * Derives overall connection capacity from close-friend capacity, so
+     * both scale with the same charisma/empathy/luck base-stat formula:
+     * {@code clamp(maxBestFriends * PER_FRIEND, MIN, MAX)}.
+     */
+    public static int deriveMaxSocialConnections(int maxBestFriends) {
+        int derived = maxBestFriends * SimConstants.SOCIAL_LINK_CONNECTIONS_PER_FRIEND;
+        return Math.max(SimConstants.SOCIAL_LINK_CONNECTIONS_MINIMUM,
+                Math.min(SimConstants.SOCIAL_LINK_CONNECTIONS_MAXIMUM, derived));
     }
 
     public boolean getHasBraces() {

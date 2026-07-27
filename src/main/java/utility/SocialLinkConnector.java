@@ -107,23 +107,27 @@ public class SocialLinkConnector {
     }
 
     /**
-     * Initializes social links between students in six phases:
+     * Initializes social links between students in eight phases:
      * <ol>
      * <li>Add all students as vertices in the social graph</li>
-     * <li>Calculate social capacity (maxBestFriends) for each student based on
-     * personality</li>
+     * <li>Calculate social capacity (maxBestFriends and the wider
+     * maxSocialConnections) for each student based on personality</li>
      * <li>Create sibling relationships with variable weights (can be positive or
      * negative)</li>
-     * <li>Generate friend relationships using a bell curve distribution with
-     * same-gender preference</li>
+     * <li>Generate close-friend relationships using a bell curve distribution
+     * with a soft same-gender preference</li>
      * <li>Generate rival/negative relationships for some students</li>
+     * <li>Widen each student's network with weak casual/acquaintance links up
+     * to their overall connection capacity</li>
      * <li>Record catalysts for pre-existing mutual best friendships</li>
+     * <li>Synchronize the friendsInSchool compatibility cache from the graph</li>
      * </ol>
      *
      * <p>
      * Social link weights use the -100 to 100 scale described in the README.
      * Relationships are directed: A's feeling about B can differ from B's feeling
-     * about A.
+     * about A. Acquaintance reciprocals are rolled independently, so one-sided
+     * admiration, indifference, and outright dislike all occur naturally.
      * </p>
      *
      * <p>
@@ -149,7 +153,8 @@ public class SocialLinkConnector {
             socialGraph.addVertex(student);
         }
 
-        // Phase 2: Calculate social capacity (maxBestFriends) for each student
+        // Phase 2: Calculate social capacity (maxBestFriends + overall
+        // connection capacity) for each student
         for (Student student : studentHashMap.values()) {
             setMaxBestFriends(student);
         }
@@ -177,11 +182,11 @@ public class SocialLinkConnector {
             }
         }
 
-        // Phase 4: Generate friend relationships using bell curve distribution
-        // The number of friends follows a normal distribution centered on
-        // personality-adjusted mean.
-        // Same-gender friends are preferred to reflect typical high school social
-        // patterns.
+        // Phase 4: Generate close-friend relationships using bell curve
+        // distribution. The number of friends follows a normal distribution
+        // centered on a personality-adjusted mean. Same-gender friends are
+        // preferred (soft weight, not a hard filter) to reflect typical high
+        // school social patterns.
         for (Student student : studentHashMap.values()) {
             int targetFriendCount = generateFriendCount(student);
             // Account for any friends already added via reciprocal links from earlier
@@ -192,7 +197,7 @@ public class SocialLinkConnector {
 
             while (friendsAdded < targetFriendCount && attempts < maxAttempts) {
                 Student potentialFriend = findPotentialFriend(
-                        student, standardSchool, false);
+                        student, standardSchool, false, SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT);
                 attempts++;
 
                 if (potentialFriend == null) {
@@ -261,7 +266,7 @@ public class SocialLinkConnector {
 
             while (rivalsAdded < numRivals && attempts < maxAttempts) {
                 Student rival = findPotentialFriend(
-                        student, standardSchool, true);
+                        student, standardSchool, true, SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT);
                 attempts++;
 
                 if (rival == null) {
@@ -292,12 +297,69 @@ public class SocialLinkConnector {
             }
         }
 
-        // Phase 6: Record catalysts for pre-existing best friendships
+        // Phase 6: Widen each student's network with weak casual/acquaintance
+        // links. Real contact circles extend far past close friends: loose
+        // acquaintances, classmates, neighborhood kids. The overall network
+        // size follows a bell curve centered on a ratio of the student's
+        // connection capacity (itself derived from the same base-stat formula
+        // as close-friend capacity). Reciprocal opinions are rolled
+        // independently and may be neutral or negative, so some students end
+        // up wanting to talk to people who don't really like them back.
+        for (Student student : studentHashMap.values()) {
+            int targetConnections = generateConnectionCount(student);
+            int connections = socialGraph.outDegreeOf(student);
+            int attempts = 0;
+            int maxAttempts = Math.max(
+                    (targetConnections - connections) * SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER, 5);
+
+            while (connections < targetConnections && attempts < maxAttempts) {
+                Student acquaintance = findPotentialFriend(
+                        student, standardSchool, false, SOCIAL_LINK_SAME_GENDER_ACQUAINTANCE_WEIGHT);
+                attempts++;
+
+                if (acquaintance == null || student.equals(acquaintance)) {
+                    continue;
+                }
+                // Existing relationships (sibling, friend, rival, or reciprocal
+                // acquaintance) already occupy this direction
+                if (socialGraph.containsEdge(student, acquaintance)) {
+                    continue;
+                }
+                if (student.studentStatistics.getSiblingsInSchool().contains(acquaintance)) {
+                    continue;
+                }
+
+                socialGraph.addVertex(acquaintance);
+
+                DefaultWeightedEdge edge = socialGraph.addEdge(student, acquaintance);
+                if (edge != null) {
+                    socialGraph.setEdgeWeight(edge, assignAcquaintanceWeight());
+                }
+
+                // Independent reciprocal: the other party may barely register
+                // this student, or even quietly dislike them (asymmetry per
+                // the README examples)
+                if (!socialGraph.containsEdge(acquaintance, student)) {
+                    DefaultWeightedEdge reciprocalEdge = socialGraph.addEdge(acquaintance, student);
+                    if (reciprocalEdge != null) {
+                        socialGraph.setEdgeWeight(reciprocalEdge, assignAcquaintanceReciprocalWeight());
+                    }
+                }
+
+                connections++;
+            }
+        }
+
+        // Phase 7: Record catalysts for pre-existing best friendships
         // Any mutual friendship where both scores >= BEST_FRIEND_THRESHOLD is assumed
         // to have
         // already experienced a catalyst event (the school existed before the sim
         // starts).
         generateInitialCatalysts(studentHashMap);
+
+        // Phase 8: Synchronize the friendsInSchool compatibility cache so it
+        // reflects exactly the friend-or-stronger outgoing links in the graph
+        refreshFriendCaches();
 
         // After initializing all social links, visualize the graph
         schoolSocialLinkVisualizer();
@@ -480,6 +542,10 @@ public class SocialLinkConnector {
             }
         }
         catalystRecords.putAll(snapshot.getCatalysts());
+
+        // Re-align every student's friendsInSchool cache with the restored
+        // graph so the compatibility list and edge weights cannot drift.
+        refreshFriendCaches();
     }
 
     // ---- Relationship Decay ----
@@ -553,6 +619,10 @@ public class SocialLinkConnector {
 
             socialGraph.setEdgeWeight(edge, newWeight);
         }
+
+        // Friendships that decayed below the friend tier fall out of the
+        // compatibility cache; anything still qualifying is retained.
+        refreshFriendCaches();
     }
 
     // ---- Social Score Modification ----
@@ -594,6 +664,7 @@ public class SocialLinkConnector {
             if (edge != null) {
                 double weight = Math.max(SOCIAL_LINK_SCORE_MIN, Math.min(SOCIAL_LINK_SCORE_MAX, amount));
                 socialGraph.setEdgeWeight(edge, weight);
+                updateFriendCacheEntry(source, target, weight);
             }
             return;
         }
@@ -613,6 +684,24 @@ public class SocialLinkConnector {
         // Clamp to valid range
         newWeight = Math.max(SOCIAL_LINK_SCORE_MIN, Math.min(SOCIAL_LINK_SCORE_MAX, newWeight));
         socialGraph.setEdgeWeight(edge, newWeight);
+        updateFriendCacheEntry(source, target, newWeight);
+    }
+
+    /**
+     * Keeps the source's {@code friendsInSchool} cache aligned with a single
+     * directed score after it changes: targets crossing the friend-tier
+     * threshold are added, targets falling below it are removed. Siblings
+     * never enter the friend cache (they have their own lists).
+     */
+    private void updateFriendCacheEntry(Student source, Student target, double newWeight) {
+        if (source.studentStatistics.getSiblingsInSchool().contains(target)) {
+            return;
+        }
+        if (newWeight >= SOCIAL_LINK_TIER_FRIEND_THRESHOLD) {
+            source.studentStatistics.addFriendInSchool(target);
+        } else {
+            source.studentStatistics.removeFriendInSchool(target);
+        }
     }
 
     /**
@@ -660,6 +749,23 @@ public class SocialLinkConnector {
         return (int) Math.round(Math.max(0, Math.min(SOCIAL_LINK_RIVAL_MAXIMUM, count)));
     }
 
+    /**
+     * Generates the total number of directed connections (close friends,
+     * casual links, acquaintances, and rivals combined) a student's network
+     * should reach. Uses a normal distribution centered at a ratio of the
+     * student's overall connection capacity, which derives from the same
+     * charisma/empathy/luck formula as close-friend capacity.
+     *
+     * @param student The student.
+     * @return Target overall network size, clamped to [0, maxSocialConnections].
+     */
+    private int generateConnectionCount(Student student) {
+        int maxConnections = student.studentStatistics.getMaxSocialConnections();
+        double mean = maxConnections * SOCIAL_LINK_CONNECTION_COUNT_MEAN_RATIO;
+        double count = GameRandom.nextGaussian() * SOCIAL_LINK_CONNECTION_COUNT_STD_DEV + mean;
+        return (int) Math.round(Math.max(0, Math.min(maxConnections, count)));
+    }
+
     // ---- Social Capacity Calculation ----
 
     /**
@@ -702,6 +808,9 @@ public class SocialLinkConnector {
         maxBestFriends = Math.max(SOCIAL_LINK_FRIEND_MINIMUM, maxBestFriends);
 
         student.studentStatistics.setMaxBestFriends(maxBestFriends);
+        // The wider network capacity scales off the same base-stat formula
+        student.studentStatistics.setMaxSocialConnections(
+                StudentStatistics.deriveMaxSocialConnections(maxBestFriends));
     }
 
     // ---- Potential Friend Selection ----
@@ -719,22 +828,25 @@ public class SocialLinkConnector {
      * </ul>
      * </p>
      * <p>
-     * Same-gender preference: 70% chance to prefer a candidate of the same gender,
-     * reflecting typical high school social dynamics. Falls back to any gender
-     * if no same-gender candidates are available.
+     * Same-gender preference is a soft candidate-weight multiplier rather
+     * than a hard filter: same-gender candidates are favoured by
+     * {@code sameGenderWeight} but mixed-gender links remain possible.
+     * Close friendships pass a strong weight (~70% same-gender in a balanced
+     * pool); casual acquaintances a mild one.
      * </p>
      *
-     * @param student        The student seeking friends.
-     * @param standardSchool The standard school entity.
-     * @param forRival       If true, uses rival affinity weights (prefers
-     *                       Hate/Negative cliques); otherwise uses friend
-     *                       affinity weights (prefers Same/Aligns cliques).
+     * @param student          The student seeking friends.
+     * @param standardSchool   The standard school entity.
+     * @param forRival         If true, uses rival affinity weights (prefers
+     *                         Hate/Negative cliques); otherwise uses friend
+     *                         affinity weights (prefers Same/Aligns cliques).
+     * @param sameGenderWeight Candidate-weight multiplier applied to
+     *                         same-gender candidates (1.0 = no preference).
      * @return A potential friend/rival or null if none found.
      */
     private Student findPotentialFriend(Student student,
-            StandardSchool standardSchool, boolean forRival) {
+            StandardSchool standardSchool, boolean forRival, double sameGenderWeight) {
         String gradeLevel = student.studentStatistics.getGradeLevel();
-        String gender = student.studentStatistics.getGender();
         ArrayList<Student> potentialFriends = new ArrayList<>();
 
         if (GameRandom.nextInt(
@@ -772,43 +884,43 @@ public class SocialLinkConnector {
             return null;
         }
 
-        if (GameRandom.nextInt(SOCIAL_LINK_SAME_GENDER_SAMPLE_SIZE) < SOCIAL_LINK_SAME_GENDER_THRESHOLD) {
-            ArrayList<Student> sameGenderCandidates = new ArrayList<>();
-            for (Student candidate : potentialFriends) {
-                if (candidate.studentStatistics.getGender() != null
-                        && candidate.studentStatistics.getGender().equals(gender)) {
-                    sameGenderCandidates.add(candidate);
-                }
-            }
-            if (!sameGenderCandidates.isEmpty()) {
-                return weightedCliqueSelect(
-                        sameGenderCandidates, student, forRival);
-            }
-        }
-
-        return weightedCliqueSelect(potentialFriends, student, forRival);
+        return weightedCliqueSelect(potentialFriends, student, forRival, sameGenderWeight);
     }
 
     /**
      * Selects a student from the candidate list using weighted random
-     * selection based on clique affinity. Friend mode favours Same and
-     * Aligns cliques; rival mode favours Hate and Negative cliques.
+     * selection based on clique affinity and a soft same-gender preference.
+     * Friend mode favours Same and Aligns cliques; rival mode favours Hate
+     * and Negative cliques. Same-gender candidates have their weight
+     * multiplied by {@code sameGenderWeight}.
      */
     private Student weightedCliqueSelect(List<Student> candidates,
-            Student student, boolean forRival) {
+            Student student, boolean forRival, double sameGenderWeight) {
         if (candidates.size() == 1) {
             return candidates.get(0);
         }
 
         String myClique = student.studentStatistics.getMainClique();
+        String myGender = student.studentStatistics.getGender();
+        String myNeighborhood = student.studentStatistics.getNeighborhoodName();
         double[] weights = new double[candidates.size()];
         double total = 0;
 
         for (int i = 0; i < candidates.size(); i++) {
-            String theirClique =
-                    candidates.get(i).studentStatistics.getMainClique();
-            weights[i] = getCliqueWeight(myClique, theirClique, forRival);
-            total += weights[i];
+            Student candidate = candidates.get(i);
+            String theirClique = candidate.studentStatistics.getMainClique();
+            double weight = getCliqueWeight(myClique, theirClique, forRival);
+            String theirGender = candidate.studentStatistics.getGender();
+            if (myGender != null && theirGender != null
+                    && myGender.equalsIgnoreCase(theirGender)) {
+                weight *= sameGenderWeight;
+            }
+            String theirNeighborhood = candidate.studentStatistics.getNeighborhoodName();
+            if (myNeighborhood != null && myNeighborhood.equals(theirNeighborhood)) {
+                weight *= SOCIAL_LINK_SAME_NEIGHBORHOOD_WEIGHT;
+            }
+            weights[i] = weight;
+            total += weight;
         }
 
         double roll = GameRandom.nextDouble() * total;
@@ -940,10 +1052,202 @@ public class SocialLinkConnector {
         return Math.max(SOCIAL_LINK_SCORE_MIN, Math.min(SOCIAL_LINK_RIVAL_WEIGHT_CEILING, weight));
     }
 
+    /**
+     * Assigns a mildly positive weight for a casual/acquaintance link
+     * (the initiating direction). Gaussian around 15 with a floor of 1,
+     * so acquaintances are always at least faintly positive from the
+     * initiator's side.
+     *
+     * @return A weight in the range [FLOOR, 100].
+     */
+    private double assignAcquaintanceWeight() {
+        double weight = GameRandom.nextGaussian() * SOCIAL_LINK_ACQUAINTANCE_WEIGHT_STD_DEV
+                + SOCIAL_LINK_ACQUAINTANCE_WEIGHT_MEAN;
+        return Math.max(SOCIAL_LINK_ACQUAINTANCE_WEIGHT_FLOOR, Math.min(SOCIAL_LINK_SCORE_MAX, weight));
+    }
+
+    /**
+     * Assigns the independent reciprocal weight for an acquaintance link.
+     * Centered lower and with a wide spread, so the other party may be
+     * mildly positive, indifferent, or negative -- producing the one-sided
+     * relationships described in the README.
+     *
+     * @return A weight in the range [-100, 100].
+     */
+    private double assignAcquaintanceReciprocalWeight() {
+        double weight = GameRandom.nextGaussian() * SOCIAL_LINK_ACQUAINTANCE_RECIPROCAL_STD_DEV
+                + SOCIAL_LINK_ACQUAINTANCE_RECIPROCAL_MEAN;
+        return Math.max(SOCIAL_LINK_SCORE_MIN, Math.min(SOCIAL_LINK_SCORE_MAX, weight));
+    }
+
+    // ---- Relationship Classification ----
+
+    /**
+     * Directed relationship tier derived from a single social-link score.
+     * Tiers are computed on demand from the score rather than persisted,
+     * so they always reflect the current state of the graph.
+     */
+    public enum RelationshipTier {
+        BEST_FRIEND,
+        FRIEND,
+        ACQUAINTANCE,
+        NEUTRAL,
+        DISLIKE,
+        ENEMY;
+    }
+
+    /**
+     * Reciprocity state of an unordered student pair, derived from both
+     * directed scores. Combined with sibling/catalyst context this covers
+     * the README's asymmetric relationship examples (unrequited admiration,
+     * deceitful friend, one-sided jealousy, frenemies) without persisting
+     * speculative labels.
+     */
+    public enum Reciprocity {
+        MUTUAL_POSITIVE,
+        ONE_SIDED_POSITIVE,
+        OPPOSED,
+        ONE_SIDED_NEGATIVE,
+        MUTUAL_NEGATIVE,
+        NEUTRAL;
+    }
+
+    /**
+     * Classifies a raw directed score into a relationship tier.
+     *
+     * @param score the directed social-link score (-100 to 100)
+     * @return the tier for that score
+     */
+    public static RelationshipTier classifyScore(double score) {
+        if (score >= SOCIAL_LINK_BEST_FRIEND_THRESHOLD) {
+            return RelationshipTier.BEST_FRIEND;
+        }
+        if (score >= SOCIAL_LINK_TIER_FRIEND_THRESHOLD) {
+            return RelationshipTier.FRIEND;
+        }
+        if (score >= SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD) {
+            return RelationshipTier.ACQUAINTANCE;
+        }
+        if (score > SOCIAL_LINK_TIER_DISLIKE_THRESHOLD) {
+            return RelationshipTier.NEUTRAL;
+        }
+        if (score > SOCIAL_LINK_TIER_ENEMY_THRESHOLD) {
+            return RelationshipTier.DISLIKE;
+        }
+        return RelationshipTier.ENEMY;
+    }
+
+    /**
+     * Returns the directed relationship tier from source toward target.
+     *
+     * @param source the student whose feelings are being classified
+     * @param target the other student
+     * @return the tier of source's outgoing link (NEUTRAL when no edge exists)
+     */
+    public RelationshipTier getRelationshipTier(Student source, Student target) {
+        return classifyScore(getSocialScore(source, target));
+    }
+
+    /**
+     * Derives the reciprocity state of a pair from both directed scores.
+     *
+     * @param a one student
+     * @param b the other student
+     * @return the pair's reciprocity state
+     */
+    public Reciprocity getReciprocity(Student a, Student b) {
+        double scoreAb = getSocialScore(a, b);
+        double scoreBa = getSocialScore(b, a);
+        boolean abPositive = scoreAb >= SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD;
+        boolean baPositive = scoreBa >= SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD;
+        boolean abNegative = scoreAb <= SOCIAL_LINK_TIER_DISLIKE_THRESHOLD;
+        boolean baNegative = scoreBa <= SOCIAL_LINK_TIER_DISLIKE_THRESHOLD;
+
+        if (abPositive && baPositive) {
+            return Reciprocity.MUTUAL_POSITIVE;
+        }
+        if (abNegative && baNegative) {
+            return Reciprocity.MUTUAL_NEGATIVE;
+        }
+        if ((abPositive && baNegative) || (abNegative && baPositive)) {
+            return Reciprocity.OPPOSED;
+        }
+        if (abPositive || baPositive) {
+            return Reciprocity.ONE_SIDED_POSITIVE;
+        }
+        if (abNegative || baNegative) {
+            return Reciprocity.ONE_SIDED_NEGATIVE;
+        }
+        return Reciprocity.NEUTRAL;
+    }
+
+    /**
+     * Returns every student this student holds a positive outgoing link
+     * toward (score above 0), regardless of tier. Used by behavior systems
+     * that want the full known-and-liked circle, not just close friends.
+     *
+     * @param student the student whose outgoing links to inspect
+     * @return list of positively-linked targets (never null)
+     */
+    public List<Student> getPositiveConnections(Student student) {
+        List<Student> result = new ArrayList<>();
+        if (student == null || !socialGraph.containsVertex(student)) {
+            return result;
+        }
+        for (DefaultWeightedEdge edge : socialGraph.outgoingEdgesOf(student)) {
+            if (socialGraph.getEdgeWeight(edge) > 0) {
+                result.add(socialGraph.getEdgeTarget(edge));
+            }
+        }
+        return result;
+    }
+
+    // ---- Friend Cache Synchronization ----
+
+    /**
+     * Rebuilds every student's {@code friendsInSchool} compatibility cache
+     * from the graph: the cache holds exactly the non-sibling targets whose
+     * outgoing score is at friend tier or stronger
+     * ({@value constants.SimConstants#SOCIAL_LINK_TIER_FRIEND_THRESHOLD}+).
+     * Weak acquaintances live only in the graph.
+     */
+    public void refreshFriendCaches() {
+        for (Student student : socialGraph.vertexSet()) {
+            refreshFriendCache(student);
+        }
+    }
+
+    /**
+     * Synchronizes a single student's friend cache with their outgoing
+     * graph edges (see {@link #refreshFriendCaches()}).
+     */
+    private void refreshFriendCache(Student student) {
+        if (student == null || !socialGraph.containsVertex(student)) {
+            return;
+        }
+        ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
+        // Drop entries that no longer qualify (decayed, or stale duplicates)
+        friends.removeIf(friend -> getSocialScore(student, friend) < SOCIAL_LINK_TIER_FRIEND_THRESHOLD);
+        // Add qualifying non-sibling targets (addFriendInSchool is dupe-safe)
+        for (DefaultWeightedEdge edge : socialGraph.outgoingEdgesOf(student)) {
+            if (socialGraph.getEdgeWeight(edge) < SOCIAL_LINK_TIER_FRIEND_THRESHOLD) {
+                continue;
+            }
+            Student target = socialGraph.getEdgeTarget(edge);
+            if (student.studentStatistics.getSiblingsInSchool().contains(target)) {
+                continue;
+            }
+            student.studentStatistics.addFriendInSchool(target);
+        }
+    }
+
     // ---- Visualization Methods ----
 
     /**
-     * Visualizes the social graph using mxGraph.
+     * Visualizes the social graph using mxGraph. Weak links (absolute score
+     * below {@value constants.SimConstants#SOCIAL_LINK_VISUALIZER_MIN_ABS_WEIGHT})
+     * are hidden so the much denser acquaintance-widened graph stays legible;
+     * the underlying graph keeps every edge.
      */
     public void schoolSocialLinkVisualizer() {
         // Use JGraphXAdapter to adapt JGraphT graph to JGraphX
@@ -961,8 +1265,12 @@ public class SocialLinkConnector {
                 vertexToCellMap.put(student, cell);
             }
 
-            // Insert all edges using the mapped mxCells
+            // Insert all significant edges using the mapped mxCells.
+            // Weak acquaintance edges are omitted from the school-wide view.
             for (DefaultWeightedEdge edge : socialGraph.edgeSet()) {
+                if (Math.abs(socialGraph.getEdgeWeight(edge)) < SOCIAL_LINK_VISUALIZER_MIN_ABS_WEIGHT) {
+                    continue;
+                }
                 Student source = socialGraph.getEdgeSource(edge);
                 Student target = socialGraph.getEdgeTarget(edge);
                 Object sourceCell = vertexToCellMap.get(source);

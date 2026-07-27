@@ -23,8 +23,6 @@ public class WhisperAction implements Action {
     
     private static final int FRIENDSHIP_GAIN = 2;
     private static final int BASE_CATCH_CHANCE = 12; // 12% base chance
-    private static final int FRIEND_PREFERENCE_CHANCE = 80;
-    
     @Override
     public String getName() {
         return "whisper";
@@ -69,7 +67,8 @@ public class WhisperAction implements Action {
             return ActionResult.failure("No adjacent students to whisper to");
         }
         
-        Student target = selectWhisperTarget(student, adjacent);
+        Student target = behavior.TargetSelector.selectTarget(student, adjacent,
+                context.getSocialLinkConnector());
         if (target != null) {
             InteractionManager manager = context.getInteractionManager();
             if (manager != null) {
@@ -132,29 +131,6 @@ public class WhisperAction implements Action {
         
         int period = context.getTime().getCurrentPeriod();
         return room.getAdjacentStudentsFor(student, period);
-    }
-    
-    /**
-     * Selects a whisper target from adjacent students, preferring friends.
-     */
-    private Student selectWhisperTarget(Student student, List<Student> adjacent) {
-        ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
-        
-        // Find adjacent friends
-        List<Student> adjacentFriends = new ArrayList<>();
-        for (Student neighbor : adjacent) {
-            if (friends.contains(neighbor)) {
-                adjacentFriends.add(neighbor);
-            }
-        }
-        
-        // Prefer adjacent friends (80% chance)
-        if (!adjacentFriends.isEmpty() && GameRandom.nextInt(100) < FRIEND_PREFERENCE_CHANCE) {
-            return adjacentFriends.get(GameRandom.nextInt(adjacentFriends.size()));
-        }
-        
-        // Fall back to any adjacent student
-        return adjacent.get(GameRandom.nextInt(adjacent.size()));
     }
     
     @Override

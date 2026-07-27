@@ -152,6 +152,17 @@ public class BehaviorContext {
     }
 
     /**
+     * Convenience accessor for the social link graph carried by the
+     * interaction manager. Behavior nodes use it for score-weighted
+     * target selection.
+     *
+     * @return the social link connector, or null when unavailable
+     */
+    public utility.SocialLinkConnector getSocialLinkConnector() {
+        return interactionManager != null ? interactionManager.getSocialLinkConnector() : null;
+    }
+
+    /**
      * Gets the classroom discipline service. Student misbehavior nodes use
      * it to report visible misbehavior; teacher nodes use it to assess the
      * room and react.

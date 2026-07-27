@@ -107,39 +107,40 @@ public class CellPhoneAssignmentService {
     }
 
     /**
-     * Populates each student phone's contact list based on existing social
-     * relationships.  This must run <i>after</i> phones have been assigned
-     * (see {@link #assignPhonesForTown}) <i>and</i> after friend/sibling
-     * relationships have been initialized (see
-     * {@link SocialLinkConnector#initializeSocialLinks}).
+     * Populates each student phone's contact list from the owner's directed
+     * social-link graph. Must run <i>after</i> phones have been assigned
+     * (see {@link #assignPhonesForTown}) <i>and</i> after
+     * {@link SocialLinkConnector#initializeSocialLinks}.
      *
      * <p>Contact population rules, evaluated per ordered (owner, peer) pair
      * where both own a phone:</p>
      * <ul>
-     *   <li><b>Sibling (in or out of school):</b> the owner <i>always</i>
-     *       saves the sibling's number whenever both own a phone — phones
-     *       are family devices and parents make sure these are saved.
-     *       This rule is applied <i>unconditionally</i> regardless of how
-     *       the siblings feel about each other (close, neutral, or
-     *       outright rivals).</li>
-     *   <li><b>Friend (peer is in owner's friends list):</b> the owner saves
-     *       the peer's number with probability
-     *       {@link constants.SimConstants#PHONE_CONTACT_FRIEND_PROBABILITY}.
-     *       This means a typical student carries most of their friends'
-     *       numbers but not every single one.  Friends who already came in
-     *       through the sibling rule are left untouched.</li>
-     *   <li><b>Acquaintance / stranger:</b> not saved.</li>
+     *   <li><b>Sibling (in or out of school):</b> always saved whenever both
+     *       own a phone, regardless of feelings.</li>
+     *   <li><b>Close friend</b> (outgoing score &ge;
+     *       {@link constants.SimConstants#PHONE_CONTACT_CLOSE_FRIEND_SCORE}):
+     *       saved with
+     *       {@link constants.SimConstants#PHONE_CONTACT_CLOSE_FRIEND_PROBABILITY}.</li>
+     *   <li><b>Casual friend</b> (outgoing score &ge;
+     *       {@link constants.SimConstants#PHONE_CONTACT_CASUAL_FRIEND_SCORE}):
+     *       saved with
+     *       {@link constants.SimConstants#PHONE_CONTACT_CASUAL_FRIEND_PROBABILITY}.</li>
+     *   <li><b>Acquaintance</b> (outgoing score &ge;
+     *       {@link constants.SimConstants#PHONE_CONTACT_ACQUAINTANCE_SCORE}):
+     *       saved with
+     *       {@link constants.SimConstants#PHONE_CONTACT_ACQUAINTANCE_PROBABILITY}.</li>
+     *   <li><b>Stranger / disliked peer:</b> not saved.</li>
      * </ul>
      *
      * <p>Population is asymmetric: A may have B's number while B does not
-     * have A's, mirroring the directed nature of the social link graph.
-     * The sibling guarantee is intentionally <i>symmetric</i> though — if
-     * both siblings own phones, both directions are added.  Existing
+     * have A's. The sibling guarantee is intentionally symmetric. Existing
      * contact entries are preserved across re-runs.</p>
      *
-     * @param town the town whose phones should have contacts populated
+     * @param town      the town whose phones should have contacts populated
+     * @param connector the social graph used to classify relationship tiers;
+     *                  when null, falls back to the owner's friendsInSchool list
      */
-    public static void populatePhoneContacts(Town town) {
+    public static void populatePhoneContacts(Town town, SocialLinkConnector connector) {
         if (town == null) {
             return;
         }
@@ -149,12 +150,10 @@ public class CellPhoneAssignmentService {
             return;
         }
 
-        // Build a quick lookup so we can resolve each peer's CellPhone
-        // without a linear scan per pair.
         Map<Student, CellPhone> phoneByStudent = new HashMap<>(studentPhones);
 
         int siblingContacts = 0;
-        int friendContacts = 0;
+        int socialContacts = 0;
         int phonesPopulated = 0;
 
         for (Map.Entry<Student, CellPhone> entry : studentPhones.entrySet()) {
@@ -167,15 +166,12 @@ public class CellPhoneAssignmentService {
             int before = ownerPhone.getContactCount();
 
             // Rule 1 (HARD GUARANTEE): siblings are ALWAYS in the contact
-            // list whenever both parties own a phone.  No relationship
-            // check, no probability roll — siblings come first so a later
-            // friend roll can never displace or skip them.
+            // list whenever both parties own a phone.
             siblingContacts += addSiblingContactsAlways(owner, ownerPhone, phoneByStudent);
 
-            // Rule 2: friends with a probability roll.  Siblings already
-            // saved above will be a no-op here because hasContactNumber
-            // short-circuits the add.
-            friendContacts += addFriendContactsProbabilistic(owner, ownerPhone, phoneByStudent);
+            // Rule 2: directed social links with tiered save probabilities.
+            socialContacts += addSocialContactsFromGraph(
+                    owner, ownerPhone, phoneByStudent, connector);
 
             if (ownerPhone.getContactCount() > before) {
                 phonesPopulated++;
@@ -183,9 +179,19 @@ public class CellPhoneAssignmentService {
         }
 
         GameLogger.logGeneration("Phone contacts populated: "
-                + (siblingContacts + friendContacts) + " entries ("
-                + siblingContacts + " sibling, " + friendContacts + " friend) across "
-                + phonesPopulated + " student phones");
+                + (siblingContacts + socialContacts) + " entries ("
+                + siblingContacts + " sibling, " + socialContacts
+                + " social) across " + phonesPopulated + " student phones");
+    }
+
+    /**
+     * Legacy overload for callers without a social graph. Falls back to the
+     * friendsInSchool list at the close-friend save rate.
+     *
+     * @param town the town whose phones should have contacts populated
+     */
+    public static void populatePhoneContacts(Town town) {
+        populatePhoneContacts(town, null);
     }
 
     /**
@@ -229,28 +235,70 @@ public class CellPhoneAssignmentService {
     }
 
     /**
-     * Saves friends' numbers into the owner's phone with probability
-     * {@link constants.SimConstants#PHONE_CONTACT_FRIEND_PROBABILITY}.
-     * Friends already saved as siblings are no-ops here.
+     * Saves peers from the owner's directed social graph into the contact
+     * list, with probability tiered by outgoing score. When {@code connector}
+     * is null, falls back to the friendsInSchool list at the close-friend rate.
      *
-     * @return the number of new friend contacts added
+     * @return the number of new social contacts added
      */
-    private static int addFriendContactsProbabilistic(Student owner,
-                                                      CellPhone ownerPhone,
-                                                      Map<Student, CellPhone> phoneByStudent) {
+    private static int addSocialContactsFromGraph(Student owner,
+                                                  CellPhone ownerPhone,
+                                                  Map<Student, CellPhone> phoneByStudent,
+                                                  SocialLinkConnector connector) {
         int added = 0;
-        List<Student> friends = owner.studentStatistics.getFriendsInSchool();
-        if (friends == null) {
-            return 0;
-        }
-        for (Student friend : friends) {
-            if (GameRandom.nextDouble() <= PHONE_CONTACT_FRIEND_PROBABILITY) {
-                if (addContactIfPossible(ownerPhone, friend, phoneByStudent)) {
+
+        if (connector == null) {
+            List<Student> friends = owner.studentStatistics.getFriendsInSchool();
+            if (friends == null) {
+                return 0;
+            }
+            for (Student friend : friends) {
+                if (GameRandom.nextDouble() <= PHONE_CONTACT_CLOSE_FRIEND_PROBABILITY
+                        && addContactIfPossible(ownerPhone, friend, phoneByStudent)) {
                     added++;
                 }
             }
+            return added;
+        }
+
+        for (Student peer : connector.getPositiveConnections(owner)) {
+            if (peer == null || peer == owner) {
+                continue;
+            }
+            // Siblings already handled by the hard guarantee above
+            if (owner.studentStatistics.getSiblingsInSchool().contains(peer)
+                    || owner.studentStatistics.getSiblingsNotInSchool().contains(peer)) {
+                continue;
+            }
+
+            double probability = contactProbabilityForScore(
+                    connector.getSocialScore(owner, peer));
+            if (probability <= 0) {
+                continue;
+            }
+            if (GameRandom.nextDouble() <= probability
+                    && addContactIfPossible(ownerPhone, peer, phoneByStudent)) {
+                added++;
+            }
         }
         return added;
+    }
+
+    /**
+     * Maps an outgoing social-link score to the probability of saving that
+     * peer's number. Scores below the acquaintance threshold return 0.
+     */
+    static double contactProbabilityForScore(double score) {
+        if (score >= PHONE_CONTACT_CLOSE_FRIEND_SCORE) {
+            return PHONE_CONTACT_CLOSE_FRIEND_PROBABILITY;
+        }
+        if (score >= PHONE_CONTACT_CASUAL_FRIEND_SCORE) {
+            return PHONE_CONTACT_CASUAL_FRIEND_PROBABILITY;
+        }
+        if (score >= PHONE_CONTACT_ACQUAINTANCE_SCORE) {
+            return PHONE_CONTACT_ACQUAINTANCE_PROBABILITY;
+        }
+        return 0.0;
     }
 
     /**

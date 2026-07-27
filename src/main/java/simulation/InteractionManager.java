@@ -100,6 +100,16 @@ public class InteractionManager {
     }
 
     /**
+     * Returns the social link connector, or null if not set. Behavior nodes
+     * use it to drive score-weighted target selection.
+     *
+     * @return the social link connector, or null
+     */
+    public SocialLinkConnector getSocialLinkConnector() {
+        return socialLinkConnector;
+    }
+
+    /**
      * Clears all pending interactions for a new tick.
      * Must be called at the start of each simulation tick before behavior trees are
      * processed.

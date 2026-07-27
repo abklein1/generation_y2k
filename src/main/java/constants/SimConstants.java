@@ -301,15 +301,51 @@ public final class SimConstants {
     public static final double SOCIAL_LINK_FRIEND_COUNT_STD_DEV = 1.5;
     public static final int SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER = 3;
 
+    // Wider social network capacity. Overall connection capacity is derived
+    // from close-friend capacity (maxBestFriends), so both scale with the
+    // same charisma/empathy/luck formula:
+    // maxSocialConnections = clamp(maxBestFriends * PER_FRIEND, MIN, MAX)
+    public static final int SOCIAL_LINK_CONNECTIONS_PER_FRIEND = 6;
+    public static final int SOCIAL_LINK_CONNECTIONS_MINIMUM = 12;
+    public static final int SOCIAL_LINK_CONNECTIONS_MAXIMUM = 60;
+    // Actual generated network size: Gaussian centered at a ratio of capacity
+    public static final double SOCIAL_LINK_CONNECTION_COUNT_MEAN_RATIO = 0.75;
+    public static final double SOCIAL_LINK_CONNECTION_COUNT_STD_DEV = 4.0;
+
+    // Acquaintance/casual link weights (the weak outer ring of the network).
+    // The reciprocal direction is rolled independently and may be neutral or
+    // negative, producing asymmetric relationships per the README.
+    public static final double SOCIAL_LINK_ACQUAINTANCE_WEIGHT_MEAN = 15.0;
+    public static final double SOCIAL_LINK_ACQUAINTANCE_WEIGHT_STD_DEV = 12.0;
+    public static final double SOCIAL_LINK_ACQUAINTANCE_WEIGHT_FLOOR = 1.0;
+    public static final double SOCIAL_LINK_ACQUAINTANCE_RECIPROCAL_MEAN = 8.0;
+    public static final double SOCIAL_LINK_ACQUAINTANCE_RECIPROCAL_STD_DEV = 15.0;
+
+    // Directed score tier thresholds (classification of a single direction)
+    public static final double SOCIAL_LINK_TIER_FRIEND_THRESHOLD = 30.0;
+    public static final double SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD = 5.0;
+    public static final double SOCIAL_LINK_TIER_DISLIKE_THRESHOLD = -5.0;
+    public static final double SOCIAL_LINK_TIER_ENEMY_THRESHOLD = -50.0;
+
+    // Whole-school visualizer hides weak edges so the denser graph stays legible
+    public static final double SOCIAL_LINK_VISUALIZER_MIN_ABS_WEIGHT = 30.0;
+
     // Grade preference for friendship formation
     public static final int SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE = 100;
     public static final int SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD = 90;
     public static final int SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE = 100;
     public static final int SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD = 75;
 
-    // Same-gender preference (high school students are more likely to befriend same gender)
-    public static final int SOCIAL_LINK_SAME_GENDER_SAMPLE_SIZE = 100;
-    public static final int SOCIAL_LINK_SAME_GENDER_THRESHOLD = 70;
+    // Same-gender preference, applied as a soft candidate weight multiplier
+    // rather than a hard filter. Close friendships skew same-gender strongly
+    // (~70% in a balanced pool); casual acquaintances only mildly.
+    public static final double SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT = 2.33;
+    public static final double SOCIAL_LINK_SAME_GENDER_ACQUAINTANCE_WEIGHT = 1.3;
+
+    // Same-neighborhood preference, applied as a soft candidate weight
+    // multiplier on top of clique affinity. Favours kids who already share
+    // a commute / hang-out circle without excluding everyone else.
+    public static final double SOCIAL_LINK_SAME_NEIGHBORHOOD_WEIGHT = 1.5;
 
     // Friend weight distribution (positive relationships, score on -100 to 100 scale)
     public static final double SOCIAL_LINK_FRIEND_WEIGHT_MEAN = 50.0;
@@ -934,11 +970,34 @@ public final class SimConstants {
     public static final int CELLPHONE_PLAN_STANDARD_THRESHOLD = 85;
 
     // Phone contact list population
-    // Probability that a student saves a given friend's phone number when
-    // both own phones.  Realistic: most-but-not-all friends end up in your
-    // contacts.  Family / siblings always exchange numbers and bypass this
-    // probability check.
-    public static final double PHONE_CONTACT_FRIEND_PROBABILITY = 0.75;
+    // Probability that a student saves a peer's phone number when both own
+    // phones, tiered by how the owner feels about the peer (their outgoing
+    // social-link score).  The barrier to a contact-list entry is low in
+    // 2004 -- even loose acquaintances often swap numbers -- so contact
+    // lists are wider than close friendship circles.  Family / siblings
+    // always exchange numbers and bypass these probability checks.
+    public static final double PHONE_CONTACT_CLOSE_FRIEND_SCORE = 50.0;
+    public static final double PHONE_CONTACT_CASUAL_FRIEND_SCORE = 20.0;
+    public static final double PHONE_CONTACT_ACQUAINTANCE_SCORE = 5.0;
+    public static final double PHONE_CONTACT_CLOSE_FRIEND_PROBABILITY = 0.92;
+    public static final double PHONE_CONTACT_CASUAL_FRIEND_PROBABILITY = 0.70;
+    public static final double PHONE_CONTACT_ACQUAINTANCE_PROBABILITY = 0.40;
+
+    // STUDENT ORIENTATION DEMOGRAPHICS (2004 simulation parameters)
+    // Roughly 1% of the student body is openly non-heterosexual and up to
+    // ~5% more are closeted (presenting as heterosexual and not acting on
+    // romantic feelings), reflecting mid-2000s self-identification rates.
+    // These are simulation parameters, not modern population estimates.
+    public static final double ORIENTATION_OPEN_NON_HETERO_RATE = 0.01;
+    public static final double ORIENTATION_CLOSETED_NON_HETERO_RATE = 0.05;
+    // Relative weights among non-heterosexual orientations
+    public static final double ORIENTATION_GAY_WEIGHT = 0.40;
+    public static final double ORIENTATION_BISEXUAL_WEIGHT = 0.50;
+    public static final double ORIENTATION_ASEXUAL_WEIGHT = 0.10;
+    // Members of out-group cliques are proportionally more likely to be
+    // selected into the non-heterosexual cohort. School-wide totals are
+    // preserved; only the concentration shifts.
+    public static final double ORIENTATION_OUT_GROUP_SELECTION_WEIGHT = 2.0;
 
     // CELL PHONE DECORATION RATES
     // Per-slot probability that a student whose clique declares decoration

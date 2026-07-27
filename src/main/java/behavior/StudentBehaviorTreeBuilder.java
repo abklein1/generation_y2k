@@ -449,8 +449,9 @@ public class StudentBehaviorTreeBuilder {
             entity.EntityState state = student.getEntityState();
             boolean inClass = state.isInClass() && hasTeacherPresent(state.getCurrentRoom());
             
-            // Select a target using tiered social preference
-            Student target = TargetSelector.selectTarget(student, getCandidates(student, state));
+            // Select a target using the initiator's outgoing social scores
+            Student target = TargetSelector.selectTarget(student, getCandidates(student, state),
+                    context.getSocialLinkConnector());
             if (target == null) {
                 return BehaviorStatus.FAILURE;
             }
@@ -568,7 +569,8 @@ public class StudentBehaviorTreeBuilder {
                 return BehaviorStatus.FAILURE;
             }
             
-            Student target = TargetSelector.selectTarget(student, adjacent);
+            Student target = TargetSelector.selectTarget(student, adjacent,
+                    context.getSocialLinkConnector());
             if (target == null) {
                 return BehaviorStatus.FAILURE;
             }
@@ -687,7 +689,8 @@ public class StudentBehaviorTreeBuilder {
             // on a target lookup that fails, lying to the player about how
             // many texts they have left.
             java.util.List<Student> textable = getTextableCandidates(student, state, phone, town);
-            Student target = TargetSelector.selectTarget(student, textable);
+            Student target = TargetSelector.selectTarget(student, textable,
+                    context.getSocialLinkConnector());
             if (target == null) {
                 return BehaviorStatus.FAILURE;
             }
