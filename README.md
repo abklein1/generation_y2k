@@ -297,7 +297,7 @@ modern population estimates: roughly 94% straight, 1% openly non-heterosexual, a
 cohort target counts rather than per-student rolls. Within the non-heterosexual cohort the weights are 40% gay, 50%
 bisexual, and 10% asexual, and members of out-group cliques carry a 2× selection weight (concentrating, not enlarging,
 the cohort). Orientation never influences platonic friendship generation, and closeted students present as
-heterosexual. Crush/romance generation is deferred to a later pass.
+heterosexual.
 
 #### Examples:
 
