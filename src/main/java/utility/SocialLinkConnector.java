@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import entity.Student;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
@@ -89,8 +90,21 @@ public class SocialLinkConnector {
      * @param standardSchool The standard school entity.
      */
     public SocialLinkConnector(HashMap<Integer, Student> studentHashMap, StandardSchool standardSchool) {
+        this(studentHashMap, standardSchool, null);
+    }
+
+    /**
+     * Constructor to initialize social links with progress reporting.
+     *
+     * @param studentHashMap HashMap of students.
+     * @param standardSchool The standard school entity.
+     * @param progress       optional callback receiving human-readable phase
+     *                       updates during the (long) generation pass; may be null
+     */
+    public SocialLinkConnector(HashMap<Integer, Student> studentHashMap, StandardSchool standardSchool,
+            Consumer<String> progress) {
         this(); // Call the default constructor to initialize graphComponent
-        initializeSocialLinks(studentHashMap, standardSchool);
+        initializeSocialLinks(studentHashMap, standardSchool, progress);
     }
 
     /**
@@ -142,11 +156,32 @@ public class SocialLinkConnector {
      * @param standardSchool The standard school entity.
      */
     public void initializeSocialLinks(HashMap<Integer, Student> studentHashMap, StandardSchool standardSchool) {
+        initializeSocialLinks(studentHashMap, standardSchool, null);
+    }
+
+    /**
+     * Initializes social links with optional progress reporting (see
+     * {@link #initializeSocialLinks(HashMap, StandardSchool)} for the phase
+     * breakdown). With ~1200 students and acquaintance widening this pass is
+     * the longest part of school generation, so callers with a loading UI
+     * should pass a progress consumer.
+     *
+     * @param studentHashMap HashMap of students.
+     * @param standardSchool The standard school entity.
+     * @param progress       optional callback for phase/percentage updates; may be null
+     */
+    public void initializeSocialLinks(HashMap<Integer, Student> studentHashMap, StandardSchool standardSchool,
+            Consumer<String> progress) {
 
         if (studentHashMap == null || standardSchool == null) {
             throw new IllegalArgumentException("Student hash map and standard school cannot be null.");
         }
         registerStudentIds(studentHashMap);
+
+        // Grade rosters are static during generation; snapshot them once so
+        // candidate selection doesn't rebuild a full grade list per attempt.
+        HashMap<String, ArrayList<Student>> gradePools = buildGradePools(standardSchool);
+        int totalStudents = studentHashMap.size();
 
         // Phase 1: Add all students as vertices in the social graph
         for (Student student : studentHashMap.values()) {
@@ -162,6 +197,7 @@ public class SocialLinkConnector {
         // Phase 3: Create sibling relationships with meaningful, variable weights
         // Sibling relationships are stored bidirectionally in siblingsInSchool lists,
         // so iterating all students will naturally create both directions.
+        report(progress, "Social links: linking siblings...");
         for (Student student : studentHashMap.values()) {
             ArrayList<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
             for (Student sibling : siblingsInSchool) {
@@ -187,17 +223,27 @@ public class SocialLinkConnector {
         // centered on a personality-adjusted mean. Same-gender friends are
         // preferred (soft weight, not a hard filter) to reflect typical high
         // school social patterns.
+        report(progress, "Social links: forming close friendships...");
+        int friendPassProcessed = 0;
         for (Student student : studentHashMap.values()) {
+            friendPassProcessed++;
+            if (progress != null && friendPassProcessed % PROGRESS_REPORT_INTERVAL == 0) {
+                progress.accept("Social links: forming close friendships ("
+                        + friendPassProcessed + "/" + totalStudents + ")...");
+            }
             int targetFriendCount = generateFriendCount(student);
             // Account for any friends already added via reciprocal links from earlier
             // students
             int friendsAdded = student.studentStatistics.getFriendsInSchool().size();
             int attempts = 0;
             int maxAttempts = Math.max(targetFriendCount * SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER, 5);
+            // Candidate weights are constant per (student, pool, mode), so they
+            // are computed once here and reused across this student's attempts.
+            HashMap<String, WeightedPool> poolCache = new HashMap<>();
 
             while (friendsAdded < targetFriendCount && attempts < maxAttempts) {
                 Student potentialFriend = findPotentialFriend(
-                        student, standardSchool, false, SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT);
+                        student, gradePools, poolCache, false, SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT);
                 attempts++;
 
                 if (potentialFriend == null) {
@@ -258,15 +304,17 @@ public class SocialLinkConnector {
         // Phase 5: Generate rival/negative relationships
         // Some students actively dislike others. This creates asymmetric negative edges
         // that do not affect the target's friendsInSchool list.
+        report(progress, "Social links: seeding rivalries...");
         for (Student student : studentHashMap.values()) {
             int numRivals = generateRivalCount();
             int rivalsAdded = 0;
             int attempts = 0;
             int maxAttempts = Math.max(numRivals * SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER, 3);
+            HashMap<String, WeightedPool> poolCache = new HashMap<>();
 
             while (rivalsAdded < numRivals && attempts < maxAttempts) {
                 Student rival = findPotentialFriend(
-                        student, standardSchool, true, SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT);
+                        student, gradePools, poolCache, true, SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT);
                 attempts++;
 
                 if (rival == null) {
@@ -305,16 +353,24 @@ public class SocialLinkConnector {
         // as close-friend capacity). Reciprocal opinions are rolled
         // independently and may be neutral or negative, so some students end
         // up wanting to talk to people who don't really like them back.
+        report(progress, "Social links: weaving acquaintance circles...");
+        int acquaintancePassProcessed = 0;
         for (Student student : studentHashMap.values()) {
+            acquaintancePassProcessed++;
+            if (progress != null && acquaintancePassProcessed % PROGRESS_REPORT_INTERVAL == 0) {
+                progress.accept("Social links: weaving acquaintance circles ("
+                        + acquaintancePassProcessed + "/" + totalStudents + ")...");
+            }
             int targetConnections = generateConnectionCount(student);
             int connections = socialGraph.outDegreeOf(student);
             int attempts = 0;
             int maxAttempts = Math.max(
                     (targetConnections - connections) * SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER, 5);
+            HashMap<String, WeightedPool> poolCache = new HashMap<>();
 
             while (connections < targetConnections && attempts < maxAttempts) {
                 Student acquaintance = findPotentialFriend(
-                        student, standardSchool, false, SOCIAL_LINK_SAME_GENDER_ACQUAINTANCE_WEIGHT);
+                        student, gradePools, poolCache, false, SOCIAL_LINK_SAME_GENDER_ACQUAINTANCE_WEIGHT);
                 attempts++;
 
                 if (acquaintance == null || student.equals(acquaintance)) {
@@ -355,14 +411,24 @@ public class SocialLinkConnector {
         // to have
         // already experienced a catalyst event (the school existed before the sim
         // starts).
+        report(progress, "Social links: recording best-friend catalysts...");
         generateInitialCatalysts(studentHashMap);
 
         // Phase 8: Synchronize the friendsInSchool compatibility cache so it
         // reflects exactly the friend-or-stronger outgoing links in the graph
+        report(progress, "Social links: syncing friend lists...");
         refreshFriendCaches();
 
-        // After initializing all social links, visualize the graph
-        schoolSocialLinkVisualizer();
+        // The whole-school visualization is intentionally NOT built here:
+        // adapting ~1200 vertices and tens of thousands of directed edges into
+        // mxGraph cells is expensive, and the UI rebuilds it on demand via
+        // schoolSocialLinkVisualizer() anyway.
+    }
+
+    private static void report(Consumer<String> progress, String message) {
+        if (progress != null) {
+            progress.accept(message);
+        }
     }
 
     // ---- Catalyst System ----
@@ -816,6 +882,48 @@ public class SocialLinkConnector {
     // ---- Potential Friend Selection ----
 
     /**
+     * Precomputed weighted candidate pool for one (student, grade pool, mode)
+     * combination. Candidate weights depend only on static attributes
+     * (clique, gender, neighborhood), so a pool built once can serve every
+     * selection attempt a student makes during a generation phase, replacing
+     * an O(gradeSize) rebuild-and-rescore per attempt with an O(log n) draw.
+     */
+    private static final class WeightedPool {
+        final ArrayList<Student> candidates;
+        final double[] cumulativeWeights;
+        final double totalWeight;
+
+        WeightedPool(ArrayList<Student> candidates, double[] cumulativeWeights, double totalWeight) {
+            this.candidates = candidates;
+            this.cumulativeWeights = cumulativeWeights;
+            this.totalWeight = totalWeight;
+        }
+    }
+
+    /** Pool cache keys for the three grade-preference buckets. */
+    private static final String POOL_SAME_GRADE = "same";
+    private static final String POOL_ADJACENT_GRADES = "adjacent";
+    private static final String POOL_OTHER_GRADES = "other";
+
+    private static final String[] GRADE_LEVELS = { "Freshman", "Sophomore", "Junior", "Senior" };
+
+    /** How often (in students processed) the long phases report progress. */
+    private static final int PROGRESS_REPORT_INTERVAL = 200;
+
+    /**
+     * Snapshots each grade's roster into a plain list once per generation
+     * pass. Rosters do not change while social links are being generated.
+     */
+    private HashMap<String, ArrayList<Student>> buildGradePools(StandardSchool standardSchool) {
+        HashMap<String, ArrayList<Student>> pools = new HashMap<>();
+        for (String grade : GRADE_LEVELS) {
+            HashMap<Integer, Student> roster = standardSchool.getStudentGradeClass(grade);
+            pools.put(grade, roster != null ? new ArrayList<>(roster.values()) : new ArrayList<>());
+        }
+        return pools;
+    }
+
+    /**
      * Finds a potential friend for a student based on grade level and gender
      * preference.
      * <p>
@@ -836,7 +944,9 @@ public class SocialLinkConnector {
      * </p>
      *
      * @param student          The student seeking friends.
-     * @param standardSchool   The standard school entity.
+     * @param gradePools       Per-grade rosters snapshotted for this pass.
+     * @param poolCache        Per-student cache of weighted pools; must be
+     *                         scoped to a single (student, mode) loop.
      * @param forRival         If true, uses rival affinity weights (prefers
      *                         Hate/Negative cliques); otherwise uses friend
      *                         affinity weights (prefers Same/Aligns cliques).
@@ -845,71 +955,76 @@ public class SocialLinkConnector {
      * @return A potential friend/rival or null if none found.
      */
     private Student findPotentialFriend(Student student,
-            StandardSchool standardSchool, boolean forRival, double sameGenderWeight) {
-        String gradeLevel = student.studentStatistics.getGradeLevel();
-        ArrayList<Student> potentialFriends = new ArrayList<>();
-
+            HashMap<String, ArrayList<Student>> gradePools,
+            HashMap<String, WeightedPool> poolCache,
+            boolean forRival, double sameGenderWeight) {
+        String poolKey;
         if (GameRandom.nextInt(
                 SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD) {
-            HashMap<Integer, Student> gradeClassmates = standardSchool.getStudentGradeClass(gradeLevel);
-            if (gradeClassmates != null) {
-                for (Student otherStudent : gradeClassmates.values()) {
-                    if (!otherStudent.equals(student)) {
-                        potentialFriends.add(otherStudent);
-                    }
-                }
-            }
+            poolKey = POOL_SAME_GRADE;
+        } else if (GameRandom.nextInt(
+                SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD) {
+            poolKey = POOL_ADJACENT_GRADES;
         } else {
-            if (GameRandom.nextInt(
-                    SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE) < SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD) {
-                String[] adjacentGrades = getAdjacentGrades(gradeLevel);
-                for (String grade : adjacentGrades) {
-                    HashMap<Integer, Student> adjacentGradeClassmates = standardSchool.getStudentGradeClass(grade);
-                    if (adjacentGradeClassmates != null) {
-                        potentialFriends.addAll(adjacentGradeClassmates.values());
-                    }
-                }
-            } else {
-                String[] otherGrades = getOtherGrades(gradeLevel);
-                for (String grade : otherGrades) {
-                    HashMap<Integer, Student> otherGradeClassmates = standardSchool.getStudentGradeClass(grade);
-                    if (otherGradeClassmates != null) {
-                        potentialFriends.addAll(otherGradeClassmates.values());
-                    }
-                }
-            }
+            poolKey = POOL_OTHER_GRADES;
         }
 
-        if (potentialFriends.isEmpty()) {
-            return null;
+        WeightedPool pool = poolCache.get(poolKey);
+        if (pool == null) {
+            pool = buildWeightedPool(student,
+                    collectGradeCandidates(poolKey, student.studentStatistics.getGradeLevel(), gradePools),
+                    forRival, sameGenderWeight);
+            poolCache.put(poolKey, pool);
         }
-
-        return weightedCliqueSelect(potentialFriends, student, forRival, sameGenderWeight);
+        return pickFromPool(pool);
     }
 
     /**
-     * Selects a student from the candidate list using weighted random
-     * selection based on clique affinity and a soft same-gender preference.
-     * Friend mode favours Same and Aligns cliques; rival mode favours Hate
-     * and Negative cliques. Same-gender candidates have their weight
-     * multiplied by {@code sameGenderWeight}.
+     * Gathers the raw candidate list for one grade-preference bucket, in the
+     * same grade order the pre-cache implementation used.
      */
-    private Student weightedCliqueSelect(List<Student> candidates,
-            Student student, boolean forRival, double sameGenderWeight) {
-        if (candidates.size() == 1) {
-            return candidates.get(0);
+    private List<Student> collectGradeCandidates(String poolKey, String gradeLevel,
+            HashMap<String, ArrayList<Student>> gradePools) {
+        String[] grades = switch (poolKey) {
+            case POOL_SAME_GRADE -> new String[] { gradeLevel };
+            case POOL_ADJACENT_GRADES -> getAdjacentGrades(gradeLevel);
+            default -> getOtherGrades(gradeLevel);
+        };
+        ArrayList<Student> result = new ArrayList<>();
+        for (String grade : grades) {
+            ArrayList<Student> pool = gradePools.get(grade);
+            if (pool != null) {
+                result.addAll(pool);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Builds a weighted pool from raw candidates (self excluded). Weights use
+     * clique affinity (friend mode favours Same/Aligns; rival mode favours
+     * Hate/Negative), a soft same-gender multiplier, and a soft
+     * same-neighborhood multiplier.
+     */
+    private WeightedPool buildWeightedPool(Student student, List<Student> rawCandidates,
+            boolean forRival, double sameGenderWeight) {
+        ArrayList<Student> candidates = new ArrayList<>(rawCandidates.size());
+        for (Student candidate : rawCandidates) {
+            if (!candidate.equals(student)) {
+                candidates.add(candidate);
+            }
         }
 
         String myClique = student.studentStatistics.getMainClique();
         String myGender = student.studentStatistics.getGender();
         String myNeighborhood = student.studentStatistics.getNeighborhoodName();
-        double[] weights = new double[candidates.size()];
+        double[] cumulativeWeights = new double[candidates.size()];
         double total = 0;
 
         for (int i = 0; i < candidates.size(); i++) {
             Student candidate = candidates.get(i);
-            String theirClique = candidate.studentStatistics.getMainClique();
-            double weight = getCliqueWeight(myClique, theirClique, forRival);
+            double weight = getCliqueWeight(myClique,
+                    candidate.studentStatistics.getMainClique(), forRival);
             String theirGender = candidate.studentStatistics.getGender();
             if (myGender != null && theirGender != null
                     && myGender.equalsIgnoreCase(theirGender)) {
@@ -919,19 +1034,38 @@ public class SocialLinkConnector {
             if (myNeighborhood != null && myNeighborhood.equals(theirNeighborhood)) {
                 weight *= SOCIAL_LINK_SAME_NEIGHBORHOOD_WEIGHT;
             }
-            weights[i] = weight;
             total += weight;
+            cumulativeWeights[i] = total;
+        }
+        return new WeightedPool(candidates, cumulativeWeights, total);
+    }
+
+    /**
+     * Draws one candidate from a weighted pool: binary search over the
+     * cumulative weight array for the first entry exceeding the roll.
+     * Mirrors the previous linear scan exactly (including the single-candidate
+     * fast path that consumes no randomness and the last-candidate fallback).
+     */
+    private Student pickFromPool(WeightedPool pool) {
+        if (pool.candidates.isEmpty()) {
+            return null;
+        }
+        if (pool.candidates.size() == 1) {
+            return pool.candidates.get(0);
         }
 
-        double roll = GameRandom.nextDouble() * total;
-        double cumulative = 0;
-        for (int i = 0; i < candidates.size(); i++) {
-            cumulative += weights[i];
-            if (roll < cumulative) {
-                return candidates.get(i);
+        double roll = GameRandom.nextDouble() * pool.totalWeight;
+        int lo = 0;
+        int hi = pool.cumulativeWeights.length - 1;
+        while (lo < hi) {
+            int mid = (lo + hi) >>> 1;
+            if (roll < pool.cumulativeWeights[mid]) {
+                hi = mid;
+            } else {
+                lo = mid + 1;
             }
         }
-        return candidates.get(candidates.size() - 1);
+        return pool.candidates.get(lo);
     }
 
     private double getCliqueWeight(String myClique, String theirClique,
@@ -1250,10 +1384,6 @@ public class SocialLinkConnector {
      * the underlying graph keeps every edge.
      */
     public void schoolSocialLinkVisualizer() {
-        // Use JGraphXAdapter to adapt JGraphT graph to JGraphX
-        JGraphXAdapter<Student, DefaultWeightedEdge> graphAdapter = new JGraphXAdapter<>(socialGraph);
-        graphAdapter.setAllowDanglingEdges(false);
-
         graph = new mxGraph();
         graph.getModel().beginUpdate();
         try {

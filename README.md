@@ -260,6 +260,45 @@ casual relationships.
 If a casual friendship were to get more serious, and they were elevated to a "best friend", then other best friend
 relationships would begin to deteriorate at a quicker rate.
 
+#### Generated network model
+
+Each student's social network is generated as a directed graph with two rings:
+
+- **Close-friend capacity** (`maxBestFriends`) is derived from Charisma (primary), Empathy, and Luck with a random
+  variability factor.
+- **Overall connection capacity** scales off the same formula:
+  `maxSocialConnections = clamp(maxBestFriends × 6, 12, 60)`. The actual generated network size follows a Gaussian
+  centered at 75% of that capacity, so charismatic students maintain far wider circles than withdrawn ones.
+- Generation runs in order: siblings, close friends, rivals, then weak casual/acquaintance links to fill remaining
+  capacity. Candidates are weighted toward the same or adjacent grades, compatible cliques, and shared neighborhoods.
+  The same-gender tendency is a soft weight (strong for close friends, mild for acquaintances), not a hard filter, so
+  mixed-gender links occur naturally.
+- Every direction is rolled independently. Derived score tiers (best friend ≥ 75 with catalyst, friend ≥ 30,
+  acquaintance ≥ 5, neutral, dislike ≤ −5, enemy ≤ −50) and pair reciprocity states (mutual positive, one-sided
+  positive, opposed, one-sided negative, mutual negative) are computed from the two scores on demand rather than
+  persisted, so the asymmetric examples below all arise from score pairs plus sibling/catalyst context.
+- `friendsInSchool` is a duplicate-safe compatibility cache holding only friend-or-stronger outgoing links; weak
+  acquaintances live only in the graph.
+
+Behavior systems consume the initiator's *outgoing* scores: interaction and note/text/whisper targeting picks positive
+known contacts with score-proportional weights, falls back to the clique/neighborhood cascade for unknown peers, and
+only targets disliked peers as a last resort. The reciprocal score is deliberately ignored during initiation, so a
+student can happily seek out someone who privately dislikes them.
+
+Phone contacts are populated from the same directed graph: siblings are always saved (when both own phones), and other
+peers are saved with tiered probabilities by outgoing score (≥ 50: 92%, ≥ 20: 70%, ≥ 5: 40%). Contact lists are
+asymmetric, and a high-capacity student under 2004 ownership rates can exceed 20 saved contacts.
+
+#### Orientation demographics
+
+As the demographic foundation for future romance mechanics (not yet implemented), each student is assigned a sexual
+orientation and a disclosure state at generation. These are **simulation parameters** tuned to the 2004 setting, not
+modern population estimates: roughly 94% straight, 1% openly non-heterosexual, and 5% closeted, assigned as seeded
+cohort target counts rather than per-student rolls. Within the non-heterosexual cohort the weights are 40% gay, 50%
+bisexual, and 10% asexual, and members of out-group cliques carry a 2× selection weight (concentrating, not enlarging,
+the cohort). Orientation never influences platonic friendship generation, and closeted students present as
+heterosexual. Crush/romance generation is deferred to a later pass.
+
 #### Examples:
 
 Strong Positive and Neutral

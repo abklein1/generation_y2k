@@ -1979,7 +1979,7 @@ public class SchoolController implements InspectionNavigator {
             StudentPopGenerator.applyAllClothingAttributes(studentHashMap);
 
             publish("Initializing social links...");
-            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
+            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool, this::publish);
 
             publish("Populating phone contacts...");
             CellPhoneAssignmentService.populatePhoneContacts(town, socialLinkConnector);
@@ -2091,7 +2091,7 @@ public class SchoolController implements InspectionNavigator {
             StudentPopGenerator.applyAllClothingAttributes(studentHashMap);
 
             publish("Initializing social links...");
-            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
+            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool, this::publish);
 
             traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
         }
