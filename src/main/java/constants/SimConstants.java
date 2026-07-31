@@ -327,6 +327,16 @@ public final class SimConstants {
     public static final double SOCIAL_LINK_TIER_DISLIKE_THRESHOLD = -5.0;
     public static final double SOCIAL_LINK_TIER_ENEMY_THRESHOLD = -50.0;
 
+    // Clique perception bias (halo effect). Members of "in" cliques are
+    // collectively viewed a few points warmer and "out" clique members a bit
+    // cooler; applied to incoming friend/acquaintance/reciprocal weights
+    // during generation (never to sibling or rival edges). Summed over a
+    // student's dozens of incoming links this is what lets in-group students
+    // dominate the popularity leaderboards without changing who befriends
+    // whom or requiring any clique reassignment.
+    public static final double SOCIAL_LINK_IN_GROUP_PERCEPTION_BONUS = 6.0;
+    public static final double SOCIAL_LINK_OUT_GROUP_PERCEPTION_PENALTY = -3.0;
+
     // Whole-school visualizer hides weak edges so the denser graph stays legible
     public static final double SOCIAL_LINK_VISUALIZER_MIN_ABS_WEIGHT = 30.0;
 
@@ -341,6 +351,21 @@ public final class SimConstants {
     // (~70% in a balanced pool); casual acquaintances only mildly.
     public static final double SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT = 2.33;
     public static final double SOCIAL_LINK_SAME_GENDER_ACQUAINTANCE_WEIGHT = 1.3;
+
+    // Orientation-aware adjustments to the same-gender preference, following
+    // studies of sexual-minority youth friendship networks: openly
+    // non-heterosexual females participate in *more* close same-gender
+    // friendships than their peers, while openly non-heterosexual males show
+    // the opposite pattern (more cross-gender than same-gender friends) and
+    // are more attached to their best friends. Closeted students deliberately
+    // mirror heterosexual friendship patterns to blend in, so they use the
+    // base weights unchanged.
+    public static final double SOCIAL_LINK_SM_FEMALE_SAME_GENDER_MULTIPLIER = 1.4;
+    public static final double SOCIAL_LINK_SM_MALE_SAME_GENDER_CLOSE_WEIGHT = 0.6;
+    public static final double SOCIAL_LINK_SM_MALE_SAME_GENDER_ACQUAINTANCE_WEIGHT = 0.8;
+    // Flat bonus applied to an openly sexual-minority male's outgoing
+    // close-friend scores (heightened best-friend attachment).
+    public static final double SOCIAL_LINK_SM_MALE_FRIEND_WEIGHT_BONUS = 8.0;
 
     // Same-neighborhood preference, applied as a soft candidate weight
     // multiplier on top of clique affinity. Favours kids who already share
@@ -388,6 +413,9 @@ public final class SimConstants {
     public static final double SOCIAL_LINK_DECAY_BEST_FRIEND = 0.2;
     // Family/siblings: slowest decay, score 50 -> neutral in ~500 days
     public static final double SOCIAL_LINK_DECAY_FAMILY = 0.1;
+    // Steady romantic partners: decays slower than a catalyst best-friend
+    // bond but not as slowly as family
+    public static final double SOCIAL_LINK_DECAY_STEADY = 0.15;
     // Scores within this distance from 0 are snapped to 0 to avoid floating-point noise
     public static final double SOCIAL_LINK_DECAY_NEUTRAL_THRESHOLD = 0.01;
 
@@ -995,9 +1023,132 @@ public final class SimConstants {
     public static final double ORIENTATION_BISEXUAL_WEIGHT = 0.50;
     public static final double ORIENTATION_ASEXUAL_WEIGHT = 0.10;
     // Members of out-group cliques are proportionally more likely to be
-    // selected into the non-heterosexual cohort. School-wide totals are
-    // preserved; only the concentration shifts.
-    public static final double ORIENTATION_OUT_GROUP_SELECTION_WEIGHT = 2.0;
+    // selected into the non-heterosexual cohort. The school-wide cohort size
+    // is preserved; only the concentration shifts.
+    public static final double ORIENTATION_OUT_GROUP_SELECTION_WEIGHT = 3.0;
+    // Disclosure is conditioned on where a student landed socially rather
+    // than on fixed school-wide open/closeted totals. In-group cliques are
+    // conservative and less accepting of sexual-minority behavior, so
+    // non-heterosexual members there almost always stay closeted; out-group
+    // cliques tolerate openness far more. Students are never moved between
+    // cliques for this -- only the closeted/open state adapts. Calibrated so
+    // the school-wide average still lands near the historical ~1% open /
+    // ~5% closeted split.
+    public static final double ORIENTATION_CLOSETED_CHANCE_IN_GROUP = 0.95;
+    public static final double ORIENTATION_CLOSETED_CHANCE_NEUTRAL = 0.80;
+    public static final double ORIENTATION_CLOSETED_CHANCE_OUT_GROUP = 0.55;
+
+    // ROMANTIC RELATIONSHIP GENERATION (2004 sim parameters)
+    // Roughly half the student body is in "some form" of romantic
+    // entanglement (crush, fling, or steady relationship), per adolescent
+    // relationship survey data. Participation scales mildly with grade level
+    // (older students date more).
+    public static final double ROMANCE_PARTICIPATION_RATE = 0.50;
+    public static final double ROMANCE_GRADE_FACTOR_FRESHMAN = 0.70;
+    public static final double ROMANCE_GRADE_FACTOR_SOPHOMORE = 0.90;
+    public static final double ROMANCE_GRADE_FACTOR_JUNIOR = 1.10;
+    public static final double ROMANCE_GRADE_FACTOR_SENIOR = 1.25;
+    // Relative mix of romance forms among students who participate
+    public static final double ROMANCE_TYPE_CRUSH_WEIGHT = 0.40;
+    public static final double ROMANCE_TYPE_FLING_WEIGHT = 0.20;
+    public static final double ROMANCE_TYPE_STEADY_WEIGHT = 0.40;
+    // ~70% of cross-gender friendships initiated by male students carry a
+    // hope of romance, so crush-holding skews male: the crush type weight is
+    // multiplied by 2*share for males and 2*(1-share) for females.
+    public static final double ROMANCE_MALE_CRUSH_SHARE = 0.70;
+    // Chance that the partner in a fling/steady pairing perceives the
+    // relationship differently (steady -> fling, fling -> nothing),
+    // reflecting the asymmetry surveys found when both parties were asked.
+    public static final double ROMANCE_PERCEPTION_MISMATCH_CHANCE = 0.18;
+    // Asexual students participate far less often and never in flings
+    public static final double ROMANCE_ASEXUAL_PARTICIPATION_MULTIPLIER = 0.25;
+    // Chance a closeted non-heterosexual student quietly holds a hidden
+    // same-gender crush (never mutual, never acted on) in addition to any
+    // opposite-gender cover relationship
+    public static final double ROMANCE_CLOSETED_HIDDEN_CRUSH_CHANCE = 0.15;
+    // Minimum outgoing social score for a friendship to be promoted
+    public static final double ROMANCE_MUTUAL_MIN_SCORE = SOCIAL_LINK_TIER_FRIEND_THRESHOLD;
+    public static final double ROMANCE_CRUSH_MIN_SCORE = SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD;
+
+    // CRUSH TARGETING (decoupled from the friendship graph)
+    // Unlike flings/steady pairs (which promote existing mutual friendships),
+    // crushes are picked from the whole orientation-compatible student body:
+    // even a student nobody likes can pine for someone, and desirable
+    // students collect many admirers. Candidate weight =
+    //   gradeProximity * familiarity * desirability^exponent
+    // where familiarity favors (but does not require) an existing positive
+    // outgoing link, and desirability grows with the target's school-wide
+    // popularity (total incoming score) and clique standing. The exponent
+    // (>1) concentrates crushes on the most desirable students, so the
+    // crushed-on leaderboard shows real "crush magnet" variation instead of
+    // a flat cap set by network degree.
+    public static final double ROMANCE_CRUSH_ADJACENT_GRADE_FACTOR = 0.35;
+    public static final double ROMANCE_CRUSH_DISTANT_GRADE_FACTOR = 0.08;
+    // familiarity = 1 + max(0, outgoing score) / divisor
+    public static final double ROMANCE_CRUSH_FAMILIARITY_DIVISOR = 40.0;
+    // desirability popularity term = 1 + max(0, incoming score total) / divisor
+    public static final double ROMANCE_CRUSH_POPULARITY_DIVISOR = 150.0;
+    public static final double ROMANCE_CRUSH_IN_GROUP_DESIRABILITY = 1.6;
+    public static final double ROMANCE_CRUSH_OUT_GROUP_DESIRABILITY = 0.75;
+    public static final double ROMANCE_CRUSH_DESIRABILITY_EXPONENT = 3.0;
+    // Holding a crush means liking the target: assigning one creates/raises
+    // the outgoing link to at least ROMANCE_CRUSH_MIN_SCORE plus a random
+    // extra below this cap, so crush persistence/decay mechanics work even
+    // for crushes on near-strangers.
+    public static final double ROMANCE_CRUSH_NEW_LINK_EXTRA_MAX = 20.0;
+    // Holder-relative clique affinity for crush targets, deliberately much
+    // flatter than the friendship affinity (Hate 0.35 vs 0.1): romance keeps
+    // real crossover between in- and out-groups (the jock/goth trope) even
+    // though friendships mostly stay within a social stratum. Neutral
+    // relationships use an implicit 1.0.
+    public static final double ROMANCE_CRUSH_CLIQUE_SAME = 1.6;
+    public static final double ROMANCE_CRUSH_CLIQUE_ALIGNS = 1.4;
+    public static final double ROMANCE_CRUSH_CLIQUE_POSITIVE = 1.2;
+    public static final double ROMANCE_CRUSH_CLIQUE_NEGATIVE = 0.6;
+    public static final double ROMANCE_CRUSH_CLIQUE_HATE = 0.35;
+    // Social score bump each partner in a steady relationship applies toward
+    // the other. Openly sexual-minority males are less attached to romantic
+    // partners than heterosexual males, so their bump is smaller.
+    public static final double ROMANCE_STEADY_SCORE_BONUS = 12.0;
+    public static final double ROMANCE_STEADY_SCORE_BONUS_SM_MALE = 6.0;
+
+    // ROMANCE UPDATE PASS (in-day pulses + end-of-day maintenance)
+    // Escalation/de-escalation rolls happen at each period transition
+    // (roughly 7 per school day) so relationship changes land throughout the
+    // day instead of only at midnight. Chances below are per pulse; the
+    // rough per-day chance is ~7x each value. End-of-day maintenance is
+    // deterministic housekeeping: statuses whose underlying scores decayed
+    // below their entry thresholds dissolve.
+    //
+    // Chance per pulse that a crush holder (or the one-sided half of an
+    // unreciprocated hookup) makes a move. Succeeds -- both start hooking
+    // up -- only if the target is attracted back, warm enough
+    // (>= ROMANCE_MUTUAL_MIN_SCORE), and not already in a mutual romance;
+    // otherwise the holder is shot down and sours on the target. Hidden
+    // same-gender crushes held by closeted students are never acted on.
+    public static final double ROMANCE_PULSE_CRUSH_ACT_CHANCE = 0.04;
+    // Outgoing score penalty the rejected party applies toward whoever
+    // turned them down
+    public static final double ROMANCE_REJECTION_SCORE_PENALTY = 10.0;
+    // Chance per pulse a mutual hookup (FWB) becomes official, provided both
+    // outgoing scores are at least ROMANCE_FLING_OFFICIAL_MIN_SCORE
+    public static final double ROMANCE_PULSE_FLING_OFFICIAL_CHANCE = 0.03;
+    public static final double ROMANCE_FLING_OFFICIAL_MIN_SCORE = 50.0;
+    // Chance per pulse a hookup simply fizzles out (doubled when it's
+    // one-sided)
+    public static final double ROMANCE_PULSE_FLING_FIZZLE_CHANCE = 0.02;
+    // Asymmetric serious pairs (one sees "going out", the other something
+    // less): chance per pulse the partner comes around (pair becomes
+    // official) vs. the mismatch surfacing and ending it
+    public static final double ROMANCE_PULSE_ASYM_CONVERGE_CHANCE = 0.03;
+    public static final double ROMANCE_PULSE_ASYM_BREAKUP_CHANCE = 0.02;
+    // Baseline per-pulse breakup chance for mutual official couples;
+    // multiplied by ROMANCE_STEADY_UNHEALTHY_BREAKUP_MULTIPLIER when either
+    // side's score has slipped below the friend threshold
+    public static final double ROMANCE_PULSE_STEADY_BREAKUP_CHANCE = 0.003;
+    public static final double ROMANCE_STEADY_UNHEALTHY_BREAKUP_MULTIPLIER = 8.0;
+    // Mutual outgoing-score penalty applied to both ex-partners on a breakup
+    public static final double ROMANCE_BREAKUP_SCORE_PENALTY = 15.0;
 
     // CELL PHONE DECORATION RATES
     // Per-slot probability that a student whose clique declares decoration
@@ -1025,7 +1176,14 @@ public final class SimConstants {
     public static final double CLIQUE_RISING_SUBGROUP_WEIGHT = 0.5;
 
     // CLIQUE SOCIAL LINK AFFINITY (friend selection bias)
-    public static final double CLIQUE_AFFINITY_SAME = 5.0;
+    // Own clique dominates everything; the relationship matrix then carries
+    // the category cohesion (in-group cliques mostly Align with / are
+    // Positive toward other in-groups, likewise out-groups with each other,
+    // while in<->out pairs are overwhelmingly Negative/Hate), so students
+    // naturally seek friends inside their own social stratum. Negative/Hate
+    // weights are small but nonzero: unlikely cross-strata friendships stay
+    // possible.
+    public static final double CLIQUE_AFFINITY_SAME = 8.0;
     public static final double CLIQUE_AFFINITY_ALIGNS = 4.0;
     public static final double CLIQUE_AFFINITY_POSITIVE = 3.0;
     public static final double CLIQUE_AFFINITY_NEUTRAL = 2.0;

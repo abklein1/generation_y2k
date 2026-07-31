@@ -11,6 +11,9 @@ public class SocialLinkSnapshot implements Serializable {
 
     private final List<EdgeSnapshot> edges = new ArrayList<>();
     private final Map<String, String> catalysts = new HashMap<>();
+    // Directed romance records ("sourceId>targetId" -> RomanticStatus name).
+    // Null on snapshots serialized before romance existed; accessors guard.
+    private final Map<String, String> romance = new HashMap<>();
 
     public void addEdge(int sourceStudentId, int targetStudentId, double weight) {
         edges.add(new EdgeSnapshot(sourceStudentId, targetStudentId, weight));
@@ -29,6 +32,18 @@ public class SocialLinkSnapshot implements Serializable {
 
     public Map<String, String> getCatalysts() {
         return new HashMap<>(catalysts);
+    }
+
+    public void putRomance(Map<String, String> romanceRecords) {
+        romance.clear();
+        if (romanceRecords != null) {
+            romance.putAll(romanceRecords);
+        }
+    }
+
+    public Map<String, String> getRomance() {
+        // Field is null when deserializing a pre-romance save
+        return romance == null ? new HashMap<>() : new HashMap<>(romance);
     }
 
     public static class EdgeSnapshot implements Serializable {

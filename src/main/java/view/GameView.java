@@ -35,6 +35,7 @@ public class GameView {
     private final JMenu simulationMenu;
     private final JMenuItem visualizeItem;
     private final JMenuItem socialGraphItem;
+    private final JMenuItem socialRankingsItem;
     private final JMenuItem seedOptionsItem;
     private final JMenuItem saveGameItem;
     private final JMenuItem loadGameItem;
@@ -136,6 +137,7 @@ public class GameView {
         JMenuItem neighborhoodsItem = new JMenuItem("Neighborhoods");
         visualizeItem = new JMenuItem("School Layout...");
         socialGraphItem = new JMenuItem("Social Graph...");
+        socialRankingsItem = new JMenuItem("Social Rankings...");
         // Add items in correct order (grade levels first, then separator, then tools)
         inspectionMenu.add(freshmanItem);
         inspectionMenu.add(sophomoresItem);
@@ -146,6 +148,7 @@ public class GameView {
         inspectionMenu.addSeparator();
         inspectionMenu.add(visualizeItem);
         inspectionMenu.add(socialGraphItem);
+        inspectionMenu.add(socialRankingsItem);
         menuBar.add(inspectionMenu);
         inspectionMenu.setEnabled(false);
 
@@ -950,6 +953,7 @@ public class GameView {
     public void setSocialGraphButtonEnabled(boolean enabled) {
         socialGraphItem.setEnabled(enabled);
         socialGraphButton.setEnabled(enabled);
+        socialRankingsItem.setEnabled(enabled);
     }
 
     public void setInspectionMenuEnabled(boolean enabled) {
@@ -1086,6 +1090,10 @@ public class GameView {
     public void addSocialGraphButtonListener(ActionListener listener) {
         socialGraphItem.addActionListener(listener);
         socialGraphButton.addActionListener(listener);
+    }
+
+    public void addSocialRankingsListener(ActionListener listener) {
+        socialRankingsItem.addActionListener(listener);
     }
 
     public void addCreateCharacterButtonListener(ActionListener listener) {

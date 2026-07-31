@@ -23,7 +23,7 @@ class OrientationAssignerTest {
     }
 
     @Test
-    @DisplayName("Should hit ~94% straight / 1% open / 5% closeted cohort targets")
+    @DisplayName("Should hit the ~6% non-heterosexual cohort target with a closeted majority")
     void testCohortTargetsMatchConfiguredRates() {
         GameRandom.reset();
         GameRandom.initialize(777001L);
@@ -46,10 +46,14 @@ class OrientationAssignerTest {
             }
         }
 
-        // round(200 * 0.01) = 2, round(200 * 0.05) = 10
-        assertEquals(2, open);
-        assertEquals(10, closeted);
+        // Cohort size is fixed: round(200 * 0.01) + round(200 * 0.05) = 12.
+        // The open/closeted split is now rolled per student from clique
+        // category (all NoLife here -> neutral, 80% closeted), so only the
+        // total and the closeted majority are guaranteed.
         assertEquals(188, straight);
+        assertEquals(12, open + closeted);
+        assertTrue(closeted > open,
+                "Neutral-clique cohorts should stay predominantly closeted");
     }
 
     @Test
@@ -74,10 +78,57 @@ class OrientationAssignerTest {
         }
 
         assertEquals(12, nonHetero, "School-wide non-heterosexual total must stay at cohort size");
-        // With equal in/out populations and 2x out-group weight, out-groups should
-        // hold a clear majority of the cohort (expected ~8 of 12).
+        // With equal in/out populations and 3x out-group weight, out-groups should
+        // hold a clear majority of the cohort (expected ~9 of 12).
         assertTrue(outGroupNonHetero > nonHetero / 2,
                 "Out-group students should hold more than half of the non-heterosexual cohort");
+    }
+
+    @Test
+    @DisplayName("Should keep in-group sexual minorities closeted far more often than out-group ones")
+    void testDisclosureConditionedOnCliqueCategory() {
+        // Aggregate over several seeds so per-seed rolls can't dominate.
+        int inGroupOpen = 0;
+        int inGroupTotal = 0;
+        int outGroupOpen = 0;
+        int outGroupTotal = 0;
+        for (long seed = 5000L; seed < 5010L; seed++) {
+            GameRandom.reset();
+            GameRandom.initialize(seed);
+            HashMap<Integer, Student> students = createStudents(200, true);
+            OrientationAssigner.assignOrientations(students);
+            for (Student student : students.values()) {
+                if (!student.studentStatistics.getSexualOrientation().isNonHeterosexual()) {
+                    continue;
+                }
+                boolean open = student.studentStatistics
+                        .getOrientationDisclosure() == OrientationDisclosure.OPEN;
+                String category = CliqueLoader.getGroupCategory(
+                        student.studentStatistics.getMainClique());
+                if ("in-group".equals(category)) {
+                    inGroupTotal++;
+                    if (open) {
+                        inGroupOpen++;
+                    }
+                } else if ("out-group".equals(category)) {
+                    outGroupTotal++;
+                    if (open) {
+                        outGroupOpen++;
+                    }
+                }
+            }
+        }
+
+        assertTrue(inGroupTotal > 0 && outGroupTotal > 0,
+                "Both clique categories should receive cohort members across seeds");
+        double inGroupOpenRate = (double) inGroupOpen / inGroupTotal;
+        double outGroupOpenRate = (double) outGroupOpen / outGroupTotal;
+        assertTrue(outGroupOpenRate > inGroupOpenRate,
+                "Out-group minorities should be open more often (in-group: " + inGroupOpenRate
+                        + ", out-group: " + outGroupOpenRate + ")");
+        assertTrue(inGroupOpenRate < 0.25,
+                "Conservative in-groups should keep nearly all minorities closeted; open rate was "
+                        + inGroupOpenRate);
     }
 
     @Test

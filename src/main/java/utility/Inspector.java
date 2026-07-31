@@ -37,6 +37,20 @@ public class Inspector {
 
     private static final DecimalFormat NEED_FORMAT = new DecimalFormat("#.#");
 
+    // Set by SchoolController after the social graph is built or restored so
+    // the Description tab can surface romantic relationships.
+    private static SocialLinkConnector socialLinkConnector;
+
+    /**
+     * Wires the active social link connector into inspection text so student
+     * descriptions can include romance information.
+     *
+     * @param connector the school's social link connector (may be null)
+     */
+    public static void setSocialLinkConnector(SocialLinkConnector connector) {
+        socialLinkConnector = connector;
+    }
+
     /**
      * Appends the HVAC temperature of the room the entity currently
      * occupies, when the simulation is tracking one for that room.
@@ -232,6 +246,8 @@ public class Inspector {
             }
         }
 
+        appendRomanceSection(sb, student);
+
         // Braces history
         if (hasBraces) {
             if (bracesStartDate != null && bracesEndDate != null) {
@@ -247,6 +263,74 @@ public class Inspector {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Appends the student's romantic relationships (crushes, hookups/FWB,
+     * couples going out) to the description, using mid-2000s slang.
+     * Perception is directed, so asymmetric
+     * pairings are called out explicitly. Crushes held by closeted students
+     * toward same-gender peers are labeled secret: nobody at school knows,
+     * but this debug/inspector view shows everything.
+     */
+    private static void appendRomanceSection(StringBuilder sb, Student student) {
+        if (socialLinkConnector == null) {
+            return;
+        }
+        List<Student> interests = socialLinkConnector.getRomanticInterests(student);
+        if (interests.isEmpty()) {
+            return;
+        }
+        sb.append("\nRomance:\n");
+        for (Student other : interests) {
+            RomanticStatus outgoing = socialLinkConnector.getRomanticStatus(student, other);
+            RomanticStatus incoming = socialLinkConnector.getRomanticStatus(other, student);
+            String otherName = other.studentName.getFullName();
+            String otherFirst = other.studentName.getFirstName();
+            String line;
+            if (outgoing == RomanticStatus.STEADY) {
+                if (incoming == RomanticStatus.STEADY) {
+                    line = "Officially going out with " + otherName + ".";
+                } else if (incoming == RomanticStatus.FLING) {
+                    line = "Thinks they're going out with " + otherName
+                            + " (" + otherFirst + " thinks they're just hooking up).";
+                } else {
+                    line = "Believes they're going out with " + otherName
+                            + " (" + otherFirst + " doesn't see it that way).";
+                }
+            } else if (outgoing == RomanticStatus.FLING) {
+                if (incoming == RomanticStatus.FLING) {
+                    line = "Friends with benefits with " + otherName + ".";
+                } else if (incoming == RomanticStatus.STEADY) {
+                    line = "Hooking up with " + otherName
+                            + " (" + otherFirst + " thinks they're officially going out).";
+                } else {
+                    line = "Hooking up with " + otherName + " ("
+                            + otherFirst + " doesn't think anything is going on).";
+                }
+            } else if (outgoing == RomanticStatus.CRUSH) {
+                line = (isSecretCrush(student, other) ? "Secretly has a crush on "
+                        : "Has a crush on ") + otherName + ".";
+            } else {
+                continue;
+            }
+            sb.append("   ").append(line).append("\n");
+        }
+    }
+
+    /**
+     * A crush is secret when a closeted non-heterosexual student holds it
+     * toward a same-gender peer: acting on or revealing it would out them.
+     */
+    private static boolean isSecretCrush(Student student, Student other) {
+        SexualOrientation orientation = student.studentStatistics.getSexualOrientation();
+        if (orientation == null || !orientation.isNonHeterosexual()
+                || student.studentStatistics.getOrientationDisclosure() != OrientationDisclosure.CLOSETED) {
+            return false;
+        }
+        String myGender = student.studentStatistics.getGender();
+        String theirGender = other.studentStatistics.getGender();
+        return myGender != null && myGender.equalsIgnoreCase(theirGender);
     }
 
     /**
@@ -968,6 +1052,9 @@ public class Inspector {
         Map<String, Object> links = new LinkedHashMap<>();
         if (student != null && student.studentStatistics != null) {
             addStudentLinks(links, student.studentStatistics.getSiblingsInSchool());
+            if (socialLinkConnector != null) {
+                addStudentLinks(links, socialLinkConnector.getRomanticInterests(student));
+            }
         }
         LinkSupport.setLinkedTextWrapped(area, buildStudentDescriptionText(student), links);
     }

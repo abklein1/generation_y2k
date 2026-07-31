@@ -17,6 +17,7 @@ import utility.GameLogger;
 import utility.AcademicProgressService;
 import utility.PStatistics;
 import utility.RadioReactionMessageLoader;
+import utility.RomanceUpdater;
 import utility.RoomConnector;
 import utility.SocialLinkConnector;
 import utility.TraversalStorage;
@@ -377,6 +378,14 @@ public class SimulationEngine {
         if (!wasTransition && isTransition) {
             notifyTransitionStart();
             initiateTransitionMovement();
+            // Romance escalation/de-escalation rolls happen at each period
+            // transition so relationship changes land throughout the day
+            // instead of only at the end-of-day pass. Open student graph
+            // windows redraw immediately when something changed.
+            if (socialLinkConnector != null
+                    && RomanceUpdater.periodPulse(students, socialLinkConnector)) {
+                socialLinkConnector.refreshOpenStudentGraphs();
+            }
         } else if (wasTransition && !isTransition) {
             finalizeTransitionArrival(currentPeriod);
             notifyTransitionEnd();
@@ -1774,8 +1783,14 @@ public class SimulationEngine {
 
         // Apply daily relationship decay: all social link scores drift toward neutral.
         // Family and best-friend bonds decay slower, incentivizing active maintenance.
+        // Romance maintenance then dissolves statuses whose underlying scores no
+        // longer support them (faded crushes, drifted hookups, starving couples).
+        // Any open per-student graph windows are redrawn afterward so they reflect
+        // the day's accumulated social changes (daily cadence keeps UI churn low).
         if (socialLinkConnector != null) {
             socialLinkConnector.applyDailyDecay();
+            RomanceUpdater.endOfDayMaintenance(students, socialLinkConnector);
+            socialLinkConnector.refreshOpenStudentGraphs();
         }
 
         // Advance clock to next school day morning so unpausing doesn't

@@ -87,6 +87,11 @@ public class SchoolController implements InspectionNavigator {
         this.view.addGenerateButtonListener(new GenerateButtonListener());
         this.view.addVisualizeButtonListener(new VisualizeButtonListener());
         this.view.addSocialGraphButtonListener(new SocialGraphButtonListener());
+        this.view.addSocialRankingsListener(e -> {
+            if (socialLinkConnector != null && studentHashMap != null) {
+                SocialRankings.show(studentHashMap, socialLinkConnector);
+            }
+        });
         this.view.addInspectionMenuListener(new InspectionMenuListener());
         this.view.addCreateCharacterButtonListener(new CreateCharacterButtonListener());
 
@@ -197,6 +202,7 @@ public class SchoolController implements InspectionNavigator {
 
         socialLinkConnector = new SocialLinkConnector();
         socialLinkConnector.restoreFromSnapshot(studentHashMap, saveData.getSocialLinks());
+        Inspector.setSocialLinkConnector(socialLinkConnector);
 
         entityStateManager = new EntityStateManager(studentHashMap, staffHashMap,
                 standardSchool, time);
@@ -1980,6 +1986,10 @@ public class SchoolController implements InspectionNavigator {
 
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool, this::publish);
+            Inspector.setSocialLinkConnector(socialLinkConnector);
+
+            publish("Kindling romantic relationships...");
+            RomanceAssigner.assignRomanticRelationships(studentHashMap, socialLinkConnector);
 
             publish("Populating phone contacts...");
             CellPhoneAssignmentService.populatePhoneContacts(town, socialLinkConnector);
@@ -2092,6 +2102,10 @@ public class SchoolController implements InspectionNavigator {
 
             publish("Initializing social links...");
             socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool, this::publish);
+            Inspector.setSocialLinkConnector(socialLinkConnector);
+
+            publish("Kindling romantic relationships...");
+            RomanceAssigner.assignRomanticRelationships(studentHashMap, socialLinkConnector);
 
             traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
         }

@@ -1,25 +1,26 @@
 package utility;
 
 import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import save.SocialLinkSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import entity.Student;
 import org.jgrapht.Graph;
-import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
 import javax.swing.*;
 
+import entity.OrientationDisclosure;
+import entity.RomanticStatus;
+import entity.SexualOrientation;
 import entity.StandardSchool;
 import static constants.SimConstants.*;
 
@@ -42,6 +43,14 @@ public class SocialLinkConnector {
     // the same catalyst entry. Without a catalyst, scores cannot cross the
     // best-friend threshold.
     private final HashMap<String, String> catalystRecords = new HashMap<>();
+
+    // Romance records: keyed by a *directed* pair identifier ("sourceId>targetId"),
+    // storing the source's perception of the relationship. Each direction is
+    // stored independently, so the two parties can disagree about what (if
+    // anything) is going on between them -- one may believe they are going
+    // steady while the other considers it a fling, and crushes are entirely
+    // one-directional.
+    private final HashMap<String, RomanticStatus> romanceRecords = new HashMap<>();
 
     // Template actions for generating initial catalyst text (pre-existing best
     // friendships)
@@ -178,9 +187,15 @@ public class SocialLinkConnector {
         }
         registerStudentIds(studentHashMap);
 
+        // Only enrolled students may enter the graph. Town generation creates
+        // extra-pool students and "not in school" siblings that are still
+        // referenced from enrolled students' sibling lists; linking them would
+        // create ghost vertices that pollute rankings and waste link capacity.
+        HashSet<Student> enrolled = new HashSet<>(studentHashMap.values());
+
         // Grade rosters are static during generation; snapshot them once so
         // candidate selection doesn't rebuild a full grade list per attempt.
-        HashMap<String, ArrayList<Student>> gradePools = buildGradePools(standardSchool);
+        HashMap<String, ArrayList<Student>> gradePools = buildGradePools(standardSchool, enrolled);
         int totalStudents = studentHashMap.size();
 
         // Phase 1: Add all students as vertices in the social graph
@@ -201,11 +216,13 @@ public class SocialLinkConnector {
         for (Student student : studentHashMap.values()) {
             ArrayList<Student> siblingsInSchool = student.studentStatistics.getSiblingsInSchool();
             for (Student sibling : siblingsInSchool) {
-                if (sibling == null) {
+                // Sibling lists are populated during town generation, before
+                // enrollment is decided, so they can reference students who
+                // never enrolled. Skip those instead of adding ghost vertices.
+                if (sibling == null || !enrolled.contains(sibling)) {
                     continue;
                 }
 
-                // Ensure sibling is a vertex (they may not be in the main studentHashMap)
                 socialGraph.addVertex(sibling);
 
                 // Add directed edge: student -> sibling (independent weight per direction)
@@ -243,7 +260,7 @@ public class SocialLinkConnector {
 
             while (friendsAdded < targetFriendCount && attempts < maxAttempts) {
                 Student potentialFriend = findPotentialFriend(
-                        student, gradePools, poolCache, false, SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT);
+                        student, gradePools, poolCache, false, sameGenderWeightFor(student, true));
                 attempts++;
 
                 if (potentialFriend == null) {
@@ -268,12 +285,12 @@ public class SocialLinkConnector {
                 // Add to this student's friend list
                 student.studentStatistics.addFriendInSchool(potentialFriend);
 
-                // Ensure potential friend is a vertex (they may come from grade class lists
-                // that include students not in the main studentHashMap)
                 socialGraph.addVertex(potentialFriend);
 
-                // Add directed edge: student -> friend (positive weight)
-                double friendWeight = assignFriendWeight();
+                // Add directed edge: student -> friend (positive weight, with
+                // the clique halo bias toward the target)
+                double friendWeight = clampScore(
+                        assignFriendWeight(student) + cliquePerceptionBias(potentialFriend));
                 DefaultWeightedEdge edge = socialGraph.addEdge(student, potentialFriend);
                 if (edge != null) {
                     socialGraph.setEdgeWeight(edge, friendWeight);
@@ -283,7 +300,8 @@ public class SocialLinkConnector {
                 // Per the README, relationships are not bidirectional in score:
                 // each party can feel differently about the other.
                 if (!socialGraph.containsEdge(potentialFriend, student)) {
-                    double reciprocalWeight = assignReciprocalWeight();
+                    double reciprocalWeight = clampScore(
+                            assignReciprocalWeight() + cliquePerceptionBias(student));
                     DefaultWeightedEdge reciprocalEdge = socialGraph.addEdge(potentialFriend, student);
                     if (reciprocalEdge != null) {
                         socialGraph.setEdgeWeight(reciprocalEdge, reciprocalWeight);
@@ -333,7 +351,6 @@ public class SocialLinkConnector {
                     continue;
                 }
 
-                // Ensure rival is a vertex (they may come from grade class lists)
                 socialGraph.addVertex(rival);
 
                 DefaultWeightedEdge edge = socialGraph.addEdge(student, rival);
@@ -370,7 +387,7 @@ public class SocialLinkConnector {
 
             while (connections < targetConnections && attempts < maxAttempts) {
                 Student acquaintance = findPotentialFriend(
-                        student, gradePools, poolCache, false, SOCIAL_LINK_SAME_GENDER_ACQUAINTANCE_WEIGHT);
+                        student, gradePools, poolCache, false, sameGenderWeightFor(student, false));
                 attempts++;
 
                 if (acquaintance == null || student.equals(acquaintance)) {
@@ -389,7 +406,8 @@ public class SocialLinkConnector {
 
                 DefaultWeightedEdge edge = socialGraph.addEdge(student, acquaintance);
                 if (edge != null) {
-                    socialGraph.setEdgeWeight(edge, assignAcquaintanceWeight());
+                    socialGraph.setEdgeWeight(edge, clampScore(
+                            assignAcquaintanceWeight() + cliquePerceptionBias(acquaintance)));
                 }
 
                 // Independent reciprocal: the other party may barely register
@@ -398,7 +416,8 @@ public class SocialLinkConnector {
                 if (!socialGraph.containsEdge(acquaintance, student)) {
                     DefaultWeightedEdge reciprocalEdge = socialGraph.addEdge(acquaintance, student);
                     if (reciprocalEdge != null) {
-                        socialGraph.setEdgeWeight(reciprocalEdge, assignAcquaintanceReciprocalWeight());
+                        socialGraph.setEdgeWeight(reciprocalEdge, clampScore(
+                                assignAcquaintanceReciprocalWeight() + cliquePerceptionBias(student)));
                     }
                 }
 
@@ -563,6 +582,155 @@ public class SocialLinkConnector {
         return new HashMap<>(catalystRecords);
     }
 
+    // ---- Romance Registry ----
+
+    /**
+     * Creates a directed key for a source-target pair. Unlike catalyst pair
+     * keys, (A, B) and (B, A) produce different keys: romantic perception is
+     * per direction.
+     */
+    private String makeDirectedKey(Student source, Student target) {
+        return getStableStudentId(source) + ">" + getStableStudentId(target);
+    }
+
+    /**
+     * Returns the source student's perception of their romantic relationship
+     * with the target ({@link RomanticStatus#NONE} when no record exists).
+     * The reverse direction is stored independently and may differ.
+     *
+     * @param source the student whose perception is queried
+     * @param target the other student
+     * @return the source's romantic status toward the target
+     */
+    public RomanticStatus getRomanticStatus(Student source, Student target) {
+        if (source == null || target == null) {
+            return RomanticStatus.NONE;
+        }
+        return romanceRecords.getOrDefault(makeDirectedKey(source, target), RomanticStatus.NONE);
+    }
+
+    /**
+     * Records the source student's perception of their romantic relationship
+     * with the target. Passing {@link RomanticStatus#NONE} (or null) clears
+     * the record. The reverse direction is untouched.
+     *
+     * @param source the student whose perception is being set
+     * @param target the other student
+     * @param status the source's perceived relationship, or NONE to clear
+     */
+    public void setRomanticStatus(Student source, Student target, RomanticStatus status) {
+        if (source == null || target == null || source.equals(target)) {
+            return;
+        }
+        String key = makeDirectedKey(source, target);
+        if (status == null || status == RomanticStatus.NONE) {
+            romanceRecords.remove(key);
+        } else {
+            romanceRecords.put(key, status);
+        }
+    }
+
+    /**
+     * Returns every student toward whom this student holds any romantic
+     * perception (crush, fling, or steady). Romance always sits on top of an
+     * existing social edge, so outgoing edges are the complete search space.
+     *
+     * @param source the student whose romantic interests to list
+     * @return list of romance targets (never null)
+     */
+    public List<Student> getRomanticInterests(Student source) {
+        List<Student> result = new ArrayList<>();
+        if (source == null || !socialGraph.containsVertex(source)) {
+            return result;
+        }
+        for (DefaultWeightedEdge edge : socialGraph.outgoingEdgesOf(source)) {
+            Student target = socialGraph.getEdgeTarget(edge);
+            if (getRomanticStatus(source, target) != RomanticStatus.NONE) {
+                result.add(target);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks whether this student is involved in a mutual romantic
+     * relationship (both directions fling-or-stronger with someone).
+     *
+     * @param student the student to check
+     * @return true if any mutual fling/steady pairing exists
+     */
+    public boolean hasMutualRomance(Student student) {
+        for (Student other : getRomanticInterests(student)) {
+            RomanticStatus outgoing = getRomanticStatus(student, other);
+            RomanticStatus incoming = getRomanticStatus(other, student);
+            if (outgoing.ordinal() >= RomanticStatus.FLING.ordinal()
+                    && incoming.ordinal() >= RomanticStatus.FLING.ordinal()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Builds a human-readable classification of the pair's romantic state
+     * from both directed perceptions (mutual steady, asymmetric perception,
+     * one-sided crush, etc.).
+     *
+     * @param a one student
+     * @param b the other student
+     * @return a short description of the pair's romantic relationship
+     */
+    public String getRelationshipSummary(Student a, Student b) {
+        RomanticStatus ab = getRomanticStatus(a, b);
+        RomanticStatus ba = getRomanticStatus(b, a);
+        String nameA = a.studentName.getFirstName();
+        String nameB = b.studentName.getFirstName();
+        if (ab == RomanticStatus.NONE && ba == RomanticStatus.NONE) {
+            return "No romantic relationship.";
+        }
+        if (ab == ba) {
+            return "Mutual: both consider it " + ab.mutualLabel() + ".";
+        }
+        if (ab == RomanticStatus.CRUSH && ba == RomanticStatus.NONE) {
+            return nameA + " has a crush on " + nameB + " (" + nameB + " is unaware).";
+        }
+        if (ba == RomanticStatus.CRUSH && ab == RomanticStatus.NONE) {
+            return nameB + " has a crush on " + nameA + " (" + nameA + " is unaware).";
+        }
+        return "Asymmetric: " + nameA + " considers it " + ab.label()
+                + ", while " + nameB + " considers it " + ba.label() + ".";
+    }
+
+    /**
+     * Gets all recorded romance entries keyed by directed pair id. Useful
+     * for inspection/debugging and generation summaries.
+     *
+     * @return copy of the romance records
+     */
+    public HashMap<String, RomanticStatus> getAllRomanceRecords() {
+        return new HashMap<>(romanceRecords);
+    }
+
+    /**
+     * Computes each student's reputation total: the sum of every other
+     * student's directed score toward them. This is the popularity metric
+     * used by the social rankings — a student many people like scores high,
+     * a student many people dislike scores negative, and asymmetries are
+     * captured because only incoming edges count.
+     *
+     * @return map of every student in the graph to their incoming score sum
+     */
+    public HashMap<Student, Double> computeIncomingScoreTotals() {
+        HashMap<Student, Double> totals = new HashMap<>();
+        for (Student student : socialGraph.vertexSet()) {
+            totals.put(student, 0.0);
+        }
+        for (DefaultWeightedEdge edge : socialGraph.edgeSet()) {
+            totals.merge(socialGraph.getEdgeTarget(edge), socialGraph.getEdgeWeight(edge), Double::sum);
+        }
+        return totals;
+    }
+
     public SocialLinkSnapshot createSnapshot() {
         SocialLinkSnapshot snapshot = new SocialLinkSnapshot();
         for (DefaultWeightedEdge edge : socialGraph.edgeSet()) {
@@ -572,6 +740,11 @@ public class SocialLinkConnector {
                     socialGraph.getEdgeWeight(edge));
         }
         snapshot.putCatalysts(catalystRecords);
+        HashMap<String, String> romanceByName = new HashMap<>();
+        for (Map.Entry<String, RomanticStatus> entry : romanceRecords.entrySet()) {
+            romanceByName.put(entry.getKey(), entry.getValue().name());
+        }
+        snapshot.putRomance(romanceByName);
         return snapshot;
     }
 
@@ -580,6 +753,7 @@ public class SocialLinkConnector {
         registerStudentIds(studentHashMap);
         socialGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
         catalystRecords.clear();
+        romanceRecords.clear();
         vertexToCellMap.clear();
 
         if (studentHashMap != null) {
@@ -608,6 +782,13 @@ public class SocialLinkConnector {
             }
         }
         catalystRecords.putAll(snapshot.getCatalysts());
+        for (Map.Entry<String, String> entry : snapshot.getRomance().entrySet()) {
+            try {
+                romanceRecords.put(entry.getKey(), RomanticStatus.valueOf(entry.getValue()));
+            } catch (IllegalArgumentException ignored) {
+                // Unknown status name from a newer/older save: skip the record
+            }
+        }
 
         // Re-align every student's friendsInSchool cache with the restored
         // graph so the compatibility list and edge weights cannot drift.
@@ -630,6 +811,9 @@ public class SocialLinkConnector {
      * <li><b>Best friends</b> (with catalyst): slower decay at
      * {@value constants.SimConstants#SOCIAL_LINK_DECAY_BEST_FRIEND}/day.
      * These bonds are hard-won and persist longer.</li>
+     * <li><b>Steady romantic partners</b>: slower still at
+     * {@value constants.SimConstants#SOCIAL_LINK_DECAY_STEADY}/day while the
+     * source considers the pair to be going steady.</li>
      * <li><b>Family/siblings</b>: slowest decay at
      * {@value constants.SimConstants#SOCIAL_LINK_DECAY_FAMILY}/day.
      * Family bonds are the most resilient over time.</li>
@@ -662,6 +846,10 @@ public class SocialLinkConnector {
             if (source.studentStatistics.getSiblingsInSchool().contains(target)) {
                 // Family bonds are the most resilient
                 decayRate = SOCIAL_LINK_DECAY_FAMILY;
+            } else if (getRomanticStatus(source, target) == RomanticStatus.STEADY) {
+                // Steady partners see each other constantly; the bond erodes
+                // slower than a catalyst best friendship
+                decayRate = SOCIAL_LINK_DECAY_STEADY;
             } else if (hasCatalyst(source, target)) {
                 // Best-friend bonds (with catalyst) decay slower than standard
                 decayRate = SOCIAL_LINK_DECAY_BEST_FRIEND;
@@ -879,6 +1067,65 @@ public class SocialLinkConnector {
                 StudentStatistics.deriveMaxSocialConnections(maxBestFriends));
     }
 
+    // ---- Orientation-Aware Gender Preference ----
+
+    /**
+     * Checks whether a student is openly non-heterosexual. Closeted students
+     * never qualify: they deliberately mirror heterosexual social patterns
+     * to blend in.
+     *
+     * @param student the student to check
+     * @return true if the student is non-heterosexual and open about it
+     */
+    static boolean isOpenSexualMinority(Student student) {
+        SexualOrientation orientation = student.studentStatistics.getSexualOrientation();
+        OrientationDisclosure disclosure = student.studentStatistics.getOrientationDisclosure();
+        return orientation != null && orientation.isNonHeterosexual()
+                && disclosure != OrientationDisclosure.CLOSETED;
+    }
+
+    private static boolean isOpenSexualMinorityMale(Student student) {
+        return isOpenSexualMinority(student)
+                && "male".equalsIgnoreCase(student.studentStatistics.getGender());
+    }
+
+    /**
+     * Resolves the same-gender candidate-weight multiplier a student uses
+     * when forming friendships, adjusted for sexual orientation per studies
+     * of sexual-minority youth friendship networks:
+     * <ul>
+     * <li>Straight and closeted students use the base weight (closeted
+     * students intentionally fit heterosexual friendship tendencies)</li>
+     * <li>Openly non-heterosexual females amplify the same-gender preference
+     * (heightened participation in close same-gender friendships)</li>
+     * <li>Openly non-heterosexual males invert it (more cross-gender than
+     * same-gender friends)</li>
+     * </ul>
+     *
+     * @param student   the student seeking friends
+     * @param closeTier true for close-friend formation, false for the milder
+     *                  acquaintance-widening pass
+     * @return the same-gender candidate-weight multiplier for this student
+     */
+    static double sameGenderWeightFor(Student student, boolean closeTier) {
+        double base = closeTier
+                ? SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT
+                : SOCIAL_LINK_SAME_GENDER_ACQUAINTANCE_WEIGHT;
+        if (!isOpenSexualMinority(student)) {
+            return base;
+        }
+        String gender = student.studentStatistics.getGender();
+        if ("female".equalsIgnoreCase(gender)) {
+            return base * SOCIAL_LINK_SM_FEMALE_SAME_GENDER_MULTIPLIER;
+        }
+        if ("male".equalsIgnoreCase(gender)) {
+            return closeTier
+                    ? SOCIAL_LINK_SM_MALE_SAME_GENDER_CLOSE_WEIGHT
+                    : SOCIAL_LINK_SM_MALE_SAME_GENDER_ACQUAINTANCE_WEIGHT;
+        }
+        return base;
+    }
+
     // ---- Potential Friend Selection ----
 
     /**
@@ -914,11 +1161,23 @@ public class SocialLinkConnector {
      * Snapshots each grade's roster into a plain list once per generation
      * pass. Rosters do not change while social links are being generated.
      */
-    private HashMap<String, ArrayList<Student>> buildGradePools(StandardSchool standardSchool) {
+    private HashMap<String, ArrayList<Student>> buildGradePools(StandardSchool standardSchool,
+            HashSet<Student> enrolled) {
         HashMap<String, ArrayList<Student>> pools = new HashMap<>();
         for (String grade : GRADE_LEVELS) {
             HashMap<Integer, Student> roster = standardSchool.getStudentGradeClass(grade);
-            pools.put(grade, roster != null ? new ArrayList<>(roster.values()) : new ArrayList<>());
+            ArrayList<Student> pool = new ArrayList<>();
+            if (roster != null) {
+                // Guard against grade rosters that drifted out of sync with the
+                // enrolled map (e.g. scheduling culls); only enrolled students
+                // may become link candidates.
+                for (Student candidate : roster.values()) {
+                    if (enrolled.contains(candidate)) {
+                        pool.add(candidate);
+                    }
+                }
+            }
+            pools.put(grade, pool);
         }
         return pools;
     }
@@ -1136,13 +1395,45 @@ public class SocialLinkConnector {
      * Assigns a positive weight for a friend relationship.
      * Friends always have at least a mildly positive score (floor of 10).
      * Gaussian distribution centered around 50 with std dev 20.
+     * Openly sexual-minority males receive a flat bonus on their outgoing
+     * close-friend scores (heightened best-friend attachment per
+     * sexual-minority youth friendship studies).
      *
+     * @param initiator the student whose outgoing friend score this is
      * @return A weight in the range [FLOOR, 100].
      */
-    private double assignFriendWeight() {
+    private double assignFriendWeight(Student initiator) {
         double weight = GameRandom.nextGaussian() * SOCIAL_LINK_FRIEND_WEIGHT_STD_DEV
                 + SOCIAL_LINK_FRIEND_WEIGHT_MEAN;
+        if (isOpenSexualMinorityMale(initiator)) {
+            weight += SOCIAL_LINK_SM_MALE_FRIEND_WEIGHT_BONUS;
+        }
         return Math.max(SOCIAL_LINK_FRIEND_WEIGHT_FLOOR, Math.min(SOCIAL_LINK_SCORE_MAX, weight));
+    }
+
+    /**
+     * The clique halo effect: a flat perception bias applied to incoming
+     * friend/acquaintance/reciprocal weights during generation based on the
+     * <i>target's</i> clique standing. Members of "in" cliques are viewed a
+     * few points warmer by everyone, "out" clique members a bit cooler, and
+     * neutral cliques (or students without a clique) are unaffected. Sibling
+     * and rival edges skip the bias: family feelings and grudges don't care
+     * about social standing.
+     *
+     * @param target the student being perceived
+     * @return the score bias to add to an incoming generated edge weight
+     */
+    static double cliquePerceptionBias(Student target) {
+        String clique = target.studentStatistics.getMainClique();
+        return switch (CliqueLoader.getGroupCategory(clique)) {
+            case "in-group" -> SOCIAL_LINK_IN_GROUP_PERCEPTION_BONUS;
+            case "out-group" -> SOCIAL_LINK_OUT_GROUP_PERCEPTION_PENALTY;
+            default -> 0.0;
+        };
+    }
+
+    private static double clampScore(double value) {
+        return Math.max(SOCIAL_LINK_SCORE_MIN, Math.min(SOCIAL_LINK_SCORE_MAX, value));
     }
 
     /**
@@ -1430,43 +1721,441 @@ public class SocialLinkConnector {
         // Additional visualization settings can be applied here
     }
 
-    public void studentVisualizer(Student student) {
-        String studentName = student.studentName.getFirstName() + " " + student.studentName.getLastName();
+    // ---- Individual Student Graph Styling ----
 
-        // Create a subgraph for the specific student and their connections
-        Graph<Student, DefaultEdge> subGraph = new DefaultDirectedWeightedGraph<>(DefaultEdge.class);
-        subGraph.addVertex(student);
+    /**
+     * How a peer relates to the graph's subject, in legend/sort order.
+     * Romance and sibling ties trump the plain score tier because they carry
+     * the most context; everything else derives from the subject's outgoing
+     * score via {@link #classifyScore(double)}.
+     */
+    private enum PeerCategory {
+        ROMANCE("Romance", "#F8BBD0"),
+        SIBLING("Sibling", "#E1BEE7"),
+        BEST_FRIEND("Best friend", "#FFE082"),
+        FRIEND("Friend", "#C8E6C9"),
+        ACQUAINTANCE("Acquaintance", "#BBDEFB"),
+        NEUTRAL("Neutral", "#ECEFF1"),
+        DISLIKE("Dislike", "#FFE0B2"),
+        ENEMY("Enemy", "#FFCDD2");
 
-        for (DefaultWeightedEdge edge : socialGraph.edgesOf(student)) {
-            Student source = socialGraph.getEdgeSource(edge);
-            Student target = socialGraph.getEdgeTarget(edge);
-            subGraph.addVertex(source);
-            subGraph.addVertex(target);
-            subGraph.addEdge(source, target);
-            subGraph.setEdgeWeight(source, target, socialGraph.getEdgeWeight(edge));
+        final String label;
+        final String fillColor;
+
+        PeerCategory(String label, String fillColor) {
+            this.label = label;
+            this.fillColor = fillColor;
         }
 
-        JGraphXAdapter<Student, DefaultEdge> graphAdapter = new JGraphXAdapter<>(subGraph);
-        JFrame frame = new JFrame(studentName);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(800, 600);
-        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-        graphComponent.getGraphControl().addMouseListener(new java.awt.event.MouseAdapter() {
+        /** Close relations sit on the inner ring, everyone else outside. */
+        boolean isInnerRing() {
+            return this == ROMANCE || this == SIBLING || this == BEST_FRIEND || this == FRIEND;
+        }
+    }
+
+    private static final String VIZ_SUBJECT_FILL = "#FFF59D";
+    private static final int VIZ_NODE_WIDTH = 180;
+    private static final int VIZ_NODE_HEIGHT = 62;
+    /** Blank canvas border kept around the outer ring. */
+    private static final int VIZ_MARGIN = 80;
+    private static final double VIZ_MIN_INNER_RADIUS = 260;
+    private static final double VIZ_RING_GAP = 200;
+    /** Circumference allowance per node so ring neighbours don't overlap. */
+    private static final double VIZ_ARC_PER_NODE = 210;
+
+    /**
+     * Opens a cleaned-up relationship graph for one student. The subject
+     * sits in the center; peers are placed on two rings (close relations
+     * inside, casual/negative outside), color-coded by their relationship
+     * to the subject, and labeled with both directed scores
+     * (&rarr; how the subject feels, &larr; how the peer feels back) plus a
+     * tag for sibling/romance/best-friend context. A legend along the
+     * bottom explains the colors. Clicking a peer navigates to them.
+     *
+     * @param student the subject of the graph
+     */
+    public void studentVisualizer(Student student) {
+        String studentName = student.studentName.getFirstName() + " " + student.studentName.getLastName();
+        StudentGraphWindow window = new StudentGraphWindow(student);
+        mxGraphComponent component = window.component;
+
+        component.setConnectable(false);
+        component.getGraphControl().addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                Object cell = graphComponent.getCellAt(e.getX(), e.getY());
-                if (cell != null) {
-                    Object vertex = graphAdapter.getCellToVertexMap().get(cell);
-                    if (vertex instanceof Student clicked) {
-                        LinkSupport.navigate(clicked);
-                    }
+                Object cell = component.getCellAt(e.getX(), e.getY());
+                Student clicked = cell != null ? window.cellToStudent.get(cell) : null;
+                if (clicked != null && !clicked.equals(student)) {
+                    LinkSupport.navigate(clicked);
                 }
             }
         });
-        frame.add(graphComponent);
-        mxFastOrganicLayout layout = new mxFastOrganicLayout(graphAdapter);
-        layout.execute(graphAdapter.getDefaultParent());
-        frame.pack();
+
+        // Ctrl + mouse wheel zooms; plain wheel scrolls vertically and
+        // Shift + wheel scrolls horizontally (handled manually because the
+        // scroll pane's default handler would fight the zoom gesture)
+        component.setWheelScrollingEnabled(false);
+        component.addMouseWheelListener(e -> {
+            if (e.isControlDown()) {
+                if (e.getWheelRotation() < 0) {
+                    component.zoomIn();
+                } else {
+                    component.zoomOut();
+                }
+            } else {
+                JScrollBar bar = e.isShiftDown()
+                        ? component.getHorizontalScrollBar()
+                        : component.getVerticalScrollBar();
+                bar.setValue(bar.getValue() + e.getWheelRotation() * 60);
+            }
+        });
+
+        JFrame frame = new JFrame(studentName + " - Social Links");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new java.awt.BorderLayout());
+        frame.add(buildGraphToolbar(window), java.awt.BorderLayout.NORTH);
+        frame.add(component, java.awt.BorderLayout.CENTER);
+        frame.add(buildLegendPanel(), java.awt.BorderLayout.SOUTH);
+        frame.setSize(1200, 900);
+        frame.setLocationRelativeTo(null);
+
+        // Track the window so end-of-day refreshes reach it; stop when closed
+        openStudentGraphs.add(window);
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                openStudentGraphs.remove(window);
+            }
+        });
+
         frame.setVisible(true);
+
+        // Start at full size, centered on the subject (after layout settles)
+        SwingUtilities.invokeLater(window::centerOnSubject);
+    }
+
+    /**
+     * Live handle for an open per-student graph window so the display can be
+     * rebuilt when the underlying social data changes.
+     */
+    private final class StudentGraphWindow {
+        private final Student subject;
+        private final HashMap<Object, Student> cellToStudent = new HashMap<>();
+        private final mxGraphComponent component;
+
+        private StudentGraphWindow(Student subject) {
+            this.subject = subject;
+            this.component = new mxGraphComponent(buildStudentPeerGraph(subject, cellToStudent));
+        }
+
+        private Object subjectCell() {
+            for (Map.Entry<Object, Student> entry : cellToStudent.entrySet()) {
+                if (entry.getValue().equals(subject)) {
+                    return entry.getKey();
+                }
+            }
+            return null;
+        }
+
+        private void centerOnSubject() {
+            Object cell = subjectCell();
+            if (cell != null) {
+                component.scrollCellToVisible(cell, true);
+            }
+        }
+
+        /**
+         * Rebuilds the graph from the current social data, preserving the
+         * user's zoom level and scroll position. Must run on the EDT.
+         */
+        private void rebuild() {
+            double scale = component.getGraph().getView().getScale();
+            java.awt.Point viewPosition = component.getViewport().getViewPosition();
+            cellToStudent.clear();
+            mxGraph fresh = buildStudentPeerGraph(subject, cellToStudent);
+            fresh.getView().setScale(scale);
+            component.setGraph(fresh);
+            component.refresh();
+            SwingUtilities.invokeLater(() -> component.getViewport().setViewPosition(viewPosition));
+        }
+    }
+
+    /** Open student graph windows that receive end-of-day refreshes. */
+    private final java.util.List<StudentGraphWindow> openStudentGraphs =
+            new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /**
+     * Redraws any open per-student graph windows from the current social
+     * data, keeping each window's zoom and scroll position. Invoked once per
+     * simulated day (right after {@link #applyDailyDecay()}) rather than per
+     * tick or per period: scores drift slowly, so daily refreshes capture
+     * every visible change while avoiding constant Swing model churn.
+     */
+    public void refreshOpenStudentGraphs() {
+        if (openStudentGraphs.isEmpty()) {
+            return;
+        }
+        SwingUtilities.invokeLater(() -> {
+            for (StudentGraphWindow window : openStudentGraphs) {
+                window.rebuild();
+            }
+        });
+    }
+
+    /** Zoom controls for the student graph window. */
+    private JPanel buildGraphToolbar(StudentGraphWindow window) {
+        mxGraphComponent component = window.component;
+        JPanel toolbar = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 4));
+        toolbar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, java.awt.Color.LIGHT_GRAY));
+
+        JButton zoomIn = new JButton("Zoom In");
+        zoomIn.addActionListener(e -> component.zoomIn());
+        toolbar.add(zoomIn);
+
+        JButton zoomOut = new JButton("Zoom Out");
+        zoomOut.addActionListener(e -> component.zoomOut());
+        toolbar.add(zoomOut);
+
+        JButton actual = new JButton("100%");
+        actual.addActionListener(e -> {
+            component.zoomActual();
+            SwingUtilities.invokeLater(window::centerOnSubject);
+        });
+        toolbar.add(actual);
+
+        JButton fit = new JButton("Fit Window");
+        fit.addActionListener(e -> {
+            com.mxgraph.util.mxRectangle bounds = component.getGraph().getGraphBounds();
+            java.awt.Dimension viewport = component.getViewport().getSize();
+            double scale = Math.min(1.0, Math.min(
+                    viewport.getWidth() / Math.max(1.0, bounds.getWidth() + 2 * VIZ_MARGIN),
+                    viewport.getHeight() / Math.max(1.0, bounds.getHeight() + 2 * VIZ_MARGIN)));
+            component.zoomTo(scale, true);
+        });
+        toolbar.add(fit);
+
+        JLabel hint = new JLabel("Ctrl + mouse wheel to zoom \u00b7 wheel/Shift+wheel to scroll \u00b7 click a student to open them");
+        hint.setFont(hint.getFont().deriveFont(java.awt.Font.ITALIC, 11f));
+        toolbar.add(hint);
+        return toolbar;
+    }
+
+    /**
+     * Builds the mxGraph model for one student's relationship view: subject
+     * centered, peers on two rings (close relations inside, casual/negative
+     * outside), sorted so same-colored categories group together. Extracted
+     * from {@link #studentVisualizer(Student)} so it can be rendered
+     * off-screen (tests, image export) without opening a window.
+     *
+     * @param student       the subject of the graph
+     * @param cellToStudent out-parameter mapping created vertex cells to the
+     *                      peer they represent (for click navigation)
+     * @return the populated graph model
+     */
+    mxGraph buildStudentPeerGraph(Student student, HashMap<Object, Student> cellToStudent) {
+        String studentName = student.studentName.getFirstName() + " " + student.studentName.getLastName();
+
+        // Collect each connected peer once (union of both edge directions)
+        java.util.LinkedHashSet<Student> peerSet = new java.util.LinkedHashSet<>();
+        for (DefaultWeightedEdge edge : socialGraph.edgesOf(student)) {
+            Student source = socialGraph.getEdgeSource(edge);
+            Student target = socialGraph.getEdgeTarget(edge);
+            peerSet.add(source.equals(student) ? target : source);
+        }
+
+        // Classify and sort so colors group together around each ring
+        List<Student> inner = new ArrayList<>();
+        List<Student> outer = new ArrayList<>();
+        HashMap<Student, PeerCategory> categories = new HashMap<>();
+        for (Student peer : peerSet) {
+            PeerCategory category = classifyPeer(student, peer);
+            categories.put(peer, category);
+            (category.isInnerRing() ? inner : outer).add(peer);
+        }
+        java.util.Comparator<Student> byCategoryThenScore = java.util.Comparator
+                .comparing((Student p) -> categories.get(p).ordinal())
+                .thenComparing(p -> -getSocialScore(student, p));
+        inner.sort(byCategoryThenScore);
+        outer.sort(byCategoryThenScore);
+
+        mxGraph peerGraph = new mxGraph();
+        peerGraph.setHtmlLabels(true);
+        peerGraph.setCellsEditable(false);
+        peerGraph.setCellsResizable(false);
+        peerGraph.setCellsDisconnectable(false);
+        peerGraph.setAllowDanglingEdges(false);
+        peerGraph.setEdgeLabelsMovable(false);
+        Object parent = peerGraph.getDefaultParent();
+
+        // Size the rings first so the whole graph can be laid out in
+        // positive coordinates (negative coordinates get clipped past the
+        // top-left corner of the scroll pane and become unreachable)
+        double innerRadius = Math.max(VIZ_MIN_INNER_RADIUS,
+                inner.size() * VIZ_ARC_PER_NODE / (2 * Math.PI));
+        double outerRadius = outer.isEmpty() ? innerRadius
+                : Math.max(innerRadius + VIZ_RING_GAP,
+                        outer.size() * VIZ_ARC_PER_NODE / (2 * Math.PI));
+        double centerX = VIZ_MARGIN + VIZ_NODE_WIDTH / 2.0 + outerRadius;
+        double centerY = VIZ_MARGIN + VIZ_NODE_HEIGHT / 2.0 + outerRadius;
+
+        peerGraph.getModel().beginUpdate();
+        try {
+            String subjectStyle = "rounded=1;whiteSpace=wrap;fontSize=15;fontStyle=1;"
+                    + "fillColor=" + VIZ_SUBJECT_FILL + ";strokeColor=#5D4037;strokeWidth=2";
+            Object subjectCell = peerGraph.insertVertex(parent, null,
+                    "<b>" + escapeHtml(studentName) + "</b>",
+                    centerX - VIZ_NODE_WIDTH / 2.0, centerY - VIZ_NODE_HEIGHT / 2.0,
+                    VIZ_NODE_WIDTH, VIZ_NODE_HEIGHT, subjectStyle);
+            cellToStudent.put(subjectCell, student);
+
+            placeRing(peerGraph, parent, subjectCell, cellToStudent,
+                    student, inner, categories, innerRadius, centerX, centerY);
+            placeRing(peerGraph, parent, subjectCell, cellToStudent,
+                    student, outer, categories, outerRadius, centerX, centerY);
+        } finally {
+            peerGraph.getModel().endUpdate();
+        }
+        return peerGraph;
+    }
+
+    /**
+     * Places one ring of peers around the subject: evenly spaced vertices
+     * color-coded by category and labeled with both directed scores, each
+     * connected to the subject by a thin edge tinted by the subject's
+     * outgoing feeling (green positive, red negative, gray neutral).
+     */
+    private void placeRing(mxGraph peerGraph, Object parent, Object subjectCell,
+            HashMap<Object, Student> cellToStudent, Student student,
+            List<Student> peers, HashMap<Student, PeerCategory> categories, double radius,
+            double centerX, double centerY) {
+        for (int i = 0; i < peers.size(); i++) {
+            Student peer = peers.get(i);
+            PeerCategory category = categories.get(peer);
+            double angle = 2 * Math.PI * i / peers.size() - Math.PI / 2;
+            double x = centerX + radius * Math.cos(angle) - VIZ_NODE_WIDTH / 2.0;
+            double y = centerY + radius * Math.sin(angle) - VIZ_NODE_HEIGHT / 2.0;
+
+            double outgoing = getSocialScore(student, peer);
+            double incoming = getSocialScore(peer, student);
+            String vertexStyle = "rounded=1;whiteSpace=wrap;fontSize=12;"
+                    + "fillColor=" + category.fillColor + ";strokeColor=#607D8B";
+            Object cell = peerGraph.insertVertex(parent, null,
+                    buildPeerLabel(student, peer, outgoing, incoming, category),
+                    x, y, VIZ_NODE_WIDTH, VIZ_NODE_HEIGHT, vertexStyle);
+            cellToStudent.put(cell, peer);
+
+            double signal = outgoing != 0 ? outgoing : incoming;
+            String strokeColor = signal > 0 ? "#66BB6A" : (signal < 0 ? "#EF5350" : "#B0BEC5");
+            double strokeWidth = 1 + Math.min(2.5, Math.abs(signal) / 40.0);
+            String edgeStyle = "endArrow=none;strokeColor=" + strokeColor
+                    + ";strokeWidth=" + strokeWidth + ";opacity=55";
+            peerGraph.insertEdge(parent, null, "", subjectCell, cell, edgeStyle);
+        }
+    }
+
+    /**
+     * Builds the HTML vertex label for a peer: name, both directed scores
+     * (&rarr; subject's feeling toward the peer, &larr; the peer's feeling
+     * back), and an optional context tag (sibling / best friend / romance).
+     */
+    private String buildPeerLabel(Student student, Student peer,
+            double outgoing, double incoming, PeerCategory category) {
+        StringBuilder sb = new StringBuilder("<b>")
+                .append(escapeHtml(peer.studentName.getFullName()))
+                .append("</b><br/>&rarr; ").append(Math.round(outgoing))
+                .append(" &nbsp; &larr; ").append(Math.round(incoming));
+        String tag = peerTag(student, peer, category);
+        if (tag != null) {
+            sb.append("<br/><i>").append(tag).append("</i>");
+        }
+        return sb.toString();
+    }
+
+    /** Short context tag shown under the scores, or null for plain tiers. */
+    private String peerTag(Student student, Student peer, PeerCategory category) {
+        if (category == PeerCategory.ROMANCE) {
+            RomanticStatus outgoing = getRomanticStatus(student, peer);
+            RomanticStatus incoming = getRomanticStatus(peer, student);
+            if (outgoing == incoming) {
+                return switch (outgoing) {
+                    case CRUSH -> "Mutual crush";
+                    case FLING -> "FWB";
+                    case STEADY -> "Official";
+                    default -> null;
+                };
+            }
+            if (incoming == RomanticStatus.NONE) {
+                return outgoing == RomanticStatus.CRUSH ? "Their crush"
+                        : "Sees it as " + outgoing.label();
+            }
+            if (outgoing == RomanticStatus.NONE) {
+                return incoming == RomanticStatus.CRUSH ? "Crushing on them"
+                        : "Peer sees " + incoming.label();
+            }
+            return "Sees " + outgoing.label() + " / peer sees " + incoming.label();
+        }
+        if (category == PeerCategory.SIBLING) {
+            return "Sibling";
+        }
+        if (category == PeerCategory.BEST_FRIEND) {
+            return "Best friend";
+        }
+        return null;
+    }
+
+    /**
+     * Classifies a peer relative to the subject. Any romantic perception in
+     * either direction wins, then sibling ties, then the tier of the
+     * subject's outgoing score.
+     */
+    private PeerCategory classifyPeer(Student student, Student peer) {
+        if (getRomanticStatus(student, peer) != RomanticStatus.NONE
+                || getRomanticStatus(peer, student) != RomanticStatus.NONE) {
+            return PeerCategory.ROMANCE;
+        }
+        if (student.studentStatistics.getSiblingsInSchool().contains(peer)) {
+            return PeerCategory.SIBLING;
+        }
+        return switch (classifyScore(getSocialScore(student, peer))) {
+            case BEST_FRIEND -> PeerCategory.BEST_FRIEND;
+            case FRIEND -> PeerCategory.FRIEND;
+            case ACQUAINTANCE -> PeerCategory.ACQUAINTANCE;
+            case NEUTRAL -> PeerCategory.NEUTRAL;
+            case DISLIKE -> PeerCategory.DISLIKE;
+            case ENEMY -> PeerCategory.ENEMY;
+        };
+    }
+
+    /** Legend strip explaining the vertex colors and score arrows. */
+    private JPanel buildLegendPanel() {
+        JPanel legend = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 12, 4));
+        legend.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, java.awt.Color.LIGHT_GRAY));
+        for (PeerCategory category : PeerCategory.values()) {
+            legend.add(legendEntry(category.label, java.awt.Color.decode(category.fillColor)));
+        }
+        JLabel arrows = new JLabel("\u2192 their feeling toward peer   \u2190 peer's feeling back");
+        arrows.setFont(arrows.getFont().deriveFont(java.awt.Font.ITALIC, 11f));
+        legend.add(arrows);
+        return legend;
+    }
+
+    private JPanel legendEntry(String text, java.awt.Color color) {
+        JPanel entry = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 4, 0));
+        JPanel swatch = new JPanel();
+        swatch.setPreferredSize(new java.awt.Dimension(14, 14));
+        swatch.setBackground(color);
+        swatch.setBorder(BorderFactory.createLineBorder(java.awt.Color.GRAY));
+        entry.add(swatch);
+        JLabel label = new JLabel(text);
+        label.setFont(label.getFont().deriveFont(11f));
+        entry.add(label);
+        return entry;
+    }
+
+    private static String escapeHtml(String text) {
+        return text == null ? "" : text
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 }

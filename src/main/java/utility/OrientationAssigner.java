@@ -10,6 +10,9 @@ import java.util.List;
 
 import static constants.SimConstants.ORIENTATION_ASEXUAL_WEIGHT;
 import static constants.SimConstants.ORIENTATION_BISEXUAL_WEIGHT;
+import static constants.SimConstants.ORIENTATION_CLOSETED_CHANCE_IN_GROUP;
+import static constants.SimConstants.ORIENTATION_CLOSETED_CHANCE_NEUTRAL;
+import static constants.SimConstants.ORIENTATION_CLOSETED_CHANCE_OUT_GROUP;
 import static constants.SimConstants.ORIENTATION_CLOSETED_NON_HETERO_RATE;
 import static constants.SimConstants.ORIENTATION_GAY_WEIGHT;
 import static constants.SimConstants.ORIENTATION_OPEN_NON_HETERO_RATE;
@@ -20,18 +23,26 @@ import static constants.SimConstants.ORIENTATION_OUT_GROUP_SELECTION_WEIGHT;
  * cohort target counts derived from the 2004-era simulation parameters in
  * {@code SimConstants}.
  *
- * <p>The school-wide totals are fixed up front (~1% openly non-heterosexual,
- * ~5% closeted) rather than rolled per student, so a generated school always
- * lands on the configured demographic mix. Which students fill the
- * non-heterosexual cohort is a weighted sample without replacement:
- * members of out-group cliques (loaded via {@link CliqueLoader}) carry a
- * higher selection weight, concentrating the cohort there without changing
- * the totals.</p>
+ * <p>The school-wide cohort size is fixed up front (~6% non-heterosexual)
+ * rather than rolled per student, so a generated school always lands on the
+ * configured demographic mix. Which students fill the non-heterosexual
+ * cohort is a weighted sample without replacement: members of out-group
+ * cliques (loaded via {@link CliqueLoader}) carry a higher selection
+ * weight, concentrating the cohort there without changing the total.</p>
+ *
+ * <p>Disclosure (open vs. closeted) is conditioned on where each cohort
+ * member landed socially. In-group cliques are conservative and less
+ * accepting of sexual-minority behavior, so members there almost always
+ * stay closeted; out-group cliques tolerate openness far more. Students are
+ * never relocated between cliques for this -- only the disclosure state
+ * adapts to placement, so the school-wide open/closeted split drifts
+ * slightly around the historical ~1%/~5% targets depending on where the
+ * cohort ended up.</p>
  *
  * <p>Must run <i>after</i> {@link CliqueAssigner#assignCliques} so the
- * out-group weighting can see each student's main clique. Orientation does
- * not influence platonic friendship generation; it exists as the
- * demographic foundation for future romantic relationship mechanics.</p>
+ * out-group weighting and disclosure rolls can see each student's main
+ * clique, and <i>before</i> {@link SocialLinkConnector} generation, which
+ * uses orientation to adjust same-gender friendship preferences.</p>
  */
 public final class OrientationAssigner {
 
@@ -67,18 +78,34 @@ public final class OrientationAssigner {
         List<Student> cohort = sampleCohort(students, cohortSize);
 
         int openAssigned = 0;
-        for (int i = 0; i < cohort.size(); i++) {
-            Student student = cohort.get(i);
+        for (Student student : cohort) {
             student.studentStatistics.setSexualOrientation(pickNonHeteroOrientation());
-            if (i < openTarget) {
+            if (GameRandom.nextDouble() < closetedChanceFor(student)) {
+                student.studentStatistics.setOrientationDisclosure(OrientationDisclosure.CLOSETED);
+            } else {
                 student.studentStatistics.setOrientationDisclosure(OrientationDisclosure.OPEN);
                 openAssigned++;
-            } else {
-                student.studentStatistics.setOrientationDisclosure(OrientationDisclosure.CLOSETED);
             }
         }
 
         logSummary(total, openAssigned, cohort.size() - openAssigned);
+    }
+
+    /**
+     * Probability that a non-heterosexual student stays closeted, based on
+     * their main clique's group category. Conservative in-groups suppress
+     * openness almost entirely; out-groups are the most accepting.
+     */
+    private static double closetedChanceFor(Student student) {
+        String clique = student.studentStatistics.getMainClique();
+        String category = clique != null ? CliqueLoader.getGroupCategory(clique) : null;
+        if ("in-group".equals(category)) {
+            return ORIENTATION_CLOSETED_CHANCE_IN_GROUP;
+        }
+        if ("out-group".equals(category)) {
+            return ORIENTATION_CLOSETED_CHANCE_OUT_GROUP;
+        }
+        return ORIENTATION_CLOSETED_CHANCE_NEUTRAL;
     }
 
     /**
