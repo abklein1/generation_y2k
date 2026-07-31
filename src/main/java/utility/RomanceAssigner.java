@@ -24,9 +24,10 @@ import static constants.SimConstants.ROMANCE_CRUSH_DISTANT_GRADE_FACTOR;
 import static constants.SimConstants.ROMANCE_CRUSH_FAMILIARITY_DIVISOR;
 import static constants.SimConstants.ROMANCE_CRUSH_IN_GROUP_DESIRABILITY;
 import static constants.SimConstants.ROMANCE_CRUSH_MIN_SCORE;
+import static constants.SimConstants.ROMANCE_CRUSH_MAGNET_CURVE;
+import static constants.SimConstants.ROMANCE_CRUSH_MAGNET_RANGE;
 import static constants.SimConstants.ROMANCE_CRUSH_NEW_LINK_EXTRA_MAX;
 import static constants.SimConstants.ROMANCE_CRUSH_OUT_GROUP_DESIRABILITY;
-import static constants.SimConstants.ROMANCE_CRUSH_POPULARITY_DIVISOR;
 import static constants.SimConstants.ROMANCE_GRADE_FACTOR_FRESHMAN;
 import static constants.SimConstants.ROMANCE_GRADE_FACTOR_JUNIOR;
 import static constants.SimConstants.ROMANCE_GRADE_FACTOR_SENIOR;
@@ -93,9 +94,12 @@ public final class RomanceAssigner {
         List<Student> students = new ArrayList<>(studentHashMap.values());
         GameRandom.shuffle(students);
 
-        // Popularity snapshot used for crush-target desirability. Taken once:
-        // crush links created below shouldn't feed back into later picks.
-        HashMap<Student, Double> incomingTotals = connector.computeIncomingScoreTotals();
+        // Popularity percentile snapshot used for crush-target desirability.
+        // Taken once: crush links created below shouldn't feed back into
+        // later picks. Rank-based so the magnet curve is independent of the
+        // generation's absolute score scale.
+        HashMap<Student, Double> popularityPercentiles =
+                computePopularityPercentiles(connector);
 
         Set<Student> inRomance = new HashSet<>();
         int target = (int) Math.round(students.size() * ROMANCE_PARTICIPATION_RATE);
@@ -120,7 +124,7 @@ public final class RomanceAssigner {
             RomanticStatus type = rollType(student);
             if (type == RomanticStatus.CRUSH) {
                 Student crushTarget = pickCrushTarget(student, students, connector,
-                        incomingTotals, false);
+                        popularityPercentiles, false);
                 if (crushTarget == null) {
                     continue;
                 }
@@ -179,7 +183,7 @@ public final class RomanceAssigner {
                 continue;
             }
             Student crushTarget = pickCrushTarget(student, students, connector,
-                    incomingTotals, true);
+                    popularityPercentiles, true);
             if (crushTarget == null) {
                 continue;
             }
@@ -297,7 +301,7 @@ public final class RomanceAssigner {
      *                         {@link #attractedTo} gate
      */
     private static Student pickCrushTarget(Student student, List<Student> population,
-            SocialLinkConnector connector, HashMap<Student, Double> incomingTotals,
+            SocialLinkConnector connector, HashMap<Student, Double> popularityPercentiles,
             boolean hiddenSameGender) {
         String myGender = student.studentStatistics.getGender();
         List<Student> candidates = new ArrayList<>();
@@ -329,7 +333,7 @@ public final class RomanceAssigner {
             double familiarity = 1 + score / ROMANCE_CRUSH_FAMILIARITY_DIVISOR;
             double weight = gradeProximityFactor(student, other) * familiarity
                     * crushCliqueAffinity(student, other)
-                    * Math.pow(desirability(other, incomingTotals),
+                    * Math.pow(desirability(other, popularityPercentiles),
                             ROMANCE_CRUSH_DESIRABILITY_EXPONENT);
             if (weight <= 0) {
                 continue;
@@ -342,14 +346,18 @@ public final class RomanceAssigner {
     }
 
     /**
-     * How crush-worthy a target looks to the school at large: grows with
-     * school-wide popularity (total incoming score) and is scaled by clique
-     * standing (in-group members are seen as bigger catches, out-group
-     * members smaller ones).
+     * How crush-worthy a target looks to the school at large: grows steeply
+     * with the target's popularity <i>percentile</i> (rank in the school-wide
+     * incoming-score ordering, 0..1) and is scaled by clique standing
+     * (in-group members are seen as bigger catches, out-group members
+     * smaller ones). The steep percentile curve keeps almost all of the
+     * bonus in the top decile, producing a handful of crush magnets per
+     * generation regardless of how compressed raw scores are.
      */
-    static double desirability(Student target, HashMap<Student, Double> incomingTotals) {
-        double popularity = Math.max(0, incomingTotals.getOrDefault(target, 0.0));
-        double value = 1 + popularity / ROMANCE_CRUSH_POPULARITY_DIVISOR;
+    static double desirability(Student target, HashMap<Student, Double> popularityPercentiles) {
+        double percentile = popularityPercentiles.getOrDefault(target, 0.0);
+        double value = 1 + ROMANCE_CRUSH_MAGNET_RANGE
+                * Math.pow(percentile, ROMANCE_CRUSH_MAGNET_CURVE);
         String category = CliqueLoader.getGroupCategory(
                 target.studentStatistics.getMainClique());
         if ("in-group".equals(category)) {
@@ -358,6 +366,23 @@ public final class RomanceAssigner {
             value *= ROMANCE_CRUSH_OUT_GROUP_DESIRABILITY;
         }
         return value;
+    }
+
+    /**
+     * Ranks every student by total incoming social score and maps them to a
+     * percentile in [0, 1] (most popular = 1). Ties keep list order; with
+     * continuous scores that's inconsequential.
+     */
+    static HashMap<Student, Double> computePopularityPercentiles(SocialLinkConnector connector) {
+        HashMap<Student, Double> totals = connector.computeIncomingScoreTotals();
+        List<Student> ranked = new ArrayList<>(totals.keySet());
+        ranked.sort((a, b) -> Double.compare(totals.get(a), totals.get(b)));
+        HashMap<Student, Double> percentiles = new HashMap<>();
+        int n = ranked.size();
+        for (int i = 0; i < n; i++) {
+            percentiles.put(ranked.get(i), n <= 1 ? 1.0 : (double) i / (n - 1));
+        }
+        return percentiles;
     }
 
     /**

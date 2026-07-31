@@ -217,14 +217,15 @@ class RomanceAssignerTest {
         Student outcast = namedStudent(2, "Female");
         outcast.studentStatistics.setMainClique(outClique);
 
-        HashMap<Student, Double> totals = new HashMap<>();
-        totals.put(queenBee, 450.0);
-        totals.put(wallflower, 20.0);
-        totals.put(outcast, 20.0);
+        // Popularity percentiles (rank in the school-wide ordering, 0..1)
+        HashMap<Student, Double> percentiles = new HashMap<>();
+        percentiles.put(queenBee, 0.98);
+        percentiles.put(wallflower, 0.50);
+        percentiles.put(outcast, 0.50);
 
-        double queenDesirability = RomanceAssigner.desirability(queenBee, totals);
-        double wallflowerDesirability = RomanceAssigner.desirability(wallflower, totals);
-        double outcastDesirability = RomanceAssigner.desirability(outcast, totals);
+        double queenDesirability = RomanceAssigner.desirability(queenBee, percentiles);
+        double wallflowerDesirability = RomanceAssigner.desirability(wallflower, percentiles);
+        double outcastDesirability = RomanceAssigner.desirability(outcast, percentiles);
 
         assertTrue(queenDesirability > wallflowerDesirability * 2,
                 "Popularity plus in-group standing should multiply crush appeal");

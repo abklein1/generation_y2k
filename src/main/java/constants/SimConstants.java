@@ -1086,8 +1086,17 @@ public final class SimConstants {
     public static final double ROMANCE_CRUSH_DISTANT_GRADE_FACTOR = 0.08;
     // familiarity = 1 + max(0, outgoing score) / divisor
     public static final double ROMANCE_CRUSH_FAMILIARITY_DIVISOR = 40.0;
-    // desirability popularity term = 1 + max(0, incoming score total) / divisor
-    public static final double ROMANCE_CRUSH_POPULARITY_DIVISOR = 150.0;
+    // Desirability popularity term is RANK-based:
+    //   1 + range * percentile^curve
+    // where percentile is the target's position (0..1) in the school-wide
+    // popularity ordering. Using rank instead of raw incoming-score totals
+    // makes the magnet effect independent of how compressed a generation's
+    // scores happen to be (real populations roll stats from a narrow
+    // Gaussian, so raw-score ratios stay near 1 and would flatten the
+    // curve). The high curve power concentrates nearly all of the bonus in
+    // the top decile: the school's handful of "it" kids.
+    public static final double ROMANCE_CRUSH_MAGNET_RANGE = 9.0;
+    public static final double ROMANCE_CRUSH_MAGNET_CURVE = 6.0;
     public static final double ROMANCE_CRUSH_IN_GROUP_DESIRABILITY = 1.6;
     public static final double ROMANCE_CRUSH_OUT_GROUP_DESIRABILITY = 0.75;
     public static final double ROMANCE_CRUSH_DESIRABILITY_EXPONENT = 3.0;
