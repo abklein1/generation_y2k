@@ -6,9 +6,25 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class NameLoader {
+    /**
+     * SSA/census yob files include hospital and form placeholders that are not
+     * real given names. Matched case-insensitively when loading first-name data.
+     */
+    private static final Set<String> PLACEHOLDER_FIRST_NAMES = Set.of(
+            "unknown", "unkown", "unk",
+            "infant", "infantof", "infantboy",
+            "baby", "babygirl", "babyboy", "babby",
+            "unnamed",
+            "male", "female", "boy", "girl",
+            "newborn",
+            "na",
+            "doe");
+
     private static final HashMap<Integer, String> firstNames = new HashMap<Integer, String>();
     // cache students since we are generating more
     private static final HashMap<Integer, String> firstNames1986 = new HashMap<Integer, String>();
@@ -47,6 +63,9 @@ public class NameLoader {
                 String[] parts = f_line.split(",");
                 if (parts.length == 3) {
                     String name = parts[0].trim();
+                    if (isPlaceholderFirstName(name)) {
+                        continue;
+                    }
                     char gen = parts[1].trim().charAt(0);
                     long freq = Long.parseLong(parts[2].trim());
                     switch (birth) {
@@ -96,6 +115,14 @@ public class NameLoader {
                 }
             }
         }
+    }
+
+    /**
+     * Returns true when {@code name} is a known census/SSA placeholder rather
+     * than a usable given name (e.g. {@code Unknown}, {@code Infant}, {@code Babyboy}).
+     */
+    public static boolean isPlaceholderFirstName(String name) {
+        return name != null && PLACEHOLDER_FIRST_NAMES.contains(name.toLowerCase(Locale.ROOT));
     }
 
     // TODO: bad code to refactor later for readability

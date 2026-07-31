@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class SocialRankings {
 
-    private static final int TOP_N = 15;
+    private static final int TOP_N = 25;
     private static final int NAME_COL_WIDTH = 26;
 
     private SocialRankings() {
