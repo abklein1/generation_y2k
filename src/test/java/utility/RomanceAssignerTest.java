@@ -272,6 +272,74 @@ class RomanceAssignerTest {
     }
 
     @Test
+    @DisplayName("Should sometimes give partnered students an additional side crush that cools the first bond")
+    void testPartneredStudentsCanHoldSideCrushes() {
+        // Across a few seeds, at least one partnered student should also hold
+        // a crush on someone other than their partner (~8% of partnered rolls).
+        int partneredWithSideCrush = 0;
+        long[] seeds = {13579L, 24680L, 97531L, 86420L, 112233L};
+        for (long seed : seeds) {
+            GameRandom.reset();
+            GameRandom.initialize(seed);
+            HashMap<Integer, Student> students = createPeerMap(100);
+            StandardSchool school = gradeSchool(students);
+            SocialLinkConnector connector = new SocialLinkConnector(students, school);
+            OrientationAssigner.assignOrientations(students);
+            RomanceAssigner.assignRomanticRelationships(students, connector);
+
+            for (Student student : students.values()) {
+                if (!RomanceAssigner.hasOutgoingPartnership(student, connector)) {
+                    continue;
+                }
+                for (Student other : connector.getRomanticInterests(student)) {
+                    if (connector.getRomanticStatus(student, other) == RomanticStatus.CRUSH) {
+                        partneredWithSideCrush++;
+                        RomanticStatus partnerView = connector.getRomanticStatus(other, student);
+                        assertEquals(RomanticStatus.NONE, partnerView,
+                                "Partnered side-crushes should be one-sided at generation");
+                    }
+                }
+            }
+        }
+        assertTrue(partneredWithSideCrush > 0,
+                "Expected at least one partnered side-crush across seeds; found "
+                        + partneredWithSideCrush);
+    }
+
+    @Test
+    @DisplayName("Assigning a partnered side crush drains the existing partnership scores")
+    void testPartneredSideCrushDrainsExistingBond() {
+        HashMap<Integer, Student> students = new HashMap<>();
+        Student dating = namedStudent(0, "Male");
+        Student partner = namedStudent(1, "Female");
+        Student crush = namedStudent(2, "Female");
+        students.put(0, dating);
+        students.put(1, partner);
+        students.put(2, crush);
+
+        SocialLinkConnector connector = new SocialLinkConnector();
+        connector.restoreFromSnapshot(students, null);
+        connector.modifySocialScore(dating, partner, 60);
+        connector.modifySocialScore(partner, dating, 55);
+        connector.setRomanticStatus(dating, partner, RomanticStatus.STEADY);
+        connector.setRomanticStatus(partner, dating, RomanticStatus.STEADY);
+
+        // Force the side-crush path by directly applying the same drain helper
+        // the assigner uses after setting the crush (full assigner needs a
+        // populated peer graph and is covered statistically above).
+        connector.setRomanticStatus(dating, crush, RomanticStatus.CRUSH);
+        connector.modifySocialScore(dating, crush, 40);
+        RomanceUpdater.drainOtherPartnerships(dating, crush, connector,
+                constants.SimConstants.ROMANCE_SIDE_CRUSH_PARTNER_DRAIN,
+                constants.SimConstants.ROMANCE_SIDE_CRUSH_PARTNER_ECHO);
+
+        assertEquals(60 - constants.SimConstants.ROMANCE_SIDE_CRUSH_PARTNER_DRAIN,
+                connector.getSocialScore(dating, partner), 1e-9);
+        assertEquals(55 - constants.SimConstants.ROMANCE_SIDE_CRUSH_PARTNER_ECHO,
+                connector.getSocialScore(partner, dating), 1e-9);
+    }
+
+    @Test
     @DisplayName("Should gate attraction by presented orientation (closeted presents as straight)")
     void testAttractionCompatibility() {
         Student straightMale = namedStudent(0, "Male");

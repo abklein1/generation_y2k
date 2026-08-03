@@ -143,6 +143,117 @@ class RomanceUpdaterTest {
     }
 
     @Test
+    @DisplayName("One-sided partnered crushes drain the first bond but do not escalate alone")
+    void testOneSidedPartneredCrushDrainsWithoutEscalating() {
+        GameRandom.reset();
+        GameRandom.initialize(4242L);
+        HashMap<Integer, Student> students = new HashMap<>();
+        Student dating = namedStudent(0, "Male");
+        Student partner = namedStudent(1, "Female");
+        Student crushTarget = namedStudent(2, "Female");
+        students.put(0, dating);
+        students.put(1, partner);
+        students.put(2, crushTarget);
+        SocialLinkConnector connector = new SocialLinkConnector();
+        connector.restoreFromSnapshot(students, null);
+        RomanceUpdater.drainDaysEvents();
+
+        connector.modifySocialScore(dating, partner, 60);
+        connector.modifySocialScore(partner, dating, 60);
+        connector.setRomanticStatus(dating, partner, RomanticStatus.STEADY);
+        connector.setRomanticStatus(partner, dating, RomanticStatus.STEADY);
+
+        connector.modifySocialScore(dating, crushTarget, 55);
+        connector.modifySocialScore(crushTarget, dating, 50);
+        connector.setRomanticStatus(dating, crushTarget, RomanticStatus.CRUSH);
+
+        double partnerScoreBefore = connector.getSocialScore(dating, partner);
+        for (int i = 0; i < 40; i++) {
+            RomanceUpdater.periodPulse(students, connector);
+        }
+
+        assertEquals(RomanticStatus.CRUSH, connector.getRomanticStatus(dating, crushTarget),
+                "One-sided partnered crushes should not escalate on their own");
+        assertEquals(RomanticStatus.NONE, connector.getRomanticStatus(crushTarget, dating));
+        assertTrue(connector.getSocialScore(dating, partner) < partnerScoreBefore,
+                "Split attention should cool the existing partnership");
+    }
+
+    @Test
+    @DisplayName("Mutual partnered crushes can escalate into a concurrent second relationship")
+    void testMutualPartneredCrushCanEscalateWithCost() {
+        GameRandom.reset();
+        GameRandom.initialize(7777L);
+        HashMap<Integer, Student> students = new HashMap<>();
+        Student dating = namedStudent(0, "Male");
+        Student partner = namedStudent(1, "Female");
+        Student crushTarget = namedStudent(2, "Female");
+        students.put(0, dating);
+        students.put(1, partner);
+        students.put(2, crushTarget);
+        SocialLinkConnector connector = new SocialLinkConnector();
+        connector.restoreFromSnapshot(students, null);
+        RomanceUpdater.drainDaysEvents();
+
+        // Weak existing bond, hot mutual crush -- escalation should be favored
+        connector.modifySocialScore(dating, partner, 35);
+        connector.modifySocialScore(partner, dating, 35);
+        connector.setRomanticStatus(dating, partner, RomanticStatus.STEADY);
+        connector.setRomanticStatus(partner, dating, RomanticStatus.STEADY);
+
+        connector.modifySocialScore(dating, crushTarget, 70);
+        connector.modifySocialScore(crushTarget, dating, 70);
+        connector.setRomanticStatus(dating, crushTarget, RomanticStatus.CRUSH);
+        connector.setRomanticStatus(crushTarget, dating, RomanticStatus.CRUSH);
+
+        double partnerScoreBefore = connector.getSocialScore(dating, partner);
+        boolean escalated = false;
+        for (int i = 0; i < 400; i++) {
+            RomanceUpdater.periodPulse(students, connector);
+            if (connector.getRomanticStatus(dating, crushTarget) == RomanticStatus.FLING
+                    && connector.getRomanticStatus(crushTarget, dating) == RomanticStatus.FLING) {
+                escalated = true;
+                break;
+            }
+        }
+
+        assertTrue(escalated, "Hot mutual crush should eventually beat a weak existing bond");
+        assertTrue(connector.getRomanticStatus(dating, partner).ordinal()
+                        >= RomanticStatus.FLING.ordinal()
+                        || connector.getSocialScore(dating, partner) < partnerScoreBefore,
+                "First relationship should still exist or show the feelings-drain cost");
+        assertTrue(connector.getSocialScore(dating, partner) < partnerScoreBefore,
+                "Starting a second relationship should cool the first bond");
+    }
+
+    @Test
+    @DisplayName("drainOtherPartnerships cools every other fling/steady bond")
+    void testDrainOtherPartnerships() {
+        HashMap<Integer, Student> students = new HashMap<>();
+        Student student = namedStudent(0, "Male");
+        Student partner = namedStudent(1, "Female");
+        Student other = namedStudent(2, "Female");
+        students.put(0, student);
+        students.put(1, partner);
+        students.put(2, other);
+        SocialLinkConnector connector = new SocialLinkConnector();
+        connector.restoreFromSnapshot(students, null);
+
+        connector.modifySocialScore(student, partner, 60);
+        connector.modifySocialScore(partner, student, 55);
+        connector.setRomanticStatus(student, partner, RomanticStatus.STEADY);
+        connector.setRomanticStatus(partner, student, RomanticStatus.STEADY);
+        connector.modifySocialScore(student, other, 40);
+
+        RomanceUpdater.drainOtherPartnerships(student, other, connector, 8.0, 3.0);
+
+        assertEquals(52.0, connector.getSocialScore(student, partner), 1e-9);
+        assertEquals(52.0, connector.getSocialScore(partner, student), 1e-9);
+        assertEquals(40.0, connector.getSocialScore(student, other), 1e-9,
+                "The excepted bond should not be drained");
+    }
+
+    @Test
     @DisplayName("Hidden same-gender crushes held by closeted students are never acted on")
     void testSecretCrushesNeverActedOn() {
         GameRandom.reset();

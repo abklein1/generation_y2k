@@ -18,7 +18,7 @@ public class NameLoader {
     private static final Set<String> PLACEHOLDER_FIRST_NAMES = Set.of(
             "unknown", "unkown", "unk",
             "infant", "infantof", "infantboy",
-            "baby", "babygirl", "babyboy", "babby",
+            "baby", "babygirl", "babyboy",
             "unnamed",
             "male", "female", "boy", "girl",
             "newborn",

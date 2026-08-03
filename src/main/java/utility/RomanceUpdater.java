@@ -13,6 +13,8 @@ import static constants.SimConstants.ROMANCE_BREAKUP_SCORE_PENALTY;
 import static constants.SimConstants.ROMANCE_CRUSH_MIN_SCORE;
 import static constants.SimConstants.ROMANCE_FLING_OFFICIAL_MIN_SCORE;
 import static constants.SimConstants.ROMANCE_MUTUAL_MIN_SCORE;
+import static constants.SimConstants.ROMANCE_PARTNERED_ESCALATE_CHANCE_MAX;
+import static constants.SimConstants.ROMANCE_PARTNERED_ESCALATE_CHANCE_MIN;
 import static constants.SimConstants.ROMANCE_PULSE_ASYM_BREAKUP_CHANCE;
 import static constants.SimConstants.ROMANCE_PULSE_ASYM_CONVERGE_CHANCE;
 import static constants.SimConstants.ROMANCE_PULSE_CRUSH_ACT_CHANCE;
@@ -20,6 +22,10 @@ import static constants.SimConstants.ROMANCE_PULSE_FLING_FIZZLE_CHANCE;
 import static constants.SimConstants.ROMANCE_PULSE_FLING_OFFICIAL_CHANCE;
 import static constants.SimConstants.ROMANCE_PULSE_STEADY_BREAKUP_CHANCE;
 import static constants.SimConstants.ROMANCE_REJECTION_SCORE_PENALTY;
+import static constants.SimConstants.ROMANCE_SECOND_RELATIONSHIP_PARTNER_DRAIN;
+import static constants.SimConstants.ROMANCE_SECOND_RELATIONSHIP_PARTNER_ECHO;
+import static constants.SimConstants.ROMANCE_SPLIT_ATTENTION_DRAIN;
+import static constants.SimConstants.ROMANCE_SPLIT_ATTENTION_ECHO;
 import static constants.SimConstants.ROMANCE_STEADY_UNHEALTHY_BREAKUP_MULTIPLIER;
 
 /**
@@ -35,6 +41,13 @@ import static constants.SimConstants.ROMANCE_STEADY_UNHEALTHY_BREAKUP_MULTIPLIER
  * decayed below their entry thresholds quietly dissolve (crushes fade,
  * hookups drift apart, starving relationships end).</li>
  * </ul>
+ *
+ * <p>Students have a finite pool of romantic feelings: a side crush or
+ * second relationship cools every other fling/steady they hold (score drain
+ * on those bonds). Partnered students may escalate a <i>mutual</i> crush
+ * into a concurrent relationship when the crush is warm enough relative to
+ * the existing bond; one-sided partnered crushes stay latent but still
+ * drain attention from the first relationship.</p>
  *
  * <p>Every change is recorded as a human-readable event (also logged via
  * {@link GameLogger#logSocialLinks}) and queued for the day; a future daily
@@ -87,6 +100,29 @@ public final class RomanceUpdater {
     }
 
     /**
+     * Cools every fling/steady {@code student} holds other than {@code except}
+     * by {@code drain} on the outgoing score and {@code echo} on the
+     * reciprocal. Models a finite romantic-feelings pool: giving to one bond
+     * takes from the others.
+     */
+    static void drainOtherPartnerships(Student student, Student except,
+            SocialLinkConnector connector, double drain, double echo) {
+        for (Student partner : connector.getRomanticInterests(student)) {
+            if (partner.equals(except)) {
+                continue;
+            }
+            RomanticStatus status = connector.getRomanticStatus(student, partner);
+            if (status != RomanticStatus.FLING && status != RomanticStatus.STEADY) {
+                continue;
+            }
+            connector.modifySocialScore(student, partner, -drain);
+            if (echo > 0) {
+                connector.modifySocialScore(partner, student, -echo);
+            }
+        }
+    }
+
+    /**
      * Visits every unordered pair with a romance record exactly once.
      * Records are directed and possibly one-sided, so pairs are deduped by
      * unordered pair identity rather than by visited student.
@@ -124,26 +160,24 @@ public final class RomanceUpdater {
 
         // Serious on at least one side: convergence/breakup dynamics
         if (ab == RomanticStatus.STEADY || ba == RomanticStatus.STEADY) {
+            dripSplitAttention(a, b, connector);
             return pulseSteady(a, b, ab, ba, connector);
         }
         // Mutual hookup: may become official or fizzle
         if (ab == RomanticStatus.FLING && ba == RomanticStatus.FLING) {
+            dripSplitAttention(a, b, connector);
             return pulseMutualFling(a, b, connector);
         }
         // One-sided hookup: holder either makes it mutual or gives up
         if (ab == RomanticStatus.FLING || ba == RomanticStatus.FLING) {
             Student holder = ab == RomanticStatus.FLING ? a : b;
             Student target = holder == a ? b : a;
+            dripSplitAttention(holder, target, connector);
             return pulseOneSidedFling(holder, target, connector);
         }
         // Crushes (one-sided or, defensively, mutual)
         if (ab == RomanticStatus.CRUSH && ba == RomanticStatus.CRUSH) {
-            // Mutual crushes always escalate once either notices
-            if (GameRandom.nextDouble() < ROMANCE_PULSE_CRUSH_ACT_CHANCE * 2) {
-                startHookingUp(a, b, connector, " (mutual crushes finally acted on)");
-                return true;
-            }
-            return false;
+            return pulseMutualCrush(a, b, connector);
         }
         if (ab == RomanticStatus.CRUSH || ba == RomanticStatus.CRUSH) {
             Student holder = ab == RomanticStatus.CRUSH ? a : b;
@@ -154,30 +188,163 @@ public final class RomanceUpdater {
     }
 
     /**
+     * Mutual crushes may escalate into a hookup. When either party already
+     * has another partnership, the roll is scaled by crush warmth versus
+     * existing-bond warmth, and success drains those other bonds.
+     */
+    private static boolean pulseMutualCrush(Student a, Student b,
+            SocialLinkConnector connector) {
+        boolean aPartnered = hasOtherPartnership(a, b, connector);
+        boolean bPartnered = hasOtherPartnership(b, a, connector);
+        if (aPartnered) {
+            drainOtherPartnerships(a, b, connector,
+                    ROMANCE_SPLIT_ATTENTION_DRAIN, ROMANCE_SPLIT_ATTENTION_ECHO);
+        }
+        if (bPartnered) {
+            drainOtherPartnerships(b, a, connector,
+                    ROMANCE_SPLIT_ATTENTION_DRAIN, ROMANCE_SPLIT_ATTENTION_ECHO);
+        }
+
+        double chance = ROMANCE_PULSE_CRUSH_ACT_CHANCE * 2;
+        if (aPartnered || bPartnered) {
+            chance *= partneredEscalateFactor(a, b, connector);
+        }
+        if (GameRandom.nextDouble() >= chance) {
+            return false;
+        }
+        if (aPartnered) {
+            drainOtherPartnerships(a, b, connector,
+                    ROMANCE_SECOND_RELATIONSHIP_PARTNER_DRAIN,
+                    ROMANCE_SECOND_RELATIONSHIP_PARTNER_ECHO);
+        }
+        if (bPartnered) {
+            drainOtherPartnerships(b, a, connector,
+                    ROMANCE_SECOND_RELATIONSHIP_PARTNER_DRAIN,
+                    ROMANCE_SECOND_RELATIONSHIP_PARTNER_ECHO);
+        }
+        String flavor = (aPartnered || bPartnered)
+                ? " (mutual crushes won out over an existing bond)"
+                : " (mutual crushes finally acted on)";
+        startHookingUp(a, b, connector, flavor);
+        return true;
+    }
+
+    /**
      * A crush holder may act on it. Success requires the target to be
-     * attracted back, warm enough toward the holder, and romantically
-     * unattached; failure removes the crush and stings. Hidden same-gender
-     * crushes held by closeted students are never acted on.
+     * attracted back and warm enough toward the holder; failure removes the
+     * crush and stings. Hidden same-gender crushes held by closeted students
+     * are never acted on. Partnered holders do not escalate one-sided
+     * crushes (only mutual crushes can become a second relationship) but
+     * still drip attention away from their existing bond.
      */
     private static boolean pulseCrush(Student holder, Student target,
             SocialLinkConnector connector) {
         if (isSecret(holder, target)) {
             return false;
         }
+        if (hasOtherPartnership(holder, target, connector)) {
+            drainOtherPartnerships(holder, target, connector,
+                    ROMANCE_SPLIT_ATTENTION_DRAIN, ROMANCE_SPLIT_ATTENTION_ECHO);
+            return false;
+        }
         if (GameRandom.nextDouble() >= ROMANCE_PULSE_CRUSH_ACT_CHANCE) {
             return false;
         }
         boolean accepted = RomanceAssigner.attractedTo(target, holder)
-                && connector.getSocialScore(target, holder) >= ROMANCE_MUTUAL_MIN_SCORE
-                && !connector.hasMutualRomance(target);
+                && connector.getSocialScore(target, holder) >= ROMANCE_MUTUAL_MIN_SCORE;
         if (accepted) {
-            startHookingUp(holder, target, connector, " (a crush paid off)");
+            if (hasOtherPartnership(target, holder, connector)) {
+                // Target is leaving bandwidth for this new bond
+                drainOtherPartnerships(target, holder, connector,
+                        ROMANCE_SECOND_RELATIONSHIP_PARTNER_DRAIN,
+                        ROMANCE_SECOND_RELATIONSHIP_PARTNER_ECHO);
+                startHookingUp(holder, target, connector,
+                        " (a crush paid off despite an existing bond)");
+            } else {
+                startHookingUp(holder, target, connector, " (a crush paid off)");
+            }
         } else {
             connector.setRomanticStatus(holder, target, RomanticStatus.NONE);
             connector.modifySocialScore(holder, target, -ROMANCE_REJECTION_SCORE_PENALTY);
             recordEvent(name(holder) + " got shot down by " + name(target) + ".");
         }
         return true;
+    }
+
+    /**
+     * Scales mutual-crush escalation chance when at least one party is
+     * already partnered: hotter mutual crush vs cooler existing bond raises
+     * the factor toward {@link constants.SimConstants#ROMANCE_PARTNERED_ESCALATE_CHANCE_MAX}.
+     */
+    private static double partneredEscalateFactor(Student a, Student b,
+            SocialLinkConnector connector) {
+        double crushWarmth = (connector.getSocialScore(a, b)
+                + connector.getSocialScore(b, a)) / 2.0;
+        double partnerWarmth = Math.max(
+                strongestOtherPartnershipWarmth(a, b, connector),
+                strongestOtherPartnershipWarmth(b, a, connector));
+        double crushShare = crushWarmth / (crushWarmth + Math.max(partnerWarmth, 1.0));
+        return ROMANCE_PARTNERED_ESCALATE_CHANCE_MIN
+                + (ROMANCE_PARTNERED_ESCALATE_CHANCE_MAX - ROMANCE_PARTNERED_ESCALATE_CHANCE_MIN)
+                * crushShare;
+    }
+
+    /**
+     * Average mutual warmth of {@code student}'s strongest fling/steady bond
+     * other than {@code except}, or 0 if none.
+     */
+    private static double strongestOtherPartnershipWarmth(Student student, Student except,
+            SocialLinkConnector connector) {
+        double best = 0;
+        for (Student partner : connector.getRomanticInterests(student)) {
+            if (partner.equals(except)) {
+                continue;
+            }
+            RomanticStatus status = connector.getRomanticStatus(student, partner);
+            if (status != RomanticStatus.FLING && status != RomanticStatus.STEADY) {
+                continue;
+            }
+            double warmth = (connector.getSocialScore(student, partner)
+                    + connector.getSocialScore(partner, student)) / 2.0;
+            if (warmth > best) {
+                best = warmth;
+            }
+        }
+        return best;
+    }
+
+    /**
+     * Whether {@code student} reports a fling/steady with someone other than
+     * {@code except}.
+     */
+    private static boolean hasOtherPartnership(Student student, Student except,
+            SocialLinkConnector connector) {
+        for (Student other : connector.getRomanticInterests(student)) {
+            if (other.equals(except)) {
+                continue;
+            }
+            RomanticStatus status = connector.getRomanticStatus(student, other);
+            if (status == RomanticStatus.FLING || status == RomanticStatus.STEADY) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * While a fling/steady pair is pulsed, each member who also holds another
+     * partnership drips attention away from those other bonds.
+     */
+    private static void dripSplitAttention(Student a, Student b,
+            SocialLinkConnector connector) {
+        if (hasOtherPartnership(a, b, connector)) {
+            drainOtherPartnerships(a, b, connector,
+                    ROMANCE_SPLIT_ATTENTION_DRAIN, ROMANCE_SPLIT_ATTENTION_ECHO);
+        }
+        if (hasOtherPartnership(b, a, connector)) {
+            drainOtherPartnerships(b, a, connector,
+                    ROMANCE_SPLIT_ATTENTION_DRAIN, ROMANCE_SPLIT_ATTENTION_ECHO);
+        }
     }
 
     /** Mutual FWB pair: chance to become official, or to fizzle out. */
@@ -207,9 +374,13 @@ public final class RomanceUpdater {
             SocialLinkConnector connector) {
         if (GameRandom.nextDouble() < ROMANCE_PULSE_CRUSH_ACT_CHANCE) {
             boolean accepted = RomanceAssigner.attractedTo(target, holder)
-                    && connector.getSocialScore(target, holder) >= ROMANCE_MUTUAL_MIN_SCORE
-                    && !connector.hasMutualRomance(target);
+                    && connector.getSocialScore(target, holder) >= ROMANCE_MUTUAL_MIN_SCORE;
             if (accepted) {
+                if (hasOtherPartnership(target, holder, connector)) {
+                    drainOtherPartnerships(target, holder, connector,
+                            ROMANCE_SECOND_RELATIONSHIP_PARTNER_DRAIN,
+                            ROMANCE_SECOND_RELATIONSHIP_PARTNER_ECHO);
+                }
                 connector.setRomanticStatus(target, holder, RomanticStatus.FLING);
                 recordEvent(name(holder) + " and " + name(target)
                         + " are now both calling it FWB.");

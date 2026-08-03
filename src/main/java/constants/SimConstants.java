@@ -1066,6 +1066,10 @@ public final class SimConstants {
     // same-gender crush (never mutual, never acted on) in addition to any
     // opposite-gender cover relationship
     public static final double ROMANCE_CLOSETED_HIDDEN_CRUSH_CHANCE = 0.15;
+    // Chance a student already in a fling/steady relationship also holds an
+    // unrequited crush on someone else. Small on purpose: most partnered
+    // students are exclusive at generation, but wandering attention happens.
+    public static final double ROMANCE_PARTNERED_CRUSH_CHANCE = 0.08;
     // Minimum outgoing social score for a friendship to be promoted
     public static final double ROMANCE_MUTUAL_MIN_SCORE = SOCIAL_LINK_TIER_FRIEND_THRESHOLD;
     public static final double ROMANCE_CRUSH_MIN_SCORE = SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD;
@@ -1131,14 +1135,36 @@ public final class SimConstants {
     //
     // Chance per pulse that a crush holder (or the one-sided half of an
     // unreciprocated hookup) makes a move. Succeeds -- both start hooking
-    // up -- only if the target is attracted back, warm enough
-    // (>= ROMANCE_MUTUAL_MIN_SCORE), and not already in a mutual romance;
-    // otherwise the holder is shot down and sours on the target. Hidden
-    // same-gender crushes held by closeted students are never acted on.
+    // up -- only if the target is attracted back and warm enough
+    // (>= ROMANCE_MUTUAL_MIN_SCORE); otherwise the holder is shot down and
+    // sours on the target. Hidden same-gender crushes held by closeted
+    // students are never acted on. Partnered holders only escalate a side
+    // crush when it is mutual (see partnered-escalation constants below).
     public static final double ROMANCE_PULSE_CRUSH_ACT_CHANCE = 0.04;
     // Outgoing score penalty the rejected party applies toward whoever
     // turned them down
     public static final double ROMANCE_REJECTION_SCORE_PENALTY = 10.0;
+    // Finite romantic-feelings pool: investing in a crush/second relationship
+    // cools every other fling/steady the student already holds. "Drain" is
+    // the holder's outgoing score toward each other partner; "echo" is a
+    // smaller reciprocal dip so the bond cools without modeling discovery
+    // drama yet. Generation assigns the one-time side-crush hit; pulses
+    // apply the smaller split-attention drip; successfully starting a
+    // second relationship applies the larger second-relationship hit.
+    public static final double ROMANCE_SIDE_CRUSH_PARTNER_DRAIN = 8.0;
+    public static final double ROMANCE_SIDE_CRUSH_PARTNER_ECHO = 3.0;
+    public static final double ROMANCE_SPLIT_ATTENTION_DRAIN = 0.5;
+    public static final double ROMANCE_SPLIT_ATTENTION_ECHO = 0.15;
+    public static final double ROMANCE_SECOND_RELATIONSHIP_PARTNER_DRAIN = 18.0;
+    public static final double ROMANCE_SECOND_RELATIONSHIP_PARTNER_ECHO = 8.0;
+    // Partnered mutual-crush escalation chance is
+    //   baseMutualChance * (MIN + (MAX - MIN) * crushShare)
+    // where crushShare = crushWarmth / (crushWarmth + partnerWarmth).
+    // Strong existing bonds suppress straying; a hotter mutual crush
+    // overcomes that. Unpartnered mutual crushes still use the flat
+    // 2x ROMANCE_PULSE_CRUSH_ACT_CHANCE roll.
+    public static final double ROMANCE_PARTNERED_ESCALATE_CHANCE_MIN = 0.35;
+    public static final double ROMANCE_PARTNERED_ESCALATE_CHANCE_MAX = 1.60;
     // Chance per pulse a mutual hookup (FWB) becomes official, provided both
     // outgoing scores are at least ROMANCE_FLING_OFFICIAL_MIN_SCORE
     public static final double ROMANCE_PULSE_FLING_OFFICIAL_CHANCE = 0.03;

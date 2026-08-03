@@ -35,7 +35,10 @@ import static constants.SimConstants.ROMANCE_GRADE_FACTOR_SOPHOMORE;
 import static constants.SimConstants.ROMANCE_MALE_CRUSH_SHARE;
 import static constants.SimConstants.ROMANCE_MUTUAL_MIN_SCORE;
 import static constants.SimConstants.ROMANCE_PARTICIPATION_RATE;
+import static constants.SimConstants.ROMANCE_PARTNERED_CRUSH_CHANCE;
 import static constants.SimConstants.ROMANCE_PERCEPTION_MISMATCH_CHANCE;
+import static constants.SimConstants.ROMANCE_SIDE_CRUSH_PARTNER_DRAIN;
+import static constants.SimConstants.ROMANCE_SIDE_CRUSH_PARTNER_ECHO;
 import static constants.SimConstants.ROMANCE_STEADY_SCORE_BONUS;
 import static constants.SimConstants.ROMANCE_STEADY_SCORE_BONUS_SM_MALE;
 import static constants.SimConstants.ROMANCE_TYPE_CRUSH_WEIGHT;
@@ -66,11 +69,14 @@ import static constants.SimConstants.ROMANCE_TYPE_STEADY_WEIGHT;
  * <p>Sexual orientation gates candidate gender. Closeted non-heterosexual
  * students present as straight and can hold opposite-gender "cover"
  * relationships; a small share additionally hold a hidden one-directional
- * same-gender crush that is never mutual and never acted on. Crush-holding
- * skews male ({@code ROMANCE_MALE_CRUSH_SHARE}) because most cross-gender
- * friendships initiated by male students carry a hope of romance. Openly
- * sexual-minority males apply a smaller score bump toward steady partners
- * (lower romantic attachment than heterosexual males).</p>
+ * same-gender crush that is never mutual and never acted on. Partnered
+ * students (fling or steady) are usually exclusive, but a small share also
+ * hold an unrequited crush on someone else; assigning that crush cools the
+ * existing bond (finite romantic-feelings pool). Crush-holding skews male
+ * ({@code ROMANCE_MALE_CRUSH_SHARE}) because most cross-gender friendships
+ * initiated by male students carry a hope of romance. Openly sexual-minority
+ * males apply a smaller score bump toward steady partners (lower romantic
+ * attachment than heterosexual males).</p>
  *
  * <p>Must run <i>after</i> the {@link SocialLinkConnector} generation pass
  * so friendships exist to be promoted.</p>
@@ -170,6 +176,30 @@ public final class RomanceAssigner {
             }
         }
 
+        // Partnered side-crush pass: students already in a fling/steady may
+        // still quietly pine for someone else. Rare on purpose -- most
+        // partnered students stay exclusive at generation.
+        int partneredCrushes = 0;
+        for (Student student : students) {
+            if (!hasOutgoingPartnership(student, connector)) {
+                continue;
+            }
+            if (GameRandom.nextDouble() >= ROMANCE_PARTNERED_CRUSH_CHANCE) {
+                continue;
+            }
+            Student crushTarget = pickCrushTarget(student, students, connector,
+                    popularityPercentiles, false);
+            if (crushTarget == null) {
+                continue;
+            }
+            connector.setRomanticStatus(student, crushTarget, RomanticStatus.CRUSH);
+            ensureCrushLink(student, crushTarget, connector);
+            // Finite feelings pool: the new crush cools every existing bond
+            RomanceUpdater.drainOtherPartnerships(student, crushTarget, connector,
+                    ROMANCE_SIDE_CRUSH_PARTNER_DRAIN, ROMANCE_SIDE_CRUSH_PARTNER_ECHO);
+            partneredCrushes++;
+        }
+
         // Hidden same-gender crush pass: closeted gay/bisexual students may
         // quietly hold an unrequited same-gender crush they never act on,
         // regardless of any cover relationship above.
@@ -193,7 +223,22 @@ public final class RomanceAssigner {
         }
 
         logSummary(students.size(), inRomance.size(), crushes, flings, steadies,
-                asymmetric, coverRelationships, hiddenCrushes);
+                asymmetric, coverRelationships, partneredCrushes, hiddenCrushes);
+    }
+
+    /**
+     * Whether the student reports being in a fling or steady relationship
+     * (outgoing perception). Used to find partnered students who may still
+     * roll a side crush.
+     */
+    static boolean hasOutgoingPartnership(Student student, SocialLinkConnector connector) {
+        for (Student other : connector.getRomanticInterests(student)) {
+            RomanticStatus status = connector.getRomanticStatus(student, other);
+            if (status == RomanticStatus.FLING || status == RomanticStatus.STEADY) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -521,14 +566,16 @@ public final class RomanceAssigner {
     }
 
     private static void logSummary(int total, int involved, int crushes, int flings,
-            int steadies, int asymmetric, int coverRelationships, int hiddenCrushes) {
+            int steadies, int asymmetric, int coverRelationships, int partneredCrushes,
+            int hiddenCrushes) {
         GameLogger.logGeneration("=== Romance Assignment Summary ===");
         GameLogger.logGeneration(String.format(
                 "Total students: %d | involved in romance: %d (%.1f%%)",
                 total, involved, total > 0 ? 100.0 * involved / total : 0));
         GameLogger.logGeneration(String.format(
                 "Crushes: %d | hooking up/FWB: %d | going out/official: %d | asymmetric perception: %d"
-                        + " | cover relationships: %d | hidden crushes: %d",
-                crushes, flings, steadies, asymmetric, coverRelationships, hiddenCrushes));
+                        + " | cover relationships: %d | partnered side-crushes: %d | hidden crushes: %d",
+                crushes, flings, steadies, asymmetric, coverRelationships, partneredCrushes,
+                hiddenCrushes));
     }
 }
