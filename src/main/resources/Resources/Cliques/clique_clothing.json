@@ -14,24 +14,28 @@
                     { "name": "zip up jacket", "brands": ["Hot Topic"], "materials": ["cotton"] }
                 ],
                 "tops": [
-                    "{band} t-shirt",
-                    "graphic tee",
+                    { "name": "{band} t-shirt", "warmth": 1 },
+                    { "name": "graphic t-shirt", "warmth": 1 },
                     { "name": "graphic tank top", "warmth": 1 },
-                    "local band t-shirt",
+                    { "name": "local band t-shirt", "warmth": 1 },
                     { "name": "{band} tank top", "warmth": 1 },
                     { "name": "tank top", "warmth": 1 },
-                    { "name": "tank top with lace fringe", "warmth": 1 }
+                    { "name": "tank top with lace fringe", "warmth": 1 },
+                    { "name": "tank top with fringe", "warmth": 1 }
                 ],
                 "bottoms": [
                     { "name": "skinny jeans", "materials": ["denim"] },
                     { "name": "ripped skinny jeans", "materials": ["denim"] },
                     { "name": "straight leg jeans", "materials": ["denim"] }
                 ],
-                "one_piece": [],
+                "one_piece": [
+                    { "name": "dress", "materials": ["cotton"] }
+                ],
                 "shoes": [
                     "Converse hightop sneakers",
                     "Vans slip-on sneakers",
-                    "Converse sneakers"
+                    "Converse sneakers",
+                    { "name": "boots", "materials": ["leather"] }
                 ],
                 "accessories": [
                     {"name": "studded belt", "materials": ["leather", "canvas"] },
@@ -39,7 +43,8 @@
                     {"name": "checkered bracelet", "materials": ["plastic"] },
                     {"name": "bracelet", "materials": ["plastic"] },
                     {"name": "slap bracelet", "materials": ["plastic"] },
-                    {"name": "choker", "materials": ["plastic", "lace", "ribbon"] }
+                    {"name": "choker", "materials": ["plastic", "lace", "ribbon"] },
+                    {"name": "striped hand warmers", "materials": ["cotton"] }
                 ],
                 "colors": [],
                 "patterns": [],
@@ -563,19 +568,29 @@
         },
         "Prep": {
             "female": {
-                "outerwear": [],
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 4 },
+                    { "name": "layered_top", "weight": 1 },
+                    { "name": "jacket_outfit", "weight": 1 }
+                ],
+                "outerwear": [
+                    { "name": "sweater", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["cotton"]}
+                ],
                 "tops": [
                     { "name": "polo shirt", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["cotton"] },
                     { "name": "tank top", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["cotton"]}
                 ],
                 "bottoms": [
                     { "name": "mini skirt", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["demim"]},
-                    { "name": "pleated skirt", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["demim", "khaki"]}
+                    { "name": "pleated skirt", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["demim", "khaki"]},
+                    { "name": "skinny jeans", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["denim"]},
+                    { "name": "shorts", "brands": ["A&F", "Aeropostale", "Hollister"], "materials": ["khaki", "denim"]}
                 ],
                 "one_piece": [],
                 "shoes": [
                     { "name": "flip flops", "materials": ["rubber"]},
-                    { "name": "boots", "brands": ["Ugg"]}
+                    { "name": "boots", "brands": ["Ugg"]},
+                    { "name": "ballet flats", "materials": ["leather"]}
                 ],
                 "accessories": [
                     { "name": "oversize belt", "materials": ["leather"]}
@@ -604,7 +619,8 @@
                 ],
                 "one_piece": [],
                 "shoes": [
-                    { "name": "flip flops", "materials": ["rubber"]}
+                    { "name": "flip flops", "materials": ["rubber"]},
+                    { "name": "sneakers", "brands": ["Nike", "Adidas", "Puma"]}
                 ],
                 "accessories": [
                     { "name": "braided belt", "materials": ["leather"]},
@@ -678,7 +694,9 @@
             },
             "male": {
                 "outerwear": [],
-                "tops": [],
+                "tops": [
+
+                ],
                 "bottoms": [],
                 "one_piece": [],
                 "shoes": [],
@@ -701,12 +719,41 @@
                 "materials": []
             },
             "male": {
-                "outerwear": [],
-                "tops": [],
-                "bottoms": [],
-                "one_piece": [],
-                "shoes": [],
-                "accessories": [],
+                "outfit_types": [
+                    { "name": "shirt_and_pants", "weight": 4 },
+                    { "name": "jacket_outfit", "weight": 1 }
+                ],
+                "outerwear": [
+                    { "name": "jacket", "materials": ["leather"], "warmth": 1 },
+                    { "name": "trench coat", "materials": ["cotton"] },
+                    { "name": "vest", "materials": ["cotton"] }
+                ],
+                "tops": [
+                    { "name": "t-shirt", "materials": ["cotton"], "warmth": 1 },
+                    { "name": "video game t-shirt", "materials": ["cotton"], "warmth": 1 },
+                    { "name": "thrift store t-shirt", "materials": ["cotton"], "warmth": 1 }
+                ],
+                "bottoms": [
+                    { "name": "cargo shorts", "materials": ["cotton"], "warmth": 1 },
+                    { "name": "cargo pants", "materials": ["cotton"], "warmth": 1 },
+                    { "name": "sweatpants", "materials": ["cotton"], "warmth": 1 },
+                    { "name": "jeans", "materials": ["denim"]}
+                ],
+                "one_piece": [
+                    { "name": "three piece suit", "materials": ["cotton"], "warmth": 1 }
+                ],
+                "shoes": [
+                    { "name": "hiking boots", "materials": ["leather"] },
+                    { "name": "hiking sandals with socks"},
+                    { "name": "military surplus boots", "materials": ["leather"] },
+                    { "name": "riding boots", "materials": ["leather"] }
+                ],
+                "accessories": [
+                    { "name": "fedora", "materials": ["felt"] },
+                    { "name": "top hat", "materials": ["felt"] },
+                    { "name": "bowler hat", "materials": ["felt"] },
+                    { "name": "trilby hat", "materials": ["leather", "felt"] }
+                ],
                 "colors": [],
                 "patterns": [],
                 "materials": []
