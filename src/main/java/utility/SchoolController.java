@@ -710,7 +710,9 @@ public class SchoolController implements InspectionNavigator {
         WeatherPatterns[] weatherArray = weather.determineWeatherAMPM(time.getCurrentDate());
         view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName(),
                 weatherArray[0].toString(), weatherArray[1].toString());
-        view.updateWeatherTemps(weather.getTemp("TMAX"), weather.getTemp("TMIN"));
+        // AM shows the day's low (mornings are coldest), PM the day's
+        // high -- matching the outdoor temps the HVAC recomputes use.
+        view.updateWeatherTemps(weather.getTemp("TMIN"), weather.getTemp("TMAX"));
         view.updateDayLabel(time.getDayName());
     }
 

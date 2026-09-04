@@ -1790,6 +1790,17 @@ public class StandardSchool implements SchoolPlan {
     }
 
     public Room getClassroomByStaff(Staff staff) {
+        if (staff == null) {
+            return null;
+        }
+
+        // Assignment and prior lookups cache the result, including a confirmed miss.
+        // Unassigned teachers (typically substitutes with no dedicated classroom)
+        // are listed once, then skipped so simulation ticks do not spam the log.
+        if (staff.hasResolvedAssignedClassroom()) {
+            return staff.getAssignedClassroom();
+        }
+
         Room assignedRoom = findAssignedRoom(staff, classrooms);
         if (assignedRoom == null)
             assignedRoom = findAssignedRoom(staff, scienceLabs);
@@ -1824,12 +1835,18 @@ public class StandardSchool implements SchoolPlan {
         if (assignedRoom == null)
             assignedRoom = findAssignedRoom(staff, portables);
 
+        staff.setAssignedClassroom(assignedRoom);
         if (assignedRoom != null) {
             return assignedRoom;
         }
 
-        GameLogger.logScheduling(
-                "Cant find room of " + staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName());
+        String name = staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName();
+        Object staffType = staff.teacherStatistics != null ? staff.teacherStatistics.getStaffType() : null;
+        if (staffType != null) {
+            GameLogger.logScheduling("Cant find room of " + name + " (" + staffType + ")");
+        } else {
+            GameLogger.logScheduling("Cant find room of " + name);
+        }
         return null;
     }
 

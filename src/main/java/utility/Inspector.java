@@ -309,8 +309,16 @@ public class Inspector {
                             + otherFirst + " doesn't think anything is going on).";
                 }
             } else if (outgoing == RomanticStatus.CRUSH) {
-                line = (isSecretCrush(student, other) ? "Secretly has a crush on "
-                        : "Has a crush on ") + otherName + ".";
+                StringBuilder crushLine = new StringBuilder(
+                        (isSecretCrush(student, other) ? "Secretly has a crush on "
+                                : "Has a crush on ") + otherName + ".");
+                // Jealousy: the crusher may have noticed their crush is taken
+                for (Student rival : socialLinkConnector.getKnownPartnersOf(student, other)) {
+                    crushLine.append(" Knows ").append(otherFirst).append(" is with ")
+                            .append(rival.studentName.getFullName())
+                            .append(" and is jealous.");
+                }
+                line = crushLine.toString();
             } else {
                 continue;
             }

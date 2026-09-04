@@ -4,6 +4,9 @@ import behavior.BehaviorContext;
 import entity.ActivityType;
 import entity.EntityState;
 import entity.Student;
+import utility.CrushDeveloper;
+import utility.GameRandom;
+import utility.RomanceUpdater;
 import utility.SocialLinkConnector;
 
 import java.util.ArrayList;
@@ -129,6 +132,23 @@ public class InteractionManager {
      *                         WHISPERING)
      */
     public void registerInteraction(Student initiator, Student target, ActivityType intendedActivity) {
+        registerInteraction(initiator, target, intendedActivity, null);
+    }
+
+    /**
+     * Registers a pending social interaction that is <i>about</i> a third
+     * student (e.g. BADMOUTHING a romantic rival to a crush). The subject is
+     * not a participant: they are the one being discussed, and per-activity
+     * resolution may adjust the target's opinion of them.
+     *
+     * @param initiator        the student initiating the interaction
+     * @param target           the student being interacted with
+     * @param intendedActivity the type of social activity
+     * @param subject          the third student the interaction is about, or
+     *                         null when the activity has no subject
+     */
+    public void registerInteraction(Student initiator, Student target, ActivityType intendedActivity,
+            Student subject) {
         if (initiator == null || target == null || initiator == target) {
             return;
         }
@@ -137,7 +157,8 @@ public class InteractionManager {
         int charisma = initiator.studentStatistics.getCharisma();
         int priorityScore = determination + charisma;
 
-        pendingInteractions.add(new PendingInteraction(initiator, target, intendedActivity, priorityScore));
+        pendingInteractions.add(new PendingInteraction(initiator, target, intendedActivity,
+                priorityScore, subject));
     }
 
     /**
@@ -261,8 +282,11 @@ public class InteractionManager {
 
         // Mirror the initiator's activity onto the target unless the
         // target is in a state that intrinsically can't be interrupted.
-        if (activity != null && !NON_INTERRUPTIBLE_ACTIVITIES.contains(currentActivity)) {
-            targetState.setCurrentActivity(activity);
+        // Directed activities (badmouthing, showing off) mirror as plain
+        // talking: the target is just being talked to.
+        ActivityType mirrored = mirroredActivityFor(activity);
+        if (mirrored != null && !NON_INTERRUPTIBLE_ACTIVITIES.contains(currentActivity)) {
+            targetState.setCurrentActivity(mirrored);
         }
 
         // Reset the target's decision cooldown so they stay engaged in the
@@ -278,15 +302,119 @@ public class InteractionManager {
             targetContext.setVariable("interaction_target", initiator);
         }
 
-        // Apply social score gains for the confirmed interaction.
-        // Both parties gain score toward each other (all NPC actions are positive for
-        // now).
+        // Apply the social score effects for the confirmed interaction.
+        // Most activities are mutual positives; directed activities
+        // (badmouthing, showing off) resolve with their own asymmetric rules.
         if (socialLinkConnector != null && initiator != null) {
-            double gain = getFriendshipGain(activity);
-            socialLinkConnector.modifySocialScore(initiator, target, gain);
-            socialLinkConnector.modifySocialScore(target, initiator, gain);
+            applyInteractionEffects(interaction);
         }
         return true;
+    }
+
+    /**
+     * Dispatches the confirmed interaction to its score resolution. Plain
+     * social activities bump both directions by the activity's friendship
+     * gain; the jealousy-driven activities have asymmetric outcomes.
+     *
+     * @param interaction the confirmed interaction
+     */
+    private void applyInteractionEffects(PendingInteraction interaction) {
+        Student initiator = interaction.getInitiator();
+        Student target = interaction.getTarget();
+        ActivityType activity = interaction.getIntendedActivity();
+
+        if (activity == ActivityType.BADMOUTHING) {
+            resolveBadmouthing(initiator, target, interaction.getSubject());
+            return;
+        }
+        if (activity == ActivityType.IMPRESSING) {
+            resolveImpressing(initiator, target);
+            return;
+        }
+        double gain = getFriendshipGain(activity);
+        socialLinkConnector.modifySocialScore(initiator, target, gain);
+        socialLinkConnector.modifySocialScore(target, initiator, gain);
+
+        // Being in the presence of one of the school's rare stat standouts
+        // can spark a fleeting crush in either participant (no-op unless the
+        // other party is a standout; see CrushDeveloper).
+        CrushDeveloper.maybeDevelopFleetingCrush(initiator, target, socialLinkConnector);
+        CrushDeveloper.maybeDevelopFleetingCrush(target, initiator, socialLinkConnector);
+    }
+
+    /**
+     * Resolves a badmouthing attempt: the initiator talks trash about the
+     * subject (their romantic rival) to the target (their crush).
+     *
+     * <p>A loyal target -- one whose outgoing score toward the subject is at
+     * least {@code BADMOUTH_BACKFIRE_LOYALTY_THRESHOLD} -- may snap back at
+     * the initiator instead of absorbing the dirt. Otherwise the target's
+     * opinion of the subject drops and the conspiratorial chat slightly
+     * warms the target toward the initiator.</p>
+     *
+     * @param initiator the badmouther
+     * @param target    the student being talked to
+     * @param subject   the student being trashed (null degrades to a chat)
+     */
+    private void resolveBadmouthing(Student initiator, Student target, Student subject) {
+        if (subject == null) {
+            // No third party to trash: degrade to a generic chat.
+            socialLinkConnector.modifySocialScore(initiator, target, SOCIAL_LINK_GAIN_SOCIALIZING);
+            socialLinkConnector.modifySocialScore(target, initiator, SOCIAL_LINK_GAIN_SOCIALIZING);
+            return;
+        }
+        boolean loyal = socialLinkConnector.getSocialScore(target, subject)
+                >= BADMOUTH_BACKFIRE_LOYALTY_THRESHOLD;
+        if (loyal && GameRandom.nextDouble() < BADMOUTH_BACKFIRE_CHANCE) {
+            socialLinkConnector.modifySocialScore(target, initiator, -BADMOUTH_BACKFIRE_PENALTY);
+            RomanceUpdater.recordExternalEvent(name(target) + " defended " + name(subject)
+                    + " when " + name(initiator) + " talked trash.");
+            return;
+        }
+        socialLinkConnector.modifySocialScore(target, subject, -SOCIAL_LINK_DRAIN_BADMOUTH);
+        socialLinkConnector.modifySocialScore(initiator, target, SOCIAL_LINK_GAIN_BADMOUTH);
+        RomanceUpdater.recordExternalEvent(name(initiator) + " talked trash about "
+                + name(subject) + " to " + name(target) + ".");
+    }
+
+    /**
+     * Resolves an attention-seeking attempt: the initiator shows off for the
+     * target (their crush). The warmth the target gains scales with the
+     * initiator's charisma; a low-charisma attempt can flop and embarrass
+     * the initiator instead.
+     *
+     * @param initiator the student showing off
+     * @param target    the student whose attention is sought
+     */
+    private void resolveImpressing(Student initiator, Student target) {
+        socialLinkConnector.modifySocialScore(initiator, target, SOCIAL_LINK_GAIN_IMPRESS);
+
+        int charisma = initiator.studentStatistics.getCharisma();
+        if (charisma < IMPRESS_FLOP_CHARISMA_THRESHOLD
+                && GameRandom.nextDouble() < IMPRESS_FLOP_CHANCE) {
+            socialLinkConnector.modifySocialScore(target, initiator, -IMPRESS_FLOP_PENALTY);
+            RomanceUpdater.recordExternalEvent(name(initiator) + " tried to impress "
+                    + name(target) + " and flopped.");
+            return;
+        }
+        double gain = IMPRESS_TARGET_GAIN_BASE + charisma / IMPRESS_CHARISMA_DIVISOR;
+        socialLinkConnector.modifySocialScore(target, initiator, gain);
+    }
+
+    /**
+     * The activity mirrored onto a confirmed target. Directed activities
+     * (badmouthing, showing off) belong to the initiator only; the target
+     * simply experiences a conversation.
+     */
+    private static ActivityType mirroredActivityFor(ActivityType activity) {
+        if (activity == ActivityType.BADMOUTHING || activity == ActivityType.IMPRESSING) {
+            return ActivityType.TALKING;
+        }
+        return activity;
+    }
+
+    private static String name(Student student) {
+        return student.studentName.getFullName();
     }
 
     /**
@@ -376,6 +504,7 @@ public class InteractionManager {
         private final Student target;
         private final ActivityType intendedActivity;
         private final int priorityScore;
+        private final Student subject;
 
         /**
          * Creates a new pending interaction.
@@ -384,13 +513,16 @@ public class InteractionManager {
          * @param target           the student being interacted with
          * @param intendedActivity the type of social activity
          * @param priorityScore    the initiator's combined DET + CHR
+         * @param subject          the third student the interaction is about
+         *                         (e.g. the rival being badmouthed), or null
          */
         public PendingInteraction(Student initiator, Student target,
-                ActivityType intendedActivity, int priorityScore) {
+                ActivityType intendedActivity, int priorityScore, Student subject) {
             this.initiator = initiator;
             this.target = target;
             this.intendedActivity = intendedActivity;
             this.priorityScore = priorityScore;
+            this.subject = subject;
         }
 
         public Student getInitiator() {
@@ -407,6 +539,10 @@ public class InteractionManager {
 
         public int getPriorityScore() {
             return priorityScore;
+        }
+
+        public Student getSubject() {
+            return subject;
         }
 
         @Override

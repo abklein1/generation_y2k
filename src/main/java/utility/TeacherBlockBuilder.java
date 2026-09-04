@@ -300,6 +300,12 @@ public class TeacherBlockBuilder {
             if (type == null || !isTeachingStaffType(type))
                 continue;
 
+            // Substitutes are a floating reserve: they get no dedicated classroom.
+            // They receive a room only when covering (reassignSubToRoom) or when
+            // repurposed to a real teaching type by recovery/reallocation.
+            if (type == StaffType.SUB)
+                continue;
+
             Room existingRoom = getTeacherRoom(staff, standardSchool);
             if (existingRoom != null)
                 continue;
@@ -480,6 +486,10 @@ public class TeacherBlockBuilder {
                     Room room = getTeacherRoom(staff, standardSchool);
                     if (room != null) {
                         teachersByType.computeIfAbsent(type, k -> new ArrayList<>()).add(staff);
+                    } else if (type == StaffType.SUB) {
+                        // Substitutes intentionally have no dedicated room; they are
+                        // not scheduled for demand-driven blocks.
+                        continue;
                     } else {
                         teachersWithoutRooms++;
                         GameLogger.logScheduling("  WARNING: " + type + " teacher " + staff.teacherName.getFirstName() +
@@ -560,7 +570,16 @@ public class TeacherBlockBuilder {
             int[][] classSlotUsage = new int[4][2];
             String[] semesters = { "Fall", "Spring" };
 
-            while (sectionsCreated < sectionsRequired) {
+            // sectionsRequired is derived from the optimal class size, but actual
+            // rooms are often smaller than optimal. Track the real capacity placed
+            // and keep adding sections until it covers the student demand, so we
+            // don't stop short while teachers still have free block slots.
+            int demandForClass = demandTracker.containsKey(className)
+                    ? demandTracker.get(className).totalDemand()
+                    : 0;
+            int capacityPlaced = 0;
+
+            while (sectionsCreated < sectionsRequired || capacityPlaced < demandForClass) {
                 // Order all 8 (period, semester) slots so we fill the slot this class
                 // uses least first, breaking ties by the globally least-used slot. This
                 // distributes every class across all 4 periods and both semesters
@@ -605,6 +624,7 @@ public class TeacherBlockBuilder {
                     block.setRoom(teacherRoom);
                     block.addClassPopulationBlock(teacherRoom.getStudentCapacity());
                     availableTeacher.teacherStatistics.addTeacherSchedule(block);
+                    capacityPlaced += teacherRoom.getStudentCapacity();
                     classSlots[slotIdx]++;
                     classSlotUsage[slotIdx][semIdx]++;
                     globalSlotUsage[slotIdx][semIdx]++;

@@ -942,7 +942,15 @@ public class SimulationEngine {
             return;
         }
 
-        // Get assigned room from school
+        // Teachers stay in their assigned room; skip if already placed, or if a
+        // prior lookup confirmed they have no classroom (substitutes, etc.).
+        if (state.getExpectedRoom() != null) {
+            return;
+        }
+        if (staffMember.hasResolvedAssignedClassroom() && staffMember.getAssignedClassroom() == null) {
+            return;
+        }
+
         if (school != null) {
             Room assignedRoom = school.getClassroomByStaff(staffMember);
             if (assignedRoom != null) {

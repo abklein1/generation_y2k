@@ -578,10 +578,20 @@ public class CurriculumRequirementsCalculator {
             return StaffType.PHYSICAL_ED;
         }
 
+        // Vocational (checked before Visual Arts so e.g. "Culinary Arts" is not
+        // captured by the broad "art" keyword)
+        if (lowerName.contains("woodworking") || lowerName.contains("auto") ||
+                lowerName.contains("shop") || lowerName.contains("culinary") ||
+                lowerName.contains("welding") || lowerName.contains("construction") ||
+                lowerName.contains("hvac") || lowerName.contains("electrical")) {
+            return StaffType.VOCATIONAL;
+        }
+
         // Visual Arts
         if (lowerName.contains("art") || lowerName.contains("drawing") ||
                 lowerName.contains("painting") || lowerName.contains("sculpture") ||
-                lowerName.contains("ceramics") || lowerName.contains("photography")) {
+                lowerName.contains("ceramics") || lowerName.contains("photography") ||
+                lowerName.contains("printmaking")) {
             return StaffType.VISUAL_ARTS;
         }
 
@@ -598,14 +608,6 @@ public class CurriculumRequirementsCalculator {
                 lowerName.contains("coding") || lowerName.contains("technology") ||
                 lowerName.contains("keyboarding") || lowerName.contains("digital")) {
             return StaffType.COMP_SCI;
-        }
-
-        // Vocational
-        if (lowerName.contains("woodworking") || lowerName.contains("auto") ||
-                lowerName.contains("shop") || lowerName.contains("culinary") ||
-                lowerName.contains("welding") || lowerName.contains("construction") ||
-                lowerName.contains("hvac") || lowerName.contains("electrical")) {
-            return StaffType.VOCATIONAL;
         }
 
         // Business

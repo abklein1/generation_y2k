@@ -71,6 +71,10 @@ public class TeacherBlock implements Serializable {
             return;
         }
 
+        if (classPopulation.contains(student)) {
+            return;
+        }
+
         if (classPopulation.size() >= capacity) {
             GameLogger.logScheduling("Block is full!");
             return;

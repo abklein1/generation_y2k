@@ -294,9 +294,14 @@ class RomanceAssignerTest {
                 for (Student other : connector.getRomanticInterests(student)) {
                     if (connector.getRomanticStatus(student, other) == RomanticStatus.CRUSH) {
                         partneredWithSideCrush++;
+                        // The target may independently hold a crush back (both
+                        // picks are one-directional), but generation must never
+                        // hand a side-crush target a fling/steady perception.
                         RomanticStatus partnerView = connector.getRomanticStatus(other, student);
-                        assertEquals(RomanticStatus.NONE, partnerView,
-                                "Partnered side-crushes should be one-sided at generation");
+                        assertTrue(partnerView == RomanticStatus.NONE
+                                        || partnerView == RomanticStatus.CRUSH,
+                                "Side-crush targets must not perceive a partnership; saw "
+                                        + partnerView);
                     }
                 }
             }
@@ -304,6 +309,37 @@ class RomanceAssignerTest {
         assertTrue(partneredWithSideCrush > 0,
                 "Expected at least one partnered side-crush across seeds; found "
                         + partneredWithSideCrush);
+    }
+
+    @Test
+    @DisplayName("Wandering-heart pass should produce students with multiple simultaneous crushes, capped")
+    void testStudentsCanHoldMultipleCrushes() {
+        int multiCrushStudents = 0;
+        long[] seeds = {13579L, 24680L, 97531L, 86420L, 112233L};
+        for (long seed : seeds) {
+            GameRandom.reset();
+            GameRandom.initialize(seed);
+            HashMap<Integer, Student> students = createPeerMap(100);
+            StandardSchool school = gradeSchool(students);
+            SocialLinkConnector connector = new SocialLinkConnector(students, school);
+            OrientationAssigner.assignOrientations(students);
+            RomanceAssigner.assignRomanticRelationships(students, connector);
+
+            for (Student student : students.values()) {
+                int crushCount = RomanceAssigner.countOutgoingCrushes(student, connector);
+                if (crushCount >= 2) {
+                    multiCrushStudents++;
+                }
+                // Hidden closeted crushes may add one on top of the
+                // wandering-heart cap, so allow a single overflow.
+                assertTrue(crushCount
+                                <= constants.SimConstants.ROMANCE_MAX_SIMULTANEOUS_CRUSHES + 1,
+                        "Crush count should respect the cap; saw " + crushCount);
+            }
+        }
+        assertTrue(multiCrushStudents > 0,
+                "Expected at least one student with 2+ crushes across seeds; found "
+                        + multiCrushStudents);
     }
 
     @Test

@@ -925,15 +925,22 @@ public final class SimConstants {
     public static final int HVAC_HEAT_SETPOINT_F = 70;
     public static final int HVAC_COOL_SETPOINT_F = 74;
     // Fraction of the setpoint-to-outdoor gap lost per hop away from
-    // the nearest utility room (a room 3 hops out is ~64% conditioned).
-    public static final double HVAC_DECAY_PER_HOP = 0.12;
+    // the nearest utility room (a room 3 hops out is ~82% conditioned).
+    public static final double HVAC_DECAY_PER_HOP = 0.06;
+    // Ceiling on how much of the setpoint-to-outdoor gap a serviced
+    // room can lose, no matter how many hops out it is. The building
+    // envelope itself holds the rest: even the farthest serviced room
+    // stays at least 70% conditioned instead of drifting all the way
+    // to the outdoor temperature.
+    public static final double HVAC_MAX_OUTDOOR_BLEND = 0.3;
     // Chance per edge that conditioned air spreads cleanly to the next
     // room on each recompute; a failed roll costs one extra hop.
     public static final double HVAC_SPREAD_CHANCE = 0.9;
-    // Portables and rooms cut off from the central system have limited
-    // insulation: they only close this fraction of the gap between the
-    // outdoor temperature and the comfort setpoint.
-    public static final double HVAC_PORTABLE_INSULATION = 0.2;
+    // Portables and rooms cut off from the central system run their own
+    // weak wall units and insulation: they close this fraction of the
+    // gap between the outdoor temperature and the comfort setpoint
+    // (matching the worst-case serviced room, i.e. 1 - max blend).
+    public static final double HVAC_PORTABLE_INSULATION = 0.7;
     // Heat rises: degrees F added per floor above the first.
     public static final int HVAC_UPPER_FLOOR_HEAT_F = 3;
     // Hour (24h clock) when room temperatures switch from tracking the
@@ -1070,6 +1077,18 @@ public final class SimConstants {
     // unrequited crush on someone else. Small on purpose: most partnered
     // students are exclusive at generation, but wandering attention happens.
     public static final double ROMANCE_PARTNERED_CRUSH_CHANCE = 0.08;
+    // Chance a student whose romantic life is crush-only picks up an
+    // additional crush. Deliberately much higher than the partnered rate:
+    // adolescent crushes come in bunches, and nothing anchors an
+    // uncommitted daydreamer to a single target.
+    public static final double ROMANCE_MULTI_CRUSH_CHANCE = 0.22;
+    // Every extra crush a student gains multiplies their next extra-crush
+    // roll by this decay, so double crushes are uncommon and triple crushes
+    // are rare.
+    public static final double ROMANCE_EXTRA_CRUSH_CHANCE_DECAY = 0.45;
+    // Hard cap on simultaneous outgoing crushes assigned by the
+    // wandering-heart pass (hidden closeted crushes are exempt).
+    public static final int ROMANCE_MAX_SIMULTANEOUS_CRUSHES = 3;
     // Minimum outgoing social score for a friendship to be promoted
     public static final double ROMANCE_MUTUAL_MIN_SCORE = SOCIAL_LINK_TIER_FRIEND_THRESHOLD;
     public static final double ROMANCE_CRUSH_MIN_SCORE = SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD;
@@ -1141,6 +1160,33 @@ public final class SimConstants {
     // students are never acted on. Partnered holders only escalate a side
     // crush when it is mutual (see partnered-escalation constants below).
     public static final double ROMANCE_PULSE_CRUSH_ACT_CHANCE = 0.04;
+    // NEW CRUSH DEVELOPMENT (runtime, after generation)
+    // Two paths create brand-new crushes during the simulation:
+    //
+    // 1) Friendship-grown: each period pulse, a student may realize they
+    //    have feelings for an existing warm friend (outgoing score at
+    //    friend tier or better, attraction-gated, weighted toward the
+    //    warmest links). Per-pulse chance is per student; ~7 pulses/day
+    //    puts the daily chance around 7x this value.
+    public static final double ROMANCE_PULSE_FRIENDSHIP_CRUSH_CHANCE = 0.002;
+    // 2) Fleeting: interacting with one of the school's rare stat
+    //    standouts (intelligence, charisma, or strength well above the
+    //    school mean) can spark a shallow crush on the spot. The crush
+    //    link is seeded barely above the crush floor, so unless it is
+    //    reinforced it decays and fades within days.
+    public static final double ROMANCE_FLEETING_CRUSH_CHANCE = 0.01;
+    // Random extra above ROMANCE_CRUSH_MIN_SCORE for a fleeting crush's
+    // link. Deliberately small (vs ROMANCE_CRUSH_NEW_LINK_EXTRA_MAX = 20)
+    // so fleeting crushes are weak and short-lived by construction.
+    public static final double ROMANCE_FLEETING_CRUSH_EXTRA_MAX = 6.0;
+    // A student is a stat standout when intelligence, charisma, or
+    // strength sits at least this many standard deviations above the
+    // school-wide mean (~2.3% per stat on a normal curve). The standout
+    // pool is additionally hard-capped at ROMANCE_STANDOUT_MAX_SHARE of
+    // the student body so overlapping tails can never push the "truly
+    // dazzling" group past ~5% and have everyone crushing on everyone.
+    public static final double ROMANCE_STANDOUT_SD_MULTIPLIER = 2.0;
+    public static final double ROMANCE_STANDOUT_MAX_SHARE = 0.05;
     // Outgoing score penalty the rejected party applies toward whoever
     // turned them down
     public static final double ROMANCE_REJECTION_SCORE_PENALTY = 10.0;
@@ -1184,6 +1230,56 @@ public final class SimConstants {
     public static final double ROMANCE_STEADY_UNHEALTHY_BREAKUP_MULTIPLIER = 8.0;
     // Mutual outgoing-score penalty applied to both ex-partners on a breakup
     public static final double ROMANCE_BREAKUP_SCORE_PENALTY = 15.0;
+
+    // JEALOUSY / RIVAL SECONDARY EFFECTS
+    // A student holding an unrequited crush can notice their crush is in an
+    // observable couple (both directions fling-or-steady). Noticing is rolled
+    // once per pulse per (crusher, couple):
+    //   chance = BASE * visibility * (0.5 + perception / 100), capped at MAX.
+    // Steady couples are fully visible (1.0); fling-level couples are
+    // sneakier and use the reduced visibility factor below.
+    public static final double ROMANCE_NOTICE_BASE_CHANCE = 0.20;
+    public static final double ROMANCE_NOTICE_FLING_VISIBILITY = 0.5;
+    public static final double ROMANCE_NOTICE_CHANCE_MAX = 0.60;
+    // Immediate outgoing-score hit toward the rival when the couple is first
+    // noticed, then a smaller per-pulse drip while the crush stays active.
+    // The drip scales with crush warmth (see RomanceUpdater.dripJealousy):
+    // stronger crushes breed stronger resentment of the rival.
+    public static final double ROMANCE_JEALOUSY_DISCOVERY_STING = 8.0;
+    public static final double ROMANCE_JEALOUSY_DRIP = 0.75;
+    // Per-decision chance gate for acting on jealousy in the behavior tree,
+    // scaled by initiative: actChance = ACT_CHANCE * (0.5 + initiative/100).
+    // Driven students scheme constantly; passive students mostly stew.
+    public static final double ROMANCE_JEALOUSY_ACT_CHANCE = 0.35;
+    // Sabotage disposition: a jealous student whose (drainable) empathy and
+    // responsibility are both below these caps badmouths the rival instead
+    // of vying for the crush's attention. Because the stats drain during the
+    // day, a worn-down student can turn mean by last period.
+    public static final int JEALOUSY_SABOTAGE_EMPATHY_MAX = 40;
+    public static final int JEALOUSY_SABOTAGE_RESPONSIBILITY_MAX = 45;
+    // Badmouthing the rival to the crush: on success the crush's outgoing
+    // score toward their partner drops by the drain and the badmouther gets
+    // a small conspiratorial gain toward the crush. A loyal crush (score
+    // toward partner >= threshold) may snap back at the badmouther instead.
+    public static final double SOCIAL_LINK_DRAIN_BADMOUTH = 4.0;
+    public static final double SOCIAL_LINK_GAIN_BADMOUTH = 1.0;
+    public static final double BADMOUTH_BACKFIRE_LOYALTY_THRESHOLD = 60.0;
+    public static final double BADMOUTH_BACKFIRE_CHANCE = 0.5;
+    public static final double BADMOUTH_BACKFIRE_PENALTY = 6.0;
+    // Vying for the crush's attention: the initiator gains the usual
+    // talking-level score toward the crush, and the crush warms by
+    // BASE + charisma / DIVISOR -- unless a low-charisma attempt flops,
+    // which dings the crush's view of the initiator instead.
+    public static final double SOCIAL_LINK_GAIN_IMPRESS = 3.0;
+    public static final double IMPRESS_TARGET_GAIN_BASE = 1.0;
+    public static final double IMPRESS_CHARISMA_DIVISOR = 25.0;
+    public static final int IMPRESS_FLOP_CHARISMA_THRESHOLD = 35;
+    public static final double IMPRESS_FLOP_CHANCE = 0.15;
+    public static final double IMPRESS_FLOP_PENALTY = 2.0;
+    // Secondary stat drains for the jealousy-driven social actions
+    public static final int STAT_DRAIN_BADMOUTH_EMPATHY = 2;
+    public static final int STAT_DRAIN_BADMOUTH_RESPONSIBILITY = 1;
+    public static final int STAT_DRAIN_IMPRESS_EMPATHY = 1;
 
     // CELL PHONE DECORATION RATES
     // Per-slot probability that a student whose clique declares decoration

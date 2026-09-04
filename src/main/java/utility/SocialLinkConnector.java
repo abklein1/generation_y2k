@@ -52,6 +52,13 @@ public class SocialLinkConnector {
     // one-directional.
     private final HashMap<String, RomanticStatus> romanceRecords = new HashMap<>();
 
+    // Couple-knowledge records: keyed by "observerId>idA:idB" (directed
+    // observer over an unordered couple pair). Each entry means the observer
+    // knows students A and B are an item. Stored per observer so a future
+    // gossip system can copy records between students; today they are only
+    // created by the perception-gated notice pass in RomanceUpdater.
+    private final HashSet<String> coupleKnowledgeRecords = new HashSet<>();
+
     // Template actions for generating initial catalyst text (pre-existing best
     // friendships)
     private static final String[] CATALYST_ACTIONS = {
@@ -711,6 +718,117 @@ public class SocialLinkConnector {
         return new HashMap<>(romanceRecords);
     }
 
+    // ---- Couple Knowledge (who knows who's dating) ----
+
+    /**
+     * Whether the pair reads as a couple to observant peers: both directions
+     * report fling-or-stronger. One-sided flings and crushes are invisible
+     * from the outside -- nothing couple-like happens in public.
+     *
+     * @param a one student
+     * @param b the other student
+     * @return true when both perceptions are FLING or STEADY
+     */
+    public boolean isObservableCouple(Student a, Student b) {
+        RomanticStatus ab = getRomanticStatus(a, b);
+        RomanticStatus ba = getRomanticStatus(b, a);
+        return (ab == RomanticStatus.FLING || ab == RomanticStatus.STEADY)
+                && (ba == RomanticStatus.FLING || ba == RomanticStatus.STEADY);
+    }
+
+    /**
+     * Key for one observer's knowledge of an unordered couple:
+     * "observerId&gt;idA:idB" (the pair portion reuses the catalyst pair key,
+     * so the pair's digits-and-colon format can never collide with the
+     * observer prefix).
+     */
+    private String makeKnowledgeKey(Student observer, Student a, Student b) {
+        return getStableStudentId(observer) + ">" + makePairKey(a, b);
+    }
+
+    /**
+     * Records that the observer now knows students {@code a} and {@code b}
+     * are a couple.
+     *
+     * @param observer the student who learned about the couple
+     * @param a        one member of the couple
+     * @param b        the other member of the couple
+     */
+    public void recordCoupleKnowledge(Student observer, Student a, Student b) {
+        if (observer == null || a == null || b == null) {
+            return;
+        }
+        coupleKnowledgeRecords.add(makeKnowledgeKey(observer, a, b));
+    }
+
+    /**
+     * Whether the observer knows students {@code a} and {@code b} are a
+     * couple.
+     *
+     * @param observer the potential knower
+     * @param a        one member of the couple
+     * @param b        the other member of the couple
+     * @return true if the observer holds a knowledge record for the pair
+     */
+    public boolean knowsAboutCouple(Student observer, Student a, Student b) {
+        if (observer == null || a == null || b == null) {
+            return false;
+        }
+        return coupleKnowledgeRecords.contains(makeKnowledgeKey(observer, a, b));
+    }
+
+    /**
+     * Purges every observer's knowledge of the (a, b) couple. Called when
+     * the couple dissolves so stale jealousy does not linger; if the pair
+     * gets back together, peers must notice all over again.
+     *
+     * @param a one member of the former couple
+     * @param b the other member of the former couple
+     */
+    public void clearCoupleKnowledge(Student a, Student b) {
+        if (a == null || b == null) {
+            return;
+        }
+        String suffix = ">" + makePairKey(a, b);
+        coupleKnowledgeRecords.removeIf(key -> key.endsWith(suffix));
+    }
+
+    /**
+     * Lists the partners of {@code crush} that the observer both can see
+     * (still an observable couple) and actually knows about. The jealousy
+     * behavior branch uses this to pick a rival.
+     *
+     * @param observer the jealous student
+     * @param crush    the student whose partners are being looked up
+     * @return known, still-observable partners (never null)
+     */
+    public List<Student> getKnownPartnersOf(Student observer, Student crush) {
+        List<Student> result = new ArrayList<>();
+        if (observer == null || crush == null) {
+            return result;
+        }
+        for (Student partner : getRomanticInterests(crush)) {
+            if (partner.equals(observer)) {
+                continue;
+            }
+            if (isObservableCouple(crush, partner)
+                    && knowsAboutCouple(observer, crush, partner)) {
+                result.add(partner);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Gets all couple-knowledge records ("observerId&gt;idA:idB"). Useful for
+     * snapshots, tests, and inspection.
+     *
+     * @return copy of the knowledge records
+     */
+    public HashSet<String> getAllCoupleKnowledge() {
+        return new HashSet<>(coupleKnowledgeRecords);
+    }
+
     /**
      * Computes each student's reputation total: the sum of every other
      * student's directed score toward them. This is the popularity metric
@@ -745,6 +863,7 @@ public class SocialLinkConnector {
             romanceByName.put(entry.getKey(), entry.getValue().name());
         }
         snapshot.putRomance(romanceByName);
+        snapshot.putCoupleKnowledge(coupleKnowledgeRecords);
         return snapshot;
     }
 
@@ -754,6 +873,7 @@ public class SocialLinkConnector {
         socialGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
         catalystRecords.clear();
         romanceRecords.clear();
+        coupleKnowledgeRecords.clear();
         vertexToCellMap.clear();
 
         if (studentHashMap != null) {
@@ -789,6 +909,7 @@ public class SocialLinkConnector {
                 // Unknown status name from a newer/older save: skip the record
             }
         }
+        coupleKnowledgeRecords.addAll(snapshot.getCoupleKnowledge());
 
         // Re-align every student's friendsInSchool cache with the restored
         // graph so the compatibility list and edge weights cannot drift.

@@ -138,10 +138,16 @@ public abstract class Room implements Serializable {
 
     public void setAssignedStaff(Staff staff) {
         staffAssign.add(staff);
+        if (staff != null) {
+            staff.setAssignedClassroom(this);
+        }
     }
 
     public void removeAssignedStaff(Staff staff) {
         staffAssign.remove(staff);
+        if (staff != null) {
+            staff.clearAssignedClassroomResolution();
+        }
     }
     // TODO: add logic for different rooms since this is now a base class and remove magic numbers
     public void setSeatArrangement() {
@@ -547,6 +553,9 @@ public abstract class Room implements Serializable {
         }
         
         isDivided = false;
+        if (secondTeacher != null) {
+            secondTeacher.clearAssignedClassroomResolution();
+        }
         secondTeacher = null;
         dividedPartner = null;
         GameLogger.logScheduling(roomName + " undivided - capacity restored to " + studentCap);
@@ -583,6 +592,9 @@ public abstract class Room implements Serializable {
             return false;
         }
         this.secondTeacher = teacher;
+        if (teacher != null) {
+            teacher.setAssignedClassroom(this);
+        }
         return true;
     }
 

@@ -133,6 +133,8 @@ public class StudentBehaviorTreeBuilder {
                 break;
                 
             case SOCIAL:
+                // Bold enough to pursue romantic drama even in class
+                activitySelector.addChild(buildJealousyBranch());
                 activitySelector.addChild(buildSocialSequence());
                 activitySelector.addChild(buildDistractedSequence());
                 activitySelector.addChild(buildEngagedSequence(student));
@@ -145,6 +147,8 @@ public class StudentBehaviorTreeBuilder {
                 break;
                 
             case TROUBLEMAKER:
+                // Bold enough to pursue romantic drama even in class
+                activitySelector.addChild(buildJealousyBranch());
                 activitySelector.addChild(buildDistractedSequence());
                 activitySelector.addChild(buildSocialSequence());
                 activitySelector.addChild(buildBoredSequence());
@@ -181,6 +185,35 @@ public class StudentBehaviorTreeBuilder {
         academicPressure.addChild(academicChoice);
 
         return academicPressure;
+    }
+
+    /**
+     * Builds the jealous-drama branch: a student who knows their crush is
+     * taken (see the couple-knowledge records on the social link connector)
+     * and has the crush in reach picks a response based on their current
+     * stats. Low empathy + responsibility means sabotage -- badmouthing the
+     * rival to the crush; everyone else tries to outshine the rival by
+     * vying for the crush's attention instead.
+     *
+     * <p>Each call builds fresh node instances so the branch can be wired
+     * into multiple spots of the same tree (in-class and out-of-class)
+     * without sharing node state.</p>
+     */
+    private static BehaviorNode buildJealousyBranch() {
+        Sequence jealousy = new Sequence("JealousDrama");
+        jealousy.addChild(new HasJealousRivalCondition());
+
+        Selector response = new Selector("JealousResponse");
+
+        Sequence sabotage = new Sequence("SabotageRival");
+        sabotage.addChild(new IsSabotageInclinedCondition());
+        sabotage.addChild(new BadmouthRivalActionNode());
+        response.addChild(sabotage);
+
+        response.addChild(new GetCrushAttentionActionNode());
+
+        jealousy.addChild(response);
+        return jealousy;
     }
     
     /**
@@ -257,8 +290,9 @@ public class StudentBehaviorTreeBuilder {
     /**
      * Builds the out-of-class behavior selector.
      * Covers hallways, lunchrooms, before/after school, and transitions.
-     * Students can socialize (if friends/peers are available), hang out
-     * at their locker, daydream, or just stand around.
+     * Students can act on romantic jealousy (if their crush is in reach and
+     * known to be taken), socialize (if friends/peers are available), hang
+     * out at their locker, daydream, or just stand around.
      */
     private static BehaviorNode buildOutOfClassBehavior(PersonalityType type) {
         Sequence outOfClass = new Sequence("OutOfClassBehavior");
@@ -268,7 +302,12 @@ public class StudentBehaviorTreeBuilder {
 
         Selector activities = new Selector("OutOfClassActivities");
 
-        // Option 1: Socialize (requires a friend or peer nearby)
+        // Option 1: Jealous drama (requires a crush in reach whose partner
+        // the student knows about; hallways and lunchrooms are where the
+        // badmouthing and showing off mostly happen)
+        activities.addChild(buildJealousyBranch());
+
+        // Option 2: Socialize (requires a friend or peer nearby)
         Sequence socialize = new Sequence("OutOfClassSocialize");
         socialize.addChild(new HasFriendNearbyCondition());
         RandomSelector socialChoice = new RandomSelector("OutOfClassSocialChoice");
@@ -277,13 +316,13 @@ public class StudentBehaviorTreeBuilder {
         socialize.addChild(socialChoice);
         activities.addChild(socialize);
 
-        // Option 2: Hang out at locker (personality-influenced)
+        // Option 3: Hang out at locker (personality-influenced)
         activities.addChild(new HangOutAtLockerActionNode());
 
-        // Option 3: Daydream / zone out (daydreamers and troublemakers prefer this)
+        // Option 4: Daydream / zone out (daydreamers and troublemakers prefer this)
         activities.addChild(new OutOfClassDaydreamActionNode());
 
-        // Option 4: Just stand around (always succeeds -- soft fallback)
+        // Option 5: Just stand around (always succeeds -- soft fallback)
         activities.addChild(new StandAroundActionNode());
 
         outOfClass.addChild(activities);
@@ -958,7 +997,7 @@ public class StudentBehaviorTreeBuilder {
      * @param state   the initiator's entity state (must be non-null)
      * @return a freshly-allocated, mutable list of candidate peers
      */
-    static java.util.List<Student> collectCoLocatedPeers(Student student,
+    public static java.util.List<Student> collectCoLocatedPeers(Student student,
                                                           entity.EntityState state) {
         java.util.List<Student> candidates = new ArrayList<>();
         if (student == null || state == null) {

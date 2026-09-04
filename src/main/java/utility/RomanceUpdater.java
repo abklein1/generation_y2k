@@ -12,7 +12,12 @@ import java.util.Set;
 import static constants.SimConstants.ROMANCE_BREAKUP_SCORE_PENALTY;
 import static constants.SimConstants.ROMANCE_CRUSH_MIN_SCORE;
 import static constants.SimConstants.ROMANCE_FLING_OFFICIAL_MIN_SCORE;
+import static constants.SimConstants.ROMANCE_JEALOUSY_DISCOVERY_STING;
+import static constants.SimConstants.ROMANCE_JEALOUSY_DRIP;
 import static constants.SimConstants.ROMANCE_MUTUAL_MIN_SCORE;
+import static constants.SimConstants.ROMANCE_NOTICE_BASE_CHANCE;
+import static constants.SimConstants.ROMANCE_NOTICE_CHANCE_MAX;
+import static constants.SimConstants.ROMANCE_NOTICE_FLING_VISIBILITY;
 import static constants.SimConstants.ROMANCE_PARTNERED_ESCALATE_CHANCE_MAX;
 import static constants.SimConstants.ROMANCE_PARTNERED_ESCALATE_CHANCE_MIN;
 import static constants.SimConstants.ROMANCE_PULSE_ASYM_BREAKUP_CHANCE;
@@ -34,8 +39,10 @@ import static constants.SimConstants.ROMANCE_STEADY_UNHEALTHY_BREAKUP_MULTIPLIER
  * <ul>
  * <li>{@link #periodPulse}: rolled at every period transition (~7 per school
  * day), so escalations and breakups land throughout the day rather than only
- * at midnight. Crushes get acted on (or shot down), mutual hookups can become
- * official, one-sided situationships resolve, and couples break up.</li>
+ * at midnight. New crushes can grow out of warm friendships (via
+ * {@link CrushDeveloper}), crushes get acted on (or shot down), mutual
+ * hookups can become official, one-sided situationships resolve, and couples
+ * break up.</li>
  * <li>{@link #endOfDayMaintenance}: deterministic housekeeping run after
  * daily score decay. Statuses whose underlying friendship scores have
  * decayed below their entry thresholds quietly dissolve (crushes fade,
@@ -71,7 +78,15 @@ public final class RomanceUpdater {
      */
     public static boolean periodPulse(HashMap<Integer, Student> students,
             SocialLinkConnector connector) {
-        return forEachPair(students, connector, RomanceUpdater::pulsePair);
+        // Keep the stat-standout registry current so fleeting-crush rolls in
+        // the InteractionManager (which fire between pulses) see fresh data.
+        if (students != null) {
+            CrushDeveloper.refreshStandouts(students.values());
+        }
+        boolean changed = CrushDeveloper.pulseFriendshipCrushes(students, connector);
+        changed |= noticeAndEnvyPass(students, connector);
+        changed |= forEachPair(students, connector, RomanceUpdater::pulsePair);
+        return changed;
     }
 
     /**
@@ -97,6 +112,93 @@ public final class RomanceUpdater {
         List<String> drained = new ArrayList<>(DAYS_EVENTS);
         DAYS_EVENTS.clear();
         return drained;
+    }
+
+    /**
+     * Records a romance-adjacent event raised outside this class (e.g. the
+     * InteractionManager resolving a badmouthing attempt) so it lands in the
+     * same daily digest and social-link log as native romance events.
+     *
+     * @param event human-readable event text
+     */
+    public static void recordExternalEvent(String event) {
+        recordEvent(event);
+    }
+
+    // ---- Jealousy: couple discovery and envy toward the rival ----
+
+    /**
+     * Perception-gated discovery of couples plus the passive jealousy that
+     * follows. For every non-hidden crush whose target is in an observable
+     * couple with someone else, the crush holder either rolls to notice the
+     * couple (recording knowledge, taking an immediate dislike to the rival)
+     * or -- once they know -- quietly resents the rival a little more each
+     * pulse. Long unrequited crushes therefore grind the holder's opinion of
+     * the rival toward dislike/enemy territory on their own.
+     *
+     * @param students  the student population
+     * @param connector the social link connector holding graph and romance data
+     * @return true if any couple was newly discovered
+     */
+    private static boolean noticeAndEnvyPass(HashMap<Integer, Student> students,
+            SocialLinkConnector connector) {
+        if (students == null || students.isEmpty() || connector == null) {
+            return false;
+        }
+        boolean changed = false;
+        for (Student holder : new ArrayList<>(students.values())) {
+            for (Student crush : connector.getRomanticInterests(holder)) {
+                if (connector.getRomanticStatus(holder, crush) != RomanticStatus.CRUSH
+                        || isSecretCrush(holder, crush)) {
+                    continue;
+                }
+                for (Student rival : connector.getRomanticInterests(crush)) {
+                    if (rival.equals(holder) || !connector.isObservableCouple(crush, rival)) {
+                        continue;
+                    }
+                    if (connector.knowsAboutCouple(holder, crush, rival)) {
+                        dripJealousy(holder, crush, rival, connector);
+                    } else if (GameRandom.nextDouble() < noticeChance(holder, crush, rival, connector)) {
+                        connector.recordCoupleKnowledge(holder, crush, rival);
+                        connector.modifySocialScore(holder, rival,
+                                -ROMANCE_JEALOUSY_DISCOVERY_STING);
+                        recordEvent(name(holder) + " noticed " + name(crush) + " is with "
+                                + name(rival) + " and felt a pang of jealousy.");
+                        changed = true;
+                    }
+                }
+            }
+        }
+        return changed;
+    }
+
+    /**
+     * Chance per pulse that the holder notices the (crush, rival) couple:
+     * base chance scaled by how visible the couple is (steady pairs act
+     * couple-y in public, fling-level pairs are sneakier) and by the
+     * holder's perception, capped so even eagle-eyed students take a few
+     * pulses on average.
+     */
+    private static double noticeChance(Student holder, Student crush, Student rival,
+            SocialLinkConnector connector) {
+        boolean steady = connector.getRomanticStatus(crush, rival) == RomanticStatus.STEADY
+                || connector.getRomanticStatus(rival, crush) == RomanticStatus.STEADY;
+        double visibility = steady ? 1.0 : ROMANCE_NOTICE_FLING_VISIBILITY;
+        double perceptionFactor = 0.5 + holder.studentStatistics.getPerception() / 100.0;
+        return Math.min(ROMANCE_NOTICE_CHANCE_MAX,
+                ROMANCE_NOTICE_BASE_CHANCE * visibility * perceptionFactor);
+    }
+
+    /**
+     * Per-pulse resentment drip from a jealous crush holder toward the
+     * rival, scaled by how warm the holder still is on the crush: stronger
+     * feelings breed stronger resentment of whoever is in the way.
+     */
+    private static void dripJealousy(Student holder, Student crush, Student rival,
+            SocialLinkConnector connector) {
+        double crushWarmth = Math.max(0, connector.getSocialScore(holder, crush));
+        double drip = ROMANCE_JEALOUSY_DRIP * (0.5 + crushWarmth / 100.0);
+        connector.modifySocialScore(holder, rival, -drip);
     }
 
     /**
@@ -239,7 +341,7 @@ public final class RomanceUpdater {
      */
     private static boolean pulseCrush(Student holder, Student target,
             SocialLinkConnector connector) {
-        if (isSecret(holder, target)) {
+        if (isSecretCrush(holder, target)) {
             return false;
         }
         if (hasOtherPartnership(holder, target, connector)) {
@@ -519,13 +621,22 @@ public final class RomanceUpdater {
     private static void clearPair(Student a, Student b, SocialLinkConnector connector) {
         connector.setRomanticStatus(a, b, RomanticStatus.NONE);
         connector.setRomanticStatus(b, a, RomanticStatus.NONE);
+        // The couple no longer exists, so peers' knowledge of it (and the
+        // jealousy it fueled) dissolves with it.
+        connector.clearCoupleKnowledge(a, b);
     }
 
     /**
      * Hidden same-gender crushes held by closeted students are never acted
-     * on: doing so would out them.
+     * on (or visibly reacted to): doing so would out them. Also used by the
+     * jealousy behavior branch to keep closeted students from acting on
+     * rivalries over a secret crush.
+     *
+     * @param holder the crush holder
+     * @param target the crush target
+     * @return true if the crush must stay hidden
      */
-    private static boolean isSecret(Student holder, Student target) {
+    public static boolean isSecretCrush(Student holder, Student target) {
         if (!RomanceAssigner.isClosetedNonHetero(holder)) {
             return false;
         }

@@ -361,6 +361,48 @@ public class StaffAssignmentService {
     }
 
     /**
+     * Fills remaining staffing shortages by generating new staff for the town,
+     * used when the town staff pool is exhausted during initial population.
+     * Newly hired teaching staff receive rooms downstream via
+     * {@link TeacherBlockBuilder#ensureTeachersHaveRooms}.
+     *
+     * @param town      the town whose pool will receive the generated staff
+     * @param school    the school to hire for
+     * @param shortages map of staff type to unfilled count
+     * @param view      the game view for output
+     * @return the number of staff generated and hired
+     */
+    public static int fillShortagesWithGeneratedStaff(Town town, StandardSchool school,
+            Map<StaffType, Integer> shortages, GameView view) {
+        int totalShort = shortages.values().stream().mapToInt(Integer::intValue).sum();
+        if (totalShort <= 0) {
+            return 0;
+        }
+
+        StaffPool pool = town.getStaffPool();
+        view.appendOutput("  Staff pool exhausted - generating " + totalShort +
+                " additional staff to meet curriculum demand...");
+        List<Staff> generated = TownPopulationGenerator.generateAdditionalStaff(town, totalShort, view);
+
+        int hired = 0;
+        int index = 0;
+        for (Map.Entry<StaffType, Integer> entry : shortages.entrySet()) {
+            StaffType type = entry.getKey();
+            for (int i = 0; i < entry.getValue() && index < generated.size(); i++) {
+                Staff staff = generated.get(index++);
+                staff.teacherStatistics.setStaffType(type);
+                if (pool.assignToSchool(staff, school)) {
+                    hired++;
+                    view.appendOutput("  Generated and hired " + staff.teacherName.getFirstName() + " " +
+                            staff.teacherName.getLastName() + " as " + type);
+                }
+            }
+        }
+
+        return hired;
+    }
+
+    /**
      * Assigns additional teachers to a school for post-generation expansion.
      * This method is used to hire more teachers after initial school population
      * to address scheduling gaps and capacity shortages.

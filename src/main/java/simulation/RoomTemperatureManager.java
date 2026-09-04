@@ -94,13 +94,18 @@ public class RoomTemperatureManager {
             if (hopCount != null) {
                 // Serviced by the central system: fully conditioned at
                 // the utility room, drifting toward outdoors with hops.
-                double outdoorBlend = Math.min(1.0,
+                // The blend is capped so distant rooms stay mostly
+                // conditioned -- the building envelope never lets an
+                // indoor room fall all the way to the outdoor temp.
+                double outdoorBlend = Math.min(
+                        SimConstants.HVAC_MAX_OUTDOOR_BLEND,
                         hopCount * SimConstants.HVAC_DECAY_PER_HOP);
                 temp = lerp(setpoint, outdoorTempF, outdoorBlend);
             } else {
                 // Portables and anything else cut off from the central
-                // air: limited insulation keeps them near the outdoor
-                // temperature.
+                // air: their own weak units and insulation close most
+                // of the gap toward the setpoint, but they remain the
+                // draftiest rooms in the school.
                 unservicedRooms.add(room);
                 temp = lerp(outdoorTempF, setpoint,
                         SimConstants.HVAC_PORTABLE_INSULATION);
