@@ -399,6 +399,9 @@ public class StaffAssignmentService {
             }
         }
 
+        HashMap<Integer, Staff> schoolStaff = pool.getStaffBySchoolAsMap(school);
+        RoomAssignment.ensureSupportStaffHaveRooms(school, schoolStaff);
+
         return hired;
     }
 
@@ -516,6 +519,7 @@ public class StaffAssignmentService {
         }
 
         view.appendOutput("Hired " + totalAssigned + " additional teachers for " + school.getSchoolName());
+        RoomAssignment.ensureSupportStaffHaveRooms(school, pool.getStaffBySchoolAsMap(school));
         return totalAssigned;
     }
 

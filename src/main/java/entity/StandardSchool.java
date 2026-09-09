@@ -1789,18 +1789,12 @@ public class StandardSchool implements SchoolPlan {
         return Arrays.copyOf(schoolColorsHex, schoolColorsHex.length);
     }
 
-    public Room getClassroomByStaff(Staff staff) {
-        if (staff == null) {
-            return null;
-        }
-
-        // Assignment and prior lookups cache the result, including a confirmed miss.
-        // Unassigned teachers (typically substitutes with no dedicated classroom)
-        // are listed once, then skipped so simulation ticks do not spam the log.
-        if (staff.hasResolvedAssignedClassroom()) {
-            return staff.getAssignedClassroom();
-        }
-
+    /**
+     * Searches school rooms for this staff member without caching or logging.
+     * Used when assigning support staff so a prior miss does not hide them
+     * and so "can't find room" is not printed before a workspace is chosen.
+     */
+    public Room locateStaffRoom(Staff staff) {
         Room assignedRoom = findAssignedRoom(staff, classrooms);
         if (assignedRoom == null)
             assignedRoom = findAssignedRoom(staff, scienceLabs);
@@ -1834,14 +1828,34 @@ public class StandardSchool implements SchoolPlan {
             assignedRoom = findAssignedRoom(staff, conferenceRooms);
         if (assignedRoom == null)
             assignedRoom = findAssignedRoom(staff, portables);
+        return assignedRoom;
+    }
 
+    public Room getClassroomByStaff(Staff staff) {
+        if (staff == null) {
+            return null;
+        }
+
+        // Assignment and prior lookups cache the result, including a confirmed miss.
+        // Unassigned teachers (typically substitutes with no dedicated classroom)
+        // are listed once, then skipped so simulation ticks do not spam the log.
+        if (staff.hasResolvedAssignedClassroom()) {
+            return staff.getAssignedClassroom();
+        }
+
+        Room assignedRoom = locateStaffRoom(staff);
         staff.setAssignedClassroom(assignedRoom);
         if (assignedRoom != null) {
             return assignedRoom;
         }
 
-        String name = staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName();
         Object staffType = staff.teacherStatistics != null ? staff.teacherStatistics.getStaffType() : null;
+        // Substitutes are a floating reserve and are not given a home room.
+        if (staffType == StaffType.SUB) {
+            return null;
+        }
+
+        String name = staff.teacherName.getFirstName() + " " + staff.teacherName.getLastName();
         if (staffType != null) {
             GameLogger.logScheduling("Cant find room of " + name + " (" + staffType + ")");
         } else {

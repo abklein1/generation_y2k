@@ -446,8 +446,10 @@ public class TeacherBlockBuilder {
 
         Map<String, SectionManager.StudentDemand> demandTracker = SectionManager.getDemandTracker();
 
-        // Step 0: Ensure all teaching staff have room assignments
+        // Step 0: House support staff first so librarians/lunch/office keep their
+        // dedicated rooms, then give remaining teaching spaces to classroom teachers.
         if (standardSchool != null) {
+            RoomAssignment.ensureSupportStaffHaveRooms(standardSchool, staffHashMap);
             ensureTeachersHaveRooms(staffHashMap, standardSchool, view);
         } else {
             GameLogger.logScheduling("  WARNING: StandardSchool is null - skipping room assignments");

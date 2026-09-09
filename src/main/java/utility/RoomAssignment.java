@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class RoomAssignment {
     public static void assignTeacherToRoom(Staff staff, Room room) {
@@ -67,70 +68,163 @@ public class RoomAssignment {
     }
 
     /**
-     * Support staff types that need a workspace but whose primary room may be
-     * taken (offices are generated with fixed names, and libraries/lunchrooms
-     * can be claimed as overflow teaching space).
+     * Support staff types that need a workspace rather than a teaching classroom.
      */
     private static boolean isSupportStaffType(StaffType type) {
         if (type == null) {
             return false;
         }
         return switch (type) {
-            case PRINCIPAL, VICE_PRINCIPAL, GUIDANCE, NURSE, OFFICE, LIBRARY, LUNCH -> true;
+            case PRINCIPAL, VICE_PRINCIPAL, GUIDANCE, NURSE, OFFICE, LIBRARY, LUNCH, MAINTENANCE -> true;
             default -> false;
         };
     }
 
     /**
+     * Assigns every support staff member (office, admin, lunch, maintenance, etc.)
+     * to an appropriate shared workspace. Substitutes are skipped. Safe to call
+     * more than once: staff who already have a room are left in place.
+     */
+    public static void ensureSupportStaffHaveRooms(StandardSchool school, HashMap<Integer, Staff> staffHashMap) {
+        if (school == null || staffHashMap == null) {
+            return;
+        }
+
+        GameLogger.logScheduling("=== ENSURING SUPPORT STAFF HAVE ROOM ASSIGNMENTS ===");
+        int alreadyHad = 0;
+        int newlyAssigned = 0;
+        int failed = 0;
+
+        for (Staff staff : staffHashMap.values()) {
+            if (staff == null || staff.teacherStatistics == null) {
+                continue;
+            }
+            StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
+            if (type == null || type == StaffType.SUB || !isSupportStaffType(type)) {
+                continue;
+            }
+
+            Room existing = staff.getAssignedClassroom();
+            if (existing == null) {
+                existing = school.locateStaffRoom(staff);
+            }
+            if (existing != null) {
+                staff.setAssignedClassroom(existing);
+                alreadyHad++;
+                continue;
+            }
+
+            if (assignSupportStaffWorkspace(staff, type, school)) {
+                newlyAssigned++;
+            } else {
+                failed++;
+                GameLogger.logScheduling("  WARNING: No workspace for " + staff.teacherName.getFirstName() + " "
+                        + staff.teacherName.getLastName() + " (" + type + ")");
+            }
+        }
+
+        GameLogger.logScheduling("  Support staff already housed: " + alreadyHad);
+        GameLogger.logScheduling("  Support staff newly assigned: " + newlyAssigned);
+        if (failed > 0) {
+            GameLogger.logScheduling("  Support staff still without a room: " + failed);
+        }
+    }
+
+    private static boolean assignSupportStaffWorkspace(Staff staff, StaffType type, StandardSchool school) {
+        boolean assigned = switch (type) {
+            case PRINCIPAL -> assignToNamedOffices(staff, school, "Principal's Office", true);
+            case VICE_PRINCIPAL -> assignToNamedOffices(staff, school, "Vice Principal's Office", true);
+            case GUIDANCE -> assignToNamedOffices(staff, school, "Guidance", false);
+            case NURSE -> assignToNamedOffices(staff, school, "Nurse", false);
+            case OFFICE -> assignToNamedOffices(staff, school, "Front Office", true);
+            case LIBRARY -> assignToSharedRooms(staff, school.getLibraries(), "library");
+            case LUNCH -> assignToSharedRooms(staff, school.getLunchrooms(), "lunchroom");
+            case MAINTENANCE -> assignToSharedRooms(staff, school.getUtilityrooms(), "utility room")
+                    || assignToSharedRooms(staff, school.getBreakrooms(), "breakroom");
+            default -> false;
+        };
+        if (!assigned) {
+            assigned = tryAssignSupportFallbackRoom(staff, type, school);
+        }
+        return assigned;
+    }
+
+    private static boolean assignToNamedOffices(Staff staff, StandardSchool school, String nameToken, boolean exact) {
+        Room room = pickBestSharedRoom(school.getOffices(), office -> matchesOfficeName(office, nameToken, exact));
+        if (room == null) {
+            return false;
+        }
+        assignSupportStaffToRoom(staff, room, room.getRoomName());
+        return true;
+    }
+
+    private static boolean matchesOfficeName(Room office, String nameToken, boolean exact) {
+        String name = office.getRoomName();
+        if (name == null) {
+            return false;
+        }
+        return exact ? name.equals(nameToken) : name.contains(nameToken);
+    }
+
+    private static boolean assignToSharedRooms(Staff staff, Room[] rooms, String reason) {
+        Room room = pickBestSharedRoom(rooms, ignored -> true);
+        if (room == null) {
+            return false;
+        }
+        assignSupportStaffToRoom(staff, room, reason);
+        return true;
+    }
+
+    /**
+     * Prefers a matching room that is still under staff capacity, otherwise the
+     * least-occupied match so extra clerks/counselors still share their office.
+     */
+    private static Room pickBestSharedRoom(Room[] rooms, Predicate<Room> filter) {
+        if (rooms == null) {
+            return null;
+        }
+        Room bestUnderCapacity = null;
+        Room leastOccupied = null;
+        for (Room room : rooms) {
+            if (room == null || !filter.test(room)) {
+                continue;
+            }
+            int assigned = room.getAssignedStaff().size();
+            int capacity = Math.max(1, room.getStaffCapacity());
+            if (assigned < capacity) {
+                if (bestUnderCapacity == null
+                        || assigned < bestUnderCapacity.getAssignedStaff().size()) {
+                    bestUnderCapacity = room;
+                }
+            }
+            if (leastOccupied == null
+                    || assigned < leastOccupied.getAssignedStaff().size()) {
+                leastOccupied = room;
+            }
+        }
+        return bestUnderCapacity != null ? bestUnderCapacity : leastOccupied;
+    }
+
+    /**
      * Fallback room assignment for support staff whose dedicated room is
-     * unavailable. Tries, in order: the type's primary rooms with spare staff
-     * capacity (shared), any completely free office, any office with spare
-     * staff capacity, and finally the least-occupied office. Guarantees a
-     * workspace whenever the school has at least one office, so support staff
-     * are never left without a location.
+     * unavailable. Tries remaining primary rooms, then any office.
      */
     private static boolean tryAssignSupportFallbackRoom(Staff staff, StaffType type, StandardSchool school) {
-        // Librarians and lunch staff can share their primary rooms up to capacity.
-        if (type == StaffType.LIBRARY) {
-            for (LibraryR library : school.getLibraries()) {
-                if (library.getAssignedStaff().size() < library.getStaffCapacity()) {
-                    assignSupportStaffToRoom(staff, library, "shared library");
-                    return true;
-                }
-            }
+        if (type == StaffType.LIBRARY && assignToSharedRooms(staff, school.getLibraries(), "shared library")) {
+            return true;
         }
-        if (type == StaffType.LUNCH) {
-            for (Lunchroom lunchroom : school.getLunchrooms()) {
-                if (lunchroom.getAssignedStaff().size() < lunchroom.getStaffCapacity()) {
-                    assignSupportStaffToRoom(staff, lunchroom, "shared lunchroom");
-                    return true;
-                }
-            }
+        if (type == StaffType.LUNCH && assignToSharedRooms(staff, school.getLunchrooms(), "shared lunchroom")) {
+            return true;
+        }
+        if (type == StaffType.MAINTENANCE
+                && (assignToSharedRooms(staff, school.getUtilityrooms(), "utility room")
+                        || assignToSharedRooms(staff, school.getBreakrooms(), "breakroom"))) {
+            return true;
         }
 
-        Office[] offices = school.getOffices();
-        for (Office office : offices) {
-            if (office.getAssignedStaff().isEmpty()) {
-                assignSupportStaffToRoom(staff, office, "free office");
-                return true;
-            }
-        }
-        for (Office office : offices) {
-            if (office.getAssignedStaff().size() < office.getStaffCapacity()) {
-                assignSupportStaffToRoom(staff, office, "office with spare capacity");
-                return true;
-            }
-        }
-
-        Office leastOccupied = null;
-        for (Office office : offices) {
-            if (leastOccupied == null
-                    || office.getAssignedStaff().size() < leastOccupied.getAssignedStaff().size()) {
-                leastOccupied = office;
-            }
-        }
-        if (leastOccupied != null) {
-            assignSupportStaffToRoom(staff, leastOccupied, "least-occupied office");
+        Room office = pickBestSharedRoom(school.getOffices(), ignored -> true);
+        if (office != null) {
+            assignSupportStaffToRoom(staff, office, "office fallback");
             return true;
         }
         return false;
@@ -144,13 +238,23 @@ public class RoomAssignment {
 
     private static void initialRoomAssignmentHelper(Staff staff, StandardSchool school) {
         StaffType type = (StaffType) staff.teacherStatistics.getStaffType();
-        Office[] offices = school.getOffices();
         boolean teacherAssigned = false;
 
-        // Handle null staff type - skip room assignment for now
         if (type == null) {
             GameLogger.logScheduling("WARNING: Staff " + staff.teacherName.getFirstName() + " " +
                     staff.teacherName.getLastName() + " has no assigned type, skipping room assignment");
+            return;
+        }
+
+        if (type == StaffType.SUB) {
+            return;
+        }
+
+        if (isSupportStaffType(type)) {
+            if (!assignSupportStaffWorkspace(staff, type, school)) {
+                GameLogger.logScheduling("No available room found for " + staff.teacherName.getFirstName() + " "
+                        + staff.teacherName.getLastName());
+            }
             return;
         }
 
@@ -227,85 +331,6 @@ public class RoomAssignment {
                     }
                 }
                 break;
-            case LIBRARY:
-                LibraryR[] libraryRS = school.getLibraries();
-                for (LibraryR libraryR : libraryRS) {
-                    if (libraryR.getAssignedStaff().isEmpty()) {
-                        assignTeacherToRoom(staff, libraryR);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
-                                + staff.teacherName.getLastName() + " to " + libraryR.getRoomName());
-                        teacherAssigned = true;
-                        break;
-                    }
-                }
-                break;
-            case NURSE:
-                for (Office office : offices) {
-                    if (office.getRoomName().contains("Nurse") && office.getAssignedStaff().isEmpty()) {
-                        assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
-                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
-                        teacherAssigned = true;
-                        break;
-                    }
-                }
-                break;
-            case GUIDANCE:
-                for (Office office : offices) {
-                    if (office.getRoomName().contains("Guidance") && office.getAssignedStaff().isEmpty()) {
-                        assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
-                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
-                        teacherAssigned = true;
-                        break;
-                    }
-                }
-                break;
-            case VICE_PRINCIPAL:
-                for (Office office : offices) {
-                    if (office.getRoomName().equals("Vice Principal's Office") && office.getAssignedStaff().isEmpty()) {
-                        assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
-                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
-                        teacherAssigned = true;
-                        break;
-                    }
-                }
-                break;
-            case PRINCIPAL:
-                for (Office office : offices) {
-                    if (office.getRoomName().equals("Principal's Office") && office.getAssignedStaff().isEmpty()) {
-                        assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
-                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
-                        teacherAssigned = true;
-                        break;
-                    }
-                }
-                break;
-            case LUNCH:
-                Lunchroom[] lunchrooms = school.getLunchrooms();
-                for (Lunchroom lunchroom : lunchrooms) {
-                    if (lunchroom.getAssignedStaff().isEmpty()) {
-                        assignTeacherToRoom(staff, lunchroom);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
-                                + staff.teacherName.getLastName() + " to " + lunchroom.getRoomName());
-                        teacherAssigned = true;
-                        break;
-                    }
-                }
-                break;
-            case OFFICE:
-                for (Office office : offices) {
-                    if (office.getRoomName().equals("Front Office") && office.getAssignedStaff().isEmpty()) {
-                        assignTeacherToRoom(staff, office);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
-                                + staff.teacherName.getLastName() + " to " + office.getRoomName());
-                        teacherAssigned = true;
-                        break;
-                    }
-                }
-                break;
             case PHYSICAL_ED:
                 Gym[] gyms = school.getGyms();
                 AthleticField[] athleticFields = school.getAthleticFields();
@@ -327,21 +352,6 @@ public class RoomAssignment {
                             teacherAssigned = true;
                             break;
                         }
-                    }
-                }
-                break;
-            case SUB:
-                // Subs might not need room assignments
-                break;
-            case MAINTENANCE:
-                UtilityRoom[] utilityRooms = school.getUtilityrooms();
-                for (UtilityRoom utilityRoom : utilityRooms) {
-                    if (utilityRoom.getAssignedStaff().size() < utilityRoom.getStaffCapacity()) {
-                        assignTeacherToRoom(staff, utilityRoom);
-                        GameLogger.logScheduling("Assigned " + staff.teacherName.getFirstName() + " "
-                                + staff.teacherName.getLastName() + " to " + utilityRoom.getRoomName());
-                        teacherAssigned = true;
-                        break;
                     }
                 }
                 break;
@@ -385,10 +395,6 @@ public class RoomAssignment {
 
         if (!teacherAssigned && canUseOverflowTeachingRoom(type)) {
             teacherAssigned = tryAssignOverflowTeachingRoom(staff, school);
-        }
-
-        if (!teacherAssigned && isSupportStaffType(type)) {
-            teacherAssigned = tryAssignSupportFallbackRoom(staff, type, school);
         }
 
         if (!teacherAssigned) {
