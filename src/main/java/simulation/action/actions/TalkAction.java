@@ -30,8 +30,6 @@ import java.util.List;
 public class TalkAction implements Action {
     
     private static final int FRIENDSHIP_GAIN = 3;
-    private static final int FRIEND_PREFERENCE_CHANCE = 80;
-    
     @Override
     public String getName() {
         return "talk";
@@ -75,8 +73,8 @@ public class TalkAction implements Action {
         
         boolean inClass = state.isInClass() && hasTeacherPresent(state.getCurrentRoom());
         
-        // Select a target (prefer friends)
-        Student target = selectTarget(student, state);
+        // Select a target (prefer positively-linked peers)
+        Student target = selectTarget(student, state, context);
         if (target != null) {
             InteractionManager manager = context.getInteractionManager();
             if (manager != null) {
@@ -164,46 +162,26 @@ public class TalkAction implements Action {
     }
 
     /**
-     * Selects a talk target, preferring friends in the same room.
+     * Selects a talk target. Room classmates are scored by the initiator's
+     * outgoing social links (positive contacts favoured); friends elsewhere
+     * in school remain a fallback when the room is empty.
      */
-    private Student selectTarget(Student student, EntityState state) {
-        ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
+    private Student selectTarget(Student student, EntityState state, BehaviorContext context) {
         Room room = state.getCurrentRoom();
-        
-        List<Student> classmates = new ArrayList<>();
+
+        List<Student> candidates = new ArrayList<>();
         if (room != null && room.getStudents() != null) {
             for (Student s : room.getStudents()) {
                 if (s != null && s != student) {
-                    classmates.add(s);
+                    candidates.add(s);
                 }
             }
         }
-        
-        List<Student> friendsInRoom = new ArrayList<>();
-        for (Student friend : friends) {
-            if (classmates.contains(friend)) {
-                friendsInRoom.add(friend);
-            }
+        if (candidates.isEmpty()) {
+            candidates.addAll(student.studentStatistics.getFriendsInSchool());
         }
-        
-        // Prefer friends (80% chance)
-        if (!friendsInRoom.isEmpty() && GameRandom.nextInt(100) < FRIEND_PREFERENCE_CHANCE) {
-            return friendsInRoom.get(GameRandom.nextInt(friendsInRoom.size()));
-        }
-        
-        if (!friends.isEmpty() && classmates.isEmpty()) {
-            return friends.get(GameRandom.nextInt(friends.size()));
-        }
-        
-        if (!classmates.isEmpty()) {
-            return classmates.get(GameRandom.nextInt(classmates.size()));
-        }
-        
-        if (!friends.isEmpty()) {
-            return friends.get(GameRandom.nextInt(friends.size()));
-        }
-        
-        return null;
+        return behavior.TargetSelector.selectTarget(student, candidates,
+                context.getSocialLinkConnector());
     }
     
     @Override

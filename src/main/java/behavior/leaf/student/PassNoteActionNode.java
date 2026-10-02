@@ -73,8 +73,9 @@ public class PassNoteActionNode extends ActionNode {
             return BehaviorStatus.FAILURE;
         }
         
-        // Select a target using tiered social preference
-        Student target = TargetSelector.selectTarget(student, getCandidates(student, state));
+        // Select a target using the initiator's outgoing social scores
+        Student target = TargetSelector.selectTarget(student, getCandidates(student, state),
+                context.getSocialLinkConnector());
         if (target == null) {
             return BehaviorStatus.FAILURE;
         }

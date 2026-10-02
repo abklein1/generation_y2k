@@ -301,15 +301,76 @@ public final class SimConstants {
     public static final double SOCIAL_LINK_FRIEND_COUNT_STD_DEV = 1.5;
     public static final int SOCIAL_LINK_FRIEND_MAX_ATTEMPTS_MULTIPLIER = 3;
 
+    // Wider social network capacity. Overall connection capacity is derived
+    // from close-friend capacity (maxBestFriends), so both scale with the
+    // same charisma/empathy/luck formula:
+    // maxSocialConnections = clamp(maxBestFriends * PER_FRIEND, MIN, MAX)
+    public static final int SOCIAL_LINK_CONNECTIONS_PER_FRIEND = 6;
+    public static final int SOCIAL_LINK_CONNECTIONS_MINIMUM = 12;
+    public static final int SOCIAL_LINK_CONNECTIONS_MAXIMUM = 60;
+    // Actual generated network size: Gaussian centered at a ratio of capacity
+    public static final double SOCIAL_LINK_CONNECTION_COUNT_MEAN_RATIO = 0.75;
+    public static final double SOCIAL_LINK_CONNECTION_COUNT_STD_DEV = 4.0;
+
+    // Acquaintance/casual link weights (the weak outer ring of the network).
+    // The reciprocal direction is rolled independently and may be neutral or
+    // negative, producing asymmetric relationships per the README.
+    public static final double SOCIAL_LINK_ACQUAINTANCE_WEIGHT_MEAN = 15.0;
+    public static final double SOCIAL_LINK_ACQUAINTANCE_WEIGHT_STD_DEV = 12.0;
+    public static final double SOCIAL_LINK_ACQUAINTANCE_WEIGHT_FLOOR = 1.0;
+    public static final double SOCIAL_LINK_ACQUAINTANCE_RECIPROCAL_MEAN = 8.0;
+    public static final double SOCIAL_LINK_ACQUAINTANCE_RECIPROCAL_STD_DEV = 15.0;
+
+    // Directed score tier thresholds (classification of a single direction)
+    public static final double SOCIAL_LINK_TIER_FRIEND_THRESHOLD = 30.0;
+    public static final double SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD = 5.0;
+    public static final double SOCIAL_LINK_TIER_DISLIKE_THRESHOLD = -5.0;
+    public static final double SOCIAL_LINK_TIER_ENEMY_THRESHOLD = -50.0;
+
+    // Clique perception bias (halo effect). Members of "in" cliques are
+    // collectively viewed a few points warmer and "out" clique members a bit
+    // cooler; applied to incoming friend/acquaintance/reciprocal weights
+    // during generation (never to sibling or rival edges). Summed over a
+    // student's dozens of incoming links this is what lets in-group students
+    // dominate the popularity leaderboards without changing who befriends
+    // whom or requiring any clique reassignment.
+    public static final double SOCIAL_LINK_IN_GROUP_PERCEPTION_BONUS = 6.0;
+    public static final double SOCIAL_LINK_OUT_GROUP_PERCEPTION_PENALTY = -3.0;
+
+    // Whole-school visualizer hides weak edges so the denser graph stays legible
+    public static final double SOCIAL_LINK_VISUALIZER_MIN_ABS_WEIGHT = 30.0;
+
     // Grade preference for friendship formation
     public static final int SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_SAMPLE_SIZE = 100;
     public static final int SOCIAL_LINK_FRIEND_GRADE_CLASSMATE_THRESHOLD = 90;
     public static final int SOCIAL_LINK_FRIEND_ADJACENT_GRADE_SAMPLE_SIZE = 100;
     public static final int SOCIAL_LINK_FRIEND_ADJACENT_GRADE_THRESHOLD = 75;
 
-    // Same-gender preference (high school students are more likely to befriend same gender)
-    public static final int SOCIAL_LINK_SAME_GENDER_SAMPLE_SIZE = 100;
-    public static final int SOCIAL_LINK_SAME_GENDER_THRESHOLD = 70;
+    // Same-gender preference, applied as a soft candidate weight multiplier
+    // rather than a hard filter. Close friendships skew same-gender strongly
+    // (~70% in a balanced pool); casual acquaintances only mildly.
+    public static final double SOCIAL_LINK_SAME_GENDER_CLOSE_WEIGHT = 2.33;
+    public static final double SOCIAL_LINK_SAME_GENDER_ACQUAINTANCE_WEIGHT = 1.3;
+
+    // Orientation-aware adjustments to the same-gender preference, following
+    // studies of sexual-minority youth friendship networks: openly
+    // non-heterosexual females participate in *more* close same-gender
+    // friendships than their peers, while openly non-heterosexual males show
+    // the opposite pattern (more cross-gender than same-gender friends) and
+    // are more attached to their best friends. Closeted students deliberately
+    // mirror heterosexual friendship patterns to blend in, so they use the
+    // base weights unchanged.
+    public static final double SOCIAL_LINK_SM_FEMALE_SAME_GENDER_MULTIPLIER = 1.4;
+    public static final double SOCIAL_LINK_SM_MALE_SAME_GENDER_CLOSE_WEIGHT = 0.6;
+    public static final double SOCIAL_LINK_SM_MALE_SAME_GENDER_ACQUAINTANCE_WEIGHT = 0.8;
+    // Flat bonus applied to an openly sexual-minority male's outgoing
+    // close-friend scores (heightened best-friend attachment).
+    public static final double SOCIAL_LINK_SM_MALE_FRIEND_WEIGHT_BONUS = 8.0;
+
+    // Same-neighborhood preference, applied as a soft candidate weight
+    // multiplier on top of clique affinity. Favours kids who already share
+    // a commute / hang-out circle without excluding everyone else.
+    public static final double SOCIAL_LINK_SAME_NEIGHBORHOOD_WEIGHT = 1.5;
 
     // Friend weight distribution (positive relationships, score on -100 to 100 scale)
     public static final double SOCIAL_LINK_FRIEND_WEIGHT_MEAN = 50.0;
@@ -352,6 +413,9 @@ public final class SimConstants {
     public static final double SOCIAL_LINK_DECAY_BEST_FRIEND = 0.2;
     // Family/siblings: slowest decay, score 50 -> neutral in ~500 days
     public static final double SOCIAL_LINK_DECAY_FAMILY = 0.1;
+    // Steady romantic partners: decays slower than a catalyst best-friend
+    // bond but not as slowly as family
+    public static final double SOCIAL_LINK_DECAY_STEADY = 0.15;
     // Scores within this distance from 0 are snapped to 0 to avoid floating-point noise
     public static final double SOCIAL_LINK_DECAY_NEUTRAL_THRESHOLD = 0.01;
 
@@ -861,15 +925,22 @@ public final class SimConstants {
     public static final int HVAC_HEAT_SETPOINT_F = 70;
     public static final int HVAC_COOL_SETPOINT_F = 74;
     // Fraction of the setpoint-to-outdoor gap lost per hop away from
-    // the nearest utility room (a room 3 hops out is ~64% conditioned).
-    public static final double HVAC_DECAY_PER_HOP = 0.12;
+    // the nearest utility room (a room 3 hops out is ~82% conditioned).
+    public static final double HVAC_DECAY_PER_HOP = 0.06;
+    // Ceiling on how much of the setpoint-to-outdoor gap a serviced
+    // room can lose, no matter how many hops out it is. The building
+    // envelope itself holds the rest: even the farthest serviced room
+    // stays at least 70% conditioned instead of drifting all the way
+    // to the outdoor temperature.
+    public static final double HVAC_MAX_OUTDOOR_BLEND = 0.3;
     // Chance per edge that conditioned air spreads cleanly to the next
     // room on each recompute; a failed roll costs one extra hop.
     public static final double HVAC_SPREAD_CHANCE = 0.9;
-    // Portables and rooms cut off from the central system have limited
-    // insulation: they only close this fraction of the gap between the
-    // outdoor temperature and the comfort setpoint.
-    public static final double HVAC_PORTABLE_INSULATION = 0.2;
+    // Portables and rooms cut off from the central system run their own
+    // weak wall units and insulation: they close this fraction of the
+    // gap between the outdoor temperature and the comfort setpoint
+    // (matching the worst-case serviced room, i.e. 1 - max blend).
+    public static final double HVAC_PORTABLE_INSULATION = 0.7;
     // Heat rises: degrees F added per floor above the first.
     public static final int HVAC_UPPER_FLOOR_HEAT_F = 3;
     // Hour (24h clock) when room temperatures switch from tracking the
@@ -934,11 +1005,281 @@ public final class SimConstants {
     public static final int CELLPHONE_PLAN_STANDARD_THRESHOLD = 85;
 
     // Phone contact list population
-    // Probability that a student saves a given friend's phone number when
-    // both own phones.  Realistic: most-but-not-all friends end up in your
-    // contacts.  Family / siblings always exchange numbers and bypass this
-    // probability check.
-    public static final double PHONE_CONTACT_FRIEND_PROBABILITY = 0.75;
+    // Probability that a student saves a peer's phone number when both own
+    // phones, tiered by how the owner feels about the peer (their outgoing
+    // social-link score).  The barrier to a contact-list entry is low in
+    // 2004 -- even loose acquaintances often swap numbers -- so contact
+    // lists are wider than close friendship circles.  Family / siblings
+    // always exchange numbers and bypass these probability checks.
+    public static final double PHONE_CONTACT_CLOSE_FRIEND_SCORE = 50.0;
+    public static final double PHONE_CONTACT_CASUAL_FRIEND_SCORE = 20.0;
+    public static final double PHONE_CONTACT_ACQUAINTANCE_SCORE = 5.0;
+    public static final double PHONE_CONTACT_CLOSE_FRIEND_PROBABILITY = 0.92;
+    public static final double PHONE_CONTACT_CASUAL_FRIEND_PROBABILITY = 0.70;
+    public static final double PHONE_CONTACT_ACQUAINTANCE_PROBABILITY = 0.40;
+
+    // STUDENT ORIENTATION DEMOGRAPHICS (2004 simulation parameters)
+    // Roughly 1% of the student body is openly non-heterosexual and up to
+    // ~5% more are closeted (presenting as heterosexual and not acting on
+    // romantic feelings), reflecting mid-2000s self-identification rates.
+    // These are simulation parameters, not modern population estimates.
+    public static final double ORIENTATION_OPEN_NON_HETERO_RATE = 0.01;
+    public static final double ORIENTATION_CLOSETED_NON_HETERO_RATE = 0.05;
+    // Relative weights among non-heterosexual orientations
+    public static final double ORIENTATION_GAY_WEIGHT = 0.40;
+    public static final double ORIENTATION_BISEXUAL_WEIGHT = 0.50;
+    public static final double ORIENTATION_ASEXUAL_WEIGHT = 0.10;
+    // Members of out-group cliques are proportionally more likely to be
+    // selected into the non-heterosexual cohort. The school-wide cohort size
+    // is preserved; only the concentration shifts.
+    public static final double ORIENTATION_OUT_GROUP_SELECTION_WEIGHT = 3.0;
+    // Disclosure is conditioned on where a student landed socially rather
+    // than on fixed school-wide open/closeted totals. In-group cliques are
+    // conservative and less accepting of sexual-minority behavior, so
+    // non-heterosexual members there almost always stay closeted; out-group
+    // cliques tolerate openness far more. Students are never moved between
+    // cliques for this -- only the closeted/open state adapts. Calibrated so
+    // the school-wide average still lands near the historical ~1% open /
+    // ~5% closeted split.
+    public static final double ORIENTATION_CLOSETED_CHANCE_IN_GROUP = 0.95;
+    public static final double ORIENTATION_CLOSETED_CHANCE_NEUTRAL = 0.80;
+    public static final double ORIENTATION_CLOSETED_CHANCE_OUT_GROUP = 0.55;
+
+    // ROMANTIC RELATIONSHIP GENERATION (2004 sim parameters)
+    // Roughly half the student body is in "some form" of romantic
+    // entanglement (crush, fling, or steady relationship), per adolescent
+    // relationship survey data. Participation scales mildly with grade level
+    // (older students date more).
+    public static final double ROMANCE_PARTICIPATION_RATE = 0.50;
+    public static final double ROMANCE_GRADE_FACTOR_FRESHMAN = 0.70;
+    public static final double ROMANCE_GRADE_FACTOR_SOPHOMORE = 0.90;
+    public static final double ROMANCE_GRADE_FACTOR_JUNIOR = 1.10;
+    public static final double ROMANCE_GRADE_FACTOR_SENIOR = 1.25;
+    // Relative mix of romance forms among students who participate
+    public static final double ROMANCE_TYPE_CRUSH_WEIGHT = 0.40;
+    public static final double ROMANCE_TYPE_FLING_WEIGHT = 0.20;
+    public static final double ROMANCE_TYPE_STEADY_WEIGHT = 0.40;
+    // ~70% of cross-gender friendships initiated by male students carry a
+    // hope of romance, so crush-holding skews male: the crush type weight is
+    // multiplied by 2*share for males and 2*(1-share) for females.
+    public static final double ROMANCE_MALE_CRUSH_SHARE = 0.70;
+    // Chance that the partner in a fling/steady pairing perceives the
+    // relationship differently (steady -> fling, fling -> nothing),
+    // reflecting the asymmetry surveys found when both parties were asked.
+    public static final double ROMANCE_PERCEPTION_MISMATCH_CHANCE = 0.18;
+    // Asexual students participate far less often and never in flings
+    public static final double ROMANCE_ASEXUAL_PARTICIPATION_MULTIPLIER = 0.25;
+    // Chance a closeted non-heterosexual student quietly holds a hidden
+    // same-gender crush (never mutual, never acted on) in addition to any
+    // opposite-gender cover relationship
+    public static final double ROMANCE_CLOSETED_HIDDEN_CRUSH_CHANCE = 0.15;
+    // Chance a student already in a fling/steady relationship also holds an
+    // unrequited crush on someone else. Small on purpose: most partnered
+    // students are exclusive at generation, but wandering attention happens.
+    public static final double ROMANCE_PARTNERED_CRUSH_CHANCE = 0.08;
+    // Chance a student whose romantic life is crush-only picks up an
+    // additional crush. Deliberately much higher than the partnered rate:
+    // adolescent crushes come in bunches, and nothing anchors an
+    // uncommitted daydreamer to a single target.
+    public static final double ROMANCE_MULTI_CRUSH_CHANCE = 0.22;
+    // Every extra crush a student gains multiplies their next extra-crush
+    // roll by this decay, so double crushes are uncommon and triple crushes
+    // are rare.
+    public static final double ROMANCE_EXTRA_CRUSH_CHANCE_DECAY = 0.45;
+    // Hard cap on simultaneous outgoing crushes assigned by the
+    // wandering-heart pass (hidden closeted crushes are exempt).
+    public static final int ROMANCE_MAX_SIMULTANEOUS_CRUSHES = 3;
+    // Minimum outgoing social score for a friendship to be promoted
+    public static final double ROMANCE_MUTUAL_MIN_SCORE = SOCIAL_LINK_TIER_FRIEND_THRESHOLD;
+    public static final double ROMANCE_CRUSH_MIN_SCORE = SOCIAL_LINK_TIER_ACQUAINTANCE_THRESHOLD;
+
+    // CRUSH TARGETING (decoupled from the friendship graph)
+    // Unlike flings/steady pairs (which promote existing mutual friendships),
+    // crushes are picked from the whole orientation-compatible student body:
+    // even a student nobody likes can pine for someone, and desirable
+    // students collect many admirers. Candidate weight =
+    //   gradeProximity * familiarity * desirability^exponent
+    // where familiarity favors (but does not require) an existing positive
+    // outgoing link, and desirability grows with the target's school-wide
+    // popularity (total incoming score) and clique standing. The exponent
+    // (>1) concentrates crushes on the most desirable students, so the
+    // crushed-on leaderboard shows real "crush magnet" variation instead of
+    // a flat cap set by network degree.
+    public static final double ROMANCE_CRUSH_ADJACENT_GRADE_FACTOR = 0.35;
+    public static final double ROMANCE_CRUSH_DISTANT_GRADE_FACTOR = 0.08;
+    // familiarity = 1 + max(0, outgoing score) / divisor
+    public static final double ROMANCE_CRUSH_FAMILIARITY_DIVISOR = 40.0;
+    // Desirability popularity term is RANK-based:
+    //   1 + range * percentile^curve
+    // where percentile is the target's position (0..1) in the school-wide
+    // popularity ordering. Using rank instead of raw incoming-score totals
+    // makes the magnet effect independent of how compressed a generation's
+    // scores happen to be (real populations roll stats from a narrow
+    // Gaussian, so raw-score ratios stay near 1 and would flatten the
+    // curve). The high curve power concentrates nearly all of the bonus in
+    // the top decile: the school's handful of "it" kids.
+    public static final double ROMANCE_CRUSH_MAGNET_RANGE = 9.0;
+    public static final double ROMANCE_CRUSH_MAGNET_CURVE = 6.0;
+    public static final double ROMANCE_CRUSH_IN_GROUP_DESIRABILITY = 1.6;
+    public static final double ROMANCE_CRUSH_OUT_GROUP_DESIRABILITY = 0.75;
+    public static final double ROMANCE_CRUSH_DESIRABILITY_EXPONENT = 3.0;
+    // Holding a crush means liking the target: assigning one creates/raises
+    // the outgoing link to at least ROMANCE_CRUSH_MIN_SCORE plus a random
+    // extra below this cap, so crush persistence/decay mechanics work even
+    // for crushes on near-strangers.
+    public static final double ROMANCE_CRUSH_NEW_LINK_EXTRA_MAX = 20.0;
+    // Holder-relative clique affinity for crush targets, deliberately much
+    // flatter than the friendship affinity (Hate 0.35 vs 0.1): romance keeps
+    // real crossover between in- and out-groups (the jock/goth trope) even
+    // though friendships mostly stay within a social stratum. Neutral
+    // relationships use an implicit 1.0.
+    public static final double ROMANCE_CRUSH_CLIQUE_SAME = 1.6;
+    public static final double ROMANCE_CRUSH_CLIQUE_ALIGNS = 1.4;
+    public static final double ROMANCE_CRUSH_CLIQUE_POSITIVE = 1.2;
+    public static final double ROMANCE_CRUSH_CLIQUE_NEGATIVE = 0.6;
+    public static final double ROMANCE_CRUSH_CLIQUE_HATE = 0.35;
+    // Social score bump each partner in a steady relationship applies toward
+    // the other. Openly sexual-minority males are less attached to romantic
+    // partners than heterosexual males, so their bump is smaller.
+    public static final double ROMANCE_STEADY_SCORE_BONUS = 12.0;
+    public static final double ROMANCE_STEADY_SCORE_BONUS_SM_MALE = 6.0;
+
+    // ROMANCE UPDATE PASS (in-day pulses + end-of-day maintenance)
+    // Escalation/de-escalation rolls happen at each period transition
+    // (roughly 7 per school day) so relationship changes land throughout the
+    // day instead of only at midnight. Chances below are per pulse; the
+    // rough per-day chance is ~7x each value. End-of-day maintenance is
+    // deterministic housekeeping: statuses whose underlying scores decayed
+    // below their entry thresholds dissolve.
+    //
+    // Chance per pulse that a crush holder (or the one-sided half of an
+    // unreciprocated hookup) makes a move. Succeeds -- both start hooking
+    // up -- only if the target is attracted back and warm enough
+    // (>= ROMANCE_MUTUAL_MIN_SCORE); otherwise the holder is shot down and
+    // sours on the target. Hidden same-gender crushes held by closeted
+    // students are never acted on. Partnered holders only escalate a side
+    // crush when it is mutual (see partnered-escalation constants below).
+    public static final double ROMANCE_PULSE_CRUSH_ACT_CHANCE = 0.04;
+    // NEW CRUSH DEVELOPMENT (runtime, after generation)
+    // Two paths create brand-new crushes during the simulation:
+    //
+    // 1) Friendship-grown: each period pulse, a student may realize they
+    //    have feelings for an existing warm friend (outgoing score at
+    //    friend tier or better, attraction-gated, weighted toward the
+    //    warmest links). Per-pulse chance is per student; ~7 pulses/day
+    //    puts the daily chance around 7x this value.
+    public static final double ROMANCE_PULSE_FRIENDSHIP_CRUSH_CHANCE = 0.002;
+    // 2) Fleeting: interacting with one of the school's rare stat
+    //    standouts (intelligence, charisma, or strength well above the
+    //    school mean) can spark a shallow crush on the spot. The crush
+    //    link is seeded barely above the crush floor, so unless it is
+    //    reinforced it decays and fades within days.
+    public static final double ROMANCE_FLEETING_CRUSH_CHANCE = 0.01;
+    // Random extra above ROMANCE_CRUSH_MIN_SCORE for a fleeting crush's
+    // link. Deliberately small (vs ROMANCE_CRUSH_NEW_LINK_EXTRA_MAX = 20)
+    // so fleeting crushes are weak and short-lived by construction.
+    public static final double ROMANCE_FLEETING_CRUSH_EXTRA_MAX = 6.0;
+    // A student is a stat standout when intelligence, charisma, or
+    // strength sits at least this many standard deviations above the
+    // school-wide mean (~2.3% per stat on a normal curve). The standout
+    // pool is additionally hard-capped at ROMANCE_STANDOUT_MAX_SHARE of
+    // the student body so overlapping tails can never push the "truly
+    // dazzling" group past ~5% and have everyone crushing on everyone.
+    public static final double ROMANCE_STANDOUT_SD_MULTIPLIER = 2.0;
+    public static final double ROMANCE_STANDOUT_MAX_SHARE = 0.05;
+    // Outgoing score penalty the rejected party applies toward whoever
+    // turned them down
+    public static final double ROMANCE_REJECTION_SCORE_PENALTY = 10.0;
+    // Finite romantic-feelings pool: investing in a crush/second relationship
+    // cools every other fling/steady the student already holds. "Drain" is
+    // the holder's outgoing score toward each other partner; "echo" is a
+    // smaller reciprocal dip so the bond cools without modeling discovery
+    // drama yet. Generation assigns the one-time side-crush hit; pulses
+    // apply the smaller split-attention drip; successfully starting a
+    // second relationship applies the larger second-relationship hit.
+    public static final double ROMANCE_SIDE_CRUSH_PARTNER_DRAIN = 8.0;
+    public static final double ROMANCE_SIDE_CRUSH_PARTNER_ECHO = 3.0;
+    public static final double ROMANCE_SPLIT_ATTENTION_DRAIN = 0.5;
+    public static final double ROMANCE_SPLIT_ATTENTION_ECHO = 0.15;
+    public static final double ROMANCE_SECOND_RELATIONSHIP_PARTNER_DRAIN = 18.0;
+    public static final double ROMANCE_SECOND_RELATIONSHIP_PARTNER_ECHO = 8.0;
+    // Partnered mutual-crush escalation chance is
+    //   baseMutualChance * (MIN + (MAX - MIN) * crushShare)
+    // where crushShare = crushWarmth / (crushWarmth + partnerWarmth).
+    // Strong existing bonds suppress straying; a hotter mutual crush
+    // overcomes that. Unpartnered mutual crushes still use the flat
+    // 2x ROMANCE_PULSE_CRUSH_ACT_CHANCE roll.
+    public static final double ROMANCE_PARTNERED_ESCALATE_CHANCE_MIN = 0.35;
+    public static final double ROMANCE_PARTNERED_ESCALATE_CHANCE_MAX = 1.60;
+    // Chance per pulse a mutual hookup (FWB) becomes official, provided both
+    // outgoing scores are at least ROMANCE_FLING_OFFICIAL_MIN_SCORE
+    public static final double ROMANCE_PULSE_FLING_OFFICIAL_CHANCE = 0.03;
+    public static final double ROMANCE_FLING_OFFICIAL_MIN_SCORE = 50.0;
+    // Chance per pulse a hookup simply fizzles out (doubled when it's
+    // one-sided)
+    public static final double ROMANCE_PULSE_FLING_FIZZLE_CHANCE = 0.02;
+    // Asymmetric serious pairs (one sees "going out", the other something
+    // less): chance per pulse the partner comes around (pair becomes
+    // official) vs. the mismatch surfacing and ending it
+    public static final double ROMANCE_PULSE_ASYM_CONVERGE_CHANCE = 0.03;
+    public static final double ROMANCE_PULSE_ASYM_BREAKUP_CHANCE = 0.02;
+    // Baseline per-pulse breakup chance for mutual official couples;
+    // multiplied by ROMANCE_STEADY_UNHEALTHY_BREAKUP_MULTIPLIER when either
+    // side's score has slipped below the friend threshold
+    public static final double ROMANCE_PULSE_STEADY_BREAKUP_CHANCE = 0.003;
+    public static final double ROMANCE_STEADY_UNHEALTHY_BREAKUP_MULTIPLIER = 8.0;
+    // Mutual outgoing-score penalty applied to both ex-partners on a breakup
+    public static final double ROMANCE_BREAKUP_SCORE_PENALTY = 15.0;
+
+    // JEALOUSY / RIVAL SECONDARY EFFECTS
+    // A student holding an unrequited crush can notice their crush is in an
+    // observable couple (both directions fling-or-steady). Noticing is rolled
+    // once per pulse per (crusher, couple):
+    //   chance = BASE * visibility * (0.5 + perception / 100), capped at MAX.
+    // Steady couples are fully visible (1.0); fling-level couples are
+    // sneakier and use the reduced visibility factor below.
+    public static final double ROMANCE_NOTICE_BASE_CHANCE = 0.20;
+    public static final double ROMANCE_NOTICE_FLING_VISIBILITY = 0.5;
+    public static final double ROMANCE_NOTICE_CHANCE_MAX = 0.60;
+    // Immediate outgoing-score hit toward the rival when the couple is first
+    // noticed, then a smaller per-pulse drip while the crush stays active.
+    // The drip scales with crush warmth (see RomanceUpdater.dripJealousy):
+    // stronger crushes breed stronger resentment of the rival.
+    public static final double ROMANCE_JEALOUSY_DISCOVERY_STING = 8.0;
+    public static final double ROMANCE_JEALOUSY_DRIP = 0.75;
+    // Per-decision chance gate for acting on jealousy in the behavior tree,
+    // scaled by initiative: actChance = ACT_CHANCE * (0.5 + initiative/100).
+    // Driven students scheme constantly; passive students mostly stew.
+    public static final double ROMANCE_JEALOUSY_ACT_CHANCE = 0.35;
+    // Sabotage disposition: a jealous student whose (drainable) empathy and
+    // responsibility are both below these caps badmouths the rival instead
+    // of vying for the crush's attention. Because the stats drain during the
+    // day, a worn-down student can turn mean by last period.
+    public static final int JEALOUSY_SABOTAGE_EMPATHY_MAX = 40;
+    public static final int JEALOUSY_SABOTAGE_RESPONSIBILITY_MAX = 45;
+    // Badmouthing the rival to the crush: on success the crush's outgoing
+    // score toward their partner drops by the drain and the badmouther gets
+    // a small conspiratorial gain toward the crush. A loyal crush (score
+    // toward partner >= threshold) may snap back at the badmouther instead.
+    public static final double SOCIAL_LINK_DRAIN_BADMOUTH = 4.0;
+    public static final double SOCIAL_LINK_GAIN_BADMOUTH = 1.0;
+    public static final double BADMOUTH_BACKFIRE_LOYALTY_THRESHOLD = 60.0;
+    public static final double BADMOUTH_BACKFIRE_CHANCE = 0.5;
+    public static final double BADMOUTH_BACKFIRE_PENALTY = 6.0;
+    // Vying for the crush's attention: the initiator gains the usual
+    // talking-level score toward the crush, and the crush warms by
+    // BASE + charisma / DIVISOR -- unless a low-charisma attempt flops,
+    // which dings the crush's view of the initiator instead.
+    public static final double SOCIAL_LINK_GAIN_IMPRESS = 3.0;
+    public static final double IMPRESS_TARGET_GAIN_BASE = 1.0;
+    public static final double IMPRESS_CHARISMA_DIVISOR = 25.0;
+    public static final int IMPRESS_FLOP_CHARISMA_THRESHOLD = 35;
+    public static final double IMPRESS_FLOP_CHANCE = 0.15;
+    public static final double IMPRESS_FLOP_PENALTY = 2.0;
+    // Secondary stat drains for the jealousy-driven social actions
+    public static final int STAT_DRAIN_BADMOUTH_EMPATHY = 2;
+    public static final int STAT_DRAIN_BADMOUTH_RESPONSIBILITY = 1;
+    public static final int STAT_DRAIN_IMPRESS_EMPATHY = 1;
 
     // CELL PHONE DECORATION RATES
     // Per-slot probability that a student whose clique declares decoration
@@ -966,7 +1307,14 @@ public final class SimConstants {
     public static final double CLIQUE_RISING_SUBGROUP_WEIGHT = 0.5;
 
     // CLIQUE SOCIAL LINK AFFINITY (friend selection bias)
-    public static final double CLIQUE_AFFINITY_SAME = 5.0;
+    // Own clique dominates everything; the relationship matrix then carries
+    // the category cohesion (in-group cliques mostly Align with / are
+    // Positive toward other in-groups, likewise out-groups with each other,
+    // while in<->out pairs are overwhelmingly Negative/Hate), so students
+    // naturally seek friends inside their own social stratum. Negative/Hate
+    // weights are small but nonzero: unlikely cross-strata friendships stay
+    // possible.
+    public static final double CLIQUE_AFFINITY_SAME = 8.0;
     public static final double CLIQUE_AFFINITY_ALIGNS = 4.0;
     public static final double CLIQUE_AFFINITY_POSITIVE = 3.0;
     public static final double CLIQUE_AFFINITY_NEUTRAL = 2.0;

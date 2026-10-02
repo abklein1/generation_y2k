@@ -148,6 +148,9 @@ public class ScheduleOptimizer {
         }
 
         fromSection.removeStudent(student);
+        if (fromSection.getTeacherBlock().getClassPopulation() != null) {
+            fromSection.getTeacherBlock().getClassPopulation().removeIf(existing -> existing == student);
+        }
         List<StudentBlock> schedule = student.studentStatistics.getStudentSchedule().getClassSchedule();
         schedule.removeIf(block -> block.getClassName().equals(fromSection.getClassName()) &&
                 block.getBlockNumber() == fromSection.getTeacherBlock().getBlockNumber() &&

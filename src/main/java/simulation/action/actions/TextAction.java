@@ -81,7 +81,7 @@ public class TextAction implements Action {
             return ActionResult.failure("Monthly text limit reached");
         }
 
-        Student target = selectTarget(student, state);
+        Student target = selectTarget(student, state, context);
         if (target != null) {
             InteractionManager manager = context.getInteractionManager();
             if (manager != null) {
@@ -174,35 +174,21 @@ public class TextAction implements Action {
                 && !room.getAssignedStaff().isEmpty();
     }
 
-    private Student selectTarget(Student student, EntityState state) {
-        ArrayList<Student> friends = student.studentStatistics.getFriendsInSchool();
-        List<Student> classmates = new ArrayList<>();
+    private Student selectTarget(Student student, EntityState state, BehaviorContext context) {
+        List<Student> candidates = new ArrayList<>();
         entity.Rooms.Room room = state.getCurrentRoom();
         if (room != null && room.getStudents() != null) {
             for (Student s : room.getStudents()) {
                 if (s != null && s != student) {
-                    classmates.add(s);
+                    candidates.add(s);
                 }
             }
         }
-
-        List<Student> friendsInRoom = new ArrayList<>();
-        for (Student friend : friends) {
-            if (classmates.contains(friend)) {
-                friendsInRoom.add(friend);
-            }
+        if (candidates.isEmpty()) {
+            candidates.addAll(student.studentStatistics.getFriendsInSchool());
         }
-
-        if (!friendsInRoom.isEmpty()) {
-            return friendsInRoom.get(GameRandom.nextInt(friendsInRoom.size()));
-        }
-        if (!friends.isEmpty()) {
-            return friends.get(GameRandom.nextInt(friends.size()));
-        }
-        if (!classmates.isEmpty()) {
-            return classmates.get(GameRandom.nextInt(classmates.size()));
-        }
-        return null;
+        return behavior.TargetSelector.selectTarget(student, candidates,
+                context.getSocialLinkConnector());
     }
 
     @Override

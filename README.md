@@ -82,16 +82,24 @@ The school mascot is generated from a weighted list based on the most frequently
 high schools. The high school name is either a randomly generated person (presumably important in the fictionalized
 community) or a randomly concatenated place name (Place1 + Place2) where, generally, most combinations make sense.
 
-### Example of School Room Map
+### Example of School Room Map (Gen 1)
 
-![](src/main/java/Resources.Screencaps/gen_example.JPG)
+![](docs/screencaps/gen_example.JPG)
+
+### Example of School Room Map (0.0.17)
+
+![](docs/screencaps/r17_1.png)
+
+### Example of Inside a Classroom (0.0.17)
+
+![](docs/screencaps/r17-4.png)
 
 *Coming soon*
 
-- School schedules/ bell schedule
+- Varying school schedules / bell schedules (Block/period scheduling)
 - More status effects for people
-- Items
-- Moods / Allostatic load
+- Items (Partially implemented)
+- Moods / Allostatic load (partially implemented)
 - Nicknames
 - Rival schools
 - Household and personal traits
@@ -123,16 +131,22 @@ normalized distribution based on age and gender.
 
 ### Example Student Generation
 
-An example of a student generated and displayed in the inspector:
-![](src/main/java/Resources.Screencaps/proto_inspect.JPG)
+An example of a student generated and displayed in the inspector (Gen 1):
+![](docs/screencaps/proto_inspect.JPG)
+
+An example of a student generated and displayed in the inspector (Release 0.0.17):
+![](docs/screencaps/r17-2.png)
 
 ### Example Staff Generation
 
-An example of a staff generated and displayed in the inspector:
-![](src/main/java/Resources.Screencaps/staff_proto1.JPG)
+An example of a staff generated and displayed in the inspector (Gen 1):
+![](docs/screencaps/staff_proto1.JPG)
+
+An example of a staff generated and displayed in the inspector (Release 0.0.17):
+![](docs/screencaps/r17-3.png)
 
 ## Datasets and References
-s
+
 - US Census Data for Surnames (Use File B) :  https://www.census.gov/topics/population/genealogy/data/2000_surnames.html
 - US Census Data for First Names : https://www.ssa.gov/oact/babynames/limits.html (Use the National Data folder)
 - US Mascot Frequency Database : https://masseyratings.com/mascots
@@ -166,6 +180,7 @@ s
 - Rates of vision issues : https://pmc.ncbi.nlm.nih.gov/articles/PMC2772054/
 - Piercing trends : https://bodyartforms.com/blog/trends-in-body-piercings-from-1990-to-2014?srsltid=AfmBOopIwKrrYHlCyQZGnKT7WzcRR2LHeNrJ_B6cIj-77KWf8jvokjfG
 - Rates of cellphone ownership 2004 : https://www.pewresearch.org/internet/2009/08/19/teens-and-mobile-phones-over-the-past-five-years-pew-internet-looks-back/
+- Rates of sexual orientation among adults 2003 : https://web.archive.org/web/20061219090954/http://norc.uchicago.edu/issues/American_Sexual_Behavior_2003.pdf
 
 ## Gameplay Mechanics
 
@@ -245,6 +260,80 @@ casual relationships.
 If a casual friendship were to get more serious, and they were elevated to a "best friend", then other best friend
 relationships would begin to deteriorate at a quicker rate.
 
+#### Generated network model
+
+Each student's social network is generated as a directed graph with two rings:
+
+- **Close-friend capacity** (`maxBestFriends`) is derived from Charisma (primary), Empathy, and Luck with a random
+  variability factor.
+- **Overall connection capacity** scales off the same formula:
+  `maxSocialConnections = clamp(maxBestFriends × 6, 12, 60)`. The actual generated network size follows a Gaussian
+  centered at 75% of that capacity, so charismatic students maintain far wider circles than withdrawn ones.
+- Generation runs in order: siblings, close friends, rivals, then weak casual/acquaintance links to fill remaining
+  capacity. Candidates are weighted toward the same or adjacent grades, compatible cliques, and shared neighborhoods.
+  The same-gender tendency is a soft weight (strong for close friends, mild for acquaintances), not a hard filter, so
+  mixed-gender links occur naturally.
+- Every direction is rolled independently. Derived score tiers (best friend ≥ 75 with catalyst, friend ≥ 30,
+  acquaintance ≥ 5, neutral, dislike ≤ −5, enemy ≤ −50) and pair reciprocity states (mutual positive, one-sided
+  positive, opposed, one-sided negative, mutual negative) are computed from the two scores on demand rather than
+  persisted, so the asymmetric examples below all arise from score pairs plus sibling/catalyst context.
+- `friendsInSchool` is a duplicate-safe compatibility cache holding only friend-or-stronger outgoing links; weak
+  acquaintances live only in the graph.
+
+Behavior systems consume the initiator's *outgoing* scores: interaction and note/text/whisper targeting picks positive
+known contacts with score-proportional weights, falls back to the clique/neighborhood cascade for unknown peers, and
+only targets disliked peers as a last resort. The reciprocal score is deliberately ignored during initiation, so a
+student can happily seek out someone who privately dislikes them.
+
+Phone contacts are populated from the same directed graph: siblings are always saved (when both own phones), and other
+peers are saved with tiered probabilities by outgoing score (≥ 50: 92%, ≥ 20: 70%, ≥ 5: 40%). Contact lists are
+asymmetric, and a high-capacity student under 2004 ownership rates can exceed 20 saved contacts.
+
+#### Orientation demographics
+
+As the demographic foundation for the romance mechanics, each student is assigned a sexual
+orientation and a disclosure state at generation. These are **simulation parameters** tuned to the 2004 setting, not
+modern population estimates: roughly 94% straight, 1% openly non-heterosexual, and 5% closeted, assigned as seeded
+cohort target counts rather than per-student rolls. Within the non-heterosexual cohort the weights are 40% gay, 50%
+bisexual, and 10% asexual, and members of out-group cliques carry a 2× selection weight (concentrating, not enlarging,
+the cohort). Orientation never influences platonic friendship generation, and closeted students present as
+heterosexual.
+
+#### Crush development during the simulation
+
+Generation seeds the initial romance state (including students holding multiple simultaneous crushes of varying
+strength, up to a cap), and new crushes keep forming while the simulation runs, through two paths:
+
+- **Friendship-grown.** Each period pulse, a student below the crush cap rolls a small chance to realize they have
+  feelings for an existing warm friend — outgoing score at friend tier or better, gated by the gender the student is
+  (openly) attracted to, with warmer links proportionally likelier. These crushes ride on an already-strong link, so
+  they persist and feed the normal act/reject/jealousy machinery.
+- **Fleeting.** A handful of students stand out from the whole school on raw stats: intelligence, charisma, or
+  strength at least two standard deviations above the school-wide mean, hard-capped at 5% of the student body so
+  overlapping stat tails can't inflate the pool. Interacting with one of these standouts can spark a shallow crush on
+  the spot. The crush link is seeded barely above the crush floor, so unless the smitten student keeps reinforcing it,
+  daily decay erases it within days.
+
+#### Jealousy and rivals
+
+Romantic perception is directed (crush / fling / steady per direction), which creates the classic unrequited setup: a
+student holding a crush on someone who is already in a couple. Jealousy turns that setup into secondary effects:
+
+- **Noticing.** A couple is *observable* once both directions report fling-or-stronger; one-sided flings and crushes
+  stay invisible. Each period pulse, a crush holder rolls to notice their crush's couple — base chance scaled by the
+  couple's visibility (steady pairs are more obvious than hookups) and the holder's perception. Discovered couples are
+  stored as per-observer knowledge records (persisted in saves, and purged when the couple dissolves), the same shape a
+  future gossip system can spread between students.
+- **Resentment.** Discovery applies an immediate score sting toward the rival, followed by a per-pulse drip scaled by
+  how warm the crush still is — long unrequited crushes grind the holder's opinion of the rival toward dislike or
+  outright enemy territory on their own.
+- **Acting on it.** A behavior-tree branch fires when the crush is in reach and a rival is known (frequency scaled by
+  initiative; closeted students never act on hidden crushes). Students with drained/low empathy and responsibility
+  **badmouth** the rival to the crush, denting the crush's opinion of their partner — unless a loyal crush snaps back
+  at the badmouther. Everyone else **vies for attention**, warming the crush toward them by a charisma-scaled amount
+  (low charisma risks an embarrassing flop). Both outcomes feed the existing score-driven escalation and breakup math,
+  so persistent sabotage genuinely destabilizes couples and persistent charm genuinely improves the crusher's odds.
+
 #### Examples:
 
 Strong Positive and Neutral
@@ -308,6 +397,8 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Initial staff assignment is not efficient and sometimes runs out of available teachers. This happens less frequently now
 - Classroom distribution is not ideal for students. Some students are still missing required classes
 - Grid system runs out of space at times (especially on stairs)
+- People wear multiple belts due to how accessories are set up
+- Room temperatures can be extremely cold
 
 ## Release 0.0.17
 
@@ -317,7 +408,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Academics: Basic system set up for student learning and mastery of subjects within the school. Before this system was implemented, students only socialized throughout the day, and studying/paying attention was only an idle action when the student had no socializing to do. Now, it is an activity that competes with the student incentive to socialize, and will allow for opportunities in the future for more emergent actions within the simulation. The studying/paying attention mechanic produces points towards mastery of a subject and will be important for maintaining grades in the future (when implemented)
 - Radio stations and music : Every world has randomized radio stations that are generated. Radio stations pull from period-appropriate Billboard Top 100 data and use a genre/artist database to create genre-based stations (alternative, rap, Christian etc.) as well as "oldies" and Top 40 stations. Students are generated with preferences in certain music genres and bands based on their cliques. Students can listen to the radio on their way to school (if carpooling or on the bus) and react to songs they like or dislike. Students within certain cliques may wear clothing from their favorite bands. There is a separate override system that allows for bands that appear outside the Top 100 but were still popular sub-genres within youth culture (emo bands that never broke into mainstream for example)
 - Clothing: Clothing is now more clique-dependent and varied. There is still much more to add, but cliques have their own unique pieces of clothing, color combinations and outfits. Students will slowly build a wardrobe over the course of the first week, where the clothing pieces that are generated per day are then assigned to their inventory so that they can be chosen to wear again. Clothing also plays into the a basic body temperature mechanic that still needs some more work. For now, every item of clothing has a base temperature score. Students were provided a metric for simulating if they felt hot or cold last update but it was not effected by any system until now.
-- School central air conditioning and temperature: As mentioned above we are now basically tracking how hot or cold a student feels. The school now has a A/C system that originates from the Utility rooms. Hot or cold air is passed between all nodes in the school to simulate how a central air system is set up, with an increasing chance to lose conditioned air as it travels to further rooms. Portables and other detached buildings do not benefit from centralized air and are generally closer to the outside temperature. Weather systems were implemented a long time ago, but this is now the first time it is being used within another system. A/C and heat need to work to combat whatever temperature it is outside
+- School central air conditioning and temperature: As mentioned above we are now basically tracking how hot or cold a student feels. The school now has a A/C system that originates from the Utility rooms. Hot or cold air is passed between all nodes in the school to simulate how a central air system is set up, with an increasing chance to lose conditioned air as it travels to further rooms. Portables and other detached buildings do not benefit from centralized air; they run their own weaker wall units, so they stay livable but are the draftiest rooms in the school. Indoor rooms always hold most of their conditioning no matter how far they are from a utility room -- only true outdoor spaces (courtyards, athletic fields, parking lots) sit at the raw outside temperature. Weather systems were implemented a long time ago, but this is now the first time it is being used within another system. A/C and heat need to work to combat whatever temperature it is outside
 - Adding more clothing and haircut "assets" for cliques and split student descriptors by gender. This should add more variety to student descriptions. Hair dyes for some cliques are now using their product names
 - Teacher decision trees and discipline: Before, students were disciplined or "caught" talking independently. Being caught by the teacher was tied to a chance at the student action-level. This has been reworked to rely on the teacher and their own decision-tree. This basic decision-tree for the teacher has them switching between basic classroom tasks. Discipline or catching students talking can depend on how much of the class is making noise, or if a student is a habitual offender. There are no long-term consequences yet for students that have been caught. Students receive a small penalty if they are told to be quiet, and their action is temporarily stopped.
 - Swapped to a fatjar so that the game could actually be launched instead of having to deal with a bunch of dependencies
@@ -343,10 +434,10 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Unique trait system: Students can be described with random unique traits to provide more flavor to their appearance. The trait system was later made generic so that it can be applied to items as well. Traits can be used to describe things in various conditions. Right now traits are applied to student appearance but the framework has been set for cellphones
 - Sim for needs: Students and staff now have pools that track hunger, thirst, temperature, bladder, entertainment, and energy. People will now eat and go to the bathroom and attempt to keep their various pools from falling to 0. Pools falling to 0 will start to drain their secondary stat pools. I will still need to work out how this interacts with allostatic load
 
-![](src/main/java/Resources.Screencaps/r16-1.png)
-![](src/main/java/Resources.Screencaps/r16-2.png)
-![](src/main/java/Resources.Screencaps/r16-3.png)
-![](src/main/java/Resources.Screencaps/r16-4.png)
+![](docs/screencaps/r16-1.png)
+![](docs/screencaps/r16-2.png)
+![](docs/screencaps/r16-3.png)
+![](docs/screencaps/r16-4.png)
 
 ### Bugfixes
 
@@ -382,9 +473,9 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Basic seed system to track school/student/staff generation, although this needs some additional work
 - Minor UI feature additions and reworks to make it more organized
 
-![](src/main/java/Resources.Screencaps/r15_1.png)
-![](src/main/java/Resources.Screencaps/r15_2.png)
-![](src/main/java/Resources.Screencaps/r15_3.png)
+![](docs/screencaps/r15_1.png)
+![](docs/screencaps/r15_2.png)
+![](docs/screencaps/r15_3.png)
 
 ### Bugfixes
 
@@ -431,7 +522,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
   bracket in the future
 - Clean up formatting and minor bugfixes
 
-![](src/main/java/Resources.Screencaps/proto7.JPG)
+![](docs/screencaps/proto7.JPG)
 
 ## Release 0.0.11
 
@@ -446,7 +537,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
   This forms the foundation for future social links feature
 - Various bugfixes
 
-![](src/main/java/Resources.Screencaps/proto6.JPG)
+![](docs/screencaps/proto6.JPG)
 
 ## Release 0.0.10
 
@@ -460,7 +551,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Math class assignment revisions for students
 - Minor bugfixes on student and teacher assignments
 
-![](src/main/java/Resources.Screencaps/proto5.JPG)
+![](docs/screencaps/proto5.JPG)
 
 ## Release 0.0.9
 
@@ -472,7 +563,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Revised student cap and staff cap calculations
 - Various bugfixes
 
-![](src/main/java/Resources.Screencaps/proto4.JPG)
+![](docs/screencaps/proto4.JPG)
 
 ## Release 0.0.8
 
@@ -485,7 +576,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Fix temperature display bug
 - Student cap bug fix where student cap was 0 for specific rooms
 
-![](src/main/java/Resources.Screencaps/proto3.JPG)
+![](docs/screencaps/proto3.JPG)
 
 ## Release 0.0.7
 
@@ -506,7 +597,7 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - GUI updates in realtime as school is generated
 - Java project SDK upgraded from 11 to 17
 
-![](src/main/java/Resources.Screencaps/proto2.JPG)
+![](docs/screencaps/proto2.JPG)
 
 ## Release 0.0.5
 

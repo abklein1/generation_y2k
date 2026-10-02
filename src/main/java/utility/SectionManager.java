@@ -490,9 +490,11 @@ public class SectionManager {
                         lowerName.contains("german") || lowerName.contains("latin") ||
                         lowerName.contains("sign language") || lowerName.contains("asl");
             case "visual arts" ->
-                lowerName.contains("art") || lowerName.contains("drawing") ||
+                (lowerName.contains("art") || lowerName.contains("drawing") ||
                         lowerName.contains("painting") || lowerName.contains("sculpture") ||
-                        lowerName.contains("ceramics") || lowerName.contains("photography");
+                        lowerName.contains("ceramics") || lowerName.contains("photography") ||
+                        lowerName.contains("printmaking"))
+                        && !lowerName.contains("culinary");
             case "performing arts" ->
                 lowerName.contains("band") || lowerName.contains("choir") ||
                         lowerName.contains("orchestra") || lowerName.contains("music") ||

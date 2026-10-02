@@ -79,6 +79,20 @@ public enum ActivityType {
     TEXTING("Texting", false, false),
     
     /**
+     * Entity is talking trash about a third student to their conversation
+     * partner. The jealousy-driven sabotage action: aims to sour the
+     * partner's opinion of the student being discussed.
+     */
+    BADMOUTHING("Badmouthing", false, false),
+    
+    /**
+     * Entity is showing off to get another student's attention.
+     * The jealousy-driven pursuit action: warms the target's opinion of the
+     * initiator, scaled by the initiator's charisma.
+     */
+    IMPRESSING("Showing Off", false, false),
+    
+    /**
      * Entity is studying in the library or study hall.
      */
     STUDYING("Studying", true, false),

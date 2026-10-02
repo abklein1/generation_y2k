@@ -217,7 +217,9 @@ public class DemandAnalyzer {
         teachersNeeded.putIfAbsent(StaffType.OFFICE, Math.max(2, totalStudents / 400));
         teachersNeeded.putIfAbsent(StaffType.MAINTENANCE, Math.max(2, totalStudents / 300));
         teachersNeeded.putIfAbsent(StaffType.LUNCH, Math.max(3, totalStudents / 200));
-        teachersNeeded.putIfAbsent(StaffType.SUB, Math.max(10, (int) (totalStudents * 0.01)));
+        // SUB may already hold a section-derived count when a class falls through
+        // the staff-type mapping; the substitute pool floor must apply regardless.
+        teachersNeeded.merge(StaffType.SUB, Math.max(10, (int) (totalStudents * 0.01)), Math::max);
     }
 
     /**

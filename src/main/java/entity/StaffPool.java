@@ -68,6 +68,11 @@ public class StaffPool implements Serializable {
         for (Map.Entry<Integer, Staff> entry : staffHashMap.entrySet()) {
             // Use the existing key if it's larger than our counter
             int id = entry.getKey();
+            // Incoming maps are often keyed 0..n-1 (e.g. generated staff batches);
+            // never overwrite staff already in the pool - remap to a fresh id.
+            if (allStaff.containsKey(id)) {
+                id = nextStaffId;
+            }
             if (id >= nextStaffId) {
                 nextStaffId = id + 1;
             }

@@ -84,6 +84,15 @@ public class SchoolAssignmentService {
         int staffAssigned = StaffAssignmentService.assignStaffByDemand(
                 town.getStaffPool(), school, demand.staffNeeds(), view);
 
+        // If the town pool ran dry, generate new staff so curriculum demand is
+        // met at initial population (the expansion path already does this).
+        Map<StaffType, Integer> remainingShortages = StaffAssignmentService.getStaffingShortages(
+                town.getStaffPool(), school, demand.staffNeeds());
+        if (!remainingShortages.isEmpty()) {
+            staffAssigned += StaffAssignmentService.fillShortagesWithGeneratedStaff(
+                    town, school, remainingShortages, view);
+        }
+
         // 5. Build/adapt school rooms based on demand
         view.appendOutput("Step 5: Adapting school rooms to demand...");
         Director.adaptSchoolToDemand(school, demand.roomNeeds(), view);

@@ -61,8 +61,9 @@ public class LunchDestinationSelector {
     }
 
     /**
-     * Chooses among lunchrooms and courtyards, weighted by where the
-     * student's friends have already been placed this lunch wave.
+     * Chooses among lunchrooms and courtyards, weighted by where the people
+     * this student likes (any positive outgoing social link, not just close
+     * friends) have already been placed this lunch wave.
      */
     private Room selectOnCampusDestination(Student student) {
         List<Room> candidates = buildCandidateList();
@@ -78,7 +79,10 @@ public class LunchDestinationSelector {
             weights.put(room, 1.0);
         }
 
-        List<Student> friends = student.studentStatistics.getFriendsInSchool();
+        List<Student> friends = socialLinkConnector.getPositiveConnections(student);
+        if (friends.isEmpty()) {
+            friends = student.studentStatistics.getFriendsInSchool();
+        }
         String myLunch = student.getEntityState() != null
                 ? student.getEntityState().getLunchPeriod() : "A";
 

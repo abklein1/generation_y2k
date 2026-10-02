@@ -87,6 +87,11 @@ public class SchoolController implements InspectionNavigator {
         this.view.addGenerateButtonListener(new GenerateButtonListener());
         this.view.addVisualizeButtonListener(new VisualizeButtonListener());
         this.view.addSocialGraphButtonListener(new SocialGraphButtonListener());
+        this.view.addSocialRankingsListener(e -> {
+            if (socialLinkConnector != null && studentHashMap != null) {
+                SocialRankings.show(studentHashMap, socialLinkConnector);
+            }
+        });
         this.view.addInspectionMenuListener(new InspectionMenuListener());
         this.view.addCreateCharacterButtonListener(new CreateCharacterButtonListener());
 
@@ -197,6 +202,7 @@ public class SchoolController implements InspectionNavigator {
 
         socialLinkConnector = new SocialLinkConnector();
         socialLinkConnector.restoreFromSnapshot(studentHashMap, saveData.getSocialLinks());
+        Inspector.setSocialLinkConnector(socialLinkConnector);
 
         entityStateManager = new EntityStateManager(studentHashMap, staffHashMap,
                 standardSchool, time);
@@ -704,7 +710,9 @@ public class SchoolController implements InspectionNavigator {
         WeatherPatterns[] weatherArray = weather.determineWeatherAMPM(time.getCurrentDate());
         view.updateWeatherIcons(rootPath + weatherArray[0].getIconName(), rootPath + weatherArray[1].getIconName(),
                 weatherArray[0].toString(), weatherArray[1].toString());
-        view.updateWeatherTemps(weather.getTemp("TMAX"), weather.getTemp("TMIN"));
+        // AM shows the day's low (mornings are coldest), PM the day's
+        // high -- matching the outdoor temps the HVAC recomputes use.
+        view.updateWeatherTemps(weather.getTemp("TMIN"), weather.getTemp("TMAX"));
         view.updateDayLabel(time.getDayName());
     }
 
@@ -1962,6 +1970,9 @@ public class SchoolController implements InspectionNavigator {
             publish("Assigning student cliques...");
             CliqueAssigner.assignCliques(studentHashMap, view);
 
+            publish("Assigning orientation demographics...");
+            OrientationAssigner.assignOrientations(studentHashMap);
+
             publish("Applying clique-aware piercings...");
             StudentPopGenerator.applyAllPiercingAttributes(studentHashMap);
 
@@ -1976,10 +1987,14 @@ public class SchoolController implements InspectionNavigator {
             StudentPopGenerator.applyAllClothingAttributes(studentHashMap);
 
             publish("Initializing social links...");
-            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
+            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool, this::publish);
+            Inspector.setSocialLinkConnector(socialLinkConnector);
+
+            publish("Kindling romantic relationships...");
+            RomanceAssigner.assignRomanticRelationships(studentHashMap, socialLinkConnector);
 
             publish("Populating phone contacts...");
-            CellPhoneAssignmentService.populatePhoneContacts(town);
+            CellPhoneAssignmentService.populatePhoneContacts(town, socialLinkConnector);
 
             traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
 
@@ -2071,6 +2086,9 @@ public class SchoolController implements InspectionNavigator {
             publish("Assigning student cliques...");
             CliqueAssigner.assignCliques(studentHashMap, view);
 
+            publish("Assigning orientation demographics...");
+            OrientationAssigner.assignOrientations(studentHashMap);
+
             publish("Applying clique-aware piercings...");
             StudentPopGenerator.applyAllPiercingAttributes(studentHashMap);
 
@@ -2085,7 +2103,11 @@ public class SchoolController implements InspectionNavigator {
             StudentPopGenerator.applyAllClothingAttributes(studentHashMap);
 
             publish("Initializing social links...");
-            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool);
+            socialLinkConnector = new SocialLinkConnector(studentHashMap, standardSchool, this::publish);
+            Inspector.setSocialLinkConnector(socialLinkConnector);
+
+            publish("Kindling romantic relationships...");
+            RomanceAssigner.assignRomanticRelationships(studentHashMap, socialLinkConnector);
 
             traversalStorage = new TraversalStorage(studentHashMap, view, roomConnector);
         }

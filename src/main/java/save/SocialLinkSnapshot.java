@@ -2,6 +2,7 @@ package save;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,13 @@ public class SocialLinkSnapshot implements Serializable {
 
     private final List<EdgeSnapshot> edges = new ArrayList<>();
     private final Map<String, String> catalysts = new HashMap<>();
+    // Directed romance records ("sourceId>targetId" -> RomanticStatus name).
+    // Null on snapshots serialized before romance existed; accessors guard.
+    private final Map<String, String> romance = new HashMap<>();
+    // Couple-knowledge records ("observerId>idA:idB"): which students know
+    // about which couples. Null on snapshots serialized before jealousy
+    // existed; accessors guard.
+    private final List<String> coupleKnowledge = new ArrayList<>();
 
     public void addEdge(int sourceStudentId, int targetStudentId, double weight) {
         edges.add(new EdgeSnapshot(sourceStudentId, targetStudentId, weight));
@@ -29,6 +37,30 @@ public class SocialLinkSnapshot implements Serializable {
 
     public Map<String, String> getCatalysts() {
         return new HashMap<>(catalysts);
+    }
+
+    public void putRomance(Map<String, String> romanceRecords) {
+        romance.clear();
+        if (romanceRecords != null) {
+            romance.putAll(romanceRecords);
+        }
+    }
+
+    public Map<String, String> getRomance() {
+        // Field is null when deserializing a pre-romance save
+        return romance == null ? new HashMap<>() : new HashMap<>(romance);
+    }
+
+    public void putCoupleKnowledge(Collection<String> knowledgeRecords) {
+        coupleKnowledge.clear();
+        if (knowledgeRecords != null) {
+            coupleKnowledge.addAll(knowledgeRecords);
+        }
+    }
+
+    public List<String> getCoupleKnowledge() {
+        // Field is null when deserializing a pre-jealousy save
+        return coupleKnowledge == null ? new ArrayList<>() : new ArrayList<>(coupleKnowledge);
     }
 
     public static class EdgeSnapshot implements Serializable {

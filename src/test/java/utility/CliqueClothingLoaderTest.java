@@ -145,8 +145,10 @@ class CliqueClothingLoaderTest {
     @Test
     @DisplayName("Explicit warmth overrides parse; unset warmth stays null")
     void testWarmthParsing() {
+        // Skater male bottoms mix explicit warmth overrides (cargo shorts)
+        // with garments that rely on the per-category default (skinny jeans).
         List<CliqueClothingLoader.ClothingOption> bottoms =
-                CliqueClothingLoader.getOptions("Skater", "Female", "bottoms");
+                CliqueClothingLoader.getOptions("Skater", "Male", "bottoms");
         assertFalse(bottoms.isEmpty());
 
         CliqueClothingLoader.ClothingOption shorts = bottoms.stream()

@@ -5,6 +5,7 @@ import behavior.BehaviorTree;
 import entity.Body.TeacherArms;
 import entity.Body.TeacherLegs;
 import entity.Body.TeacherUpperT;
+import entity.Rooms.Room;
 import utility.TeacherFactory;
 import utility.TeacherName;
 import utility.TeacherStatistics;
@@ -26,6 +27,11 @@ public class Staff implements Serializable {
     private EntityState entityState;
     private transient BehaviorTree behaviorTree;
     private transient BehaviorContext behaviorContext;
+
+    /** Homeroom / assigned teaching space, or null if this staff has none. */
+    private Room assignedClassroom;
+    /** True once {@link #assignedClassroom} has been resolved (including a confirmed miss). */
+    private boolean assignedClassroomResolved;
 
     public Staff() {
         teacherName = teacherFactory.createName();
@@ -89,6 +95,41 @@ public class Staff implements Serializable {
      */
     public void setBehaviorContext(BehaviorContext behaviorContext) {
         this.behaviorContext = behaviorContext;
+    }
+
+    /**
+     * Assigned teaching room if one has been resolved. {@code null} can mean
+     * either "not looked up yet" or "confirmed to have no room"; use
+     * {@link #hasResolvedAssignedClassroom()} to distinguish.
+     */
+    public Room getAssignedClassroom() {
+        return assignedClassroom;
+    }
+
+    /**
+     * @return true if a classroom lookup has already run (or an assignment
+     *         wrote the result), including the case where there is no room
+     */
+    public boolean hasResolvedAssignedClassroom() {
+        return assignedClassroomResolved;
+    }
+
+    /**
+     * Records this staff member's assigned room. Passing {@code null} means
+     * they have no classroom; either way, later lookups can skip a full
+     * school scan.
+     */
+    public void setAssignedClassroom(Room room) {
+        this.assignedClassroom = room;
+        this.assignedClassroomResolved = true;
+    }
+
+    /**
+     * Forgets a cached classroom so the next lookup searches the school again.
+     */
+    public void clearAssignedClassroomResolution() {
+        this.assignedClassroom = null;
+        this.assignedClassroomResolved = false;
     }
 
     @Override
