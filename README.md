@@ -398,7 +398,20 @@ Repeated allostatic overload will likely reduce the overall amount of allostatic
 - Classroom distribution is not ideal for students. Some students are still missing required classes
 - Grid system runs out of space at times (especially on stairs)
 - People wear multiple belts due to how accessories are set up
-- Room temperatures can be extremely cold
+
+## Release 0.0.18
+
+### Features
+
+- Relationships/Romance/Orientations: Students now can have romantic relationships and more complex social circles where they can have a variety of crushes, friendships, and serious or casual long-term romantic relationships. These relationships are asymmetric so it is possible that one student could believe that they are in a relationship or best friends with another, whereas their "friend" or romantic interest may not feel the same way. This should set the groundwork for more complex interactions
+- Viewer/tab that displays popular and unpopular students and various other stats to dive into social circles
+- Relationships can change over time and students may get up the courage to ask one another out, decide to end a relationship or become jealous of other relationships if they have a crush or interest in someone. They can decide to attempt to break up the relationship
+- Adding some more clothing options for cliques
+
+### Bugfixes
+
+- Non-teacher staff was still not being assigned to rooms despite being generated, which meant error messages were spamming the feed. Staff are now being assigned to their correct rooms
+- Minor tweaks to the central A/C and heating system that was causing rooms to be extremely cold
 
 ## Release 0.0.17
 
