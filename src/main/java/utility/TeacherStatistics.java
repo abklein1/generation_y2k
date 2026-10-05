@@ -37,6 +37,7 @@ public class TeacherStatistics implements PStatistics {
     private Enum<?> staffType;
     private final TeacherSchedule teacherSchedule;
     private int yearsOfExperience;
+    private entity.TeacherTemperament temperament;
     private String neighborhoodName;
     private String neighborhoodWealthLevel;
 
@@ -553,6 +554,37 @@ public class TeacherStatistics implements PStatistics {
 
     public void setYearsOfExperience(int yearsOfExperience) {
         this.yearsOfExperience = yearsOfExperience;
+    }
+
+    /**
+     * Returns the teacher's grading temperament. Saves created before the
+     * grading system have no temperament, so null falls back to BALANCED.
+     *
+     * @return the temperament, never null
+     */
+    public entity.TeacherTemperament getTemperament() {
+        return temperament == null ? entity.TeacherTemperament.BALANCED : temperament;
+    }
+
+    public void setTemperament(entity.TeacherTemperament temperament) {
+        this.temperament = temperament;
+    }
+
+    /**
+     * Derives temperament from existing personality stats: dutiful but
+     * unsympathetic teachers grade strictly, warm open-minded ones leniently,
+     * and low-resilience teachers grade erratically.
+     */
+    public void deriveTemperamentFromStats() {
+        if (resilience < 35) {
+            this.temperament = entity.TeacherTemperament.ERRATIC;
+        } else if (responsibility >= 60 && empathy < 45) {
+            this.temperament = entity.TeacherTemperament.STRICT;
+        } else if (empathy >= 60 && openmindedness >= 50) {
+            this.temperament = entity.TeacherTemperament.LENIENT;
+        } else {
+            this.temperament = entity.TeacherTemperament.BALANCED;
+        }
     }
 
     /**

@@ -122,6 +122,13 @@ public class StudentBehaviorTreeBuilder {
     private static BehaviorNode buildClassActivitySelector(Student student, PersonalityType type) {
         Selector activitySelector = new Selector("ClassActivities");
 
+        // An in-progress quiz/test/exam overrides everything for every
+        // personality: no socializing while a test is on the desk.
+        Sequence assessmentSequence = new Sequence("TakeAssessment");
+        assessmentSequence.addChild(new HasAssessmentNowCondition());
+        assessmentSequence.addChild(new TakeAssessmentActionNode());
+        activitySelector.addChild(assessmentSequence);
+
         // Academic pressure gets first chance to compete with social relief.
         activitySelector.addChild(buildAcademicPressureSequence());
         
@@ -437,7 +444,7 @@ public class StudentBehaviorTreeBuilder {
             }
 
             String className = AcademicProgressService.getCurrentClassName(student, context.getTime());
-            return AcademicProgressService.hasAcademicPressure(student, className);
+            return AcademicProgressService.hasAcademicPressure(student, className, context.getTime());
         }
     }
     

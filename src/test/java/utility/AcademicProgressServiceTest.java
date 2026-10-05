@@ -1,24 +1,26 @@
 package utility;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import behavior.BehaviorContext;
 import behavior.BehaviorTree;
 import behavior.StudentBehaviorTreeBuilder;
 import entity.ActivityType;
 import entity.EntityState;
+import entity.Rooms.Classroom;
 import entity.Staff;
 import entity.Student;
 import entity.StudentBlock;
 import entity.Time;
-import entity.Rooms.Classroom;
 import entity.academic.AcademicSkill;
 import entity.academic.CourseProgress;
 import entity.academic.HomeworkAssignment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Academic progress service")
 class AcademicProgressServiceTest {
@@ -143,6 +145,60 @@ class AcademicProgressServiceTest {
 
         assertTrue(second.getEffort() > first.getEffort());
         assertTrue(second.getProblemCount() >= first.getProblemCount());
+    }
+
+    @Test
+    @DisplayName("Flags students with rock-bottom drive as academically apathetic")
+    void detectsAcademicApathy() {
+        Student slacker = createStudentWithStats(100, 20, 50, 50, 30);
+        assertTrue(AcademicProgressService.isAcademicallyApathetic(slacker));
+
+        Student driven = createStudentWithStats(100, 60, 50, 50, 60);
+        assertFalse(AcademicProgressService.isAcademicallyApathetic(driven));
+    }
+
+    @Test
+    @DisplayName("Upcoming assessments create pressure, but not for apathetic students")
+    void upcomingAssessmentsCreatePressure() {
+        Time time = new Time();
+
+        Student student = createStudentWithStats(100, 60, 50, 50, 60);
+        addClassWithQuizIn2Days(student, time);
+        assertTrue(AcademicProgressService.hasAcademicPressure(student, "Algebra I", time));
+
+        Student slacker = createStudentWithStats(100, 20, 50, 50, 30);
+        addClassWithQuizIn2Days(slacker, time);
+        assertFalse(AcademicProgressService.hasAcademicPressure(slacker, "Algebra I", time));
+    }
+
+    @Test
+    @DisplayName("No assessment pressure when nothing is scheduled soon")
+    void noPressureWithoutNearbyAssessments() {
+        Time time = new Time();
+        Student student = createStudentWithStats(100, 60, 50, 50, 60);
+        addClassWithQuiz(student, time.getDayCounter() + 30);
+        assertFalse(AcademicProgressService.hasAcademicPressure(student, "Algebra I", time));
+    }
+
+    private void addClassWithQuizIn2Days(Student student, Time time) {
+        addClassWithQuiz(student, time.getDayCounter() + 2);
+    }
+
+    private void addClassWithQuiz(Student student, int quizDay) {
+        Staff teacher = createTeacher(10, 100, 50);
+        entity.TeacherBlock teacherBlock = new entity.TeacherBlock();
+        teacherBlock.setBlockNumber(1);
+        teacherBlock.setClassName("Algebra I");
+        teacherBlock.setSemester("Fall");
+        teacherBlock.setLessonPlan(new entity.academic.LessonPlan(
+                entity.academic.CourseCategory.CORE_ACADEMIC,
+                entity.academic.LessonPlanTemplate
+                        .forCategory(entity.academic.CourseCategory.CORE_ACADEMIC).getWeights(),
+                2,
+                java.util.List.of(new entity.academic.ScheduledAssessment("quiz_p",
+                        entity.academic.AssessmentType.QUIZ, "Quiz 1", quizDay, 50))));
+        teacher.teacherStatistics.addTeacherSchedule(teacherBlock);
+        addScheduledClass(student, "Algebra I", "Fall", teacher);
     }
 
     @Test

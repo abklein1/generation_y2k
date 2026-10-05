@@ -5,10 +5,15 @@ import entity.ActivityType;
 import entity.Staff;
 import entity.Student;
 import entity.StudentBlock;
+import entity.TeacherBlock;
 import entity.Time;
 import entity.academic.AcademicSkill;
+import entity.academic.AssessmentType;
 import entity.academic.CourseProgress;
+import entity.academic.GradeEntry;
 import entity.academic.HomeworkAssignment;
+import entity.academic.LessonPlan;
+import entity.academic.ScheduledAssessment;
 import entity.academic.StudentAcademicRecord;
 
 import java.util.List;
@@ -71,11 +76,12 @@ public final class AcademicProgressService {
 
     public static int assignHomeworkIfDue(Student student, Time time) {
         if (student == null || student.studentStatistics == null || time == null
-                || !isHomeworkAssignmentDay(time.getDayCounter())) {
+                || time.getDayCounter() <= 0) {
             return 0;
         }
 
         int assignedCount = 0;
+        int day = time.getDayCounter();
         String semester = time.getCurrentSemester();
         StudentAcademicRecord record = student.studentStatistics.getAcademicRecord();
         List<StudentBlock> blocks = student.studentStatistics.getStudentSchedule().getClassScheduleCopy();
@@ -84,14 +90,32 @@ public final class AcademicProgressService {
                 continue;
             }
 
+            // The section's lesson plan controls cadence: PE assigns none,
+            // electives assign less often, and nothing is assigned on a day
+            // the class already has a test or project. Sections without a
+            // plan keep the legacy fixed interval.
+            LessonPlan plan = getLessonPlanFor(block);
+            int interval = plan == null
+                    ? SimConstants.ACADEMIC_HOMEWORK_ASSIGNMENT_INTERVAL_DAYS
+                    : plan.getHomeworkIntervalDays();
+            if (interval <= 0 || day % interval != 0) {
+                continue;
+            }
+            if (plan != null && plan.getAssessmentForDay(day) != null) {
+                continue;
+            }
+
             String className = block.getClassName();
             if (record.hasOpenHomeworkForCourse(className)
-                    || record.hasHomeworkAssignedForCourseOnDay(className, time.getDayCounter())) {
+                    || record.hasHomeworkAssignedForCourseOnDay(className, day)) {
                 continue;
             }
 
             CourseProgress course = record.getOrCreateCourse(className);
-            HomeworkAssignment homework = createHomework(block, course, time.getDayCounter());
+            if (plan != null) {
+                course.setGradingPolicy(plan.getWeights(), block.getSemester());
+            }
+            HomeworkAssignment homework = createHomework(block, course, day);
             record.addHomework(homework);
             course.recordHomeworkAssigned();
             assignedCount++;
@@ -106,6 +130,7 @@ public final class AcademicProgressService {
 
         int completedCount = 0;
         StudentAcademicRecord record = student.studentStatistics.getAcademicRecord();
+        boolean apathetic = isAcademicallyApathetic(student);
         for (HomeworkAssignment homework : record.getPendingHomework()) {
             if (!homework.isDueOnOrBefore(day)) {
                 continue;
@@ -113,6 +138,9 @@ public final class AcademicProgressService {
 
             CourseProgress course = record.getOrCreateCourse(homework.getClassName());
             double completionScore = calculateHomeworkCompletionScore(student, course, homework);
+            if (apathetic) {
+                completionScore -= SimConstants.GRADING_APATHY_HOMEWORK_PENALTY;
+            }
             drainHomeworkPools(student);
 
             if (completionScore >= 50.0) {
@@ -121,15 +149,40 @@ public final class AcademicProgressService {
                 course.addUnderstanding(SimConstants.ACADEMIC_HOMEWORK_UNDERSTANDING_GAIN);
                 record.addSkillMastery(inferSkill(homework.getClassName()),
                         SimConstants.ACADEMIC_HOMEWORK_SKILL_GAIN);
-                student.studentStatistics.setNewGrade((int) Math.min(100.0, 70.0 + completionScore / 3.0));
+                int grade = (int) Math.min(100.0, 70.0 + completionScore / 3.0);
+                student.studentStatistics.setNewGrade(grade);
+                course.getGradeBook().addEntry(new GradeEntry(AssessmentType.HOMEWORK,
+                        "Homework (day " + homework.getAssignedDay() + ")", grade, day, false));
                 completedCount++;
             } else {
                 homework.markMissing();
                 course.recordHomeworkMissing();
-                student.studentStatistics.setNewGrade((int) Math.max(0.0, 65.0 - (50.0 - completionScore) / 2.0));
+                int grade = (int) Math.max(0.0, 65.0 - (50.0 - completionScore) / 2.0);
+                student.studentStatistics.setNewGrade(grade);
+                course.getGradeBook().addEntry(new GradeEntry(AssessmentType.HOMEWORK,
+                        "Homework (day " + homework.getAssignedDay() + ")", grade, day, true));
             }
         }
         return completedCount;
+    }
+
+    /**
+     * Students with rock-bottom determination and responsibility simply do
+     * not care about school work: they feel no pre-assessment pressure and
+     * put less effort into homework.
+     *
+     * @param student the student to check
+     * @return true when the student is academically apathetic
+     */
+    public static boolean isAcademicallyApathetic(Student student) {
+        if (student == null || student.studentStatistics == null) {
+            return false;
+        }
+        int determination = student.studentStatistics.getDetermination();
+        int responsibility = student.studentStatistics.getResponsibility();
+        return (determination < SimConstants.GRADING_APATHY_DETERMINATION_MAX
+                && responsibility < SimConstants.GRADING_APATHY_RESPONSIBILITY_MAX)
+                || (determination + responsibility) / 2 < SimConstants.GRADING_APATHY_COMBINED_MAX;
     }
 
     public static boolean hasAcademicPressure(Student student, String className) {
@@ -145,6 +198,119 @@ public final class AcademicProgressService {
         return course != null
                 && course.getUnderstanding() < SimConstants.ACADEMIC_LOW_UNDERSTANDING_THRESHOLD
                 && course.getAssignedHomework() > 0;
+    }
+
+    /**
+     * Time-aware pressure check: apathetic students never feel it, and
+     * everyone else also feels pressure when a quiz/test/exam/project on the
+     * class's lesson plan is close. Daydreamer-type students only react to
+     * exams; students currently holding a D or F react one day earlier.
+     *
+     * @param student   the student
+     * @param className the class in question
+     * @param time      the game clock (null falls back to homework-only checks)
+     * @return true when the student should prioritize academics right now
+     */
+    public static boolean hasAcademicPressure(Student student, String className, Time time) {
+        if (student == null || student.studentStatistics == null) {
+            return false;
+        }
+        if (isAcademicallyApathetic(student)) {
+            return false;
+        }
+        if (hasAcademicPressure(student, className)) {
+            return true;
+        }
+        if (time == null) {
+            return false;
+        }
+
+        StudentBlock block = findScheduledBlock(student, className, time.getCurrentSemester());
+        LessonPlan plan = getLessonPlanFor(block);
+        if (plan == null) {
+            return false;
+        }
+
+        boolean daydreamerLike = student.studentStatistics.getCuriosity() >= 60
+                && student.studentStatistics.getDetermination() < 45;
+        CourseProgress course = student.studentStatistics.getAcademicRecord().getCourse(className);
+        double percent = course == null ? -1.0 : course.getCurrentPercent();
+        boolean strugglingGrade = percent >= 0.0 && percent < 70.0;
+
+        int day = time.getDayCounter();
+        for (ScheduledAssessment assessment : plan.getAssessments()) {
+            if (assessment.isGraded() || assessment.getScheduledDay() < day) {
+                continue;
+            }
+            if (daydreamerLike && !assessment.getType().isExam()) {
+                continue;
+            }
+            int window = assessment.getType().getPressureWindowDays() + (strugglingGrade ? 1 : 0);
+            if (assessment.getScheduledDay() - day <= window) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Resolves the teacher-side block (and therefore the lesson plan) that
+     * matches a student's scheduled block.
+     *
+     * @param block the student's scheduled block
+     * @return the matching teacher block, or null
+     */
+    public static TeacherBlock findTeacherBlock(StudentBlock block) {
+        if (block == null || block.getTeacher() == null
+                || block.getTeacher().teacherStatistics == null
+                || block.getTeacher().teacherStatistics.getTeacherSchedule() == null) {
+            return null;
+        }
+        for (TeacherBlock teacherBlock
+                : block.getTeacher().teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
+            if (teacherBlock.getBlockNumber() == block.getBlockNumber()
+                    && teacherBlock.getClassName() != null
+                    && teacherBlock.getClassName().equals(block.getClassName())
+                    && teacherBlock.getSemester() != null
+                    && teacherBlock.getSemester().equals(block.getSemester())) {
+                return teacherBlock;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the lesson plan governing a student's scheduled block, or null
+     * when the section has none.
+     *
+     * @param block the student's scheduled block
+     * @return the lesson plan, or null
+     */
+    public static LessonPlan getLessonPlanFor(StudentBlock block) {
+        TeacherBlock teacherBlock = findTeacherBlock(block);
+        return teacherBlock == null ? null : teacherBlock.getLessonPlan();
+    }
+
+    /**
+     * Finds the student's scheduled block for a class in the given semester.
+     *
+     * @param student   the student
+     * @param className the class name
+     * @param semester  "Fall" or "Spring"
+     * @return the matching block, or null
+     */
+    public static StudentBlock findScheduledBlock(Student student, String className, String semester) {
+        if (student == null || student.studentStatistics == null || className == null) {
+            return null;
+        }
+        for (StudentBlock block
+                : student.studentStatistics.getStudentSchedule().getClassScheduleCopy()) {
+            if (block != null && className.equals(block.getClassName())
+                    && (semester == null || semester.equals(block.getSemester()))) {
+                return block;
+            }
+        }
+        return null;
     }
 
     public static String getCurrentClassName(Student student, Time time) {
@@ -183,11 +349,6 @@ public final class AcademicProgressService {
             return AcademicSkill.HISTORY;
         }
         return AcademicSkill.GENERAL_STUDY;
-    }
-
-    private static boolean isHomeworkAssignmentDay(int dayCounter) {
-        return dayCounter > 0
-                && dayCounter % SimConstants.ACADEMIC_HOMEWORK_ASSIGNMENT_INTERVAL_DAYS == 0;
     }
 
     private static boolean isAssignableClassBlock(StudentBlock block, String semester) {

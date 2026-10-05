@@ -217,6 +217,8 @@ public class SchoolController implements InspectionNavigator {
         }
 
         simulationEngine = new SimulationEngine(time, standardSchool, studentHashMap, staffHashMap);
+        // Backfill lesson plans for saves created before the grading system.
+        LessonPlanGenerator.ensureLessonPlans(staffHashMap);
         simulationEngine.setSocialLinkConnector(socialLinkConnector);
         if (town != null) {
             simulationEngine.setTown(town);
@@ -393,6 +395,10 @@ public class SchoolController implements InspectionNavigator {
     private void initializeSimulation() {
         // Create simulation engine
         simulationEngine = new SimulationEngine(time, standardSchool, studentHashMap, staffHashMap);
+
+        // Teachers draft their semester lesson plans (homework cadence,
+        // quizzes, tests, exams, projects) before the first bell rings.
+        LessonPlanGenerator.ensureLessonPlans(staffHashMap);
 
         // Connect social link system so interactions update relationship scores
         if (socialLinkConnector != null) {

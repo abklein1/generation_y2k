@@ -14,8 +14,12 @@ import entity.Rooms.Classroom;
 import entity.*;
 import entity.Rooms.Room;
 import entity.academic.AcademicSkill;
+import entity.academic.AssessmentType;
 import entity.academic.CourseProgress;
+import entity.academic.GradeEntry;
 import entity.academic.HomeworkAssignment;
+import entity.academic.LessonPlan;
+import entity.academic.ScheduledAssessment;
 import entity.academic.StudentAcademicRecord;
 import utility.music.MusicPreference;
 import utility.music.MusicTaste;
@@ -780,6 +784,150 @@ public class Inspector {
         return NEED_FORMAT.format(value) + "%";
     }
 
+    /**
+     * Builds the per-course gradebook report: letter grade and percent,
+     * category breakdown, recent results, upcoming assessments, and GPA.
+     */
+    private static String buildStudentGradesText(Student student) {
+        StringBuilder sb = new StringBuilder();
+        StudentAcademicRecord record = student.studentStatistics.getAcademicRecord();
+
+        sb.append(student.studentName.getFullName()).append("\n=====================================\n");
+
+        double overallGpa = record.getOverallGpa();
+        sb.append("Overall GPA: ")
+                .append(overallGpa < 0.0 ? "-" : NEED_FORMAT.format(overallGpa))
+                .append("\n");
+        for (String semester : new String[] { "Fall", "Spring" }) {
+            double gpa = record.getSemesterGpa(semester);
+            if (gpa >= 0.0) {
+                sb.append(semester).append(" GPA: ").append(NEED_FORMAT.format(gpa)).append("\n");
+            }
+        }
+
+        sb.append("\nCourse Grades\n-------------------------------------\n");
+        if (record.getCourseProgressByKey().isEmpty()) {
+            sb.append("No grades recorded yet.\n");
+        }
+        for (CourseProgress course : record.getCourseProgressByKey().values()) {
+            double percent = course.getCurrentPercent();
+            sb.append(String.format("%-28s %s  %s%n",
+                    course.getClassName(),
+                    course.getLetterGrade(),
+                    percent < 0.0 ? "(no grades yet)" : formatPercent(percent)));
+
+            for (Map.Entry<AssessmentType, Integer> weight : course.getGradeWeights().entrySet()) {
+                AssessmentType type = weight.getKey();
+                double average = type == AssessmentType.PARTICIPATION
+                        ? course.getParticipationScore()
+                        : course.getGradeBook().getCategoryAverage(type);
+                sb.append(String.format("   %-22s %3d%%  avg: %s%n",
+                        type.getDisplayName(),
+                        weight.getValue(),
+                        average < 0.0 ? "-" : formatPercent(average)));
+            }
+
+            List<GradeEntry> entries = course.getGradeBook().getEntries();
+            if (!entries.isEmpty()) {
+                sb.append("   Recent results:\n");
+                int from = Math.max(0, entries.size() - 5);
+                for (int i = entries.size() - 1; i >= from; i--) {
+                    GradeEntry entry = entries.get(i);
+                    sb.append(String.format("      %-26s %s (day %d)%n",
+                            entry.getTitle(),
+                            entry.isMissing() ? "MISSING" : formatPercent(entry.getScore()),
+                            entry.getDay()));
+                }
+            }
+            sb.append("\n");
+        }
+
+        sb.append("Upcoming Assessments\n-------------------------------------\n");
+        boolean anyUpcoming = false;
+        for (StudentBlock block : student.studentStatistics.getStudentSchedule()
+                .getClassScheduleCopy()) {
+            LessonPlan plan = AcademicProgressService.getLessonPlanFor(block);
+            if (plan == null) {
+                continue;
+            }
+            int shown = 0;
+            for (ScheduledAssessment assessment : plan.getAssessments()) {
+                if (assessment.isGraded() || shown >= 3) {
+                    continue;
+                }
+                sb.append(String.format("%-28s %-18s day %d%n",
+                        block.getClassName(),
+                        assessment.getTitle(),
+                        assessment.getScheduledDay()));
+                anyUpcoming = true;
+                shown++;
+            }
+        }
+        if (!anyUpcoming) {
+            sb.append("No upcoming assessments.\n");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Builds the staff lesson-plan report: per section, the course category,
+     * grading weights, and every scheduled assessment with its status.
+     */
+    private static String buildStaffLessonPlanText(Staff staff) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(staff.teacherName.getFirstName()).append(" ")
+                .append(staff.teacherName.getLastName())
+                .append("\n=====================================\n");
+        sb.append("Temperament: ")
+                .append(staff.teacherStatistics.getTemperament().getDisplayName())
+                .append("\n\n");
+
+        boolean anyPlans = false;
+        for (TeacherBlock block : staff.teacherStatistics.getTeacherSchedule().getTeacherSchedule()) {
+            LessonPlan plan = block.getLessonPlan();
+            if (plan == null) {
+                continue;
+            }
+            anyPlans = true;
+            sb.append(block.getClassName())
+                    .append(" (").append(block.getSemester())
+                    .append(", Block ").append(block.getBlockNumber()).append(")\n");
+            sb.append("   Category: ").append(plan.getCategory()).append("\n");
+            sb.append("   Weights: ");
+            StringBuilder weights = new StringBuilder();
+            for (Map.Entry<AssessmentType, Integer> weight : plan.getWeights().entrySet()) {
+                if (weights.length() > 0) {
+                    weights.append(", ");
+                }
+                weights.append(weight.getKey().getDisplayName()).append(" ")
+                        .append(weight.getValue()).append("%");
+            }
+            sb.append(weights).append("\n");
+            if (plan.getHomeworkIntervalDays() > 0) {
+                sb.append("   Homework every ").append(plan.getHomeworkIntervalDays())
+                        .append(" day(s)\n");
+            } else {
+                sb.append("   No homework assigned\n");
+            }
+            for (ScheduledAssessment assessment : plan.getAssessments()) {
+                sb.append(String.format("   day %-4d %-24s %-11s",
+                        assessment.getScheduledDay(),
+                        assessment.getTitle(),
+                        assessment.getStatus()));
+                if (assessment.isGraded()) {
+                    sb.append("  class avg: ").append(formatPercent(assessment.getClassAverage()));
+                }
+                sb.append("\n");
+            }
+            sb.append("\n");
+        }
+        if (!anyPlans) {
+            sb.append("No lesson plans.\n");
+        }
+        return sb.toString();
+    }
+
     private static String formatSkillName(AcademicSkill skill) {
         String name = skill.name().toLowerCase().replace('_', ' ');
         return Character.toUpperCase(name.charAt(0)) + name.substring(1);
@@ -1428,6 +1576,14 @@ public class Inspector {
         JScrollPane academicScroll = new JScrollPane(academicArea);
         tabbedPane.addTab("Academic", academicScroll);
 
+        // Grades tab
+        JTextArea gradesArea = new JTextArea(buildStudentGradesText(student));
+        gradesArea.setEditable(false);
+        gradesArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        gradesArea.setCaretPosition(0);
+        JScrollPane gradesScroll = new JScrollPane(gradesArea);
+        tabbedPane.addTab("Grades", gradesScroll);
+
         // Likes/Dislikes tab
         JTextArea likesArea = new JTextArea(buildLikesDislikesText(student));
         likesArea.setEditable(false);
@@ -1581,6 +1737,9 @@ public class Inspector {
         sb.append(firstName).append(" was born on ").append(birth).append(".\n");
         sb.append("\nThey are assigned as: ").append(assignment).append("\n");
         sb.append("They have ").append(yearsOfExperience).append(" year(s) of teaching experience.\n");
+        sb.append("Temperament: ")
+                .append(staff.teacherStatistics.getTemperament().getDisplayName())
+                .append("\n");
 
         return sb.toString();
     }
@@ -1773,6 +1932,14 @@ public class Inspector {
         schedArea.setCaretPosition(0);
         JScrollPane schedScroll = new JScrollPane(schedArea);
         tabbedPane.addTab("Schedule", schedScroll);
+
+        // Lesson Plan tab
+        JTextArea planArea = new JTextArea(buildStaffLessonPlanText(staff));
+        planArea.setEditable(false);
+        planArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        planArea.setCaretPosition(0);
+        JScrollPane planScroll = new JScrollPane(planArea);
+        tabbedPane.addTab("Lesson Plan", planScroll);
 
         // Create the dialog
         JDialog dialog = new JDialog();

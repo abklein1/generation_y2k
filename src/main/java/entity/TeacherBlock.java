@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import entity.Rooms.Room;
+import entity.academic.LessonPlan;
 import utility.GameLogger;
 
 public class TeacherBlock implements Serializable {
@@ -15,6 +16,7 @@ public class TeacherBlock implements Serializable {
     String semester;
     List<Student> classPopulation;
     int capacity;
+    private LessonPlan lessonPlan;
 
     public TeacherBlock() {
         blockNumber = 0;
@@ -93,5 +95,13 @@ public class TeacherBlock implements Serializable {
 
     public List<Student> getClassPopulation() {
         return classPopulation;
+    }
+
+    public LessonPlan getLessonPlan() {
+        return lessonPlan;
+    }
+
+    public void setLessonPlan(LessonPlan lessonPlan) {
+        this.lessonPlan = lessonPlan;
     }
 }

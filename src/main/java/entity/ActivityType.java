@@ -96,6 +96,12 @@ public enum ActivityType {
      * Entity is studying in the library or study hall.
      */
     STUDYING("Studying", true, false),
+
+    /**
+     * Entity is sitting a quiz, test, exam, project presentation, or skills
+     * evaluation in class. Suppresses social behavior for the duration.
+     */
+    TAKING_ASSESSMENT("Taking Assessment", true, false),
     
     /**
      * Entity is idle/waiting.

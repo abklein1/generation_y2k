@@ -117,6 +117,7 @@ public class TeacherPopGenerator {
                             staff.teacherStatistics.getAge(), staff.teacherStatistics.getHairLength()));
             staff.teacherStatistics.setYearsOfExperience(
                     setRandom(0, (staff.teacherStatistics.getAge() - TEACHER_YEARS_OF_EXPERIENCE_MODIFIER)));
+            staff.teacherStatistics.deriveTemperamentFromStats();
 
             // Determine vision issues based on age and gender
             int age = staff.teacherStatistics.getAge();

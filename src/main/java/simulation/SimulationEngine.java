@@ -405,6 +405,10 @@ public class SimulationEngine {
         // 3.1. Assign regular homework once per eligible school day.
         processHomeworkAssignments(currentDayPhase);
 
+        // 3.2. Advance scheduled assessments: start them when their period
+        // begins and grade them when their window elapses.
+        processAssessments();
+
         // 3.25. Handle mid-block lunch transitions (enter/exit lunch)
         processLunchTransitions();
 
@@ -1573,6 +1577,13 @@ public class SimulationEngine {
         context.removeVariable("interaction_target");
         context.removeVariable("friendship_gained");
         context.removeVariable("learning_gained");
+    }
+
+    private void processAssessments() {
+        if (staff == null || time == null) {
+            return;
+        }
+        utility.AssessmentService.processTick(staff, time);
     }
 
     private void processHomeworkAssignments(DayPhase currentDayPhase) {

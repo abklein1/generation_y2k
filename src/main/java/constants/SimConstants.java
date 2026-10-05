@@ -741,6 +741,70 @@ public final class SimConstants {
     public static final double ACADEMIC_TEACHER_MAX_STRESS_REDUCTION = 0.30;
     public static final int ACADEMIC_TEACHER_CURRICULUM_RAMP_STEP = 3;
 
+    // ACADEMIC CALENDAR (semester/quarter anchors; month values are 0-based
+    // to match java.util.Calendar). The school year starts Aug 23 2004.
+    public static final int ACADEMIC_CALENDAR_FALL_START_MONTH = 7; // August
+    public static final int ACADEMIC_CALENDAR_FALL_START_DAY = 23;
+    public static final int ACADEMIC_CALENDAR_FALL_END_MONTH = 11; // December
+    public static final int ACADEMIC_CALENDAR_FALL_END_DAY = 17;
+    public static final int ACADEMIC_CALENDAR_Q1_END_MONTH = 9; // October
+    public static final int ACADEMIC_CALENDAR_Q1_END_DAY = 15;
+    public static final int ACADEMIC_CALENDAR_FALL_FINALS_START_MONTH = 11;
+    public static final int ACADEMIC_CALENDAR_FALL_FINALS_START_DAY = 13;
+    public static final int ACADEMIC_CALENDAR_SPRING_START_MONTH = 0; // January
+    public static final int ACADEMIC_CALENDAR_SPRING_START_DAY = 3;
+    public static final int ACADEMIC_CALENDAR_SPRING_END_MONTH = 4; // May
+    public static final int ACADEMIC_CALENDAR_SPRING_END_DAY = 27;
+    public static final int ACADEMIC_CALENDAR_Q3_END_MONTH = 2; // March
+    public static final int ACADEMIC_CALENDAR_Q3_END_DAY = 11;
+    public static final int ACADEMIC_CALENDAR_SPRING_FINALS_START_MONTH = 4;
+    public static final int ACADEMIC_CALENDAR_SPRING_FINALS_START_DAY = 23;
+
+    // ASSESSMENTS (lesson plans, scheduling, in-class windows)
+    public static final int ASSESSMENT_QUIZ_MINUTES = 25;
+    public static final int ASSESSMENT_TEST_MINUTES = 60;
+    public static final int ASSESSMENT_EXAM_MINUTES = 85; // full block
+    public static final int ASSESSMENT_PROJECT_MINUTES = 85; // presentation day
+    public static final int ASSESSMENT_SKILLS_EVAL_MINUTES = 85;
+    // Days before an assessment during which academic pressure kicks in
+    public static final int ASSESSMENT_PRESSURE_DAYS_QUIZ = 2;
+    public static final int ASSESSMENT_PRESSURE_DAYS_TEST = 4;
+    public static final int ASSESSMENT_PRESSURE_DAYS_EXAM = 7;
+    public static final int ASSESSMENT_PRESSURE_DAYS_PROJECT = 5;
+    // Fraction of the assessment window a student must sit to receive a score
+    public static final double ASSESSMENT_MIN_ATTENDANCE_FRACTION = 0.5;
+    // Scheduling jitter (days) for inexperienced teachers; erratic adds more
+    public static final int ASSESSMENT_MAX_DATE_JITTER_DAYS = 4;
+    public static final int ASSESSMENT_ERRATIC_EXTRA_JITTER_DAYS = 3;
+    // Per-assessment secondary stat drains while sitting the assessment
+    public static final int ASSESSMENT_INITIATIVE_DRAIN = 1;
+    public static final int ASSESSMENT_RESPONSIBILITY_DRAIN = 1;
+    public static final int ASSESSMENT_ENTERTAINMENT_DRAIN = 3;
+    // Testing effect: small understanding/skill bump from taking a graded test
+    public static final double ASSESSMENT_UNDERSTANDING_BUMP = 1.5;
+    public static final double ASSESSMENT_SKILL_BUMP = 1.0;
+
+    // GRADING (score computation)
+    public static final double GRADING_KNOWLEDGE_BASE = 35.0;
+    public static final double GRADING_UNDERSTANDING_WEIGHT = 0.45;
+    public static final double GRADING_SKILL_WEIGHT = 0.15;
+    public static final double GRADING_DIFFICULTY_SLOPE = 0.25;
+    public static final double GRADING_PREP_BONUS_MAX = 10.0;
+    public static final int GRADING_PREP_ATTENTION_POINTS_FOR_MAX = 200;
+    public static final double GRADING_LOW_ENERGY_THRESHOLD = 35.0;
+    public static final double GRADING_LOW_ENERGY_MAX_PENALTY = 8.0;
+    public static final double GRADING_STRESS_MAX_PENALTY = 6.0;
+    public static final double GRADING_BASE_NOISE_STD_DEV = 7.0;
+    // Teacher grading noise: +-6 at 0 years experience down to +-2 at cap
+    public static final double GRADING_TEACHER_NOISE_MAX = 6.0;
+    public static final double GRADING_TEACHER_NOISE_MIN = 2.0;
+    public static final double GRADING_TEACHER_PARTIAL_CREDIT_MAX = 4.0;
+    // Apathetic students put less into homework and assessments
+    public static final double GRADING_APATHY_HOMEWORK_PENALTY = 15.0;
+    public static final int GRADING_APATHY_DETERMINATION_MAX = 35;
+    public static final int GRADING_APATHY_RESPONSIBILITY_MAX = 40;
+    public static final int GRADING_APATHY_COMBINED_MAX = 35;
+
     // Secondary stat sleep replenishment: percentage of max to restore
     public static final double SECONDARY_STAT_SLEEP_REPLENISH_RATE = 1.0; // 100% restored on sleep
 
