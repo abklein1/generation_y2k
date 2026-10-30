@@ -10,6 +10,7 @@ import entity.Student;
 import entity.TeacherTemperament;
 import entity.academic.AssessmentType;
 import entity.academic.CourseCategory;
+import entity.academic.CourseProgress;
 import entity.academic.ScheduledAssessment;
 
 @DisplayName("Assessment grader")
@@ -110,6 +111,27 @@ class AssessmentGraderTest {
                 CourseCategory.PHYSICAL_EDUCATION, eval);
 
         assertTrue(athleteScore > scholarScore);
+    }
+
+    @Test
+    @DisplayName("Scratch course state is used instead of the live record")
+    void scratchCourseOverridesLiveUnderstanding() {
+        Student student = createStudent(100, 50, 50);
+        student.studentStatistics.getAcademicRecord()
+                .getOrCreateCourse("Algebra I").addUnderstanding(10.0);
+
+        CourseProgress prepared = new CourseProgress("algebra_i", "Algebra I");
+        prepared.addUnderstanding(90.0);
+        ScheduledAssessment test = quiz(50);
+
+        GameRandom.initialize(42L);
+        double liveScore = AssessmentGrader.score(student, null, "Algebra I",
+                CourseCategory.CORE_ACADEMIC, test);
+        GameRandom.initialize(42L);
+        double scratchScore = AssessmentGrader.score(student, null, "Algebra I",
+                CourseCategory.CORE_ACADEMIC, test, prepared);
+
+        assertTrue(scratchScore > liveScore);
     }
 
     @Test

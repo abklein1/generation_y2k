@@ -19,7 +19,9 @@ import entity.Student;
 import entity.StudentBlock;
 import entity.Time;
 import entity.academic.AcademicSkill;
+import entity.academic.AssessmentType;
 import entity.academic.CourseProgress;
+import entity.academic.GradeEntry;
 import entity.academic.HomeworkAssignment;
 
 @DisplayName("Academic progress service")
@@ -77,6 +79,46 @@ class AcademicProgressServiceTest {
         assertEquals(1, course.getCompletedHomework());
         assertTrue(course.getUnderstanding() > 80.0);
         assertTrue(student.studentStatistics.getAcademicRecord().getSkillMastery(AcademicSkill.HISTORY) > 0.0);
+    }
+
+    @Test
+    @DisplayName("gradeHomework is side-effect free and matches live resolve")
+    void gradeHomeworkIsPureAndMatchesResolve() {
+        Student student = createStudentWithStats(120, 80, 70, 80, 80);
+        CourseProgress course = student.studentStatistics.getAcademicRecord()
+                .getOrCreateCourse("World History");
+        course.addUnderstanding(80.0);
+
+        GradeEntry preview = AcademicProgressService.gradeHomework(
+                student, course, 12, 5, 1, 1, false);
+
+        assertEquals(AssessmentType.HOMEWORK, preview.getType());
+        assertFalse(preview.isMissing());
+        assertEquals(0, course.getCompletedHomework());
+        assertEquals(80.0, course.getUnderstanding(), 0.001);
+        assertTrue(course.getGradeBook().isEmpty());
+
+        student.studentStatistics.getAcademicRecord().addHomework(new HomeworkAssignment(
+                "world_history", "World History", 12, 5, 1, 1));
+        AcademicProgressService.resolveHomeworkForDay(student, 1);
+
+        GradeEntry recorded = course.getGradeBook().getEntries().get(0);
+        assertEquals(preview.getScore(), recorded.getScore(), 0.001);
+        assertEquals(preview.isMissing(), recorded.isMissing());
+    }
+
+    @Test
+    @DisplayName("Apathetic students can miss homework")
+    void apatheticHomeworkCanBeMissing() {
+        Student student = createStudentWithStats(70, 20, 30, 10, 10);
+        CourseProgress course = student.studentStatistics.getAcademicRecord()
+                .getOrCreateCourse("Algebra I");
+
+        GradeEntry entry = AcademicProgressService.gradeHomework(
+                student, course, 22, 12, 3, 4, true);
+
+        assertTrue(entry.isMissing());
+        assertTrue(entry.getScore() < 70.0);
     }
 
     @Test

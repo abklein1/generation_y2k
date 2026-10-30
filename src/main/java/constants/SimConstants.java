@@ -805,6 +805,35 @@ public final class SimConstants {
     public static final int GRADING_APATHY_RESPONSIBILITY_MAX = 40;
     public static final int GRADING_APATHY_COMBINED_MAX = 35;
 
+    // TRANSCRIPT (finalized semester courses)
+    // 4x4 block schedule: one semester block equals one full credit
+    public static final double TRANSCRIPT_CREDIT_PER_SEMESTER_COURSE = 1.0;
+
+    // ACADEMIC HISTORY GENERATOR (world-gen backfill of prior school years)
+    // Synthesized semester-end understanding: base plus trait-driven terms
+    public static final double HISTORY_UNDERSTANDING_BASE = 90.0;
+    public static final double HISTORY_UNDERSTANDING_INTELLIGENCE_WEIGHT = 0.30;
+    public static final double HISTORY_UNDERSTANDING_DETERMINATION_WEIGHT = 0.22;
+    public static final double HISTORY_UNDERSTANDING_RESPONSIBILITY_WEIGHT = 0.10;
+    public static final double HISTORY_UNDERSTANDING_INITIATIVE_WEIGHT = 0.08;
+    // Persistent per-student academic arc (slumps/improvers), per-year drift,
+    // and per-course variation
+    public static final double HISTORY_STUDENT_ARC_STD_DEV = 6.0;
+    public static final double HISTORY_YEAR_NOISE_STD_DEV = 3.0;
+    public static final double HISTORY_COURSE_NOISE_STD_DEV = 4.0;
+    // Earlier years score slightly lower than recent ones (maturity ramp)
+    public static final double HISTORY_MATURITY_GAIN_PER_YEAR = 2.0;
+    // Synthesized attention points from determination/responsibility
+    public static final int HISTORY_ATTENTION_STAT_FLOOR = 30;
+    public static final int HISTORY_ATTENTION_DETERMINATION_SCALE = 4;
+    public static final int HISTORY_ATTENTION_RESPONSIBILITY_SCALE = 3;
+    public static final int HISTORY_ATTENTION_MAX = 400;
+    // Cap on synthesized homework entries per course-semester
+    public static final int HISTORY_MAX_HOMEWORK_PER_COURSE = 40;
+    // Real skill mastery seeded per completed historical course, scaled by
+    // that course's synthesized understanding (0-100)
+    public static final double HISTORY_SKILL_MASTERY_GAIN_SCALE = 0.06;
+
     // Secondary stat sleep replenishment: percentage of max to restore
     public static final double SECONDARY_STAT_SLEEP_REPLENISH_RATE = 1.0; // 100% restored on sleep
 

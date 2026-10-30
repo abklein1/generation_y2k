@@ -11,6 +11,8 @@ import entity.Radio.Song;
 import entity.Rooms.OffCampus;
 import entity.Rooms.Room;
 import entity.Items.Outfit;
+import entity.academic.StudentAcademicRecord;
+import entity.academic.TranscriptEntry;
 import save.SimulationRuntimeSnapshot;
 import utility.DailyOutfitAssigner;
 import utility.GameLogger;
@@ -1814,7 +1816,15 @@ public class SimulationEngine {
 
         // Advance clock to next school day morning so unpausing doesn't
         // re-trigger end-of-day immediately.
+        String semesterBeforeAdvance = time.getCurrentSemester();
         time.advanceToNextSchoolDay();
+
+        // When the calendar crosses a semester boundary, freeze the finished
+        // semester's course grades onto each student's permanent transcript
+        // (idempotent: finalized courses leave the live course map).
+        if (!semesterBeforeAdvance.equals(time.getCurrentSemester())) {
+            finalizeSemesterForAllStudents(semesterBeforeAdvance);
+        }
 
         // Dress students for the new day: first-week outfits come from
         // the pre-generated wardrobe, later days recombine owned pieces,
@@ -1825,6 +1835,54 @@ public class SimulationEngine {
 
         // Re-place all entities in their first-period rooms for the new day
         placeEntitiesForNewDay();
+    }
+
+    /**
+     * Freezes the just-finished semester onto every student's transcript so
+     * cumulative GPA accumulates across semesters. The school year is the
+     * calendar year the year started in: at either boundary the clock has
+     * already moved past New Year (Fall ends in January) or into the next
+     * August (Spring ends over summer), so it is always the previous year.
+     *
+     * @param endedSemester the semester that just finished ("Fall"/"Spring")
+     */
+    private void finalizeSemesterForAllStudents(String endedSemester) {
+        if (students == null) {
+            return;
+        }
+        int schoolYear = time.getYear() - 1;
+        for (Student student : students.values()) {
+            if (student == null || student.studentStatistics == null) {
+                continue;
+            }
+
+            // Credit the semester's teachers on the transcript entries.
+            Map<String, String> teacherNamesByCourseKey = new HashMap<>();
+            for (StudentBlock block : student.studentStatistics.getStudentSchedule()
+                    .getClassScheduleCopy()) {
+                if (block == null || block.isLunch() || block.getClassName() == null
+                        || block.getClassName().isBlank()) {
+                    continue;
+                }
+                if (block.getSemester() != null
+                        && !endedSemester.equalsIgnoreCase(block.getSemester())) {
+                    continue;
+                }
+                Staff teacher = block.getTeacher();
+                if (teacher != null && teacher.teacherName != null) {
+                    teacherNamesByCourseKey.put(
+                            StudentAcademicRecord.normalizeCourseKey(block.getClassName()),
+                            teacher.teacherName.getFullName());
+                }
+            }
+
+            List<TranscriptEntry> finalized = student.studentStatistics.getAcademicRecord()
+                    .finalizeSemester(endedSemester, schoolYear,
+                            student.studentStatistics.getGradeLevel(), teacherNamesByCourseKey);
+            for (TranscriptEntry entry : finalized) {
+                student.studentStatistics.addToCompletedClasses(entry.getClassName());
+            }
+        }
     }
 
     /**

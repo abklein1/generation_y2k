@@ -81,4 +81,14 @@ class GradeBookTest {
         assertEquals(1.0, GradeBook.gradePointsFor(64.0), 0.001);
         assertEquals(0.0, GradeBook.gradePointsFor(30.0), 0.001);
     }
+
+    @Test
+    @DisplayName("AP and Honors names add the GPA bonus")
+    void honorsBonusForClassName() {
+        assertEquals(1.0, GradeBook.honorsBonusFor("AP Biology"), 0.001);
+        assertEquals(1.0, GradeBook.honorsBonusFor("English AP Seminar"), 0.001);
+        assertEquals(0.5, GradeBook.honorsBonusFor("Honors English III"), 0.001);
+        assertEquals(0.0, GradeBook.honorsBonusFor("English I"), 0.001);
+        assertEquals(0.0, GradeBook.honorsBonusFor(null), 0.001);
+    }
 }

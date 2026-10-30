@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -22,6 +21,8 @@ public class StudentAcademicRecord implements Serializable {
     private final List<HomeworkAssignment> homeworkAssignments;
     // Added with the grading system; null in saves that predate it.
     private Map<String, AssessmentAttempt> assessmentAttempts;
+    // Added with the history generator; null in saves that predate it.
+    private Transcript transcript;
 
     public StudentAcademicRecord() {
         this.courseProgressByKey = new LinkedHashMap<>();
@@ -139,6 +140,83 @@ public class StudentAcademicRecord implements Serializable {
         return assessmentAttempts;
     }
 
+    /** The permanent transcript, created lazily so old saves keep loading. */
+    public Transcript getTranscript() {
+        if (transcript == null) {
+            transcript = new Transcript();
+        }
+        return transcript;
+    }
+
+    /**
+     * Cumulative weighted GPA (4.0 scale plus AP/Honors bonus) over all
+     * finalized transcript courses.
+     *
+     * @return the GPA, or -1 when no course has been finalized yet
+     */
+    public double getCumulativeGpa() {
+        return getTranscript().getCumulativeGpa(true);
+    }
+
+    /**
+     * Cumulative unweighted GPA (plain 4.0 scale) over all finalized
+     * transcript courses.
+     *
+     * @return the GPA, or -1 when no course has been finalized yet
+     */
+    public double getCumulativeUnweightedGpa() {
+        return getTranscript().getCumulativeGpa(false);
+    }
+
+    /**
+     * Freezes a finished semester onto the transcript: every graded course
+     * whose semester matches (or was never tagged) becomes a
+     * {@link TranscriptEntry} and is removed from the live course map, so
+     * the operation is idempotent and {@link #getOverallGpa()} keeps
+     * reflecting only in-progress coursework.
+     *
+     * @param semester             the semester that just ended ("Fall"/"Spring")
+     * @param schoolYear           start year of the school year (2004 = 2004-05)
+     * @param gradeLevel           the student's grade level this year
+     * @param teacherNameByCourseKey optional map of course key to teacher
+     *                             display name; may be null
+     * @return the finalized entries, in course order (possibly empty)
+     */
+    public List<TranscriptEntry> finalizeSemester(String semester, int schoolYear,
+                                                  String gradeLevel,
+                                                  Map<String, String> teacherNameByCourseKey) {
+        List<TranscriptEntry> finalized = new ArrayList<>();
+        if (semester == null || semester.isBlank()) {
+            return finalized;
+        }
+        List<String> finalizedKeys = new ArrayList<>();
+        for (Map.Entry<String, CourseProgress> entry : courseProgressByKey.entrySet()) {
+            CourseProgress course = entry.getValue();
+            String courseSemester = course.getSemester();
+            if (courseSemester != null && !semester.equalsIgnoreCase(courseSemester)) {
+                continue;
+            }
+            double percent = course.getCurrentPercent();
+            if (percent < 0.0) {
+                continue;
+            }
+            String teacherName = teacherNameByCourseKey == null
+                    ? null : teacherNameByCourseKey.get(entry.getKey());
+            finalized.add(new TranscriptEntry(schoolYear, gradeLevel, semester,
+                    course.getClassName(), percent,
+                    constants.SimConstants.TRANSCRIPT_CREDIT_PER_SEMESTER_COURSE,
+                    teacherName));
+            finalizedKeys.add(entry.getKey());
+        }
+        for (TranscriptEntry entry : finalized) {
+            getTranscript().addEntry(entry);
+        }
+        for (String key : finalizedKeys) {
+            courseProgressByKey.remove(key);
+        }
+        return finalized;
+    }
+
     /**
      * GPA (4.0 scale) over courses in one semester, weighted +1.0 for AP and
      * +0.5 for Honors classes. Courses without any grades are skipped.
@@ -171,13 +249,8 @@ public class StudentAcademicRecord implements Serializable {
             if (percent < 0.0) {
                 continue;
             }
-            double points = GradeBook.gradePointsFor(percent);
-            String name = course.getClassName() == null ? "" : course.getClassName();
-            if (name.startsWith("AP ") || name.contains(" AP ")) {
-                points += 1.0;
-            } else if (name.toLowerCase(Locale.ROOT).contains("honors")) {
-                points += 0.5;
-            }
+            double points = GradeBook.gradePointsFor(percent)
+                    + GradeBook.honorsBonusFor(course.getClassName());
             totalPoints += points;
             courseCount++;
         }

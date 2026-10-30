@@ -244,6 +244,10 @@ public class Time implements Serializable {
         return calendar.get(Calendar.MONTH);
     }
 
+    public int getYear() {
+        return calendar.get(Calendar.YEAR);
+    }
+
     /**
      * Advances the clock to the next school day morning (skipping weekends).
      * Sets the time to STARTING_HOUR:STARTING_MINUTE and increments the day counter.

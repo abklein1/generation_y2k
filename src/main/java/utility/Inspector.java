@@ -21,6 +21,8 @@ import entity.academic.HomeworkAssignment;
 import entity.academic.LessonPlan;
 import entity.academic.ScheduledAssessment;
 import entity.academic.StudentAcademicRecord;
+import entity.academic.Transcript;
+import entity.academic.TranscriptEntry;
 import utility.music.MusicPreference;
 import utility.music.MusicTaste;
 
@@ -40,6 +42,7 @@ import java.util.Map;
 public class Inspector {
 
     private static final DecimalFormat NEED_FORMAT = new DecimalFormat("#.#");
+    private static final DecimalFormat GPA_FORMAT = new DecimalFormat("0.00");
 
     // Set by SchoolController after the social graph is built or restored so
     // the Description tab can surface romantic relationships.
@@ -795,14 +798,21 @@ public class Inspector {
         sb.append(student.studentName.getFullName()).append("\n=====================================\n");
 
         double overallGpa = record.getOverallGpa();
-        sb.append("Overall GPA: ")
-                .append(overallGpa < 0.0 ? "-" : NEED_FORMAT.format(overallGpa))
+        sb.append("Current GPA: ")
+                .append(overallGpa < 0.0 ? "-" : GPA_FORMAT.format(overallGpa))
                 .append("\n");
         for (String semester : new String[] { "Fall", "Spring" }) {
             double gpa = record.getSemesterGpa(semester);
             if (gpa >= 0.0) {
-                sb.append(semester).append(" GPA: ").append(NEED_FORMAT.format(gpa)).append("\n");
+                sb.append(semester).append(" GPA: ").append(GPA_FORMAT.format(gpa)).append("\n");
             }
+        }
+        double cumulativeGpa = record.getCumulativeGpa();
+        if (cumulativeGpa >= 0.0) {
+            sb.append("Cumulative GPA: ")
+                    .append(GPA_FORMAT.format(cumulativeGpa)).append(" weighted / ")
+                    .append(GPA_FORMAT.format(record.getCumulativeUnweightedGpa()))
+                    .append(" unweighted\n");
         }
 
         sb.append("\nCourse Grades\n-------------------------------------\n");
@@ -865,6 +875,28 @@ public class Inspector {
         }
         if (!anyUpcoming) {
             sb.append("No upcoming assessments.\n");
+        }
+
+        Transcript transcript = record.getTranscript();
+        if (!transcript.isEmpty()) {
+            sb.append("\nTranscript\n-------------------------------------\n");
+            for (int schoolYear : transcript.getSchoolYears()) {
+                List<TranscriptEntry> yearEntries = transcript.getEntriesForYear(schoolYear);
+                String yearLabel = yearEntries.get(0).getSchoolYearLabel();
+                String gradeLevel = yearEntries.get(0).getGradeLevel();
+                double yearGpa = transcript.getYearGpa(schoolYear, true);
+                sb.append(String.format("%s %s  GPA %s%n", yearLabel, gradeLevel,
+                        GPA_FORMAT.format(yearGpa)));
+                for (TranscriptEntry entry : yearEntries) {
+                    sb.append(String.format("   %-6s %-28s %s  %s%s%n",
+                            entry.getSemester(),
+                            entry.getClassName(),
+                            entry.getLetterGrade(),
+                            formatPercent(entry.getFinalPercent()),
+                            entry.getTeacherName() == null
+                                    ? "" : "  " + entry.getTeacherName()));
+                }
+            }
         }
 
         return sb.toString();
@@ -1246,6 +1278,17 @@ public class Inspector {
      */
     public static void updateStudentAcademicArea(Student student, JTextArea area) {
         area.setText(buildAcademicProgressText(student));
+        area.setCaretPosition(0);
+    }
+
+    /**
+     * Updates a JTextArea with the student's gradebook: current, semester,
+     * and cumulative GPA, per-course grades, upcoming assessments, and the
+     * prior-year transcript.
+     * Used by SchoolController's tabbed inspection window.
+     */
+    public static void updateStudentGradesArea(Student student, JTextArea area) {
+        area.setText(buildStudentGradesText(student));
         area.setCaretPosition(0);
     }
 

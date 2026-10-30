@@ -137,33 +137,58 @@ public final class AcademicProgressService {
             }
 
             CourseProgress course = record.getOrCreateCourse(homework.getClassName());
-            double completionScore = calculateHomeworkCompletionScore(student, course, homework);
-            if (apathetic) {
-                completionScore -= SimConstants.GRADING_APATHY_HOMEWORK_PENALTY;
-            }
+            GradeEntry entry = gradeHomework(student, course, homework.getEffort(),
+                    homework.getProblemCount(), homework.getAssignedDay(), day, apathetic);
             drainHomeworkPools(student);
-
-            if (completionScore >= 50.0) {
+            if (!entry.isMissing()) {
                 homework.markCompleted();
                 course.recordHomeworkCompleted();
                 course.addUnderstanding(SimConstants.ACADEMIC_HOMEWORK_UNDERSTANDING_GAIN);
                 record.addSkillMastery(inferSkill(homework.getClassName()),
                         SimConstants.ACADEMIC_HOMEWORK_SKILL_GAIN);
-                int grade = (int) Math.min(100.0, 70.0 + completionScore / 3.0);
-                student.studentStatistics.setNewGrade(grade);
-                course.getGradeBook().addEntry(new GradeEntry(AssessmentType.HOMEWORK,
-                        "Homework (day " + homework.getAssignedDay() + ")", grade, day, false));
                 completedCount++;
             } else {
                 homework.markMissing();
                 course.recordHomeworkMissing();
-                int grade = (int) Math.max(0.0, 65.0 - (50.0 - completionScore) / 2.0);
-                student.studentStatistics.setNewGrade(grade);
-                course.getGradeBook().addEntry(new GradeEntry(AssessmentType.HOMEWORK,
-                        "Homework (day " + homework.getAssignedDay() + ")", grade, day, true));
             }
+            student.studentStatistics.setNewGrade((int) entry.getScore());
+            course.getGradeBook().addEntry(entry);
         }
         return completedCount;
+    }
+
+    /**
+     * Grades one homework assignment without side effects: the completion
+     * score is computed from the student's traits and the supplied course
+     * state, then mapped to a graded or missing {@link GradeEntry}. Used by
+     * the live homework resolver and by the history generator against scratch
+     * course state.
+     *
+     * @param student      the student doing the homework
+     * @param course       course state supplying understanding
+     * @param effort       the assignment's effort rating
+     * @param problemCount the assignment's problem count
+     * @param assignedDay  day the homework was assigned (for the entry title)
+     * @param day          day the grade is recorded
+     * @param apathetic    true when the student is academically apathetic
+     * @return the resulting grade entry (missing=true when not completed)
+     */
+    public static GradeEntry gradeHomework(Student student, CourseProgress course, int effort,
+                                           int problemCount, int assignedDay, int day,
+                                           boolean apathetic) {
+        double completionScore = calculateHomeworkCompletionScore(student, course,
+                effort, problemCount);
+        if (apathetic) {
+            completionScore -= SimConstants.GRADING_APATHY_HOMEWORK_PENALTY;
+        }
+        if (completionScore >= 50.0) {
+            int grade = (int) Math.min(100.0, 70.0 + completionScore / 3.0);
+            return new GradeEntry(AssessmentType.HOMEWORK,
+                    "Homework (day " + assignedDay + ")", grade, day, false);
+        }
+        int grade = (int) Math.max(0.0, 65.0 - (50.0 - completionScore) / 2.0);
+        return new GradeEntry(AssessmentType.HOMEWORK,
+                "Homework (day " + assignedDay + ")", grade, day, true);
     }
 
     /**
@@ -440,14 +465,14 @@ public final class AcademicProgressService {
     }
 
     private static double calculateHomeworkCompletionScore(Student student, CourseProgress course,
-                                                           HomeworkAssignment homework) {
+                                                           int effort, int problemCount) {
         double ability = student.studentStatistics.getIntelligence() * 0.25
                 + student.studentStatistics.getDetermination() * 0.25
                 + student.studentStatistics.getPerception() * 0.15
                 + student.studentStatistics.getInitiative() * 0.20
                 + student.studentStatistics.getResponsibility() * 0.15;
-        double workloadPenalty = Math.max(0, homework.getEffort() - 18) * 1.1
-                + Math.max(0, homework.getProblemCount() - 8) * 0.7;
+        double workloadPenalty = Math.max(0, effort - 18) * 1.1
+                + Math.max(0, problemCount - 8) * 0.7;
         return ability + course.getUnderstanding() * 0.45 - workloadPenalty;
     }
 

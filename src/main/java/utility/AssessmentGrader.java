@@ -37,6 +37,27 @@ public final class AssessmentGrader {
                                CourseCategory category, ScheduledAssessment assessment) {
         StudentAcademicRecord record = student.studentStatistics.getAcademicRecord();
         CourseProgress course = record.getOrCreateCourse(className);
+        return score(student, teacher, className, category, assessment, course);
+    }
+
+    /**
+     * Scores one student on one assessment against an explicit course state,
+     * which may be a scratch {@link CourseProgress} that is not part of the
+     * student's live record (used by the history generator). Skill mastery is
+     * still read from the student's real academic record.
+     *
+     * @param student    the student being graded
+     * @param teacher    the grading teacher (null-safe)
+     * @param className  the class the assessment belongs to
+     * @param category   the course category, which decides the scoring formula
+     * @param assessment the assessment being graded
+     * @param course     the course state supplying understanding and prep
+     * @return a 0-100 score
+     */
+    public static double score(Student student, Staff teacher, String className,
+                               CourseCategory category, ScheduledAssessment assessment,
+                               CourseProgress course) {
+        StudentAcademicRecord record = student.studentStatistics.getAcademicRecord();
 
         double raw = knowledgeTerm(student, record, course, className, category, assessment.getType())
                 + baseStatTerm(student)

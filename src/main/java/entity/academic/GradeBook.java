@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -106,6 +107,24 @@ public class GradeBook implements Serializable {
             return "D";
         }
         return "F";
+    }
+
+    /**
+     * GPA bonus for advanced coursework: +1.0 for AP classes, +0.5 for
+     * Honors classes, 0 otherwise.
+     *
+     * @param className the class name as scheduled
+     * @return the grade-point bonus
+     */
+    public static double honorsBonusFor(String className) {
+        String name = className == null ? "" : className;
+        if (name.startsWith("AP ") || name.contains(" AP ")) {
+            return 1.0;
+        }
+        if (name.toLowerCase(Locale.ROOT).contains("honors")) {
+            return 0.5;
+        }
+        return 0.0;
     }
 
     /**

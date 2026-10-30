@@ -842,6 +842,10 @@ public class SchoolController implements InspectionNavigator {
                 academicArea.setWrapStyleWord(true);
                 academicArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
 
+                JTextArea gradesArea = new JTextArea();
+                gradesArea.setEditable(false);
+                gradesArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+
                 JTextArea likesArea = new JTextArea();
                 likesArea.setEditable(false);
                 likesArea.setLineWrap(true);
@@ -856,6 +860,7 @@ public class SchoolController implements InspectionNavigator {
                         SwingConstants.CENTER), java.awt.BorderLayout.CENTER);
                 studentTabs.addTab("Schedule", emptySchedule);
                 studentTabs.addTab("Academic", new JScrollPane(academicArea));
+                studentTabs.addTab("Grades", new JScrollPane(gradesArea));
                 studentTabs.addTab("Likes/Dislikes", new JScrollPane(likesArea));
                 studentTabs.addTab("Cell Phone", new JScrollPane(phoneArea));
                 JScrollPane activityScroll = new JScrollPane(activityArea);
@@ -871,6 +876,7 @@ public class SchoolController implements InspectionNavigator {
                             Inspector.updateStudentDescriptionArea(selectedStudent, descArea);
                             Inspector.updateStudentStatsArea(selectedStudent, statsArea);
                             Inspector.updateStudentAcademicArea(selectedStudent, academicArea);
+                            Inspector.updateStudentGradesArea(selectedStudent, gradesArea);
                             Inspector.updateStudentLikesDislikesArea(selectedStudent, likesArea);
 
                             JPanel schedulePanel = Inspector.buildStudentSchedulePanel(selectedStudent);
@@ -897,6 +903,7 @@ public class SchoolController implements InspectionNavigator {
                         Inspector.updateActivityArea(currentlySelectedStudent[0], activityArea);
                         Inspector.updateStudentStatsArea(currentlySelectedStudent[0], statsArea);
                         Inspector.updateStudentAcademicArea(currentlySelectedStudent[0], academicArea);
+                        Inspector.updateStudentGradesArea(currentlySelectedStudent[0], gradesArea);
                         CellPhone polledPhone = town != null
                                 ? town.getStudentPhone(currentlySelectedStudent[0]) : null;
                         Inspector.updateCellPhoneArea(polledPhone,
@@ -1821,9 +1828,19 @@ public class SchoolController implements InspectionNavigator {
 
             } catch (Throwable t) {
                 t.printStackTrace();
-                publish("Caught an exception: " + t.getMessage());
+                publishAlways("World generation hit an error: " + t);
             }
             return null;
+        }
+
+        /**
+         * Writes a message to the console regardless of the GENERATION log
+         * category, which is disabled in New Game mode. Use for one-line
+         * summaries and errors the player should always see; keep verbose
+         * progress on {@link #publish(Object...)}.
+         */
+        private void publishAlways(String message) {
+            javax.swing.SwingUtilities.invokeLater(() -> view.appendOutput(message));
         }
 
         /**
@@ -1935,6 +1952,12 @@ public class SchoolController implements InspectionNavigator {
                 studentHashMap = SchoolAssignmentService.getStudentHashMap(town, standardSchool);
                 staffHashMap = SchoolAssignmentService.getStaffHashMap(town, standardSchool);
             }
+
+            // Backfill prior-year transcripts/GPAs for upperclassmen now that
+            // schedules and staff assignments exist (seeded, deterministic).
+            publish("Generating academic history for upperclassmen...");
+            SchoolHistoryGenerator.generate(studentHashMap, staffHashMap,
+                    STARTING_YEAR, this::publishAlways);
 
             // Report on school status
             if (standardSchool.isOvercrowded()) {
@@ -2071,6 +2094,12 @@ public class SchoolController implements InspectionNavigator {
                 e.printStackTrace();
                 GameLogger.logDebug("some exception");
             }
+
+            // Backfill prior-year transcripts/GPAs for upperclassmen now that
+            // schedules and staff assignments exist (seeded, deterministic).
+            publish("Generating academic history for upperclassmen...");
+            SchoolHistoryGenerator.generate(studentHashMap, staffHashMap,
+                    STARTING_YEAR, this::publishAlways);
             // Add names to rooms
             gyms = standardSchool.getGyms();
             for (Gym gym : gyms) {
